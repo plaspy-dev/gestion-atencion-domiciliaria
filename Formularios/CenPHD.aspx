@@ -1,0 +1,61 @@
+﻿<%@ Page Title="Censo PHD Integral" Language="vb" AutoEventWireup="false" MasterPageFile="~/Princ.Master" CodeBehind="CenPHD.aspx.vb" Inherits="ML.CenPHD" %>
+<%@ Register src="../Controles/Filtro.ascx" tagname="Filtro" tagprefix="uc1" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cph" runat="server">
+    <uc1:Filtro ID="Filtro1" runat="server" Tipo="ML.Datos.Censos.Censos" Campos="pacDocumento,entNombre" Titulos="Digite Nombre o Documento,Seleccione Asegurador" Referencias=",Asegurador" />
+    <asp:GridView ID="grvCenso" runat="server" AutoGenerateColumns="False"  DataKeyNames="pacId"
+        DataSourceID="ObjectDataSource1" AllowSorting="True" 
+        EmptyDataText="No se encuentran Pacientes para este Censo" AllowPaging="True">
+        <Columns>
+            <asp:CommandField HeaderText="Ver" SelectText="Ver" ShowSelectButton="True" />
+            <asp:BoundField DataField="tdocDescripcion" HeaderText="Tipo Doc" 
+                SortExpression="tdocDescripcion" />
+            <asp:BoundField DataField="pacDocumento" HeaderText="Documento" 
+                SortExpression="pacDocumento" />
+            <asp:BoundField DataField="pacPNombre" HeaderText="Nombre" 
+                SortExpression="pacPNombre" />
+            <asp:BoundField DataField="entNombre" HeaderText="Asegurador" 
+                SortExpression="entNombre" />
+            <asp:BoundField DataField="pacDireccion" HeaderText="Direccion" 
+                SortExpression="pacDireccion" />
+            <asp:BoundField DataField="pacBarrio" HeaderText="Barrio" 
+                SortExpression="pacBarrio" />
+            <asp:BoundField DataField="pacTelefono" HeaderText="Telefono" 
+                SortExpression="pacTelefono" />
+            <asp:BoundField DataField="pacFecIngPrograma" HeaderText="Fec Ing Programa" 
+                SortExpression="pacFecIngPrograma" />
+            <asp:BoundField DataField="cirDescripcion" HeaderText="CIE10" 
+                SortExpression="cirDescripcion" />
+            <asp:BoundField DataField="cirDescripcion_1" HeaderText="CIE10_1" 
+                SortExpression="cirDescripcion_1" />
+            <asp:CheckBoxField DataField="pacCuraciones" HeaderText="Curaciones" 
+                SortExpression="pacCuraciones" />
+            <asp:CheckBoxField DataField="pacAdmPuntual" HeaderText="Adm Puntual" 
+                SortExpression="pacAdmPuntual" />
+            <asp:CheckBoxField DataField="pacTerapiaFisica" HeaderText="Ter Física" 
+                SortExpression="pacTerapiaFisica" />
+            <asp:CheckBoxField DataField="pacTerapiaResp" HeaderText="Ter Resp" 
+                SortExpression="pacTerapiaResp" />
+            <asp:CheckBoxField DataField="pacTerapiaOcup" HeaderText="Ter Ocup" 
+                SortExpression="pacTerapiaOcup" />
+            <asp:CheckBoxField DataField="pacTerapiaLenguaje" 
+                HeaderText="Ter Lenguaje" SortExpression="pacTerapiaLenguaje" />
+            <asp:CheckBoxField DataField="pacValNutricional" HeaderText="Val Nutricional" 
+                SortExpression="pacValNutricional" />
+            <asp:CheckBoxField DataField="pacValMedica" HeaderText="Val Médica" 
+                SortExpression="pacValMedica" />
+            <asp:CheckBoxField DataField="pacEnfermeria_12" HeaderText="Enf 12" 
+                SortExpression="pacEnfermeria_12" />
+            <asp:CheckBoxField DataField="pacEnfermeria_24" HeaderText="Enf 24" 
+                SortExpression="pacEnfermeria_24" />
+            <asp:CheckBoxField DataField="pacEntregaSuministros" 
+                HeaderText="Entrega Suministros" SortExpression="pacEntregaSuministros" />
+        </Columns>
+    </asp:GridView>
+    <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" 
+        TypeName="ML.Datos.Censos.Censos" OldValuesParameterFormatString="original_{0}" 
+        SelectMethod="ConsultarPHD" SortParameterName="expresionOrden">
+    </asp:ObjectDataSource>
+    <asp:Label ID="lblTotal" runat="server" SkinID="lblFormatoFecha"></asp:Label>
+</asp:Content>
