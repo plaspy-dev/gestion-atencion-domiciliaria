@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<paginas>
+  <seccion>
+    <titulo>Seguimiento a pacientes</titulo>
+    <pagina>
+      <titulo>Pacientes</titulo>
+      <url>~/paciente/paciente.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Hoja de ingreso</titulo>
+      <url>~/paciente/ingreso.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Índice de Barthel</titulo>
+      <url>~/paciente/barthel.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Hoja de enfermería</titulo>
+      <url>~/paciente/enfermeria.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Hoja de gastos</titulo>
+      <url>~/paciente/gastos.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Epicrisis apoyo terapeútico</titulo>
+      <url>~/paciente/epicrisis.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Fórmula médica</titulo>
+      <url>~/paciente/formulacion.aspx</url>
+    </pagina>
+  </seccion>
+  <seccion>
+    <titulo>Administrador</titulo>
+    <pagina>
+      <titulo>Parametros</titulo>
+      <url>~/administrador/Default.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Indice de Barthel</titulo>
+      <url>~/administrador/barthel.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Usuarios</titulo>
+      <url>~/administrador/usuario.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Grupos de usuarios</titulo>
+      <url>~/administrador/grupos.aspx</url>
+    </pagina>
+  </seccion>
+</paginas>

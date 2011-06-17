@@ -11,32 +11,41 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2011-05-16.
+This cut records the home-care application as archived on 2011-06-17.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
 
 ### Features in the retained source
 
-This snapshot records a source or documentation milestone.
+- Open the patient record and its care information. `paciente/paciente.aspx`.
+- View and maintain access groups. `administrador/grupos.aspx`.
+- Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
 
 ### Build and local use
 
-This edition lacks an archived solution or project file. A standalone build requires the application entry point, its shared references and its ASP.NET configuration for this edition.
+On Windows with PowerShell 7 and .NET Framework 4.8, run the archived Web Forms precompile recipe.
 
-Run the matching application in an isolated ASP.NET site with fictional records.
+```powershell
+$output = Join-Path $env:TEMP ('webforms-demo-' + [guid]::NewGuid().ToString('N'))
+pwsh -NoProfile -File demo/Build.ps1 -Output $output
+```
+
+The retained site entry is `Default.aspx`. Use fictional accounts and a disposable database on loopback.
 
 ### Archive notes
 
-The archive inventory counted 205 additions, 0 edits and 0 removals.
+The archive inventory counted 20 additions, 0 edits and 205 removals.
 
 ### Framework versions
 
-This cut preserves ASP.NET Web Forms sources. Its surviving project and configuration files do not record the original .NET Framework version.
+The archive does not record the original framework version. The local build recipe uses the ASP.NET Web Forms compiler for .NET Framework 4.x on Windows and the packages declared in this cut.
 
 ### Usage
 
-Review the archived screens, source and assembly references. This tree has no standalone sign-in recipe.
+Use the documented local build with a fictional operator. The available screens include `paciente/paciente.aspx` and the other routes above.
+
+The retained entry page is `administrador/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
 
 ### License
 
@@ -65,32 +74,41 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2011-05-16.
+Este corte conserva la versión de atención domiciliaria archivada el 2011-06-17.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
 
 ### Funciones en el código conservado
 
-Este corte registra un punto del historial de fuentes o documentación.
+- Abre la ficha del paciente y su información de atención. `paciente/paciente.aspx`.
+- Consulta y administra los grupos de acceso. `administrador/grupos.aspx`.
+- Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
 
 ### Compilación y uso local
 
-Esta edición carece de un archivo de solución o proyecto. Una compilación independiente requiere el punto de entrada, sus referencias compartidas y la configuración ASP.NET de este corte.
+En Windows con PowerShell 7 y .NET Framework 4.8, ejecuta la receta de precompilación Web Forms del corte.
 
-Ejecuta la aplicación correspondiente en un sitio ASP.NET aislado con registros ficticios.
+```powershell
+$output = Join-Path $env:TEMP ('webforms-demo-' + [guid]::NewGuid().ToString('N'))
+pwsh -NoProfile -File demo/Build.ps1 -Output $output
+```
+
+La entrada conservada del sitio es `Default.aspx`. Usa cuentas ficticias y una base desechable en la interfaz local.
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 205 adiciones, 0 cambios y 0 retiros.
+El inventario del respaldo registró 20 adiciones, 0 cambios y 205 retiros.
 
 ### Versiones de .NET Framework
 
-Este corte conserva fuentes de ASP.NET Web Forms. Los archivos de proyecto y configuración conservados no registran la versión original de .NET Framework.
+El respaldo no registra la versión original del framework. La receta local usa el compilador de ASP.NET Web Forms para .NET Framework 4.x en Windows y los paquetes declarados en este corte.
 
 ### Uso
 
-Revisa las pantallas, las fuentes y las referencias archivadas. Este árbol carece de una receta de ingreso autónoma.
+Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `paciente/paciente.aspx` y las demás rutas de arriba.
+
+La portada conservada es `administrador/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
 
 ### Licencia
 
