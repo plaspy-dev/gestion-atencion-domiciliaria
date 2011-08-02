@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Configuration;
 using System.Web;
 using System.Web.UI.WebControls;
 using System.Xml;
@@ -41,6 +42,11 @@ public class Grupo
 			}
 		}
 		return 0;
+	}
+
+	public void AddPermisos(string padre, string nombre, string url, int permiso)
+	{
+		m_aURLs.Add(new CURLs(url, nombre, padre, permiso));
 	}
 
 	public int GetPermisoRaiz(string url)
@@ -92,10 +98,16 @@ public class Grupo
 				if (treeNode == null || treeNode.Text != cURLs.Parent)
 				{
 					treeNode = new TreeNode(cURLs.Parent);
+					treeNode.Collapse();
 					treeNode.SelectAction = TreeNodeSelectAction.Expand;
 					tree.Nodes.Add(treeNode);
 				}
-				TreeNode treeNode2 = Add(cURLs.Titulo, cURLs.URL + parametros);
+				string text = cURLs.URL;
+				if (ConfigurationSettings.AppSettings["prefijonuevo"] != null)
+				{
+					text = text.Replace("~/", ConfigurationSettings.AppSettings["prefijonuevo"]);
+				}
+				TreeNode treeNode2 = Add(cURLs.Titulo, text + parametros);
 				if (cURLs.FullURL == HttpContext.Current.Request.Url.AbsolutePath)
 				{
 					treeNode2.Selected = true;

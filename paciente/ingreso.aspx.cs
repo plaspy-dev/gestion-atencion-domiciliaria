@@ -37,10 +37,13 @@ public partial class paciente_ingreso : System.Web.UI.Page
                 query["pacDireccion"] = "phdPaciente.pacDireccion";
                 query["pacFechaNac"] = "phdPaciente.pacFechaNac";
                 query["entNombre"] = "admEntidad.entNombre";
+                query["sexoId"] = "phdPaciente.sexoId";
 
                 SqlDataReader reader = conector.Query(query.GetSelect("phdPaciente.pacDocumento='" + TDocumento.Text + "' AND phdPaciente.tdocId='" + DDocumento.SelectedValue + "'", "LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)"));
                 if (reader != null && reader.Read())
                 {
+                    PMujer.Visible = reader["sexoId"].ToString()!="2";
+
                     BAceptar.Enabled = usuario.CanInsert();
                     Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
                     DMedico.Focus();
@@ -320,28 +323,6 @@ public partial class paciente_ingreso : System.Web.UI.Page
             {
                 antecendentes["ingreso_paciente"] = HIdIngreso.Value;
                 antecendentes["motivo"] = ((HiddenField)RVarios.Items[i].FindControl("HId")).Value;
-                id = antecendentes.GetInsert();
-            }
-            conector.QueryMod(id);
-        }
-
-        for (int i = 0; i < RVarios2.Items.Count; i++)
-        {
-
-            Query antecendentes = new Query("varios2_ingreso");
-
-            string id = ((HiddenField)RVarios2.Items[i].FindControl("HIdVarios")).Value;
-
-            antecendentes["estado"] = ((CheckBox)RVarios2.Items[i].FindControl("CVarios")).Checked ? "1" : "";
-
-            if (id.Length > 0)
-            {
-                id = antecendentes.GetUpdate("id='" + id + "'");
-            }
-            else
-            {
-                antecendentes["ingreso_paciente"] = HIdIngreso.Value;
-                antecendentes["motivo"] = ((HiddenField)RVarios2.Items[i].FindControl("HId")).Value;
                 id = antecendentes.GetInsert();
             }
             conector.QueryMod(id);

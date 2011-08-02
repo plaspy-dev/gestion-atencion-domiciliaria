@@ -32,7 +32,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             DDocumento.SelectedValue = Request.QueryString["td"];
             TFecha.Text = Request.QueryString["f"];
             if (TFecha.Text.Length == 0)
-                TFecha.Text = CConector.GetDate(DateTime.Now);
+                TFecha.Text = DateTime.Now.ToShortDateString();
 
             if (TDocumento.Text.Length > 0 && DDocumento.SelectedIndex > -1)
             {
@@ -80,7 +80,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     formulacion += "fecha";
                     formulacion += "codigo";
 
-                    MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("tipo='" + DDocumento.SelectedValue + "' AND documento='" + TDocumento.Text + "' AND fecha='" +TFecha.Text + "'"));
+                    MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("tipo='" + DDocumento.SelectedValue + "' AND documento='" + TDocumento.Text + "' AND fecha='" + Conector.GetDate(Convert.ToDateTime(TFecha.Text)) + "'"));
                     if (readermysql != null && readermysql.Read())
                     {
                         BAceptar.Enabled = usuario.CanUpdate();
@@ -91,7 +91,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
                         TCodigo.Focus();
                         HIdFormulacion.Value = readermysql["id"].ToString();
-                        TFecha.Text = CConector.GetDate(readermysql["fecha"]);
+                        TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
                         TCodigo.Text= readermysql["codigo"].ToString();
 
                         ((MasterPageI)Master).SetModificacion(HIdFormulacion.Value);
@@ -212,7 +212,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
         Query formulacion = new Query("formulacion");
         CConector conector = CConector.GetConector();
 
-        formulacion["fecha"]= TFecha.Text;
+        formulacion["fecha"]= CConector.GetDate(Convert.ToDateTime( TFecha.Text));
         formulacion["codigo"]= TCodigo.Text;
 
         string szQuery;

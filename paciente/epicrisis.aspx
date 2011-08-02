@@ -102,7 +102,7 @@
                         <td>
                         <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" 
                     ErrorMessage="Por favor ingrese una fecha." ControlToValidate="TFecha" 
-                    Display="Dynamic" SetFocusOnError="True"></asp:RequiredFieldValidator><asp:HiddenField ID="HIdIndice" runat="server" />
+                    Display="Dynamic" SetFocusOnError="True"></asp:RequiredFieldValidator><asp:RangeValidator ID="RangeValidator1" runat="server" MinimumValue="12/12/1900" MaximumValue="12/12/2100" SetFocusOnError="true" Display="Dynamic" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Type="Date"></asp:RangeValidator><asp:HiddenField ID="HIdIndice" runat="server" />
                         </td>
                     </tr>
                 </table>

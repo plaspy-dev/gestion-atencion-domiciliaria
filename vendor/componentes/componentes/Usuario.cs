@@ -33,6 +33,11 @@ public class Usuario
 		m_pGrupo.SetPermiso(url, permiso);
 	}
 
+	public void AddPermiso(string padre, string nombre, string url, int permiso)
+	{
+		m_pGrupo.AddPermisos(padre, nombre, url, permiso);
+	}
+
 	public ArrayList GetFullMenu()
 	{
 		return m_pGrupo.GetFullMenu();

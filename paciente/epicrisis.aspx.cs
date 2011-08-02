@@ -84,7 +84,7 @@ public partial class paciente_epicrisis : System.Web.UI.Page
                         BAceptar.Enabled = usuario.CanUpdate();
 
                         HIdIndice.Value = readermysql["id"].ToString();
-                        TFecha.Text = CConector.GetDate(readermysql["fecha"]);
+                        TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
                         TValoracionInicial.Text = readermysql["valoracion_inicial"].ToString();
                         TValoracionFinal.Text = readermysql["valoracion_final"].ToString();
                         TIntervencionPropuesta.Text = readermysql["intervencion_propuesta"].ToString();
@@ -185,7 +185,7 @@ public partial class paciente_epicrisis : System.Web.UI.Page
         string szQuery;
         string mensaje;
 
-        epicrisis["fecha"]= TFecha.Text;
+        epicrisis["fecha"]= CConector.GetDate(Convert.ToDateTime( TFecha.Text));
         epicrisis["valoracion_inicial"]= TValoracionInicial.Text;
         epicrisis["valoracion_final"]= TValoracionFinal.Text;
         epicrisis["intervencion_propuesta"]= TIntervencionPropuesta.Text;

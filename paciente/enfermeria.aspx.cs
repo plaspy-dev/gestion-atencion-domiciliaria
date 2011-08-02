@@ -40,7 +40,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
             DDocumento.SelectedValue = Request.QueryString["td"];
             TFecha.Text = Request.QueryString["f"];
             if (TFecha.Text.Length == 0)
-                TFecha.Text = CConector.GetDate(DateTime.Now);
+                TFecha.Text = DateTime.Now.ToShortDateString();
 
             if (TDocumento.Text.Length > 0 && DDocumento.SelectedIndex > -1)
             {
@@ -94,13 +94,13 @@ public partial class paciente_enfermeria : System.Web.UI.Page
                     hoja += "diagnostico";
                     hoja += "dieta";
 
-                    MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("tipo='" + DDocumento.SelectedValue + "' AND documento='" + TDocumento.Text + "' AND fecha='" +TFecha.Text + "'"));
+                    MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("tipo='" + DDocumento.SelectedValue + "' AND documento='" + TDocumento.Text + "' AND fecha='" + CConector.GetDate(Convert.ToDateTime(TFecha.Text)) + "'"));
                     if (readermysql != null && readermysql.Read())
                     {
                         HIdHoja.Value = readermysql["id"].ToString();
-                        TFecha.Text = CConector.GetDate(readermysql["fecha"]);
+                        TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
                         TDiagnostico.Text = readermysql["diagnostico"].ToString();
-                        TDieta.Text = readermysql["dieta"].ToString();
+                        DDieta.Text = readermysql["dieta"].ToString();
                         
                         TDiagnostico.Focus();
                     }
@@ -235,9 +235,9 @@ public partial class paciente_enfermeria : System.Web.UI.Page
         Query hoja = new Query("hoja_enfermeria");
         CConector conector = CConector.GetConector();
 
-        hoja["fecha"]=TFecha.Text;
+        hoja["fecha"]= CConector.GetDate(Convert.ToDateTime( TFecha.Text));
         hoja["diagnostico"]= TDiagnostico.Text;
-        hoja["dieta"]= TDieta.Text;
+        hoja["dieta"] = DDieta.Text;
         
         string szQuery;
         string mensaje;

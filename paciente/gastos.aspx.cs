@@ -34,7 +34,7 @@ public partial class paciente_gastos : System.Web.UI.Page
             DDocumento.SelectedValue = Request.QueryString["td"];
             TFecha.Text = Request.QueryString["f"];
             if (TFecha.Text.Length == 0)
-                TFecha.Text = CConector.GetDate(DateTime.Now);
+                TFecha.Text = DateTime.Now.ToShortDateString();
 
             if (TDocumento.Text.Length > 0 && DDocumento.SelectedIndex > -1)
             {
@@ -81,7 +81,7 @@ public partial class paciente_gastos : System.Web.UI.Page
                     hoja += "id";
                     hoja += "fecha";
 
-                    MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("tipo='" + DDocumento.SelectedValue + "' AND documento='" + TDocumento.Text + "' AND fecha='" + TFecha.Text + "'"));
+                    MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("tipo='" + DDocumento.SelectedValue + "' AND documento='" + TDocumento.Text + "' AND fecha='" + CConector.GetDate(Convert.ToDateTime( TFecha.Text)) + "'"));
                     if (readermysql != null && readermysql.Read())
                     {
                         BAceptar.Enabled = usuario.CanUpdate();
@@ -91,7 +91,7 @@ public partial class paciente_gastos : System.Web.UI.Page
                         GSuministros.Columns[1].Visible = usuario.CanDelete();
 
                         HIdHoja.Value = readermysql["id"].ToString();
-                        TFecha.Text = CConector.GetDate(readermysql["fecha"]);
+                        TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
                         BMasSuministros.Focus();
 
                         ((MasterPageI)Master).SetModificacion(HIdHoja.Value);
@@ -202,7 +202,7 @@ public partial class paciente_gastos : System.Web.UI.Page
         string szQuery="";
         string mensaje="";
 
-        hoja["fecha"] = TFecha.Text;
+        hoja["fecha"] = CConector.GetDate(Convert.ToDateTime( TFecha.Text));
 
         if (HIdHoja.Value.Length == 0)
         {

@@ -1,4 +1,4 @@
-<%@ Page Title="Hoja de enfermeria" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="enfermeria.aspx.cs" Inherits="paciente_enfermeria" %>
+﻿<%@ Page Title="Hoja de enfermeria" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="enfermeria.aspx.cs" Inherits="paciente_enfermeria" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
@@ -75,7 +75,7 @@
         </tr>
         <tr>
             <td>
-                Direcci�n</td>
+                Dirección</td>
             <td>
                 <asp:Label runat="server" ID="LDireccion"></asp:Label>
             </td>
@@ -98,6 +98,7 @@
                     <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" 
                         ControlToValidate="TFecha" Display="Dynamic" 
                         ErrorMessage="Por favor ingrese una fecha." SetFocusOnError="True"></asp:RequiredFieldValidator>
+                        <asp:RangeValidator ID="RangeValidator1" runat="server" MinimumValue="12/12/1900" MaximumValue="12/12/2100" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Type="Date"></asp:RangeValidator>
                     <asp:HiddenField ID="HIdHoja" runat="server" />
                     <asp:Button ID="BFecha" runat="server" CausesValidation="False" onclick="BFecha_Click" Text="->"/>
                 </td>
@@ -119,7 +120,13 @@
                 <td>
                     Dieta</td>
                 <td>
-                    <asp:TextBox ID="TDieta" runat="server" Width="100%"></asp:TextBox>
+                    <asp:DropDownList ID="DDieta" runat="server" DataSourceID="SDieta" 
+                        DataTextField="nombre" DataValueField="id"></asp:DropDownList>
+            <asp:SqlDataSource ID="SDieta" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=10 AND szReservado IS NULL ORDER BY nombre" >
+            </asp:SqlDataSource>
                 </td>
                 <td>
                     &nbsp;
@@ -211,7 +218,7 @@
         </asp:UpdatePanel>
     </fieldset>
     <fieldset>
-        <legend>Control de liquidos</legend>
+        <legend>Control de líquidos</legend>
         <table style="width: 100%;">
             <tr>
                 <td>
@@ -227,16 +234,10 @@
             <Columns>
                 <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                 <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                <asp:BoundField DataField="horai" HeaderText="Hora Ini." />
-                <asp:BoundField DataField="horaf" HeaderText="Hora Fin" />
-                <asp:BoundField DataField="clase" HeaderText="Clase" />
-                <asp:BoundField DataField="iv" HeaderText="IV" />
-                <asp:TemplateField HeaderText="VO">
-                    <ItemTemplate>
-                        <asp:CheckBox ID="CheckBox1" runat="server" Enabled="false" Checked='<%# Bind("vo") %>'></asp:CheckBox>
-                    </ItemTemplate>
-                </asp:TemplateField>
-                <asp:BoundField DataField="total" HeaderText="Total" />
+                <asp:BoundField DataField="horai" HeaderText="Hora" />
+                <asp:BoundField DataField="clase" HeaderText="Tipo" />
+                <asp:BoundField DataField="iv" HeaderText="Vía" />
+                <asp:BoundField DataField="total" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
             </Columns>
             <SelectedRowStyle CssClass="selecteditem" />
         </asp:GridView>
@@ -250,14 +251,14 @@
                 </tr>
             </table>
         <sdg:CustomDataSource ID="SControlLiquidosA" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT id,horai,horaf,clase,iv,vo,total FROM control_liquidos_hoja_enfermeria WHERE hoja_enfermeria=@hoja AND tipo=0"
+                            SelectCommand="SELECT id,horai,clase,total,iv FROM control_liquidos_hoja_enfermeria WHERE hoja_enfermeria=@hoja AND tipo=0"
                             DeleteCommand="DELETE FROM control_liquidos_hoja_enfermeria WHERE id=@id"
                             >
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="HIdHoja" DefaultValue="0" PropertyName="Value" Name="hoja" />
                             </SelectParameters>
         </sdg:CustomDataSource>
-            <div id="dControlLiquidosA" title="Control de l�quidos">
+            <div id="dControlLiquidosA" title="Control de líquidos">
             <asp:DetailsView ID="DControlLiquidosA" runat="server" Width="100%" 
                 DataSourceID="SDControlLiquidosA" DataKeyNames="id" 
                 AutoGenerateRows="False" DefaultMode="Edit" 
@@ -265,7 +266,7 @@
                     oniteminserted="DControlLiquidosA_ItemInserted" 
                     onitemupdated="DControlLiquidosA_ItemUpdated" >
                 <Fields>
-                    <asp:TemplateField HeaderText="Hora Ini.">
+                    <asp:TemplateField HeaderText="Hora">
                         <EditItemTemplate>
                             <asp:TextBox ID="THoraI" runat="server" CssClass="hora" Text='<%# Bind("horai") %>'></asp:TextBox><asp:RequiredFieldValidator
                                 ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese una hora." ControlToValidate="THoraI" SetFocusOnError="True" Display="Dynamic"></asp:RequiredFieldValidator>
@@ -278,40 +279,72 @@
                             <asp:Label ID="Label1" runat="server" Text='<%# Bind("horai") %>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Hora Fin">
+                    <asp:TemplateField HeaderText="Tipo">
                         <EditItemTemplate>
-                            <asp:TextBox ID="THoraF" runat="server" CssClass="hora" Text='<%# Bind("horaf") %>'></asp:TextBox></asp:RequiredFieldValidator>
+                            <asp:DropDownList ID="DTipo" runat="server" SelectedValue='<%# Bind("clase") %>' DataSourceID="STipo" DataTextField="nombre" DataValueField="nombre">
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="STipo" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT nombre FROM varios WHERE tipo=11 AND szReservado IS NULL ORDER BY nombre" >
+                            </asp:SqlDataSource>
                         </EditItemTemplate>
                         <InsertItemTemplate>
-                            <asp:TextBox ID="THoraF" runat="server" CssClass="hora" Text='<%# Bind("horaf") %>'></asp:TextBox></asp:RequiredFieldValidator>
+                            <asp:DropDownList ID="DTipo" runat="server" SelectedValue='<%# Bind("clase") %>' DataSourceID="STipo" DataTextField="nombre" DataValueField="nombre">
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="STipo" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT nombre FROM varios WHERE tipo=11 AND szReservado IS NULL ORDER BY nombre" >
+                            </asp:SqlDataSource>
                         </InsertItemTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="Label1" runat="server" Text='<%# Bind("horaf") %>'></asp:Label>
+                            <asp:Label ID="Label4" runat="server" Text='<%# Bind("clase") %>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="clase" HeaderText="Clase" />
-                    <asp:BoundField DataField="iv" HeaderText="IV" />
-                    <asp:TemplateField HeaderText="VO">
+                    <asp:TemplateField HeaderText="Vía">
                         <EditItemTemplate>
-                            <asp:CheckBox ID="CVo" runat="server" Checked='<%# Bind("vo") %>' />
+                            <asp:DropDownList ID="DVia" runat="server" SelectedValue='<%# Bind("iv") %>' DataSourceID="SVia" DataTextField="nombre" DataValueField="nombre">
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="SVia" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT nombre FROM varios WHERE tipo=12 AND szReservado IS NULL ORDER BY nombre" >
+                            </asp:SqlDataSource>
                         </EditItemTemplate>
                         <InsertItemTemplate>
-                            <asp:CheckBox ID="CVo" runat="server" Checked='<%# Bind("vo") %>' />
+                            <asp:DropDownList ID="DVia" runat="server" SelectedValue='<%# Bind("iv") %>' DataSourceID="SVia" DataTextField="nombre" DataValueField="nombre">
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="SVia" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT nombre FROM varios WHERE tipo=12 AND szReservado IS NULL ORDER BY nombre" >
+                            </asp:SqlDataSource>
                         </InsertItemTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="Label1" runat="server" Text='<%# Bind("vo") %>'></asp:Label>
+                            <asp:Label ID="Label5" runat="server" Text='<%# Bind("iv") %>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="total" HeaderText="Total" />
+                    <asp:TemplateField HeaderText="Cantidad">
+                        <EditItemTemplate>
+                            <asp:TextBox ID="TCantidad" runat="server" CssClass="entero" Text='<%# Bind("total") %>'></asp:TextBox>ml. o gr.
+                        </EditItemTemplate>
+                        <InsertItemTemplate>
+                            <asp:TextBox ID="TCantidad" runat="server" CssClass="entero" Text='<%# Bind("total") %>'></asp:TextBox>ml. o gr.
+                        </InsertItemTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="Label2" runat="server" Text='<%# Bind("total") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:CommandField ShowInsertButton="True" ButtonType="Button" />
                     <asp:CommandField ButtonType="Button" ShowEditButton="True" />
                 </Fields>
             </asp:DetailsView>
             </div>
             <sdg:CustomDataSource ID="SDControlLiquidosA" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT id,horai,horaf,clase,iv,vo,total FROM control_liquidos_hoja_enfermeria WHERE id=@id"
-                            InsertCommand="INSERT INTO control_liquidos_hoja_enfermeria(hoja_enfermeria,horai,horaf,clase,iv,vo,total,tipo) VALUES (@hoja, @horai, @horaf, @clase, @iv, @vo, @total, 0)"
-                            UpdateCommand="UPDATE control_liquidos_hoja_enfermeria SET horai=@horai,horaf=@horaf,clase=@clase,iv=@iv,vo=@vo,total=@total WHERE id=@id"
+                            SelectCommand="SELECT id,horai,clase,total,iv FROM control_liquidos_hoja_enfermeria WHERE id=@id"
+                            InsertCommand="INSERT INTO control_liquidos_hoja_enfermeria(hoja_enfermeria,horai,clase,total,tipo,iv) VALUES (@hoja, @horai, @clase, @total, 0, @iv)"
+                            UpdateCommand="UPDATE control_liquidos_hoja_enfermeria SET horai=@horai,clase=@clase,total=@total,iv=@iv WHERE id=@id"
                             ParentDataSource="SControlLiquidosA"
                             >
                             <SelectParameters>
@@ -338,16 +371,10 @@
             <Columns>
                 <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                 <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                <asp:BoundField DataField="horai" HeaderText="Hora Ini." />
-                <asp:BoundField DataField="horaf" HeaderText="Hora Fin" />
-                <asp:BoundField DataField="clase" HeaderText="Clase" />
-                <asp:BoundField DataField="iv" HeaderText="IV" />
-                <asp:TemplateField HeaderText="VO">
-                    <ItemTemplate>
-                        <asp:CheckBox ID="CheckBox1" runat="server" Enabled="false" Checked='<%# Bind("vo") %>'></asp:CheckBox>
-                    </ItemTemplate>
-                </asp:TemplateField>
-                <asp:BoundField DataField="total" HeaderText="Total" />
+                <asp:BoundField DataField="horai" HeaderText="Hora" />
+                <asp:BoundField DataField="clase" HeaderText="Tipo" />
+                <asp:BoundField DataField="iv" HeaderText="Vía" />
+                <asp:BoundField DataField="total" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
             </Columns>
             <SelectedRowStyle CssClass="selecteditem" />
         </asp:GridView>
@@ -361,14 +388,14 @@
                 </tr>
             </table>
         <sdg:CustomDataSource ID="SControlLiquidosE" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT id,horai,horaf,clase,iv,vo,total FROM control_liquidos_hoja_enfermeria WHERE hoja_enfermeria=@hoja AND tipo=1"
+                            SelectCommand="SELECT id,horai,clase,total,iv FROM control_liquidos_hoja_enfermeria WHERE hoja_enfermeria=@hoja AND tipo=1"
                             DeleteCommand="DELETE FROM control_liquidos_hoja_enfermeria WHERE id=@id"
                             >
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="HIdHoja" DefaultValue="0" PropertyName="Value" Name="hoja" />
                             </SelectParameters>
         </sdg:CustomDataSource>
-            <div id="dControlLiquidosE" title="Control de l�quidos">
+            <div id="dControlLiquidosE" title="Control de líquidos">
             <asp:DetailsView ID="DControlLiquidosE" runat="server" Width="100%" 
                 DataSourceID="SDControlLiquidosE" DataKeyNames="id" 
                 AutoGenerateRows="False" DefaultMode="Edit" 
@@ -376,7 +403,7 @@
                     oniteminserted="DControlLiquidosE_ItemInserted" 
                     onitemupdated="DControlLiquidosE_ItemUpdated" >
                 <Fields>
-                    <asp:TemplateField HeaderText="Hora Ini.">
+                    <asp:TemplateField HeaderText="Hora">
                         <EditItemTemplate>
                             <asp:TextBox ID="THoraI" runat="server" CssClass="hora" Text='<%# Bind("horai") %>'></asp:TextBox><asp:RequiredFieldValidator
                                 ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese una hora." ControlToValidate="THoraI" SetFocusOnError="True" Display="Dynamic"></asp:RequiredFieldValidator>
@@ -389,40 +416,72 @@
                             <asp:Label ID="Label1" runat="server" Text='<%# Bind("horai") %>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Hora Fin">
+                    <asp:TemplateField HeaderText="Tipo">
                         <EditItemTemplate>
-                            <asp:TextBox ID="THoraF" runat="server" CssClass="hora" Text='<%# Bind("horaf") %>'></asp:TextBox></asp:RequiredFieldValidator>
+                            <asp:DropDownList ID="DTipo" runat="server" SelectedValue='<%# Bind("clase") %>' DataSourceID="STipo" DataTextField="nombre" DataValueField="nombre">
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="STipo" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT nombre FROM varios WHERE tipo=11 AND szReservado IS NULL ORDER BY nombre" >
+                            </asp:SqlDataSource>
                         </EditItemTemplate>
                         <InsertItemTemplate>
-                            <asp:TextBox ID="THoraF" runat="server" CssClass="hora" Text='<%# Bind("horaf") %>'></asp:TextBox></asp:RequiredFieldValidator>
+                            <asp:DropDownList ID="DTipo" runat="server" SelectedValue='<%# Bind("clase") %>' DataSourceID="STipo" DataTextField="nombre" DataValueField="nombre">
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="STipo" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT nombre FROM varios WHERE tipo=11 AND szReservado IS NULL ORDER BY nombre" >
+                            </asp:SqlDataSource>
                         </InsertItemTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="Label1" runat="server" Text='<%# Bind("horaf") %>'></asp:Label>
+                            <asp:Label ID="Label3" runat="server" Text='<%# Bind("clase") %>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="clase" HeaderText="Clase" />
-                    <asp:BoundField DataField="iv" HeaderText="IV" />
-                    <asp:TemplateField HeaderText="VO">
+                    <asp:TemplateField HeaderText="Vía">
                         <EditItemTemplate>
-                            <asp:CheckBox ID="CVo" runat="server" Checked='<%# Bind("vo") %>' />
+                            <asp:DropDownList ID="DVia" runat="server" SelectedValue='<%# Bind("iv") %>' DataSourceID="SVia" DataTextField="nombre" DataValueField="nombre">
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="SVia" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT nombre FROM varios WHERE tipo=12 AND szReservado IS NULL ORDER BY nombre" >
+                            </asp:SqlDataSource>
                         </EditItemTemplate>
                         <InsertItemTemplate>
-                            <asp:CheckBox ID="CVo" runat="server" Checked='<%# Bind("vo") %>' />
+                            <asp:DropDownList ID="DVia" runat="server" SelectedValue='<%# Bind("iv") %>' DataSourceID="SVia" DataTextField="nombre" DataValueField="nombre">
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="SVia" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT nombre FROM varios WHERE tipo=12 AND szReservado IS NULL ORDER BY nombre" >
+                            </asp:SqlDataSource>
                         </InsertItemTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="Label1" runat="server" Text='<%# Bind("vo") %>'></asp:Label>
+                            <asp:Label ID="Label5" runat="server" Text='<%# Bind("iv") %>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="total" HeaderText="Total" />
+                    <asp:TemplateField HeaderText="Cantidad">
+                        <EditItemTemplate>
+                            <asp:TextBox ID="TCantidad" runat="server" CssClass="entero" Text='<%# Bind("total") %>'></asp:TextBox>ml. o gr.
+                        </EditItemTemplate>
+                        <InsertItemTemplate>
+                            <asp:TextBox ID="TCantidad" runat="server" CssClass="entero" Text='<%# Bind("total") %>'></asp:TextBox>ml. o gr.
+                        </InsertItemTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="Label2" runat="server" Text='<%# Bind("total") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:CommandField ShowInsertButton="True" ButtonType="Button" />
                     <asp:CommandField ButtonType="Button" ShowEditButton="True" />
                 </Fields>
             </asp:DetailsView>
             </div>
             <sdg:CustomDataSource ID="SDControlLiquidosE" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT id,horai,horaf,clase,iv,vo,total FROM control_liquidos_hoja_enfermeria WHERE id=@id"
-                            InsertCommand="INSERT INTO control_liquidos_hoja_enfermeria(hoja_enfermeria,horai,horaf,clase,iv,vo,total,tipo) VALUES (@hoja, @horai, @horaf, @clase, @iv, @vo, @total, 1)"
-                            UpdateCommand="UPDATE control_liquidos_hoja_enfermeria SET horai=@horai,horaf=@horaf,clase=@clase,iv=@iv,vo=@vo,total=@total WHERE id=@id"
+                            SelectCommand="SELECT id,horai,clase,total,iv FROM control_liquidos_hoja_enfermeria WHERE id=@id"
+                            InsertCommand="INSERT INTO control_liquidos_hoja_enfermeria(hoja_enfermeria,horai,clase,total,tipo,iv) VALUES (@hoja, @horai, @clase, @total, 1, @iv)"
+                            UpdateCommand="UPDATE control_liquidos_hoja_enfermeria SET horai=@horai,clase=@clase,total=@total,iv=@iv WHERE id=@id"
                             ParentDataSource="SControlLiquidosE"
                             >
                             <SelectParameters>
@@ -522,7 +581,7 @@
         <table style="width: 100%;">
             <tr>
                 <td>
-                    Neurol�gico</td>
+                    Neurológico</td>
                 <td>
                     <asp:TextBox ID="TNeurologico" runat="server" Width="100%"></asp:TextBox>
                     </td>
@@ -552,7 +611,7 @@
             </tr>
             <tr>
                 <td>
-                    T�rax</td>
+                    Tórax</td>
                 <td>
                     <asp:TextBox ID="TTorax" runat="server" Width="100%"></asp:TextBox>
                 </td>
@@ -663,11 +722,11 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Observaciones">
                         <EditItemTemplate>
-                            <asp:TextBox ID="TObservaciones" TextMode="MultiLine" Width="100%" runat="server" Text='<%# Bind("observaciones") %>'></asp:TextBox><asp:RequiredFieldValidator
+                            <asp:TextBox ID="TObservaciones" TextMode="MultiLine" Rows="10" Width="400px" runat="server" Text='<%# Bind("observaciones") %>'></asp:TextBox><asp:RequiredFieldValidator
                                 ID="RequiredFieldValidator1" runat="server" ErrorMessage="Por favor ingrese unas observaciones." ControlToValidate="TObservaciones" SetFocusOnError="True" Display="Dynamic"></asp:RequiredFieldValidator>
                         </EditItemTemplate>
                         <InsertItemTemplate>
-                            <asp:TextBox ID="TObservaciones" TextMode="MultiLine" Width="100%" runat="server" Text='<%# Bind("observaciones") %>'></asp:TextBox><asp:RequiredFieldValidator
+                            <asp:TextBox ID="TObservaciones" TextMode="MultiLine" Rows="10" Width="400px" runat="server" Text='<%# Bind("observaciones") %>'></asp:TextBox><asp:RequiredFieldValidator
                                 ID="RequiredFieldValidator1" runat="server" ErrorMessage="Por favor ingrese unas observaciones." ControlToValidate="TObservaciones" SetFocusOnError="True" Display="Dynamic"></asp:RequiredFieldValidator>
                         </InsertItemTemplate>
                         <ItemTemplate>

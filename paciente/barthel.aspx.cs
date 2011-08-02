@@ -81,7 +81,7 @@ public partial class paciente_barthel : System.Web.UI.Page
                         BAceptar.Enabled = usuario.CanUpdate();
 
                         HIdIndice.Value = readermysql["id"].ToString();
-                        TFecha.Text = CConector.GetDate(readermysql["fecha"]);
+                        TFecha.Text = ((DateTime) readermysql["fecha"]).ToShortDateString();
                         THora.Text = CConector.GetHora(readermysql["fecha"]);
                         TDiagnostico.Text = readermysql["diagnostico"].ToString();
 
@@ -176,7 +176,7 @@ public partial class paciente_barthel : System.Web.UI.Page
         Query indice = new Query("indice_barthel");
         CConector conector = CConector.GetConector();
 
-        indice["fecha"]= TFecha.Text + " " + THora.Text + ":00";
+        indice["fecha"] = CConector.GetDate(Convert.ToDateTime(TFecha.Text).ToString())  + " " + THora.Text + ":00";
         indice["diagnostico"]= TDiagnostico.Text;
 
         string szQuery;

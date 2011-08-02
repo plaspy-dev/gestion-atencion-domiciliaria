@@ -22,7 +22,9 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
         titulo_aux.Attributes["title"] = "";
         LAuxDiag.Text = "";
-        lblTitulo.Text = Request.QueryString["m"];
+        lblTitulo.Text = Page.Title;
+        if (Request.QueryString["m"]!=null)
+            lblTitulo.Text += " " + Request.QueryString["m"];
     }
 
     public TreeNode Add(string titulo, string url) {

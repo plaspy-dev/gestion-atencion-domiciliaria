@@ -10,6 +10,12 @@ namespace SDG.Web.UI.WebControls;
 
 public class ConfigureDataSource : Form
 {
+	private IServiceProvider _serviceProvider;
+
+	private CustomDataSource _component;
+
+	private CustomDataSourceDesigner _designer;
+
 	private IContainer components = null;
 
 	private Label lInstructions;
@@ -23,12 +29,6 @@ public class ConfigureDataSource : Form
 	private Button bOK;
 
 	private Button bCancel;
-
-	private IServiceProvider _serviceProvider;
-
-	private CustomDataSource _component;
-
-	private CustomDataSourceDesigner _designer;
 
 	internal string TypeName
 	{
@@ -87,91 +87,6 @@ public class ConfigureDataSource : Form
 			}
 			return methodInfo;
 		}
-	}
-
-	protected override void Dispose(bool disposing)
-	{
-		if (disposing && components != null)
-		{
-			components.Dispose();
-		}
-		base.Dispose(disposing);
-	}
-
-	private void InitializeComponent()
-	{
-		this.lInstructions = new System.Windows.Forms.Label();
-		this.label1 = new System.Windows.Forms.Label();
-		this.ddlTypes = new System.Windows.Forms.ComboBox();
-		this.ddlMethods = new System.Windows.Forms.ComboBox();
-		this.bOK = new System.Windows.Forms.Button();
-		this.bCancel = new System.Windows.Forms.Button();
-		base.SuspendLayout();
-		this.lInstructions.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-		this.lInstructions.Location = new System.Drawing.Point(12, 9);
-		this.lInstructions.Name = "lInstructions";
-		this.lInstructions.Size = new System.Drawing.Size(505, 18);
-		this.lInstructions.TabIndex = 0;
-		this.lInstructions.Text = "Choose a type:";
-		this.label1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-		this.label1.Location = new System.Drawing.Point(12, 79);
-		this.label1.Name = "label1";
-		this.label1.Size = new System.Drawing.Size(505, 18);
-		this.label1.TabIndex = 1;
-		this.label1.Text = "Choose a method:";
-		this.ddlTypes.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-		this.ddlTypes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-		this.ddlTypes.FormattingEnabled = true;
-		this.ddlTypes.Location = new System.Drawing.Point(12, 30);
-		this.ddlTypes.Name = "ddlTypes";
-		this.ddlTypes.Size = new System.Drawing.Size(502, 21);
-		this.ddlTypes.TabIndex = 2;
-		this.ddlTypes.SelectedIndexChanged += new System.EventHandler(ddlTypes_SelectedIndexChanged);
-		this.ddlMethods.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-		this.ddlMethods.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-		this.ddlMethods.Enabled = false;
-		this.ddlMethods.FormattingEnabled = true;
-		this.ddlMethods.Location = new System.Drawing.Point(12, 100);
-		this.ddlMethods.Name = "ddlMethods";
-		this.ddlMethods.Size = new System.Drawing.Size(502, 21);
-		this.ddlMethods.TabIndex = 3;
-		this.ddlMethods.SelectedIndexChanged += new System.EventHandler(ddlMethods_SelectedIndexChanged);
-		this.bOK.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-		this.bOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-		this.bOK.Enabled = false;
-		this.bOK.Location = new System.Drawing.Point(182, 143);
-		this.bOK.Name = "bOK";
-		this.bOK.Size = new System.Drawing.Size(75, 23);
-		this.bOK.TabIndex = 4;
-		this.bOK.Text = "Accept";
-		this.bOK.UseVisualStyleBackColor = true;
-		this.bOK.Click += new System.EventHandler(bOK_Click);
-		this.bCancel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-		this.bCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-		this.bCancel.Location = new System.Drawing.Point(272, 143);
-		this.bCancel.Name = "bCancel";
-		this.bCancel.Size = new System.Drawing.Size(75, 23);
-		this.bCancel.TabIndex = 5;
-		this.bCancel.Text = "Cancel";
-		this.bCancel.UseVisualStyleBackColor = true;
-		base.AutoScaleDimensions = new System.Drawing.SizeF(6f, 13f);
-		base.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-		base.ClientSize = new System.Drawing.Size(529, 182);
-		base.ControlBox = false;
-		base.Controls.Add(this.bCancel);
-		base.Controls.Add(this.bOK);
-		base.Controls.Add(this.ddlMethods);
-		base.Controls.Add(this.ddlTypes);
-		base.Controls.Add(this.label1);
-		base.Controls.Add(this.lInstructions);
-		base.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-		base.MaximizeBox = false;
-		base.MinimizeBox = false;
-		base.Name = "ConfigureDataSource";
-		base.ShowInTaskbar = false;
-		base.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-		this.Text = "Configure Data Source";
-		base.ResumeLayout(false);
 	}
 
 	public ConfigureDataSource()
@@ -269,5 +184,90 @@ public class ConfigureDataSource : Form
 		{
 			_designer.RefreshSchemaInternal(MethodInfo.ReflectedType, MethodInfo.Name, MethodInfo.ReturnType, preferSilent: true);
 		}
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing && components != null)
+		{
+			components.Dispose();
+		}
+		base.Dispose(disposing);
+	}
+
+	private void InitializeComponent()
+	{
+		this.lInstructions = new System.Windows.Forms.Label();
+		this.label1 = new System.Windows.Forms.Label();
+		this.ddlTypes = new System.Windows.Forms.ComboBox();
+		this.ddlMethods = new System.Windows.Forms.ComboBox();
+		this.bOK = new System.Windows.Forms.Button();
+		this.bCancel = new System.Windows.Forms.Button();
+		base.SuspendLayout();
+		this.lInstructions.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+		this.lInstructions.Location = new System.Drawing.Point(12, 9);
+		this.lInstructions.Name = "lInstructions";
+		this.lInstructions.Size = new System.Drawing.Size(505, 18);
+		this.lInstructions.TabIndex = 0;
+		this.lInstructions.Text = "Choose a type:";
+		this.label1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+		this.label1.Location = new System.Drawing.Point(12, 79);
+		this.label1.Name = "label1";
+		this.label1.Size = new System.Drawing.Size(505, 18);
+		this.label1.TabIndex = 1;
+		this.label1.Text = "Choose a method:";
+		this.ddlTypes.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+		this.ddlTypes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+		this.ddlTypes.FormattingEnabled = true;
+		this.ddlTypes.Location = new System.Drawing.Point(12, 30);
+		this.ddlTypes.Name = "ddlTypes";
+		this.ddlTypes.Size = new System.Drawing.Size(502, 21);
+		this.ddlTypes.TabIndex = 2;
+		this.ddlTypes.SelectedIndexChanged += new System.EventHandler(ddlTypes_SelectedIndexChanged);
+		this.ddlMethods.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+		this.ddlMethods.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+		this.ddlMethods.Enabled = false;
+		this.ddlMethods.FormattingEnabled = true;
+		this.ddlMethods.Location = new System.Drawing.Point(12, 100);
+		this.ddlMethods.Name = "ddlMethods";
+		this.ddlMethods.Size = new System.Drawing.Size(502, 21);
+		this.ddlMethods.TabIndex = 3;
+		this.ddlMethods.SelectedIndexChanged += new System.EventHandler(ddlMethods_SelectedIndexChanged);
+		this.bOK.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+		this.bOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+		this.bOK.Enabled = false;
+		this.bOK.Location = new System.Drawing.Point(182, 143);
+		this.bOK.Name = "bOK";
+		this.bOK.Size = new System.Drawing.Size(75, 23);
+		this.bOK.TabIndex = 4;
+		this.bOK.Text = "Accept";
+		this.bOK.UseVisualStyleBackColor = true;
+		this.bOK.Click += new System.EventHandler(bOK_Click);
+		this.bCancel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+		this.bCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+		this.bCancel.Location = new System.Drawing.Point(272, 143);
+		this.bCancel.Name = "bCancel";
+		this.bCancel.Size = new System.Drawing.Size(75, 23);
+		this.bCancel.TabIndex = 5;
+		this.bCancel.Text = "Cancel";
+		this.bCancel.UseVisualStyleBackColor = true;
+		base.AutoScaleDimensions = new System.Drawing.SizeF(6f, 13f);
+		base.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+		base.ClientSize = new System.Drawing.Size(529, 182);
+		base.ControlBox = false;
+		base.Controls.Add(this.bCancel);
+		base.Controls.Add(this.bOK);
+		base.Controls.Add(this.ddlMethods);
+		base.Controls.Add(this.ddlTypes);
+		base.Controls.Add(this.label1);
+		base.Controls.Add(this.lInstructions);
+		base.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+		base.MaximizeBox = false;
+		base.MinimizeBox = false;
+		base.Name = "ConfigureDataSource";
+		base.ShowInTaskbar = false;
+		base.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+		this.Text = "Configure Data Source";
+		base.ResumeLayout(false);
 	}
 }

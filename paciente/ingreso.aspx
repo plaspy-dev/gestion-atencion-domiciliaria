@@ -89,38 +89,49 @@
     </table>
     </fieldset></asp:Panel>
     <fieldset>
-    <legend>II. Información de atención básica ambulatoria</legend>
-   	  <table width="100%" border="0">
+    <legend>II. Información de atención básica</legend>
+   	  <table border="0">
   <tr>
-    <td><table width="100%" border="0">
-      <tr>
-        <td> Medico que atiende<asp:HiddenField ID="HIdIngreso" runat="server" />
-          </td>
-        <td><asp:DropDownList ID="DMedico" runat="server" DataSourceID="SMedicos" 
-                DataTextField="megNombre" DataValueField="megId"> </asp:DropDownList>
+    <td>
+    <table border="0" width="100%">
+        <tr>
+            <td class="td1">
+                Medico que atiende<asp:HiddenField ID="HIdIngreso" runat="server" />
+            </td>
+            <td>
+                <asp:DropDownList ID="DMedico" runat="server" DataSourceID="SMedicos" 
+                DataTextField="perNombre" DataValueField="perId"> </asp:DropDownList>
             <asp:SqlDataSource ID="SMedicos" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="SELECT [megId], [megNombre] FROM [phdMegas]">
+                SelectCommand="SELECT perId,perNombre FROM admPersonalHS WHERE eEstId=1 and carId=6 ORDER BY perNombre">
             </asp:SqlDataSource>
-          </td>
-        <td>Hora</td>
-        <td><asp:TextBox ID="THora" runat="server" CssClass="hora"></asp:TextBox></td>
-      </tr>
-      <tr>
-        <td> Motivo consulta</td>
-        <td><asp:TextBox ID="TMotivo" runat="server"></asp:TextBox></td>
-        <td>Según</td>
-        <td><asp:DropDownList ID="DMotivo" runat="server" DataSourceID="SMotivos" 
+                Hora<asp:TextBox ID="THora" runat="server" CssClass="hora"></asp:TextBox>
+            </td>
+        </tr>
+        <tr>
+            <td class="td1">
+                Motivo consulta</td>
+            <td>
+                <asp:TextBox ID="TMotivo" runat="server" Width="100%" TextMode="MultiLine"></asp:TextBox>
+            </td>
+        </tr>
+        <tr>
+            <td class="td1">
+                Según</td>
+            <td>
+                <asp:DropDownList ID="DMotivo" runat="server" DataSourceID="SMotivos" 
                 DataTextField="nombre" DataValueField="id"></asp:DropDownList>
             <asp:SqlDataSource ID="SMotivos" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT id, nombre FROM varios WHERE tipo=1 AND szReservado IS NULL" >
             </asp:SqlDataSource>
-        </td>
-      </tr>
-    </table></td>
+            </td>
+        </tr>
+    </table>
+      </td>
   </tr>
+  <tr><td><hr /></td></tr>
   <tr>
     <td><table width="100%" border="0">
       <tr>
@@ -150,17 +161,18 @@
           </tr>
           <tr>
             <td>Peso</td>
-            <td><asp:TextBox ID="TPeso" runat="server" CssClass="entero"></asp:TextBox></td>
+            <td><asp:TextBox ID="TPeso" runat="server" CssClass="float"></asp:TextBox></td>
             <td>Kg</td>
           </tr>
         </table></td>
       </tr>
     </table></td>
   </tr>
+  <tr><td><hr /></td></tr>
   <tr>
-    <td><table width="100%" border="0">
+    <td><table border="0" width="100%">
       <tr>
-        <td><asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" 
+        <td class="td1"><asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" 
                 DataKeyNames="id, antecedente" DataSourceID="SAntecendentes">
                 <Columns>
                     <asp:TemplateField HeaderText="Antecedentes">
@@ -205,7 +217,7 @@
                 </SelectParameters>
             </asp:SqlDataSource>
           </td>
-        <td>Observaciones<br />
+        <td style="width: 50%; vertical-align: top;">Observaciones<br />
             <asp:TextBox ID="TObservacionesAntecedentes" runat="server" Height="150px" 
                 TextMode="MultiLine" Width="100%"></asp:TextBox>
             <br />
@@ -213,31 +225,36 @@
       </tr>
     </table></td>
   </tr>
+  <tr><td><hr /></td></tr>
   <tr>
     <td>
-        <asp:Repeater ID="RVarios" runat="server" DataSourceID="SVarios">
-            <ItemTemplate>
-                <asp:CheckBox ID="CVarios" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
-                <asp:HiddenField runat="server" ID="HId" Value='<%# Eval("id") %>' />
-                <asp:HiddenField runat="server" ID="HIdVarios" Value='<%# Eval("varios") %>' />
-            </ItemTemplate>
-        </asp:Repeater>
-        <asp:SqlDataSource ID="SVarios" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,varios_ingreso.id AS varios, varios_ingreso.estado AS estado FROM varios LEFT JOIN varios_ingreso ON (varios_ingreso.ingreso_paciente=@idingreso AND varios_ingreso.motivo=varios.id) WHERE varios.tipo=5 AND varios.szReservado IS NULL" >
-                <SelectParameters>
-                    <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
-                </SelectParameters>
-            </asp:SqlDataSource></td>
+        <asp:Panel runat="server" ID="PMujer">
+            <fieldset>
+                <legend>Mujer</legend>
+                <asp:Repeater ID="RVarios" runat="server" DataSourceID="SVarios">
+                <ItemTemplate>
+                    <asp:CheckBox ID="CVarios" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
+                    <asp:HiddenField runat="server" ID="HId" Value='<%# Eval("id") %>' />
+                    <asp:HiddenField runat="server" ID="HIdVarios" Value='<%# Eval("varios") %>' />
+                </ItemTemplate>
+            </asp:Repeater>
+            <asp:SqlDataSource ID="SVarios" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,varios_ingreso.id AS varios, varios_ingreso.estado AS estado FROM varios LEFT JOIN varios_ingreso ON (varios_ingreso.ingreso_paciente=@idingreso AND varios_ingreso.motivo=varios.id) WHERE varios.tipo=5 AND varios.szReservado IS NULL" >
+                    <SelectParameters>
+                        <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
+                    </SelectParameters>
+                </asp:SqlDataSource><br />
+                Ampliación de la información<asp:TextBox ID="TAmpliacion" runat="server" 
+                    TextMode="MultiLine" Width="99%"></asp:TextBox>    
+            </fieldset>
+        </asp:Panel>
+        </td>
   </tr>
+  <tr><td><hr /></td></tr>
   <tr>
-    <td>Ampliación de la información<asp:TextBox ID="TAmpliacion" runat="server" 
-            TextMode="MultiLine" Width="100%"></asp:TextBox>
-      </td>
-  </tr>
-  <tr>
-    <td><table width="100%" border="0">
+    <td><table border="0" width="100%">
       <tr>
         <td><asp:GridView ID="GExamenFisico" runat="server" AutoGenerateColumns="False" 
                 DataKeyNames="id, examen" DataSourceID="SExamenFisico">
@@ -264,20 +281,18 @@
                 </SelectParameters>
             </asp:SqlDataSource>
           </td>
-        <td>Observaciones<br />
+        <td style="width: 50%; vertical-align: top;">Observaciones<br />
             <asp:TextBox ID="TObservacionesFisico" runat="server" Height="150px" 
                 TextMode="MultiLine" Width="100%"></asp:TextBox>
           </td>
       </tr>
     </table></td>
   </tr>
+  <tr><td><hr /></td></tr>
   <tr>
-    <td>&nbsp;</td>
-  </tr>
-  <tr>
-    <td><table width="100%" border="0">
+    <td><table border="0">
       <tr>
-        <td>Código diagnostico de ingreso</td>
+        <td class="td1">Código diagnostico de ingreso</td>
         <td>
             <asp:TextBox ID="TDIngreso" runat="server"></asp:TextBox>
           </td>
@@ -296,27 +311,8 @@
             <asp:TextBox ID="TDescripcionEgreso" runat="server"></asp:TextBox>
           </td>
       </tr>
-      <tr>
-        <td><asp:Repeater ID="RVarios2" runat="server" DataSourceID="SVarios2">
-            <ItemTemplate>
-                <asp:CheckBox ID="CVarios" runat="server" Text='<%# Eval("nombre") %>' Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' />
-                <asp:HiddenField runat="server" ID="HId" Value='<%# Eval("id") %>' />
-                <asp:HiddenField runat="server" ID="HIdVarios" Value='<%# Eval("varios") %>' />
-            </ItemTemplate>
-        </asp:Repeater>
-        <asp:SqlDataSource ID="SVarios2" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre, varios2_ingreso.id AS varios, varios2_ingreso.estado AS estado FROM varios LEFT JOIN varios2_ingreso ON (varios2_ingreso.ingreso_paciente=@idingreso AND varios2_ingreso.motivo=varios.id) WHERE varios.tipo=6 AND varios.szReservado IS NULL" >
-                <SelectParameters>
-                    <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
-                </SelectParameters>
-            </asp:SqlDataSource></td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-      </tr>
-      </table></td>
+      </table>
+      </td>
   </tr>
   <tr>
     <td>Conducta inicial<br />

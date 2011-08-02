@@ -35,7 +35,7 @@ The retained site entry is `Default.aspx`. Use fictional accounts and a disposab
 
 ### Archive notes
 
-The archive inventory counted 2 additions, 5 edits and 0 removals.
+The archive inventory counted 1 additions, 10 edits and 0 removals.
 
 ### Framework versions
 
@@ -98,7 +98,7 @@ La entrada conservada del sitio es `Default.aspx`. Usa cuentas ficticias y una b
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 2 adiciones, 5 cambios y 0 retiros.
+El inventario del respaldo registró 1 adiciones, 10 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 

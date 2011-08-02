@@ -39,4 +39,12 @@ public class CURLs
 		m_szParent = parent;
 		m_nPermisos = 0;
 	}
+
+	public CURLs(string url, string titulo, string parent, int permisos)
+	{
+		m_szURL = url;
+		m_szTitulo = titulo;
+		m_szParent = parent;
+		m_nPermisos = permisos;
+	}
 }

@@ -9,8 +9,8 @@ using System.Web.UI.WebControls;
 namespace SDG.Web.UI.WebControls;
 
 [Designer(typeof(CustomDataSourceDesigner))]
-[PersistChildren(false)]
 [ParseChildren(true)]
+[PersistChildren(false)]
 public class CustomDataSource : DataSourceControl
 {
 	protected static readonly string[] _views = new string[1] { "DefaultView" };
@@ -29,8 +29,8 @@ public class CustomDataSource : DataSourceControl
 
 	protected CustomDataSourceView _view;
 
-	[Category("ParentDataSource")]
 	[DefaultValue("")]
+	[Category("ParentDataSource")]
 	public string ParentDataSource
 	{
 		get
@@ -43,8 +43,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("InsertCommand")]
+	[DefaultValue("")]
 	public string InsertCommand
 	{
 		get
@@ -57,8 +57,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("SelectCommand")]
+	[DefaultValue("")]
 	public string SelectCommand
 	{
 		get
@@ -71,8 +71,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[Category("DeleteCommand")]
 	[DefaultValue("")]
+	[Category("DeleteCommand")]
 	public string DeleteCommand
 	{
 		get
@@ -85,8 +85,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("UpdateCommand")]
+	[DefaultValue("")]
 	public string UpdateCommand
 	{
 		get
@@ -99,8 +99,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[Category("ConnectionString")]
 	[DefaultValue("")]
+	[Category("ConnectionString")]
 	public string ConnectionString
 	{
 		get
@@ -113,8 +113,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[Category("Data")]
 	[DefaultValue("")]
+	[Category("Data")]
 	public string TypeName
 	{
 		get
@@ -127,8 +127,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[Category("Data")]
 	[DefaultValue("")]
+	[Category("Data")]
 	public string SelectMethod
 	{
 		get
@@ -141,25 +141,25 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[MergableProperty(false)]
 	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
 	[Category("Data")]
 	[DefaultValue(null)]
+	[MergableProperty(false)]
 	[PersistenceMode(PersistenceMode.InnerProperty)]
 	public ParameterCollection SelectParameters => View.SelectParameters;
 
+	[DefaultValue(null)]
 	[Category("Data")]
 	[PersistenceMode(PersistenceMode.InnerProperty)]
-	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
-	[DefaultValue(null)]
 	[MergableProperty(false)]
+	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
 	public ParameterCollection InsertParameters => View.InsertParameters;
 
 	[PersistenceMode(PersistenceMode.InnerProperty)]
-	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
 	[Category("Data")]
 	[DefaultValue(null)]
 	[MergableProperty(false)]
+	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
 	public ParameterCollection UpdateParameters => View.UpdateParameters;
 
 	protected CustomDataSourceView View

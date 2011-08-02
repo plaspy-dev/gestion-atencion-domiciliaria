@@ -53,10 +53,13 @@ public partial class administrador_Default : System.Web.UI.Page
             tipos.Add(new Tipos("Revisión sistemas (Hoja de ingreso)", 3));
             tipos.Add(new Tipos("Examen físico (Hoja de ingreso)", 4));
             tipos.Add(new Tipos("Varios (Hoja de ingreso)", 5));
-            tipos.Add(new Tipos("Varios Inferior (Hoja de ingreso)", 6));
+            // tipos.Add(new Tipos("Varios Inferior (Hoja de ingreso)", 6)); // eliminado.
             tipos.Add(new Tipos("Grupos (Indice de Barthel)", 7));
             // tipos.Add(new Tipos("Indice de Barthel", 8));
             tipos.Add(new Tipos("Suministros (Hoja de gastos)", 9));
+            tipos.Add(new Tipos("Dieta (Hoja de enfermería)", 10));
+            tipos.Add(new Tipos("Control de líquidos (Hoja de enfermería)", 11));
+            tipos.Add(new Tipos("Vía (Hoja de enfermería)", 12));
 
             GTipo.DataSource = tipos;
             GTipo.DataBind();

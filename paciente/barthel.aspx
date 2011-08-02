@@ -101,7 +101,7 @@
                     <asp:TextBox ID="TFecha" runat="server" CssClass="fecha"></asp:TextBox>
                 </td>
                 <td>
-                    &nbsp;</td>
+                    <asp:RangeValidator ID="RangeValidator1" runat="server" MaximumValue="12/12/2100" MinimumValue="12/12/1900" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Type="Date"></asp:RangeValidator></td>
             </tr>
             <tr>
                 <td>
