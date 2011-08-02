@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using componentes;
 
 public partial class administrador_barthel : System.Web.UI.Page
 {
@@ -11,7 +12,7 @@ public partial class administrador_barthel : System.Web.UI.Page
     {
         DGrupo.Focus();
         if(!IsPostBack) {
-            CUsuario usuario = CUsuario.GetUsuario();
+            Usuario usuario = Usuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanInsert();
             GResultado.Columns[1].Visible = usuario.CanDelete();
@@ -21,7 +22,7 @@ public partial class administrador_barthel : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
-        CQuery query = new CQuery("varios");
+        Query query = new Query("varios");
         CConector conector = CConector.GetConector();
         string szQuery;
         string mensaje;

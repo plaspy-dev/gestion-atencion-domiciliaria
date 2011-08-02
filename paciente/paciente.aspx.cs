@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using System.Text;
 using System.IO;
+using componentes;
 
 public partial class seguimiento_paciente : System.Web.UI.Page
 {
@@ -16,7 +17,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         DDocumento.Focus();
         if(!IsPostBack) {
 
-            CUsuario usuario = CUsuario.GetUsuario();
+            Usuario usuario = Usuario.GetUsuario();
             BAceptar.Enabled = usuario.CanInsert();
 
             TDocumento.Text = Request.QueryString["id"];
@@ -25,7 +26,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
             if(TDocumento.Text.Length>0 && DDocumento.SelectedIndex>-1) {
 
-                CQuery query = new CQuery("phdPaciente");
+                Query query = new Query("phdPaciente");
                 query += "pacId";
                 query += "pacPNombre";
                 query += "pacSNombre";
@@ -43,7 +44,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 if (reader != null && reader.Read())
                 {
                     BAceptar.Enabled = usuario.CanUpdate();
-                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"];
+                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
                     TPApellido.Focus();
 
                     HId.Value = reader["pacId"].ToString();
@@ -101,7 +102,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         if(cuenta>1) {
 
             texto = "";
-            CQuery query = new CQuery("phdPaciente");
+            Query query = new Query("phdPaciente");
             query += "tdocId";
             query += "pacDocumento";
             query += "pacPNombre";
@@ -149,7 +150,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         CConectorMS conector = CConectorMS.GetConector();
-        CQuery query = new CQuery("phdPaciente");
+        Query query = new Query("phdPaciente");
         string szQuery = "";
         string mensaje="";
         

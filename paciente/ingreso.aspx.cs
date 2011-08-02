@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Text;
 using System.IO;
 using MySql.Data.MySqlClient;
+using componentes;
 
 public partial class paciente_ingreso : System.Web.UI.Page
 {
@@ -17,7 +18,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
         DDocumento.Focus();
         if(!IsPostBack) {
 
-            CUsuario usuario = CUsuario.GetUsuario();
+            Usuario usuario = Usuario.GetUsuario();
             BAceptar.Enabled = false;
 
             TDocumento.Text = Request.QueryString["id"];
@@ -26,7 +27,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
             if (TDocumento.Text.Length > 0 && DDocumento.SelectedIndex > -1)
             {
-                CQuery query = new CQuery("phdPaciente");
+                Query query = new Query("phdPaciente");
 
                 query ["pacId"]= "phdPaciente.pacId";
                 query ["pacPNombre"]= "phdPaciente.pacPNombre";
@@ -41,7 +42,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                 if (reader != null && reader.Read())
                 {
                     BAceptar.Enabled = usuario.CanInsert();
-                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"];
+                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
                     DMedico.Focus();
 
                     HId.Value = reader["pacId"].ToString();
@@ -63,7 +64,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     }
                 }
 
-                CQuery qIngreso = new CQuery("ingreso_paciente");
+                Query qIngreso = new Query("ingreso_paciente");
 
                 qIngreso += "id";
                 qIngreso += "medico";
@@ -148,7 +149,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
         {
 
             texto = "";
-            CQuery query = new CQuery("phdPaciente");
+            Query query = new Query("phdPaciente");
             query += "tdocId";
             query += "pacDocumento";
             query += "pacPNombre";
@@ -197,7 +198,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         CConector conector = CConector.GetConector();
-        CQuery qIngreso = new CQuery("ingreso_paciente");
+        Query qIngreso = new Query("ingreso_paciente");
 
         qIngreso["medico"]= DMedico.SelectedValue;
         qIngreso["hora"]= THora.Text;
@@ -245,7 +246,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
         for(int i=0; i<GAntecedentes.Rows.Count; i++) {
 
-            CQuery antecendentes = new CQuery("antecedentes_ingreso");
+            Query antecendentes = new Query("antecedentes_ingreso");
             string id= GAntecedentes.DataKeys[i].Values[1].ToString();
 
             antecendentes["estado"] = ((CheckBox)GAntecedentes.Rows[i].Cells[0].FindControl("CSi")).Checked ? "1" : "";
@@ -262,7 +263,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
         for (int i = 0; i < GRevision.Rows.Count; i++)
         {
 
-            CQuery antecendentes = new CQuery("revision_ingreso");
+            Query antecendentes = new Query("revision_ingreso");
             string id = GRevision.DataKeys[i].Values[1].ToString();
 
             antecendentes["nor"] = ((CheckBox)GRevision.Rows[i].Cells[1].FindControl("CNor")).Checked ? "1" : "";
@@ -284,7 +285,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
          for (int i = 0; i < GExamenFisico.Rows.Count; i++)
         {
 
-            CQuery antecendentes = new CQuery("examen_ingreso");
+            Query antecendentes = new Query("examen_ingreso");
             string id = GExamenFisico.DataKeys[i].Values[1].ToString();
 
             antecendentes["nor"] = ((CheckBox)GExamenFisico.Rows[i].Cells[1].FindControl("CNor")).Checked ? "1" : "";
@@ -306,7 +307,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
         for (int i = 0; i < RVarios.Items.Count; i++)
         {
 
-            CQuery antecendentes = new CQuery("varios_ingreso");
+            Query antecendentes = new Query("varios_ingreso");
             string id = ((HiddenField)RVarios.Items[i].FindControl("HIdVarios")).Value;
 
             antecendentes["estado"] = ((CheckBox)RVarios.Items[i].FindControl("CVarios")).Checked ? "1" : "";
@@ -327,7 +328,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
         for (int i = 0; i < RVarios2.Items.Count; i++)
         {
 
-            CQuery antecendentes = new CQuery("varios2_ingreso");
+            Query antecendentes = new Query("varios2_ingreso");
 
             string id = ((HiddenField)RVarios2.Items[i].FindControl("HIdVarios")).Value;
 
@@ -346,7 +347,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             conector.QueryMod(id);
         }
 
-        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"];
+        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
         ((MasterPageI)Master).SetResultado(mensaje);
     }
 

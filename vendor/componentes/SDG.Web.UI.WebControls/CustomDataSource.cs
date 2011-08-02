@@ -29,8 +29,8 @@ public class CustomDataSource : DataSourceControl
 
 	protected CustomDataSourceView _view;
 
-	[DefaultValue("")]
 	[Category("ParentDataSource")]
+	[DefaultValue("")]
 	public string ParentDataSource
 	{
 		get
@@ -141,11 +141,11 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
+	[MergableProperty(false)]
 	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
-	[PersistenceMode(PersistenceMode.InnerProperty)]
 	[Category("Data")]
 	[DefaultValue(null)]
-	[MergableProperty(false)]
+	[PersistenceMode(PersistenceMode.InnerProperty)]
 	public ParameterCollection SelectParameters => View.SelectParameters;
 
 	[Category("Data")]

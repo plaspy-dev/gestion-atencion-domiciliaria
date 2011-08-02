@@ -4,13 +4,19 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using componentes;
 
 public partial class MasterPageI : System.Web.UI.MasterPage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        CUsuario usuario = CUsuario.GetUsuario();
+        Usuario usuario = Usuario.GetUsuario();
         usuario.CreateMenu(TMenu, Session["parametros"]==null ? "" : Session["parametros"].ToString());
+
+        /*
+            SELECT seg_Menu.meIdMenu,seg_Menu.meDescMenu,seg_Menu.meIdMenuPadre,seg_Menu.meEsTarea,seg_Menu.meRuta,ins,modif,elim,meFechaIngreso
+		    FROM dbo.seg_Menu INNER JOIN fnSeg_ConMenu('Administrador',0)menuUs ON seg_Menu.meIdMenu = menuUs.IdMenu order by seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu
+        */
         Session.Remove("parametros");
         lblNombre.Text = usuario.GetNombre();
 

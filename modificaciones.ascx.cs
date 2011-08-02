@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 using System.Collections;
+using componentes;
 
 public partial class modificaciones : System.Web.UI.UserControl
 {
@@ -37,7 +38,7 @@ public partial class modificaciones : System.Web.UI.UserControl
     public void Update()
     {
         CConector conector = CConector.GetConector();
-        CQuery query = new CQuery("modificaciones");
+        Query query = new Query("modificaciones");
 
         query["usuario"] = "usuario.nombre";
         query["fecha"] = "modificaciones.fecha";

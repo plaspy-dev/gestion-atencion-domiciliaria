@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Text;
 using System.IO;
+using componentes;
 
 public partial class paciente_enfermeria : System.Web.UI.Page
 {
@@ -19,7 +20,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
         //Create the connection and DataAdapter for the Authors table.
         if (!IsPostBack)
         {
-            CUsuario usuario = CUsuario.GetUsuario();
+            Usuario usuario = Usuario.GetUsuario();
 
             BAceptar.Enabled = false;
             BMasControlLiquidosA.Enabled = false;
@@ -43,7 +44,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
 
             if (TDocumento.Text.Length > 0 && DDocumento.SelectedIndex > -1)
             {
-                CQuery query = new CQuery("phdPaciente");
+                Query query = new Query("phdPaciente");
 
                 query["pacId"] = "phdPaciente.pacId";
                 query["pacPNombre"] = "phdPaciente.pacPNombre";
@@ -66,7 +67,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
                     TFecha.Focus();
 
                     BFecha.Enabled = true;
-                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"];
+                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
 
                     HId.Value = reader["pacId"].ToString();
                     LNombres.Text = reader["pacPNombre"].ToString() + " " + reader["pacSNombre"].ToString();
@@ -86,7 +87,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
                         LEdad.Text = years + " años";
                     }
 
-                    CQuery hoja = new CQuery("hoja_enfermeria");
+                    Query hoja = new Query("hoja_enfermeria");
 
                     hoja += "id";
                     hoja += "fecha";
@@ -105,7 +106,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
                     }
                     if (HIdHoja.Value.Length > 0)
                     {
-                        CQuery valoracion = new CQuery("valoracion_hoja_enfermeria");
+                        Query valoracion = new Query("valoracion_hoja_enfermeria");
                         
                         valoracion += "id";
                         valoracion += "neurologico";
@@ -180,7 +181,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
         if (cuenta > 1)
         {
             texto = "";
-            CQuery query = new CQuery("phdPaciente");
+            Query query = new Query("phdPaciente");
             query += "tdocId";
             query += "pacDocumento";
             query += "pacPNombre";
@@ -231,7 +232,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
     }
     protected void BAceptar_Click(object sender, EventArgs e)
     {
-        CQuery hoja = new CQuery("hoja_enfermeria");
+        Query hoja = new Query("hoja_enfermeria");
         CConector conector = CConector.GetConector();
 
         hoja["fecha"]=TFecha.Text;
@@ -263,7 +264,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
         if (conector.InsertModificacion(HIdHoja.Value) == -1)
             return;
 
-        CQuery valoracion = new CQuery("valoracion_hoja_enfermeria");
+        Query valoracion = new Query("valoracion_hoja_enfermeria");
 
         valoracion["neurologico"]= TNeurologico.Text;
         valoracion["cabeza"] = TCabeza.Text;
@@ -299,7 +300,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
         if (!UpdateCambios(conector, SBitacora.GetQuerys()))
             return;
 
-        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"];
+        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
         ((MasterPageI)Master).SetResultado(mensaje);
     }
 
@@ -310,7 +311,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
             string szQuery;
             for (int i = 0; i < querys.Length; i++)
             {
-                szQuery = querys[i].Replace("@hoja", CQuery.GetValor(HIdHoja.Value));
+                szQuery = querys[i].Replace("@hoja", Query.GetValor(HIdHoja.Value));
                 if (conector.QueryMod(szQuery) == -1)
                     return false;
             }

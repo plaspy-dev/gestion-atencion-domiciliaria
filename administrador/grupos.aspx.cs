@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections;
 using MySql.Data.MySqlClient;
+using componentes;
 
 public partial class administrador_grupos : System.Web.UI.Page
 {
@@ -71,12 +72,12 @@ public partial class administrador_grupos : System.Web.UI.Page
         BEliminar.Visible = false;
         if(!IsPostBack) {
 
-            CUsuario usuario = CUsuario.GetUsuario();
+            Usuario usuario = Usuario.GetUsuario();
             BAceptar.Enabled = usuario.CanInsert();
 
             TNombre.Focus();
             ArrayList permisos = new ArrayList();
-            ArrayList menu = CUsuario.GetUsuario().GetFullMenu();
+            ArrayList menu = Usuario.GetUsuario().GetFullMenu();
             for(int i=0; i<menu.Count; i++) {
 
                 CURLs url = (CURLs)menu[i];
@@ -89,7 +90,7 @@ public partial class administrador_grupos : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
-        CQuery query= new CQuery("grupo");
+        Query query= new Query("grupo");
         CConector conector = CConector.GetConector();
         string szQuery;
         string mensaje;
@@ -118,7 +119,7 @@ public partial class administrador_grupos : System.Web.UI.Page
         if (conector.QueryMod("DELETE FROM permisos WHERE grupo='" + grupo + "'") == -1)
             return;
 
-        CQuery permisos = new CQuery("permisos");
+        Query permisos = new Query("permisos");
         for (int i = 0; i < GPermisos.Rows.Count; i++)
         {
             permisos["grupo"] = grupo;
@@ -174,7 +175,7 @@ public partial class administrador_grupos : System.Web.UI.Page
     protected void LGrupos_SelectedIndexChanged(object sender, EventArgs e)
     {
         ArrayList permisos = new ArrayList();
-        ArrayList menu = CUsuario.GetUsuario().GetFullMenu();
+        ArrayList menu = Usuario.GetUsuario().GetFullMenu();
 
         if (LGrupos.SelectedValue == "0")
         {
@@ -190,7 +191,7 @@ public partial class administrador_grupos : System.Web.UI.Page
                 permisos.Add(new Permisos(url.Titulo, url.URL, 63));
             }
         } else {
-            CUsuario usuario= CUsuario.GetUsuario();
+            Usuario usuario= Usuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanUpdate();
             BEliminar.Enabled = usuario.CanDelete();
@@ -201,7 +202,7 @@ public partial class administrador_grupos : System.Web.UI.Page
             TNombre.Text = LGrupos.SelectedItem.Text;
             TDescripcion.Text = conector.QueryString("SELECT descripcion FROM grupo WHERE id='" + LGrupos.SelectedValue + "'");
 
-            CQuery query = new CQuery("permisos");
+            Query query = new Query("permisos");
             query += "url";
             query += "permiso";
 

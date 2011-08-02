@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using componentes;
 
 public partial class administrador_usuario : System.Web.UI.Page
 {
@@ -11,7 +12,7 @@ public partial class administrador_usuario : System.Web.UI.Page
     {
         TNombres.Focus();
         if(!IsPostBack) {
-            CUsuario usuario = CUsuario.GetUsuario();
+            Usuario usuario = Usuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanInsert();
             GUsuarios.Columns[1].Visible = usuario.CanDelete();
@@ -31,7 +32,7 @@ public partial class administrador_usuario : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
-        CQuery query = new CQuery("usuario");
+        Query query = new Query("usuario");
         CConector conector = CConector.GetConector();
         string szQuery;
         string mensaje;
@@ -40,7 +41,7 @@ public partial class administrador_usuario : System.Web.UI.Page
         query["usuario"] = TUsuario.Text;
         query["grupo"] = DGrupos.SelectedValue;
         if(TContrasena.Text.Length>0)
-            query.AddCampo("contrasena", "PASSWORD(" + CQuery.GetValor(TContrasena.Text) + ")", false);
+            query.AddCampo("contrasena", "PASSWORD(" + Query.GetValor(TContrasena.Text) + ")", false);
 
         if (HId.Value.Length == 0)
         {
