@@ -20,6 +20,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
             Usuario usuario = Usuario.GetUsuario();
             BAceptar.Enabled = false;
+            BMasCDiagnostico.Enabled = false;
 
             TDocumento.Text = Request.QueryString["id"];
             DDocumento.DataBind();
@@ -29,30 +30,39 @@ public partial class paciente_ingreso : System.Web.UI.Page
             {
                 Query query = new Query("phdPaciente");
 
+                string codigo1 = "",codigo2="",codigo3="";
+
                 query ["pacId"]= "phdPaciente.pacId";
                 query ["pacPNombre"]= "phdPaciente.pacPNombre";
                 query["pacSNombre"] = "phdPaciente.pacSNombre";
                 query["pacPApellido"] = "phdPaciente.pacPApellido";
                 query["pacSApellido"] = "phdPaciente.pacSApellido";
-                query["pacDireccion"] = "phdPaciente.pacDireccion";
                 query["pacFechaNac"] = "phdPaciente.pacFechaNac";
                 query["entNombre"] = "admEntidad.entNombre";
-                query["sexoId"] = "phdPaciente.sexoId";
+                query["sexo"] = "admSexo.sexoDesc";
+                query["cieCodDx"] = "phdPaciente.cieCodDx";
+                query["cieCodDx_1"] = "phdPaciente.cieCodDx_1";
+                query["cieCodDx_2"] = "phdPaciente.cieCodDx_2";
 
-                SqlDataReader reader = conector.Query(query.GetSelect("phdPaciente.pacDocumento='" + TDocumento.Text + "' AND phdPaciente.tdocId='" + DDocumento.SelectedValue + "'", "LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)"));
+                SqlDataReader reader = conector.Query(query.GetSelect("phdPaciente.pacDocumento='" + TDocumento.Text + "' AND phdPaciente.tdocId='" + DDocumento.SelectedValue + "'", "LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId) LEFT JOIN admSexo ON (phdPaciente.sexoId=admSexo.sexoId)"));
                 if (reader != null && reader.Read())
                 {
-                    PMujer.Visible = reader["sexoId"].ToString()!="2";
+                    PMujer.Visible = reader["sexo"].ToString()!="M";
 
                     BAceptar.Enabled = usuario.CanInsert();
-                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
+                    BMasCDiagnostico.Enabled = usuario.CanInsert();
+
+                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
                     DMedico.Focus();
 
                     HId.Value = reader["pacId"].ToString();
                     LNombres.Text= reader["pacPNombre"].ToString() + " " + reader["pacSNombre"].ToString();
                     LApellidos.Text = reader["pacPApellido"].ToString() + " " + reader["pacSApellido"].ToString();
-                    LDireccion.Text = reader["pacDireccion"].ToString();
+                    LSexo.Text = reader["sexo"].ToString();
                     LEntidad.Text = reader["entNombre"].ToString();
+                    codigo1 = reader["cieCodDx"].ToString();
+                    codigo2 = reader["cieCodDx_1"].ToString();
+                    codigo3 = reader["cieCodDx_2"].ToString();
 
                     if (reader["pacFechaNac"] != null && reader["pacFechaNac"].ToString().Length != 0)
                     {
@@ -94,6 +104,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
                 if(readermysql!=null && readermysql.Read()) {
 
                     BAceptar.Enabled = usuario.CanUpdate();
+                    BMasCDiagnostico.Enabled = usuario.CanUpdate();
+
+                    GCDiagnostico.Columns[0].Visible = usuario.CanUpdate();
+                    GCDiagnostico.Columns[1].Visible = usuario.CanDelete();
 
                     HIdIngreso.Value=readermysql["id"].ToString();
                     DMedico.SelectedValue= readermysql["medico"].ToString();
@@ -116,6 +130,11 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     TConductaInicial.Text = readermysql["conducta"].ToString();
 
                     ((MasterPageI)Master).SetModificacion(HIdIngreso.Value);
+                } else { // no existe
+                    if(codigo1.Length!=0) {
+                        codigo1= conector.QueryString("SELECT cirDescripcion FROM phdCIE10 WHERE cieCodDx='" + codigo1 + "'");
+
+                    }
                 }
             }
         }
@@ -232,7 +251,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
             szQuery = qIngreso.GetInsert();
             mensaje = LNombres.Text + " ingresado";
-            int resultado = conector.QueryMod(szQuery);
+            int resultado = conector.QueryMod(szQuery, true);
             if (resultado == -1)
                 return;
             HIdIngreso.Value = resultado.ToString();
@@ -328,12 +347,46 @@ public partial class paciente_ingreso : System.Web.UI.Page
             conector.QueryMod(id);
         }
 
-        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
+        string[] querys = SCDiagnostico.GetQuerys();
+        if (querys != null)
+        {
+            for (int i = 0; i < querys.Length; i++)
+            {
+                szQuery = querys[i].Replace("@ingreso", Query.GetValor(HIdIngreso.Value));
+                if (conector.QueryMod(szQuery) == -1)
+                    return;
+            }
+        }
+
+        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
         ((MasterPageI)Master).SetResultado(mensaje);
     }
 
     protected void BCancelar_Click(object sender, EventArgs e)
     {
         Response.Redirect(Request.Url.AbsolutePath);
+    }
+
+    protected void DCDiagnostico_ItemCommand(object sender, DetailsViewCommandEventArgs e)
+    {
+        if (e.CommandName == "Cancel")
+        {
+            GCDiagnostico.SelectedIndex = -1;
+            GCDiagnostico.DataBind();
+        }
+    }
+    protected void DCDiagnostico_ItemInserted(object sender, DetailsViewInsertedEventArgs e)
+    {
+        GCDiagnostico.DataBind();
+    }
+    protected void DCDiagnostico_ItemUpdated(object sender, DetailsViewUpdatedEventArgs e)
+    {
+        GCDiagnostico.DataBind();
+        GCDiagnostico.SelectedIndex = -1;
+        DCDiagnostico.DataBind();
+    }
+    protected void BMasCDiagnostico_Click(object sender, EventArgs e)
+    {
+        DCDiagnostico.ChangeMode(DetailsViewMode.Insert);
     }
 }

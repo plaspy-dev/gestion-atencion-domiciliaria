@@ -39,6 +39,9 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 query += "pacCelular";
                 query += "pacFechaNac";
                 query += "sexoId";
+                query += "cieCodDx";
+                query += "cieCodDx_1";
+                query += "cieCodDx_2";
 
                 SqlDataReader reader = conector.Query(query.GetSelect("pacDocumento='" + TDocumento.Text + "' AND tdocId='" + DDocumento.SelectedValue + "'"));
                 if (reader != null && reader.Read())

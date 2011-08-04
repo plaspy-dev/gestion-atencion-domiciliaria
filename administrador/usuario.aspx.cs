@@ -53,7 +53,7 @@ public partial class administrador_usuario : System.Web.UI.Page
             szQuery = query.GetUpdate("id='" + HId.Value + "'");
             mensaje = TNombres.Text + " editado";
         }
-        int res=conector.QueryMod(szQuery);
+        int res = conector.QueryMod(szQuery, true);
         if ( res== -1)
             return;
         if (HId.Value.Length == 0)

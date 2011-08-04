@@ -99,7 +99,7 @@ public partial class administrador_Default : System.Web.UI.Page
             szQuery = query.GetUpdate("id='" + HId.Value + "'");
             mensaje = TNombre.Text + " editado";
         }
-        int res = conector.QueryMod(szQuery);
+        int res = conector.QueryMod(szQuery, true);
         if (res == -1)
             return;
         if (HId.Value.Length == 0)

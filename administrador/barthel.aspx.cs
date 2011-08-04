@@ -40,7 +40,7 @@ public partial class administrador_barthel : System.Web.UI.Page
             szQuery = query.GetUpdate("id='" + HId.Value + "'");
             mensaje = TConcepto.Text + " editado";
         }
-        int res = conector.QueryMod(szQuery);
+        int res = conector.QueryMod(szQuery, true);
         if (res == -1)
             return;
         if (HId.Value.Length == 0)

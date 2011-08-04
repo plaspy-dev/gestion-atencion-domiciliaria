@@ -1,11 +1,31 @@
 ﻿<%@ Page Title="Hoja de ingreso" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="ingreso.aspx.cs" Inherits="paciente_ingreso" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<style type="text/css">
+	.ui-autocomplete {
+		max-height: 200px;
+		overflow-y: auto;
+		/* prevent horizontal scrollbar */
+		overflow-x: hidden;
+		/* add padding to account for vertical scrollbar */
+		padding-right: 20px;
+		text-align: left;
+	}
+	/* IE 6 doesn't support max-height
+	 * we use height instead, but this forces the menu to always be this tall
+	 */
+	* html .ui-autocomplete {
+		height: 200px;
+	}
+</style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <asp:Panel runat="server" ID="Panel1" DefaultButton="IBuscar">
     <fieldset>
         <legend>Datos del paciente</legend>
+        <table>
+            <tr>
+                <td>
     <table>
         <tr>
                 <td>
@@ -76,17 +96,48 @@
         </tr>
         <tr>
             <td>
-                Dirección</td>
+                Sexo</td>
             <td>
-                <asp:Label runat="server" ID="LDireccion"></asp:Label>
+                <asp:Label ID="LSexo" runat="server"></asp:Label>
             </td>
             <td>
                 Edad</td>
             <td>
-                <asp:Label runat="server" ID="LEdad"></asp:Label>
+                <asp:Label ID="LEdad" runat="server"></asp:Label>
             </td>
         </tr>
     </table>
+    </td>
+            </tr>
+            <tr>
+                <td>
+                <asp:Repeater ID="RCodigosC10" runat="server" DataSourceID="SCodigosC10">
+                <HeaderTemplate>
+                <fieldset>
+                <legend>CIE 10</legend>
+                <table>
+                </HeaderTemplate>
+                <ItemTemplate>
+                    <tr><td>
+                    <%# Eval("descripcion") %>
+                    </td></tr>
+                </ItemTemplate>
+                <FooterTemplate>
+                </table>
+                </fieldset>
+                </FooterTemplate>
+            </asp:Repeater>
+            <asp:SqlDataSource ID="SCodigosC10" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT descripcion FROM codigos_ingreso WHERE ingreso_paciente=@idingreso" >
+                    <SelectParameters>
+                        <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
+                    </SelectParameters>
+                </asp:SqlDataSource>
+                </td>
+            </tr>
+        </table>
     </fieldset></asp:Panel>
     <fieldset>
     <legend>II. Información de atención básica</legend>
@@ -230,7 +281,7 @@
     <td>
         <asp:Panel runat="server" ID="PMujer">
             <fieldset>
-                <legend>Mujer</legend>
+                <legend>Datos ginecológicos</legend>
                 <asp:Repeater ID="RVarios" runat="server" DataSourceID="SVarios">
                 <ItemTemplate>
                     <asp:CheckBox ID="CVarios" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
@@ -315,6 +366,96 @@
       </td>
   </tr>
   <tr>
+    <td><fieldset>
+    <legend>Código de diagnóstico</legend>
+    <asp:UpdatePanel ID="UCDiagnostico" runat="server" UpdateMode="Conditional"> 
+        <ContentTemplate>
+            <table>
+                <tr>
+                    <td>
+                        <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" 
+                AutoGenerateColumns="False" DataKeyNames="id" ShowFooter="True" >
+            <Columns>
+                <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                <asp:BoundField DataField="codigo" HeaderText="Código" />
+                <asp:BoundField DataField="descripcion" HeaderText="Descripción" />
+            </Columns>
+            <SelectedRowStyle CssClass="selecteditem" />
+        </asp:GridView>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <asp:Button ID="BMasCDiagnostico" runat="server" onclick="BMasCDiagnostico_Click" 
+                            Text="+" />
+                    </td>
+                </tr>
+            </table>
+        <sdg:CustomDataSource ID="SCDiagnostico" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            SelectCommand="SELECT id,codigo,descripcion FROM codigos_ingreso WHERE ingreso_paciente=@ingreso"
+                            DeleteCommand="DELETE FROM codigos_ingreso WHERE id=@id"
+                            >
+                            <SelectParameters>
+                                <asp:ControlParameter ControlID="HIdIngreso" DefaultValue="0" PropertyName="Value" Name="ingreso" />
+                            </SelectParameters>
+        </sdg:CustomDataSource>
+            <div id="dCDiagnostico" title="Código de diagnóstico">
+            <asp:DetailsView ID="DCDiagnostico" runat="server" Width="100%" 
+                DataSourceID="SDCDiagnostico" DataKeyNames="id" 
+                AutoGenerateRows="False" DefaultMode="Edit" 
+                oniteminserted="DCDiagnostico_ItemInserted" 
+                onitemupdated="DCDiagnostico_ItemUpdated" 
+                onitemcommand="DCDiagnostico_ItemCommand">
+                <Fields>
+                    <asp:TemplateField HeaderText="codigo">
+                        <EditItemTemplate>
+                            <asp:TextBox ID="TCodigo" Width="200px" runat="server" Text='<%# Bind("codigo") %>'></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor seleccione un código." ControlToValidate="TDescripcion" SetFocusOnError="True" Display="Dynamic"></asp:RequiredFieldValidator>
+                        </EditItemTemplate>
+                        <InsertItemTemplate>
+                            <asp:TextBox ID="TCodigo" Width="200px" runat="server" Text='<%# Bind("codigo") %>'></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor seleccione un código." ControlToValidate="TDescripcion" SetFocusOnError="True" Display="Dynamic"></asp:RequiredFieldValidator>
+                        </InsertItemTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="Label1" runat="server" Text='<%# Bind("codigo") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="descripcion">
+                        <EditItemTemplate>
+                            <asp:TextBox ID="TDescripcion" Width="200px" runat="server" Text='<%# Bind("descripcion") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                        <InsertItemTemplate>
+                            <asp:TextBox ID="TDescripcion" Width="200px" runat="server" Text='<%# Bind("descripcion") %>'></asp:TextBox>
+                        </InsertItemTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="Label2" runat="server" Text='<%# Bind("descripcion") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:CommandField ShowInsertButton="True" ButtonType="Button" />
+                    <asp:CommandField ButtonType="Button" ShowEditButton="True" />
+                </Fields>
+            </asp:DetailsView>
+            </div>
+            <sdg:CustomDataSource ID="SDCDiagnostico" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            SelectCommand="SELECT id,codigo,descripcion FROM codigos_ingreso WHERE id=@id"
+                            InsertCommand="INSERT INTO codigos_ingreso(ingreso_paciente,codigo,descripcion) VALUES (@ingreso, @codigo, @descripcion)"
+                            UpdateCommand="UPDATE codigos_ingreso SET codigo=@codigo,descripcion=@descripcion WHERE id=@id" 
+                            ParentDataSource="SCDiagnostico"
+                            >
+                            <SelectParameters>
+                                <asp:ControlParameter ControlID="GCDiagnostico" DefaultValue="0" PropertyName="SelectedValue" Name="id" />
+                            </SelectParameters>
+                            <UpdateParameters>
+                                <asp:ControlParameter ControlID="GCDiagnostico" DefaultValue="0" PropertyName="SelectedValue" Name="id" />
+                            </UpdateParameters>
+        </sdg:CustomDataSource>
+        </ContentTemplate>
+        </asp:UpdatePanel>
+    </fieldset>
+    </td>
+  </tr>
+  <tr>
     <td>Conducta inicial<br />
         <asp:TextBox ID="TConductaInicial" runat="server" Height="200px" 
             TextMode="MultiLine" Width="100%"></asp:TextBox>
@@ -340,6 +481,42 @@
         function iniciopagina() {
             $("#ctl00_cph_TDocumento").blur(function() { if ($.getUrlVar('id') != $(this).val()) $("#ctl00_cph_IBuscar").click(); });
         }
+        $('#ctl00_cph_UCDiagnostico').panelUpdated(function() {
+            addDialog("#ctl00_cph_UCDiagnostico", "#dCDiagnostico");
+            $('#ctl00_cph_DCDiagnostico_TDescripcion').attr("disabled","true");
+            $("#ctl00_cph_DCDiagnostico_TCodigo").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
+                        data: "{}",
+                        data: "{ 'q': '" + request.term + "' }",
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function(data) { return data; },
+                        success: function(data) {
+                            response($.map(data.d, function(item) {
+                                return {
+                                    value: item.Value, label: item.Name
+                                }
+                            }))
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert(textStatus);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    $('#ctl00_cph_DCDiagnostico_TDescripcion').val(ui.item.label);
+                    return true;
+                },
+                search: function(event, ui) {
+                    $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
+                }
+            });
+        });
+        
         $(function() {
             $("#ctl00_cph_TTA").mask("999/99");
         });

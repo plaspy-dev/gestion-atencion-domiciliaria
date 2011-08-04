@@ -49,7 +49,7 @@ public partial class paciente_barthel : System.Web.UI.Page
                 {
                     TFecha.Focus();
                     BAceptar.Enabled = usuario.CanInsert();
-                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
+                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
 
                     HId.Value = reader["pacId"].ToString();
                     LNombres.Text = reader["pacPNombre"].ToString() + " " + reader["pacSNombre"].ToString();
@@ -189,7 +189,7 @@ public partial class paciente_barthel : System.Web.UI.Page
 
             szQuery = indice.GetInsert();
             mensaje = LNombres.Text + " ingresado";
-            int resultado = conector.QueryMod(szQuery);
+            int resultado = conector.QueryMod(szQuery, true);
             if (resultado == -1)
                 return;
             HIdIndice.Value = resultado.ToString();
@@ -226,7 +226,7 @@ public partial class paciente_barthel : System.Web.UI.Page
                 conector.QueryMod(analisis.GetInsert());
             }
         }
-        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
+        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
         ((MasterPageI)Master).SetResultado(mensaje);
     }
     protected void RGrupos_ItemDataBound(object sender, RepeaterItemEventArgs e)

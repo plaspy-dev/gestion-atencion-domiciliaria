@@ -47,7 +47,7 @@ public partial class paciente_epicrisis : System.Web.UI.Page
                 {
                     BAceptar.Enabled = usuario.CanInsert();
                     TFecha.Focus();
-                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
+                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
 
                     HId.Value = reader["pacId"].ToString();
                     LNombres.Text = reader["pacPNombre"].ToString() + " " + reader["pacSNombre"].ToString();
@@ -200,7 +200,7 @@ public partial class paciente_epicrisis : System.Web.UI.Page
 
             szQuery = epicrisis.GetInsert();
             mensaje = LNombres.Text + " ingresado";
-            int resultado = conector.QueryMod(szQuery);
+            int resultado = conector.QueryMod(szQuery, true);
             if (resultado == -1)
                 return;
             HIdIndice.Value = resultado.ToString();
@@ -214,7 +214,7 @@ public partial class paciente_epicrisis : System.Web.UI.Page
         }
         if (conector.InsertModificacion(HIdIndice.Value) == -1)
             return;
-        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
+        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
         ((MasterPageI)Master).SetResultado(mensaje);
     }
 }

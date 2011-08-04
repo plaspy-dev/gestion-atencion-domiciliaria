@@ -225,7 +225,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
             szQuery = formulacion.GetInsert();
             mensaje = LNombres.Text + " ingresado";
-            int resultado = conector.QueryMod(szQuery);
+            int resultado = conector.QueryMod(szQuery, true);
             if (resultado == -1)
                 return;
             HIdFormulacion.Value = resultado.ToString();

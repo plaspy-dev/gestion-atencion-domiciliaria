@@ -103,7 +103,7 @@ public partial class administrador_grupos : System.Web.UI.Page
 
             szQuery = query.GetInsert();
             mensaje = TNombre.Text + " ingresado";
-            int resultado = conector.QueryMod(szQuery);
+            int resultado = conector.QueryMod(szQuery, true);
             if (resultado == -1)
                 return;
             grupo = resultado.ToString();

@@ -90,11 +90,11 @@ public partial class _Default : System.Web.UI.Page
                         }
                     }
 
-                    SqlDataReader readerms= conectorMS.Query("SELECT	seg_Menu.meDescMenu AS nombre, seg_Menu.meRuta AS ruta,ins,modif,elim,parent.meDescMenu AS parent "+
+                    SqlDataReader readerms= conectorMS.Query("SELECT seg_Menu.meDescMenu AS nombre, seg_Menu.meRuta AS ruta,ins,modif,elim,parent.meDescMenu AS parent "+
                             "FROM dbo.seg_Menu INNER JOIN dbo.fnSeg_ConMenu('" + m_EUsuario.Text + "',0)menuUs ON seg_Menu.meIdMenu = menuUs.IdMenu " +  
                             "LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre) " +
 		                    "WHERE seg_Menu.meRuta!='' " + 
-		                    " order by seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu");
+		                    " order by parent,seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu");
 
                     if (readerms != null)
                     {
@@ -173,7 +173,7 @@ public partial class _Default : System.Web.UI.Page
                             "FROM dbo.seg_Menu INNER JOIN dbo.fnSeg_ConMenu('" + m_EUsuario.Text + "',0)menuUs ON seg_Menu.meIdMenu = menuUs.IdMenu " +
                             "LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre) " +
                             "WHERE seg_Menu.meRuta!='' " +
-                            " order by seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu");
+                            " order by parent,seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu");
 
                 if (readerms != null)
                 {

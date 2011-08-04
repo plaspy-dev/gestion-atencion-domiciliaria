@@ -67,7 +67,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
                     TFecha.Focus();
 
                     BFecha.Enabled = true;
-                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
+                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
 
                     HId.Value = reader["pacId"].ToString();
                     LNombres.Text = reader["pacPNombre"].ToString() + " " + reader["pacSNombre"].ToString();
@@ -198,7 +198,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
                 TableRow row = new TableRow();
                 TableCell cell = new TableCell();
                 HyperLink link = new HyperLink();
-                link.NavigateUrl = Request.Url.AbsolutePath + "?id=" + reader["pacDocumento"].ToString() + "&td=" + reader["tdocId"].ToString();
+                link.NavigateUrl = Request.Url.AbsolutePath + "?id=" + reader["pacDocumento"].ToString() + "&td=" + reader["tdocId"].ToString() + "&f=" + DateTime.Now.ToShortDateString();
                 link.Text = reader["pacDocumento"].ToString();
                 cell.Attributes["align"] = "left";
                 cell.Controls.Add(link);
@@ -207,7 +207,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
 
                 cell = new TableCell();
                 link = new HyperLink();
-                link.NavigateUrl = Request.Url.AbsolutePath + "?id=" + reader["pacDocumento"].ToString() + "&td=" + reader["tdocId"].ToString();
+                link.NavigateUrl = Request.Url.AbsolutePath + "?id=" + reader["pacDocumento"].ToString() + "&td=" + reader["tdocId"].ToString() + "&f=" + DateTime.Now.ToShortDateString();
                 link.Text = reader["pacPApellido"].ToString() + " " + reader["pacSApellido"].ToString()
                     + " " + reader["pacPNombre"].ToString() + " " + reader["pacSNombre"].ToString();
                 cell.Attributes["align"] = "left";
@@ -249,7 +249,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
 
             szQuery = hoja.GetInsert();
             mensaje = LNombres.Text + " ingresado";
-            int resultado = conector.QueryMod(szQuery);
+            int resultado = conector.QueryMod(szQuery, true);
             if (resultado == -1)
                 return;
             HIdHoja.Value = resultado.ToString();
@@ -300,7 +300,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
         if (!UpdateCambios(conector, SBitacora.GetQuerys()))
             return;
 
-        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
+        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
         ((MasterPageI)Master).SetResultado(mensaje);
     }
 
