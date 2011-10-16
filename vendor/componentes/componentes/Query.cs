@@ -87,7 +87,7 @@ public class Query
 		{
 			return "NULL";
 		}
-		if (valor == "SYSDATE()")
+		if (valor.ToLower() == "sysdate()" || valor.ToLower() == "getdate()")
 		{
 			return valor;
 		}

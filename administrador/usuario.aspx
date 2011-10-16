@@ -73,7 +73,9 @@
         </tr>
         <tr>
             <td>
-                &nbsp;</td>
+                <asp:Button ID="BMigrar" runat="server" CausesValidation="False" 
+                    onclick="BMigrar_Click" Text="Migrar usuarios" />
+            </td>
             <td>
                 &nbsp;</td>
             <td align="right">
@@ -87,7 +89,14 @@
     </fieldset>
     <asp:GridView ID="GUsuarios" runat="server" DataSourceID="SUsuarios" 
         DataKeyNames="id" AutoGenerateColumns="false" 
-        onselectedindexchanged="GUsuarios_SelectedIndexChanged">
+        onselectedindexchanged="GUsuarios_SelectedIndexChanged" 
+        AllowSorting="True">
+        <RowStyle CssClass="GridRow"></RowStyle>
+        <FooterStyle CssClass="GridFooter"></FooterStyle>
+        <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+        <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+        <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+        <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         <Columns>
                     <asp:CommandField ButtonType="Image" 
                         ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />

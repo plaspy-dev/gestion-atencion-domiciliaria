@@ -7,17 +7,19 @@
     <table width="100%" border="0">
   <tr>
     <td valign="top">
-        <asp:GridView ID="GTipo" runat="server" AutoGenerateColumns="False">
-            <Columns>
-                <asp:HyperLinkField DataNavigateUrlFields="tipo" 
-                    DataNavigateUrlFormatString="~/administrador/?tipo={0}" 
-                    DataTextField="nombre"  />
-            </Columns>
-        </asp:GridView>
+        <asp:TreeView ID="TTipo" runat="server"  ImageSet="Arrows" >
+            <ParentNodeStyle Font-Bold="False" />
+            <HoverNodeStyle Font-Underline="True" ForeColor="#5555DD" />
+            <SelectedNodeStyle Font-Underline="True" ForeColor="#5555DD" 
+                HorizontalPadding="0px" VerticalPadding="0px" />
+            <NodeStyle Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" 
+                HorizontalPadding="5px" NodeSpacing="0px" VerticalPadding="0px" />
+        </asp:TreeView>
+        <br />
       </td>
-    <td><table width="100%" border="0">
+    <td valign="top"><table width="100%" border="0">
       <tr>
-        <td align="center" bgcolor="#406BAF" style="color: #FFF">
+        <td align="left" bgcolor="#406BAF" style="color: #FFF">
             <asp:Label ID="LTipo" runat="server"></asp:Label>
           </td>
       </tr>
@@ -63,17 +65,22 @@
             <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False" 
                 DataKeyNames="id" DataSourceID="SqlDataSource1" 
                 onselectedindexchanged="GResultado_SelectedIndexChanged">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
                     <asp:CommandField ButtonType="Image" 
                         ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                     <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" 
                         ShowDeleteButton="True" />
-                    <asp:BoundField DataField="nombre" HeaderText="nombre" 
+                    <asp:BoundField DataField="nombre" HeaderText="Nombre" 
                         SortExpression="nombre" />
-                    <asp:BoundField DataField="descripcion" HeaderText="descripcion" 
+                    <asp:BoundField DataField="descripcion" HeaderText="Descripción" 
                         SortExpression="descripcion" />
                 </Columns>
-                <SelectedRowStyle CssClass="selecteditem" />
             </asp:GridView>
             <asp:SqlDataSource ID="SqlDataSource1" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 

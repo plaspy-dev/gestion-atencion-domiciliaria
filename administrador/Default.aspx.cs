@@ -9,30 +9,28 @@ using componentes;
 
 public partial class administrador_Default : System.Web.UI.Page
 {
-    public class Tipos
+    protected TreeNode Add(string titulo, int tipo, TreeNode parent)
     {
-        private string _nombre;
-        private int _tipo;
+        TreeNode hijo = new TreeNode(titulo);
+        hijo.NavigateUrl = Request.Url.AbsolutePath + "?tipo=" + tipo.ToString();
+        hijo.Selected = tipo.ToString() == Request.QueryString["tipo"];
+        parent.ChildNodes.Add(hijo);
+        if (hijo.Selected)
+        {
+            HTipo.Value = tipo.ToString();
+            LTipo.Text = titulo;
+            parent.Expand();
+        }
+        return hijo;
+    }
 
-        public Tipos(string nombre, int tipo)
-        {
-            _nombre= nombre;
-            _tipo = tipo;
-        }
-        public string nombre
-        {
-            get
-            {
-                return _nombre;
-            }
-        }
-        public int tipo
-        {
-            get
-            {
-                return _tipo;
-            }
-        }
+    protected TreeNode Add(string titulo)
+    {
+        TreeNode parent= new TreeNode(titulo);
+        parent.Collapse();
+        parent.SelectAction = TreeNodeSelectAction.Expand;
+        TTipo.Nodes.Add(parent);
+        return parent;
     }
 
     protected void Page_Load(object sender, EventArgs e)
@@ -40,44 +38,41 @@ public partial class administrador_Default : System.Web.UI.Page
         TNombre.Focus();
         if (!IsPostBack)
         {
+            if (Request.QueryString["tipo"] == null)
+            {
+                Response.Redirect(Request.Url.AbsolutePath + "?tipo=1");
+                return;
+            }
+
             Usuario usuario= Usuario.GetUsuario();
 
             BAceptar.Enabled= usuario.CanInsert();
             GResultado.Columns[1].Visible = usuario.CanDelete();
             GResultado.Columns[0].Visible = usuario.CanUpdate();
 
-            ArrayList tipos = new ArrayList();
-            
-            tipos.Add(new Tipos("Según (Hoja de ingreso)", 1));
-            tipos.Add(new Tipos("Antecedentes (Hoja de ingreso)", 2));
-            tipos.Add(new Tipos("Revisión sistemas (Hoja de ingreso)", 3));
-            tipos.Add(new Tipos("Examen físico (Hoja de ingreso)", 4));
-            tipos.Add(new Tipos("Varios (Hoja de ingreso)", 5));
-            // tipos.Add(new Tipos("Varios Inferior (Hoja de ingreso)", 6)); // eliminado.
-            tipos.Add(new Tipos("Grupos (Indice de Barthel)", 7));
-            // tipos.Add(new Tipos("Indice de Barthel", 8));
-            tipos.Add(new Tipos("Suministros (Hoja de gastos)", 9));
-            tipos.Add(new Tipos("Dieta (Hoja de enfermería)", 10));
-            tipos.Add(new Tipos("Control de líquidos (Hoja de enfermería)", 11));
-            tipos.Add(new Tipos("Vía (Hoja de enfermería)", 12));
+            TreeNode parent = Add("Hoja de ingreso");
 
-            GTipo.DataSource = tipos;
-            GTipo.DataBind();
+            Add("Según", 1, parent);
+            Add("Antecedentes", 2, parent);
+            Add("Revisión sistemas", 3, parent);
+            Add("Examen físico", 4, parent);
+            Add("Varios", 5, parent);
+            // Add("Varios Inferior (Hoja de ingreso)", 6, parent); // eliminado.
 
-            GTipo.SelectedIndex = 0;
-            HTipo.Value = "1";
-            LTipo.Text = ((Tipos)tipos[0]).nombre;
+            parent = Add("Indice de Barthel");
+            Add("Grupos", 7, parent);
+            // Add("Indice de Barthel", 8, parent);
 
-            for (int i = 0; i < tipos.Count; i++ ) {
+            parent = Add("Hoja de gastos");
+            Add("Suministros", 9, parent);
 
-                if( ((Tipos)tipos[i]).tipo.ToString()==Request.QueryString["tipo"]) {
+            parent = Add("Hoja de enfermería");
+            Add("Dieta", 10, parent);
+            Add("Control de líquidos", 11, parent);
+            Add("Vía", 12, parent);
 
-                    GTipo.SelectedIndex = i;
-                    HTipo.Value = ((Tipos)tipos[i]).tipo.ToString();
-                    LTipo.Text= ((Tipos)tipos[i]).nombre;
-                    break;
-                }
-            }
+            if (HTipo.Value.Length == 0)
+                Response.Redirect(Request.Url.AbsolutePath + "?tipo=1");
         }
     }
 
@@ -106,12 +101,13 @@ public partial class administrador_Default : System.Web.UI.Page
             HId.Value = res.ToString();
         if (conector.InsertModificacion(HId.Value) == -1)
             return;
-        Response.Redirect("~/administrador/?tipo=" + HTipo.Value + "&m=" + mensaje);
+        Session["szMensaje"] = mensaje;
+        Response.Redirect(Request.Url.AbsolutePath + "?tipo=" + HTipo.Value);
     }
 
     protected void BCancelar_Click(object sender, EventArgs e)
     {
-        Response.Redirect("~/administrador/?tipo=" + HTipo.Value);
+        Response.Redirect(Request.Url.AbsolutePath + "?tipo=" + HTipo.Value);
     }
 
     protected void GResultado_SelectedIndexChanged(object sender, EventArgs e)

@@ -27,6 +27,27 @@ public class ConectorMS
 		m_szConexion = conexion;
 	}
 
+	~ConectorMS()
+	{
+		try
+		{
+			if (m_pSQLReader != null)
+			{
+				m_pSQLReader.Close();
+			}
+			if (m_pSQLConector != null)
+			{
+				m_pSQLConector.Close();
+			}
+		}
+		catch (SqlException)
+		{
+		}
+		catch (Exception)
+		{
+		}
+	}
+
 	public SqlConnection GetConexion()
 	{
 		return m_pSQLConector;
@@ -87,7 +108,6 @@ public class ConectorMS
 				ShowError(m_szLastError);
 				return false;
 			}
-			return true;
 		}
 		return true;
 	}
@@ -134,7 +154,7 @@ public class ConectorMS
 		if (identity && num != -1)
 		{
 			num = -1;
-			if (Query("SELECT LAST_INSERT_ID()") != null && m_pSQLReader.Read())
+			if (Query("SELECT @@IDENTITY") != null && m_pSQLReader.Read())
 			{
 				num = Convert.ToInt32(m_pSQLReader[0].ToString());
 			}
@@ -238,5 +258,22 @@ public class ConectorMS
 			return "";
 		}
 		return fecha.Substring(0, 10);
+	}
+
+	public bool SelectInDropDown(DropDownList lista, object valor, string query)
+	{
+		bool result = true;
+		lista.DataBind();
+		lista.SelectedIndex = -1;
+		ListItem listItem = lista.Items.FindByValue(valor.ToString());
+		if (listItem == null)
+		{
+			ConectorMS conectorMS = new ConectorMS(m_szConexion);
+			listItem = new ListItem(conectorMS.QueryString(query), valor.ToString());
+			lista.Items.Add(listItem);
+			result = false;
+		}
+		listItem.Selected = true;
+		return result;
 	}
 }

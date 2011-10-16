@@ -10,6 +10,8 @@ public class Grupo
 {
 	protected ArrayList m_aURLs;
 
+	protected bool m_bInicio = false;
+
 	public Grupo()
 	{
 		m_aURLs = new ArrayList();
@@ -26,7 +28,11 @@ public class Grupo
 			{
 				XmlNodeList elementsByTagName5 = item2.GetElementsByTagName("titulo");
 				XmlNodeList elementsByTagName6 = item2.GetElementsByTagName("url");
-				m_aURLs.Add(new CURLs(elementsByTagName6[0].InnerText, elementsByTagName5[0].InnerText, innerText));
+				CURLs value = new CURLs(elementsByTagName6[0].InnerText, elementsByTagName5[0].InnerText, innerText)
+				{
+					m_bNativo = true
+				};
+				m_aURLs.Add(value);
 			}
 		}
 	}
@@ -86,35 +92,107 @@ public class Grupo
 		return m_aURLs;
 	}
 
-	public void CreateMenu(TreeView tree, string parametros)
+	protected bool CreateMenu(TreeView tree, string parametros, bool nativo, Usuario usuario)
 	{
-		Usuario usuario = Usuario.GetUsuario();
+		bool result = false;
 		TreeNode treeNode = null;
 		for (int i = 0; i < m_aURLs.Count; i++)
 		{
 			CURLs cURLs = (CURLs)m_aURLs[i];
-			if (usuario.GetGrupo() == 0 || GetPermisoRaiz(cURLs.URL) > 0)
+			if (cURLs.m_bNativo != nativo)
 			{
-				if (treeNode == null || treeNode.Text != cURLs.Parent)
+				continue;
+			}
+			result = true;
+			if (usuario.GetGrupo() != 0 && GetPermisoRaiz(cURLs.URL) <= 0 && cURLs.m_bNativo)
+			{
+				continue;
+			}
+			if (treeNode == null || treeNode.Text != cURLs.Parent)
+			{
+				treeNode = null;
+				TreeNodeCollection treeNodeCollection = tree.Nodes;
+				if (m_bInicio)
+				{
+					treeNodeCollection = tree.Nodes[0].ChildNodes;
+				}
+				int num = -1;
+				for (int j = 0; j < treeNodeCollection.Count; j++)
+				{
+					string text = treeNodeCollection[j].Text;
+					text = text.Replace("<div onclick='noPreguntar();'>", "");
+					text = text.Replace("</div>", "");
+					if (text == cURLs.Parent)
+					{
+						treeNode = treeNodeCollection[j];
+						break;
+					}
+					if (text.CompareTo(cURLs.Parent) > 0)
+					{
+						if (j != 0)
+						{
+							text = treeNodeCollection[j - 1].Text;
+							text = text.Replace("<div onclick='noPreguntar();'>", "");
+							text = text.Replace("</div>", "");
+						}
+						if (j == 0 || text.CompareTo(cURLs.Parent) < 0)
+						{
+							num = j;
+							break;
+						}
+					}
+				}
+				if (treeNode == null)
 				{
 					treeNode = new TreeNode(cURLs.Parent);
 					treeNode.Collapse();
 					treeNode.SelectAction = TreeNodeSelectAction.Expand;
-					tree.Nodes.Add(treeNode);
+					if (num == -1)
+					{
+						treeNodeCollection.Add(treeNode);
+					}
+					else
+					{
+						treeNodeCollection.AddAt(num, treeNode);
+					}
 				}
-				string text = cURLs.URL;
-				if (ConfigurationSettings.AppSettings["prefijonuevo"] != null)
-				{
-					text = text.Replace("~/", ConfigurationSettings.AppSettings["prefijonuevo"]);
-				}
-				TreeNode treeNode2 = Add(cURLs.Titulo, text + parametros);
-				if (cURLs.FullURL == HttpContext.Current.Request.Url.AbsolutePath)
-				{
-					treeNode2.Selected = true;
-					treeNode.Expand();
-				}
-				treeNode.ChildNodes.Add(treeNode2);
 			}
+			string text2 = cURLs.URL;
+			if (m_bInicio == cURLs.m_bNativo && ConfigurationSettings.AppSettings["app"] != null)
+			{
+				text2 = CURLs.SwitchApp(text2, ConfigurationSettings.AppSettings["app"]);
+			}
+			TreeNode treeNode2 = Add(cURLs.Titulo, text2 + parametros);
+			if (cURLs.FullURL == HttpContext.Current.Request.Url.AbsolutePath)
+			{
+				treeNode2.Selected = true;
+				treeNode.Expand();
+			}
+			TreeNode treeNode3 = null;
+			for (int j = 0; j < treeNode.ChildNodes.Count; j++)
+			{
+				if (treeNode.ChildNodes[j].Text == treeNode2.Text)
+				{
+					treeNode3 = treeNode.ChildNodes[j];
+					break;
+				}
+			}
+			if (treeNode3 != null)
+			{
+				treeNode.ChildNodes.Remove(treeNode3);
+			}
+			treeNode.ChildNodes.Add(treeNode2);
 		}
+		return result;
+	}
+
+	public void CreateMenu(TreeView tree, string parametros, Usuario usuario)
+	{
+		m_bInicio = false;
+		if (!CreateMenu(tree, parametros, nativo: false, usuario))
+		{
+			m_bInicio = false;
+		}
+		CreateMenu(tree, parametros, nativo: true, usuario);
 	}
 }

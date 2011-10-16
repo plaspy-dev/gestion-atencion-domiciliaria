@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using componentes;
+using System.Data.SqlClient;
 
 public partial class administrador_usuario : System.Web.UI.Page
 {
@@ -65,5 +66,40 @@ public partial class administrador_usuario : System.Web.UI.Page
     protected void BCancelar_Click(object sender, EventArgs e)
     {
         Response.Redirect(Request.Url.AbsolutePath);
+    }
+    protected void BMigrar_Click(object sender, EventArgs e)
+    {
+        CConectorMS conector= CConectorMS.GetConector();
+        CConector conectorMySQL = CConector.GetConector();
+        int actualizados = 0;
+        int insertados = 0;
+
+        SqlDataReader reader=  conector.Query("SELECT usIdUsuario,usNombreUsuario,usClave FROM seg_Usuarios WHERE usActivo=1");
+        if(reader!=null) {
+            while(reader.Read()) {
+
+                string id= conectorMySQL.QueryString("SELECT id FROM usuario WHERE usuario='" + reader["usIdUsuario"].ToString() + "'");
+
+                Query query = new Query("usuario");
+                query["nombre"] = reader["usNombreUsuario"].ToString();
+                query["usuario"] = reader["usIdUsuario"].ToString();
+                string nombre = reader["usIdUsuario"].ToString();
+                string password = crypt.Desencriptar(reader["usClave"].ToString(), System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"));
+                query.AddCampo("contrasena", "PASSWORD(" + Query.GetValor(password) + ")", false);
+
+                if (id.Length == 0)
+                {
+                    insertados++;
+                    query["grupo"] = "1";
+                    conectorMySQL.QueryMod(query.GetInsert()); 
+                }
+                else
+                {
+                    actualizados++;
+                    conectorMySQL.QueryMod(query.GetUpdate("id='" + id + "'")); 
+                }
+            }
+        }
+        ((MasterPageI)Master).SetResultado( insertados+ " usuarios ingresados y " + actualizados + " actualizados.");
     }
 }

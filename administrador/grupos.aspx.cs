@@ -10,6 +10,24 @@ using componentes;
 
 public partial class administrador_grupos : System.Web.UI.Page
 {
+    class Parents {
+        public string parent {set; get; }
+        public ArrayList permisos {set; get;}
+        public Parents(string p) {
+            parent = p;
+            permisos = new ArrayList();
+        }
+        public Permisos FindURL(string url) {
+
+            for (int i = 0; i < permisos.Count; i++)
+            {
+                if (((Permisos)permisos[i]).pagina == url)
+                    return (Permisos)permisos[i];
+            }
+            return null;
+        }
+    }
+
     class Permisos
     {
         protected string _Pagina;
@@ -76,15 +94,29 @@ public partial class administrador_grupos : System.Web.UI.Page
             BAceptar.Enabled = usuario.CanInsert();
 
             TNombre.Focus();
-            ArrayList permisos = new ArrayList();
+            ArrayList parents= new ArrayList();
             ArrayList menu = Usuario.GetUsuario().GetFullMenu();
             for(int i=0; i<menu.Count; i++) {
 
                 CURLs url = (CURLs)menu[i];
-                permisos.Add(new Permisos(url.Titulo, url.URL));
+                if (url.m_bNativo)
+                {
+                    Parents padre=null;
+                    for (int j = 0; j < parents.Count; j++ ) {
+                        if(((Parents) parents[j]).parent==url.Parent) {
+                            padre = (Parents)parents[j];
+                            break;
+                        }
+                    }
+                    if(padre==null) {
+                        padre = new Parents(url.Parent);
+                        parents.Add(padre);
+                    }
+                    padre.permisos.Add(new Permisos(url.Titulo, url.URL));
+                }
             }
-            GPermisos.DataSource = permisos;
-            GPermisos.DataBind();
+            RParents.DataSource = parents;
+            RParents.DataBind();
         }
     }
 
@@ -119,41 +151,46 @@ public partial class administrador_grupos : System.Web.UI.Page
         if (conector.QueryMod("DELETE FROM permisos WHERE grupo='" + grupo + "'") == -1)
             return;
 
-        Query permisos = new Query("permisos");
-        for (int i = 0; i < GPermisos.Rows.Count; i++)
+        for (int j = 0; j < RParents.Items.Count; j++)
         {
-            permisos["grupo"] = grupo;
-            HiddenField pag = (HiddenField)GPermisos.Rows[i].FindControl("pagina");
-            permisos["url"] = pag.Value;
-            int per = 0;
+            GridView grid = (GridView)RParents.Items[j].FindControl("GPermisos");
+            Query permisos = new Query("permisos");
 
-            CheckBox check;
-            check = (CheckBox)GPermisos.Rows[i].FindControl("a");
-            if (check.Checked)
-                per += 32;
-            check = (CheckBox)GPermisos.Rows[i].FindControl("e");
-            if (check.Checked)
-                per += 16;
-            check = (CheckBox)GPermisos.Rows[i].FindControl("d");
-            if (check.Checked)
-                per += 8;
-            check = (CheckBox)GPermisos.Rows[i].FindControl("i");
-            if (check.Checked)
-                per += 4;
-            check = (CheckBox)GPermisos.Rows[i].FindControl("m");
-            if (check.Checked)
-                per += 2;
-            check = (CheckBox)GPermisos.Rows[i].FindControl("l");
-            if (check.Checked)
-                per += 1;
-            if (per == 0) // lo omitimos
-                continue;
-            if (per > 0 && (per & 1) != 1)
-                per += 1;
-            permisos["permiso"] = per.ToString();
+            for (int i = 0; i < grid.Rows.Count; i++)
+            {
+                permisos["grupo"] = grupo;
+                HiddenField pag = (HiddenField)grid.Rows[i].FindControl("pagina");
+                permisos["url"] = pag.Value;
+                int per = 0;
 
-            if (conector.QueryMod(permisos.GetInsert()) == -1)
-                return;
+                CheckBox check;
+                check = (CheckBox)grid.Rows[i].FindControl("a");
+                if (check.Checked)
+                    per += 32;
+                check = (CheckBox)grid.Rows[i].FindControl("e");
+                if (check.Checked)
+                    per += 16;
+                check = (CheckBox)grid.Rows[i].FindControl("d");
+                if (check.Checked)
+                    per += 8;
+                check = (CheckBox)grid.Rows[i].FindControl("i");
+                if (check.Checked)
+                    per += 4;
+                check = (CheckBox)grid.Rows[i].FindControl("m");
+                if (check.Checked)
+                    per += 2;
+                check = (CheckBox)grid.Rows[i].FindControl("l");
+                if (check.Checked)
+                    per += 1;
+                if (per == 0) // lo omitimos
+                    continue;
+                if (per > 0 && (per & 1) != 1)
+                    per += 1;
+                permisos["permiso"] = per.ToString();
+
+                if (conector.QueryMod(permisos.GetInsert()) == -1)
+                    return;
+            }
         }
 
         ((MasterPageI)Master).SetResultado(mensaje);
@@ -174,8 +211,32 @@ public partial class administrador_grupos : System.Web.UI.Page
     }
     protected void LGrupos_SelectedIndexChanged(object sender, EventArgs e)
     {
-        ArrayList permisos = new ArrayList();
+        ArrayList parents = new ArrayList();
         ArrayList menu = Usuario.GetUsuario().GetFullMenu();
+
+        for (int i = 0; i < menu.Count; i++)
+        {
+
+            CURLs url = (CURLs)menu[i];
+            if (url.m_bNativo)
+            {
+                Parents padre = null;
+                for (int j = 0; j < parents.Count; j++)
+                {
+                    if (((Parents)parents[j]).parent == url.Parent)
+                    {
+                        padre = (Parents)parents[j];
+                        break;
+                    }
+                }
+                if (padre == null)
+                {
+                    padre = new Parents(url.Parent);
+                    parents.Add(padre);
+                }
+                padre.permisos.Add(new Permisos(url.Titulo, url.URL, LGrupos.SelectedValue == "0" ? 63 : 0));
+            }
+        }
 
         if (LGrupos.SelectedValue == "0")
         {
@@ -184,12 +245,6 @@ public partial class administrador_grupos : System.Web.UI.Page
 
             TNombre.Text = LGrupos.SelectedItem.Text;
             TDescripcion.Text = "Grupo de administración, con todos los accesos";
-
-            for (int i = 0; i < menu.Count; i++)
-            {
-                CURLs url = (CURLs)menu[i];
-                permisos.Add(new Permisos(url.Titulo, url.URL, 63));
-            }
         } else {
             Usuario usuario= Usuario.GetUsuario();
 
@@ -206,12 +261,6 @@ public partial class administrador_grupos : System.Web.UI.Page
             query += "url";
             query += "permiso";
 
-            for (int i = 0; i < menu.Count; i++)
-            {
-                CURLs url = (CURLs)menu[i];
-                permisos.Add(new Permisos(url.Titulo, url.URL, 0));
-            }
-
             MySqlDataReader reader= conector.Query(query.GetSelect("grupo='" + LGrupos.SelectedValue + "'"));
             if (reader != null)
             {
@@ -219,10 +268,11 @@ public partial class administrador_grupos : System.Web.UI.Page
                 {
                     string url= reader["url"].ToString();
                     int nPermisos = Convert.ToInt32(reader["permiso"]);
-                    for (int i = 0; i < permisos.Count; i++)
+                    for (int i = 0; i < parents.Count; i++)
                     {
-                        Permisos info = (Permisos)permisos[i];
-                        if (info.pagina == url)
+                        Parents pagina = (Parents)parents[i];
+                        Permisos info = pagina.FindURL(url);
+                        if (info!=null)
                         {
                             info.SetPermisos(nPermisos);
                         }
@@ -230,9 +280,18 @@ public partial class administrador_grupos : System.Web.UI.Page
                 }
             }
         }
-        GPermisos.DataSource = permisos;
-        GPermisos.DataBind();
+        RParents.DataSource = parents;
+        RParents.DataBind();
 
         ((MasterPageI)Master).SetModificacion(LGrupos.SelectedValue);
+    }
+
+    protected void RParents_ItemCreated(object sender, RepeaterItemEventArgs e)
+    {
+        if(e.Item.DataItem!=null) {
+
+            GridView grid = (GridView)e.Item.FindControl("GPermisos");
+            grid.DataSource= ((Parents)e.Item.DataItem).permisos;
+        }
     }
 }

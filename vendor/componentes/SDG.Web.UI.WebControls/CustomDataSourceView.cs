@@ -25,6 +25,8 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 
 	protected ParameterCollection _InsertParameters;
 
+	protected bool _init = false;
+
 	public override bool CanInsert => false;
 
 	public override bool CanUpdate => false;
@@ -256,7 +258,7 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 			}
 		}
 		Page page = (Page)HttpContext.Current.Handler;
-		if (page.IsPostBack)
+		if (page.IsPostBack || _init)
 		{
 			sessionState2 = SessionState.Get(_owner.ID, text);
 			if (sessionState2 != null)
@@ -268,6 +270,7 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 				return sessionState2.dataTable.AsDataView();
 			}
 		}
+		_init = true;
 		sessionState2 = new SessionState(_owner.ID, text);
 		MySqlConnection mySqlConnection;
 		try

@@ -14,12 +14,34 @@
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery.timeentry.min.js"></script>
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery.ui.timepicker.js"></script>
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery.maskedinput-1.3.min.js"></script>
+    <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/combo.js"></script>
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/main.js"></script>
     <link href="css/ui-lightness/jquery-ui-1.8.13.custom.css" type="text/css" rel="Stylesheet" />
+    <link href="css/ui-lightness/jquery-ui-numeric-min.css" type="text/css" rel="Stylesheet" />
     <link href="css/estilo.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript">
         $(function() {
             $("#tabs").tabs();
+            $("#ctl00_lnkCambioClave").click(function() {
+               $("#contrasena").dialog(
+                    {
+                        modal: true,
+                        autoOpen: true,
+                        width: 'auto',
+                        open: function(event, ui) { setTimeout("$('#contrasena :input:first').focus();", 100); },
+                        buttons: {
+                            "Aceptar": function() {
+                                $("#ctl00_BAceptar").click();
+                            },
+                            "Cancelar": function() {
+                                $(this).dialog("close");
+                            }
+                        }
+                });
+                $("#ctl00_BAceptar").hide();
+                $("#contrasena").parent().appendTo(jQuery("#aspnetForm"));
+                return false;
+            });
         });
     </script>
     <asp:ContentPlaceHolder id="head" runat="server">
@@ -27,8 +49,8 @@
 </head>
 <body>
     <div id="loading">Cargando ...</div>
-    <form id="form1" runat="server"  >
-    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
+    <form id="form1" runat="server" autocomplete="off" >
+    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" ScriptMode="Release" LoadScriptsBeforeUI="false">
     </asp:ScriptManager>
 <table cellpadding="0" cellspacing="0" width="100%">
 <tr><td align="center" >
@@ -47,7 +69,7 @@
                     &nbsp;&nbsp;
                 </td><td valign="bottom" align="right" >
                     <asp:LinkButton ID="lnkCambioClave" runat="server" CausesValidation="False" 
-                        PostBackUrl="~/formularios/CambioClave.aspx">Cambio de Clave</asp:LinkButton>
+                        PostBackUrl="">Cambio de Clave</asp:LinkButton>
                     &nbsp;<asp:LinkButton ID="lnkSalir" runat="server" CausesValidation="False" 
                         PostBackUrl="~/Default.aspx?end=1">Salir</asp:LinkButton>
 &nbsp;
@@ -63,12 +85,12 @@
                     <tr><td align="right">
                      <table><tr>
                      <td align="left" >
-                         <asp:LinkButton ID="lnkEmail" runat="server" CssClass="linkBH" Visible="False" 
-                         CausesValidation="False" OnClientClick="email('dvContent');return false;">Correo</asp:LinkButton>
+                         <asp:LinkButton ID="lnkNuevo" runat="server" CssClass="linkBH" 
+                         Visible="False" CausesValidation="False" PostBackUrl="">Nuevo</asp:LinkButton>
                      </td>
                      <td align="left" >
                          <asp:LinkButton ID="lnkImp" runat="server" CssClass="linkBH" 
-                         Visible="False" CausesValidation="False" OnClientClick="imprimir('dvContent');return false;">Imprimir</asp:LinkButton>
+                         Visible="False" CausesValidation="False" OnClientClick="imprimir();return false;" onclick="lnkImp_Click">Imprimir</asp:LinkButton>
                      </td>
                      <td align="left" >
                          <asp:LinkButton ID="lnkGuardar" runat="server" CssClass="linkBH" 
@@ -76,25 +98,17 @@
                      </td>
                      <td align="left" >
                          <asp:LinkButton ID="lnkExcel" runat="server" CssClass="linkBH" 
-                             Visible="False" CausesValidation="False">Excel</asp:LinkButton>
+                             Visible="False" CausesValidation="False" onclick="lnkExcel_Click">Excel</asp:LinkButton>
                          </td>
-                     <td align="left" >
-                         <asp:LinkButton ID="lnkVolver" runat="server" CssClass="linkBH" 
-                             Visible="False" CausesValidation="False">Volver</asp:LinkButton>
-                         </td>
-                     <td align="left" >
-                         <asp:LinkButton ID="lnkNuevo" runat="server" CssClass="linkBH" 
-                             Visible="False" CausesValidation="False">Nuevo</asp:LinkButton>
-                         </td><td >
-                             &nbsp;</td></tr></table>
-                    </td><td style="width:5px;"></td></tr>
+                     </tr></table>
+                    </td></tr>
                     </table>
                     </div> 
                     </td>
                     </tr>
                     <tr>
                     <td valign="top">
-                        <div id="tabs">
+                        <div id="tabs" style="min-width: 190px">
 	                    <ul>
 		                    <li><a href="#tabs-1">Navegador</a></li>
 		                    <li><a href="#tabs-2">Propiedades</a></li>
@@ -115,7 +129,7 @@
                             </div>
                         </div>
                     </td>
-                        <td colspan="3" valign="top" style="overflow:auto;border: thin solid #D4D4D4; width:80%;min-width:400px;">
+                        <td colspan="3" valign="top" style="border: thin solid #D4D4D4; width:80%;min-width:400px;">
                             <div runat="server" class='msj' id="dvMsj" visible="false"></div>
                             <div id="dvContent">
                                 <asp:ContentPlaceHolder ID="cph" runat="server">
@@ -147,6 +161,49 @@
             </div>
         </ContentTemplate>
     </asp:UpdatePanel>
+    <div id="contrasena" title="Cambiar contraseña" style="display: none;">
+        <table>
+            <tr>
+                <td align="left">
+                    Actual
+                </td>
+                <td align="left">
+                    <asp:TextBox ID="TActual" TextMode="Password" runat="server"></asp:TextBox>
+                </td>
+                <td align="left">
+                    <asp:Button ID="BAceptar" runat="server" Text="Aceptar" 
+                        ValidationGroup="contrasena" onclick="BAceptar_Click" />
+                </td>
+            </tr>
+            <tr>
+                <td align="left">
+                    Nueva
+                </td>
+                <td align="left">
+                    <asp:TextBox ID="TNueva" TextMode="Password" runat="server"></asp:TextBox>
+                </td>
+                <td align="left">
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" 
+                        ControlToValidate="TNueva" ErrorMessage="Por favor ingrese una contraseña." 
+                        Display="Dynamic" SetFocusOnError="true" ValidationGroup="contrasena"></asp:RequiredFieldValidator>
+                </td>
+            </tr>
+            <tr>
+                <td align="left">
+                    Confirmar
+                </td>
+                <td align="left">
+                    <asp:TextBox ID="TConfirmar" TextMode="Password" runat="server"></asp:TextBox>
+                </td>
+                <td align="left">
+                    <asp:CompareValidator ID="CompareValidator1" runat="server" 
+                        ControlToValidate="TNueva" ControlToCompare="TConfirmar" 
+                        ErrorMessage="Las nuevas contraseñas no coinciden." Display="Dynamic" 
+                        SetFocusOnError="true" ValidationGroup="contrasena"></asp:CompareValidator>
+                </td>
+            </tr>
+        </table>
+    </div>
     </form>
 <div id="dialog-message" title="Error">
     <asp:Label ID="LMensaje" runat="server" Text=""></asp:Label>
@@ -154,16 +211,29 @@
 <img src="<%=ResolveUrl("~/")%>renewSes.aspx" alt="" name="renewSession" id="renewSession" style="display: none" />
 <script type="text/javascript">
 
-var g_OpenDialog = null;
+    var g_OpenDialog = null;
 
-$('#ctl00_UPDiagAux').panelUpdated(function() {
+    $('#ctl00_UPDiagAux').panelUpdated(function() {
 
-    if ($("#ctl00_titulo_aux").attr("title").length > 0) {
-        $("#dialog_aux").dialog({
+        if ($("#ctl00_titulo_aux").attr("title").length > 0) {
+            $("#dialog_aux").dialog({
+                modal: true,
+                autoOpen: true,
+                width: 'auto',
+                title: $("#ctl00_titulo_aux").attr("title"),
+                buttons: {
+                    "Aceptar": function() {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+    });
+
+    if ($("#<%= LMensaje.ClientID %>").html().length > 0) {
+        $("#dialog-message").dialog({
             modal: true,
-            autoOpen: true,
             width: 'auto',
-            title: $("#ctl00_titulo_aux").attr("title"),
             buttons: {
                 "Aceptar": function() {
                     $(this).dialog("close");
@@ -171,38 +241,25 @@ $('#ctl00_UPDiagAux').panelUpdated(function() {
             }
         });
     }
-});
 
-if ($("#ctl00_LMensaje").html().length > 0) {
-    $("#dialog-message").dialog({
-        modal: true,
-        width: 'auto',
-        buttons: {
-            "Aceptar": function() {
-                $(this).dialog("close");
-            }
-        }
+    $(document).ready(function() {
+        window.setInterval("$('#renewSession').attr('src', '" + $('#renewSession').attr('src') + "?par=' + Math.random())", 180000);
     });
-}
 
-$(document).ready(function() {
-    window.setInterval("$('#renewSession').attr('src', '" + $('#renewSession').attr('src') + "?par=' + Math.random())", 180000);
-});
+    prm = Sys.WebForms.PageRequestManager.getInstance();
+    prm.add_beginRequest(function(sender, args) {
+        if (g_OpenDialog) {
+            $(g_OpenDialog).dialog("close");
+            g_OpenDialog = null;
+        }
+        $("#loading").show();
+    });
 
-prm = Sys.WebForms.PageRequestManager.getInstance();
-prm.add_beginRequest(function(sender, args) {
-    if (g_OpenDialog) {
-        $(g_OpenDialog).dialog("close");
-        g_OpenDialog = null;
-    }
-    $("#loading").show();
-});
+    prm.add_pageLoaded(function(sender, args) {
 
-prm.add_pageLoaded(function(sender, args) {
-
-    inicio();
-    $("#loading").hide();
-});
+        inicio();
+        $("#loading").hide();
+    });
 
 </script>
 </body>

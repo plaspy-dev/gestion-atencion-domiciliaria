@@ -73,11 +73,15 @@
                 <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False" 
                     DataKeyNames="id" DataSourceID="SqlDataSource2" 
                     onselectedindexchanged="GResultado_SelectedIndexChanged">
+                    <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
-                    <asp:CommandField ButtonType="Image" 
-                        ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                    <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" 
-                        ShowDeleteButton="True" />
+                    <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                    <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                     <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" />
                     <asp:BoundField DataField="nombre" HeaderText="Concepto" 
                         SortExpression="nombre" >

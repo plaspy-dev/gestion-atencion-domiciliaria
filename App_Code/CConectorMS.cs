@@ -19,12 +19,6 @@ public class CConectorMS : ConectorMS
     }
     static public CConectorMS GetConector()
     {
-
-        if (HttpContext.Current.Session["ConectorMS"] == null)
-        {
-            CConectorMS conector = new CConectorMS();
-            HttpContext.Current.Session["ConectorMS"] = conector;
-        }
-        return (CConectorMS)HttpContext.Current.Session["ConectorMS"];
+        return new CConectorMS();
     }
 }

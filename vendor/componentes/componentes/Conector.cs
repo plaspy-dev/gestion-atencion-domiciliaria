@@ -27,6 +27,27 @@ public class Conector
 		m_szConexion = conexionstring;
 	}
 
+	~Conector()
+	{
+		try
+		{
+			if (m_pSQLReader != null)
+			{
+				m_pSQLReader.Close();
+			}
+			if (m_pSQLConector != null)
+			{
+				m_pSQLConector.Close();
+			}
+		}
+		catch (MySqlException)
+		{
+		}
+		catch (Exception)
+		{
+		}
+	}
+
 	public MySqlConnection GetConexion()
 	{
 		return m_pSQLConector;
@@ -87,7 +108,6 @@ public class Conector
 				ShowError(m_szLastError);
 				return false;
 			}
-			return true;
 		}
 		return true;
 	}
@@ -273,5 +293,50 @@ public class Conector
 	{
 		Usuario usuario = Usuario.GetUsuario();
 		return QueryMod(GetModificacion(usuario.GetID(), idDocumento));
+	}
+
+	public static string GetMySQLDateFormat(string text)
+	{
+		try
+		{
+			DateTime dateTime = Convert.ToDateTime(text);
+			bool flag = 0 == 0;
+			string text2 = ((dateTime.Month < 10) ? ("0" + dateTime.Month) : dateTime.Month.ToString());
+			string text3 = ((dateTime.Day < 10) ? ("0" + dateTime.Day) : dateTime.Day.ToString());
+			return dateTime.Year + "-" + text2 + "-" + text3;
+		}
+		catch (Exception)
+		{
+		}
+		return "";
+	}
+
+	public static string GetFromMySQLDate(object fecha)
+	{
+		try
+		{
+			return ((DateTime)fecha).ToShortDateString();
+		}
+		catch (Exception)
+		{
+		}
+		return "";
+	}
+
+	public bool SelectInDropDown(DropDownList lista, object valor, string query)
+	{
+		bool result = true;
+		lista.DataBind();
+		lista.SelectedIndex = -1;
+		ListItem listItem = lista.Items.FindByValue(valor.ToString());
+		if (listItem == null)
+		{
+			Conector conector = new Conector(m_szConexion);
+			listItem = new ListItem(conector.QueryString(query), valor.ToString());
+			lista.Items.Add(listItem);
+			result = false;
+		}
+		listItem.Selected = true;
+		return result;
 	}
 }

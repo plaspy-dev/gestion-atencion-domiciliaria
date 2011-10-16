@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Data;
 using System.Drawing.Design;
 using System.Web.UI;
 using System.Web.UI.Design.WebControls;
@@ -8,8 +9,8 @@ using System.Web.UI.WebControls;
 
 namespace SDG.Web.UI.WebControls;
 
-[Designer(typeof(CustomDataSourceDesigner))]
 [ParseChildren(true)]
+[Designer(typeof(CustomDataSourceDesigner))]
 [PersistChildren(false)]
 public class CustomDataSource : DataSourceControl
 {
@@ -29,8 +30,8 @@ public class CustomDataSource : DataSourceControl
 
 	protected CustomDataSourceView _view;
 
-	[DefaultValue("")]
 	[Category("ParentDataSource")]
+	[DefaultValue("")]
 	public string ParentDataSource
 	{
 		get
@@ -43,8 +44,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[Category("InsertCommand")]
 	[DefaultValue("")]
+	[Category("InsertCommand")]
 	public string InsertCommand
 	{
 		get
@@ -57,8 +58,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[Category("SelectCommand")]
 	[DefaultValue("")]
+	[Category("SelectCommand")]
 	public string SelectCommand
 	{
 		get
@@ -71,8 +72,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("DeleteCommand")]
+	[DefaultValue("")]
 	public string DeleteCommand
 	{
 		get
@@ -85,8 +86,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[Category("UpdateCommand")]
 	[DefaultValue("")]
+	[Category("UpdateCommand")]
 	public string UpdateCommand
 	{
 		get
@@ -99,8 +100,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("ConnectionString")]
+	[DefaultValue("")]
 	public string ConnectionString
 	{
 		get
@@ -113,8 +114,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("Data")]
+	[DefaultValue("")]
 	public string TypeName
 	{
 		get
@@ -250,6 +251,16 @@ public class CustomDataSource : DataSourceControl
 	public IEnumerable Select()
 	{
 		return View.Select(DataSourceSelectArguments.Empty);
+	}
+
+	public CustomDataSourceView GetView()
+	{
+		return View;
+	}
+
+	public DataTable GetTable()
+	{
+		return SessionState.Get(ID)?.dataTable;
 	}
 
 	public string[] GetQuerys()

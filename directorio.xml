@@ -1,11 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <paginas>
   <seccion>
-    <titulo>Seguimiento a pacientes</titulo>
+    <titulo>Gestión de Pacientes</titulo>
+    <pagina>
+      <titulo>Informes</titulo>
+      <url>~/paciente/informes.aspx</url>
+    </pagina>
     <pagina>
       <titulo>Pacientes</titulo>
       <url>~/paciente/paciente.aspx</url>
     </pagina>
+  </seccion>
+  <seccion>
+    <titulo>Seguimiento a pacientes</titulo>
     <pagina>
       <titulo>Hoja de ingreso</titulo>
       <url>~/paciente/ingreso.aspx</url>
@@ -32,13 +39,31 @@
     </pagina>
   </seccion>
   <seccion>
+    <titulo>RRHH</titulo>
+    <pagina>
+      <titulo>Informes</titulo>
+      <url>~/rh/Default.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Personal</titulo>
+      <url>~/rh/funcionario.aspx</url>
+    </pagina>
+  </seccion>
+  <seccion>
+    <titulo>Directorio</titulo>
+    <pagina>
+      <titulo>Directorio</titulo>
+      <url>~/directorio/Default.aspx</url>
+    </pagina>
+  </seccion>
+  <seccion>
     <titulo>Administrador</titulo>
     <pagina>
       <titulo>Parametros</titulo>
       <url>~/administrador/Default.aspx</url>
     </pagina>
     <pagina>
-      <titulo>Indice de Barthel</titulo>
+      <titulo>Índice de Barthel</titulo>
       <url>~/administrador/barthel.aspx</url>
     </pagina>
     <pagina>
@@ -48,6 +73,20 @@
     <pagina>
       <titulo>Grupos de usuarios</titulo>
       <url>~/administrador/grupos.aspx</url>
+    </pagina>
+  </seccion>
+  <seccion>
+    <titulo>Vehículos</titulo>
+    <pagina>
+      <titulo>Recorrido</titulo>
+      <url>~/vehiculos/recorrido.aspx</url>
+    </pagina>
+  </seccion>
+  <seccion>
+    <titulo>PHD</titulo>
+    <pagina>
+      <titulo>Programación</titulo>
+      <url>~/phd/programacion.aspx</url>
     </pagina>
   </seccion>
 </paginas>

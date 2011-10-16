@@ -12,6 +12,8 @@ public class CURLs
 
 	protected int m_nPermisos;
 
+	public bool m_bNativo;
+
 	public int Permisos
 	{
 		get
@@ -38,6 +40,7 @@ public class CURLs
 		m_szTitulo = titulo;
 		m_szParent = parent;
 		m_nPermisos = 0;
+		m_bNativo = false;
 	}
 
 	public CURLs(string url, string titulo, string parent, int permisos)
@@ -46,5 +49,11 @@ public class CURLs
 		m_szTitulo = titulo;
 		m_szParent = parent;
 		m_nPermisos = permisos;
+		m_bNativo = false;
+	}
+
+	public static string SwitchApp(string url, string nueva)
+	{
+		return url.Replace("~/", "/" + nueva + "/");
 	}
 }

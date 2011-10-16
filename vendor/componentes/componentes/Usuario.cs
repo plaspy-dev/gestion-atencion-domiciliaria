@@ -12,20 +12,33 @@ public class Usuario
 
 	protected string m_szID;
 
+	protected string m_szLogin;
+
 	protected Grupo m_pGrupo;
 
-	public Usuario(string id, string nombre, int grupo)
+	public Usuario(string id, string nombre, int grupo, string login)
 	{
 		m_szNombre = nombre;
 		m_nGrupo = grupo;
 		m_szID = id;
+		m_szLogin = login;
 		m_pGrupo = new Grupo();
 		HttpContext.Current.Session["Usuario"] = this;
 	}
 
+	public string GetLogin()
+	{
+		return m_szLogin;
+	}
+
+	public void CreateMenu(TreeView tree)
+	{
+		m_pGrupo.CreateMenu(tree, "", this);
+	}
+
 	public void CreateMenu(TreeView tree, string parametros)
 	{
-		m_pGrupo.CreateMenu(tree, parametros);
+		m_pGrupo.CreateMenu(tree, parametros, this);
 	}
 
 	public void SetPermiso(string url, int permiso)
@@ -141,7 +154,7 @@ public class Usuario
 		if (usuario == null)
 		{
 			string text = HttpUtility.UrlEncode(HttpContext.Current.Request.Url.AbsoluteUri);
-			HttpContext.Current.Response.Redirect("~/?from=" + text);
+			HttpContext.Current.Response.Redirect("~/Default.aspx?from=" + text);
 			HttpContext.Current.Response.End();
 		}
 		if (!usuario.CanAccess())
