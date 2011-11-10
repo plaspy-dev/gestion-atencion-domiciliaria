@@ -10,7 +10,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Text;
 using System.IO;
-using componentes;
+using SDG.Componentes;
 
 public partial class paciente_gastos : System.Web.UI.Page
 {

@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using System.Collections;
-using componentes;
+using SDG.Componentes;
 
 public partial class rh_funcionario : System.Web.UI.Page
 {
@@ -97,6 +97,8 @@ public partial class rh_funcionario : System.Web.UI.Page
                 query += "mteId";
                 query += "perFechaTermContrato";
                 query += "profId";
+                query += "perParentescoContacto";
+                query += "residencialocId";
 
                 CConectorMS conector = new CConectorMS();
 
@@ -145,7 +147,6 @@ public partial class rh_funcionario : System.Web.UI.Page
                     CPazySalvo.Checked = reader["perPazySalvo"].ToString()=="1" ? true : false;
                     DEstado.SelectedValue = reader["eEstId"].ToString();
                     DCargo.SelectedValue = reader["carId"].ToString();
-                    DTipoContrato.SelectedValue = reader["tipContId"].ToString();
                     TFechaContrato.Text = ConectorMS.GetDate(reader["perFechaContrato"]);
                     DArea.SelectedValue = reader["areaId"].ToString();
                     DNivelComplejidad.SelectedValue = reader["nivCompId"].ToString();
@@ -154,7 +155,11 @@ public partial class rh_funcionario : System.Web.UI.Page
                     DBanco.SelectedValue = reader["banId"].ToString();
                     DTerminacion.Text = reader["mteId"].ToString();
                     TFechaTerminacion.Text = ConectorMS.GetDate(reader["perFechaTermContrato"]);
-                    DProfesion.SelectedValue = reader["profId"].ToString();
+                    TParentesco.Text = reader["perParentescoContacto"].ToString();
+                    DLocalidadVivienda.SelectedValue = reader["residencialocId"].ToString();
+
+                    conector.SelectInDropDown(DTipoContrato, reader["tipContId"], "SELECT tipContDesc FROM admTipoContrato WHERE tipContId='" + reader["tipContId"].ToString() + "'");
+                    conector.SelectInDropDown(DProfesion, reader["profId"], "SELECT profNombre FROM admProfesion WHERE profId='" + reader["profId"].ToString() + "'");
 
                     ArrayList lista = (ArrayList)Session[Request.Url.AbsolutePath];
                     Query empresa= new Query("admInfoLaboral");
@@ -176,6 +181,13 @@ public partial class rh_funcionario : System.Web.UI.Page
                     }
                     GEmpresas.DataSource = lista;
                     GEmpresas.DataBind();
+
+
+                    GResultados.AllowPaging = false;
+                    GResultados.DataBind();
+                    LTotal.Text = GResultados.Rows.Count + " Sesiones";
+                    GResultados.AllowPaging = true;
+                    GResultados.DataBind();
                 }
             }
         }
@@ -229,6 +241,8 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["mteId"] = DTerminacion.SelectedValue;
         query["perFechaTermContrato"] = TFechaTerminacion.Text;
         query["profId"] = DProfesion.SelectedValue;
+        query["perParentescoContacto"] = TParentesco.Text;
+        query["residencialocId"] = DLocalidadVivienda.SelectedValue;
 
         CConectorMS conectorms = new CConectorMS();
 

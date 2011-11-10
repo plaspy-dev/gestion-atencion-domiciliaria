@@ -7,12 +7,22 @@ using System.Web.UI.WebControls;
 using System.ComponentModel;
 using System.Collections;
 using System.Data.SqlClient;
-using componentes;
+using SDG.Componentes;
 
 public partial class phd_novedad : System.Web.UI.UserControl
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.medico)
+        {
+            SNuevoServicio.SelectCommand = SNuevoServicio.SelectCommand.Replace("tpaTipoServicio=1", "tpaTipoServicio=3");
+            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "carId in (6,8,29,27,19,18,9,45)");
+        }
+        else if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.apoyo)
+        {
+            SNuevoServicio.SelectCommand = SNuevoServicio.SelectCommand.Replace("tpaTipoServicio=1", "tpaTipoServicio=2");
+            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "carId in (4,23)");
+        }
         BAceptar.Enabled= Usuario.GetUsuario().CanUpdate();
     }
     [Bindable(true), Category("Appearance"), DefaultValue("")]
@@ -80,12 +90,12 @@ public partial class phd_novedad : System.Web.UI.UserControl
         query["segFechaRegistro"] = "GETDATE()";
         query["novId"] = "2";
 
-        Query qprogramacion = new Query("phdProgramacion");
+        Query qprogramacion = new Query(ProgramacionTipo.GetNombreTabla());
 
         for (int i = 0; i < programacion.Length; i++)
         {
             query["prgId"] = programacion[i];
-            query["perIdAnt"] = conector.QueryString("SELECT perId FROM phdProgramacion WHERE prgId=" + programacion[i] + "");
+            query["perIdAnt"] = conector.QueryString("SELECT perId FROM " + ProgramacionTipo.GetNombreTabla() + " WHERE prgId=" + programacion[i] + "");
 
             if (TTipo.Text == "0")
             {
@@ -109,6 +119,7 @@ public partial class phd_novedad : System.Web.UI.UserControl
             else if (TTipo.Text == "3")
             {
                 query["cnoId"] = DCausa4.SelectedValue;
+                query["perId"] = "";
             }
             else if (TTipo.Text == "4")
             {

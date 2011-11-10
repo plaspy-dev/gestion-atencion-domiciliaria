@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace componentes;
+namespace SDG.Componentes;
 
 public class Query
 {

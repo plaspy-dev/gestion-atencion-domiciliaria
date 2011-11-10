@@ -1,6 +1,6 @@
 using System.Web;
 
-namespace componentes;
+namespace SDG.Componentes;
 
 public class CURLs
 {

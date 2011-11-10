@@ -7,7 +7,9 @@
 <head runat="server">
     <title></title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery.cookie.js"></script>
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery-ui-1.8.13.custom.min.js"></script>
+    <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery.ui.autocomplete.selectFirst.js"></script>
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery.ui.datepicker-es.js"></script>
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery-ui-numeric-min.js"></script>
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery.updatepanel.js"></script>
@@ -142,6 +144,10 @@
                             <div style="height:5px;"/>
                    
             </asp:Panel>
+            <div style="text-align:right;">
+    <span style="color: darkgray">Copyright &copy;2011 <a href="http://www.sdg.com.co"><font style="color: darkgray; text-decoration:none">Software Developers Group LTDA</font></a>.All Rights Reserved &nbsp;&nbsp;<br />
+    Versión <asp:Label ID="LVersion" runat="server" Text=""></asp:Label> &nbsp;&nbsp;</span>
+</div>
 </td></tr>
 </table>
 </td></tr>
@@ -243,7 +249,12 @@
     }
 
     $(document).ready(function() {
-        window.setInterval("$('#renewSession').attr('src', '" + $('#renewSession').attr('src') + "?par=' + Math.random())", 180000);
+        setInterval("$('#renewSession').attr('src', '" + $('#renewSession').attr('src') + "?par=' + Math.random())", 180000);
+        setInterval(function() {
+            var date = new Date();
+            date.setTime(date.getTime() + (600000)); // 10 minutos
+            $.cookie("contrasena", $.cookie("contrasena"), { expires: date });
+        }, 180000);
     });
 
     prm = Sys.WebForms.PageRequestManager.getInstance();

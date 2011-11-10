@@ -1,144 +1,16 @@
 ﻿<%@ Page Title="Programación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="programacion.aspx.cs" Inherits="phd_programacion" %>
-<%@ Register src="~/paciente/autorizaciones.ascx" tagname="autorizaciones" tagprefix="uc1" %>
-<%@ Register src="programacionc.ascx" tagname="programacion" tagprefix="uc2" %>
-<%@ Register src="novedad.ascx" tagname="novedad" tagprefix="uc3" %>
+<%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
+<%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
+<%@ Register src="~/programacion/programacionc.ascx" tagname="programacion" tagprefix="uc2" %>
+<%@ Register src="~/programacion/novedad.ascx" tagname="novedad" tagprefix="uc3" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<script type="text/javascript">
-    $(function() {
-        $("#<%= TPaciente.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPacienteI",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $.goURL("id=" + ui.item.value);
-                return false;
-            }
-        });
-    });
-</script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
-    Paciente: <asp:TextBox runat="server" ID="TPaciente"></asp:TextBox><asp:Label runat="server" Font-Bold="true" ID="LPaciente"></asp:Label>
+    <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
     <asp:Panel runat="server" id="PDatos" Visible="false" >
-    <asp:HiddenField runat="server" ID="HId" />
-    <table style="width: 100%;" border="1">
-        <tr>
-            <td colspan="4" style="text-align: center" class="celdaTitulo">Información personal
-            </td>
-            <td style="text-align: center" class="celdaTitulo">
-                Servicios
-            </td>
-        </tr>
-       <tr>
-            <td>
-                Fecha Nacimiento
-            </td>
-            <td colspan="2">
-                    <asp:Label ID="LFechaNacimiento" Font-Bold="true" runat="server" Text=""></asp:Label> - <asp:Label Font-Bold="true" ID="LEdad" runat="server" Text=""></asp:Label>
-            </td>
-            <td>
-                Sexo
-                <asp:Label ID="LSexo" Font-Bold="true" runat="server" Text=""></asp:Label>
-            </td>
-            <td rowspan="8" valign="top">
-                <uc1:autorizaciones ID="UCAutorizaciones" runat="server" />
-            </td>
-       </tr>
-        <tr>
-            <td>
-                Asegurador
-            </td>
-            <td>
-                <asp:Label ID="LAsegurador" runat="server" Font-Bold="true" Text=""></asp:Label>
-            </td>
-            <td>
-                Carné
-            </td>
-            <td>
-                <asp:Label ID="LCarnet" runat="server" Font-Bold="true" Text=""></asp:Label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Dirección
-            </td>
-            <td>
-                <asp:Label ID="LDireccion" runat="server" Font-Bold="true" Text=""></asp:Label>
-            </td>
-            <td>
-                Barrio
-            </td>
-            <td style="margin-left: 40px">
-                <asp:Label ID="LBarrio" runat="server" Font-Bold="true" Text=""></asp:Label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Teléfono
-            </td>
-            <td>
-                <asp:Label ID="LTelefono" runat="server" Font-Bold="true" Text=""></asp:Label>
-            </td>
-            <td>
-                Celular
-            </td>
-            <td>
-                <asp:Label ID="LMovil" runat="server" Font-Bold="true" Text=""></asp:Label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Pago Dir
-            </td>
-            <td>
-                <asp:Label ID="LTipoPago" runat="server" Font-Bold="true" Text=""></asp:Label>
-            </td>
-            <td>
-                Estancia
-            </td>
-            <td>
-                <asp:Label ID="LEstancia" runat="server" Font-Bold="true" Text=""></asp:Label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Familiar</td>
-            <td>
-                <asp:Label ID="LFamiliar" runat="server" Font-Bold="true" Text=""></asp:Label>
-            </td>
-            <td>
-                Parentesco
-            </td>
-            <td>
-                <asp:Label ID="LParentesco" runat="server" Font-Bold="true" Text=""></asp:Label>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="4">
-                <asp:Label ID="LCIE10" runat="server" Font-Bold="true" Text=""></asp:Label>
-            </td>
-        </tr>
-        </table>
-        <table class="styleTb" width="100%">
+        <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
+        <table width="100%">
             <tr>
                 <td style="text-align: left" width="100%" colspan="2" class="celdaTitulo">
                     Historial de Programaciones
@@ -212,7 +84,7 @@
                                     DeleteCommand="DELETE phdProgramacion where prgId=@prgId"
                                     >
                           <SelectParameters>
-                            <asp:ControlParameter ControlID="HId" Name="paciente" PropertyName="Value" />
+                            <asp:ControlParameter ControlID="CCDetallePaciente" Name="paciente" PropertyName="IdPaciente" />
                             <asp:ControlParameter ControlID="DProgramaciones" PropertyName="SelectedValue" Name="actividad" />
                           </SelectParameters>
                     </asp:SqlDataSource>
@@ -233,4 +105,3 @@
         <uc2:programacion ID="UCProgramacion" runat="server" Visible="False" OnAceptarClicked="UCProgramacion_AceptarClicked" OnCancelarClicked="UCProgramacion_CancelarClicked" />
         <uc3:novedad ID="UCNovedad" runat="server" OnAceptarClicked="UCNovedad_AceptarClicked" Visible="false" OnCancelarClicked="UCNovedad_CancelarClicked" />
 </asp:Content>
-

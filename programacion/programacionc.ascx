@@ -226,7 +226,8 @@
                                 DataSourceID="SProfesional" DataTextField="nombre"
                                 DataValueField="id">
                                 <asp:ListItem Value="" Text=""></asp:ListItem>
-                                </asp:DropDownList><asp:RequiredFieldValidator ValidationGroup="CProgramacion" ControlToValidate="DProfesional" ErrorMessage="Por favor seleccione un profesional." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                </asp:DropDownList>
+                <asp:RequiredFieldValidator ValidationGroup="CProgramacion" InitialValue="0" ControlToValidate="DProfesional" ErrorMessage="Por favor seleccione un profesional." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <asp:SqlDataSource ID="SProfesional" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
                     SelectCommand="(SELECT '' AS id,'' AS nombre) UNION (SELECT perId id,perNombre nombre FROM dbo.admPersonalHS where eEstId=1 and (areaid=2 or carId in (8,11,25,27))) ORDER BY 2">

@@ -4,13 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using componentes;
+using SDG.Componentes;
 using MySql.Data.MySqlClient;
 
 public partial class MasterPageI : System.Web.UI.MasterPage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        LVersion.Text = Version.GetVersion();
+
         Usuario usuario = Usuario.GetUsuario();
         usuario.CreateMenu(TMenu, Session["parametros"]==null ? "" : Session["parametros"].ToString());
 
@@ -33,6 +35,9 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             
             Session["printgridview"] = null;
         }
+        // actualizamos la contraseña
+        Response.Cookies["contrasena"].Value = Request.Cookies["contrasena"].Value;
+        Response.Cookies["contrasena"].Expires = DateTime.Now.AddMinutes(10);
     }
 
     public void SetTitulo(string titulo)

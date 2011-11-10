@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 using System.Collections;
-using componentes;
+using SDG.Componentes;
 
 public partial class modificaciones : System.Web.UI.UserControl
 {

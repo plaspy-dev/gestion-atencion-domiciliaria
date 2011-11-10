@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections;
 using MySql.Data.MySqlClient;
-using componentes;
+using SDG.Componentes;
 
 public partial class administrador_grupos : System.Web.UI.Page
 {

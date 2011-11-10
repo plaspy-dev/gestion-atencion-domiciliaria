@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 using System.Web.Security;
 using System.Data.SqlClient;
-using componentes;
+using SDG.Componentes;
 using System.Configuration;
 
 public partial class _Default : System.Web.UI.Page 
@@ -27,7 +27,7 @@ public partial class _Default : System.Web.UI.Page
                 Response.End();
             }
             m_EUsuario.Text = CConector.GetCookie("loginOrganizationExample15");
-            m_EContrasena.Text = CConector.GetCookie("contrasena");
+            m_EContrasena.Text = HttpUtility.UrlDecode(CConector.GetCookie("contrasena"));
             if (m_EContrasena.Text.Length > 0)
             {
                 IngresarOld();

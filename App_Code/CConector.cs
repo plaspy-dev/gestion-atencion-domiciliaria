@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using MySql.Data.MySqlClient;
-using componentes;
+using SDG.Componentes;
 
 public class CConector : Conector
 {

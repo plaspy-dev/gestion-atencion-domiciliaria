@@ -26,7 +26,7 @@ $project = Get-ChildItem -LiteralPath (Join-Path $library 'source') -Filter '*.c
 if (@($project).Count -ne 1) { throw 'The recovered library project was not found.' }
 dotnet build $project.FullName --configuration Release -m:1
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-Copy-Item -LiteralPath (Join-Path $library 'source/bin/Release/net48/Componentes.dll') -Destination (Join-Path $site 'Bin')
+Copy-Item -LiteralPath (Join-Path $library 'source/bin/Release/net48/SDG.Componentes.dll') -Destination (Join-Path $site 'Bin')
 $compiler = Join-Path $env:WINDIR 'Microsoft.NET/Framework/v4.0.30319/aspnet_compiler.exe'
 & $compiler -v / -p $site -f (Join-Path $target 'compiled')
 exit $LASTEXITCODE

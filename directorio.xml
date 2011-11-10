@@ -89,4 +89,18 @@
       <url>~/phd/programacion.aspx</url>
     </pagina>
   </seccion>
+  <seccion>
+    <titulo>Médico Domiciliario</titulo>
+    <pagina>
+      <titulo>Programación</titulo>
+      <url>~/medico/programacion.aspx</url>
+    </pagina>
+  </seccion>
+  <seccion>
+    <titulo>Apoyo Terapéutico</titulo>
+    <pagina>
+      <titulo>Programación</titulo>
+      <url>~/apoyo/programacion.aspx</url>
+    </pagina>
+  </seccion>
 </paginas>

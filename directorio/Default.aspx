@@ -1,23 +1,6 @@
 ﻿<%@ Page Title="Directorio" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="directorio_Default" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <style type="text/css">
-	.ui-autocomplete {
-		max-height: 500px;
-		overflow-y: auto;
-		/* prevent horizontal scrollbar */
-		overflow-x: hidden;
-		/* add padding to account for vertical scrollbar */
-		padding-right: 20px;
-		text-align: left;
-	}
-	/* IE 6 doesn't support max-height
-	 * we use height instead, but this forces the menu to always be this tall
-	 */
-	* html .ui-autocomplete {
-		height: 500px;
-	}
-</style>
 <script type="text/javascript">
     function iniciopagina() {
         
@@ -94,7 +77,7 @@
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SCargo" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT carId AS id,carDescripcion AS nombre FROM admCargo">
+                    SelectCommand="SELECT carId AS id,carDescripcion AS nombre FROM admCargo ORDER BY carDescripcion">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -107,7 +90,7 @@
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SDisponibilidad" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT dispId AS id,dispDescripcion AS nombre FROM admdisponibilidad">
+                    SelectCommand="SELECT dispId AS id,dispDescripcion AS nombre FROM admdisponibilidad ORDER BY dispDescripcion">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -189,7 +172,16 @@
                     LEFT JOIN admDisponibilidad on admDisponibilidad.dispId = per.dispId 
                     LEFT JOIN admEstadoEstancia ON (admEstadoEstancia.eEstId=per.eEstId) 
                     OUTER APPLY (
-                        SELECT TOP 1 atxProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE atxProgramacion.perId=per.perId AND atxProgramacion.prgFechaProg>getdate() ORDER BY atxProgramacion.prgFechaProg
+                        SELECT TOP 1 * FROM
+                        ((SELECT atxProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE 
+                        atxProgramacion.perId=per.perId AND 
+                        atxProgramacion.prgFechaProg>getdate() 
+                        ) UNION (SELECT phdProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre FROM phdProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) WHERE 
+                        phdProgramacion.perId=per.perId AND 
+                        phdProgramacion.prgFechaProg>getdate() 
+                        ) UNION (SELECT phdProgramacionMD.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre FROM phdProgramacionMD LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacionMD.pacId) WHERE 
+                        phdProgramacionMD.perId=per.perId AND 
+                        phdProgramacionMD.prgFechaProg>getdate())) AS a ORDER BY fecha
                     ) AS prog
                     WHERE 
                     (@id=0 OR @id=per.perId) 

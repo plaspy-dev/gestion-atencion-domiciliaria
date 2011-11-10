@@ -7,12 +7,37 @@ using System.Web.UI.WebControls;
 using System.ComponentModel;
 using System.Collections;
 using System.Data.SqlClient;
-using componentes;
+using SDG.Componentes;
 
 public partial class phd_programacionc : System.Web.UI.UserControl
 {
+    public ProgramacionTipo.TipoServicios TipoServicio
+    {
+        get
+        {
+            return ProgramacionTipo.TipoServicio;
+        }
+        set
+        {
+            ProgramacionTipo.TipoServicio = value;
+        }
+    }
+
     protected void Page_Load(object sender, EventArgs e)
     {
+        SAutorizacion.SelectCommand = SAutorizacion.SelectCommand.Replace("phdProgramacion", ProgramacionTipo.GetNombreTabla());
+        SActividad.SelectCommand = SActividad.SelectCommand.Replace("phdProgramacion", ProgramacionTipo.GetNombreTabla());
+        if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.medico)
+        {
+            SAutorizacion.SelectCommand = SAutorizacion.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=3");
+            SActividad.SelectCommand = SActividad.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=3");
+            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "carId in (6,8,29,27,19,18,9,45)");
+        } else  if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.apoyo)
+        {
+            SAutorizacion.SelectCommand = SAutorizacion.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=2");
+            SActividad.SelectCommand = SActividad.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=2");
+            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "carId in (4,23)");
+        }
         if(!IsPostBack) {
             Session["phd_programacion"] = null;
         }
@@ -26,7 +51,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
             HId.Value = value;
             if (HId.Value.Length > 0)
             {
-                Query query = new Query("phdProgramacion");
+                Query query = new Query(ProgramacionTipo.GetNombreTabla());
 
                 query += "prgFechaProg";
                 query += "perId";
@@ -41,7 +66,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                 if (reader != null && reader.Read())
                 {
                     CRecurrente.Checked = false;
-                    TFecha.Text = reader["prgFechaProg"].ToString();
+                    TFechaFinal.Text= TFecha.Text = reader["prgFechaProg"].ToString();
                     TObservaciones.Text = reader["prgObservaciones"].ToString();
                     TSesiones.Text = reader["prgNumSesion"].ToString();
 
@@ -207,7 +232,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         Usuario usuario = Usuario.GetUsuario();
         CConectorMS conector = new CConectorMS();
 
-        Query query = new Query("phdProgramacion");
+        Query query = new Query(ProgramacionTipo.GetNombreTabla());
 
         query["pacId"] = HIdPaciente.Value;
         query["perId"] = DProfesional.SelectedValue;

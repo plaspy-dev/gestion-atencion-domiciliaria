@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using componentes;
+using SDG.Componentes;
 
 public partial class paciente_informes : System.Web.UI.Page
 {

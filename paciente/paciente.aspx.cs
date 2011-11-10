@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using System.Text;
 using System.IO;
-using componentes;
+using SDG.Componentes;
 
 public partial class seguimiento_paciente : System.Web.UI.Page
 {

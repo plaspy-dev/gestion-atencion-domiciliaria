@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 using System.Text;
 using System.IO;
 using MySql.Data.MySqlClient;
-using componentes;
+using SDG.Componentes;
 
 public partial class paciente_ingreso : System.Web.UI.Page
 {

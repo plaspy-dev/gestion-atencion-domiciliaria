@@ -4,7 +4,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace componentes;
+namespace SDG.Componentes;
 
 public class ConectorMS
 {
@@ -260,6 +260,11 @@ public class ConectorMS
 		return fecha.Substring(0, 10);
 	}
 
+	public bool SelectInDropDown(DropDownList lista, object valor)
+	{
+		return SelectInDropDown(lista, valor, "");
+	}
+
 	public bool SelectInDropDown(DropDownList lista, object valor, string query)
 	{
 		bool result = true;
@@ -269,7 +274,7 @@ public class ConectorMS
 		if (listItem == null)
 		{
 			ConectorMS conectorMS = new ConectorMS(m_szConexion);
-			listItem = new ListItem(conectorMS.QueryString(query), valor.ToString());
+			listItem = new ListItem((query.Length > 0) ? conectorMS.QueryString(query) : "", valor.ToString());
 			lista.Items.Add(listItem);
 			result = false;
 		}

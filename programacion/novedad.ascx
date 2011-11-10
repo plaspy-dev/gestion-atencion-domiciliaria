@@ -85,7 +85,7 @@
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SNuevoServicio" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT actId id,actDescripcion nombre FROM dbo.phdActividad INNER JOIN dbo.phdTipoActividad ON phdActividad.tpaId = phdTipoActividad.tpaId where tpaTipoServicio=1 order by 2">
+                    SelectCommand="SELECT actId id,actDescripcion nombre FROM dbo.phdActividad INNER JOIN dbo.phdTipoActividad ON phdActividad.tpaId = phdTipoActividad.tpaId WHERE tpaTipoServicio=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
             </tr>
         </table>

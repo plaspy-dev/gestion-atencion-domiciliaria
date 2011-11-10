@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace componentes;
+namespace SDG.Componentes;
 
 public class crypt
 {

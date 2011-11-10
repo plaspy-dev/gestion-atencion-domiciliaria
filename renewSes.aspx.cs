@@ -20,6 +20,7 @@ public partial class renewSes : System.Web.UI.Page
     {
         Response.AddHeader("ContentType", "image/gif");
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
+        // actualizamos la contraseña
         Response.BinaryWrite(gif);
         Response.End();
     }

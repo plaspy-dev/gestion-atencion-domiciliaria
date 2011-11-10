@@ -2,7 +2,7 @@ using System.Collections;
 using System.Web;
 using System.Web.UI.WebControls;
 
-namespace componentes;
+namespace SDG.Componentes;
 
 public class Usuario
 {

@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Configuration;
-using componentes;
+using SDG.Componentes;
 
 public partial class rh_Default : System.Web.UI.Page
 {

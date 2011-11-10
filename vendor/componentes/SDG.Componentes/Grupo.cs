@@ -4,7 +4,7 @@ using System.Web;
 using System.Web.UI.WebControls;
 using System.Xml;
 
-namespace componentes;
+namespace SDG.Componentes;
 
 public class Grupo
 {
@@ -191,7 +191,7 @@ public class Grupo
 		m_bInicio = false;
 		if (!CreateMenu(tree, parametros, nativo: false, usuario))
 		{
-			m_bInicio = false;
+			m_bInicio = true;
 		}
 		CreateMenu(tree, parametros, nativo: true, usuario);
 	}

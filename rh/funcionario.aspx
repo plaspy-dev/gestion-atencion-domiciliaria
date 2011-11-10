@@ -3,7 +3,13 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <script type="text/javascript">
         $(function() {
-            $("#tabpersonal").tabs();
+            $("#tabpersonal").tabs({
+                cookie: {
+                // store cookie for a day, without, it would be a session cookie
+                    name: 'tabs',
+                    expires: 1
+                }
+            });
             $("#<%= TApellidos.ClientID %>,#<%= TNombres.ClientID %>,#<%= TDocumento.ClientID %>").autocomplete({
                 source: function(request, response) {
                     $.ajax({
@@ -42,25 +48,24 @@
                 <li><a href="#tabs2">Detalles de Contrato</a></li>
                 <li><a href="#tabs3">Info Profesional</a></li>
                 <li><a href="#tabs4">Info Laboral</a></li>
+                <li><a href="#tabs5">Sesiones programadas</a></li>
             </ul>
             <div id="tabs1">
                 <table class="style1">
                     <tr>
                         <td>
-                            Apellidos
-                        </td>
+                            Apellidos</td>
                         <td>
                             <asp:TextBox ID="TApellidos" runat="server" ></asp:TextBox>
                             <asp:RequiredFieldValidator ControlToValidate="TApellidos" ErrorMessage="Por favor ingrese un apellido." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         </td>
                         <td>
-                            Nombres
-                        </td>
+                            Nombres</td>
                         <td>
                             <asp:TextBox ID="TNombres" runat="server"></asp:TextBox>
                             <asp:RequiredFieldValidator ControlToValidate="TNombres" ErrorMessage="Por favor ingrese un nombre." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         </td>
-                        <td rowspan="13" valign="top">
+                        <td rowspan="15" valign="top">
                             <asp:ImageButton ID="imbFoto" runat="server" Height="130" Width="130" BorderWidth="1"/>
                         <br />
                             <asp:LinkButton ID="lnkElimFoto" runat="server">Eliminar Foto</asp:LinkButton>
@@ -71,8 +76,7 @@
                         </td>                        
                     </tr>
                     <tr><td>
-                    Fecha de Ingreso
-                    </td>
+                    Fecha de Ingreso</td>
                     <td>
                         <asp:TextBox ID="TFIngreso" CssClass="fecha" runat="server"></asp:TextBox>
                         <asp:RequiredFieldValidator ControlToValidate="TFIngreso" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator3" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
@@ -81,8 +85,7 @@
                     </tr>
                     <tr>
                         <td>
-                            Documento
-                        </td>
+                            Documento</td>
                         <td>
                             <asp:TextBox ID="TDocumento" runat="server"></asp:TextBox>
                             <asp:RequiredFieldValidator ControlToValidate="TDocumento" ErrorMessage="Por favor ingrese un documento." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
@@ -92,22 +95,19 @@
                                 ValidationExpression="[0-9]{0,20}">*</asp:RegularExpressionValidator>
                         </td>
                         <td>
-                           Lugar Expedición
-                        </td>
+                           Lugar Expedición</td>
                         <td>
                             <asp:TextBox ID="TLExpedicion" runat="server"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            Libreta Militar
-                        </td>
+                            Libreta Militar</td>
                         <td>
                             <asp:TextBox ID="TLMilitar" runat="server" CssClass="entero"></asp:TextBox>
                         </td>
                         <td>
-                            Distrito
-                        </td>
+                            Distrito</td>
                         <td>
                             <asp:TextBox ID="TDMilitar" runat="server" CssClass="entero" Width="44px"></asp:TextBox>
                         </td>
@@ -120,8 +120,7 @@
                             <asp:TextBox ID="TPasadoJudicial" runat="server"></asp:TextBox>
                         </td>
                         <td>
-                            Fec. Pasado Judicial
-                        </td>
+                            Fec. Pasado Judicial</td>
                         <td>
                             <asp:TextBox ID="TFPasadoJudicial" runat="server" CssClass="fecha"></asp:TextBox>
                         </td>
@@ -131,30 +130,26 @@
                             <asp:CheckBox ID="CTarjetaProfesional" runat="server" Text="Tarjeta profesional" />
                         </td>
                         <td>
-                            Num Tarjeta Prof.
-                        </td>
+                            Num Tarjeta Prof.</td>
                         <td>
                             <asp:TextBox ID="TTarjetaNumero" runat="server"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            Grupo Sanguíneo
-                        </td>
+                            Grupo Sanguíneo</td>
                         <td>
                             <asp:TextBox ID="TGrupoSanguineo" runat="server" Width="38px"></asp:TextBox>
                         </td>
                         <td>
-                            RH
-                        </td>
+                            RH</td>
                         <td>
                             <asp:TextBox ID="TRH" runat="server" Width="38px"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            Género
-                        </td>
+                            Género</td>
                         <td>
                             <asp:DropDownList ID="DSexo" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SSexo" DataTextField="nombre" DataValueField="id">
@@ -166,8 +161,7 @@
                             </asp:SqlDataSource>
                         </td>
                         <td>
-                            Fecha Nacimiento
-                        </td>
+                            Fecha Nacimiento</td>
                         <td>
                             <asp:TextBox ID="TFechaNacimiento" CssClass="fecha" runat="server"></asp:TextBox>
                             <asp:RangeValidator MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" runat="server" ErrorMessage="Por favor ingrese una fecha valida." Display="Dynamic" ControlToValidate="TFechaNacimiento" Type="Date">*</asp:RangeValidator>
@@ -175,43 +169,50 @@
                     </tr>
                     <tr>
                         <td>
-                            Dirección
-                        </td>
+                            Dirección</td>
                         <td>
                             <asp:TextBox ID="TDireccion" runat="server"></asp:TextBox>
                         </td>
                         <td>
-                            Barrio
-                        </td>
+                            Barrio</td>
                         <td colspan="2">
                             <asp:TextBox ID="TBarrio" runat="server"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            Teléfono
-                        </td>
+                            &nbsp;</td>
+                        <td>
+                            &nbsp;</td>
+                        <td>
+                            Localidad</td>
+                        <td colspan="2">
+                            <asp:DropDownList ID="DLocalidadVivienda" runat="server" AppendDataBoundItems="true" 
+                                DataSourceID="SLocalidad" DataTextField="nombre" DataValueField="id">
+                                <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
+                            </asp:DropDownList></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Teléfono</td>
                         <td>
                             <asp:TextBox runat="server" ID="TTelefono"></asp:TextBox>
                         </td>
                         <td>
-                            Teléfono1
-                        </td>
+                            Teléfono1</td>
                         <td>
                             <asp:TextBox runat="server" ID="TTelefono2"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            Celular
-                        </td>
+                            Celular</td>
                         <td>
                             <asp:TextBox runat="server" ID="TMovil" ></asp:TextBox>
                             <asp:RequiredFieldValidator ControlToValidate="TMovil" ErrorMessage="Por favor ingrese un teléfono movil." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         </td>
                         <td>
-                            Correo electrónico
-                        </td>
+                            Correo electrónico</td>
                         <td>
                             <asp:TextBox runat="server" ID="TEMail"></asp:TextBox>
                             <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" 
@@ -222,8 +223,7 @@
                     </tr>
                     <tr>
                         <td>
-                            Estado Civil
-                        </td>
+                            Estado Civil</td>
                         <td>
                             <asp:DropDownList ID="DEstadoCivil" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SEstadoCivil" DataTextField="nombre" DataValueField="id">
@@ -231,13 +231,27 @@
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SEstadoCivil" runat="server" 
                                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT estCivilId id, estCivDescripcion nombre FROM dbo.admEstadoCivil">
+                                SelectCommand="SELECT estCivilId id, estCivDescripcion nombre,estCivCompanero companero FROM dbo.admEstadoCivil">
                             </asp:SqlDataSource>
                             <asp:Label ID="Label21" runat="server" Text="Num. Hijos"></asp:Label>
                             <asp:TextBox runat="server" ID="THijos" CssClass="entero" Width="30px" MaxLength="2"></asp:TextBox>
+                            <script type="text/javascript">
+                                $(function () {
+                                    var com = new Array();
+                                    <asp:Repeater ID="RCompañero" runat="server" DataSourceID="SEstadoCivil">
+                                        <ItemTemplate>com[<%# Eval("id") %>]='<%# Eval("companero") %>';</ItemTemplate>
+                                    </asp:Repeater>
+                                    $("#<%= DEstadoCivil.ClientID %>").change(function() {
+                                        var temp= com[$(this).val()];
+                                        if(temp==null || temp.length==0)
+                                            temp="Cónyugue";
+                                        $("#<%= LConyugue.ClientID %>").text(temp);
+                                    }).change();
+                                });
+                            </script>
                         </td>
                         <td>
-                            Nombre Cónyuge
+                            Nombre <asp:Label ID="LConyugue" runat="server" Text=""></asp:Label>
                         </td>
                         <td>
                             <asp:TextBox runat="server" ID="TConyuge"></asp:TextBox>
@@ -245,8 +259,7 @@
                     </tr>
                     <tr>
                         <td>
-                            Persona Contacto
-                        </td>
+                            Persona Contacto</td>
                         <td>
                             <asp:TextBox runat="server" ID="TContacto"></asp:TextBox>
                         </td>
@@ -259,8 +272,18 @@
                     </tr>
                     <tr>
                         <td>
-                            EPS
+                            Parentesco contacto</td>
+                        <td>
+                            <asp:TextBox ID="TParentesco" runat="server"></asp:TextBox>
                         </td>
+                        <td>
+                            &nbsp;</td>
+                        <td colspan="2">
+                            &nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            EPS</td>
                         <td>
                             <asp:DropDownList ID="DEPS" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SEPS" DataTextField="nombre" DataValueField="id">
@@ -287,8 +310,7 @@
                     </tr>
                     <tr>
                         <td>
-                            ARP
-                        </td>
+                            ARP</td>
                         <td>
                             <asp:DropDownList ID="DARP" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SARP" DataTextField="nombre" DataValueField="id">
@@ -574,6 +596,52 @@
                         </td>
                     </tr>
                 </table>
+            </div>
+            <div id="tabs5">
+                <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
+                    AutoGenerateColumns="False" EmptyDataText="No se encontraron sesiones" 
+                    AllowPaging="True" PageSize="20" AllowSorting="True" >
+                    <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                    <Columns>
+                        <asp:BoundField HeaderText="Fecha" DataField="fecha" SortExpression="fecha" DataFormatString="{0:d}"/>
+                        <asp:BoundField HeaderText="Paciente" DataField="nombre" SortExpression="nombre"/>
+                        <asp:BoundField HeaderText="Actividad" DataField="act" SortExpression="act"/>
+                    </Columns>
+                </asp:GridView>
+                <div style="text-align: right;">
+                    <asp:Label ID="LTotal" runat="server" Text=""></asp:Label>
+                </div>
+                <asp:SqlDataSource ID="SResultados" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                        SelectCommand="SELECT * FROM
+                                ((SELECT atxProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre, phdActividad.actDescripcion AS act
+                                FROM atxProgramacion 
+                                LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) 
+                                LEFT JOIN phdActividad ON (phdActividad.actId=atxProgramacion.actId)
+                                WHERE 
+                                atxProgramacion.perId=@perId
+                                ) UNION (SELECT phdProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre, phdActividad.actDescripcion AS act
+                                FROM phdProgramacion 
+                                LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) 
+                                LEFT JOIN phdActividad ON (phdActividad.actId=phdProgramacion.actId)
+                                WHERE 
+                                phdProgramacion.perId=@perId
+                                ) UNION (SELECT phdProgramacionMD.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre, phdActividad.actDescripcion AS act
+                                FROM phdProgramacionMD 
+                                LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacionMD.pacId)
+                                LEFT JOIN phdActividad ON (phdActividad.actId=phdProgramacionMD.actId)
+                                WHERE 
+                                phdProgramacionMD.perId=@perId
+                                )) AS a ORDER BY fecha DESC">
+                         <SelectParameters>
+                            <asp:ControlParameter ControlID="HId" PropertyName="Value" Name="perId" DefaultValue="-1" />
+                         </SelectParameters>
+            </asp:SqlDataSource>
             </div>
         </div>
         <div style="text-align: right">
