@@ -246,7 +246,7 @@
                                         if(temp==null || temp.length==0)
                                             temp="Cónyugue";
                                         $("#<%= LConyugue.ClientID %>").text(temp);
-                                    }).change();
+                                    }).keypress(function() { $(this).change(); }).change();
                                 });
                             </script>
                         </td>

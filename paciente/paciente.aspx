@@ -129,10 +129,6 @@
                 Documento
                 <asp:TextBox runat="server" ID="TDocumento"></asp:TextBox>
                 <asp:RequiredFieldValidator ControlToValidate="TDocumento" ErrorMessage="Por favor ingrese un documento." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                <asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" 
-                    ErrorMessage="Por favor ingrese un numero valido." Display="Dynamic" 
-                    SetFocusOnError="true" ControlToValidate="TDocumento" 
-                    ValidationExpression="[0-9]{0,20}">*</asp:RegularExpressionValidator>
             </td>
             <td >
                 Primer Apellido
@@ -268,7 +264,7 @@
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SLocalidad" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="select locId id, locDescripcion nombre from admLocalidad">
+                    SelectCommand="SELECT locId id, locDescripcion nombre FROM admLocalidad">
                 </asp:SqlDataSource>
             </td>
             <td colspan="1">

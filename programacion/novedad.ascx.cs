@@ -21,7 +21,7 @@ public partial class phd_novedad : System.Web.UI.UserControl
         else if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.apoyo)
         {
             SNuevoServicio.SelectCommand = SNuevoServicio.SelectCommand.Replace("tpaTipoServicio=1", "tpaTipoServicio=2");
-            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "carId in (4,23)");
+            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "(areaid=1 OR carId IN (4,23)");
         }
         BAceptar.Enabled= Usuario.GetUsuario().CanUpdate();
     }
@@ -119,7 +119,7 @@ public partial class phd_novedad : System.Web.UI.UserControl
             else if (TTipo.Text == "3")
             {
                 query["cnoId"] = DCausa4.SelectedValue;
-                query["perId"] = "";
+                qprogramacion["perId"] = "0";
             }
             else if (TTipo.Text == "4")
             {

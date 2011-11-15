@@ -109,7 +109,7 @@
                                 WHERE 
                                 phdAutorizacion.autActivo=1
                                 AND phdAutorizacion.pacId=@paciente
-                                AND convert(datetime,convert(varchar(10),getdate(),112),112) BETWEEN autFecha AND isnull(autFechaVenc+30,autFecha+60)
+                                AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
                                 AND phdTipoActividad.tpaTipoServicio=1 
                                 AND
                                 phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(phdProgramacion.prgNumSesion),0) FROM phdProgramacion WHERE phdProgramacion.pacId=phdAutorizacion.pacId AND phdProgramacion.autNumero=phdAutorizacion.autNumero AND phdProgramacion.actId=phdDetalleAutorizacion.actId)

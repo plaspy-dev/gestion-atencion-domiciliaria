@@ -74,7 +74,27 @@ public class servicios : System.Web.Services.WebService
         List<CJSon> lista = new List<CJSon>();
 
         CConectorMS conector = new CConectorMS();
-        SqlDataReader reader = conector.Query("SELECT TOP 100 pacId id,pacDocumento AS documento, pacPNombre + ' ' + isnull(pacSNombre,'') + ' ' + pacPapellido + ' ' + isnull(pacSApellido, '') AS nombres,EstId AS estado FROM phdPaciente WHERE pacDocumento LIKE '%" + q + "%' OR (pacPNombre + ' ' + isnull(pacSNombre,'') + ' ' + pacPapellido + ' ' + isnull(pacSApellido, '')) LIKE '%" + q + "%' ORDER BY EstId,nombres");
+        
+        string query = "SELECT TOP 100 pacId id,pacDocumento AS documento, pacPNombre + ' ' + isnull(pacSNombre,'') + ' ' + pacPapellido + ' ' + isnull(pacSApellido, '') AS nombres,EstId AS estado FROM phdPaciente WHERE ";
+        string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
+
+        if (split.Length == 1)
+        { // solo un dato puede ser un documento
+            query += "pacDocumento LIKE '%" + q.Trim() + "%' OR ";
+        }
+        query += "(";
+
+        for(int i=0; i<split.Length; i++) {
+
+            if(split[i].Length>0) { // verificamos que no este vacio
+
+                if (i > 0)
+                    query += " AND ";
+                query += String.Format(" (pacPNombre LIKE '%{0}%' OR pacSNombre LIKE '%{0}%' OR pacPapellido LIKE '%{0}%' OR pacSApellido LIKE '%{0}%') ", split[i]);
+            }
+        }
+        query += ") ORDER BY EstId,nombres";
+        SqlDataReader reader = conector.Query(query);
         if (reader != null)
         {
             while (reader.Read())
@@ -94,8 +114,31 @@ public class servicios : System.Web.Services.WebService
     {
         List<CJSon> lista = new List<CJSon>();
 
+        string query = "SELECT TOP 100 pacId id,pacDocumento AS documento, pacPNombre + ' ' + isnull(pacSNombre,'') + ' ' + pacPapellido + ' ' + isnull(pacSApellido, '') AS nombres FROM phdPaciente WHERE ";
+        string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
+
+        if (split.Length == 1)
+        { // solo un dato puede ser un documento
+            query += "pacDocumento LIKE '%" + q.Trim() + "%' OR ";
+        }
+        query += "(";
+
+        for (int i = 0; i < split.Length; i++)
+        {
+
+            if (split[i].Length > 0)
+            { // verificamos que no este vacio
+
+                if (i > 0)
+                    query += " AND ";
+                query += String.Format(" (pacPNombre LIKE '%{0}%' OR pacSNombre LIKE '%{0}%' OR pacPapellido LIKE '%{0}%' OR pacSApellido LIKE '%{0}%') ", split[i]);
+            }
+        }
+
+        query+=") ORDER BY nombres";
+
         CConectorMS conector = new CConectorMS();
-        SqlDataReader reader = conector.Query("SELECT TOP 100 pacId id,pacDocumento AS documento, pacPNombre + ' ' + isnull(pacSNombre,'') + ' ' + pacPapellido + ' ' + isnull(pacSApellido, '') AS nombres FROM phdPaciente WHERE pacDocumento LIKE '%" + q + "%' OR (pacPNombre + ' ' + isnull(pacSNombre,'') + ' ' + pacPapellido + ' ' + isnull(pacSApellido, '')) LIKE '%" + q + "%' ORDER BY nombres");
+        SqlDataReader reader = conector.Query(query);
         if (reader != null)
         {
             while (reader.Read())

@@ -139,10 +139,13 @@
                 <asp:BoundField HeaderText="Barrio" DataField="perBarrio" SortExpression="perBarrio">
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
-                <asp:BoundField HeaderText="Próxima programación" DataField="fecha" SortExpression="fecha" DataFormatString="{0:d}">
+                <asp:BoundField HeaderText="Paciente actual" DataField="nombrehoy" SortExpression="nombrehoy">
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
                 <asp:BoundField HeaderText="Próximo paciente" DataField="nombre" SortExpression="nombre">
+                    <ItemStyle Wrap="False" />
+                </asp:BoundField>
+                <asp:BoundField HeaderText="Próxima programación" DataField="fecha" SortExpression="fecha" DataFormatString="{0:d}">
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
                 <asp:BoundField HeaderText="E-Mail" DataField="perCorreoElectronico" SortExpression="perCorreoElectronico"/>
@@ -165,12 +168,33 @@
                     admCargo.carDescripcion AS cargo,admEstadoEstancia.eEstDesc AS estado,per.perCelular AS celular,
                     per.perDireccion, per.perBarrio, admDisponibilidad.dispDescripcion,
                     prog.fecha,
-                    ISNULL(per.perTelefono, '') + ' '+ ISNULL(per.perTelefono1, '') AS telefono,per.perCorreoElectronico,
-                    prog.nombre
+                    ISNULL(per.perTelefono, '') + ' '+ ISNULL(per.perTelefono1, '') AS telefono,per.perCorreoElectronico
+                    ,ISNULL(prog.nombre,'') + ISNULL((SELECT TOP 1 ' (Descansando)' FROM phdProgramacion 
+                        WHERE phdProgramacion.perId=per.perId AND 
+                        DATEADD(dd, 0, DATEDIFF(dd, 0, phdProgramacion.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))
+						AND phdProgramacion.actId IN (1,9,12,13,15)),'') AS nombre
+                    ,ISNULL(progHoy.nombrehoy,(SELECT TOP 1 '(Descansando)' FROM phdProgramacion 
+                        WHERE phdProgramacion.perId=per.perId AND 
+                        DATEADD(dd, 0, DATEDIFF(dd, 0, phdProgramacion.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()-1))
+						AND phdProgramacion.actId IN (1,9,12,13,15))) AS nombrehoy
                     FROM admPersonalHS per 
                     LEFT JOIN admCargo on per.carId = admCargo.carId 
                     LEFT JOIN admDisponibilidad on admDisponibilidad.dispId = per.dispId 
-                    LEFT JOIN admEstadoEstancia ON (admEstadoEstancia.eEstId=per.eEstId) 
+                    LEFT JOIN admEstadoEstancia ON (admEstadoEstancia.eEstId=per.eEstId)
+                    OUTER APPLY (
+                        SELECT TOP 1 * FROM
+                        ((SELECT atxProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombrehoy FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE 
+                        atxProgramacion.perId=per.perId AND 
+                        DATEADD(dd, 0, DATEDIFF(dd, 0, atxProgramacion.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))
+                        ) UNION (SELECT phdProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombrehoy FROM phdProgramacion 
+                        LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) 
+                        WHERE phdProgramacion.perId=per.perId AND 
+                        DATEADD(dd, 0, DATEDIFF(dd, 0, phdProgramacion.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))
+                        ) UNION (SELECT phdProgramacionMD.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombrehoy FROM phdProgramacionMD LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacionMD.pacId) WHERE 
+                        phdProgramacionMD.perId=per.perId AND 
+                        DATEADD(dd, 0, DATEDIFF(dd, 0, phdProgramacionMD.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))
+                        )) AS a ORDER BY fecha
+                    ) AS progHoy
                     OUTER APPLY (
                         SELECT TOP 1 * FROM
                         ((SELECT atxProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE 
@@ -182,7 +206,7 @@
                         ) UNION (SELECT phdProgramacionMD.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre FROM phdProgramacionMD LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacionMD.pacId) WHERE 
                         phdProgramacionMD.perId=per.perId AND 
                         phdProgramacionMD.prgFechaProg>getdate())) AS a ORDER BY fecha
-                    ) AS prog
+                    ) AS prog                    
                     WHERE 
                     (@id=0 OR @id=per.perId) 
                     AND (@estado=0 OR per.eEstId=@estado) 

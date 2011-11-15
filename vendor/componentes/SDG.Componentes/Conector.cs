@@ -278,9 +278,9 @@ public class Conector
 		return fecha.Substring(0, 10);
 	}
 
-	public static string GetModificacion(string idUsuario, string idDocumento)
+	public static string GetModificacion(string idUsuario, string idDocumento, string tabla)
 	{
-		Query query = new Query("modificaciones");
+		Query query = new Query(tabla);
 		query["id"] = idDocumento;
 		query["fecha"] = "SYSDATE()";
 		string value = HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~");
@@ -289,10 +289,21 @@ public class Conector
 		return query.GetInsert();
 	}
 
+	public static string GetModificacion(string idUsuario, string idDocumento)
+	{
+		return GetModificacion(idUsuario, idDocumento, "modificaciones");
+	}
+
 	public int InsertModificacion(string idDocumento)
 	{
 		Usuario usuario = Usuario.GetUsuario();
 		return QueryMod(GetModificacion(usuario.GetID(), idDocumento));
+	}
+
+	public int InsertModificacionWeb(string idDocumento)
+	{
+		Usuario usuario = Usuario.GetUsuario();
+		return QueryMod(GetModificacion(usuario.GetID(), idDocumento, "modificacionesweb"));
 	}
 
 	public static string GetMySQLDateFormat(string text)
@@ -323,18 +334,33 @@ public class Conector
 		return "";
 	}
 
+	public bool SelectInDropDown(DropDownList lista, object valor)
+	{
+		return SelectInDropDown(lista, valor, "");
+	}
+
 	public bool SelectInDropDown(DropDownList lista, object valor, string query)
 	{
 		bool result = true;
-		lista.DataBind();
+		if (lista.Items.Count < 2)
+		{
+			lista.DataBind();
+		}
 		lista.SelectedIndex = -1;
 		ListItem listItem = lista.Items.FindByValue(valor.ToString());
 		if (listItem == null)
 		{
 			Conector conector = new Conector(m_szConexion);
-			listItem = new ListItem(conector.QueryString(query), valor.ToString());
-			lista.Items.Add(listItem);
-			result = false;
+			string text = "";
+			if (query.Length > 0)
+			{
+				if (query.IndexOf("{") != -1 && query.IndexOf("}") != -1)
+				{
+					query = string.Format(query, valor);
+				}
+				text = conector.QueryString(query);
+			}
+			listItem = new ListItem(text, valor.ToString());
 		}
 		listItem.Selected = true;
 		return result;

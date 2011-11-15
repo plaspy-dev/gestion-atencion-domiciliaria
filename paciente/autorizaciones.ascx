@@ -36,7 +36,7 @@ SelectCommand="SELECT autNumero,autFecha,autFechaVenc
                 FROM phdAutorizacion
                 WHERE 
                 autActivo=1 AND
-                convert(datetime,convert(varchar(10),getdate(),112),112) BETWEEN autFecha AND isnull(autFechaVenc,autFecha+30) AND
+                GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60) AND
                 pacId=@paciente
                 ">
                 <SelectParameters>

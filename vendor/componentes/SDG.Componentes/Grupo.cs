@@ -114,7 +114,14 @@ public class Grupo
 				TreeNodeCollection treeNodeCollection = tree.Nodes;
 				if (m_bInicio)
 				{
-					treeNodeCollection = tree.Nodes[0].ChildNodes;
+					if (tree.Nodes.Count > 0)
+					{
+						treeNodeCollection = tree.Nodes[0].ChildNodes;
+					}
+					else
+					{
+						m_bInicio = false;
+					}
 				}
 				int num = -1;
 				for (int j = 0; j < treeNodeCollection.Count; j++)

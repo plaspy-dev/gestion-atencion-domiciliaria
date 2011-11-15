@@ -36,7 +36,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         {
             SAutorizacion.SelectCommand = SAutorizacion.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=2");
             SActividad.SelectCommand = SActividad.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=2");
-            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "carId in (4,23)");
+            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "(areaid=1 or carId in (4,23))");
         }
         if(!IsPostBack) {
             Session["phd_programacion"] = null;

@@ -268,13 +268,25 @@ public class ConectorMS
 	public bool SelectInDropDown(DropDownList lista, object valor, string query)
 	{
 		bool result = true;
-		lista.DataBind();
+		if (lista.Items.Count < 2)
+		{
+			lista.DataBind();
+		}
 		lista.SelectedIndex = -1;
 		ListItem listItem = lista.Items.FindByValue(valor.ToString());
 		if (listItem == null)
 		{
 			ConectorMS conectorMS = new ConectorMS(m_szConexion);
-			listItem = new ListItem((query.Length > 0) ? conectorMS.QueryString(query) : "", valor.ToString());
+			string text = "";
+			if (query.Length > 0)
+			{
+				if (query.IndexOf("{") != -1 && query.IndexOf("}") != -1)
+				{
+					query = string.Format(query, valor);
+				}
+				text = conectorMS.QueryString(query);
+			}
+			listItem = new ListItem(text, valor.ToString());
 			lista.Items.Add(listItem);
 			result = false;
 		}
