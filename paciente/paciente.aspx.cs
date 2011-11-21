@@ -159,7 +159,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
         for (int i = 0; i < texto.Length; i++)
         {
-            if (char.IsNumber(texto[i]) && !char.IsLetter(texto[i]))
+            if (!char.IsNumber(texto[i]) && !char.IsLetter(texto[i]))
             {
                 texto= texto.Replace(texto[i].ToString(), "");
                 i--;

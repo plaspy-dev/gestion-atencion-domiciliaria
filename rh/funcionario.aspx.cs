@@ -34,6 +34,12 @@ public partial class rh_funcionario : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
+            Response.Cookies["tabpersonal"].Value = null;
+            string ruta = "";
+            for (int i = 0; i < Request.Url.Segments.Length-1; i++)
+                ruta += Request.Url.Segments[i];
+            Response.Cookies["tabpersonal"].Path = ruta;
+
             Session[Request.Url.AbsolutePath] = new ArrayList();
             // solo compatibilidad
             if (Request.QueryString["ip"] != null && Request.QueryString["ip"].Length>0)

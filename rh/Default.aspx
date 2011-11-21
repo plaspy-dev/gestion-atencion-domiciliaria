@@ -1,24 +1,6 @@
 ﻿<%@ Page Title="Personal" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="rh_Default" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <style type="text/css">
-	.ui-autocomplete {
-		max-height: 500px;
-		overflow-y: auto;
-		/* prevent horizontal scrollbar */
-		overflow-x: hidden;
-		/* add padding to account for vertical scrollbar */
-		padding-right: 20px;
-		text-align: left;
-	}
-	/* IE 6 doesn't support max-height
-	 * we use height instead, but this forces the menu to always be this tall
-	 */
-	* html .ui-autocomplete {
-		height: 500px;
-	}
-	.ui-autocomplete-loading { background: white url('../imgs/ui-anim_basic_16x16.gif') right center no-repeat; }
-</style>
 <script type="text/javascript">
     function pad(number, length) {
         var str = number;
@@ -28,6 +10,17 @@
         return str;
     }
     $(function() {
+        var dates = $("#<%= TInicio.ClientID %>, #<%= TFin.ClientID %>").datepicker({
+            onSelect: function(selectedDate) {
+                var option = this.id == "<%= TInicio.ClientID %>" ? "minDate" : "maxDate",
+					        instance = $(this).data("datepicker"),
+					        date = $.datepicker.parseDate(
+						        instance.settings.dateFormat ||
+						        $.datepicker._defaults.dateFormat,
+						        selectedDate, instance.settings);
+                dates.not(this).datepicker("option", option, date);
+            }
+        });
         $("#<%=  CRetiro.ClientID %>").change(function() {
             $("#<%= DRetiro.ClientID %>").toggle();
             $("#<%=  DRetiro.ClientID %>").val("0");

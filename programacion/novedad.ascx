@@ -17,6 +17,7 @@
 <asp:HiddenField ID="HId" runat="server" />
 <asp:HiddenField ID="HIdProgramacion" runat="server" />
 <asp:HiddenField ID="HIdProgramaciones" runat="server" />
+<asp:HiddenField ID="HIdTipoNovedad" runat="server" />
 <asp:TextBox runat="server" ID="TTipo"></asp:TextBox>
 <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
 <div id="tabsnovedad">
@@ -43,7 +44,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-3">
+    <div id="tnov-3" class="ui-tabs-hide">
         <table>
             <tr>
                 <td style="min-width:100px; text-align:left;">Causa</td>
@@ -64,7 +65,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-5">
+    <div id="tnov-5" class="ui-tabs-hide">
         <table>
             <tr>
                 <td style="min-width:100px; text-align:left;">Causa</td>
@@ -90,7 +91,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-2">
+    <div id="tnov-2" class="ui-tabs-hide">
         <table>
             <tr>
                 <td style="min-width:100px; text-align:left;">Causa</td>
@@ -116,7 +117,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-4">
+    <div id="tnov-4" class="ui-tabs-hide">
         <table>
             <tr>
                 <td style="min-width:100px; text-align:left;">Causa</td>
@@ -131,7 +132,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-6">
+    <div id="tnov-6" class="ui-tabs-hide">
     </div>
 </div>
 <div>
@@ -173,10 +174,11 @@
                         LEFT JOIN admPersonalHS ON (phdNovedad.perId = admPersonalHS.perId)
                         LEFT JOIN admPersonalHS AS personalAnt ON (phdNovedad.perIdAnt = personalAnt.perId) OR (phdNovedad.perIdAnt IS NULL AND personalAnt.perId IS NULL)
                         LEFT JOIN phdCausaNovedad ON (phdNovedad.cnoId = phdCausaNovedad.cnoId)
-                        WHERE phdNovedad.prgId=@programacion AND phdNovedad.prgTipo = 1 ORDER BY phdNovedad.segFechaRegistro DESC"
+                        WHERE phdNovedad.prgId=@programacion AND phdNovedad.prgTipo =@tipo ORDER BY phdNovedad.segFechaRegistro DESC"
                     >
           <SelectParameters>
             <asp:ControlParameter ControlID="HIdProgramacion" Name="programacion" PropertyName="Value" Type="Int32" />
+            <asp:ControlParameter ControlID="HIdTipoNovedad" Name="tipo" PropertyName="Value" Type="Int32" />
           </SelectParameters>
     </asp:SqlDataSource>
     <br />

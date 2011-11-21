@@ -139,6 +139,12 @@
                 <asp:BoundField HeaderText="Barrio" DataField="perBarrio" SortExpression="perBarrio">
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
+                <asp:BoundField HeaderText="L. Trabajo" DataField="loctrabajo" SortExpression="loctrabajo">
+                    <ItemStyle Wrap="False" />
+                </asp:BoundField>
+                <asp:BoundField HeaderText="L. Residencia" DataField="locresidencia" SortExpression="locresidencia">
+                    <ItemStyle Wrap="False" />
+                </asp:BoundField>
                 <asp:BoundField HeaderText="Paciente actual" DataField="nombrehoy" SortExpression="nombrehoy">
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
@@ -167,8 +173,9 @@
                     SelectCommand="SELECT per.perId AS id,per.perDocumento AS documento, per.perNombre AS nombres,
                     admCargo.carDescripcion AS cargo,admEstadoEstancia.eEstDesc AS estado,per.perCelular AS celular,
                     per.perDireccion, per.perBarrio, admDisponibilidad.dispDescripcion,
-                    prog.fecha,
-                    ISNULL(per.perTelefono, '') + ' '+ ISNULL(per.perTelefono1, '') AS telefono,per.perCorreoElectronico
+                    prog.fecha
+                    ,loctrabajo.locDescripcion AS loctrabajo,locresidencia.locDescripcion AS locresidencia
+                    ,ISNULL(per.perTelefono, '') + ' '+ ISNULL(per.perTelefono1, '') AS telefono,per.perCorreoElectronico
                     ,ISNULL(prog.nombre,'') + ISNULL((SELECT TOP 1 ' (Descansando)' FROM phdProgramacion 
                         WHERE phdProgramacion.perId=per.perId AND 
                         DATEADD(dd, 0, DATEDIFF(dd, 0, phdProgramacion.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))
@@ -181,32 +188,25 @@
                     LEFT JOIN admCargo on per.carId = admCargo.carId 
                     LEFT JOIN admDisponibilidad on admDisponibilidad.dispId = per.dispId 
                     LEFT JOIN admEstadoEstancia ON (admEstadoEstancia.eEstId=per.eEstId)
+                    LEFT JOIN admLocalidad AS loctrabajo ON (loctrabajo.locId=per.locId)
+                    LEFT JOIN admLocalidad AS locresidencia ON (locresidencia.locId=per.residencialocId)
                     OUTER APPLY (
-                        SELECT TOP 1 * FROM
-                        ((SELECT atxProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombrehoy FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE 
-                        atxProgramacion.perId=per.perId AND 
-                        DATEADD(dd, 0, DATEDIFF(dd, 0, atxProgramacion.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))
-                        ) UNION (SELECT phdProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombrehoy FROM phdProgramacion 
-                        LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) 
-                        WHERE phdProgramacion.perId=per.perId AND 
-                        DATEADD(dd, 0, DATEDIFF(dd, 0, phdProgramacion.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))
-                        ) UNION (SELECT phdProgramacionMD.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombrehoy FROM phdProgramacionMD LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacionMD.pacId) WHERE 
-                        phdProgramacionMD.perId=per.perId AND 
-                        DATEADD(dd, 0, DATEDIFF(dd, 0, phdProgramacionMD.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))
-                        )) AS a ORDER BY fecha
+                        SELECT TOP 1 (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombrehoy 
+                            FROM vwphd_ProgramacionTotal 
+                            LEFT JOIN phdPaciente ON (phdPaciente.pacId=vwphd_ProgramacionTotal.pacId) 
+                            WHERE 
+                            vwphd_ProgramacionTotal.perId=per.perId 
+                            AND DATEADD(dd, 0, DATEDIFF(dd, 0, vwphd_ProgramacionTotal.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))
                     ) AS progHoy
                     OUTER APPLY (
-                        SELECT TOP 1 * FROM
-                        ((SELECT atxProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE 
-                        atxProgramacion.perId=per.perId AND 
-                        atxProgramacion.prgFechaProg>getdate() 
-                        ) UNION (SELECT phdProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre FROM phdProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) WHERE 
-                        phdProgramacion.perId=per.perId AND 
-                        phdProgramacion.prgFechaProg>getdate() 
-                        ) UNION (SELECT phdProgramacionMD.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre FROM phdProgramacionMD LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacionMD.pacId) WHERE 
-                        phdProgramacionMD.perId=per.perId AND 
-                        phdProgramacionMD.prgFechaProg>getdate())) AS a ORDER BY fecha
-                    ) AS prog                    
+                        SELECT TOP 1 vwphd_ProgramacionTotal.prgFechaProg AS fecha,(phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre 
+                            FROM vwphd_ProgramacionTotal 
+                            LEFT JOIN phdPaciente ON (phdPaciente.pacId=vwphd_ProgramacionTotal.pacId) 
+                            WHERE 
+                            vwphd_ProgramacionTotal.perId=1147 
+                            AND vwphd_ProgramacionTotal.prgFechaProg>getdate() 
+                            ORDER BY vwphd_ProgramacionTotal.prgFechaProg 
+                    ) AS prog
                     WHERE 
                     (@id=0 OR @id=per.perId) 
                     AND (@estado=0 OR per.eEstId=@estado) 

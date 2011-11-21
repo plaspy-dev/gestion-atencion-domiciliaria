@@ -13,6 +13,8 @@ public partial class phd_novedad : System.Web.UI.UserControl
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        if(!IsPostBack)
+            HIdTipoNovedad.Value = ((int)ProgramacionTipo.TipoServicio).ToString();
         if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.medico)
         {
             SNuevoServicio.SelectCommand = SNuevoServicio.SelectCommand.Replace("tpaTipoServicio=1", "tpaTipoServicio=3");
@@ -21,7 +23,7 @@ public partial class phd_novedad : System.Web.UI.UserControl
         else if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.apoyo)
         {
             SNuevoServicio.SelectCommand = SNuevoServicio.SelectCommand.Replace("tpaTipoServicio=1", "tpaTipoServicio=2");
-            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "(areaid=1 OR carId IN (4,23)");
+            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "(areaid=1 OR carId IN (4,23))");
         }
         BAceptar.Enabled= Usuario.GetUsuario().CanUpdate();
     }
@@ -79,8 +81,8 @@ public partial class phd_novedad : System.Web.UI.UserControl
         Query query = new Query("phdNovedad");
         CConectorMS conector = new CConectorMS();
         string []programacion= HIdProgramacion.Value=="" ? HIdProgramaciones.Value.Split(',') : HIdProgramacion.Value.Split(',');
+        query["prgTipo"] = HIdTipoNovedad.Value;
 
-        query["prgTipo"] = "1";
         int tipo=(Convert.ToInt32(TTipo.Text) + 1);
         if(tipo>2) // no hay tipo 3
             tipo++;

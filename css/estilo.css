@@ -21,6 +21,7 @@
 {
     width: 100px;
     text-align: right;
+    background: white url('../imgs/cal.gif') left center no-repeat;
 }
 .likenumber 
 {
@@ -557,4 +558,3 @@ table tr td
 	height: 500px;
 }
 .ui-autocomplete-loading { background: white url('../imgs/ui-anim_basic_16x16.gif') right center no-repeat; }
-	

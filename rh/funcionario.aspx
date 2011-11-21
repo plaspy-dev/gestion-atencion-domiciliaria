@@ -3,10 +3,20 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <script type="text/javascript">
         $(function() {
+            var dates = $("#<%= TDesde.ClientID %>, #<%= THasta.ClientID %>").datepicker({
+                onSelect: function(selectedDate) {
+                    var option = this.id == "<%= TDesde.ClientID %>" ? "minDate" : "maxDate",
+					    instance = $(this).data("datepicker"),
+					    date = $.datepicker.parseDate(
+						    instance.settings.dateFormat ||
+						    $.datepicker._defaults.dateFormat,
+						    selectedDate, instance.settings);
+                    dates.not(this).datepicker("option", option, date);
+                }
+            });
             $("#tabpersonal").tabs({
                 cookie: {
-                // store cookie for a day, without, it would be a session cookie
-                    name: 'tabs',
+                    name: 'tabpersonal',
                     expires: 1
                 }
             });
@@ -50,7 +60,7 @@
                 <li><a href="#tabs4">Info Laboral</a></li>
                 <li><a href="#tabs5">Sesiones programadas</a></li>
             </ul>
-            <div id="tabs1">
+            <div id="tabs1" class="ui-tabs-hide">
                 <table class="style1">
                     <tr>
                         <td>
@@ -330,7 +340,7 @@
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SLocalidad" runat="server" 
                                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="select locId id, locDescripcion nombre from admLocalidad">
+                                SelectCommand="SELECT locId id, locDescripcion nombre FROM admLocalidad">
                             </asp:SqlDataSource>
                             </td>
                     </tr>
@@ -597,7 +607,23 @@
                     </tr>
                 </table>
             </div>
-            <div id="tabs5">
+            <div id="tabs5" class="ui-tabs-hide">
+                <fieldset>
+                    <legend>Fechas</legend>
+                    <table>
+                        <tr>
+                            <td>Desde</td>
+                            <td><asp:TextBox runat="server" CssClass="fecha" ID="TDesde"></asp:TextBox></td>
+                            <td>Hasta</td>
+                            <td><asp:TextBox runat="server" CssClass="fecha" ID="THasta"></asp:TextBox></td>
+                            <td>
+                                <asp:RangeValidator ControlToValidate="TDesde" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator2" Display="Dynamic" Type="Date" ValidationGroup="fechas">*</asp:RangeValidator>
+                                <asp:RangeValidator ControlToValidate="THasta" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator4" Display="Dynamic" Type="Date" ValidationGroup="fechas">*</asp:RangeValidator>
+                                <asp:Button ID="BFiltrar" runat="server" Text="Filtrar" ValidationGroup="fechas" />
+                            </td>
+                         </tr>
+                    </table>
+                </fieldset>
                 <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
                     AutoGenerateColumns="False" EmptyDataText="No se encontraron sesiones" 
                     AllowPaging="True" PageSize="20" AllowSorting="True" >
@@ -618,28 +644,20 @@
                 </div>
                 <asp:SqlDataSource ID="SResultados" runat="server" 
                         ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                        SelectCommand="SELECT * FROM
-                                ((SELECT atxProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre, phdActividad.actDescripcion AS act
-                                FROM atxProgramacion 
-                                LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) 
-                                LEFT JOIN phdActividad ON (phdActividad.actId=atxProgramacion.actId)
-                                WHERE 
-                                atxProgramacion.perId=@perId
-                                ) UNION (SELECT phdProgramacion.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre, phdActividad.actDescripcion AS act
-                                FROM phdProgramacion 
-                                LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) 
-                                LEFT JOIN phdActividad ON (phdActividad.actId=phdProgramacion.actId)
-                                WHERE 
-                                phdProgramacion.perId=@perId
-                                ) UNION (SELECT phdProgramacionMD.prgFechaProg AS fecha, (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre, phdActividad.actDescripcion AS act
-                                FROM phdProgramacionMD 
-                                LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacionMD.pacId)
-                                LEFT JOIN phdActividad ON (phdActividad.actId=phdProgramacionMD.actId)
-                                WHERE 
-                                phdProgramacionMD.perId=@perId
-                                )) AS a ORDER BY fecha DESC">
+                        SelectCommand="SELECT vwphd_ProgramacionTotal.prgFechaProg fecha,
+                            (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre, 
+                            phdActividad.actDescripcion AS act
+                            FROM vwphd_ProgramacionTotal 
+                            LEFT JOIN phdPaciente ON (phdPaciente.pacId=vwphd_ProgramacionTotal.pacId) 
+                            LEFT JOIN phdActividad ON (phdActividad.actId=vwphd_ProgramacionTotal.actId)
+                            WHERE vwphd_ProgramacionTotal.perId=@perId 
+                            AND (@desde=' ' OR vwphd_ProgramacionTotal.prgFechaProg>=@desde)
+                            AND (@hasta=' ' OR vwphd_ProgramacionTotal.prgFechaProg<=@hasta)
+                            ORDER BY vwphd_ProgramacionTotal.prgFechaProg DESC">
                          <SelectParameters>
                             <asp:ControlParameter ControlID="HId" PropertyName="Value" Name="perId" DefaultValue="-1" />
+                            <asp:ControlParameter ControlID="TDesde" PropertyName="Text" Name="desde" DefaultValue=" " />
+                            <asp:ControlParameter ControlID="THasta" PropertyName="Text" Name="hasta" DefaultValue=" " />
                          </SelectParameters>
             </asp:SqlDataSource>
             </div>
