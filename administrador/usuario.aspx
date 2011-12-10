@@ -1,6 +1,16 @@
 ﻿<%@ Page Title="Usuario" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="usuario.aspx.cs" Inherits="administrador_usuario" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<script type="text/javascript">
+    $(function() {
+        $("#accordion").accordion({
+            autoHeight: false,
+            navigation: true,
+            collapsible: true,
+            active: -1,
+        });
+    });
+</script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <fieldset>
@@ -8,7 +18,7 @@
         <table>
         <tr>
             <td>
-                Nombres<asp:HiddenField ID="HId" runat="server" />
+                Nombres<asp:HiddenField ID="HId" runat="server" /><asp:HiddenField ID="HUsuario" runat="server" />
             </td>
             <td>
                 <asp:TextBox ID="TNombres" runat="server"></asp:TextBox>
@@ -72,6 +82,74 @@
             </td>
         </tr>
         <tr>
+            <td colspan="3">
+                <div id="accordion">
+                    <h3><a href="#">Permisos especiales</a></h3>
+                    <div style="display: none">
+                <asp:GridView ID="GEspeciales" runat="server" DataSourceID="SEspeciales" 
+                    DataKeyNames="perIdPermiso" AutoGenerateColumns="false" ShowHeader="false"
+                    AllowSorting="True">
+                    <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                    <Columns>
+                        <asp:TemplateField HeaderText="Permiso">
+                            <ItemTemplate>
+                                <asp:CheckBox runat="server" ID="CPermiso" Checked='<%# Eval("usIdUsuario").ToString()!="" %>' Text='<%# Eval("perDescripcion").ToString() %>' />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>        
+                </asp:GridView>
+                <asp:SqlDataSource ID="SEspeciales" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                        SelectCommand="SELECT segPermiso.perIdPermiso,segPermiso.perDescripcion, segPermisoEspecial.usIdUsuario
+                                    FROM segPermiso
+                                    LEFT JOIN segPermisoEspecial ON (segPermisoEspecial.usIdUsuario=@usuario AND segPermisoEspecial.perIdPermiso= segPermiso.perIdPermiso)
+                                    ORDER BY segPermiso.perDescripcion
+                                    ;">
+                            <SelectParameters>
+                                <asp:ControlParameter ControlID="HUsuario" Name="usuario" PropertyName="Value" DefaultValue=" " />
+                            </SelectParameters>
+                </asp:SqlDataSource>
+                </div>
+                    <h3><a href="#">Alertas</a></h3>
+                    <div style="display: none">                
+                <asp:GridView ID="GAlertas" runat="server" DataSourceID="SAlertas" 
+                    DataKeyNames="tarId" AutoGenerateColumns="false" ShowHeader="false"
+                    AllowSorting="True">
+                    <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                    <Columns>
+                        <asp:TemplateField HeaderText="Alerta">
+                            <ItemTemplate>
+                                <asp:CheckBox runat="server" ID="CPermiso" Checked='<%# Eval("usIdUsuario").ToString()!="" %>' Text='<%# Eval("tarTitulo").ToString() %>' />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
+                <asp:SqlDataSource ID="SAlertas" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                        SelectCommand="SELECT genTareas.tarId,genTareas.tarTitulo, GenUsuarioTarea.usIdUsuario
+                                    FROM genTareas
+                                    LEFT JOIN GenUsuarioTarea ON (GenUsuarioTarea.usIdUsuario=@usuario AND GenUsuarioTarea.tarId=genTareas.tarId)
+                                    ORDER BY genTareas.tarTitulo
+                                    ;">
+                            <SelectParameters>
+                                <asp:ControlParameter ControlID="HUsuario" Name="usuario" PropertyName="Value" DefaultValue=" " />
+                            </SelectParameters>
+                </asp:SqlDataSource>                  
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
             <td>
                 <asp:Button ID="BMigrar" runat="server" CausesValidation="False" 
                     onclick="BMigrar_Click" Text="Migrar usuarios" />
@@ -79,10 +157,8 @@
             <td>
                 &nbsp;</td>
             <td align="right">
-                <asp:Button ID="BAceptar" runat="server" Text="Aceptar" 
-                    onclick="BAceptar_Click" />
-                <asp:Button ID="BCancelar" runat="server" Text="Cancelar" 
-                    CausesValidation="false" onclick="BCancelar_Click" />
+                <asp:Button ID="BAceptar" runat="server" Text="Aceptar" onclick="BAceptar_Click" OnClientClick="return confirm('Esta acción reemplazara los permisos del usuario. ¿Esta seguro de continuar?');" />
+                <asp:Button ID="BCancelar" runat="server" Text="Cancelar" CausesValidation="false" onclick="BCancelar_Click" />
             </td>
         </tr>
     </table>
@@ -90,7 +166,7 @@
     <asp:GridView ID="GUsuarios" runat="server" DataSourceID="SUsuarios" 
         DataKeyNames="id" AutoGenerateColumns="false" 
         onselectedindexchanged="GUsuarios_SelectedIndexChanged" 
-        AllowSorting="True">
+        AllowSorting="True" onrowdeleted="GUsuarios_RowDeleted" >
         <RowStyle CssClass="GridRow"></RowStyle>
         <FooterStyle CssClass="GridFooter"></FooterStyle>
         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -114,6 +190,6 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT usuario.id AS id,usuario.nombre AS nombre,usuario.usuario AS usuario,IFNULL(grupo.nombre,'Administrador') AS grupo,usuario.ingreso AS ingreso FROM usuario LEFT JOIN grupo ON (usuario.grupo=grupo.id) WHERE usuario.estado IS NULL OR usuario.estado!=-1 ORDER BY usuario.nombre" 
                  DeleteCommand="UPDATE usuario SET estado=-1 WHERE id=@id">
-    </asp:SqlDataSource>
+    </asp:SqlDataSource>    
 </asp:Content>
 

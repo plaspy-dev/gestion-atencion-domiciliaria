@@ -166,7 +166,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                 while (inicio <= fin)
                 {
                     for(int i=0; i<CSemana.Items.Count; i++) { // verificamos que sea un dia de las semana
-                        if (CSemana.Items[i].Selected && inicio.DayOfWeek.ToString() == CSemana.Items[i].Value)
+                        if (CSemana.Items[i].Selected && ((int)inicio.DayOfWeek).ToString() == CSemana.Items[i].Value)
                         {
                             AddFecha(fechas, inicio.ToShortDateString(), maximo);
                         }
@@ -285,7 +285,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
             {
                 DateTime autorizacion= (DateTime)reader["autFecha"];
                 DateTime final = (DateTime)reader["autFechaVenc"];
-                if(final==null) 
+                if (final == null || final < autorizacion) 
                     final = autorizacion.AddDays(30);
                 RFechaFinal.MinimumValue = RFecha.MinimumValue = CConectorMS.GetDate(autorizacion);
                 RFechaFinal.MaximumValue = RFecha.MaximumValue = CConectorMS.GetDate(final);

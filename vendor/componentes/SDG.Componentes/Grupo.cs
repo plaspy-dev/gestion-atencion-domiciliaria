@@ -52,7 +52,7 @@ public class Grupo
 
 	public void AddPermisos(string padre, string nombre, string url, int permiso)
 	{
-		m_aURLs.Add(new CURLs(url, nombre, padre, permiso));
+		m_aURLs.Add(new CURLs(url, nombre, padre, (url.Length == 0) ? 1 : permiso));
 	}
 
 	public int GetPermisoRaiz(string url)
@@ -83,13 +83,62 @@ public class Grupo
 	protected TreeNode Add(string titulo, string url)
 	{
 		TreeNode treeNode = new TreeNode(titulo);
-		treeNode.NavigateUrl = url;
+		if (url.Length > 2)
+		{
+			treeNode.NavigateUrl = url;
+		}
+		else
+		{
+			treeNode.Collapse();
+			treeNode.SelectAction = TreeNodeSelectAction.Expand;
+		}
 		return treeNode;
 	}
 
 	public ArrayList GetFullMenu()
 	{
 		return m_aURLs;
+	}
+
+	protected TreeNode FindParent(TreeNodeCollection treenodo, string buscado, ref int old)
+	{
+		if (buscado == "")
+		{
+			return null;
+		}
+		old = -1;
+		for (int i = 0; i < treenodo.Count; i++)
+		{
+			int old2 = -1;
+			TreeNode treeNode = FindParent(treenodo[i].ChildNodes, buscado, ref old2);
+			if (treeNode != null)
+			{
+				old = old2;
+				return treeNode;
+			}
+			string text = treenodo[i].Text;
+			text = text.Replace("<div onclick='noPreguntar();'>", "");
+			text = text.Replace("</div>", "");
+			if (text == buscado)
+			{
+				return treenodo[i];
+			}
+			if (text.CompareTo(buscado) > 0)
+			{
+				if (i != 0)
+				{
+					text = treenodo[i - 1].Text;
+					text = text.Replace("<div onclick='noPreguntar();'>", "");
+					text = text.Replace("</div>", "");
+				}
+				if (i == 0 || text.CompareTo(buscado) < 0)
+				{
+					old = i;
+					break;
+				}
+			}
+		}
+		return null;
 	}
 
 	protected bool CreateMenu(TreeView tree, string parametros, bool nativo, Usuario usuario)
@@ -108,87 +157,67 @@ public class Grupo
 			{
 				continue;
 			}
+			TreeNodeCollection treeNodeCollection = tree.Nodes;
+			if (m_bInicio)
+			{
+				if (tree.Nodes.Count > 0)
+				{
+					treeNodeCollection = tree.Nodes[0].ChildNodes;
+				}
+				else
+				{
+					m_bInicio = false;
+				}
+			}
 			if (treeNode == null || treeNode.Text != cURLs.Parent)
 			{
 				treeNode = null;
-				TreeNodeCollection treeNodeCollection = tree.Nodes;
-				if (m_bInicio)
+				if (cURLs.Parent.Length > 0)
 				{
-					if (tree.Nodes.Count > 0)
+					int old = -1;
+					treeNode = FindParent(treeNodeCollection, cURLs.Parent, ref old);
+					if (treeNode == null)
 					{
-						treeNodeCollection = tree.Nodes[0].ChildNodes;
-					}
-					else
-					{
-						m_bInicio = false;
-					}
-				}
-				int num = -1;
-				for (int j = 0; j < treeNodeCollection.Count; j++)
-				{
-					string text = treeNodeCollection[j].Text;
-					text = text.Replace("<div onclick='noPreguntar();'>", "");
-					text = text.Replace("</div>", "");
-					if (text == cURLs.Parent)
-					{
-						treeNode = treeNodeCollection[j];
-						break;
-					}
-					if (text.CompareTo(cURLs.Parent) > 0)
-					{
-						if (j != 0)
+						treeNode = new TreeNode(cURLs.Parent);
+						treeNode.Collapse();
+						treeNode.SelectAction = TreeNodeSelectAction.Expand;
+						if (old == -1)
 						{
-							text = treeNodeCollection[j - 1].Text;
-							text = text.Replace("<div onclick='noPreguntar();'>", "");
-							text = text.Replace("</div>", "");
+							treeNodeCollection.Add(treeNode);
 						}
-						if (j == 0 || text.CompareTo(cURLs.Parent) < 0)
+						else
 						{
-							num = j;
-							break;
+							treeNodeCollection.AddAt(old, treeNode);
 						}
-					}
-				}
-				if (treeNode == null)
-				{
-					treeNode = new TreeNode(cURLs.Parent);
-					treeNode.Collapse();
-					treeNode.SelectAction = TreeNodeSelectAction.Expand;
-					if (num == -1)
-					{
-						treeNodeCollection.Add(treeNode);
-					}
-					else
-					{
-						treeNodeCollection.AddAt(num, treeNode);
 					}
 				}
 			}
-			string text2 = cURLs.URL;
+			string text = cURLs.URL;
 			if (m_bInicio == cURLs.m_bNativo && ConfigurationSettings.AppSettings["app"] != null)
 			{
-				text2 = CURLs.SwitchApp(text2, ConfigurationSettings.AppSettings["app"]);
+				text = CURLs.SwitchApp(text, ConfigurationSettings.AppSettings["app"]);
 			}
-			TreeNode treeNode2 = Add(cURLs.Titulo, text2 + parametros);
+			TreeNode treeNode2 = Add(cURLs.Titulo, text + parametros);
 			if (cURLs.FullURL == HttpContext.Current.Request.Url.AbsolutePath)
 			{
 				treeNode2.Selected = true;
 				treeNode.Expand();
 			}
 			TreeNode treeNode3 = null;
-			for (int j = 0; j < treeNode.ChildNodes.Count; j++)
+			TreeNodeCollection treeNodeCollection2 = ((treeNode == null) ? treeNodeCollection : treeNode.ChildNodes);
+			for (int j = 0; j < treeNodeCollection2.Count; j++)
 			{
-				if (treeNode.ChildNodes[j].Text == treeNode2.Text)
+				if (treeNodeCollection2[j].Text == treeNode2.Text)
 				{
-					treeNode3 = treeNode.ChildNodes[j];
+					treeNode3 = treeNodeCollection2[j];
 					break;
 				}
 			}
 			if (treeNode3 != null)
 			{
-				treeNode.ChildNodes.Remove(treeNode3);
+				treeNodeCollection2.Remove(treeNode3);
 			}
-			treeNode.ChildNodes.Add(treeNode2);
+			treeNodeCollection2.Add(treeNode2);
 		}
 		return result;
 	}

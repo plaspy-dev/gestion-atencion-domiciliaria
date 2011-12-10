@@ -32,7 +32,17 @@ public class CURLs
 
 	public string Parent => m_szParent;
 
-	public string FullURL => HttpContext.Current.Request.ApplicationPath + "/" + URL.Substring(2);
+	public string FullURL
+	{
+		get
+		{
+			if (URL.Length > 2)
+			{
+				return HttpContext.Current.Request.ApplicationPath + "/" + URL.Substring(2);
+			}
+			return "";
+		}
+	}
 
 	public CURLs(string url, string titulo, string parent)
 	{

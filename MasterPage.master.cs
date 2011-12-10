@@ -36,7 +36,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             Session["printgridview"] = null;
         }
         // actualizamos la contraseña
-        Response.Cookies["contrasena"].Value = Request.Cookies["contrasena"].Value;
+        Response.Cookies["contrasena"].Value = Session["passwdtemp"].ToString();
         Response.Cookies["contrasena"].Expires = DateTime.Now.AddMinutes(10);
     }
 

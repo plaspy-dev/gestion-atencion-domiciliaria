@@ -25,7 +25,7 @@
         <li><a href="#tnov-1">Cancelación Programación</a></li>
         <li><a href="#tnov-2">Reasignación</a></li>
         <li><a href="#tnov-3">Cambio en num. sesiones</a></li>
-        <li><a href="#tnov-4">Paciente desprotegido</a></li>
+        <li><a href="#tnov-4">Paciente descubierto</a></li>
         <li><a href="#tnov-5">Cambio Servicio</a></li>
         <li><a href="#tnov-6">Otro</a></li>
     </ul>

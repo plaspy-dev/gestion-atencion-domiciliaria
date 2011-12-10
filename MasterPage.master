@@ -250,11 +250,6 @@
 
     $(document).ready(function() {
         setInterval("$('#renewSession').attr('src', '" + $('#renewSession').attr('src') + "?par=' + Math.random())", 180000);
-        setInterval(function() {
-            var date = new Date();
-            date.setTime(date.getTime() + (600000)); // 10 minutos
-            $.cookie("contrasena", $.cookie("contrasena"), { expires: date });
-        }, 180000);
     });
 
     prm = Sys.WebForms.PageRequestManager.getInstance();

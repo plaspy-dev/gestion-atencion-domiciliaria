@@ -2,15 +2,7 @@
 <script type="text/javascript">
     $(function() {
         function copyfecha(elemento) {
-            var fecha = $(elemento).datepicker("getDate");
-            if (fecha == null)
-                return;
-            var otra = $("#<%= TFechaFinal.ClientID %>").datepicker("getDate");
-            if (otra == null || otra < fecha) {
-                fecha.setDate(fecha.getDate() + 1);
-                $("#<%= TFechaFinal.ClientID %>").val($.datepicker.formatDate('dd/mm/yy', fecha));
-                // $("#<%= TFechaFinal.ClientID %>").datepicker("setDate", fecha);
-            }
+            $("#<%= TFechaFinal.ClientID %>").val($(elemento).val());
         }
         $("#<%= TFecha.ClientID %>").change(function() { copyfecha(this) }).datepicker({
             onClose: function(dateText, inst) {
