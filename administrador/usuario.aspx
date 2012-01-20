@@ -151,7 +151,7 @@
         </tr>
         <tr>
             <td>
-                <asp:Button ID="BMigrar" runat="server" CausesValidation="False" 
+                <asp:Button ID="BMigrar" runat="server" CausesValidation="False" OnClientClick="return confirm('Esta acción modificara los permisos de los ususarios, ¿esta seguro de continuar?')"
                     onclick="BMigrar_Click" Text="Migrar usuarios" />
             </td>
             <td>

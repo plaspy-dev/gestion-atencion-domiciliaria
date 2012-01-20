@@ -44,7 +44,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-3" class="ui-tabs-hide">
+    <div id="tnov-3" class="hide">
         <table>
             <tr>
                 <td style="min-width:100px; text-align:left;">Causa</td>
@@ -65,7 +65,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-5" class="ui-tabs-hide">
+    <div id="tnov-5" class="hide">
         <table>
             <tr>
                 <td style="min-width:100px; text-align:left;">Causa</td>
@@ -91,7 +91,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-2" class="ui-tabs-hide">
+    <div id="tnov-2" class="hide">
         <table>
             <tr>
                 <td style="min-width:100px; text-align:left;">Causa</td>
@@ -117,7 +117,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-4" class="ui-tabs-hide">
+    <div id="tnov-4" class="hide">
         <table>
             <tr>
                 <td style="min-width:100px; text-align:left;">Causa</td>
@@ -132,7 +132,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-6" class="ui-tabs-hide">
+    <div id="tnov-6" class="hide">
     </div>
 </div>
 <div>

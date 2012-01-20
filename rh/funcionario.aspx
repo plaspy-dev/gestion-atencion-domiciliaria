@@ -60,7 +60,7 @@
                 <li><a href="#tabs4">Info Laboral</a></li>
                 <li><a href="#tabs5">Sesiones programadas</a></li>
             </ul>
-            <div id="tabs1" class="ui-tabs-hide">
+            <div id="tabs1" class="hide">
                 <table class="style1">
                     <tr>
                         <td>
@@ -76,9 +76,14 @@
                             <asp:RequiredFieldValidator ControlToValidate="TNombres" ErrorMessage="Por favor ingrese un nombre." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         </td>
                         <td rowspan="15" valign="top">
-                            <asp:ImageButton ID="imbFoto" runat="server" Height="130" Width="130" BorderWidth="1"/>
-                        <br />
-                            <asp:LinkButton ID="lnkElimFoto" runat="server">Eliminar Foto</asp:LinkButton>
+                            <asp:ImageButton runat="server" ID="IFoto" CausesValidation="false" />
+                            <br />
+                            <asp:FileUpload runat="server" ID="FFoto" Width="100px" />
+                            <asp:ImageButton runat="server" ID="IEliminar" ImageUrl="~/imgs/eliminar.gif" 
+                                onclick="IEliminar_Click" />
+                                <asp:RegularExpressionValidator id="RegularExpressionValidator3" runat="server" ErrorMessage="Por favor seleccione una imagen en formato jpg." 
+                                    ValidationExpression="^(([a-zA-Z]:)|(\\{2}\w+)\$?)(\\(\w[\w].*))(.jpg|.JPG|.jpeg|.JPEG)$"  ControlToValidate="FFoto">*
+                                </asp:RegularExpressionValidator>
                             <br />
                             <asp:Label ID="Label40" runat="server" Text="Observaciones"></asp:Label>
                             <br />
@@ -346,7 +351,7 @@
                     </tr>
                 </table>
             </div>
-            <div id="tabs2" class="ui-tabs-hide">
+            <div id="tabs2" class="hide">
                 <table>
                     <tr><td colspan="4">
                         <asp:CheckBox runat="server" ID="CPazySalvo" Text="Paz y Salvo?" />
@@ -498,7 +503,7 @@
                         </tr>
                     </table>
             </div>
-            <div id="tabs3"  class="ui-tabs-hide">
+            <div id="tabs3"  class="hide">
                 <table class="style1">
                     <tr>
                         <td>
@@ -561,7 +566,7 @@
                     </tr>
                 </table>
             </div>
-            <div id="tabs4" class="ui-tabs-hide">
+            <div id="tabs4" class="hide">
             <table class="style1">
                     <tr>
                         <td>
@@ -607,7 +612,7 @@
                     </tr>
                 </table>
             </div>
-            <div id="tabs5" class="ui-tabs-hide">
+            <div id="tabs5" class="hide">
                 <fieldset>
                     <legend>Fechas</legend>
                     <table>

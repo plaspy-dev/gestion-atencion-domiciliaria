@@ -81,11 +81,21 @@ public partial class _Default : System.Web.UI.Page
                     CConector.SetCookie("usuario", m_EUsuario.Text);
                     Usuario pUsuario = new Usuario(id, usuario, grupo, login);
 
-                    SqlDataReader readerms= conectorMS.Query("SELECT seg_Menu.meDescMenu AS nombre, seg_Menu.meRuta AS ruta,ins,modif,elim,parent.meDescMenu AS parent "+
-                            "FROM dbo.seg_Menu INNER JOIN dbo.fnSeg_ConMenu('" + m_EUsuario.Text + "',0)menuUs ON seg_Menu.meIdMenu = menuUs.IdMenu " +  
-                            "LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre) " +
-		                    // "WHERE seg_Menu.meRuta!='' " + 
-		                    " order by parent,seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu");
+                    SqlDataReader readerms = null;
+                    if (grupo == 0)
+                    {
+                        readerms = conectorMS.Query("SELECT seg_Menu.meDescMenu AS nombre,seg_Menu.meRuta AS ruta,1 AS ins,1 AS modif,1 AS elim, parent.meDescMenu AS parent"
+                                                + " FROM seg_Menu"
+                                                + " LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre)"
+                                            );
+                    }
+                    else
+                    {
+                        readerms= conectorMS.Query("SELECT seg_Menu.meDescMenu AS nombre, seg_Menu.meRuta AS ruta,ins,modif,elim,parent.meDescMenu AS parent " +
+                                  "FROM dbo.seg_Menu INNER JOIN dbo.fnSeg_ConMenu('" + m_EUsuario.Text + "',0)menuUs ON seg_Menu.meIdMenu = menuUs.IdMenu " +
+                                  "LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre) " +
+                                  " order by parent,seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu");
+                    }
 
                     if (readerms != null)
                     {
@@ -118,6 +128,9 @@ public partial class _Default : System.Web.UI.Page
                     }
                     Session["passwdtemp"] = m_EContrasena.Text;
                     conector.Query("UPDATE usuario SET ingreso=SYSDATE() WHERE id='" + id + "'");
+                    Response.Cookies["loginOrganizationExample15"].Value = m_EUsuario.Text;
+                    Response.Cookies["loginOrganizationExample15"].Expires = DateTime.Now.AddDays(15);
+
                     string url = Request.QueryString["from"];
                     if (url == null || url.Length == 0)
                         pUsuario.Redirect();
@@ -174,11 +187,21 @@ public partial class _Default : System.Web.UI.Page
                     }
                 }
 
-                SqlDataReader readerms = conectorMS.Query("SELECT	seg_Menu.meDescMenu AS nombre, seg_Menu.meRuta AS ruta,ins,modif,elim,parent.meDescMenu AS parent " +
-                            "FROM dbo.seg_Menu INNER JOIN dbo.fnSeg_ConMenu('" + m_EUsuario.Text + "',0)menuUs ON seg_Menu.meIdMenu = menuUs.IdMenu " +
-                            "LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre) " +
-                            // "WHERE seg_Menu.meRuta!='' " +
-                            " order by parent,seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu");
+                SqlDataReader readerms = null;
+                if (grupo == 0)
+                {
+                    readerms = conectorMS.Query("SELECT seg_Menu.meDescMenu AS nombre,seg_Menu.meRuta AS ruta,1 AS ins,1 AS modif,1 AS elim, parent.meDescMenu AS parent"
+                                            + " FROM seg_Menu"
+                                            + " LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre)"
+                                        );
+                }
+                else
+                {
+                    readerms = conectorMS.Query("SELECT seg_Menu.meDescMenu AS nombre, seg_Menu.meRuta AS ruta,ins,modif,elim,parent.meDescMenu AS parent " +
+                              "FROM dbo.seg_Menu INNER JOIN dbo.fnSeg_ConMenu('" + m_EUsuario.Text + "',0)menuUs ON seg_Menu.meIdMenu = menuUs.IdMenu " +
+                              "LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre) " +
+                              " order by parent,seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu");
+                }
 
                 if (readerms != null)
                 {
@@ -198,8 +221,10 @@ public partial class _Default : System.Web.UI.Page
                     }
                 }
 
-                Session["passwdtemp"] = crypt.Encriptar(m_EContrasena.Text);
+                Session["passwdtemp"] = crypt.Encriptar(m_EContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"));
                 conector.Query("UPDATE usuario SET ingreso=SYSDATE() WHERE id='" + id + "'");
+                Response.Cookies["loginOrganizationExample15"].Value = m_EUsuario.Text;
+                Response.Cookies["loginOrganizationExample15"].Expires = DateTime.Now.AddDays(15);
                 string url = Request.QueryString["from"];
                 if (url == null || url.Length == 0)
                     pUsuario.Redirect();

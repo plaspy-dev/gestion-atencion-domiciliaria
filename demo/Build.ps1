@@ -15,7 +15,6 @@ Get-ChildItem -LiteralPath $siteSource -Force | Where-Object {
 if (Test-Path -LiteralPath (Join-Path $siteSource 'Bin')) {
     Copy-Item -LiteralPath (Join-Path $siteSource 'Bin') -Destination (Join-Path $site 'Bin') -Recurse
 }
-
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Web.config.example') -Destination (Join-Path $site 'Web.config') -Force
 $library = Join-Path $target 'componentes'
 $references = Join-Path $library 'references'

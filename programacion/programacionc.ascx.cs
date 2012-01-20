@@ -280,11 +280,12 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         if (DAutorizacion.SelectedIndex != -1)
         {
             CConectorMS conector = new CConectorMS();
-            SqlDataReader reader = conector.Query("SELECT autFecha,autFechaVenc FROM phdAutorizacion WHERE autNumero='" + DAutorizacion.SelectedValue + "'");
+            SqlDataReader reader = conector.Query("SELECT autFecha,autFechaVenc,autObservaciones FROM phdAutorizacion WHERE autNumero='" + DAutorizacion.SelectedValue + "'");
             if (reader != null && reader.Read())
             {
                 DateTime autorizacion= (DateTime)reader["autFecha"];
                 DateTime final = (DateTime)reader["autFechaVenc"];
+                TObservaciones.Text= reader["autObservaciones"].ToString();
                 if (final == null || final < autorizacion) 
                     final = autorizacion.AddDays(30);
                 RFechaFinal.MinimumValue = RFecha.MinimumValue = CConectorMS.GetDate(autorizacion);

@@ -69,6 +69,31 @@ public class servicios : System.Web.Services.WebService
     };
 
     [WebMethod]
+    public List<CJSon> GetAutorizaciones(String q)
+    {
+        List<CJSon> lista = new List<CJSon>();
+
+        CConectorMS conector = new CConectorMS();
+
+        string query = "SELECT TOP 100 phdAutorizacion.autNumero,phdAutorizacion.autFecha,phdPaciente.pacNombres"
+                + " FROM phdAutorizacion"
+                + " LEFT JOIN phdPaciente ON (phdAutorizacion.pacId=phdPaciente.pacId)"
+                + " WHERE phdAutorizacion.autNumero LIKE '%" + q.ToString()+ "%'"
+                + " ORDER BY phdAutorizacion.autFecha DESC";
+        SqlDataReader reader = conector.Query(query);
+        if (reader != null)
+        {
+            while (reader.Read())
+            {
+                string valor = ((DateTime)reader["autFecha"]).ToShortDateString() + " - " + reader["autNumero"].ToString() + " - " + reader["pacNombres"].ToString();
+                lista.Add(new CJSon(reader["autNumero"].ToString(), valor));
+            }
+            reader.Close();
+        }
+        return lista;
+    }
+
+    [WebMethod]
     public List<CJSon> GetPacienteI(String q)
     {
         List<CJSon> lista = new List<CJSon>();

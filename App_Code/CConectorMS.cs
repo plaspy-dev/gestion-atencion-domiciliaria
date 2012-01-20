@@ -21,4 +21,7 @@ public class CConectorMS : ConectorMS
     {
         return new CConectorMS();
     }
+    public string GetConnectionString() {
+        return m_szConexion;
+    }
 }

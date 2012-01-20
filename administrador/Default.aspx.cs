@@ -71,6 +71,10 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Control de líquidos", 11, parent);
             Add("Vía", 12, parent);
 
+            parent = Add("Pacientes");
+            Add("Categoría de afiliación", 13, parent);
+            // Add("Copagos", 14, parent);
+
             if (HTipo.Value.Length == 0)
                 Response.Redirect(Request.Url.AbsolutePath + "?tipo=1");
         }

@@ -2,14 +2,15 @@
 <%@ Register src="autorizaciones.ascx" tagname="autorizaciones" tagprefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<script type="text/javascript">
+
+    <script type="text/javascript">
     $(function() {
         $("#<%= TObservaciones.ClientID %>").attr("tabindex", "-1");
         $("#<%= PReactivar.ClientID %>").accordion({
             autoHeight: false,
-            collapsible: true
+            collapsible: true,
+            active: false
         });
-        $("#<%= PReactivar.ClientID %>").accordion("activate", -1);
 
         $("#<%= TPApellido.ClientID %>,#<%= TPNombre.ClientID %>,#<%= TDocumento.ClientID %>").autocomplete({
             source: function(request, response) {
@@ -109,9 +110,14 @@
         </tr>
         <tr>
             <td rowspan="4">
-                <asp:ImageButton runat="server" BorderWidth="1px" Height="100px" Width="100px" ID="imbFoto"></asp:ImageButton>
+                <asp:ImageButton runat="server" ID="IFoto" CausesValidation="false" />
                 <br />
-                <asp:LinkButton runat="server" ID="lnkElimFoto">Eliminar Foto</asp:LinkButton>
+                <asp:FileUpload runat="server" ID="FFoto" Width="100px" />
+                <asp:ImageButton runat="server" ID="IEliminar" ImageUrl="~/imgs/eliminar.gif" 
+                    onclick="IEliminar_Click" />
+                    <asp:RegularExpressionValidator id="RegularExpressionValidator2" runat="server" ErrorMessage="Por favor seleccione una imagen en formato jpg." 
+                        ValidationExpression="^(([a-zA-Z]:)|(\\{2}\w+)\$?)(\\(\w[\w].*))(.jpg|.JPG|.jpeg|.JPEG)$"  ControlToValidate="FFoto">*
+                    </asp:RegularExpressionValidator>
             </td>
             <td rowspan="4">
                 Tipo Documento
@@ -382,9 +388,18 @@
                 </asp:DropDownList>
             </td>
             <td style="margin-left: 160px">
-                &nbsp;</td>
-            <td>
-                &nbsp;</td>
+                Categoría</td>
+            <td><asp:DropDownList ID="DCategoria" runat="server" 
+                                DataSourceID="SCategoria" DataTextField="nombre" 
+                                DataValueField="id" AppendDataBoundItems="true">
+                                <asp:ListItem Text="" Value=""></asp:ListItem>
+                                </asp:DropDownList>
+                <asp:SqlDataSource ID="SCategoria" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT id,nombre FROM varios WHERE tipo=13 AND szReservado IS NULL">
+                </asp:SqlDataSource>
+                </td>
         </tr>
         <tr>
             <td class="celdaTitulo" colspan="4">
@@ -476,7 +491,7 @@
     </table>
     </div>
     <asp:Panel runat="server" ID="PReactivar">
-        <h3><a href="#">Programación proxima</a></h3>
+        <h3><a href="#">Programación próxima</a></h3>
         <div>
             <asp:GridView ID="GProgramacion" runat="server" AutoGenerateColumns="False" DataSourceID="SProgramacion" EmptyDataText="No se encontraron programaciones">
                 <RowStyle CssClass="GridRow"></RowStyle>

@@ -293,4 +293,19 @@ public class ConectorMS
 		listItem.Selected = true;
 		return result;
 	}
+
+	public bool StartTransaction()
+	{
+		return QueryMod("BEGIN TRANSACTION;") != -1;
+	}
+
+	public bool RoolBack()
+	{
+		return QueryMod("ROLLBACK") != -1;
+	}
+
+	public bool Commit()
+	{
+		return QueryMod("COMMIT;") != -1;
+	}
 }

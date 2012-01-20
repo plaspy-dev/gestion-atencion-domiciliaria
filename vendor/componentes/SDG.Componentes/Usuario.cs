@@ -77,7 +77,7 @@ public class Usuario
 		{
 			return true;
 		}
-		return (m_pGrupo.GetPermisos(HttpContext.Current.Request.Url.AbsolutePath) & 1) == 1;
+		return m_pGrupo.GetPermisos(HttpContext.Current.Request.Url.AbsolutePath) > 0;
 	}
 
 	public bool CanInsert()

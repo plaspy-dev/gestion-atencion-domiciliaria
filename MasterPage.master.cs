@@ -6,11 +6,39 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
+using System.Data.SqlClient;
 
 public partial class MasterPageI : System.Web.UI.MasterPage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        if(!IsPostBack) {
+
+            CConectorMS conector = new CConectorMS();
+            CConectorMS conectorc = new CConectorMS();
+
+            SqlDataReader consultas = conectorc.Query("SELECT genTareas.tarTitulo AS nombre,genTareas.consulta,genTareas.url FROM GenUsuarioTarea LEFT JOIN genTareas ON (genTareas.tarId=GenUsuarioTarea.tarId) WHERE usIdUsuario='" + Usuario.GetUsuario().GetLogin() + "' AND genTareas.consulta IS NOT NULL;");
+            if(consultas!=null) {
+
+                while(consultas.Read()) {
+
+                    MenuItem parent = new MenuItem(consultas["nombre"].ToString());
+                    SqlDataReader reader = conector.Query(consultas["consulta"].ToString());
+                    if (reader != null)
+                    {
+                        while (reader.Read())
+                        {
+                            MenuItem item = new MenuItem(reader["nombre"].ToString());
+                            item.NavigateUrl = consultas["url"].ToString() + reader["id"].ToString();
+                            parent.ChildItems.Add(item);
+                        }
+                        if (parent.ChildItems.Count > 0)
+                            MAlertas.Items.Add(parent);
+                    }
+                }
+            }
+        }
+
         LVersion.Text = Version.GetVersion();
 
         Usuario usuario = Usuario.GetUsuario();
@@ -26,6 +54,8 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         {
             lblTitulo.Text += " " + Session["szMensaje"].ToString();
             Session["szMensaje"] = null;
+        } else {
+            lblTitulo.Text = Page.Title;
         }
         if (lnkExcel.Visible == false)
         {

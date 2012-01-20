@@ -81,11 +81,36 @@
                     <td colspan="4" >
                     <div class="celdaTitulo" >
                     <table width="100%"  cellpadding="0" cellspacing="0">
-                    <tr><td>
+                    <tr><td style="width: 100%" align="center">
                         <asp:Label ID="lblTitulo" CssClass="lblTituloPagina" runat="server" Text="" ></asp:Label>
-                    </td></tr>
-                    <tr><td align="right">
-                     <table><tr>
+                    </td><td align="right">
+                     <table>
+                     <tr>
+                        <td>
+                            <asp:Menu ID="MAlertas" runat="server" Orientation="Horizontal" 
+                                DynamicHorizontalOffset="2" ForeColor="#FFFFFF">
+                                <StaticItemTemplate>
+                                    <table cellpadding=1 cellspacing=1>
+                                        <tr>
+                                            <td><%# Eval("Text") %></td>
+                                            <td class="circulo">
+                                                <%# Eval("ChildItems.Count") %>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </StaticItemTemplate>
+                                <DynamicItemTemplate>
+                                    <div class="dinamicmenu">
+                                    <%# Eval("Text") %>
+                                    </div>
+                                </DynamicItemTemplate>
+                                <StaticHoverStyle CssClass="Titulo" />
+                                <DynamicHoverStyle CssClass="Titulo" />
+                                <DynamicMenuItemStyle HorizontalPadding="5px" VerticalPadding="3px" />
+                            </asp:Menu>
+                        </td>
+                     </tr>
+                     <tr>
                      <td align="left" >
                          <asp:LinkButton ID="lnkNuevo" runat="server" CssClass="linkBH" 
                          Visible="False" CausesValidation="False" PostBackUrl="">Nuevo</asp:LinkButton>
@@ -126,7 +151,7 @@
                                         HorizontalPadding="5px" NodeSpacing="0px" VerticalPadding="0px" />
                                 </asp:TreeView>
                             </div>
-                            <div id="tabs-2" class="ui-tabs-hide">
+                            <div id="tabs-2" class="hide">
                                 <uc1:modificaciones ID="MModificaciones" IdModificacion="" runat="server"/>
                             </div>
                         </div>

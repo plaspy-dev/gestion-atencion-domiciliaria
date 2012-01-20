@@ -17,6 +17,7 @@ public partial class administrador_usuario : System.Web.UI.Page
         if(!IsPostBack) {
             Usuario usuario = Usuario.GetUsuario();
 
+            BMigrar.Visible = usuario.CanAdmin();
             BAceptar.Enabled = usuario.CanInsert();
             GUsuarios.Columns[1].Visible = usuario.CanDelete();
             GUsuarios.Columns[0].Visible = usuario.CanUpdate();
@@ -73,7 +74,7 @@ public partial class administrador_usuario : System.Web.UI.Page
         query["usIdUsuario"] = TUsuario.Text;
         query["usNombreUsuario"] = TNombres.Text;
         if (TContrasena.Text.Length > 0)
-            query["usClave"] = crypt.Encriptar(TContrasena.Text);
+            query["usClave"] = crypt.Encriptar(TContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"));
 
         if (HUsuario.Value.Length > 0)
         {
@@ -93,34 +94,41 @@ public partial class administrador_usuario : System.Web.UI.Page
                 return;
         }
 
-        query = new Query("permisos");
+        if (DGrupos.SelectedValue == "0") { // es administrador
+            conector.QueryMod("INSERT INTO Seg_UsuarioMenu SELECT meIdMenu,'" + TUsuario.Text + "',1,1,1 FROM seg_menu WHERE meRuta!='';");
+        } else {
 
-        query += "url";
-        query += "permiso";
+            query = new Query("permisos");
 
-        MySqlDataReader reader= conector.Query(query.GetSelect("grupo='" + DGrupos.SelectedValue + "'"));
-        if(reader!=null) {
-            while(reader.Read()) {
+            query += "url";
+            query += "permiso";
 
-                string url = reader["url"].ToString();
-                if(url[0]=='/') { // es de los nuevos
+            MySqlDataReader reader = conector.Query(query.GetSelect("grupo='" + DGrupos.SelectedValue + "'"));
+            if (reader != null)
+            {
+                while (reader.Read())
+                {
+                    string url = reader["url"].ToString();
+                    if (url[0] == '/')
+                    { // es de los nuevos
 
-                    url = url.Replace("/" + ConfigurationSettings.AppSettings["app"], "");
-                    Permisos info = new Permisos("", url, (int)reader["permiso"]);
+                        url = url.Replace("/" + ConfigurationSettings.AppSettings["app"], "");
+                        Permisos info = new Permisos("", url, (int)reader["permiso"]);
 
-                    string id = conectorms.QueryString("SELECT meIdMenu FROM seg_menu WHERE meRuta='" + info.pagina + "'");
-                    if (id.Length == 0)
-                        continue;
+                        string id = conectorms.QueryString("SELECT meIdMenu FROM seg_menu WHERE meRuta='" + info.pagina + "'");
+                        if (id.Length == 0)
+                            continue;
 
-                    query = new Query("Seg_UsuarioMenu");
-                    query["meIdMenu"] = id;
-                    query["usIdUsuario"] = TUsuario.Text;
-                    query["umInserta"] = info.insercion ? "1" : "0";
-                    query["umModifica"] = info.edicion ? "1" : "0";
-                    query["umElimina"] = info.eliminar ? "1" : "0";
+                        query = new Query("Seg_UsuarioMenu");
+                        query["meIdMenu"] = id;
+                        query["usIdUsuario"] = TUsuario.Text;
+                        query["umInserta"] = info.insercion ? "1" : "0";
+                        query["umModifica"] = info.edicion ? "1" : "0";
+                        query["umElimina"] = info.eliminar ? "1" : "0";
 
-                    if (conectorms.QueryMod(query.GetInsert()) == -1)
-                        return;
+                        if (conectorms.QueryMod(query.GetInsert()) == -1)
+                            return;
+                    }
                 }
             }
         }
@@ -169,6 +177,7 @@ public partial class administrador_usuario : System.Web.UI.Page
             while(reader.Read()) {
 
                 string id= conectorMySQL.QueryString("SELECT id FROM usuario WHERE usuario='" + reader["usIdUsuario"].ToString() + "'");
+                string grupoold = conectorMySQL.QueryString("SELECT grupo FROM usuario WHERE usuario='" + reader["usIdUsuario"].ToString() + "'");
 
                 Query query = new Query("usuario");
                 query["nombre"] = reader["usNombreUsuario"].ToString();
@@ -177,19 +186,71 @@ public partial class administrador_usuario : System.Web.UI.Page
                 string password = crypt.Desencriptar(reader["usClave"].ToString(), System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"));
                 query.AddCampo("contrasena", "PASSWORD(" + Query.GetValor(password) + ")", false);
 
+                string grupoid = "";
+                if (grupoold != "0")
+                {// es administrador
+                    // creamos el grupo en caso de no existir
+                    grupoid = conectorMySQL.QueryString("SELECT id FROM grupo WHERE nombre='Grupo_" + nombre + "'");
+                    if (grupoid.Length == 0)
+                    {
+                        int res = conectorMySQL.QueryMod("INSERT INTO grupo (nombre) VALUES ('Grupo_" + nombre + "')", true);
+                        grupoid = res.ToString();
+                    }
+                    query["grupo"] = grupoid;
+                }
+
                 if (id.Length == 0)
                 {
                     insertados++;
-                    query["grupo"] = "1";
-                    conectorMySQL.QueryMod(query.GetInsert()); 
+                    
+                    int res= conectorMySQL.QueryMod(query.GetInsert(), true);
+                    id= res.ToString();
                 }
                 else
                 {
                     actualizados++;
                     conectorMySQL.QueryMod(query.GetUpdate("id='" + id + "'")); 
                 }
+
+                if (grupoold != "0")
+                {
+                    CConectorMS conector1 = new CConectorMS();
+                    SqlDataReader reader1 = conector1.Query("SELECT meRuta,umInserta,umModifica,umElimina FROM Seg_UsuarioMenu LEFT JOIN seg_menu ON (seg_menu.meIdMenu=Seg_UsuarioMenu.meIdMenu) WHERE usIdUsuario='" + nombre + "';");
+                    if (reader1 != null)
+                    {
+                        conectorMySQL.QueryMod("DELETE FROM permisos WHERE grupo='" + grupoid + "' AND url LIKE '/%'");
+
+                        Query permisos = new Query("permisos");
+                        permisos["grupo"] = grupoid;
+
+                        while (reader1.Read())
+                        {
+                            int permiso = 0;
+                            permisos["url"] = "/" + ConfigurationSettings.AppSettings["app"] + reader1["meRuta"].ToString();
+                            if (reader1["umInserta"].ToString().ToLower() == "true")
+                                permiso += 1;
+                            if (reader1["umModifica"].ToString().ToLower() == "true")
+                                permiso += 12;
+                            if (reader1["umElimina"].ToString().ToLower() == "true")
+                                permiso += 16;
+
+                            if (permiso > 0)
+                            {
+                                permisos["permiso"] = permiso.ToString();
+                                conectorMySQL.QueryMod(permisos.GetInsert());
+                            }
+                        }
+                    }
+                    if (grupoold.Length > 0 && grupoold != grupoid)
+                    { // actualizamos los permisos que ya tenia el usuario.
+
+                        conectorMySQL.QueryMod("DELETE FROM permisos WHERE grupo='" + grupoid + "' AND url LIKE '~/%'");
+                        conectorMySQL.QueryMod("INSERT INTO permisos (grupo,url,permiso) SELECT " + grupoid + ",url, permiso FROM permisos WHERE grupo='" + grupoold + "' AND url LIKE '~/%'");
+                    }
+                }
             }
         }
+        GUsuarios.DataBind();
         ((MasterPageI)Master).SetResultado( insertados+ " usuarios ingresados y " + actualizados + " actualizados.");
     }
     protected void GUsuarios_RowDeleted(object sender, GridViewDeletedEventArgs e)

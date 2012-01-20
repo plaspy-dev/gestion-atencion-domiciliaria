@@ -1,6 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <paginas>
   <seccion>
+    <titulo>Admisiones</titulo>
+    <pagina>
+      <titulo>Autorizaciones</titulo>
+      <url>~/admisiones/autorizaciones.aspx</url>
+    </pagina>
+  </seccion>
+  <seccion>
     <titulo>Gestión de Pacientes</titulo>
     <pagina>
       <titulo>Informes</titulo>
@@ -73,6 +80,10 @@
     <pagina>
       <titulo>Grupos de usuarios</titulo>
       <url>~/administrador/grupos.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Copagos</titulo>
+      <url>~/administrador/copagos.aspx</url>
     </pagina>
   </seccion>
   <seccion>

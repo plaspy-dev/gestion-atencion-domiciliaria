@@ -32,6 +32,9 @@ public partial class rh_funcionario : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
+        Session["foto_tabla"] = "admPersonalHS";
+        Session["foto_id"] = "perId";
+
         if (!IsPostBack)
         {
             Response.Cookies["tabpersonal"].Value = null;
@@ -53,6 +56,7 @@ public partial class rh_funcionario : System.Web.UI.Page
             Usuario usuario = Usuario.GetUsuario();
             BAceptar.Enabled = usuario.CanInsert();
             lnkAgInfoLab.Visible = usuario.CanInsert();
+            IEliminar.Visible = false;
 
             if (Request.QueryString["id"]!=null && Request.QueryString["id"].Length>0)
             {
@@ -105,6 +109,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                 query += "profId";
                 query += "perParentescoContacto";
                 query += "residencialocId";
+                query += "nombre";
 
                 CConectorMS conector = new CConectorMS();
 
@@ -163,6 +168,12 @@ public partial class rh_funcionario : System.Web.UI.Page
                     TFechaTerminacion.Text = ConectorMS.GetDate(reader["perFechaTermContrato"]);
                     TParentesco.Text = reader["perParentescoContacto"].ToString();
                     DLocalidadVivienda.SelectedValue = reader["residencialocId"].ToString();
+                    if (reader["nombre"].ToString().Length != 0)
+                    {
+                        IFoto.ImageUrl = "~/archivo/foto.ashx?w=120&i=" + HId.Value;
+                        IFoto.PostBackUrl = "~/archivo/foto.ashx?i=" + HId.Value;
+                        IEliminar.Visible = usuario.CanDelete();
+                    }
 
                     conector.SelectInDropDown(DTipoContrato, reader["tipContId"], "SELECT tipContDesc FROM admTipoContrato WHERE tipContId='" + reader["tipContId"].ToString() + "'");
                     conector.SelectInDropDown(DProfesion, reader["profId"], "SELECT profNombre FROM admProfesion WHERE profId='" + reader["profId"].ToString() + "'");
@@ -249,6 +260,12 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["profId"] = DProfesion.SelectedValue;
         query["perParentescoContacto"] = TParentesco.Text;
         query["residencialocId"] = DLocalidadVivienda.SelectedValue;
+        if (HId.Value.Length != 0 && IFoto.PostBackUrl.Length == 0)
+        {
+            query["nombre"] = "";
+            query["tipo"] = "";
+            query["archivo"] = "";
+        }
 
         CConectorMS conectorms = new CConectorMS();
 
@@ -265,6 +282,12 @@ public partial class rh_funcionario : System.Web.UI.Page
         }
         CConector conector = new CConector();
         conector.InsertModificacion(HId.Value);
+
+        if (FFoto.HasFile)
+        {
+            Archivos archivo = new Archivos(FFoto.PostedFile, Convert.ToInt32(HId.Value));
+            archivo.SaveFile(new Query("admPersonalHS"));
+        }
 
         if(conectorms.QueryMod("DELETE FROM admDocsPersonalHS WHERE perId=" + HId.Value )==-1)
             return;
@@ -362,5 +385,12 @@ public partial class rh_funcionario : System.Web.UI.Page
         lista.RemoveAt(e.RowIndex);
         GEmpresas.DataSource = lista;
         GEmpresas.DataBind();
+    }
+
+    protected void IEliminar_Click(object sender, ImageClickEventArgs e)
+    {
+        IFoto.PostBackUrl = "";
+        IFoto.ImageUrl = "";
+        IEliminar.Visible = false;
     }
 }

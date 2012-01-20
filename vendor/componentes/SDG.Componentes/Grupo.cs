@@ -12,8 +12,11 @@ public class Grupo
 
 	protected bool m_bInicio = false;
 
+	protected bool m_bNativo = true;
+
 	public Grupo()
 	{
+		m_bNativo = ConfigurationSettings.AppSettings["app"] == null;
 		m_aURLs = new ArrayList();
 		XmlDocument xmlDocument = new XmlDocument();
 		xmlDocument.Load(HttpContext.Current.Server.MapPath("~/directorio.xml"));
@@ -109,19 +112,19 @@ public class Grupo
 		old = -1;
 		for (int i = 0; i < treenodo.Count; i++)
 		{
-			int old2 = -1;
-			TreeNode treeNode = FindParent(treenodo[i].ChildNodes, buscado, ref old2);
-			if (treeNode != null)
-			{
-				old = old2;
-				return treeNode;
-			}
 			string text = treenodo[i].Text;
 			text = text.Replace("<div onclick='noPreguntar();'>", "");
 			text = text.Replace("</div>", "");
 			if (text == buscado)
 			{
 				return treenodo[i];
+			}
+			int old2 = -1;
+			TreeNode treeNode = FindParent(treenodo[i].ChildNodes, buscado, ref old2);
+			if (treeNode != null)
+			{
+				old = old2;
+				return treeNode;
 			}
 			if (text.CompareTo(buscado) > 0)
 			{
@@ -181,7 +184,7 @@ public class Grupo
 						treeNode = new TreeNode(cURLs.Parent);
 						treeNode.Collapse();
 						treeNode.SelectAction = TreeNodeSelectAction.Expand;
-						if (old == -1)
+						if (old == -1 || m_bNativo)
 						{
 							treeNodeCollection.Add(treeNode);
 						}
@@ -197,7 +200,12 @@ public class Grupo
 			{
 				text = CURLs.SwitchApp(text, ConfigurationSettings.AppSettings["app"]);
 			}
-			TreeNode treeNode2 = Add(cURLs.Titulo, text + parametros);
+			string text2 = text;
+			if (text.Length > 0)
+			{
+				text2 += parametros;
+			}
+			TreeNode treeNode2 = Add(cURLs.Titulo, text2);
 			if (cURLs.FullURL == HttpContext.Current.Request.Url.AbsolutePath)
 			{
 				treeNode2.Selected = true;
@@ -205,19 +213,45 @@ public class Grupo
 			}
 			TreeNode treeNode3 = null;
 			TreeNodeCollection treeNodeCollection2 = ((treeNode == null) ? treeNodeCollection : treeNode.ChildNodes);
+			int num = -1;
 			for (int j = 0; j < treeNodeCollection2.Count; j++)
 			{
-				if (treeNodeCollection2[j].Text == treeNode2.Text)
+				string text3 = treeNodeCollection2[j].Text;
+				text3 = text3.Replace("<div onclick='noPreguntar();'>", "");
+				text3 = text3.Replace("</div>", "");
+				if (text3 == treeNode2.Text)
 				{
 					treeNode3 = treeNodeCollection2[j];
 					break;
 				}
+				if (text3.CompareTo(treeNode2.Text) > 0)
+				{
+					if (j != 0)
+					{
+						text3 = treeNodeCollection2[j - 1].Text;
+						text3 = text3.Replace("<div onclick='noPreguntar();'>", "");
+						text3 = text3.Replace("</div>", "");
+					}
+					if (j == 0 || text3.CompareTo(treeNode2.Text) < 0)
+					{
+						num = j;
+						break;
+					}
+				}
 			}
 			if (treeNode3 != null)
 			{
-				treeNodeCollection2.Remove(treeNode3);
+				treeNode3.NavigateUrl = treeNode2.NavigateUrl;
+				treeNode3.SelectAction = treeNode2.SelectAction;
 			}
-			treeNodeCollection2.Add(treeNode2);
+			else if (num == -1 || m_bNativo)
+			{
+				treeNodeCollection2.Add(treeNode2);
+			}
+			else
+			{
+				treeNodeCollection2.AddAt(num, treeNode2);
+			}
 		}
 		return result;
 	}

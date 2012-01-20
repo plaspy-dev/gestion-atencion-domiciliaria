@@ -52,9 +52,9 @@
         });
         $("#dExepciones").accordion({
             autoHeight: false,
-            collapsible: true
+            collapsible: true,
+            active: false, 
         });
-        $("#dExepciones").accordion("activate", -1);
         $("#<%= DActividad.ClientID %>").change(function() {
             $('span[id^="dact"]').hide();
             $("#dact" + $(this).val()).show();

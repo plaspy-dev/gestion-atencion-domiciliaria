@@ -13,6 +13,9 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        Session["foto_tabla"] = "phdPaciente";
+        Session["foto_id"] = "pacId";
+
         if(!IsPostBack) {
 
             PReactivar.Visible = false;
@@ -26,6 +29,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
             Usuario usuario = Usuario.GetUsuario();
             BAceptar.Enabled = usuario.CanInsert();
+            IEliminar.Visible = false;
 
             if (Request.QueryString["id"] != null && Request.QueryString["id"].Length > 0)
             {
@@ -69,6 +73,8 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 query += "cieCodDx";
                 query += "cieCodDx_1";
                 query += "cieCodDx_2";
+                query+="categoria";
+                query+= "nombre";
 
                 CConectorMS conector = new CConectorMS();
 
@@ -82,14 +88,14 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                     UCAutorizaciones.Value= HId.Value = reader["pacId"].ToString();
                     ((MasterPageI)Master).SetModificacion(HId.Value);
 
-                    DDocumento.SelectedValue = reader["tdocId"].ToString();
+                    conector.SelectInDropDown(DDocumento, reader["tdocId"]);
                     TDocumento.Text = reader["pacDocumento"].ToString();
                     TPApellido.Text = reader["pacPApellido"].ToString();
                     TObservaciones.Text = reader["pacObservaciones"].ToString();
                     TSApellido.Text = reader["pacSApellido"].ToString();
                     TPNombre.Text = reader["pacPNombre"].ToString();
                     TSNombre.Text = reader["pacSNombre"].ToString();
-                    DSexo.SelectedValue = reader["sexoId"].ToString();
+                    conector.SelectInDropDown(DSexo ,reader["sexoId"]);
                     TNacimiento.Text = ConectorMS.GetDate(reader["pacFechaNac"]);
                     TDireccion.Text = reader["pacDireccion"].ToString();
                     TBarrio.Text = reader["pacBarrio"].ToString();
@@ -110,7 +116,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                     conector.SelectInDropDown(DMedico, reader["megId"], "SELECT megNombre FROM phdMegas WHERE megId={0}");
                     TFechaIngresoAsegurador.Text = ConectorMS.GetDate(reader["pacFecIngAsegurador"]);
                     TGrado.Text = reader["pacGrado"].ToString();
-                    DTipoAfiliado.SelectedValue = reader["pacTipoAfiliado"].ToString();
+                    conector.SelectInDropDown(DTipoAfiliado , reader["pacTipoAfiliado"]);
                     conector.SelectInDropDown(DTipoEvento, reader["tipECod"], "SELECT tipEDescripcion FROM phdTipoEvento WHERE tipECod={0}");
                     TFechaIngreso.Text = ConectorMS.GetDate(reader["pacFecIngPrograma"]);
                     conector.SelectInDropDown(DEstado, reader["estId"], "SELECT estDesc FROM phdEstado WHERE estId={0}");
@@ -119,6 +125,13 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                     TCIE1.Text = reader["cieCodDx"].ToString();
                     TCIE2.Text = reader["cieCodDx_1"].ToString();
                     TCIE3.Text = reader["cieCodDx_2"].ToString();
+                    conector.SelectInDropDown(DCategoria, reader["categoria"]);
+                    if(reader["nombre"].ToString().Length!=0) {
+
+                        IFoto.ImageUrl = "~/archivo/foto.ashx?w=120&i=" + HId.Value;
+                        IFoto.PostBackUrl = "~/archivo/foto.ashx?i=" + HId.Value;
+                        IEliminar.Visible = usuario.CanDelete();
+                    }
 
                     GetCodigoCIE(TCIE1, conector);
                     GetCodigoCIE(TCIE2, conector);
@@ -209,7 +222,14 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         query["cieCodDx"] = GetCodigoCIE(TCIE1.Text);
         query["cieCodDx_1"] = GetCodigoCIE(TCIE2.Text);
         query["cieCodDx_2"] = GetCodigoCIE(TCIE3.Text);
+        query["categoria"] = DCategoria.SelectedValue;
         query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
+        if (HId.Value.Length!=0 && IFoto.PostBackUrl.Length == 0)
+        {
+            query["nombre"] = "";
+            query["tipo"] = "";
+            query["archivo"] = "";
+        }
 
         CConectorMS conectorms = new CConectorMS();
 
@@ -231,6 +251,11 @@ public partial class seguimiento_paciente : System.Web.UI.Page
             if (res == -1)
                 return;
             HId.Value = res.ToString();
+        }
+        if(FFoto.HasFile) {
+
+            Archivos archivo = new Archivos(FFoto.PostedFile, Convert.ToInt32(HId.Value));
+            archivo.SaveFile(new Query("phdPaciente"));
         }
 
         CConector conectormysql = new CConector();
@@ -294,5 +319,11 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         conectormysql.InsertModificacion(HId.Value);
 
         ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Editado.");
+    }
+    protected void IEliminar_Click(object sender, ImageClickEventArgs e)
+    {
+        IFoto.PostBackUrl = "";
+        IFoto.ImageUrl = "";
+        IEliminar.Visible = false;
     }
 }

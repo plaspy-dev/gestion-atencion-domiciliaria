@@ -44,18 +44,21 @@ public partial class administrador_grupos : System.Web.UI.Page
                 CURLs url = (CURLs)menu[i];
                 /*if (url.m_bNativo)
                 {*/
-                    Parents padre=null;
-                    for (int j = 0; j < parents.Count; j++ ) {
-                        if(((Parents) parents[j]).parent==url.Parent) {
-                            padre = (Parents)parents[j];
-                            break;
-                        }
+                if (url.Parent.Length==0) {
+                    continue;
+                }
+                Parents padre=null;
+                for (int j = 0; j < parents.Count; j++ ) {
+                    if(((Parents) parents[j]).parent==url.Parent) {
+                        padre = (Parents)parents[j];
+                        break;
                     }
-                    if(padre==null) {
-                        padre = new Parents(url.Parent);
-                        parents.Add(padre);
-                    }
-                    padre.permisos.Add(new Permisos(url.Titulo, url.URL));
+                }
+                if(padre==null) {
+                    padre = new Parents(url.Parent);
+                    parents.Add(padre);
+                }
+                padre.permisos.Add(new Permisos(url.Titulo, url.URL));
                 //}
             }
             RParents.DataSource = parents;
@@ -162,6 +165,10 @@ public partial class administrador_grupos : System.Web.UI.Page
             CURLs url = (CURLs)menu[i];
             /*if (url.m_bNativo)
             {*/
+            if (url.Parent.Length == 0)
+            {
+                continue;
+            }
                 Parents padre = null;
                 for (int j = 0; j < parents.Count; j++)
                 {
