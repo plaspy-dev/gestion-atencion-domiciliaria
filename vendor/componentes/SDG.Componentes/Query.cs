@@ -180,6 +180,11 @@ public class Query
 
 	public string GetDelete(string condicion)
 	{
-		return "DELETE FROM " + m_szTabla + condicion;
+		string text = "DELETE FROM " + m_szTabla;
+		if (condicion.Length != 0)
+		{
+			text = text + " WHERE " + condicion;
+		}
+		return text;
 	}
 }

@@ -181,12 +181,13 @@
         </tr>
         <tr>
             <td>
-                Número<asp:HiddenField runat="server" ID="HIdAutorizacion" />
+                Número<asp:HiddenField runat="server" ID="HIdAutorizacion" /><asp:HiddenField runat="server" ID="HId" />
             </td>
             <td>
                 <asp:TextBox ID="TNumero" runat="server"></asp:TextBox>
             </td>
             <td colspan="2">
+                <asp:Label runat="server" ID="LEstado"></asp:Label>
                 <asp:CheckBox ID="CGenerar" Text="Generar número automático" runat="server" />
             </td>
         </tr>
@@ -327,9 +328,9 @@
                 <asp:TextBox ID="TValor" CssClass="dinero" runat="server"></asp:TextBox>
             </td>
             <td>
-                &nbsp;</td>
+                </td>
             <td>
-                &nbsp;</td>
+                </td>
         </tr>
         <tr>
             <td class="celdaTitulo" colspan="4">

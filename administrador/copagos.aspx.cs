@@ -61,6 +61,8 @@ public partial class administrador_copagos : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!IsValid)
+            return;
         CConector conector = new CConector();
         Query query = new Query("varios");
 

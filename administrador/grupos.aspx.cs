@@ -58,7 +58,8 @@ public partial class administrador_grupos : System.Web.UI.Page
                     padre = new Parents(url.Parent);
                     parents.Add(padre);
                 }
-                padre.permisos.Add(new Permisos(url.Titulo, url.URL));
+                if (url.URL!="~")
+                    padre.permisos.Add(new Permisos(url.Titulo, url.URL));
                 //}
             }
             RParents.DataSource = parents;
@@ -68,6 +69,8 @@ public partial class administrador_grupos : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!IsValid)
+            return;
         Query query= new Query("grupo");
         CConector conector = CConector.GetConector();
         string szQuery;

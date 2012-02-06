@@ -75,6 +75,14 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Categoría de afiliación", 13, parent);
             // Add("Copagos", 14, parent);
 
+            parent = Add("Encuesta de satisfacción al usuario");
+            Add("Grupo preguntas", 15, parent);
+            // Add("Preguntas", 16, parent);
+
+            parent = Add("Evento adverso o incidente en la IPS");
+            Add("Tipo evento", 17, parent);
+            Add("Consecuencia del evento", 18, parent);
+
             if (HTipo.Value.Length == 0)
                 Response.Redirect(Request.Url.AbsolutePath + "?tipo=1");
         }
@@ -82,6 +90,8 @@ public partial class administrador_Default : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!IsValid)
+            return;
         Query query = new Query("varios");
         CConector conector= CConector.GetConector();
         string szQuery;
@@ -117,8 +127,8 @@ public partial class administrador_Default : System.Web.UI.Page
     protected void GResultado_SelectedIndexChanged(object sender, EventArgs e)
     {
         HId.Value= GResultado.SelectedDataKey.Value.ToString();
-        TNombre.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[2].Text);
-        TDescripcion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[3].Text);
+        TNombre.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[2].Text).Trim();
+        TDescripcion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[3].Text).Trim();
 
         ((MasterPageI)Master).SetModificacion(HId.Value);
     }

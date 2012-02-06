@@ -105,7 +105,7 @@
                                 </FooterTemplate>
                                 <ItemTemplate>
                                     <h3><a href="#"><%# Eval("parent") %></a></h3>
-                                    <div>
+                                    <div class="hide">
                                     <asp:GridView ID="GPermisos" runat="server" AutoGenerateColumns="false" DataKeyNames="pagina">
                                         <RowStyle CssClass="GridRow"></RowStyle>
                                         <FooterStyle CssClass="GridFooter"></FooterStyle>

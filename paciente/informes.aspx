@@ -80,12 +80,12 @@
                 <asp:BoundField DataField="tdocDescripcion" SortExpression="tdocDescripcion" HeaderText="TD" />
                 <asp:HyperLinkField DataTextField="pacDocumento" HeaderText="Documento" 
                     DataNavigateUrlFields="pacId" SortExpression="pacDocumento"
-                    DataNavigateUrlFormatString="~/paciente/paciente.aspx?id={0}" >
+                    DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" >
                 <ItemStyle HorizontalAlign="Right" />
                 </asp:HyperLinkField>
                <asp:HyperLinkField DataTextField="pacPNombre" HeaderText="Nombres" 
                     DataNavigateUrlFields="pacId" 
-                    DataNavigateUrlFormatString="~/paciente/paciente.aspx?id={0}" SortExpression="pacPNombre" >
+                    DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" SortExpression="pacPNombre" >
                     <ItemStyle Wrap="False" />
                 </asp:HyperLinkField>
                 <asp:BoundField HeaderText="Edad" DataField="edad" SortExpression="edad">

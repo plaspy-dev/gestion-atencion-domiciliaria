@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class cliente_estadisticas : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        GResultados.DataBind();
+        int total = 0;
+        LResultado.Text = "";
+        for(int i=0; i<GResultados.Rows.Count; i++) {
+            int actual= Convert.ToInt32(GResultados.Rows[i].Cells[1].Text);
+            total += actual;
+            if (LResultado.Text.Length > 0)
+                LResultado.Text += ",";
+            LResultado.Text += "['" + GResultados.Rows[i].Cells[0].Text + "', " + actual.ToString() + "]";
+        }
+        LTotal.Text = total + " Encuesta";
+        if (total != 1)
+            LTotal.Text += "s";
+    }
+    protected void GResultados_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        LCalificacion.Text = "Detalle " + ((LinkButton)GResultados.SelectedRow.FindControl("LConcepto")).Text;
+        PDetalle.Visible = true;
+    }
+    protected void GDetalle_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowIndex == -1)
+            return;
+        CConectorMS conector = new CConectorMS();
+        ((LinkButton)e.Row.FindControl("LPaciente")).Text = conector.QueryString("SELECT pacnombres FROM phdPaciente WHERE pacId=" + ((LinkButton)e.Row.FindControl("LPaciente")).Text);
+    }
+}

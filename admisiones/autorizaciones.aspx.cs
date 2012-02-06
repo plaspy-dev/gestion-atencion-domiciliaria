@@ -38,6 +38,9 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 query += "total";
                 query += "autObservaciones";
                 query += "entId";
+                query += "autActivo";
+                query += "autFechaSuspension";
+                query += "id";
 
                 SqlDataReader reader= conector.Query(query.GetSelect("autNumero=" + Query.GetValor(Request.QueryString["aut"])));
                 if(reader!=null && reader.Read()) {
@@ -54,7 +57,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     GPagos.Columns[1].Visible = usuario.CanDelete();
 
                     HIdAutorizacion.Value = Request.QueryString["aut"];
-                    ((MasterPageI)Master).SetModificacion(HIdAutorizacion.Value);
+                    HId.Value = reader["id"].ToString();
+                    ((MasterPageI)Master).SetModificacion(HId.Value);
 
                     HIdEntidad.Value = reader["entId"].ToString();
                     TNumero.Text = reader["autNumero"].ToString();
@@ -63,7 +67,19 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     TVencimiento.Text = reader["autFechaVenc"].ToString();
                     TValor.Text = reader["total"].ToString();
                     TObservaciones.Text = reader["autObservaciones"].ToString();
+                    if (reader["autActivo"].ToString().ToLower()=="false") {
 
+                        if (reader["autFechaSuspension"].ToString().Length==0)
+                            LEstado.Text = "Anulada";
+                        else LEstado.Text = "Suspendida hasta el " + CConector.GetFromMySQLDate(reader["autFechaSuspension"]);
+                    } else {
+                        DateTime vencimiento = (DateTime)reader["autFechaVenc"];
+                        if(vencimiento==null) {
+                            vencimiento = (DateTime)reader["autFecha"];
+                            vencimiento = vencimiento.AddDays(30);
+                        }
+                        LEstado.Text = DateTime.Now.Date>vencimiento ? "Vencida" : "Activa";
+                    }
                     BIr_Click(sender, e);
                 }
             }
@@ -90,6 +106,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 if (conector.QueryMod(pago.GetUpdate("id=" + GPagos.SelectedDataKey.Value.ToString() )) == -1)
                     return;
             }
+            if (new CConector().InsertModificacion(HId.Value) == -1)
+                return;
             GPagos.DataBind();
         }
 
@@ -98,6 +116,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!IsValid)
+            return;
         CConectorMS conector = new CConectorMS();
         Query query = new Query("phdAutorizacion");
         conector.StartTransaction();
@@ -176,15 +196,16 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 query["segUsuarioConfirma"] = Usuario.GetUsuario().GetLogin();
                 query["segFechaConfirma"] = "GETDATE()";
             }
-
-            if(conector.QueryMod(query.GetInsert())==-1)
+            int res=conector.QueryMod(query.GetInsert(), true);
+            if(res==-1)
                 return;
+            HId.Value = res.ToString();
             HIdAutorizacion.Value= TNumero.Text;
         } else {
             if(conector.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(HIdAutorizacion.Value)))==-1)
                 return;
         }
-        if(new CConector().InsertModificacion(TNumero.Text)==-1)
+        if(new CConector().InsertModificacion(HId.Value)==-1)
             return;
 
         if (GPagos.Rows.Count==0)
@@ -353,6 +374,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         {
             return;
         }
+        if (new CConector().InsertModificacion(HId.Value) == -1)
+            return;
         conector.Commit();
         ((MasterPageI)Master).SetResultado("Autorización " + HIdAutorizacion.Value + " eliminada.");
     }
@@ -368,6 +391,9 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             query["autFechaSuspension"] = TFSuspender.Text;
 
         if (conector.QueryMod(query.GetUpdate("autNumero='" + HIdAutorizacion.Value + "'")) == -1)
+            return;
+
+        if (new CConector().InsertModificacion(HId.Value) == -1)
             return;
 
         ((MasterPageI)Master).SetResultado("Autorización " + HIdAutorizacion.Value + (RSuspender.Checked ? " suspendida." : " anulada." ));

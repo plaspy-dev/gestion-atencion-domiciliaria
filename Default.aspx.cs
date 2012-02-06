@@ -148,6 +148,7 @@ public partial class _Default : System.Web.UI.Page
 
     protected void m_BIngresar_Click(object sender, EventArgs e)
     {
+        Session.Clear();
         CConectorMS conectorMS = CConectorMS.GetConector();
         CConector conector = CConector.GetConector();
         string usuario = m_EUsuario.Text;

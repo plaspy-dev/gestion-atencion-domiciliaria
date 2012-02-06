@@ -37,6 +37,8 @@ public partial class administrador_usuario : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!IsValid)
+            return;
         Query query = new Query("usuario");
         CConector conector = CConector.GetConector();
         string szQuery;

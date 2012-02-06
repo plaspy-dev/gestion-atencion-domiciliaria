@@ -27,7 +27,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             CConectorMS conector = CConectorMS.GetConector();
             CConector conectormy = CConector.GetConector();
 
-            TDocumento.Text = Request.QueryString["id"];
+            TDocumento.Text = Request.QueryString["pid"];
             DDocumento.DataBind();
             DDocumento.SelectedValue = Request.QueryString["td"];
             TFecha.Text = Request.QueryString["f"];
@@ -54,7 +54,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     BMasFormulacion.Enabled= usuario.CanInsert();
                     TFecha.Focus();
                     BFecha.Enabled = true;
-                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
+                    Session["parametros"] = "?pid=" + Request.QueryString["pid"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
 
                     HId.Value = reader["pacId"].ToString();
                     LNombres.Text = reader["pacPNombre"].ToString() + " " + reader["pacSNombre"].ToString();
@@ -209,6 +209,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
     }
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!IsValid)
+            return;
         Query formulacion = new Query("formulacion");
         CConector conector = CConector.GetConector();
 
@@ -251,7 +253,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             }
         }
 
-        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
+        Session["parametros"] = "?pid=" + Request.QueryString["pid"] + "&td=" + Request.QueryString["td"] + "&f=" + CConector.GetDate(DateTime.Now);
         ((MasterPageI)Master).SetResultado(mensaje);
     }
 }

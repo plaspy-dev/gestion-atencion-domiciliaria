@@ -28,9 +28,9 @@ public partial class paciente_informes : System.Web.UI.Page
                 DEStado.SelectedValue = "1";
             }
         }
-        if (Request.QueryString["id"] != null)
+        if (Request.QueryString["pid"] != null)
         {
-            Response.Redirect("~/paciente/paciente.aspx?id=" + Request.QueryString["id"]);
+            Response.Redirect("~/paciente/paciente.aspx?pid=" + Request.QueryString["pid"]);
             return;
         }
 

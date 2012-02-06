@@ -11,10 +11,10 @@ public partial class rh_Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if(Request.QueryString["id"]!=null) {
+        if(Request.QueryString["fid"]!=null) {
 
             // agregar el id del usuario
-            Response.Redirect("~/rh/funcionario.aspx?id=" + Request.QueryString["id"]);
+            Response.Redirect("~/rh/funcionario.aspx?fid=" + Request.QueryString["fid"]);
             return;
         }
         if(!Usuario.GetUsuario().CanPrint())

@@ -285,7 +285,8 @@ public partial class phd_programacionc : System.Web.UI.UserControl
             {
                 DateTime autorizacion= (DateTime)reader["autFecha"];
                 DateTime final = (DateTime)reader["autFechaVenc"];
-                TObservaciones.Text= reader["autObservaciones"].ToString();
+                if (HId.Value.Length==0)
+                    TObservaciones.Text= reader["autObservaciones"].ToString();
                 if (final == null || final < autorizacion) 
                     final = autorizacion.AddDays(30);
                 RFechaFinal.MinimumValue = RFecha.MinimumValue = CConectorMS.GetDate(autorizacion);

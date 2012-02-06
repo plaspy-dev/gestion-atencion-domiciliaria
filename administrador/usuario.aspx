@@ -7,7 +7,7 @@
             autoHeight: false,
             navigation: true,
             collapsible: true,
-            active: -1,
+            active: -1
         });
     });
 </script>

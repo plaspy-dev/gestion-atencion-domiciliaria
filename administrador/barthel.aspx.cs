@@ -22,6 +22,8 @@ public partial class administrador_barthel : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!IsValid)
+            return;
         Query query = new Query("varios");
         CConector conector = CConector.GetConector();
         string szQuery;

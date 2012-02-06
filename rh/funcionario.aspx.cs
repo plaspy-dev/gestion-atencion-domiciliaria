@@ -58,7 +58,7 @@ public partial class rh_funcionario : System.Web.UI.Page
             lnkAgInfoLab.Visible = usuario.CanInsert();
             IEliminar.Visible = false;
 
-            if (Request.QueryString["id"]!=null && Request.QueryString["id"].Length>0)
+            if (Request.QueryString["fid"]!=null && Request.QueryString["fid"].Length>0)
             {
                 Query query = new Query("admPersonalHS");
 
@@ -113,7 +113,7 @@ public partial class rh_funcionario : System.Web.UI.Page
 
                 CConectorMS conector = new CConectorMS();
 
-                SqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(Request.QueryString["id"]) + ""));
+                SqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(Request.QueryString["fid"]) + ""));
 
                 if (reader != null && reader.Read())
                 {
@@ -212,6 +212,8 @@ public partial class rh_funcionario : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!IsValid)
+            return;
         Query query = new Query("admPersonalHS");
 
         query["perApellidos"] = TApellidos.Text;

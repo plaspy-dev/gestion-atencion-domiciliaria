@@ -142,12 +142,12 @@
         <Columns>
             <asp:HyperLinkField DataTextField="documento" HeaderText="Documento" 
                 DataNavigateUrlFields="id" SortExpression="documento"
-                DataNavigateUrlFormatString="~/rh/Default.aspx?id={0}" >
+                DataNavigateUrlFormatString="~/rh/Default.aspx?fid={0}" >
             <ItemStyle HorizontalAlign="Right" />
             </asp:HyperLinkField>
            <asp:HyperLinkField DataTextField="nombres" HeaderText="Nombres" 
                 DataNavigateUrlFields="id" 
-                DataNavigateUrlFormatString="~/rh/Default.aspx?id={0}" SortExpression="nombres" />
+                DataNavigateUrlFormatString="~/rh/Default.aspx?fid={0}" SortExpression="nombres" />
             <asp:BoundField HeaderText="Cargo" DataField="cargo" SortExpression="cargo"/>
             <asp:BoundField HeaderText="Teléfono movil" DataField="celular" 
                 SortExpression="celular">

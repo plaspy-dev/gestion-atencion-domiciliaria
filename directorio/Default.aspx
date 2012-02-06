@@ -28,7 +28,7 @@
                 minLength: 3,
                 select: function(event, ui) {
 
-                    location.href = location.href + "?id=" + ui.item.value;
+                    location.href = location.href + "?fid=" + ui.item.value;
                     return true;
                 }
             });
@@ -52,9 +52,27 @@
             <td>
                 Estado</td>
             <td>
+                Nombres o documento</td>
+            <td>
+                Área</td>
+            <td>
+                Cargo</td>
+            <td>
+                Disponibilidad</td>
+            <td>
+                &nbsp;</td>
+            <td>
+                &nbsp;</td>
+            <td>
+                &nbsp;</td>
+            <td>
+                &nbsp;</td>
+        </tr>
+        <tr>
+            <td>
                 <asp:DropDownList ID="DEStado" runat="server" AppendDataBoundItems="true" 
-                    DataSourceID="SEstado" DataTextField="nombre" DataValueField="id" 
-                    AutoPostBack="True">
+                    AutoPostBack="True" DataSourceID="SEstado" DataTextField="nombre" 
+                    DataValueField="id">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SEstado" runat="server" 
@@ -63,16 +81,22 @@
                 </asp:SqlDataSource>
             </td>
             <td>
-                Nombres o documento</td>
-            <td>
                 <asp:TextBox ID="TNombres" runat="server"></asp:TextBox>
             </td>
             <td>
-                Cargo</td>
+                <asp:DropDownList ID="DArea" runat="server" AppendDataBoundItems="true" AutoPostBack="true" 
+                        DataSourceID="SArea" DataTextField="nombre" DataValueField="id">
+                        <asp:ListItem Text="(Todas)" Value="0"></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SArea" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                    SelectCommand="SELECT areaId id,areaDesc nombre FROM dbo.admArea ORDER BY 2">
+                </asp:SqlDataSource>
+            </td>
             <td>
                 <asp:DropDownList ID="DCargo" runat="server" AppendDataBoundItems="true" 
-                    DataSourceID="SCargo" DataTextField="nombre" DataValueField="id" 
-                    AutoPostBack="True">
+                    AutoPostBack="True" DataSourceID="SCargo" DataTextField="nombre" 
+                    DataValueField="id">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SCargo" runat="server" 
@@ -81,11 +105,9 @@
                 </asp:SqlDataSource>
             </td>
             <td>
-                Disponibilidad</td>
-            <td>
-                <asp:DropDownList ID="DDisponibilidad" runat="server" AppendDataBoundItems="true" 
-                    DataSourceID="SDisponibilidad" DataTextField="nombre" DataValueField="id" 
-                    AutoPostBack="True">
+                <asp:DropDownList ID="DDisponibilidad" runat="server" 
+                    AppendDataBoundItems="true" AutoPostBack="True" DataSourceID="SDisponibilidad" 
+                    DataTextField="nombre" DataValueField="id">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SDisponibilidad" runat="server" 
@@ -96,6 +118,14 @@
             <td>
                 <asp:Button ID="BBuscar" runat="server" Text="Buscar" />
             </td>
+            <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
         </tr>
         </table>
     </asp:Panel>
@@ -107,12 +137,12 @@
             <Columns>
                 <asp:HyperLinkField DataTextField="documento" HeaderText="Documento" 
                     DataNavigateUrlFields="id" SortExpression="documento"
-                    DataNavigateUrlFormatString="~/directorio/Default.aspx?id={0}" >
+                    DataNavigateUrlFormatString="~/directorio/Default.aspx?fid={0}" >
                 <ItemStyle HorizontalAlign="Right" />
                 </asp:HyperLinkField>
                <asp:HyperLinkField DataTextField="nombres" HeaderText="Nombres" 
                     DataNavigateUrlFields="id" 
-                    DataNavigateUrlFormatString="~/directorio/Default.aspx?id={0}" SortExpression="nombres" >
+                    DataNavigateUrlFormatString="~/directorio/Default.aspx?fid={0}" SortExpression="nombres" >
                     <ItemStyle Wrap="False" />
                 </asp:HyperLinkField>
                 <asp:BoundField HeaderText="Cargo" DataField="cargo" SortExpression="cargo">
@@ -212,12 +242,14 @@
                     AND (@estado=0 OR per.eEstId=@estado) 
                     AND (@cargo=0 or per.carId=@cargo) 
                     AND (@disponibilidad=0 OR per.dispId=@disponibilidad)
+                    AND (@area=0 OR @area=per.areaId)
                     AND (@nombres=' ' OR per.perNombre LIKE '%' + @nombres + '%' )
                     ORDER BY per.perNombre">
                      <SelectParameters>
                         <asp:ControlParameter ControlID="DEStado" PropertyName="SelectedValue" Name="estado" />
                         <asp:ControlParameter ControlID="DCargo" PropertyName="SelectedValue" Name="cargo" />
                         <asp:ControlParameter ControlID="DDisponibilidad" PropertyName="SelectedValue" Name="disponibilidad" />
+                        <asp:ControlParameter ControlID="DArea" PropertyName="SelectedValue" Name="area" />
                         <asp:ControlParameter ControlID="TNombres" Name="nombres" PropertyName="Text" DefaultValue=" " />
                         <asp:SessionParameter SessionField="directorioid" Name="id" DefaultValue="0" />
                      </SelectParameters>

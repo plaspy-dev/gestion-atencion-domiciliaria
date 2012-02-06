@@ -13,9 +13,9 @@ public partial class apoyo_programacion : System.Web.UI.Page
         if (!IsPostBack)
         {
             UCProgramacion.TipoServicio = ProgramacionTipo.TipoServicios.apoyo;
-            if (Request.QueryString["id"] != null)
+            if (Request.QueryString["pid"] != null)
             {
-                CCDetallePaciente.IdPaciente = Request.QueryString["id"];
+                CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
 
                 if (CCDetallePaciente.IdPaciente.Length == 0)
                 {

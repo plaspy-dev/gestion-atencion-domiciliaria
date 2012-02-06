@@ -22,7 +22,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             BAceptar.Enabled = false;
             BMasCDiagnostico.Enabled = false;
 
-            TDocumento.Text = Request.QueryString["id"];
+            TDocumento.Text = Request.QueryString["pid"];
             DDocumento.DataBind();
             DDocumento.SelectedValue = Request.QueryString["td"];
 
@@ -52,7 +52,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     BAceptar.Enabled = usuario.CanInsert();
                     BMasCDiagnostico.Enabled = usuario.CanInsert();
 
-                    Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
+                    Session["parametros"] = "?pid=" + Request.QueryString["pid"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
                     DMedico.Focus();
 
                     HId.Value = reader["pacId"].ToString();
@@ -219,6 +219,8 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!IsValid)
+            return;
         CConector conector = CConector.GetConector();
         Query qIngreso = new Query("ingreso_paciente");
 
@@ -358,7 +360,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             }
         }
 
-        Session["parametros"] = "?id=" + Request.QueryString["id"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
+        Session["parametros"] = "?pid=" + Request.QueryString["pid"] + "&td=" + Request.QueryString["td"] + "&f=" + DateTime.Now.ToShortDateString();
         ((MasterPageI)Master).SetResultado(mensaje);
     }
 

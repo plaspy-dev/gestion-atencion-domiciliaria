@@ -66,8 +66,12 @@
   <seccion>
     <titulo>Administrador</titulo>
     <pagina>
-      <titulo>Parametros</titulo>
+      <titulo>Parámetros</titulo>
       <url>~/administrador/Default.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Parámetros 2</titulo>
+      <url>~/administrador/parametros2.aspx</url>
     </pagina>
     <pagina>
       <titulo>Índice de Barthel</titulo>
@@ -84,6 +88,10 @@
     <pagina>
       <titulo>Copagos</titulo>
       <url>~/administrador/copagos.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Encuesta de satisfacción al usuario</titulo>
+      <url>~/administrador/preguntas.aspx</url>
     </pagina>
   </seccion>
   <seccion>
@@ -112,6 +120,24 @@
     <pagina>
       <titulo>Programación</titulo>
       <url>~/apoyo/programacion.aspx</url>
+    </pagina>
+  </seccion>
+  <seccion>
+    <titulo>Servicio al Cliente</titulo>
+    <pagina>
+      <titulo>Encuesta de satisfacción al usuario</titulo>
+      <url>~/cliente/escliente.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Estadísticas</titulo>
+      <url>~/cliente/estadisticas.aspx</url>
+    </pagina>
+  </seccion>
+  <seccion>
+    <titulo>Auditoria</titulo>
+    <pagina>
+      <titulo>Evento adverso o incidente en la IPS</titulo>
+      <url>~/auditoria/eventoa.aspx</url>
     </pagina>
   </seccion>
 </paginas>

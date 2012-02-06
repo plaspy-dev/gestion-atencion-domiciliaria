@@ -100,13 +100,13 @@ public partial class MasterPageI : System.Web.UI.MasterPage
     {
         CConector conector = CConector.GetConector();
         Usuario usuario = Usuario.GetUsuario();
-        string id= conector.QueryString("SELECT id FROM usuario WHERE id='" + usuario.GetID()  + "' AND (estado IS NULL OR estado!=-1) AND contrasena=PASSWORD('" + TActual.Text + "')");
+        string id= conector.QueryString("SELECT id FROM usuario WHERE id='" + usuario.GetID()  + "' AND (estado IS NULL OR estado!=-1) AND contrasena=PASSWORD(" + Query.GetValor(TActual.Text) + ")");
         if (id.Length == 0)
         {
             SetMensaje("Contraseña actual equivocada");
             return;
         }
-        if (conector.QueryMod("UPDATE usuario SET contrasena=PASSWORD('" + TNueva.Text + "') WHERE id='" + usuario.GetID() + "'") == -1)
+        if (conector.QueryMod("UPDATE usuario SET contrasena=PASSWORD(" + Query.GetValor(TNueva.Text) + ") WHERE id='" + usuario.GetID() + "'") == -1)
             return;
         lblTitulo.Text += "Contraseña cambiada correctamente.";
     }

@@ -31,7 +31,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
             BAceptar.Enabled = usuario.CanInsert();
             IEliminar.Visible = false;
 
-            if (Request.QueryString["id"] != null && Request.QueryString["id"].Length > 0)
+            if (Request.QueryString["pid"] != null && Request.QueryString["pid"].Length > 0)
             {
                 Query query = new Query("phdPaciente");
 
@@ -78,7 +78,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
                 CConectorMS conector = new CConectorMS();
 
-                SqlDataReader reader = conector.Query(query.GetSelect("pacId=" + Query.GetValor(Request.QueryString["id"]) + ""));
+                SqlDataReader reader = conector.Query(query.GetSelect("pacId=" + Query.GetValor(Request.QueryString["pid"]) + ""));
 
                 if (reader != null && reader.Read())
                 {
@@ -183,6 +183,8 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!IsValid)
+            return;
         Query query = new Query("phdPaciente");
 
         query["tdocId"] = DDocumento.SelectedValue;

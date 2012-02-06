@@ -53,7 +53,7 @@
         $("#dExepciones").accordion({
             autoHeight: false,
             collapsible: true,
-            active: false, 
+            active: false
         });
         $("#<%= DActividad.ClientID %>").change(function() {
             $('span[id^="dact"]').hide();

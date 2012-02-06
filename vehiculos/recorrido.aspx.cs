@@ -48,6 +48,8 @@ public partial class vehiculos_recorrido : System.Web.UI.Page
     }
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!IsValid)
+            return;
         Query query = new Query("vehRecorrido");
         CConectorMS conector = new CConectorMS();
 

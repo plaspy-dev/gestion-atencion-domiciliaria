@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Parametros" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="administrador_Default" %>
+﻿<%@ Page Title="Parámetros" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="administrador_Default" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
@@ -64,7 +64,7 @@
         <td>
             <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False" 
                 DataKeyNames="id" DataSourceID="SqlDataSource1" 
-                onselectedindexchanged="GResultado_SelectedIndexChanged">
+                onselectedindexchanged="GResultado_SelectedIndexChanged" >
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
                 <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -74,10 +74,8 @@
                 <Columns>
                     <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                     <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                    <asp:BoundField DataField="nombre" HeaderText="Nombre" 
-                        SortExpression="nombre" />
-                    <asp:BoundField DataField="descripcion" HeaderText="Descripción" 
-                        SortExpression="descripcion" />
+                    <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" />
+                    <asp:BoundField DataField="descripcion" HeaderText="Descripción" SortExpression="descripcion" />
                 </Columns>
             </asp:GridView>
             <asp:SqlDataSource ID="SqlDataSource1" runat="server" 

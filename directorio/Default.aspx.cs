@@ -10,14 +10,14 @@ public partial class directorio_Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (Request.QueryString["id"] != null)
+        if (Request.QueryString["fid"] != null)
         {
-            Session["directorioid"] = Request.QueryString["id"];
+            Session["directorioid"] = Request.QueryString["fid"];
             Response.Redirect(Request.Url.AbsolutePath);
             return;
         }
         if (!Usuario.GetUsuario().CanPrint())
-            SResultados.SelectCommand = SResultados.SelectCommand.Insert(7, "TOP 1 ");
+            SResultados.SelectCommand = SResultados.SelectCommand.Insert(7, "TOP 5 ");
         if (IsPostBack)
         {
             Session.Remove("directorioid");
