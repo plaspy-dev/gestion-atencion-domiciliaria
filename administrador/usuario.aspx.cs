@@ -97,7 +97,7 @@ public partial class administrador_usuario : System.Web.UI.Page
         }
 
         if (DGrupos.SelectedValue == "0") { // es administrador
-            conector.QueryMod("INSERT INTO Seg_UsuarioMenu SELECT meIdMenu,'" + TUsuario.Text + "',1,1,1 FROM seg_menu WHERE meRuta!='';");
+            conectorms.QueryMod("INSERT INTO Seg_UsuarioMenu SELECT meIdMenu,'" + TUsuario.Text + "',1,1,1 FROM seg_menu WHERE meRuta!='';");
         } else {
 
             query = new Query("permisos");

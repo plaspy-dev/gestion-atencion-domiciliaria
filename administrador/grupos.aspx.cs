@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using System.Collections;
 using MySql.Data.MySqlClient;
 using SDG.Componentes;
+using System.Configuration;
 
 public partial class administrador_grupos : System.Web.UI.Page
 {
@@ -142,6 +143,56 @@ public partial class administrador_grupos : System.Web.UI.Page
             }
         }
 
+        MySqlDataReader reader= conector.Query("SELECT usuario FROM usuario WHERE grupo=" + grupo);
+        if(reader!=null) {
+
+            CConectorMS conectorms = new CConectorMS();
+            CConector conector2 = new CConector();
+            conectorms.StartTransaction();
+
+            while(reader.Read()) {
+
+                string usuario= reader["usuario"].ToString();
+                if (conectorms.QueryMod("DELETE FROM Seg_UsuarioMenu WHERE usIdUsuario='" + usuario + "'") == -1)
+                    return;
+
+                query = new Query("permisos");
+
+                query += "url";
+                query += "permiso";
+
+                MySqlDataReader reader2 = conector2.Query(query.GetSelect("grupo='" + grupo + "'"));
+                if (reader2 != null)
+                {
+                    while (reader2.Read())
+                    {
+                        string url = reader2["url"].ToString();
+                        if (url[0] == '/')
+                        { // es de los nuevos
+
+                            url = url.Replace("/" + ConfigurationSettings.AppSettings["app"], "");
+                            Permisos info = new Permisos("", url, (int)reader2["permiso"]);
+
+                            string id = conectorms.QueryString("SELECT meIdMenu FROM seg_menu WHERE meRuta='" + info.pagina + "'");
+                            if (id.Length == 0)
+                                continue;
+
+                            query = new Query("Seg_UsuarioMenu");
+                            query["meIdMenu"] = id;
+                            query["usIdUsuario"] = usuario;
+                            query["umInserta"] = info.insercion ? "1" : "0";
+                            query["umModifica"] = info.edicion ? "1" : "0";
+                            query["umElimina"] = info.eliminar ? "1" : "0";
+
+                            if (conectorms.QueryMod(query.GetInsert()) == -1)
+                                return;
+                        }
+                    }
+                }
+            }
+            conectorms.Commit();
+        }
+
         ((MasterPageI)Master).SetResultado(mensaje);
     }
     protected void BCancelar_Click(object sender, EventArgs e)
@@ -186,7 +237,8 @@ public partial class administrador_grupos : System.Web.UI.Page
                     padre = new Parents(url.Parent);
                     parents.Add(padre);
                 }
-                padre.permisos.Add(new Permisos(url.Titulo, url.URL, LGrupos.SelectedValue == "0" ? 63 : 0));
+                if (url.URL != "~")
+                    padre.permisos.Add(new Permisos(url.Titulo, url.URL, LGrupos.SelectedValue == "0" ? 63 : 0));
             // }
         }
 

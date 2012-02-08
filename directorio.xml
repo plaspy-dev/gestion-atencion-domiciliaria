@@ -48,6 +48,10 @@
   <seccion>
     <titulo>RRHH</titulo>
     <pagina>
+      <titulo>Cumpleaños</titulo>
+      <url>~/rh/cumple.aspx</url>
+    </pagina>
+    <pagina>
       <titulo>Informes</titulo>
       <url>~/rh/Default.aspx</url>
     </pagina>
@@ -138,6 +142,10 @@
     <pagina>
       <titulo>Evento adverso o incidente en la IPS</titulo>
       <url>~/auditoria/eventoa.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Indicadores</titulo>
+      <url>~/auditoria/indicadores.aspx</url>
     </pagina>
   </seccion>
 </paginas>
