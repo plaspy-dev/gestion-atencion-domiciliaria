@@ -30,5 +30,5 @@
         });
     });
 </script>
-<asp:TextBox runat="server" ID="TFuncionario"></asp:TextBox>
+<asp:TextBox runat="server" ID="TFuncionario"></asp:TextBox><asp:label runat="server" ID="LNombre" Font-Bold="true"></asp:label>
 <asp:HiddenField runat="server" ID="HIdFuncionario" />

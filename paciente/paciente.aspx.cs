@@ -328,4 +328,13 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         IFoto.ImageUrl = "";
         IEliminar.Visible = false;
     }
+    protected void OnValidaFileJPG(object sender, ServerValidateEventArgs e)
+    {
+        e.IsValid = false;
+        if (e.Value.Length != 0)
+        {
+            string Extension = e.Value.Substring(e.Value.LastIndexOf(".") + 1).ToLower();
+            e.IsValid = Extension == "jpg" || Extension == "jpeg"; // Valid file type
+        }
+    }
 }

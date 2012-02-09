@@ -12,6 +12,12 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
     public string Documento { get; set; }
     public string Nombres { get; set; }
 
+    public string AsegurdadorID {
+        get {
+            return HIdAsegurador.Value;
+        }
+    }
+
     public string IdPaciente {
         get {
             return HIdPaciente.Value;
@@ -19,6 +25,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
         set {
 
             HIdPaciente.Value = "";
+            HIdAsegurador.Value = "";
             if (value==null || value.Length == 0)
                 return;
 
@@ -46,6 +53,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             query["entidad"] = "admEntidad.entNombre";
             query["tipopago"] = "phdPagoDirecto.pdirDescripcion";
             query["estId"] = "phdPaciente.estId";
+            query["entId"] = "phdPaciente.entId";
 
             CConectorMS conector = new CConectorMS();
 
@@ -57,6 +65,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             {
                 HIdPaciente.Value = UCAutorizaciones.Value = reader["pacId"].ToString();
 
+                HIdAsegurador.Value = reader["entId"].ToString();
                 Documento= reader["pacDocumento"].ToString();
                 Nombres = reader["pacPApellido"].ToString() +
                     " " + reader["pacSApellido"].ToString() +

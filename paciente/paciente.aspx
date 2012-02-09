@@ -115,9 +115,7 @@
                 <asp:FileUpload runat="server" ID="FFoto" Width="100px" />
                 <asp:ImageButton runat="server" ID="IEliminar" ImageUrl="~/imgs/eliminar.gif" 
                     onclick="IEliminar_Click" />
-                    <asp:RegularExpressionValidator id="RegularExpressionValidator2" runat="server" ErrorMessage="Por favor seleccione una imagen en formato jpg." 
-                        ValidationExpression="^(([a-zA-Z]:)|(\\{2}\w+)\$?)(\\(\w[\w].*))(.jpg|.JPG|.jpeg|.JPEG)$"  ControlToValidate="FFoto">*
-                    </asp:RegularExpressionValidator>
+                    <asp:CustomValidator Display="Dynamic" ControlToValidate="FFoto" ID="CustomValidator1" runat="server" ClientValidationFunction="ValidateFileUploadJPG" ErrorMessage="Por favor seleccione una imagen en formato jpg" onservervalidate="OnValidaFileJPG">*</asp:CustomValidator>
             </td>
             <td rowspan="4">
                 Tipo Documento

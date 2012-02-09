@@ -133,8 +133,16 @@
       <url>~/cliente/escliente.aspx</url>
     </pagina>
     <pagina>
-      <titulo>Estadísticas</titulo>
+      <titulo>Estadísticas encuestas</titulo>
       <url>~/cliente/estadisticas.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Estadísticas quejas</titulo>
+      <url>~/cliente/estadisticas2.aspx</url>
+    </pagina>
+    <pagina>
+      <titulo>Nueva queja, reclamo o felicitacion</titulo>
+      <url>~/cliente/quejas.aspx</url>
     </pagina>
   </seccion>
   <seccion>
