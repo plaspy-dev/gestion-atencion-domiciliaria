@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.Script.Services;
 using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 
 /// <summary>
 /// Descripción breve de servicios
@@ -211,5 +212,44 @@ public class servicios : System.Web.Services.WebService
         return dDiagnosticos;
     }
 
+    [WebMethod]
+    // [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<CJSon> GetMedicamentos(String q)
+    {
+        List<CJSon> lista = new List<CJSon>();
+
+        CConector conector = new CConector();
+        String query= "SELECT id,nombre,via,umedida,cantidad,forma FROM medicamentos WHERE ";
+
+        string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
+
+        for (int i = 0; i < split.Length; i++)
+        {
+            if (split[i].Length > 0)
+            { // verificamos que no este vacio
+                if (i > 0)
+                    query += " AND ";
+                query += String.Format(" (nombre LIKE '%{0}%' OR via LIKE '%{0}%' OR umedida LIKE '%{0}%' OR cantidad LIKE '%{0}%' OR forma LIKE '%{0}%') ", split[i]);
+            }
+        }
+
+        query += " ORDER BY nombre,umedida,cantidad LIMIT 100";
+        MySqlDataReader reader = conector.Query(query);
+        if (reader != null)
+        {
+            string nombre="";
+            while (reader.Read())
+            {
+                // RANITIDINA (50mg), Vía INTRAMUSCULAR-INYECTABLES
+                nombre = reader["nombre"].ToString();
+                nombre += " (" + reader["cantidad"].ToString() + reader["umedida"].ToString() + ")";
+                nombre += ", vía " + reader["via"].ToString();
+                nombre += "-" + reader["forma"].ToString();
+                lista.Add(new CJSon(reader["id"].ToString(), nombre));
+            }
+            reader.Close();
+        }
+        return lista;
+    }
 }
 

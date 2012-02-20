@@ -127,7 +127,7 @@
     </pagina>
   </seccion>
   <seccion>
-    <titulo>Servicio al Cliente</titulo>
+    <titulo>Atención al usuario</titulo>
     <pagina>
       <titulo>Encuesta de satisfacción al usuario</titulo>
       <url>~/cliente/escliente.aspx</url>
@@ -146,7 +146,7 @@
     </pagina>
   </seccion>
   <seccion>
-    <titulo>Auditoria</titulo>
+    <titulo>Garantía de la calidad</titulo>
     <pagina>
       <titulo>Evento adverso o incidente en la IPS</titulo>
       <url>~/auditoria/eventoa.aspx</url>

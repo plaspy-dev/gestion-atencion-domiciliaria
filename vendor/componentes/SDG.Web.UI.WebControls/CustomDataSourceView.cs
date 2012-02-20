@@ -385,7 +385,7 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 		string text = _owner.UpdateCommand;
 		SessionState sessionState = SessionState.Get(_owner.ModifyTable);
 		DataRow dataRow = null;
-		int pos = -1;
+		int num = -1;
 		for (int i = 0; i < sessionState.dataTable.Rows.Count; i++)
 		{
 			bool flag = true;
@@ -402,11 +402,15 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 			if (flag)
 			{
 				dataRow = sessionState.dataTable.Rows[i];
-				pos = i;
+				num = i;
 				break;
 			}
 		}
-		if (sessionState.CleanQuerys(pos))
+		if (num == -1)
+		{
+			return 0;
+		}
+		if (sessionState.CleanQuerys(num))
 		{
 			text = _owner.InsertCommand;
 			try
@@ -447,7 +451,7 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 		catch (ArgumentException)
 		{
 		}
-		sessionState.AddQuery(text, pos);
+		sessionState.AddQuery(text, num);
 		return 1;
 	}
 
@@ -460,7 +464,7 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 		string text = _owner.DeleteCommand;
 		SessionState sessionState = SessionState.Get(_owner.ModifyTable);
 		DataRow dataRow = null;
-		int pos = -1;
+		int num = -1;
 		for (int i = 0; i < sessionState.dataTable.Rows.Count; i++)
 		{
 			bool flag = true;
@@ -476,18 +480,27 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 			}
 			if (flag)
 			{
-				pos = i;
+				num = i;
 				dataRow = sessionState.dataTable.Rows[i];
 				break;
 			}
+		}
+		if (num == -1)
+		{
+			return 0;
+		}
+		if (sessionState.CleanQuerys(num))
+		{
+			sessionState.DeleteRow(num);
+			return 1;
 		}
 		foreach (DictionaryEntry key in keys)
 		{
 			dataRow[key.Key.ToString()] = ((key.Value == null) ? DBNull.Value : key.Value);
 			text = text.Replace("@" + key.Key.ToString(), SessionState.GetValor(key.Value));
 		}
-		sessionState.AddQuery(text, pos);
-		sessionState.DeleteRow(pos);
+		sessionState.AddQuery(text, num);
+		sessionState.DeleteRow(num);
 		return 1;
 	}
 

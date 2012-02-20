@@ -30,6 +30,7 @@ public partial class paciente_informes : System.Web.UI.Page
         }
         if (Request.QueryString["pid"] != null)
         {
+            ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
             Response.Redirect("~/paciente/paciente.aspx?pid=" + Request.QueryString["pid"]);
             return;
         }

@@ -72,8 +72,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[Category("DeleteCommand")]
 	[DefaultValue("")]
+	[Category("DeleteCommand")]
 	public string DeleteCommand
 	{
 		get
@@ -100,8 +100,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("ConnectionString")]
+	[DefaultValue("")]
 	public string ConnectionString
 	{
 		get
@@ -114,8 +114,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("Data")]
+	[DefaultValue("")]
 	public string TypeName
 	{
 		get
@@ -128,8 +128,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("Data")]
+	[DefaultValue("")]
 	public string SelectMethod
 	{
 		get
@@ -143,10 +143,10 @@ public class CustomDataSource : DataSourceControl
 	}
 
 	[Category("Data")]
+	[PersistenceMode(PersistenceMode.InnerProperty)]
+	[DefaultValue(null)]
 	[MergableProperty(false)]
 	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
-	[DefaultValue(null)]
-	[PersistenceMode(PersistenceMode.InnerProperty)]
 	public ParameterCollection SelectParameters => View.SelectParameters;
 
 	[DefaultValue(null)]
@@ -156,11 +156,11 @@ public class CustomDataSource : DataSourceControl
 	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
 	public ParameterCollection InsertParameters => View.InsertParameters;
 
-	[DefaultValue(null)]
 	[PersistenceMode(PersistenceMode.InnerProperty)]
-	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
 	[Category("Data")]
+	[DefaultValue(null)]
 	[MergableProperty(false)]
+	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
 	public ParameterCollection UpdateParameters => View.UpdateParameters;
 
 	protected CustomDataSourceView View

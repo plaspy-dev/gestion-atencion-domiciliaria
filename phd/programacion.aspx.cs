@@ -24,6 +24,8 @@ public partial class phd_programacion : System.Web.UI.Page
                 }
                 else
                 {
+                    ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
+
                     Usuario usuario = Usuario.GetUsuario();
                     LNuevo.Visible = usuario.CanInsert();
 

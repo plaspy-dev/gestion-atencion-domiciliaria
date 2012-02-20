@@ -44,7 +44,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         Usuario usuario = Usuario.GetUsuario();
         usuario.CreateMenu(TMenu, Session["parametros"]==null ? "" : Session["parametros"].ToString());
 
-        Session.Remove("parametros");
+        // Session.Remove("parametros");
         lblNombre.Text = usuario.GetNombre();
 
         titulo_aux.Attributes["title"] = "";
@@ -68,6 +68,11 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         // actualizamos la contraseña
         Response.Cookies["contrasena"].Value = Session["passwdtemp"].ToString();
         Response.Cookies["contrasena"].Expires = DateTime.Now.AddMinutes(10);
+    }
+
+    public void SetParametros(string parametros) {
+
+        Session["parametros"] = parametros;
     }
 
     public void SetTitulo(string titulo)

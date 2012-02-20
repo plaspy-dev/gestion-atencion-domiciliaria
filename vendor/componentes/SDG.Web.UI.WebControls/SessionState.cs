@@ -116,6 +116,10 @@ internal class SessionState
 
 	public bool CleanQuerys(int pos)
 	{
+		if (pos == -1)
+		{
+			return false;
+		}
 		DataRow dataRow = dataTable.Rows[pos];
 		if (dataRow["sqlexists"].ToString().Length == 0)
 		{

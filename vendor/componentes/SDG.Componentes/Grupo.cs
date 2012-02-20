@@ -182,7 +182,6 @@ public class Grupo
 					if (treeNode == null)
 					{
 						treeNode = new TreeNode(cURLs.Parent);
-						treeNode.Collapse();
 						treeNode.SelectAction = TreeNodeSelectAction.Expand;
 						if (old == -1 || m_bNativo)
 						{
@@ -193,6 +192,7 @@ public class Grupo
 							treeNodeCollection.AddAt(old, treeNode);
 						}
 					}
+					treeNode.Collapse();
 				}
 			}
 			string text = cURLs.URL;
@@ -201,7 +201,7 @@ public class Grupo
 				text = CURLs.SwitchApp(text, ConfigurationSettings.AppSettings["app"]);
 			}
 			string text2 = text;
-			if (text.Length > 0)
+			if (text.Length > 0 && text != "~")
 			{
 				text2 += parametros;
 			}

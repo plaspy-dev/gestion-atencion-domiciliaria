@@ -237,7 +237,7 @@ public partial class cliente_quejas : System.Web.UI.Page
         CConectorMS conector= new CConectorMS();
 
         query["qrId"] = HIdQuejas.Value;
-        query.AddCampo("sqrId", "(SELECT ISNULL(MAX(sqrId)+1,1) FROM serSeguimiento WHERE qrId=" + HIdQuejas.Value + ")", false);
+        query["sqrId"]= conector.QueryString("(SELECT ISNULL(MAX(sqrId)+1,1) FROM serSeguimiento WHERE qrId=" + HIdQuejas.Value + ")");
         query["sqrDetalles"] = TSDetalles.Text;
         if (TAcciones.Text.Length == 0)
             query.AddCampo("sqrPendiente", "''", false);

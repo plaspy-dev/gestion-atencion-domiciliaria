@@ -21,7 +21,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
             PReactivar.Visible = false;
             if (Request.QueryString["ip"] != null && Request.QueryString["ip"].Length > 0)
             {
-                Response.Redirect(Request.Url.AbsolutePath + "?id=" + crypt.Desencriptar(Request.QueryString["ip"]));
+                Response.Redirect(Request.Url.AbsolutePath + "?pid=" + crypt.Desencriptar(Request.QueryString["ip"]));
                 Response.End();
                 return;
             }
@@ -82,6 +82,8 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
                 if (reader != null && reader.Read())
                 {
+                    ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
+
                     BAceptar.Enabled = usuario.CanUpdate();
                     ((MasterPageI)Master).Imprimir();
 
@@ -163,7 +165,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         int pos= text.IndexOf('-');
         if(pos!=-1) {
             string resultado = text.Substring(0, pos);
-            return text.Substring(0, pos);
+            return text.Substring(0, pos).Trim();
         }
         return "";
     }
@@ -242,7 +244,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         }
         else
         {
-            string id = conectorms.QueryString("SELECT pacId FROM phdPaciente WHERE tdocId=" + DDocumento.SelectedValue + " AND pacDocumento='"+ TDocumento.Text+"'");
+            string id = conectorms.QueryString("SELECT pacId FROM phdPaciente WHERE tdocId=" + DDocumento.SelectedValue + " AND pacDocumento='"+ GetCleanDoc(TDocumento.Text) +"'");
             if(id.Length>0) {
 
                 ((MasterPageI)Master).SetMensaje("Ya existe un paciente con este documento.");
@@ -263,6 +265,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         CConector conectormysql = new CConector();
         conectormysql.InsertModificacion(HId.Value);
 
+        ((MasterPageI)Master).SetParametros("?pid=" + HId.Value);
         ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Editado.");
     }
 

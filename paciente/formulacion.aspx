@@ -1,248 +1,127 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="formulacion.aspx.cs" Inherits="paciente_formulacion" %>
+﻿<%@ Page Title="Formulación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="formulacion.aspx.cs" Inherits="paciente_formulacion" %>
+<%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
+<%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<script type="text/javascript">
+    function iniciopagina() {
+        $("#<%= TMedicamento.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetMedicamentos",
+                    data: "{}",
+                    data: "{ 'q': '" + request.term + "' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.value, label: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                $("#<%= TMedicamentoID.ClientID %>").val(ui.item.value);
+                $("#<%= TMedicamento.ClientID %>").val(ui.item.label);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TMedicamentoID.ClientID %>").val("");
+                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
+            }
+        }).change(function() { if ($(this).val() == "") $("#<%= TMedicamentoID.ClientID %>").val(""); });
+    };
+    $(function() {
+        $("#<%= TFecha.ClientID %>").datepicker({
+            onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#<%=BFecha.ClientID %>").click(); }
+        });
+    });
+</script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
-<asp:Panel runat="server" ID="Panel1" DefaultButton="IBuscar">
-    <fieldset>
-        <legend>Datos del paciente</legend>
-    <table>
-        <tr>
-                <td>
-                    Documento
-                    <asp:SqlDataSource ID="SDocumentos" runat="server" 
-                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                        SelectCommand="SELECT [tdocId], [tdocDescripcion] FROM [phdTipoDocumento]">
-                    </asp:SqlDataSource>
-                </td>
-                <td>
-                    <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-                        <ContentTemplate>
-                            <table>
-                        <tr>
-                            <td>
-                            <asp:DropDownList ID="DDocumento" runat="server" 
-                                DataSourceID="SDocumentos" DataTextField="tdocDescripcion" 
-                                DataValueField="tdocId">
-                                </asp:DropDownList>
-                            </td>
-                            <td><asp:TextBox ID="TDocumento" runat="server" ValidationGroup="documento" 
-                                CssClass="entero"></asp:TextBox>
-                            </td>
-                        </tr>
-                        </table>
-                        </ContentTemplate>
-                    </asp:UpdatePanel>
-                </td>
-                <td>
-                    <asp:UpdatePanel ID="UBuscar" runat="server" UpdateMode="Conditional">
-                        <ContentTemplate>
-                            <asp:Button ID="IBuscar" runat="server" Text="..." onclick="IBuscar_Click" ValidationGroup="documento" />
-                        </ContentTemplate>
-                    </asp:UpdatePanel>
-                    <asp:HiddenField ID="HId" runat="server" Value="" />
-                </td>
-                <td>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" 
-                        ControlToValidate="TDocumento" ErrorMessage="Por favor ingrese un documento." 
-                        SetFocusOnError="True" ValidationGroup="documento"></asp:RequiredFieldValidator>
-                </td>
-                <td>&nbsp;
-                    </td>
+<div id="dImprimir">
+<uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
+    <asp:Panel runat="server" id="PDatos" Visible="false">
+        <asp:HiddenField ID="HIdFormulacion" runat="server" />
+        <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
+        <table>
+            <tr>
+                <td>Fecha</td>
+                <td><asp:TextBox ID="TFecha" runat="server" CssClass="fecha"></asp:TextBox>
+                            <asp:Button ID="BFecha" CssClass="hide" runat="server" Text="..." onclick="BFecha_Click" /></td>
+                <td><asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese una fecha." SetFocusOnError="true" ControlToValidate="TFecha" Display="Dynamic"></asp:RequiredFieldValidator><asp:RangeValidator ID="RangeValidator1" runat="server" MinimumValue="12/12/1900" MaximumValue="12/12/2100" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Display="Dynamic" Type="Date"></asp:RangeValidator></td>
+                <td></td>
             </tr>
-        <tr>
-            <td>
-                Apellidos</td>
-            <td>
-                <asp:Label runat="server" ID="LApellidos"></asp:Label>
-            </td>
-            <td>
-                Nombres</td>
-            <td>
-                <asp:Label runat="server" ID="LNombres"></asp:Label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Entidad</td>
-            <td>
-                <asp:Label runat="server" ID="LEntidad"></asp:Label>
-            </td>
-            <td>
-                Tipo de afiliado</td>
-            <td>
-                <asp:Label runat="server" ID="LTAfiliado"></asp:Label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Dirección</td>
-            <td>
-                <asp:Label runat="server" ID="LDireccion"></asp:Label>
-            </td>
-            <td>
-                Edad</td>
-            <td>
-                <asp:Label runat="server" ID="LEdad"></asp:Label>
-            </td>
-        </tr>
-    </table>
-    </fieldset></asp:Panel>
-    <table width="100%">
-        <tr>
-            <td>
-                <table>
-                    <tr>
-                        <td>
-                            Fecha
-                        </td>
-                        <td>
-                            <asp:TextBox ID="TFecha" runat="server" CssClass="fecha"></asp:TextBox>
-                            <asp:Button ID="BFecha" runat="server" Text="..." onclick="BFecha_Click" />
-                        </td>
-                        <td>
-                            <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese una fecha." SetFocusOnError="true" ControlToValidate="TFecha" Display="Dynamic"></asp:RequiredFieldValidator><asp:RangeValidator ID="RangeValidator1" runat="server" MinimumValue="12/12/1900" MaximumValue="12/12/2100" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Display="Dynamic" Type="Date"></asp:RangeValidator>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Código de diagnóstico</td>
-                        <td>
-                            <asp:TextBox ID="TCodigo" runat="server"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:HiddenField ID="HIdFormulacion" runat="server" />
-                            </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td>
-            <fieldset>
-        <legend>Formulación</legend>
-        <asp:UpdatePanel ID="UFormulacion" runat="server" UpdateMode="Conditional"> 
-        <ContentTemplate>
-            <table>
-                <tr>
-                    <td>
-                        <asp:GridView ID="GFormulacion" runat="server" DataSourceID="SFormulacion" 
-                AutoGenerateColumns="False" DataKeyNames="id" ShowFooter="True" >
-            <Columns>
-                <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                <asp:BoundField DataField="medicamento" HeaderText="Nombre del medicamento" />
-                <asp:BoundField DataField="formulada" HeaderText="Cantidad formulada" />
-                <asp:BoundField DataField="entregada" HeaderText="Cantidad entregada" />
-            </Columns>
-            <SelectedRowStyle CssClass="selecteditem" />
-        </asp:GridView>
-                    </td>
-                </tr>
-                <tr>
-                    <td align="right">
-                        <asp:Button ID="BMasFormulacion" runat="server" onclick="BMasFormulacion_Click" 
-                            Text="+" />
-                    </td>
-                </tr>
-            </table>
-        <sdg:CustomDataSource ID="SFormulacion" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT id,medicamento,formulada,entregada FROM medicamento_formulacion WHERE formulacion=@formulacion"
+            <tr>
+                <td colspan="4" class="celdaTitulo">Formulación</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <asp:GridView ID="GFormulacion" runat="server" DataSourceID="SFormulacion" 
+                    AutoGenerateColumns="False" DataKeyNames="id"
+                                        onselectedindexchanged="GFormulacion_SelectedIndexChanged" >
+                        <Columns>
+                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:BoundField DataField="medicamen_id" HeaderText="idMedicamento" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
+                            <asp:BoundField DataField="medicamento" HeaderText="Nombre del medicamento" />
+                            <asp:BoundField DataField="formulada" HeaderText="Cantidad formulada" ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="posologia" HeaderText="Posología" />
+                        </Columns>
+                        <SelectedRowStyle CssClass="selecteditem" />
+                    </asp:GridView>
+                    <sdg:CustomDataSource ID="SFormulacion" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            SelectCommand="SELECT medicamento_formulacion.id,medicamento_formulacion.medicamento AS medicamen_id,medicamento_formulacion.formulada,medicamento_formulacion.posologia 
+                                            ,CONCAT(medicamentos.nombre,' (',medicamentos.cantidad,medicamentos.umedida,'), vía ',medicamentos.via,'-',medicamentos.forma) AS medicamento
+                                            FROM medicamento_formulacion 
+                                            LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)
+                                            WHERE formulacion=@formulacion"
                             DeleteCommand="DELETE FROM medicamento_formulacion WHERE id=@id"
+                            InsertCommand="INSERT INTO medicamento_formulacion (formulacion,medicamento,posologia,formulada) VALUES (@formulacion,@medicamen_id,@posologia,@formulada)"
+                            UpdateCommand="UPDATE medicamento_formulacion SET medicamento=@medicamen_id,posologia=@posologia,formulada=@formulada WHERE id=@id"
                             >
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="HIdFormulacion" DefaultValue="0" PropertyName="Value" Name="formulacion" />
                             </SelectParameters>
-        </sdg:CustomDataSource>
-            <div id="dFormulacion" title="Signos vitales">
-            <asp:DetailsView ID="DFormulacion" runat="server" Width="100%" 
-                DataSourceID="SDetalleView" DataKeyNames="id" 
-                AutoGenerateRows="False" DefaultMode="Edit" 
-                oniteminserted="DFormulacion_ItemInserted" 
-                onitemupdated="DFormulacion_ItemUpdated" 
-                onitemcommand="DFormulacion_ItemCommand">
-                <Fields>
-                    <asp:TemplateField HeaderText="Medicamento">
-                        <EditItemTemplate>
-                            <asp:TextBox ID="TMedicamento" runat="server" Text='<%# Bind("medicamento") %>'></asp:TextBox><asp:RequiredFieldValidator
-                                ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese un medicamento." ControlToValidate="TMedicamento" SetFocusOnError="True" Display="Dynamic"></asp:RequiredFieldValidator>
-                        </EditItemTemplate>
-                        <InsertItemTemplate>
-                            <asp:TextBox ID="TMedicamento" runat="server" Text='<%# Bind("medicamento") %>'></asp:TextBox><asp:RequiredFieldValidator
-                                ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese un medicamento." ControlToValidate="TMedicamento" SetFocusOnError="True" Display="Dynamic"></asp:RequiredFieldValidator>
-                        </InsertItemTemplate>
-                        <ItemTemplate>
-                            <asp:Label ID="Label1" runat="server" Text='<%# Bind("medicamento") %>'></asp:Label>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Cantidad formulada">
-                        <EditItemTemplate>
-                            <asp:TextBox ID="TFormulada" runat="server" CssClass="entero" Text='<%# Bind("formulada") %>'></asp:TextBox><asp:RequiredFieldValidator
-                                ID="RequiredFieldValidator3" runat="server" ErrorMessage="Por favor ingrese una cantidad." ControlToValidate="TFormulada" SetFocusOnError="True" Display="Dynamic"></asp:RequiredFieldValidator>
-                        </EditItemTemplate>
-                        <InsertItemTemplate>
-                            <asp:TextBox ID="TFormulada" runat="server" CssClass="entero" Text='<%# Bind("formulada") %>'></asp:TextBox><asp:RequiredFieldValidator
-                                ID="RequiredFieldValidator3" runat="server" ErrorMessage="Por favor ingrese una cantidad." ControlToValidate="TFormulada" SetFocusOnError="True" Display="Dynamic"></asp:RequiredFieldValidator>
-                        </InsertItemTemplate>
-                        <ItemTemplate>
-                            <asp:Label ID="Label2" runat="server" Text='<%# Bind("formulada") %>'></asp:Label>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Cantidad entregada">
-                        <EditItemTemplate>
-                            <asp:TextBox ID="TEntregada" runat="server" CssClass="entero" Text='<%# Bind("entregada") %>'></asp:TextBox>
-                        </EditItemTemplate>
-                        <InsertItemTemplate>
-                            <asp:TextBox ID="TEntregada" runat="server" CssClass="entero" Text='<%# Bind("entregada") %>'></asp:TextBox>
-                        </InsertItemTemplate>
-                        <ItemTemplate>
-                            <asp:Label ID="Label3" runat="server" Text='<%# Bind("entregada") %>'></asp:Label>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:CommandField ShowInsertButton="True" ButtonType="Button" />
-                    <asp:CommandField ButtonType="Button" ShowEditButton="True" />
-                </Fields>
-            </asp:DetailsView>
-            </div>
-            <sdg:CustomDataSource ID="SDetalleView" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT id,medicamento,formulada,entregada FROM medicamento_formulacion WHERE id=@id"
-                            InsertCommand="INSERT INTO medicamento_formulacion(formulacion,medicamento,formulada,entregada) VALUES (@formulacion, @medicamento, @formulada, @entregada)"
-                            UpdateCommand="UPDATE medicamento_formulacion SET medicamento=@medicamento,formulada=@formulada,entregada=@entregada WHERE id=@id"
-                            ParentDataSource="SFormulacion"
-                            >
-                            <SelectParameters>
-                                <asp:ControlParameter ControlID="GFormulacion" DefaultValue="0" PropertyName="SelectedValue" Name="id" />
-                            </SelectParameters>
-                            <UpdateParameters>
-                                <asp:ControlParameter ControlID="GFormulacion" DefaultValue="0" PropertyName="SelectedValue" Name="id" />
-                            </UpdateParameters>
-        </sdg:CustomDataSource>
-        </ContentTemplate>
-        </asp:UpdatePanel>
-    </fieldset>
-            </td>
-        </tr>
-        <tr>
-            <td align="right">
+                    </sdg:CustomDataSource>
+                </td>
+            </tr>
+            <tr>
+                <td>Medicamento<asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TMedicamentoID" ErrorMessage="Por favor ingrese un medicamento." ID="RMedicamento" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                                <td colspan="3"><asp:TextBox Width="99%" runat="server" ID="TMedicamento"></asp:TextBox><asp:TextBox runat="server" ID="TMedicamentoID" CssClass="hide"></asp:TextBox>
+                                </td>
+            </tr>
+            <tr>
+                <td>Cantidad<asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TCantidad" ErrorMessage="Por favor ingrese una cantidad." ID="RCantidad" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                                    <td><asp:TextBox runat="server" ID="TCantidad" Width="50px" CssClass="entero"></asp:TextBox>
+                                </td>
+                                <td>Posología<asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TPosologia" ErrorMessage="Por favor ingrese una posología." ID="RPosologia" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                                <td><asp:TextBox runat="server" ID="TPosologia" Width="400px"></asp:TextBox>
+                                </td>
+            </tr>
+            <tr>
+                <td colspan="4" align="right">
+                                <asp:ValidationSummary runat="server" ID="ValidationSummary1" ShowMessageBox="true" ValidationGroup="medicamento" />
+                                <asp:Button ID="BMasFormulacion" ValidationGroup="medicamento" runat="server" onclick="BMasFormulacion_Click" Text="+" />
+                                </td>
+            </tr>
+            <tr>
+                <td align="right" colspan="4">
                 <asp:Button ID="BAceptar" runat="server" Text="Aceptar" 
                     onclick="BAceptar_Click" /><asp:Button ID="BCancelar" 
                     CausesValidation="false" runat="server" Text="Cancelar" 
                     onclick="BCancelar_Click" />
-            </td>
-        </tr>
-    </table>
-    <script type="text/javascript">
-        $('#ctl00_cph_UFormulacion').panelUpdated(function() {
-            addDialog("#ctl00_cph_UFormulacion", "#dFormulacion");
-        });
-        $(document).ready(function() {
-            $("#ctl00_cph_BFecha").hide();
-            $("#ctl00_cph_TFecha").datepicker({
-                onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#ctl00_cph_BFecha").click(); }
-            });
-        });
-        function iniciopagina() {
-            $("#ctl00_cph_TDocumento").blur(function() { if ($.getUrlVar('id') != $(this).val()) $("#ctl00_cph_IBuscar").click(); });
-        }
-    </script>
+                </td>
+            </tr>
+        </table>
+    </asp:Panel>
+    </div>
 </asp:Content>

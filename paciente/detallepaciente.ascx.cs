@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using SDG.Componentes;
+using MySql.Data.MySqlClient;
 
 public partial class phd_detallepaciente : System.Web.UI.UserControl
 {
@@ -15,6 +16,11 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
     public string AsegurdadorID {
         get {
             return HIdAsegurador.Value;
+        }
+    }
+    public string Sexo {
+        get {
+            return LSexo.Text;
         }
     }
 
@@ -111,6 +117,22 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                 if (cie3.Length > 0 && LCIE10.Text.Length > 0)
                     LCIE10.Text += "<br/>";
                 LCIE10.Text += cie3;
+
+                CConector conectormysql = new CConector();
+                MySqlDataReader readermysql = conectormysql.Query("SELECT codigo FROM ingreso_paciente LEFT JOIN codigos_ingreso ON (codigos_ingreso.ingreso_paciente=ingreso_paciente.id) WHERE paciente="+ HIdPaciente.Value);
+                if(readermysql!=null) {
+                    bool primero=true;
+                    while (readermysql.Read())
+                    {
+                        if(primero) {
+                            LCIE10.Text = "";
+                            primero = false;
+                        }
+                        if (LCIE10.Text.Length > 0)
+                            LCIE10.Text += "<br/>";
+                        LCIE10.Text += GetCodigoCIE(readermysql["codigo"].ToString(), conector);
+                    }
+                }
             }
         }
     }

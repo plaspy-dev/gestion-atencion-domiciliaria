@@ -52,7 +52,7 @@
             minLength: 3,
             select: function(event, ui) {
 
-                $.goURL("id=" + ui.item.value);
+                $.goURL("fid=" + ui.item.value);
                 return false;
             }
         });
