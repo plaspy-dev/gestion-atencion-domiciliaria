@@ -60,21 +60,103 @@
                 <td><div id="chart_div2"></div></td>
             </tr>
             <tr>
-                <td align="center"><asp:DetailsView ID="DResultados" runat="server" DataSourceID="SResultados" AutoGenerateRows="false">
+                <td align="center"><asp:DetailsView ID="DResultados" runat="server" 
+                        DataSourceID="SResultados" AutoGenerateRows="False">
             <Fields>
-                <asp:BoundField HeaderText="Quejas" DataField="quejas" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
-                <asp:BoundField HeaderText="Cerradas" DataField="cerradas" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
-                <asp:BoundField HeaderText="Atendidas" DataField="atendidas" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
-                <asp:BoundField HeaderText="Sin tramitar" DataField="sintramitar" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L1" runat="server" CommandName="quejas" OnClick="LEstadisticas_Click" Text="Quejas" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("quejas")%>
+                    </ItemTemplate>
+                    <HeaderStyle HorizontalAlign="Left" />
+                    <ItemStyle HorizontalAlign="Right" />
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L2" runat="server" CommandName="cerradas" OnClick="LEstadisticas_Click" Text="Cerradas" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("cerradas")%>
+                    </ItemTemplate>
+                    <HeaderStyle HorizontalAlign="Left" />
+                    <ItemStyle HorizontalAlign="Right" />
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L3" runat="server" CommandName="atendidas" OnClick="LEstadisticas_Click" Text="Atendidas" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("atendidas")%>
+                    </ItemTemplate>
+                    <HeaderStyle HorizontalAlign="Left" />
+                    <ItemStyle HorizontalAlign="Right" />
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderStyle HorizontalAlign="Left" />
+                    <ItemStyle HorizontalAlign="Right" />
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L4" runat="server" CommandName="sintramitar" OnClick="LEstadisticas_Click" Text="Sin tramitar" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("sintramitar") %>
+                    </ItemTemplate>
+                </asp:TemplateField>
             </Fields>
         </asp:DetailsView></td>
                 <td align="center"><asp:DetailsView ID="DSolucion" runat="server" DataSourceID="SResultados" AutoGenerateRows="false">
             <Fields>
-                <asp:BoundField HeaderText="Resueltas en 3 días o menos" DataField="dias3" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
-                <asp:BoundField HeaderText="Resueltas de 4 a 7 días" DataField="dias7" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
-                <asp:BoundField HeaderText="Resueltas de 8 a 15 días" DataField="dias15" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
-                <asp:BoundField HeaderText="Resueltas en 16 o más" DataField="muchosdias" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
-                <asp:BoundField HeaderText="Sin cerrar" DataField="sincerrar" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L1" runat="server" CommandName="dias3" OnClick="LEstadisticas_Click" Text="Resueltas en 3 días o menos" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("dias3")%>
+                    </ItemTemplate>
+                    <HeaderStyle HorizontalAlign="Left" />
+                    <ItemStyle HorizontalAlign="Right" />
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L2" runat="server" CommandName="dias7" OnClick="LEstadisticas_Click" Text="Resueltas de 4 a 7 días" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("dias7")%>
+                    </ItemTemplate>
+                    <HeaderStyle HorizontalAlign="Left" />
+                    <ItemStyle HorizontalAlign="Right" />
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L3" runat="server" CommandName="dias15" OnClick="LEstadisticas_Click" Text="Resueltas de 8 a 15 días" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("dias15")%>
+                    </ItemTemplate>
+                    <HeaderStyle HorizontalAlign="Left" />
+                    <ItemStyle HorizontalAlign="Right" />
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L4" runat="server" CommandName="muchosdias" OnClick="LEstadisticas_Click" Text="Resueltas en 16 o más" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("muchosdias")%>
+                    </ItemTemplate>
+                    <HeaderStyle HorizontalAlign="Left" />
+                    <ItemStyle HorizontalAlign="Right" />
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L5" runat="server" CommandName="sincerrar" OnClick="LEstadisticas_Click" Text="Sin cerrar" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("sincerrar")%>
+                    </ItemTemplate>
+                    <HeaderStyle HorizontalAlign="Left" />
+                    <ItemStyle HorizontalAlign="Right" />
+                </asp:TemplateField>
             </Fields>
         </asp:DetailsView></td>
             </tr>
@@ -99,7 +181,42 @@
                     <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
                     <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />
                  </SelectParameters>
-    </asp:SqlDataSource>
+    </asp:SqlDataSource>    
+        <asp:Panel runat="server" ID="PDetalle" Visible="false">
+            <table width="100%">
+            <tr>
+            <td class="Titulo"><asp:Label runat="server" ID="LDetalle"></asp:Label></td>
+            </tr>
+            <tr>
+            <td>
+            <asp:GridView ID="GDetalle" runat="server" DataSourceID="SDetalle" 
+                AutoGenerateColumns="False" EmptyDataText="No se encontraron quejas" 
+                AllowPaging="True" PageSize="50" AllowSorting="True">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                <Columns>
+                    <asp:TemplateField HeaderText="Paciente" SortExpression="paciente">
+                        <ItemTemplate>
+                            <asp:LinkButton ID="LPaciente" runat="server" CausesValidation="False" PostBackUrl='<%# Eval("qrId", "~/cliente/quejas.aspx?qid={0}") %>' Text='<%# Eval("pacNombres") %>'></asp:LinkButton>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:BoundField HeaderText="Fecha" SortExpression="qrFecha" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" DataField="qrFecha" />
+                    <asp:BoundField HeaderText="Detalle" SortExpression="qrDetalle" DataField="qrDetalle" />
+                    <asp:BoundField HeaderText="Observaciones" SortExpression="qrObsHS" DataField="qrObsHS" />
+                </Columns>
+            </asp:GridView>
+            <asp:SqlDataSource ID="SDetalle" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
+                        SelectCommand="">
+            </asp:SqlDataSource>
+            </td>
+            </tr>
+            </table>
+        </asp:Panel>
     </asp:Panel>
 </asp:Content>
 

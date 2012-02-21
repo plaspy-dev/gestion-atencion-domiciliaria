@@ -28,15 +28,15 @@ public partial class paciente_informes : System.Web.UI.Page
                 DEStado.SelectedValue = "1";
             }
         }
-        if (Request.QueryString["pid"] != null)
+        /*if (Request.QueryString["pid"] != null)
         {
             ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
             Response.Redirect("~/paciente/paciente.aspx?pid=" + Request.QueryString["pid"]);
             return;
-        }
+        }*/
 
         if (!Usuario.GetUsuario().CanPrint())
-            SResultados.SelectCommand = SResultados.SelectCommand.Insert(7, "TOP 1 ");
+            SResultados.SelectCommand = SResultados.SelectCommand.Insert(7, "TOP 10 ");
 
         GResultados.AllowPaging = false;
         GResultados.DataBind();

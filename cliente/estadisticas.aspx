@@ -113,7 +113,6 @@
         <div style="text-align: right;">
             <asp:Label ID="Label1" runat="server" Text=""></asp:Label>
         </div>
-        </div>
         <asp:SqlDataSource ID="SDetalle" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 

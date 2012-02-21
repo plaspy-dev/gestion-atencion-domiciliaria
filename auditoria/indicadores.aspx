@@ -19,7 +19,7 @@
 
         var options = {
             width: 600, height: 400,
-            title: 'Pacientes',
+            title: 'Pacientes'
         };
 
         var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
@@ -42,7 +42,7 @@
 
         var options2 = {
             width: 600, height: 400,
-            title: 'Eventos adversos',
+            title: 'Eventos adversos'
         };
 
         var chart2 = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
