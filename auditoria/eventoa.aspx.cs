@@ -88,6 +88,7 @@ public partial class auditoria_eventoa : System.Web.UI.Page
         query["otro"]=TOConsecuencia.Text;
         query["funcionario"]=TProfesionalID.Text;
         query["observaciones"]=TObservaciones.Text;
+        query["entidad"] = CCDetallePaciente.AsegurdadorID;
 
         if(HIdEvento.Value.Length==0) {
 

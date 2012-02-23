@@ -47,6 +47,29 @@
 
         var chart2 = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
         chart2.draw(data2, options2);
+        
+        
+        var data3 = new google.visualization.DataTable();
+        data3.addColumn('string', 'CIE10');
+        <asp:Repeater runat="server" DataSourceID="SCausas" ID="RCausas">
+            <ItemTemplate>data3.addColumn('number', '<%# Eval("causa") %>');</ItemTemplate>
+        </asp:Repeater>
+
+        data3.addRows([
+            ['CIE10'
+            <asp:Repeater runat="server" DataSourceID="SCausas" ID="RCausas2">
+                <ItemTemplate>,<%# Eval("c").ToString().Replace(",",".") %></ItemTemplate>
+            </asp:Repeater>
+            ]
+        ]);
+
+        var options3 = {
+            width: 600, height: 400,
+            title: 'Patologías principales'
+        };
+
+        var chart3 = new google.visualization.ColumnChart(document.getElementById('chart_div3'));
+        chart3.draw(data3, options3);
     }
 </script>
     <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
@@ -54,12 +77,27 @@
         <tr>
             <td>Desde</td>
             <td>Hasta</td>
-            <td></td>
+            <td>Entidad</td>
+            <td>
+            </td>
         </tr>
         <tr>
             <td><asp:TextBox runat="server" ID="TDesde" CssClass="fecha"></asp:TextBox><asp:RangeValidator ControlToValidate="TDesde" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
             <td><asp:TextBox runat="server" ID="THasta" CssClass="fecha"></asp:TextBox><asp:RangeValidator ControlToValidate="THasta" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
-            <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" onclick="BBuscar_Click" /></td>
+            <td>
+                <asp:DropDownList ID="DAsegurador" runat="server" 
+                                DataSourceID="SAsegurador" DataTextField="nombre" 
+                                DataValueField="id" AppendDataBoundItems="true">
+                                <asp:ListItem Text="(Todas)" Value="0"></asp:ListItem>
+                                </asp:DropDownList>
+                <asp:SqlDataSource ID="SAsegurador" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                    SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                </asp:SqlDataSource>
+            </td>
+            <td>
+                <asp:Button ID="BBuscar" runat="server" onclick="BBuscar_Click" Text="Buscar" />
+            </td>
         </tr>
     </table>
     <div id="dImprimir">
@@ -88,29 +126,33 @@
                 SelectCommand="SELECT 
                         (SELECT COUNT(*) FROM phdEgresos 
                         LEFT JOIN phdCausaEgreso ON (phdCausaEgreso.cegId=phdEgresos.cegId)
-                        WHERE phdEgresos.egrFecha BETWEEN @desde AND @hasta AND phdCausaEgreso.cegDescripcion='MUERTE') AS muertos
+                        LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdEgresos.pacId)
+                        WHERE (@eps=0 OR phdPaciente.entId=@eps) AND phdEgresos.egrFecha BETWEEN @desde AND @hasta AND phdCausaEgreso.cegDescripcion='MUERTE') AS muertos
                         ,
-                        (SELECT COUNT(DISTINCT pacId) FROM phdProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta)+ 
-                        (SELECT COUNT(DISTINCT pacId) FROM phdProgramacionMD WHERE prgFechaProg BETWEEN @desde AND @hasta)+ 
-                        (SELECT COUNT(DISTINCT pacId) FROM atxProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta) AS atendidos
+                        (SELECT COUNT(DISTINCT phdProgramacion.pacId) FROM phdProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta)+ 
+                        (SELECT COUNT(DISTINCT phdProgramacionMD.pacId) FROM phdProgramacionMD LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacionMD.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta)+ 
+                        (SELECT COUNT(DISTINCT atxProgramacion.pacId) FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta) AS atendidos
                         ,
                         (SELECT COUNT(*) FROM phdEgresos
                         LEFT JOIN phdCausaEgreso ON (phdCausaEgreso.cegId=phdEgresos.cegId)
+                        LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdEgresos.pacId) 
                         WHERE 
+                        (@eps=0 OR phdPaciente.entId=@eps) AND 
 						phdEgresos.egrFecha BETWEEN @desde AND @hasta 
                         AND 
 						(phdCausaEgreso.cegDescripcion LIKE 'REINGRESO POR AGUDIZACION' OR phdCausaEgreso.cegDescripcion='REINGRESO POR PATOLOGIA ANEXA' OR phdCausaEgreso.cegDescripcion='REINGRESO POR CANALIZACIÓN FALLIDA')
                         ) AS egresos
-                        ,(SELECT COUNT(DISTINCT pacId) FROM phdProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta) AS atendidosphd
-                        ,(SELECT COUNT(*) FROM phdNovedad WHERE phdNovedad.novTipo=5 AND phdNovedad.prgTipo=1 AND phdNovedad.segFechaRegistro BETWEEN @desde AND @hasta) AS descubiertoenfermeria
-                        ,(SELECT COUNT(*) FROM phdProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta) AS phdProgramadas
-                        ,(SELECT COUNT(DISTINCT pacId) FROM atxProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta) AS atendidosatx
-                        ,(SELECT COUNT(*) FROM phdNovedad WHERE phdNovedad.novTipo=5 AND phdNovedad.prgTipo=2 AND phdNovedad.segFechaRegistro BETWEEN @desde AND @hasta) AS descubiertoapoyo
-                        ,(SELECT COUNT(*) FROM atxProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta) AS atxProgramadas
+                        ,(SELECT COUNT(DISTINCT phdProgramacion.pacId) FROM phdProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta) AS atendidosphd
+                        ,(SELECT COUNT(*) FROM phdNovedad LEFT JOIN phdProgramacion ON (phdProgramacion.prgId=phdNovedad.prgId) LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND phdNovedad.novTipo=5 AND phdNovedad.prgTipo=1 AND phdNovedad.segFechaRegistro BETWEEN @desde AND @hasta) AS descubiertoenfermeria
+                        ,(SELECT COUNT(*) FROM phdProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta) AS phdProgramadas
+                        ,(SELECT COUNT(DISTINCT atxProgramacion.pacId) FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta) AS atendidosatx
+                        ,(SELECT COUNT(*) FROM phdNovedad LEFT JOIN atxProgramacion ON (atxProgramacion.prgId=phdNovedad.prgId) LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND phdNovedad.novTipo=5 AND phdNovedad.prgTipo=2 AND phdNovedad.segFechaRegistro BETWEEN @desde AND @hasta) AS descubiertoapoyo
+                        ,(SELECT COUNT(*) FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta) AS atxProgramadas
                         ">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
                     <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />
+                    <asp:ControlParameter ControlID="DAsegurador" Name="eps" PropertyName="SelectedValue" />
                  </SelectParameters>
     </asp:SqlDataSource>
         </td>
@@ -118,83 +160,170 @@
             <asp:DetailsView ID="DEventos" runat="server" DataSourceID="SEventos" 
                 AutoGenerateRows="False">
             <Fields>
-                <asp:BoundField DataField="eventos" HeaderStyle-HorizontalAlign="Left" 
-                    HeaderText="Eventos adversos" ItemStyle-HorizontalAlign="Right">
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L1" runat="server" CommandName="eventos" OnClick="LEventos_Click" Text="Eventos adversos" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("eventos")%>
+                    </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
-                </asp:BoundField>
-                <asp:BoundField DataField="farmacologico" HeaderStyle-HorizontalAlign="Left" 
-                    HeaderText="Farmacológico" ItemStyle-HorizontalAlign="Right">
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L2" runat="server" CommandName="farmacologico" OnClick="LEventos_Click" Text="Farmacológico" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("farmacologico")%>
+                    </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
-                </asp:BoundField>
-                <asp:BoundField DataField="epidemologicos" HeaderStyle-HorizontalAlign="Left" 
-                    HeaderText="Epidemiológicos" ItemStyle-HorizontalAlign="Right">
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L3" runat="server" CommandName="epidemologicos" OnClick="LEventos_Click" Text="Epidemiológicos" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("epidemologicos")%>
+                    </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
-                </asp:BoundField>
-                <asp:BoundField DataField="apoyoterapeutico" HeaderStyle-HorizontalAlign="Left" 
-                    HeaderText="Apoyo terapéutico" ItemStyle-HorizontalAlign="Right">
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L4" runat="server" CommandName="apoyoterapeutico" OnClick="LEventos_Click" Text="Apoyo terapéutico" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("apoyoterapeutico")%>
+                    </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
-                </asp:BoundField>
-                <asp:BoundField DataField="lesionesapoyo" HeaderStyle-HorizontalAlign="Left" 
-                    HeaderText="Lesiones apoyo" ItemStyle-HorizontalAlign="Right">
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L5" runat="server" CommandName="lesionesapoyo" OnClick="LEventos_Click" Text="Lesiones apoyo" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("lesionesapoyo")%>
+                    </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
-                </asp:BoundField>
-                <asp:BoundField DataField="autolesion" HeaderStyle-HorizontalAlign="Left" 
-                    HeaderText="Autolesión" ItemStyle-HorizontalAlign="Right">
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L6" runat="server" CommandName="autolesion" OnClick="LEventos_Click" Text="Autolesión" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("autolesion")%>
+                    </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
-                </asp:BoundField>
-                <asp:BoundField DataField="atencion" HeaderStyle-HorizontalAlign="Left" 
-                    HeaderText="Complicaciones en la atención" ItemStyle-HorizontalAlign="Right">
+                </asp:TemplateField>
+                <asp:TemplateField>
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="L7" runat="server" CommandName="atencion" OnClick="LEventos_Click" Text="Complicaciones en la atención" ></asp:LinkButton>
+                    </HeaderTemplate>
+                    <ItemTemplate>
+                        <%# Eval("atencion")%>
+                    </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
-                </asp:BoundField>
+                </asp:TemplateField>
             </Fields>
         </asp:DetailsView>
         <asp:SqlDataSource ID="SEventos" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT 
-                                (SELECT COUNT(*) FROM evento_adverso WHERE evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')) AS eventos
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161
-                                OR tipo=150
-                                OR tipo=154
-                                OR tipo=160
-                                OR tipo=153)) AS farmacologico
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161
-                                OR tipo=147 OR tipo=149)) AS epidemologicos
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161
-                                OR tipo=147
-                                OR tipo=149
-                                OR tipo=157
-                                OR tipo=158)) AS apoyoterapeutico
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161
-                                OR tipo=157
-                                OR tipo=158
-                                OR tipo=156
-                                )) AS lesionesapoyo
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161
-                                OR tipo=156
-                                OR tipo=158
-                                OR tipo=157)) AS autolesion
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161
-                                OR tipo=160
-                                OR tipo=151
-                                OR tipo=155
-                                )) AS atencion
+                                (SELECT COUNT(*) FROM evento_adverso WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')) AS eventos
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=150 OR tipo=154 OR tipo=160 OR tipo=153)) AS farmacologico
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=147 OR tipo=149)) AS epidemologicos
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=147 OR tipo=149 OR tipo=157 OR tipo=158)) AS apoyoterapeutico
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=157 OR tipo=158 OR tipo=156 )) AS lesionesapoyo
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=156 OR tipo=158 OR tipo=157)) AS autolesion
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=160 OR tipo=151 OR tipo=155 )) AS atencion
                                 ;">
                      <SelectParameters>
                         <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
                         <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />
+                        <asp:ControlParameter ControlID="DAsegurador" Name="eps" PropertyName="SelectedValue" />
                      </SelectParameters>
         </asp:SqlDataSource>
         </td>
     </tr>
+            <tr>
+                <td align="center"><div id="chart_div3"></div></td>
+                <td align="center">&nbsp;</td>
+            </tr>
+            <tr>
+                <td align="center"><asp:GridView ID="GCausas" runat="server" DataSourceID="SCausas" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True">
+                    <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                    <Columns>
+                        <asp:BoundField HeaderText="CIE10" SortExpression="causa" DataField="causa" ItemStyle-HorizontalAlign="Left" />
+                        <asp:BoundField HeaderText="Incidencias" SortExpression="c" DataField="c" ItemStyle-HorizontalAlign="Right" />
+                    </Columns>
+                </asp:GridView>
+                <asp:SqlDataSource ID="SCausas" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
+                    SelectCommand="SELECT TOP 10 phdCIE10.cieCodDx+' - '+ phdCIE10.cirDescripcion AS causa,COUNT(*) AS c FROM phdPaciente
+                                LEFT JOIN phdCIE10 ON (phdCIE10.cieCodDx=phdPaciente.cieCodDx)
+                                WHERE 
+                                (@eps=0 OR phdPaciente.entId=@eps)
+                                AND pacId IN 
+                                ((SELECT pacId FROM phdProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta)
+                                UNION (SELECT pacId FROM phdProgramacionMD WHERE prgFechaProg BETWEEN @desde AND @hasta)
+                                UNION (SELECT pacId FROM atxProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta))
+                                GROUP BY phdCIE10.cieCodDx,phdCIE10.cirDescripcion ORDER BY c DESC">
+                             <SelectParameters>
+                                <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
+                                <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />
+                                <asp:ControlParameter ControlID="DAsegurador" Name="eps" PropertyName="SelectedValue" />
+                             </SelectParameters>
+                </asp:SqlDataSource></td>
+                <td align="center">&nbsp;</td>
+            </tr>
     </table>
     </div>
+    <asp:Panel runat="server" ID="PDetalle" Visible="false">
+        <table width="100%">
+        <tr>
+        <td class="Titulo"><asp:Label runat="server" ID="LDetalle"></asp:Label></td>
+        </tr>
+        <tr>
+        <td>
+        <asp:GridView ID="GDetalle" runat="server" DataSourceID="SDetalle" 
+            AutoGenerateColumns="False" EmptyDataText="No se encontraron quejas" 
+            AllowPaging="True" PageSize="50" AllowSorting="True" 
+                DataKeyNames="id,pacienteid" onrowdatabound="GDetalle_RowDataBound">
+            <RowStyle CssClass="GridRow"></RowStyle>
+            <FooterStyle CssClass="GridFooter"></FooterStyle>
+            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+            <Columns>
+                <asp:TemplateField HeaderText="Paciente" SortExpression="paciente">
+                    <ItemTemplate>
+                        <asp:LinkButton ID="LPaciente" runat="server" CausesValidation="False" PostBackUrl='<%# Eval("id", "~/auditoria/eventoa.aspx?eaid={0}") %>' Text='<%# Eval("paciente") %>'></asp:LinkButton>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:BoundField HeaderText="Fecha" SortExpression="fecha" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" DataField="fecha" />
+                <asp:BoundField HeaderText="Descripción" SortExpression="descripcion" DataField="descripcion" />
+            </Columns>
+        </asp:GridView>
+        <asp:SqlDataSource ID="SDetalle" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
+                    SelectCommand="">
+        </asp:SqlDataSource>
+        </td>
+        </tr>
+        </table>
+    </asp:Panel>
 </asp:Panel>
 </asp:Content>

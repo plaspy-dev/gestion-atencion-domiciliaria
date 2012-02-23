@@ -22,7 +22,31 @@
 
             var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
             chart.draw(data, options);
+            
+            var data2 = new google.visualization.DataTable();
+            data2.addColumn('string', 'Encuestas');
+            <asp:Repeater runat="server" DataSourceID="SConceptos" ID="RConceptos">
+                <ItemTemplate>data2.addColumn('number', '<%# Eval("concepto") %>');</ItemTemplate>
+            </asp:Repeater>
+            
+            data2.addRows([
+                ['Encuestas'
+                <asp:Repeater runat="server" DataSourceID="SConceptos" ID="RConceptos2">
+                    <ItemTemplate>,<%# Eval("cal").ToString().Replace(",",".") %></ItemTemplate>
+                </asp:Repeater>
+                ]
+            ]);
+
+            var options2 = {
+                width: 600, height: 400,
+                title: 'Encuestas'
+            };
+
+            var chart2 = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
+            chart2.draw(data2, options2);
           }
+          
+        
         </script>
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
     <table>
@@ -30,59 +54,98 @@
             <td>Desde</td>
             <td>Hasta</td>
             <td></td>
+            <td>
+                &nbsp;</td>
         </tr>
         <tr>
             <td><asp:TextBox runat="server" ID="TDesde" CssClass="fecha"></asp:TextBox><asp:RangeValidator ControlToValidate="TDesde" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
             <td><asp:TextBox runat="server" ID="THasta" CssClass="fecha"></asp:TextBox><asp:RangeValidator ControlToValidate="THasta" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" /></td>
+            <td><asp:Label ID="LTotal" runat="server" Text=""></asp:Label></td>
         </tr>
     </table>
-    <div id="chart_div"></div>
     <div id="dImprimir">
-    <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True" DataKeyNames="cal" onselectedindexchanged="GResultados_SelectedIndexChanged" >
-        <RowStyle CssClass="GridRow"></RowStyle>
-        <FooterStyle CssClass="GridFooter"></FooterStyle>
-        <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-        <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-        <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-        <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-        <Columns>
-            <asp:TemplateField HeaderText="Concepto" SortExpression="cal">
-                <ItemTemplate>
-                    <asp:LinkButton ID="LConcepto" runat="server" CausesValidation="False" CommandName="Select" Text='<%# Eval("concepto") %>'></asp:LinkButton>
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:BoundField HeaderText="Encuestas" SortExpression="numero" DataField="numero" ItemStyle-HorizontalAlign="Right" />
-        </Columns>
-    </asp:GridView>
-    <div style="text-align: right;">
-        <asp:Label ID="LTotal" runat="server" Text=""></asp:Label>
+    <table>
+        <tr>
+            <td><div id="chart_div"></div></td>
+            <td><div id="chart_div2"></div></td>
+        </tr>
+        <tr>
+            <td><asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True" DataKeyNames="cal" onselectedindexchanged="GResultados_SelectedIndexChanged" >
+                    <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                    <Columns>
+                        <asp:TemplateField HeaderText="Concepto" SortExpression="cal">
+                            <ItemTemplate>
+                                <asp:LinkButton ID="LConcepto" runat="server" CausesValidation="False" CommandName="Select" Text='<%# Eval("concepto") %>'></asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:BoundField HeaderText="Encuestas" SortExpression="numero" DataField="numero" ItemStyle-HorizontalAlign="Right" />
+                    </Columns>
+                </asp:GridView>
+                <asp:SqlDataSource ID="SResultados" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT COUNT(*) numero
+                                ,FLOOR(calificacion) AS cal
+                                ,CASE 
+                                WHEN FLOOR(calificacion)=0 THEN 'Muy insatisfecho' 
+                                WHEN FLOOR(calificacion)=1 THEN 'Insatisfecho' 
+                                WHEN FLOOR(calificacion)=2 THEN 'Conforme' 
+                                WHEN FLOOR(calificacion)=3 THEN 'Satisfecho' 
+                                WHEN FLOOR(calificacion)=4 THEN 'Muy satisfecho' 
+                                ELSE '' END AS concepto
+                                FROM escliente 
+                                WHERE 
+                                (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=fecha)
+                                AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=fecha)
+                                GROUP BY cal
+                                ORDER BY cal;
+                                ">
+                             <SelectParameters>
+                                <asp:ControlParameter ControlID="TDesde" Name="desde" DefaultValue=" " PropertyName="Text" />
+                                <asp:ControlParameter ControlID="THasta" Name="hasta" DefaultValue=" " PropertyName="Text" />
+                             </SelectParameters>
+                </asp:SqlDataSource>
+                </td>
+            <td>
+                <asp:GridView ID="GConceptos" runat="server" DataSourceID="SConceptos" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True" >
+                    <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                    <Columns>
+                        <asp:BoundField HeaderText="Concepto" SortExpression="concepto" DataField="concepto" />
+                        <asp:BoundField HeaderText="Promedio" SortExpression="cal" DataField="cal" DataFormatString="{0:g}" ItemStyle-HorizontalAlign="Right" />
+                    </Columns>
+                </asp:GridView>
+                <asp:SqlDataSource ID="SConceptos" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT varios.nombre AS concepto,AVG(escliente_calificacion.calificacion) AS cal 
+                                FROM escliente
+                                LEFT JOIN escliente_calificacion ON (escliente_calificacion.encuesta=escliente.id)
+                                LEFT JOIN varios ON (varios.id=escliente_calificacion.concepto)
+                                WHERE 
+                                (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=escliente.fecha)
+                                AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=escliente.fecha)
+                                GROUP BY concepto ORDER BY cal DESC;
+                                ">
+                             <SelectParameters>
+                                <asp:ControlParameter ControlID="TDesde" Name="desde" DefaultValue=" " PropertyName="Text" />
+                                <asp:ControlParameter ControlID="THasta" Name="hasta" DefaultValue=" " PropertyName="Text" />
+                             </SelectParameters>
+                </asp:SqlDataSource>
+            </td>
+        </tr>
+    </table>
     </div>
-    </div>
-    <asp:SqlDataSource ID="SResultados" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT COUNT(*) numero
-                    ,FLOOR(calificacion) AS cal
-                    ,CASE 
-                    WHEN FLOOR(calificacion)=0 THEN 'Muy insatisfecho' 
-                    WHEN FLOOR(calificacion)=1 THEN 'Insatisfecho' 
-                    WHEN FLOOR(calificacion)=2 THEN 'Conforme' 
-                    WHEN FLOOR(calificacion)=3 THEN 'Satisfecho' 
-                    WHEN FLOOR(calificacion)=4 THEN 'Muy satisfecho' 
-                    ELSE '' END AS concepto
-                    FROM escliente 
-                    WHERE 
-                    (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=fecha)
-                    AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=fecha)
-                    GROUP BY cal
-                    ORDER BY cal;
-                    ">
-                 <SelectParameters>
-                    <asp:ControlParameter ControlID="TDesde" Name="desde" DefaultValue=" " PropertyName="Text" />
-                    <asp:ControlParameter ControlID="THasta" Name="hasta" DefaultValue=" " PropertyName="Text" />
-                 </SelectParameters>
-    </asp:SqlDataSource>
     <asp:Panel runat="server" ID="PDetalle" Visible="false">
         <table width="100%">
         <tr>
