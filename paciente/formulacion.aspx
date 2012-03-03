@@ -10,7 +10,7 @@
                 $.ajax({
                     url: "../webservices/servicios.asmx/GetMedicamentos",
                     data: "{}",
-                    data: "{ 'q': '" + request.term + "' }",
+                    data: "{ 'q': '" + request.term + "', 't': '" + $("#<%= DTipo.ClientID %>").val() + "' }",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
@@ -43,6 +43,13 @@
         $("#<%= TFecha.ClientID %>").datepicker({
             onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#<%=BFecha.ClientID %>").click(); }
         });
+        $("#<%= PFormulaciones.ClientID %>").accordion({
+            autoHeight: false,
+            collapsible: true,
+            active: false
+        });
+
+        FullRowSelect("#<%= GFormulaciones.ClientID %>");
     });
 </script>
 </asp:Content>
@@ -57,8 +64,70 @@
                 <td>Fecha</td>
                 <td><asp:TextBox ID="TFecha" runat="server" CssClass="fecha"></asp:TextBox>
                             <asp:Button ID="BFecha" CssClass="hide" runat="server" Text="..." onclick="BFecha_Click" /></td>
-                <td><asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese una fecha." SetFocusOnError="true" ControlToValidate="TFecha" Display="Dynamic"></asp:RequiredFieldValidator><asp:RangeValidator ID="RangeValidator1" runat="server" MinimumValue="12/12/1900" MaximumValue="12/12/2100" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Display="Dynamic" Type="Date"></asp:RangeValidator></td>
-                <td></td>
+                <td>
+                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese una fecha." SetFocusOnError="true" ControlToValidate="TFecha" Display="Dynamic"></asp:RequiredFieldValidator><asp:RangeValidator ID="RangeValidator1" runat="server" MinimumValue="12/12/1900" MaximumValue="12/12/2100" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Display="Dynamic" Type="Date"></asp:RangeValidator></td>
+                <td align="right">
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Tipo</td>
+                <td>
+                    <asp:DropDownList ID="DTipo" runat="server" DataSourceID="STipo" DataTextField="nombre" DataValueField="id" AutoPostBack="true" OnSelectedIndexChanged="BFecha_Click">
+                    </asp:DropDownList>
+                    <asp:SqlDataSource ID="STipo" runat="server" 
+                                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=19 AND szReservado IS NULL ORDER BY nombre">
+                    </asp:SqlDataSource></td>
+                <td>
+                    &nbsp;</td>
+                <td align="right">
+                    <asp:Button ID="BFormula" runat="server" CausesValidation="False" 
+                        onclick="BFormula_Click" Text="Última fórmula" /></td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                <asp:Panel ID="PFormulaciones" runat="server">
+                    <h3><a href="#"><asp:Label runat="server" ID="LFormulaciones"></asp:Label></a></h3>
+                    <div class="hide">
+                        <asp:GridView ID="GFormulaciones" runat="server" AutoGenerateColumns="False" 
+                            DataSourceID="SFormulaciones" EmptyDataText="No se encontraron Formulaciones de este usuario" >
+                            <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                            <Columns>
+                                <asp:TemplateField>
+                                    <ItemTemplate>
+                                        <asp:ImageButton CommandArgument='<%# Eval("fecha") %>' CommandName='<%# Eval("idtipo") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                                <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
+                                <asp:BoundField DataField="tipo" HeaderText="Tipo" />
+                                <asp:BoundField DataField="medicamentos" HeaderText="Medicamentos recetados" ItemStyle-HorizontalAlign="Right" />
+                            </Columns>
+                        </asp:GridView>
+                        <asp:SqlDataSource ID="SFormulaciones" runat="server" 
+                            ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            SelectCommand="SELECT formulacion.fecha,formulacion.tipo AS idtipo,varios.nombre AS tipo, COUNT(*) AS medicamentos
+                                        FROM formulacion
+                                        LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id)
+                                        LEFT JOIN varios ON (varios.id=formulacion.tipo)
+                                        WHERE formulacion.paciente=@paciente
+                                        GROUP BY formulacion.fecha,tipo
+                                        ORDER BY fecha DESC;">
+                            <SelectParameters>
+                                <asp:ControlParameter ControlID="CCDetallePaciente" PropertyName="IdPaciente" Name="paciente" />
+                            </SelectParameters>
+                        </asp:SqlDataSource>
+                    </div>
+                </asp:Panel>
+                </td>
             </tr>
             <tr>
                 <td colspan="4" class="celdaTitulo">Formulación</td>
@@ -73,14 +142,14 @@
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                             <asp:BoundField DataField="medicamen_id" HeaderText="idMedicamento" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                             <asp:BoundField DataField="medicamento" HeaderText="Nombre del medicamento" />
-                            <asp:BoundField DataField="formulada" HeaderText="Cantidad formulada" ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="formulada" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="posologia" HeaderText="Posología" />
                         </Columns>
                         <SelectedRowStyle CssClass="selecteditem" />
                     </asp:GridView>
                     <sdg:CustomDataSource ID="SFormulacion" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             SelectCommand="SELECT medicamento_formulacion.id,medicamento_formulacion.medicamento AS medicamen_id,medicamento_formulacion.formulada,medicamento_formulacion.posologia 
-                                            ,CONCAT(medicamentos.nombre,' (',medicamentos.cantidad,medicamentos.umedida,'), vía ',medicamentos.via,'-',medicamentos.forma) AS medicamento
+                                            ,IF(medicamentos.principio IS NULL,CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',medicamentos.forma),medicamentos.nombre) AS medicamento
                                             FROM medicamento_formulacion 
                                             LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)
                                             WHERE formulacion=@formulacion"

@@ -48,7 +48,6 @@ public partial class paciente_barthel : System.Web.UI.Page
                     
                     indice+="id";
                     indice+="fecha";
-                    indice+="diagnostico";
 
                     MySqlDataReader readermysql = conectormy.Query(indice.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
                     if (readermysql != null && readermysql.Read())
@@ -59,7 +58,6 @@ public partial class paciente_barthel : System.Web.UI.Page
                         HIdIndice.Value = readermysql["id"].ToString();
                         TFecha.Text = ((DateTime) readermysql["fecha"]).ToShortDateString();
                         THora.Text = CConector.GetHora(readermysql["fecha"]);
-                        TDiagnostico.Text = readermysql["diagnostico"].ToString();
 
                         ((MasterPageI)Master).SetModificacion(HIdIndice.Value);
                     }
@@ -80,7 +78,6 @@ public partial class paciente_barthel : System.Web.UI.Page
         CConector conector = CConector.GetConector();
 
         indice["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text)  + " " + THora.Text + ":00";
-        indice["diagnostico"]= TDiagnostico.Text;
 
         string szQuery;
         string mensaje;

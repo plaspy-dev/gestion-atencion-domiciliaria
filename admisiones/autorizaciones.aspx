@@ -195,10 +195,8 @@
             <td></td>
             <td></td>
             <td colspan="2">
-                <asp:RadioButton ID="RPreautorizacion" Text="Es pre-autorización" 
-                    runat="server" Checked="True" EnableViewState="False" GroupName="generar" /><br />
-                <asp:RadioButton ID="RAutorizacion" Text="Es autorización definitiva" 
-                    runat="server" GroupName="generar" />
+                <asp:RadioButton ID="RPreautorizacion" Text="Es pre-autorización" runat="server" Checked="True" EnableViewState="False" GroupName="generar" /><br />
+                <asp:RadioButton ID="RAutorizacion" Text="Es autorización definitiva" runat="server" GroupName="generar" />
             </td>
         </tr>
         <tr>

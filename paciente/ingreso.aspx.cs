@@ -15,6 +15,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
         CConectorMS conector = CConectorMS.GetConector();
 
         if (!IsPostBack)
@@ -35,6 +36,8 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
                     SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
                     SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
+
+                    TFecha.Text = DateTime.Now.ToShortDateString(); 
 
                     PDatos.Visible = true;
 
@@ -66,6 +69,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     qIngreso += "ddi";
                     qIngreso += "dde";
                     qIngreso += "conducta";
+                    qIngreso += "fecha";
 
                     CConector conectormysql = CConector.GetConector();
                     MySqlDataReader readermysql = conectormysql.Query(qIngreso.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
@@ -73,7 +77,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     {
                         BAceptar.Enabled = usuario.CanUpdate();
                         BMasCDiagnostico.Enabled = usuario.CanUpdate();
-                        ((MasterPageI)Master).Imprimir();
+                        ((MasterPageI)Master).Imprimir("ingreso.html");
 
                         GCDiagnostico.Columns[0].Visible = usuario.CanUpdate();
                         GCDiagnostico.Columns[1].Visible = usuario.CanDelete();
@@ -89,6 +93,9 @@ public partial class paciente_ingreso : System.Web.UI.Page
                         TFR.Text = readermysql["fr"].ToString();
                         TT.Text = readermysql["t"].ToString();
                         TPeso.Text = readermysql["peso"].ToString();
+                        if (readermysql["fecha"] != DBNull.Value)
+                            TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
+                        else TFecha.Text = "";
                         // TObservacionesAntecedentes.Text = readermysql["observacionesa"].ToString();
                         // TAmpliacion.Text = readermysql["amplacion"].ToString();
                         // TObservacionesFisico.Text = readermysql["observacionesef"].ToString();
@@ -122,6 +129,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
         qIngreso["fr"]= TFR.Text;
         qIngreso["t"]= TT.Text;
         qIngreso["peso"]= TPeso.Text;
+        qIngreso["fecha"] = CConector.GetDate(Convert.ToDateTime(TFecha.Text));
         // qIngreso["observacionesa"]= TObservacionesAntecedentes.Text;
         // qIngreso["amplacion"]= TAmpliacion.Text;
         // qIngreso["observacionesef"]= TObservacionesFisico.Text;
@@ -174,7 +182,6 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
         for (int i = 0; i < GRevision.Rows.Count; i++)
         {
-
             Query antecendentes = new Query("revision_ingreso");
             string id = GRevision.DataKeys[i].Values[1].ToString();
 
@@ -321,5 +328,79 @@ public partial class paciente_ingreso : System.Web.UI.Page
     {
         TCIE10.Text = HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[2].Text).Trim();
         TCIE10.Text+= " - " + HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[3].Text).Trim();
+    }
+
+    protected string RenderGrid(GridView grid) {
+
+        String resultado = "<table border=1 width=100% cellspacing=0>";
+        resultado += "<tr>";
+        for (int i = 0; i < grid.Columns.Count; i++) {    
+            resultado += "<td><b>" + grid.Columns[i].HeaderText + "</b></td>";
+        }
+        resultado += "</tr>";
+        for (int i = 0; i < grid.Rows.Count; i++) {
+            GridViewRow row = grid.Rows[i];
+            resultado += "<tr>";
+            for(int j=0; j<row.Cells.Count; j++) {
+                resultado += "<td>";
+                if(row.Cells[j].HasControls()) {
+                    ControlCollection controles= row.Cells[j].Controls;
+                    for(int k=0; k<controles.Count; k++) {
+
+                        if(controles[k] is TextBox) {
+                            String texto = ((TextBox)controles[k]).Text;
+                            if (texto.Length == 0)
+                                texto = "&nbsp;";
+                            resultado+= texto;
+                            break;
+                        } else if(controles[k] is CheckBox) {
+                            if(((CheckBox)controles[k]).Checked)
+                                resultado +=  "X ";
+                            if (((CheckBox)controles[k]).Text.Length>0)
+                                resultado+= ((CheckBox)controles[k]).Text;
+                            break;
+                        }
+                    }
+                } else resultado += row.Cells[j].Text;
+                resultado += "</td>";
+            }
+            resultado += "</tr>";
+        }
+        resultado += "</table>";
+        return resultado;
+    }
+
+    protected void OnImprimir(object sender, EventArgs e)
+    {
+        PrintEventArgs evento = (PrintEventArgs)e;
+        // aqui modificamos el evento.Contenido
+        evento.Contenido = evento.Contenido.Replace("$GAntecedentes$", RenderGrid(GAntecedentes));
+        evento.Contenido = evento.Contenido.Replace("$GRevision$", RenderGrid(GRevision));
+        evento.Contenido = evento.Contenido.Replace("$GExamenFisico$", RenderGrid(GExamenFisico));
+        if (PMujer.Visible)
+            evento.Contenido = evento.Contenido.Replace("$GGinecologico$", RenderGrid(GGinecologico));
+        else evento.Contenido = evento.Contenido.Replace("$GGinecologico$", "");
+        evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
+
+        Query query = new Query("phdPaciente");
+
+        query["categoria"] = "categoria";
+        query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
+
+        CConectorMS conectorms = new CConectorMS();
+
+        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente));
+        if (reader != null)
+        {
+            bool l = reader.Read();
+            if (l)
+            {
+                evento.Contenido = evento.Contenido.Replace("$szCategoria$", new CConector().QueryString("SELECT nombre FROM varios WHERE id='" + reader["categoria"].ToString() + "' AND tipo=13"));
+            }
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
+            }
+        }
     }
 }

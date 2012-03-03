@@ -25,7 +25,7 @@
         $(function() {
             $("#tabs").tabs();
             $("#ctl00_lnkCambioClave").click(function() {
-               $("#contrasena").dialog(
+                $("#contrasena").dialog(
                     {
                         modal: true,
                         autoOpen: true,
@@ -39,11 +39,15 @@
                                 $(this).dialog("close");
                             }
                         }
-                });
+                    });
                 $("#ctl00_BAceptar").hide();
                 $("#contrasena").parent().appendTo(jQuery("#aspnetForm"));
                 return false;
             });
+            var imp = $("#<%= lnkImp.ClientID %>");
+            if (imp.attr("r") == "1") {
+                imp.attr("href", window.location + "&p=1").attr("target", "_blank");
+            }
         });
     </script>
     <asp:ContentPlaceHolder id="head" runat="server">
@@ -112,21 +116,20 @@
                      </tr>
                      <tr>
                      <td align="left" >
-                         <asp:LinkButton ID="lnkNuevo" runat="server" CssClass="linkBH" 
-                         Visible="False" CausesValidation="False" PostBackUrl="">Nuevo</asp:LinkButton>
+                         <asp:LinkButton ID="lnkNuevo" runat="server" CssClass="linkBH" Visible="False" CausesValidation="False" PostBackUrl="">Nuevo</asp:LinkButton>
                      </td>
                      <td align="left" >
-                         <asp:LinkButton ID="lnkImp" runat="server" CssClass="linkBH" 
-                         Visible="False" CausesValidation="False" OnClientClick="imprimir();return false;" onclick="lnkImp_Click">Imprimir</asp:LinkButton>
+                         <asp:LinkButton ID="lnkImp" runat="server" CssClass="linkBH" Visible="False" CausesValidation="False" OnClientClick="imprimir();return false;" onclick="lnkImp_Click">Imprimir</asp:LinkButton>
                      </td>
                      <td align="left" >
-                         <asp:LinkButton ID="lnkGuardar" runat="server" CssClass="linkBH" 
-                             Visible="False" ValidationGroup="Guardar">Guardar</asp:LinkButton>
+                         <asp:LinkButton ID="lnkGuardar" runat="server" CssClass="linkBH" Visible="False" ValidationGroup="Guardar">Guardar</asp:LinkButton>
                      </td>
                      <td align="left" >
-                         <asp:LinkButton ID="lnkExcel" runat="server" CssClass="linkBH" 
-                             Visible="False" CausesValidation="False" onclick="lnkExcel_Click">Excel</asp:LinkButton>
-                         </td>
+                         <asp:LinkButton ID="lnkExcel" runat="server" CssClass="linkBH" Visible="False" CausesValidation="False" onclick="lnkExcel_Click">Excel</asp:LinkButton>
+                     </td>
+                     <td align="left" >
+                         <asp:LinkButton ID="lnkPDF" runat="server" CssClass="linkBH" Visible="False" CausesValidation="False" onclick="lnkPDF_Click">PDF</asp:LinkButton>
+                     </td>
                      </tr></table>
                     </td></tr>
                     </table>

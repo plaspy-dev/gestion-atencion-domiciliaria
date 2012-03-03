@@ -6,6 +6,7 @@ using System.Web.Services;
 using System.Web.Script.Services;
 using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
+using SDG.Componentes;
 
 /// <summary>
 /// Descripción breve de servicios
@@ -214,12 +215,12 @@ public class servicios : System.Web.Services.WebService
 
     [WebMethod]
     // [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<CJSon> GetMedicamentos(String q)
+    public List<CJSon> GetMedicamentos(String q, String t)
     {
         List<CJSon> lista = new List<CJSon>();
 
         CConector conector = new CConector();
-        String query= "SELECT id,nombre,via,umedida,cantidad,forma FROM medicamentos WHERE ";
+        String query = "SELECT id,nombre,principio,concentracion,forma FROM medicamentos WHERE tipo=" + Query.GetValor(t) +" AND ";
 
         string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
@@ -229,22 +230,25 @@ public class servicios : System.Web.Services.WebService
             { // verificamos que no este vacio
                 if (i > 0)
                     query += " AND ";
-                query += String.Format(" (nombre LIKE '%{0}%' OR via LIKE '%{0}%' OR umedida LIKE '%{0}%' OR cantidad LIKE '%{0}%' OR forma LIKE '%{0}%') ", split[i]);
+                query += String.Format(" (nombre LIKE '%{0}%' OR principio LIKE '%{0}%' OR concentracion LIKE '%{0}%' OR forma LIKE '%{0}%') ", split[i]);
             }
         }
 
-        query += " ORDER BY nombre,umedida,cantidad LIMIT 100";
+        query += " ORDER BY nombre,principio,concentracion LIMIT 100";
         MySqlDataReader reader = conector.Query(query);
         if (reader != null)
         {
             string nombre="";
             while (reader.Read())
             {
-                // RANITIDINA (50mg), Vía INTRAMUSCULAR-INYECTABLES
+                // PARACETAMOL [ACETAMINOFÉN], 100 mg/mL (10%) - SOLUCIÓN ORAL
                 nombre = reader["nombre"].ToString();
-                nombre += " (" + reader["cantidad"].ToString() + reader["umedida"].ToString() + ")";
-                nombre += ", vía " + reader["via"].ToString();
-                nombre += "-" + reader["forma"].ToString();
+                if (reader["principio"].ToString().Length!=0)
+                    nombre += " [" + reader["principio"].ToString() + "]";
+                if (reader["concentracion"].ToString().Length!=0)
+                    nombre += ", " + reader["concentracion"].ToString();
+                if(reader["forma"].ToString().Length!=0)
+                    nombre += "-" + reader["forma"].ToString();
                 lista.Add(new CJSon(reader["id"].ToString(), nombre));
             }
             reader.Close();

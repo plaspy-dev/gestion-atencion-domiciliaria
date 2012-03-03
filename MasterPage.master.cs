@@ -7,9 +7,20 @@ using System.Web.UI.WebControls;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
 using System.Data.SqlClient;
+using System.IO;
+using System.Collections;
+using iTextSharp.text;
+using iTextSharp.text.html;
+using iTextSharp.text.html.simpleparser;
+using iTextSharp.text.pdf;
+using iTextSharp.text.xml;
 
 public partial class MasterPageI : System.Web.UI.MasterPage
 {
+    // private static readonly object _ImprimirClicked = new object();
+    public event EventHandler _ImprimirClicked = null;
+    public event EventHandler _ExcelClicked = null;
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if(!IsPostBack) {
@@ -64,6 +75,12 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         if(lnkImp.Visible==false) {
             
             Session["printgridview"] = null;
+            Session["printfile"] = null;
+        } else {
+            if(Request.QueryString["p"]=="1") {
+                // nos preparamos para redireccionar
+                lnkImp_Click(sender, e);
+            }
         }
         // actualizamos la contraseña
         Response.Cookies["contrasena"].Value = Session["passwdtemp"].ToString();
@@ -215,6 +232,60 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
     }
 
+    public string ReplaceContenido(ControlCollection controles, string contenido)
+    {
+
+        for (int i = 0; i < controles.Count; i++)
+        {
+            string id = controles[i].ID;
+            string valor = "";
+            if (controles[i].Controls.Count > 0)
+            {
+                contenido = ReplaceContenido(controles[i].Controls, contenido);
+                continue;
+            }
+            if (id == null || id.Length == 0)
+                continue;
+            id = "$" + controles[i].ID + "$";
+            if (controles[i].GetType() == typeof(TextBox))
+            {
+                valor = ((TextBox)controles[i]).Text;
+            }
+            else if (controles[i].GetType() == typeof(CheckBox))
+            {
+                valor = ((CheckBox)controles[i]).Checked ? "X" : "";
+            }
+            else if (controles[i].GetType() == typeof(Label))
+            {
+                valor = ((Label)controles[i]).Text;
+            }
+            else if (controles[i].GetType() == typeof(DropDownList))
+            {
+                if (((DropDownList)controles[i]).SelectedItem == null)
+                    ((DropDownList)controles[i]).DataBind(); // solo para depuracion
+                valor = ((DropDownList)controles[i]).SelectedItem.Text;
+            }
+            else if (controles[i].GetType() == typeof(HiddenField))
+            {
+                valor = ((HiddenField)controles[i]).Value;
+            }
+            if (contenido.IndexOf(id) != -1)
+            {
+                contenido = contenido.Replace(id, valor);
+            }
+        }
+        return contenido;
+    }
+
+    public void Imprimir(string archivo)
+    {
+        lnkImp.Visible = Usuario.GetUsuario().CanPrint();
+        lnkImp.OnClientClick = "";
+        lnkImp.Attributes["r"] = "1";
+        lnkPDF.Visible = true;
+        Session["printfile"] = archivo;
+    }
+
     protected void lnkImp_Click(object sender, EventArgs e) {
 
         if (Session["printgridview"] != null)
@@ -230,6 +301,31 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             LAuxDiag.Text += "$(function() { imprimir(); });\n";
             LAuxDiag.Text += "</script>\n";
         }
+        else if (Session["printfile"] != null)
+        {
+            PrintEventArgs evento = new PrintEventArgs();
+            StreamReader reader = new StreamReader(Server.MapPath(Session["printfile"].ToString()));
+            evento.Contenido = reader.ReadToEnd();
+            reader.Close();
+
+            evento.Contenido = ReplaceContenido(cph.Controls, evento.Contenido);
+            // agregamos el script para imprimir
+#if DEBUG
+            evento.Contenido= evento.Contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {}</script></body>");
+            // contenido= contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {if(window.name=='popup')return;var venImp = window.open('../imp.htm', 'popup');venImp.document.write(document.documentElement.innerHTML);venImp.document.close();if(venImp.print) {venImp.print();}window.history.back();}</script></body>");
+#else
+            evento.Contenido = evento.Contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {if(window.print) {window.print();}window.close();}</script></body>");
+            // contenido = contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {if(window.name=='popup')return;var venImp = window.open('../imp.htm', 'popup');venImp.document.write(document.documentElement.innerHTML);venImp.document.close();if(venImp.print) {venImp.print();venImp.close();}window.history.back();}</script></body>");
+#endif
+            // llamamos a la pagina cliente
+            if (_ImprimirClicked != null)
+            {
+                _ImprimirClicked(this, evento);
+            }
+            Response.Clear();
+            Response.Write(evento.Contenido);
+            Response.End();
+        }
     }
     
     protected void lnkExcel_Click(object sender, EventArgs e)
@@ -238,5 +334,98 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         {
             RenderView((GridView)Session["excelgridview"]);
         }
+    }
+
+    class DefaultFontProvider : FontFactoryImp {
+      private String Default;
+      public DefaultFontProvider(String def) {
+        Default = def;
+      }
+
+      // I believe this is the correct override, but there are quite a few others.
+      override public Font GetFont(String fontName, String encoding, bool embedded, float size, int style, BaseColor color,bool cached) {
+        if (fontName == null || fontName.Length == 0) {
+          fontName = Default;
+        }
+        size = 8;
+        return base.GetFont(fontName, encoding, embedded, size, style, color, cached);
+      }
+    }
+
+    
+    protected void lnkPDF_Click(object sender, EventArgs e) {
+
+        /*Response.ContentType = "application/pdf";
+        Response.AddHeader("content-disposition", "attachment;filename=GridViewExport.pdf");
+        Response.Cache.SetCacheability(HttpCacheability.NoCache);
+
+        StringWriter sw = new StringWriter();
+        HtmlTextWriter hw = new HtmlTextWriter(sw);
+
+        GridView1.AllowPaging = false;
+        GridView1.DataBind();
+        GridView1.RenderControl(hw);
+
+        StringReader sr = new StringReader(sw.ToString());
+        Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+        HTMLWorker htmlparser = new HTMLWorker(pdfDoc);
+        PdfWriter.GetInstance(pdfDoc, Response.OutputStream);
+
+        pdfDoc.Open();
+        htmlparser.Parse(sr);
+        pdfDoc.Close();
+
+        Response.Write(pdfDoc);
+        Response.End();  */
+
+        PrintEventArgs evento = new PrintEventArgs();
+        Response.Clear();
+        Response.ContentType = "application/pdf";
+        Response.Cache.SetCacheability(HttpCacheability.NoCache);
+        Response.AddHeader("content-disposition", "attachment;filename=" + Page.Title + ".pdf");
+
+        StreamReader reader = new StreamReader(Server.MapPath(Session["printfile"].ToString()));
+        evento.Contenido = reader.ReadToEnd();
+        reader.Close();
+
+        int pos= evento.Contenido.IndexOf("<head>");
+        if(pos!=-1) {
+
+            int posf= evento.Contenido.IndexOf("</head>");
+            evento.Contenido = evento.Contenido.Substring(0, pos) + evento.Contenido.Substring(posf + "</head>".Length);
+            pos = posf;
+        }
+        
+        evento.Contenido= ReplaceContenido(cph.Controls, evento.Contenido);
+
+        if (_ImprimirClicked != null)
+        {
+            _ImprimirClicked(this, evento);
+        }
+        Directory.SetCurrentDirectory(Server.MapPath(""));
+
+        Document document = new Document(PageSize.LETTER, 10, 10, 10, 10);
+        PdfWriter.GetInstance(document, Response.OutputStream);
+
+        document.AddTitle(Page.Title);
+        document.AddSubject(Request.Url.ToString());
+        document.AddCreator("OrganizationExample15: " + Version.GetVersion());
+        document.AddAuthor(Usuario.GetUsuario().GetNombre());
+
+        HTMLWorker htmlparser = new HTMLWorker(document);
+
+        document.Open();
+
+        IDictionary<string, object> providers = new Dictionary<string, object>();
+        providers.Add(HTMLWorker.FONT_PROVIDER, new DefaultFontProvider("Arial"));
+        htmlparser.SetProviders(providers);
+
+        StringReader sr = new StringReader(evento.Contenido);
+        htmlparser.Parse(sr);
+        document.Close();
+
+        // step 3: we parse the document
+        document.Close();
+        Response.End();
     }
 }

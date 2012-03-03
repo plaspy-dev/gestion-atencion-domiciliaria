@@ -1,5 +1,9 @@
 # Third-party notices / Avisos de terceros
 
+| Component / Componente | Author / Autor | Source / Origen | License / Licencia | Build path / Ruta de compilación | SHA-256 |
+| --- | --- | --- | --- | --- | --- |
+| iTextSharp 5.2.0 | iText | [NuGet 5.2.0](https://www.nuget.org/packages/iTextSharp/5.2.0) | [AGPL](THIRD-PARTY-LICENSES/iTextSharp-5.2.0-AGPL.txt) | `Bin/itextsharp.dll` | `6604df0949263f645a26aba510a04a80871698b96267cf3586e808dbdec1b6ac` |
+
 ## Archived ASP.NET assemblies / Ensamblados ASP.NET archivados
 
 | Path / Ruta | Author / Autor | Source / Origen | Notice / Aviso | SHA-256 |

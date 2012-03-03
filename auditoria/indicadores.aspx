@@ -128,10 +128,11 @@
                         LEFT JOIN phdCausaEgreso ON (phdCausaEgreso.cegId=phdEgresos.cegId)
                         LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdEgresos.pacId)
                         WHERE (@eps=0 OR phdPaciente.entId=@eps) AND phdEgresos.egrFecha BETWEEN @desde AND @hasta AND phdCausaEgreso.cegDescripcion='MUERTE') AS muertos
-                        ,
-                        (SELECT COUNT(DISTINCT phdProgramacion.pacId) FROM phdProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta)+ 
-                        (SELECT COUNT(DISTINCT phdProgramacionMD.pacId) FROM phdProgramacionMD LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacionMD.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta)+ 
-                        (SELECT COUNT(DISTINCT atxProgramacion.pacId) FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta) AS atendidos
+                        ,(SELECT COUNT(DISTINCT autNumero) FROM phdAutorizacion WHERE 
+                        (@eps=0 OR phdAutorizacion.entId=@eps) AND 
+                        autNumero IN ((SELECT phdProgramacion.autNumero FROM phdProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta)
+                        UNION (SELECT phdProgramacionMD.autNumero FROM phdProgramacionMD WHERE prgFechaProg BETWEEN @desde AND @hasta) 
+                        UNION (SELECT atxProgramacion.autNumero FROM atxProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta))) AS atendidos
                         ,
                         (SELECT COUNT(*) FROM phdEgresos
                         LEFT JOIN phdCausaEgreso ON (phdCausaEgreso.cegId=phdEgresos.cegId)
@@ -271,14 +272,15 @@
                 </asp:GridView>
                 <asp:SqlDataSource ID="SCausas" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
-                    SelectCommand="SELECT TOP 10 phdCIE10.cieCodDx+' - '+ phdCIE10.cirDescripcion AS causa,COUNT(*) AS c FROM phdPaciente
+                    SelectCommand="SELECT TOP 10 phdCIE10.cieCodDx+' - '+ phdCIE10.cirDescripcion AS causa,COUNT(*) AS c FROM phdAutorizacion
+                                LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
                                 LEFT JOIN phdCIE10 ON (phdCIE10.cieCodDx=phdPaciente.cieCodDx)
                                 WHERE 
                                 (@eps=0 OR phdPaciente.entId=@eps)
-                                AND pacId IN 
-                                ((SELECT pacId FROM phdProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta)
-                                UNION (SELECT pacId FROM phdProgramacionMD WHERE prgFechaProg BETWEEN @desde AND @hasta)
-                                UNION (SELECT pacId FROM atxProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta))
+                                AND phdAutorizacion.autNumero IN 
+                                ((SELECT autNumero FROM phdProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta)
+                                UNION (SELECT autNumero FROM phdProgramacionMD WHERE prgFechaProg BETWEEN @desde AND @hasta)
+                                UNION (SELECT autNumero FROM atxProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta))
                                 GROUP BY phdCIE10.cieCodDx,phdCIE10.cirDescripcion ORDER BY c DESC">
                              <SelectParameters>
                                 <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />

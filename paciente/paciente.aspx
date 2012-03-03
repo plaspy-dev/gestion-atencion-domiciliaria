@@ -96,13 +96,13 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <div id="imprimir">
     <asp:ValidationSummary ID="ValidationSummary1" runat="server" DisplayMode="List" />
-    <table class="style1" cellpadding="0" cellspacing="0" border="1">
+    <table cellpadding="0" cellspacing="0" border="1">
         <tr>
             <td colspan="4" style="text-align: center" class="celdaTitulo" >
                 <asp:Label ID="Label32" runat="server" SkinID="lblsubTitulo" 
                     Text="Información personal"></asp:Label>
             </td>
-            <td class="style2" rowspan="24">    
+            <td rowspan="24">    
              </td>
             <td class="celdaTitulo" style="width: 150px;">
                 <asp:Label ID="Label33" runat="server" SkinID="lblsubTitulo" Text="Autorizaciones vigentes" Width="120px"></asp:Label>

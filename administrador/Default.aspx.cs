@@ -83,6 +83,9 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Tipo evento", 17, parent);
             Add("Consecuencia del evento", 18, parent);
 
+            parent = Add("Formulación");
+            Add("Tipo formulación", 19, parent);
+
             if (HTipo.Value.Length == 0)
                 Response.Redirect(Request.Url.AbsolutePath + "?tipo=1");
         }

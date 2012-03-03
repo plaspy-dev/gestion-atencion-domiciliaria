@@ -190,11 +190,15 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
             query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
             query["segFechaIngreso"] = "GETDATE()";
-            if (CGenerar.Checked && RPreautorizacion.Visible && RPreautorizacion.Checked && (HIdEntidad.Value == "36" || HIdEntidad.Value == "29"))
+            if (CGenerar.Checked && RPreautorizacion.Visible && RPreautorizacion.Checked)
             {
-                query["autProvisional"] = "1";
-                query["segUsuarioConfirma"] = Usuario.GetUsuario().GetLogin();
-                query["segFechaConfirma"] = "GETDATE()";
+                if (HIdEntidad.Value == "36" || HIdEntidad.Value == "29") {
+
+                    query["segUsuarioConfirma"] = Usuario.GetUsuario().GetLogin();
+                    query["segFechaConfirma"] = "GETDATE()";
+                } else {
+                    query["autProvisional"] = "1";
+                }
             }
             int res=conector.QueryMod(query.GetInsert(), true);
             if(res==-1)

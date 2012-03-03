@@ -14,6 +14,7 @@ public partial class paciente_epicrisis : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
         if (!IsPostBack)
         {
             Usuario usuario = Usuario.GetUsuario();
@@ -54,7 +55,7 @@ public partial class paciente_epicrisis : System.Web.UI.Page
                 MySqlDataReader readermysql = conectormy.Query(epicrisis.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
                 if (readermysql != null && readermysql.Read())
                 {
-                    ((MasterPageI)Master).Imprimir();
+                    ((MasterPageI)Master).Imprimir("epicrisis.html");
                     BAceptar.Enabled = usuario.CanUpdate();
 
                     HIdEpicrisis.Value = readermysql["id"].ToString();
@@ -116,5 +117,34 @@ public partial class paciente_epicrisis : System.Web.UI.Page
 
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
         ((MasterPageI)Master).SetResultado(mensaje);
+    }
+
+    protected void OnImprimir(object sender, EventArgs e)
+    {
+        PrintEventArgs evento = (PrintEventArgs)e;
+        // aqui modificamos el evento
+        // evento = evento.Replace("$GFormulacion$", RenderPage());
+        evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
+
+        Query query = new Query("phdPaciente");
+
+        query["categoria"] = "categoria";
+        query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
+
+        CConectorMS conectorms = new CConectorMS();
+
+        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente));
+        if (reader != null)
+        {
+            bool l = reader.Read();
+            if (l)
+            {
+                evento.Contenido = evento.Contenido.Replace("$szCategoria$", new CConector().QueryString("SELECT nombre FROM varios WHERE id='" + reader["categoria"].ToString() + "' AND tipo=13"));
+            }
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
+            }
+        }
     }
 }

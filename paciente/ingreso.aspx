@@ -55,15 +55,27 @@
                 <td colspan="5" class="celdaTitulo">Información de atención básica</td>
             </tr>
             <tr>
-                <td>Medico que atiende</td>
-                <td><asp:DropDownList ID="DMedico" runat="server" DataSourceID="SMedicos" 
+                <td>Fecha</td>
+                <td><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox></td>
+                <td>Hora</td>
+                <td><asp:TextBox ID="THora" runat="server" CssClass="hora"></asp:TextBox></td>
+                <td>
+                    &nbsp;</td>
+            </tr>
+            <tr>
+                <td>
+                    Medico que atiende</td>
+                <td>
+                    <asp:DropDownList ID="DMedico" runat="server" DataSourceID="SMedicos" 
                 DataTextField="perNombre" DataValueField="perId"> </asp:DropDownList>
             <asp:SqlDataSource ID="SMedicos" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
                 SelectCommand="SELECT perId,perNombre FROM admPersonalHS WHERE eEstId=1 and carId=6 ORDER BY perNombre">
             </asp:SqlDataSource></td>
-                <td>Hora</td>
-                <td><asp:TextBox ID="THora" runat="server" CssClass="hora"></asp:TextBox></td>
+                <td>
+                    &nbsp;</td>
+                <td>
+                    &nbsp;</td>
                 <td>
                     &nbsp;</td>
             </tr>
@@ -142,6 +154,7 @@
                         <ItemTemplate>
                             <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
                         </ItemTemplate>
+                        <ItemStyle Wrap="false" />
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%">
                         <ItemTemplate>

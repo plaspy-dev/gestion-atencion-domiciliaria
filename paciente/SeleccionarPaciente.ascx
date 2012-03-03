@@ -1,5 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="SeleccionarPaciente.ascx.cs" Inherits="paciente_SeleccionarPaciente" %>
 <script type="text/javascript">
+    if (typeof jQuery != 'undefined')
     $(function() {
         $("#<%= TPaciente.ClientID %>").autocomplete({
             source: function(request, response) {

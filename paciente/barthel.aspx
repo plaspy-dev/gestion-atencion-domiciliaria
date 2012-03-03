@@ -64,16 +64,6 @@
                 <td>
                     &nbsp;</td>
             </tr>
-            <tr>
-                <td>
-                    Diagnostico
-                </td>
-                <td>
-                    <asp:TextBox ID="TDiagnostico" runat="server" Width="100%"></asp:TextBox>
-                </td>
-                <td>
-                    &nbsp;</td>
-            </tr>
         </table>
     </fieldset>
     <fieldset>
@@ -146,14 +136,6 @@
                                 <asp:Button ID="BCancelar" runat="server" CausesValidation="False" 
                                     onclick="BCancelar_Click" Text="Cancelar" />
                             </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                &nbsp;</td>
-                            <td>
-                                &nbsp;</td>
-                            <td>
-                                &nbsp;</td>
                         </tr>
                     </table>
                 </td>
