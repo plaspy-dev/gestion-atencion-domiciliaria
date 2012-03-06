@@ -61,13 +61,13 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     qIngreso += "fr";
                     qIngreso += "t";
                     qIngreso += "peso";
-                    qIngreso += "observacionesa";
+                    /*qIngreso += "observacionesa";
                     qIngreso += "amplacion";
                     qIngreso += "observacionesef";
                     qIngreso += "cdi";
                     qIngreso += "cde";
                     qIngreso += "ddi";
-                    qIngreso += "dde";
+                    qIngreso += "dde";*/
                     qIngreso += "conducta";
                     qIngreso += "fecha";
 
@@ -106,6 +106,38 @@ public partial class paciente_ingreso : System.Web.UI.Page
                         TConductaInicial.Text = readermysql["conducta"].ToString();
 
                         ((MasterPageI)Master).SetModificacion(HIdIngreso.Value);
+                    }
+                    else
+                    {
+                        GCDiagnostico.DataBind();
+                        if (GCDiagnostico.Rows.Count == 0)
+                        { // no se encontraron diagnosticos
+
+                            CConectorMS conectorms = new CConectorMS();
+                            SqlDataReader reader = conectorms.Query("SELECT cieCodDx,cieCodDx_1,cieCodDx_2 FROM phdPaciente WHERE pacId=" + CCDetallePaciente.IdPaciente);
+                            if (reader != null && reader.Read())
+                            {
+
+                                TCIE10.Text = reader["cieCodDx"].ToString();
+                                if (TCIE10.Text.Length > 0)
+                                {
+                                    TCIE10.Text += "-";
+                                    BMasCDiagnostico_Click(sender, e);
+                                }
+                                TCIE10.Text = reader["cieCodDx_1"].ToString();
+                                if (TCIE10.Text.Length > 0)
+                                {
+                                    TCIE10.Text += "-";
+                                    BMasCDiagnostico_Click(sender, e);
+                                }
+                                TCIE10.Text = reader["cieCodDx_2"].ToString();
+                                if (TCIE10.Text.Length > 0)
+                                {
+                                    TCIE10.Text += "-";
+                                    BMasCDiagnostico_Click(sender, e);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -260,6 +292,32 @@ public partial class paciente_ingreso : System.Web.UI.Page
             }
         }
 
+
+        // actualizamos el cie10 del paciente
+        string cie10 = "", cie102 = "", cie103 = "";
+
+        MySqlDataReader reader = conector.Query("SELECT codigo FROM codigos_ingreso WHERE ingreso_paciente=" + HIdIngreso.Value);
+        if (reader != null)
+        {
+
+            if (reader.Read())
+            {
+                cie10 = reader["codigo"].ToString();
+                if (reader.Read())
+                {
+                    cie102 = reader["codigo"].ToString();
+                    if (reader.Read())
+                    {
+                        cie103 = reader["codigo"].ToString();
+                    }
+                }
+            }
+        }
+
+        CConectorMS conectorms = new CConectorMS();
+        if (conectorms.QueryMod("UPDATE phdPaciente SET cieCodDx=" + Query.GetValor(cie10) + ",cieCodDx_1=" + Query.GetValor(cie102) + ",cieCodDx_2=" + Query.GetValor(cie103) + " WHERE pacId=" + CCDetallePaciente.IdPaciente) == -1)
+            return;
+
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
         ((MasterPageI)Master).SetResultado(mensaje);
     }
@@ -380,6 +438,8 @@ public partial class paciente_ingreso : System.Web.UI.Page
         if (PMujer.Visible)
             evento.Contenido = evento.Contenido.Replace("$GGinecologico$", RenderGrid(GGinecologico));
         else evento.Contenido = evento.Contenido.Replace("$GGinecologico$", "");
+
+        evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + TConductaInicial.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
         Query query = new Query("phdPaciente");

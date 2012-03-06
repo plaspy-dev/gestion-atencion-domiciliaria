@@ -14,3 +14,9 @@
 | `Bin/Newtonsoft.Json.dll` | James Newton-King and contributors | Json.NET, byte-for-byte archived copy / copia del respaldo | MIT | `526f69142edc80cb1f261acdb7c73ce3db841d21ac26bee6715f604c8a238be1` |
 | `Bin/System.Web.Optimization.dll` | Microsoft | ASP.NET Web Optimization, byte-for-byte archived copy / copia del respaldo | Microsoft package license | `321b29486a5c3195574552ad05dba2199572db3a3ba3952bd1ee768cc3f8cedd` |
 | `Bin/WebGrease.dll` | Microsoft | WebGrease, byte-for-byte archived copy / copia del respaldo | Microsoft package license | `bbe6b3b04a07561f362ffbcb7b20dce1fa30090394e3f7fd32541fcb80ffd29d` |
+
+## Web library files / Archivos de bibliotecas web
+
+| Path / Ruta | Component / Componente | Author / Autor | Origin / Origen | Notice / Aviso | SHA-256 |
+| --- | --- | --- | --- | --- | --- |
+| `js/tiny_mce.js` | TinyMCE 3.4.9 | Moxiecode Systems AB | Archived edition / Respaldo de esta edición | Original TinyMCE notice and LGPL terms / Aviso original y términos LGPL de TinyMCE | `ff6df65212d0061f88b15ea08ee09c50d6cf1ca4e133c69f90ae8dfe24374780` |

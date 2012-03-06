@@ -19,6 +19,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
         if (!IsPostBack)
         {
+            SeleccionarPaciente.Inactivos = false;
             BAceptar.Enabled = false;
             BMasFormulacion.Enabled=false;
             BFecha.Enabled = false;

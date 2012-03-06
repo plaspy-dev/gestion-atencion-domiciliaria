@@ -44,6 +44,10 @@
       <titulo>Fórmula médica</titulo>
       <url>~/paciente/formulacion.aspx</url>
     </pagina>
+    <pagina>
+      <titulo>Evolución</titulo>
+      <url>~/paciente/evolucion.aspx</url>
+    </pagina>
   </seccion>
   <seccion>
     <titulo>RRHH</titulo>
@@ -97,6 +101,10 @@
       <titulo>Encuesta de satisfacción al usuario</titulo>
       <url>~/administrador/preguntas.aspx</url>
     </pagina>
+    <pagina>
+      <titulo>Formulación</titulo>
+      <url>~/administrador/medicamentos.aspx</url>
+    </pagina>    
   </seccion>
   <seccion>
     <titulo>Vehículos</titulo>

@@ -118,7 +118,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                     LCIE10.Text += "<br/>";
                 LCIE10.Text += cie3;
 
-                CConector conectormysql = new CConector();
+                /*CConector conectormysql = new CConector();
                 MySqlDataReader readermysql = conectormysql.Query("SELECT codigo FROM ingreso_paciente LEFT JOIN codigos_ingreso ON (codigos_ingreso.ingreso_paciente=ingreso_paciente.id) WHERE paciente="+ HIdPaciente.Value);
                 if(readermysql!=null) {
                     bool primero=true;
@@ -132,12 +132,12 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                             LCIE10.Text += "<br/>";
                         LCIE10.Text += GetCodigoCIE(readermysql["codigo"].ToString(), conector);
                     }
-                }
+                }*/
             }
         }
     }
 
-    static protected string GetCodigoCIE(string text, CConectorMS conector)
+    static public string GetCodigoCIE(string text, CConectorMS conector)
     {
         if (text.Length > 0)
         {

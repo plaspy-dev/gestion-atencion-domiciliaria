@@ -141,7 +141,7 @@ public class servicios : System.Web.Services.WebService
     {
         List<CJSon> lista = new List<CJSon>();
 
-        string query = "SELECT TOP 100 pacId id,pacDocumento AS documento, pacPNombre + ' ' + isnull(pacSNombre,'') + ' ' + pacPapellido + ' ' + isnull(pacSApellido, '') AS nombres FROM phdPaciente WHERE ";
+        string query = "SELECT TOP 100 pacId id,pacDocumento AS documento, pacPNombre + ' ' + isnull(pacSNombre,'') + ' ' + pacPapellido + ' ' + isnull(pacSApellido, '') AS nombres FROM phdPaciente WHERE EstId!=2 AND (";
         string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
         if (split.Length == 1)
@@ -162,7 +162,7 @@ public class servicios : System.Web.Services.WebService
             }
         }
 
-        query+=") ORDER BY nombres";
+        query+=")) ORDER BY nombres";
 
         CConectorMS conector = new CConectorMS();
         SqlDataReader reader = conector.Query(query);
@@ -203,7 +203,29 @@ public class servicios : System.Web.Services.WebService
         List<CDiagnosticos> dDiagnosticos = new List<CDiagnosticos>();
         
         CConectorMS conector = new CConectorMS();
-        SqlDataReader reader = conector.Query("SELECT TOP 100 cieCodDx,[cieCodDx]+' - '+ [cirDescripcion] AS descripcion FROM phdCIE10 WHERE cieCodDx LIKE '" + q + "%' OR cirDescripcion LIKE '%" + q + "%' ORDER BY cieCodDx;");
+        string query = "SELECT TOP 100 cieCodDx,[cieCodDx]+' - '+ [cirDescripcion] AS descripcion FROM phdCIE10 WHERE ";
+
+        string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
+
+        if (split.Length == 1)
+        { // solo un dato puede ser un documento
+            query += "cieCodDx LIKE '" + q.Trim() + "%' OR ";
+        }
+        query += "(";
+
+        for (int i = 0; i < split.Length; i++)
+        {
+            if (split[i].Length > 0)
+            { // verificamos que no este vacio
+                if (i > 0)
+                    query += " AND ";
+                query += String.Format("cieCodDx LIKE '{0}%' OR cirDescripcion LIKE '%{0}%'", split[i]);
+            }
+        }
+
+        query += ") ORDER BY cieCodDx;";
+
+        SqlDataReader reader = conector.Query(query);
         if(reader!=null) {
             while(reader.Read()) {
                 dDiagnosticos.Add(new CDiagnosticos(reader["cieCodDx"].ToString(), reader["descripcion"].ToString()));
@@ -220,7 +242,7 @@ public class servicios : System.Web.Services.WebService
         List<CJSon> lista = new List<CJSon>();
 
         CConector conector = new CConector();
-        String query = "SELECT id,nombre,principio,concentracion,forma FROM medicamentos WHERE tipo=" + Query.GetValor(t) +" AND ";
+        String query = "SELECT id,nombre,principio,concentracion,forma FROM medicamentos WHERE tipo=" + Query.GetValor(t) +" AND estado IS NULL AND ";
 
         string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 

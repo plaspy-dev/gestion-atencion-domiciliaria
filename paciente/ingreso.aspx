@@ -3,10 +3,8 @@
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<link href="../css/jquery-linedtextarea.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery-linedtextarea.js"></script>
+<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tiny_mce.js"></script>
 <script type="text/javascript">
-
     $(function() {
         $("#ctl00_cph_TTA").mask("999/99");
         $("#<%= TCIE10.ClientID %>").autocomplete({
@@ -38,14 +36,66 @@
                 // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
             }
         });
-        /*$("#<%= TConductaInicial.ClientID %>").linedtextarea(
-		    { selectedLine: 1 }
-	    );*/
+    });
+    function rel(text) {
+        text = text.replace(/\r/gi, '');
+        while (text[0] == '\n') {
+            text = text.substring(1);
+        }
+        text = text.split('\n');
+        count1 = text.length;
+        for (x = 0; x < count1; x++) {
+            if (text[x].match(/[\S]/g) == null) text[x] = ''; else text[x] = text[x];
+        }
+        text = text.join('\n').replace(/\n{2,}/g, '\n');
+        return text;
+    }
+
+    var editor = null;
+
+    function lim() {
+        var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
+        $("#<%= TConductaInicial.ClientID %>").val(limpio);
+        var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
+        editor.setContent(completa);
+    }
+    
+    function blurevent(ed) {
+        tinyMCE.dom.Event.add(ed.getWin(), "blur", function(e) {
+            tinyMCE.triggerSave();
+            lim();
+        });
+    }
+
+    tinyMCE.init({
+        mode: "exact",
+        elements: "elm1",
+        theme: "advanced",
+        theme_advanced_buttons1: "",
+        theme_advanced_buttons2: "",
+        theme_advanced_buttons3: "",
+        valid_elements: "ol,li",
+        plugins: "paste",
+        setup: function(ed) {
+            editor = ed;
+            ed.onSubmit.add(function(ed, e) {
+                lim();
+            });
+            ed.onInit.add(function(ed) {
+                var completa = $("#<%= TConductaInicial.ClientID %>").val();
+                completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
+                editor.setContent(completa);
+                blurevent(ed);
+                $("#elm1").remove();
+            });
+        },
+        paste_preprocess: function(pl, o) {
+            o.content = o.content.replace(/<\S[^><]*>/g, "");
+        }
     });
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
-<div id="dImprimir">
 <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
     <asp:Panel runat="server" id="PDatos" Visible="false">
         <asp:HiddenField ID="HIdIngreso" runat="server" />
@@ -300,8 +350,9 @@
                 <td colspan="5">Conducta inicial</td>
             </tr>
             <tr>
-                <td colspan="5"><asp:TextBox ID="TConductaInicial" runat="server" Height="200px" 
-            TextMode="MultiLine" Width="99%"></asp:TextBox></td>
+                <td colspan="5"><asp:TextBox ID="TConductaInicial" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>
+                <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
+                </td>
             </tr>
             <tr>
                 <td colspan="5" align="right"><asp:Button ID="BAceptar" runat="server" onclick="BAceptar_Click" 
@@ -311,6 +362,5 @@
             </tr>
         </table>
     </asp:Panel>
-    </div>
 </asp:Content>
 
