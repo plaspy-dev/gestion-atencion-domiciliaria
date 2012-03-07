@@ -10,7 +10,7 @@ public partial class directorio_Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (Request.QueryString["fid"] != null)
+        if (Request.QueryString["fiid"] != null)
         {
             Session["directorioid"] = Request.QueryString["fid"];
             Response.Redirect(Request.Url.AbsolutePath);
@@ -21,6 +21,14 @@ public partial class directorio_Default : System.Web.UI.Page
         if (IsPostBack)
         {
             Session.Remove("directorioid");
+            CConectorMS conector = new CConectorMS();
+            conector.StartTransaction();
+            conector.QueryMod("TRUNCATE TABLE programacion_directorio;");
+            conector.QueryMod("INSERT INTO programacion_directorio "
+                + " SELECT prgFechaProg, perId, pacId, actId FROM phdProgramacion WHERE prgFechaProg>=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))"
+                + " UNION SELECT prgFechaProg, perId, pacId, actId FROM atxProgramacion WHERE prgFechaProg>=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))"
+                + " UNION SELECT prgFechaProg, perId, pacId, actId FROM phdProgramacionMD WHERE prgFechaProg>=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))");
+            conector.Commit();
         } 
         else
         {

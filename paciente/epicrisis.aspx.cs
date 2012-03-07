@@ -123,17 +123,20 @@ public partial class paciente_epicrisis : System.Web.UI.Page
     {
         PrintEventArgs evento = (PrintEventArgs)e;
         // aqui modificamos el evento
-        // evento = evento.Replace("$GFormulacion$", RenderPage());
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
         Query query = new Query("phdPaciente");
 
+        // SELECT perDocumento,perNombre FROM phdPaciente LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)
+
         query["categoria"] = "categoria";
         query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
+        query["szProfesional"] = "admPersonalHS.perDocumento";
+        query["szMedico"] = "admPersonalHS.perNombre";
 
         CConectorMS conectorms = new CConectorMS();
 
-        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente));
+        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"));
         if (reader != null)
         {
             bool l = reader.Read();

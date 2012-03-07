@@ -252,7 +252,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
         }
 
         CConectorMS conectorms = new CConectorMS();
-        if (conectorms.QueryMod("UPDATE phdPaciente SET cieCodDx=" + Query.GetValor(cie10) + ",cieCodDx_1=" + Query.GetValor(cie102) + ",cieCodDx_2=" + Query.GetValor(cie103) + " WHERE pacId=" + CCDetallePaciente.IdPaciente) == -1)
+        if (conectorms.QueryMod("UPDATE phdPaciente SET megId=" + Query.GetValor(DMedico.SelectedValue) + ",cieCodDx=" + Query.GetValor(cie10) + ",cieCodDx_1=" + Query.GetValor(cie102) + ",cieCodDx_2=" + Query.GetValor(cie103) + " WHERE pacId=" + CCDetallePaciente.IdPaciente) == -1)
             return;
 
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
@@ -390,10 +390,12 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
         query["categoria"] = "categoria";
         query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
+        query["szMedico"] = "admPersonalHS.perDocumento";
+        query["szProfesional"] = "admPersonalHS.perNombre";
 
         CConectorMS conectorms = new CConectorMS();
 
-        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente));
+        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"));
         if (reader != null)
         {
             bool l = reader.Read();

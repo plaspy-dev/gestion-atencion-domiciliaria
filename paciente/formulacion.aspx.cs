@@ -243,10 +243,12 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
         query["categoria"] = "categoria";
         query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
+        query["szProfesional"] = "admPersonalHS.perDocumento";
+        query["szMedico"] = "admPersonalHS.perNombre";
 
         CConectorMS conectorms = new CConectorMS();
 
-        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente));
+        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"));
         if (reader != null)
         {
             bool l = reader.Read();

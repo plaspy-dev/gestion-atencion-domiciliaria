@@ -7,7 +7,7 @@
         $("#<%= TNombres.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
-                    url: "../webservices/servicios.asmx/GetPaciente",
+                    url: "../webservices/servicios.asmx/GetPacienteI",
                     data: "{ 'q': '" + request.term + "' }",
                     dataType: "json",
                     type: "POST",

@@ -63,8 +63,8 @@ public partial class administrador_grupos : System.Web.UI.Page
                     padre.permisos.Add(new Permisos(url.Titulo, url.URL));
                 //}
             }
-            RParents.DataSource = parents;
-            RParents.DataBind();
+            R.DataSource = parents;
+            R.DataBind();
         }
     }
 
@@ -101,16 +101,15 @@ public partial class administrador_grupos : System.Web.UI.Page
         if (conector.QueryMod("DELETE FROM permisos WHERE grupo='" + grupo + "'") == -1)
             return;
 
-        for (int j = 0; j < RParents.Items.Count; j++)
+        for (int j = 0; j < R.Items.Count; j++)
         {
-            GridView grid = (GridView)RParents.Items[j].FindControl("GPermisos");
+            GridView grid = (GridView)R.Items[j].FindControl("P");
             Query permisos = new Query("permisos");
 
             for (int i = 0; i < grid.Rows.Count; i++)
             {
                 permisos["grupo"] = grupo;
-                HiddenField pag = (HiddenField)grid.Rows[i].FindControl("pagina");
-                permisos["url"] = pag.Value;
+                permisos["url"] = grid.DataKeys[i].Value.ToString();
                 int per = 0;
 
                 CheckBox check;
@@ -284,17 +283,17 @@ public partial class administrador_grupos : System.Web.UI.Page
                 }
             }
         }
-        RParents.DataSource = parents;
-        RParents.DataBind();
+        R.DataSource = parents;
+        R.DataBind();
 
         ((MasterPageI)Master).SetModificacion(LGrupos.SelectedValue);
     }
 
-    protected void RParents_ItemCreated(object sender, RepeaterItemEventArgs e)
+    protected void R_ItemCreated(object sender, RepeaterItemEventArgs e)
     {
         if(e.Item.DataItem!=null) {
 
-            GridView grid = (GridView)e.Item.FindControl("GPermisos");
+            GridView grid = (GridView)e.Item.FindControl("P");
             grid.DataSource= ((Parents)e.Item.DataItem).permisos;
         }
     }

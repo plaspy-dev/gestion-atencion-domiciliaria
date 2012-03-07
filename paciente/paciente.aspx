@@ -15,7 +15,7 @@
         $("#<%= TPApellido.ClientID %>,#<%= TPNombre.ClientID %>,#<%= TDocumento.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
-                    url: "../webservices/servicios.asmx/GetPaciente",
+                    url: "../webservices/servicios.asmx/GetPacienteI",
                     data: "{ 'q': '" + request.term + "' }",
                     dataType: "json",
                     type: "POST",
@@ -358,7 +358,7 @@
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SMedico" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT megId id, megNombre nombre FROM dbo.phdMegas ORDER BY nombre">
+                    SelectCommand="SELECT perId id,perNombre nombre FROM admPersonalHS WHERE eEstId=1 and carId=6 ORDER BY perNombre">
                 </asp:SqlDataSource>
             </td>
         </tr>

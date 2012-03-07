@@ -20,11 +20,11 @@
         });
 
         for (j = 1; j < 100; j++) {
-            nombre = "#ctl00_cph_RParents_ctl";
+            nombre = "#ctl00_cph_R_ctl";
             if (j < 10)
                 nombre += "0";
             nombre += j;
-            nombre += "_GPermisos_ctl";
+            nombre += "_P_ctl";
             if ($(nombre + "02_t").length == 0)
                 break;
 
@@ -95,8 +95,8 @@
                     </tr>
                     <tr>
                         <td>
-                            <asp:Repeater ID="RParents" runat="server" DataMember="parent" 
-                                onitemcreated="RParents_ItemCreated">
+                            <asp:Repeater ID="R" runat="server" DataMember="parent" 
+                                onitemcreated="R_ItemCreated">
                                 <HeaderTemplate>
                                     <div id="accordion">
                                 </HeaderTemplate>
@@ -106,7 +106,7 @@
                                 <ItemTemplate>
                                     <h3><a href="#"><%# Eval("parent") %></a></h3>
                                     <div class="hide">
-                                    <asp:GridView ID="GPermisos" runat="server" AutoGenerateColumns="false" DataKeyNames="pagina">
+                                    <asp:GridView ID="P" runat="server" AutoGenerateColumns="false" DataKeyNames="pagina">
                                         <RowStyle CssClass="GridRow"></RowStyle>
                                         <FooterStyle CssClass="GridFooter"></FooterStyle>
                                         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -117,7 +117,6 @@
                                             <asp:TemplateField HeaderText="Todos">
                                                 <ItemTemplate>
                                                     <asp:CheckBox ID="t" runat="server" Checked='<%# Bind("todos") %>' />
-                                                    <asp:HiddenField ID="pagina" Value='<%# Bind("pagina") %>' runat="server" />
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Página">

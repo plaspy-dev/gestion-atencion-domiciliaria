@@ -28,7 +28,7 @@
                 minLength: 3,
                 select: function(event, ui) {
 
-                    location.href = location.href + "?fid=" + ui.item.value;
+                    location.href = location.href + "?fiid=" + ui.item.value;
                     return true;
                 }
             });
@@ -202,41 +202,18 @@
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
                     SelectCommand="SELECT per.perId AS id,per.perDocumento AS documento, per.perNombre AS nombres,
                     admCargo.carDescripcion AS cargo,admEstadoEstancia.eEstDesc AS estado,per.perCelular AS celular,
-                    per.perDireccion, per.perBarrio, admDisponibilidad.dispDescripcion,
-                    prog.fecha
+                    per.perDireccion, per.perBarrio, admDisponibilidad.dispDescripcion
                     ,loctrabajo.locDescripcion AS loctrabajo,locresidencia.locDescripcion AS locresidencia
                     ,ISNULL(per.perTelefono, '') + ' '+ ISNULL(per.perTelefono1, '') AS telefono,per.perCorreoElectronico
-                    ,ISNULL(prog.nombre,'') + ISNULL((SELECT TOP 1 ' (Descansando)' FROM phdProgramacion 
-                        WHERE phdProgramacion.perId=per.perId AND 
-                        DATEADD(dd, 0, DATEDIFF(dd, 0, phdProgramacion.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))
-						AND phdProgramacion.actId IN (1,9,12,13,15)),'') AS nombre
-                    ,ISNULL(progHoy.nombrehoy,(SELECT TOP 1 '(Descansando)' FROM phdProgramacion 
-                        WHERE phdProgramacion.perId=per.perId AND 
-                        DATEADD(dd, 0, DATEDIFF(dd, 0, phdProgramacion.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()-1))
-						AND phdProgramacion.actId IN (1,9,12,13,15))) AS nombrehoy
+					,(SELECT TOP 1 fecha FROM programacion_directorio WHERE programacion_directorio.perId=per.perId AND programacion_directorio.fecha>GETDATE() ORDER BY fecha) AS fecha
+					,(SELECT TOP 1 ISNULL(phdPaciente.pacNombres,'') + CASE WHEN actId IN (1,9,12,13,15) THEN '(Descansando)' ELSE '' END FROM programacion_directorio LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion_directorio.pacId) WHERE programacion_directorio.perId=per.perId AND programacion_directorio.fecha>GETDATE() ORDER BY fecha) AS nombre
+					,(SELECT TOP 1 ISNULL(phdPaciente.pacNombres,'') + CASE WHEN (SELECT TOP 1 actId FROM programacion_directorio WHERE programacion_directorio.perId=per.perId AND programacion_directorio.fecha=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()-1))) IN (1,9,12,13,15) THEN '(Descansando)' ELSE '' END FROM programacion_directorio LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion_directorio.pacId) WHERE programacion_directorio.perId=per.perId AND programacion_directorio.fecha=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))) AS nombrehoy
                     FROM admPersonalHS per 
                     LEFT JOIN admCargo on per.carId = admCargo.carId 
                     LEFT JOIN admDisponibilidad on admDisponibilidad.dispId = per.dispId 
                     LEFT JOIN admEstadoEstancia ON (admEstadoEstancia.eEstId=per.eEstId)
                     LEFT JOIN admLocalidad AS loctrabajo ON (loctrabajo.locId=per.locId)
                     LEFT JOIN admLocalidad AS locresidencia ON (locresidencia.locId=per.residencialocId)
-                    OUTER APPLY (
-                        SELECT TOP 1 (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombrehoy 
-                            FROM vwphd_ProgramacionTotal 
-                            LEFT JOIN phdPaciente ON (phdPaciente.pacId=vwphd_ProgramacionTotal.pacId) 
-                            WHERE 
-                            vwphd_ProgramacionTotal.perId=per.perId 
-                            AND DATEADD(dd, 0, DATEDIFF(dd, 0, vwphd_ProgramacionTotal.prgFechaProg))=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))
-                    ) AS progHoy
-                    OUTER APPLY (
-                        SELECT TOP 1 vwphd_ProgramacionTotal.prgFechaProg AS fecha,(phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre 
-                            FROM vwphd_ProgramacionTotal 
-                            LEFT JOIN phdPaciente ON (phdPaciente.pacId=vwphd_ProgramacionTotal.pacId) 
-                            WHERE 
-                            vwphd_ProgramacionTotal.perId=1147 
-                            AND vwphd_ProgramacionTotal.prgFechaProg>getdate() 
-                            ORDER BY vwphd_ProgramacionTotal.prgFechaProg 
-                    ) AS prog
                     WHERE 
                     (@id=0 OR @id=per.perId) 
                     AND (@estado=0 OR per.eEstId=@estado) 
