@@ -99,7 +99,10 @@ public partial class cliente_escliente : System.Web.UI.Page
                 string sharedid= ((HiddenField)rep.Items[j].FindControl("HId")).Value;
                 string resid = ((HiddenField)rep.Items[j].FindControl("HIdr")).Value;
 
-                cal["calificacion"] = ((TextBox)rep.Items[j].FindControl("TRespuesta")).Text;
+                string calificacion=((TextBox)rep.Items[j].FindControl("TRespuesta")).Text;
+                if(calificacion=="-")
+                    calificacion="";
+                cal["calificacion"] = calificacion;
                 if(resid.Length==0) {
 
                     cal["encuesta"] = HIdEncuesta.Value;

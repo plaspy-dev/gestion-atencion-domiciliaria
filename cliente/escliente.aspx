@@ -45,16 +45,42 @@
         }
 
         $("#promedio").numeric({ format: "0.##", buttons: false });
-        $(".cal").css("text-align", "left").numeric({ format: "0", buttons: false, minValue: 0, maxValue: 5 }).change(function() {
 
-            $(this).parent().parent().css("background-color", GetColor(parseInt($(this).val())))
-            .prev().css("background-color", GetColor(parseInt($(this).val())));
+
+        jQuery.fn.ForceNumericOnly =
+            function() {
+                return this.each(function() {
+                    $(this).keydown(function(e) {
+                        var key = e.charCode || e.keyCode || 0;
+                        // allow backspace, tab, delete, arrows, numbers and keypad numbers ONLY
+                        return (
+                            key == 8 ||
+                            key == 9 ||
+                            key == 46 ||
+                            key == 109 ||
+                            key == 189 ||
+                            (key >= 37 && key <= 40) ||
+                            (key >= 49 && key <= 53) ||
+                            (key >= 97 && key <= 101));
+                    });
+                });
+            };
+        // .numeric({ format: "0", buttons: false, minValue: 0, maxValue: 5 })
+        $(".cal").css("text-align", "left").ForceNumericOnly().change(function() {
+
+            if ($(this).val() == "-") {
+                $(this).parent().css("background-color", "#0000FF")
+                .prev().css("background-color", "#0000FF");
+            } else $(this).parent().css("background-color", GetColor(parseInt($(this).val())))
+                .prev().css("background-color", GetColor(parseInt($(this).val())));
             var total = 0;
             var cuenta = 0;
             $(".cal").each(function() {
                 var valor = parseInt($(this).val());
-                if (isNaN(valor))
+                if (isNaN(valor)) {
                     valor = 0;
+                    cuenta--;
+                }
                 total += valor;
                 cuenta++;
             });
@@ -131,7 +157,7 @@
             </tr>
             <tr>
                 <td>1-Diligencie según lo establecido en el procedimiento de aplicación y análisis de las encuestas de satisfacción al cliente externo<br />
-                    2-Marque con una X según corresponda teniendo en cuenta que (1 insatisfacho total  y 5 satisfacción).<br />
+                    2-Marque con una X según corresponda teniendo en cuenta que (1 insatisfacho total  y 5 satisfacción). o <b>'-'</b> si no aplica aplica.<br />
                     3-Diligencie la totalidad de los items</td>
             </tr>
             <tr>
@@ -150,14 +176,16 @@
                             <ItemTemplate>
                                 <tr>
                                     <td><%# Eval("nombre") %><asp:HiddenField runat="server" ID="HId" Value='<%# Eval("id") %>' /><asp:HiddenField runat="server" ID="HIdr" Value='<%# Eval("idr") %>' /></td>
-                                    <td><asp:TextBox runat="server" Width="10px" MaxLength="1" CssClass="cal" ID="TRespuesta" Text='<%# Eval("calificacion") %>'></asp:TextBox><asp:RequiredFieldValidator ControlToValidate="TRespuesta" ErrorMessage="Por favor ingrese una calificación." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                                    <td><asp:TextBox runat="server" Width="10px" MaxLength="1" CssClass="cal" ID="TRespuesta" Text='<%# Eval("calificacion") %>'></asp:TextBox>
+                                    <asp:RequiredFieldValidator ControlToValidate="TRespuesta" ErrorMessage="Por favor ingrese una calificación." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                    <asp:RegularExpressionValidator ValidationExpression="^[12345-]{1}$" ID="RegularExpressionValidator1" ControlToValidate="TRespuesta" ErrorMessage="Por favor ingrese una calificación valida." Display="Dynamic" SetFocusOnError="true" runat="server">*</asp:RegularExpressionValidator></td>
                                 </tr>
                             </ItemTemplate>
                         </asp:Repeater>
                         <asp:SqlDataSource ID="SPreguntas" runat="server" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                            SelectCommand="SELECT varios.id,varios.nombre,escliente_calificacion.id AS idr, escliente_calificacion.calificacion
+                            SelectCommand="SELECT varios.id,varios.nombre,escliente_calificacion.id AS idr, CAST(IFNULL(escliente_calificacion.calificacion, '-') AS char) AS calificacion
                                             FROM varios 
                                             LEFT JOIN escliente_calificacion ON (escliente_calificacion.encuesta=@encuesta AND escliente_calificacion.concepto=varios.id)
                                             WHERE varios.tipo=16 AND varios.parametro1=@id AND varios.szReservado IS NULL" >

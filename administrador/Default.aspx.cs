@@ -57,6 +57,7 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Revisión sistemas", 3, parent);
             Add("Examen físico", 4, parent);
             Add("Varios", 5, parent);
+            Add("Tipo diagnóstico", 20, parent);
             // Add("Varios Inferior (Hoja de ingreso)", 6, parent); // eliminado.
 
             parent = Add("Indice de Barthel");
@@ -85,6 +86,9 @@ public partial class administrador_Default : System.Web.UI.Page
 
             parent = Add("Formulación");
             Add("Tipo formulación", 19, parent);
+
+
+            // 20
 
             if (HTipo.Value.Length == 0)
                 Response.Redirect(Request.Url.AbsolutePath + "?tipo=1");

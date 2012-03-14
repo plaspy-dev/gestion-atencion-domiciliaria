@@ -34,18 +34,14 @@
             });
     }
     $(function() {
-        $('#<%= UResultados.ClientID %>').panelUpdated(function() {
-            $("#dResultados").attr("title", $("#ctl00_cph_DeDisponibilidad_LNombres").html());
-            $("#ctl00_cph_DeDisponibilidad_LNombres").hide();
-            addDialog('#<%= UResultados.ClientID%>', "#dResultados");
-        });
+        $("#dResultados").attr("title", $("#ctl00_cph_DeDisponibilidad_LNombres").html());
+        $("#ctl00_cph_DeDisponibilidad_LNombres").hide();
+        addDialog('#<%= PBuscar.ClientID%>', "#dResultados");
     }
     );
 </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
-    <asp:UpdatePanel ID="UResultados" runat="server" UpdateMode="Conditional"> 
-        <ContentTemplate>
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
     <table>
         <tr>
@@ -137,12 +133,12 @@
             <Columns>
                 <asp:HyperLinkField DataTextField="documento" HeaderText="Documento" 
                     DataNavigateUrlFields="id" SortExpression="documento"
-                    DataNavigateUrlFormatString="~/directorio/Default.aspx?fid={0}" >
+                    DataNavigateUrlFormatString="~/directorio/Default.aspx?fiid={0}" >
                 <ItemStyle HorizontalAlign="Right" />
                 </asp:HyperLinkField>
                <asp:HyperLinkField DataTextField="nombres" HeaderText="Nombres" 
                     DataNavigateUrlFields="id" 
-                    DataNavigateUrlFormatString="~/directorio/Default.aspx?fid={0}" SortExpression="nombres" >
+                    DataNavigateUrlFormatString="~/directorio/Default.aspx?fiid={0}" SortExpression="nombres" >
                     <ItemStyle Wrap="False" />
                 </asp:HyperLinkField>
                 <asp:BoundField HeaderText="Cargo" DataField="cargo" SortExpression="cargo">
@@ -266,7 +262,5 @@
                                 <asp:ControlParameter ControlID="GResultados" DefaultValue="-1" PropertyName="SelectedValue" Name="id" />
                             </UpdateParameters>
             </asp:SqlDataSource>
-    </ContentTemplate>
-    </asp:UpdatePanel>
 </asp:Content>
 

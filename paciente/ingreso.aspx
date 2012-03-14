@@ -42,6 +42,9 @@
             $("input[name*=TObservaciones]").each(function() {
                 $(this).width($(this).parent().width() - 15);
             });
+	    $("input[name*=TObservaciones]").each(function() {
+                $(this).width($(this).parent().width() - 15);
+            });
         });
     });
     function rel(text) {
@@ -132,81 +135,87 @@
                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
                 SelectCommand="SELECT perId,perNombre FROM admPersonalHS WHERE eEstId=1 and carId=6 ORDER BY perNombre">
             </asp:SqlDataSource></td>
-                <td>&nbsp;
-                    </td>
-                <td>&nbsp;
+                <td>Según</td>
+                <td><asp:DropDownList ID="DMotivo" runat="server" DataSourceID="SMotivos" 
+                        DataTextField="nombre" DataValueField="id">
+                    </asp:DropDownList>
+                    <asp:SqlDataSource ID="SMotivos" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT id, nombre FROM varios WHERE tipo=1 AND szReservado IS NULL">
+                    </asp:SqlDataSource>
                 </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="celdaTitulo">
+                    Signos vitales</td>
+            </tr>
+            <tr>
+                <td>
+                    TA</td>
+                <td>
+                    <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>
+                    mm/Hg</td>
+                <td>
+                    FC</td>
+                <td>
+                    <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>
+                    Lat/min</td>
+            </tr>
+            <tr>
+                <td>
+                    FR</td>
+                <td>
+                    <asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>
+                    Min</td>
+                <td>
+                    T</td>
+                <td>
+                    <asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox>
+                    °</td>
+            </tr>
+            <tr>
+                <td>
+                    Peso</td>
+                <td>
+                    <asp:TextBox ID="TPeso" runat="server" CssClass="float"></asp:TextBox>
+                    Kg</td>
+                <td>
+                    Saturación</td>
+                <td>
+                    <asp:TextBox ID="TSaturacion" runat="server" CssClass="float"></asp:TextBox>
+                    %</td>
+            </tr>
+            <tr>
+                <td>
+                    Glucometría</td>
+                <td>
+                    <asp:TextBox ID="TGlucometria" runat="server" CssClass="float"></asp:TextBox>
+                    mg/dl</td>
+                <td>
+                    &nbsp;</td>
+                <td>
+                    &nbsp;</td>
             </tr>
             <tr>
                 <td>Motivo consulta</td>
                 <td colspan="3"><asp:TextBox ID="TMotivo" runat="server" Width="99%" TextMode="MultiLine"></asp:TextBox></td>
             </tr>
             <tr>
-                <td>Según</td>
-                <td><asp:DropDownList ID="DMotivo" runat="server" DataSourceID="SMotivos" 
-                DataTextField="nombre" DataValueField="id"></asp:DropDownList>
-            <asp:SqlDataSource ID="SMotivos" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=1 AND szReservado IS NULL" >
-            </asp:SqlDataSource></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td colspan="2">Enfermedad actual</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
+                <td>Enfermedad actual</td>
                 <td colspan="3">
-                    <asp:TextBox ID="TEnfermedadActual" runat="server" Height="120px" TextMode="MultiLine" Width="99%"></asp:TextBox>
+                    <asp:TextBox ID="TEnfermedadActual" runat="server" Height="120px" 
+                        TextMode="MultiLine" Width="99%"></asp:TextBox>
                 </td>
-                <td><table>
-  <tr>
-  <td>TA</td>
-    <td>
-      <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>
-      </td>
-    <td>
-      mm/Hg</td>
-    </tr>
-                  <tr>
-                    <td>FC</td>
-                    <td>
-                      <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>
-                      </td>
-                    <td>
-                      Lat/min</td>
-                  </tr>
-                  <tr>
-                    <td>FR</td>
-                    <td>
-                      <asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>
-                      </td>
-                    <td>
-                      Min</td>
-                  </tr>
-                  <tr>
-                    <td>T</td>
-                    <td>
-                      <asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox>
-                      </td>
-                    <td>
-                      °</td>
-                  </tr>
-                  <tr>
-                    <td>Peso</td>
-                    <td>
-                      <asp:TextBox ID="TPeso" runat="server" CssClass="float"></asp:TextBox>
-                      </td>
-                    <td>
-                      Kg</td>
-  </tr>
-</table></td>
             </tr>
             <tr>
-                <td colspan="2"><asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" DataKeyNames="id, antecedente" DataSourceID="SAntecendentes">
+                <td colspan="2" valign="top"><asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" DataKeyNames="id, antecedente" DataSourceID="SAntecendentes">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
                     <asp:TemplateField HeaderText="Antecedentes">
                         <ItemTemplate>
@@ -229,9 +238,15 @@
                     <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
                 </SelectParameters>
             </asp:SqlDataSource></td>
-                <td colspan="2">
+                <td colspan="2" valign="top">
                 <asp:GridView ID="GRevision" runat="server" AutoGenerateColumns="False" 
                 DataKeyNames="id,revision" DataSourceID="SRevision">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
                     <asp:BoundField DataField="nombre" HeaderText="Revisión sistemas" />
                     <asp:TemplateField HeaderText="Nor">
@@ -262,8 +277,14 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="2" valign="top">
                 <asp:GridView ID="GExamenFisico" runat="server" AutoGenerateColumns="False" DataKeyNames="id, examen" DataSourceID="SExamenFisico">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
             <Columns>
                 <asp:BoundField DataField="nombre" HeaderText="Examen físico" />
                 <asp:TemplateField HeaderText="Nor">
@@ -292,10 +313,16 @@
                 </SelectParameters>
             </asp:SqlDataSource>
                 </td>
-                <td colspan="2">
+                <td colspan="2" valign="top">
                     <asp:Panel runat="server" ID="PMujer">
                         <asp:GridView ID="GGinecologico" runat="server" AutoGenerateColumns="False" 
                         DataKeyNames="id, varios" DataSourceID="SGinecologico">
+                        <RowStyle CssClass="GridRow"></RowStyle>
+                        <FooterStyle CssClass="GridFooter"></FooterStyle>
+                        <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                        <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                        <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                        <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
                             <asp:TemplateField HeaderText="Datos ginecológicos">
                                 <ItemTemplate>
@@ -333,14 +360,15 @@
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                             <asp:BoundField DataField="codigo" HeaderText="Código" />
                             <asp:BoundField DataField="descripcion" HeaderText="Descripción" />
+                            <asp:BoundField DataField="observaciones" HeaderText="Observaciones" />
                         </Columns>
                         <SelectedRowStyle CssClass="selecteditem" />
                     </asp:GridView>
                     <sdg:CustomDataSource ID="SCDiagnostico" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                                        SelectCommand="SELECT id,codigo,descripcion FROM codigos_ingreso WHERE ingreso_paciente=@ingreso"
+                                        SelectCommand="SELECT id,codigo,descripcion,observaciones FROM codigos_ingreso WHERE ingreso_paciente=@ingreso"
                                         DeleteCommand="DELETE FROM codigos_ingreso WHERE id=@id"
-                                        InsertCommand="INSERT INTO codigos_ingreso(ingreso_paciente,codigo,descripcion) VALUES (@ingreso, @codigo, @descripcion)"
-                                        UpdateCommand="UPDATE codigos_ingreso SET codigo=@codigo,descripcion=@descripcion WHERE id=@id" 
+                                        InsertCommand="INSERT INTO codigos_ingreso(ingreso_paciente,codigo,descripcion,observaciones) VALUES (@ingreso, @codigo, @descripcion, @observaciones)"
+                                        UpdateCommand="UPDATE codigos_ingreso SET codigo=@codigo,descripcion=@descripcion,observaciones=@observaciones WHERE id=@id" 
                                         >
                                         <SelectParameters>
                                             <asp:ControlParameter ControlID="HIdIngreso" DefaultValue="0" PropertyName="Value" Name="ingreso" />
@@ -349,12 +377,38 @@
                 </td>
             </tr>
             <tr>
-                <td>CIE10</td>
-              <td colspan="3"><asp:TextBox runat="server" Width="90%" ID="TCIE10"></asp:TextBox>
+                <td colspan="2">CIE10</td>
+                <td colspan="2">Observaciones</td>
+            </tr>
+            <tr>
+                <td colspan="2"><asp:TextBox runat="server" Width="98%" ID="TCIE10"></asp:TextBox></td>
+                <td colspan="2"><asp:TextBox runat="server" Width="98%" ID="TObservacionesCIE10"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td>Tipo diagnóstico</td>
+                <td colspan="2">
+                <asp:DropDownList ID="DTipoDiagnostico" runat="server" DataSourceID="STipoDiagnostico" 
+                        DataTextField="nombre" DataValueField="id">
+                    </asp:DropDownList>
+                    <asp:SqlDataSource ID="STipoDiagnostico" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT id, nombre FROM varios WHERE tipo=20 AND szReservado IS NULL">
+                    </asp:SqlDataSource>
+                </td>
+                <td align="right">
                 <asp:Button ID="BMasCDiagnostico" runat="server" OnClick="BMasCDiagnostico_Click" Text="+" /></td>
             </tr>
             <tr>
-                <td colspan="4">Conducta inicial</td>
+                <td>Análisis clínico</td>
+                <td colspan="3">
+                    <asp:TextBox ID="TAnalisis" runat="server" Height="120px" 
+                        TextMode="MultiLine" Width="99%"></asp:TextBox>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    Conducta inicial</td>
             </tr>
             <tr>
                 <td colspan="4"><asp:TextBox ID="TConductaInicial" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>

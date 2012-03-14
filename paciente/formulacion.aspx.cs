@@ -59,6 +59,25 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     if (DTipo.Items.FindByValue(Request.QueryString["tf"]) != null)
                         DTipo.SelectedValue = Request.QueryString["tf"];
 
+                    if (DTipo.SelectedIndex != -1)
+                    {
+                        string singular = DTipo.SelectedItem.Text.ToLower();
+                        if (singular[singular.Length - 1] == 's')
+                        {
+                            singular = DTipo.SelectedItem.Text.Substring(0, DTipo.SelectedItem.Text.Length - 1);
+                        }
+                        else singular = DTipo.SelectedItem.Text;
+                        CConector conectormysql = new CConector();
+                        GFormulacion.Columns[5].HeaderText = LPosologia.Text = conectormysql.QueryString("SELECT descripcion FROM varios WHERE id=" + DTipo.SelectedValue);
+                        if (LPosologia.Text.ToLower() != "posología") {
+                            GFormulacion.Columns[6].Visible = false;
+                            GFormulacion.Columns[7].Visible = false;
+                            trPosologia.Visible = false;
+                        }
+                        LFormulacion.Text = DTipo.SelectedItem.Text;
+                        LMedicamento.Text = singular;
+                    }                    
+
                     Query formulacion = new Query("formulacion");
 
                     formulacion += "id";
@@ -85,7 +104,9 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     }
 
                     GFormulaciones.DataBind();
-                    LFormulaciones.Text = GFormulaciones.Rows.Count + " Formula";
+                    LFormulaciones.Text = GFormulaciones.Rows.Count + " Orden";
+                    LFormulaciones.Text += GFormulaciones.Rows.Count == 1 ? "" : "es";
+                    LFormulaciones.Text += " médica";
                     LFormulaciones.Text += GFormulaciones.Rows.Count == 1 ? "" : "s";
                     PFormulaciones.Visible = GFormulaciones.Rows.Count > 0;
                 }
@@ -110,10 +131,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
     protected void BMasFormulacion_Click(object sender, EventArgs e)
     {
         Page.Validate("medicamento");
-        if (!RMedicamento.IsValid || !RPosologia.IsValid || !RCantidad.IsValid)
-            return;
-
-        if (GFormulacion.Rows.Count > 4) 
+        if (!RMedicamento.IsValid || !RCantidad.IsValid)
             return;
 
         IOrderedDictionary data = new OrderedDictionary();
@@ -121,6 +139,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
         data.Add("formulada", TCantidad.Text);
         data.Add("posologia", TPosologia.Text);
         data.Add("medicamen_id", TMedicamentoID.Text);
+        data.Add("via", TVia.Text);
+        data.Add("tiempo", TTiempo.Text);
 
         if (GFormulacion.SelectedIndex == -1)
         {
@@ -135,6 +155,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
             dataold.Add("formulada", HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[4].Text).Trim());
             dataold.Add("posologia", HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[5].Text).Trim());
             dataold.Add("medicamen_id", HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[2].Text).Trim());
+            dataold.Add("tiempo", HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[6].Text).Trim());
+            dataold.Add("via", HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[7].Text).Trim());
             dataold.Add("id", GFormulacion.DataKeys[GFormulacion.SelectedIndex].Value);
 
             SFormulacion.GetView().Update(data, data, dataold,OnDataSourceOperationComplete);
@@ -143,6 +165,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
         GFormulacion.DataBind();
 
         TMedicamentoID.Text = TMedicamento.Text = TPosologia.Text = TCantidad.Text = "";
+        BAceptar_Click(sender, e);
+        Response.Redirect(Request.Url.ToString());
     }
 
     protected void BFecha_Click(object sender, EventArgs e)
@@ -156,7 +180,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             
         BMasFormulacion_Click(sender, e);
 
-        if (!RMedicamento.IsValid || !RPosologia.IsValid || !RCantidad.IsValid)
+        if (!RMedicamento.IsValid || !RCantidad.IsValid)
         {
             if (TMedicamentoID.Text.Length != 0 || TCantidad.Text.Length != 0 || TPosologia.Text.Length != 0)
                 return;
@@ -203,31 +227,47 @@ public partial class paciente_formulacion : System.Web.UI.Page
             }
         }
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
-        ((MasterPageI)Master).SetResultado(mensaje);
+        if(sender==BAceptar)
+            ((MasterPageI)Master).SetResultado(mensaje);
     }
+
     protected void GFormulacion_SelectedIndexChanged(object sender, EventArgs e)
     {
         TMedicamentoID.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[2].Text).Trim();
         TMedicamento.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[3].Text).Trim();
         TCantidad.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[4].Text).Trim();
         TPosologia.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[5].Text).Trim();
+        TTiempo.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[6].Text).Trim();
+        TVia.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[7].Text).Trim();
     }
 
-    protected string RenderPage()
+    protected string RenderPage(int inicio)
     {
         string resultado="";
         GFormulacion.DataBind();
+        int i = inicio;
 
-        for (int i = 0; i < GFormulacion.Rows.Count; i++) {
+        for (; i < GFormulacion.Rows.Count && i<inicio+5; i++) {
 
             resultado += "<tr><td>" + GFormulacion.Rows[i].Cells[3].Text + "</td>";
             resultado += "<td align='right'>" + GFormulacion.Rows[i].Cells[4].Text + "</td>";
-            resultado += "<td>" + GFormulacion.Rows[i].Cells[5].Text + "</td></tr>";
+            resultado += "<td>" + GFormulacion.Rows[i].Cells[5].Text + "</td>";
+            if(trPosologia.Visible) {
+                resultado += "<td>" + GFormulacion.Rows[i].Cells[6].Text + "</td>";
+                resultado += "<td>" + GFormulacion.Rows[i].Cells[7].Text + "</td>";
+            }
+            resultado += "</tr>";
         }
-        for (int i = GFormulacion.Rows.Count; i < 5; i++) {
+        for (; i < inicio+5; i++) {
             resultado += "<tr><td>&nbsp;</td>";
             resultado += "<td>&nbsp;</td>";
-            resultado += "<td>&nbsp;</td></tr>";
+            resultado += "<td>&nbsp;</td>";
+            if (trPosologia.Visible)
+            {
+                resultado += "<td>&nbsp;</td>";
+                resultado += "<td>&nbsp;</td>";
+            }
+            resultado += "</tr>";
         }
         return resultado;
     }
@@ -235,9 +275,15 @@ public partial class paciente_formulacion : System.Web.UI.Page
     protected void OnImprimir(object sender, EventArgs e)
     {
         PrintEventArgs evento = (PrintEventArgs)e;
-        // aqui modificamos el resultado
-        evento.Contenido = evento.Contenido.Replace("$GFormulacion$", RenderPage());
+
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
+        string encabezado = "";
+        if (trPosologia.Visible)
+        {
+            encabezado += "<td align='center'><strong>Tiempo</strong></td>";
+            encabezado += "<td align='center'><strong>Vía</strong></td>";
+        }
+        evento.Contenido = evento.Contenido.Replace("$GFormulacionHeader$", encabezado);
 
         Query query = new Query("phdPaciente");
 
@@ -261,6 +307,22 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
             }
         }
+
+        int paginas= (int)Math.Ceiling((double)GFormulacion.Rows.Count/5);
+        if(paginas>1) {
+            int pos = evento.Contenido.IndexOf("<div");
+            int posf = evento.Contenido.IndexOf("</div>");
+
+            string contenidoreal = evento.Contenido.Substring(pos, posf - pos + 6);
+            string contenido = "";
+
+            for(int i=1; i<paginas; i++) {
+                contenido += contenidoreal.Replace("$GFormulacion$", RenderPage(i * 5));
+            }
+            evento.Contenido= evento.Contenido.Insert(posf + 6, contenido);
+        }
+        // aqui modificamos la primera pagina.
+        evento.Contenido = evento.Contenido.Replace("$GFormulacion$", RenderPage(0));
     }
     protected void BFormula_Click(object sender, EventArgs e)
     {

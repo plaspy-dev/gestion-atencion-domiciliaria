@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Formulación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="formulacion.aspx.cs" Inherits="paciente_formulacion" %>
+﻿<%@ Page Title="Orden médica" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="formulacion.aspx.cs" Inherits="paciente_formulacion" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 
@@ -85,7 +85,7 @@
                     &nbsp;</td>
                 <td align="right">
                     <asp:Button ID="BFormula" runat="server" CausesValidation="False" 
-                        onclick="BFormula_Click" Text="Última fórmula" /></td>
+                        onclick="BFormula_Click" Text="Última" /></td>
             </tr>
             <tr>
                 <td colspan="4">
@@ -108,7 +108,7 @@
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
                                 <asp:BoundField DataField="tipo" HeaderText="Tipo" />
-                                <asp:BoundField DataField="medicamentos" HeaderText="Medicamentos recetados" ItemStyle-HorizontalAlign="Right" />
+                                <asp:BoundField DataField="medicamentos" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
                             </Columns>
                         </asp:GridView>
                         <asp:SqlDataSource ID="SFormulaciones" runat="server" 
@@ -130,7 +130,7 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="4" class="celdaTitulo">Formulación</td>
+                <td colspan="4" class="celdaTitulo"><asp:Label runat="server" ID="LFormulacion" Text="Formulación"></asp:Label></td>
             </tr>
             <tr>
                 <td colspan="4">
@@ -144,18 +144,21 @@
                             <asp:BoundField DataField="medicamento" HeaderText="Nombre del medicamento" />
                             <asp:BoundField DataField="formulada" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="posologia" HeaderText="Posología" />
+                            <asp:BoundField DataField="tiempo" HeaderText="Tiempo" />
+                            <asp:BoundField DataField="via" HeaderText="Vía" />
                         </Columns>
                         <SelectedRowStyle CssClass="selecteditem" />
                     </asp:GridView>
                     <sdg:CustomDataSource ID="SFormulacion" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             SelectCommand="SELECT medicamento_formulacion.id,medicamento_formulacion.medicamento AS medicamen_id,medicamento_formulacion.formulada,medicamento_formulacion.posologia 
                                             ,IF(medicamentos.principio IS NULL,medicamentos.nombre,CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',medicamentos.forma)) AS medicamento
+                                            ,medicamento_formulacion.via,medicamento_formulacion.tiempo
                                             FROM medicamento_formulacion 
                                             LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)
                                             WHERE formulacion=@formulacion"
                             DeleteCommand="DELETE FROM medicamento_formulacion WHERE id=@id"
-                            InsertCommand="INSERT INTO medicamento_formulacion (formulacion,medicamento,posologia,formulada) VALUES (@formulacion,@medicamen_id,@posologia,@formulada)"
-                            UpdateCommand="UPDATE medicamento_formulacion SET medicamento=@medicamen_id,posologia=@posologia,formulada=@formulada WHERE id=@id"
+                            InsertCommand="INSERT INTO medicamento_formulacion (formulacion,medicamento,posologia,formulada,via,tiempo) VALUES (@formulacion,@medicamen_id,@posologia,@formulada,@via,@tiempo)"
+                            UpdateCommand="UPDATE medicamento_formulacion SET medicamento=@medicamen_id,posologia=@posologia,formulada=@formulada,via=@via,tiempo=@tiempo WHERE id=@id"
                             >
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="HIdFormulacion" DefaultValue="0" PropertyName="Value" Name="formulacion" />
@@ -164,7 +167,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Medicamento<asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TMedicamentoID" ErrorMessage="Por favor ingrese un medicamento." ID="RMedicamento" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td><asp:Label runat="server" ID="LMedicamento" Text="Medicamento"></asp:Label><asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TMedicamentoID" ErrorMessage="Por favor ingrese un medicamento." ID="RMedicamento" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                                 <td colspan="3"><asp:TextBox Width="99%" runat="server" ID="TMedicamento"></asp:TextBox><asp:TextBox runat="server" ID="TMedicamentoID" CssClass="hide"></asp:TextBox>
                                 </td>
             </tr>
@@ -172,9 +175,19 @@
                 <td>Cantidad<asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TCantidad" ErrorMessage="Por favor ingrese una cantidad." ID="RCantidad" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                                     <td><asp:TextBox runat="server" ID="TCantidad" Width="50px" CssClass="entero"></asp:TextBox>
                                 </td>
-                                <td>Posología<asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TPosologia" ErrorMessage="Por favor ingrese una posología." ID="RPosologia" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                                <td><asp:Label runat="server" ID="LPosologia" Text="Posología"></asp:Label></td>
                                 <td><asp:TextBox runat="server" ID="TPosologia" Width="400px"></asp:TextBox>
                                 </td>
+            </tr>
+            <tr runat="server" id="trPosologia">
+                <td>
+                    Tiempo</td>
+                <td>
+                    <asp:TextBox runat="server" ID="TTiempo"></asp:TextBox></td>
+                <td>
+                    Vía de administración</td>
+                <td>
+                    <asp:TextBox runat="server" ID="TVia"></asp:TextBox></td>
             </tr>
             <tr>
                 <td colspan="4" align="right">

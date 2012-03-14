@@ -4,93 +4,97 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 
     <script type="text/javascript">
-    $(function() {
-        $("#<%= TObservaciones.ClientID %>").attr("tabindex", "-1");
-        $("#<%= PReactivar.ClientID %>").accordion({
-            autoHeight: false,
-            collapsible: true,
-            active: false
-        });
+        $(function() {
+            $("#<%= TObservaciones.ClientID %>").attr("tabindex", "-1");
+            $("#<%= PReactivar.ClientID %>").accordion({
+                autoHeight: false,
+                collapsible: true,
+                active: false
+            });
 
-        $("#<%= TPApellido.ClientID %>,#<%= TPNombre.ClientID %>,#<%= TDocumento.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPacienteI",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $.goURL("pid=" + ui.item.value);
-                return false;
+            $("#<%= TPApellido.ClientID %>,#<%= TPNombre.ClientID %>,#<%= TDocumento.ClientID %>").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "../webservices/servicios.asmx/GetPacienteI",
+                        data: "{ 'q': '" + request.term + "' }",
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function(data) { return data; },
+                        success: function(data) {
+                            response($.map(data.d, function(item) {
+                                return {
+                                    value: item.value, label: item.item
+                                }
+                            }))
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert(textStatus);
+                        }
+                    });
+                },
+                minLength: 3,
+                select: function(event, ui) {
+                    $.goURL("pid=" + ui.item.value);
+                    return false;
+                }
+            });
+            $("#<%= TDocumento.ClientID %>").change(function() {
+                if($("#<%= HId.ClientID %>").val().length!=0)
+                    $.goURL("doc=" + $(this).val() + "&tdoc=" + $("#<%= DDocumento.ClientID %>").val());
+            });
+
+            $("#<%= TCIE1.ClientID %>,#<%= TCIE2.ClientID %>,#<%= TCIE3.ClientID %>").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
+                        data: "{}",
+                        data: "{ 'q': '" + request.term + "' }",
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function(data) { return data; },
+                        success: function(data) {
+                            response($.map(data.d, function(item) {
+                                return {
+                                    value: item.Name, label: item.Name
+                                }
+                            }))
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert(textStatus);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                },
+                search: function(event, ui) {
+                    // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
+                }
+            });
+
+            function calcularEdad() {
+                var fecha = $("#<%= TNacimiento.ClientID %>").datepicker("getDate");
+                if (fecha) {
+                    var currentTime = new Date();
+                    var diff_date = currentTime - fecha;
+                    var num_years = diff_date / 31536000000;
+                    $("#<%= LEdad.ClientID %>").html(Math.floor(num_years) + " años");
+                } else {
+                    $("#<%= LEdad.ClientID %>").html("");
+                }
             }
-        });
 
-        $("#<%= TCIE1.ClientID %>,#<%= TCIE2.ClientID %>,#<%= TCIE3.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
-                    data: "{}",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.Name, label: item.Name
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 2,
-            select: function(event, ui) {
-            },
-            search: function(event, ui) {
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
-            }
+            $('#<%= TNacimiento.ClientID %>').change(calcularEdad).datepicker({
+                onClose: function(dateText, inst) {
+                    calcularEdad();
+                },
+                changeMonth: true,
+                changeYear: true
+            });
+            calcularEdad();
         });
-
-        function calcularEdad() {
-            var fecha = $("#<%= TNacimiento.ClientID %>").datepicker("getDate");
-            if (fecha) {
-                var currentTime = new Date();
-                var diff_date = currentTime - fecha;
-                var num_years = diff_date / 31536000000;
-                $("#<%= LEdad.ClientID %>").html(Math.floor(num_years) + " años");
-            } else {
-                $("#<%= LEdad.ClientID %>").html("");
-            }
-        }
-
-        $('#<%= TNacimiento.ClientID %>').change(calcularEdad).datepicker({
-            onClose: function(dateText, inst) {
-                calcularEdad();
-            },
-            changeMonth: true,
-            changeYear: true
-        });
-        calcularEdad();
-    });
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">

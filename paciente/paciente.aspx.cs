@@ -19,19 +19,35 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         if(!IsPostBack) {
 
             PReactivar.Visible = false;
-            if (Request.QueryString["ip"] != null && Request.QueryString["ip"].Length > 0)
+            if (!string.IsNullOrEmpty(Request.QueryString["ip"]))
             {
                 Response.Redirect(Request.Url.AbsolutePath + "?pid=" + crypt.Desencriptar(Request.QueryString["ip"]));
                 Response.End();
                 return;
             }
             TDocumento.Focus();
+            if (!string.IsNullOrEmpty(Request.QueryString["doc"]) && !string.IsNullOrEmpty(Request.QueryString["tdoc"]))
+            {
+                
+                CConectorMS conector = new CConectorMS();
+
+                TDocumento.Text = Request.QueryString["doc"];
+                conector.SelectInDropDown(DDocumento, Request.QueryString["tdoc"]);
+
+                string id = conector.QueryString("SELECT pacId FROM phdPaciente WHERE pacDocumento=" + Query.GetValor(TDocumento.Text) + " AND tdocId=" + Query.GetValor(DDocumento.SelectedValue));
+                if(id.Length!=0) {
+                    Response.Redirect(Request.Url.AbsolutePath + "?pid=" + id);
+                    Response.End();
+                    return;
+                }
+                TPApellido.Focus();
+            }
 
             Usuario usuario = Usuario.GetUsuario();
             BAceptar.Enabled = usuario.CanInsert();
             IEliminar.Visible = false;
 
-            if (Request.QueryString["pid"] != null && Request.QueryString["pid"].Length > 0)
+            if (!string.IsNullOrEmpty(Request.QueryString["pid"]))
             {
                 Query query = new Query("phdPaciente");
 

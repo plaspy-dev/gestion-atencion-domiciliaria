@@ -1,6 +1,11 @@
 ﻿<%@ Page Title="Indice de Barthel" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="barthel.aspx.cs" Inherits="administrador_barthel" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<script type="text/javascript">
+    $(function() {
+        $('.entero').numeric({ format: "0", buttons: false, minValue: 0, emptyValue: '-' });
+    });
+</script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <asp:Panel ID="Panel1" runat="server" DefaultButton="BAceptar">

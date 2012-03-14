@@ -53,6 +53,9 @@
             $("input[name*=TObservaciones]").each(function() {
                 $(this).width($(this).parent().width() - 15);
             });
+	    $("input[name*=TObservaciones]").each(function() {
+                $(this).width($(this).parent().width() - 15);
+            });
         });
     });
     function rel(text) {

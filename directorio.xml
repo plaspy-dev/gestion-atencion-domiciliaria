@@ -41,7 +41,7 @@
       <url>~/paciente/epicrisis.aspx</url>
     </pagina>
     <pagina>
-      <titulo>Fórmula médica</titulo>
+      <titulo>Orden médica</titulo>
       <url>~/paciente/formulacion.aspx</url>
     </pagina>
     <pagina>

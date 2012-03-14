@@ -61,6 +61,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     qIngreso += "fr";
                     qIngreso += "t";
                     qIngreso += "peso";
+                    qIngreso += "saturacion";
+                    qIngreso += "analisis";
+                    qIngreso += "glucometria";
+                    qIngreso += "tipo_diagnostico";
                     /*qIngreso += "observacionesa";
                     qIngreso += "amplacion";
                     qIngreso += "observacionesef";
@@ -93,6 +97,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
                         TFR.Text = readermysql["fr"].ToString();
                         TT.Text = readermysql["t"].ToString();
                         TPeso.Text = readermysql["peso"].ToString();
+                        TSaturacion.Text = readermysql["saturacion"].ToString();
+                        TAnalisis.Text = readermysql["analisis"].ToString();
+                        TGlucometria.Text = readermysql["glucometria"].ToString();
+                        conector.SelectInDropDown(DTipoDiagnostico, readermysql["tipo_diagnostico"]);
                         if (readermysql["fecha"] != DBNull.Value)
                             TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
                         else TFecha.Text = "";
@@ -163,6 +171,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
         qIngreso["peso"]= TPeso.Text;
         qIngreso["fecha"] = CConector.GetDate(Convert.ToDateTime(TFecha.Text));
         qIngreso["conducta"]= TConductaInicial.Text;
+        qIngreso["saturacion"] = TSaturacion.Text;
+        qIngreso["analisis"] = TAnalisis.Text;
+        qIngreso["glucometria"] = TGlucometria.Text;
+        qIngreso["tipo_diagnostico"] = DTipoDiagnostico.SelectedValue;
 
         string szQuery;
         string mensaje;
@@ -343,6 +355,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             IOrderedDictionary data = new OrderedDictionary();
             data.Add("codigo", codigo);
             data.Add("descripcion", descripcion);
+            data.Add("observaciones", TObservacionesCIE10.Text);
 
             if (GCDiagnostico.SelectedIndex == -1)
             {
@@ -355,6 +368,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                 IOrderedDictionary dataold = new OrderedDictionary();
                 dataold.Add("codigo", HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[2].Text).Trim());
                 dataold.Add("descripcion", HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[3].Text).Trim());
+                dataold.Add("observaciones", HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[4].Text).Trim());
                 dataold.Add("id", GCDiagnostico.DataKeys[GCDiagnostico.SelectedIndex].Value);
 
                 SCDiagnostico.GetView().Update(data, data, dataold, OnDataSourceOperationComplete);
@@ -363,6 +377,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             GCDiagnostico.DataBind();
 
             TCIE10.Text = "";
+            TObservacionesCIE10.Text = "";
         }
     }
 
@@ -379,6 +394,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
     {
         TCIE10.Text = HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[2].Text).Trim();
         TCIE10.Text+= " - " + HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[3].Text).Trim();
+        TObservacionesCIE10.Text = HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[4].Text).Trim();
     }
 
     protected string RenderGrid(GridView grid) {

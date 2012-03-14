@@ -29,6 +29,17 @@
         }
         $("input:radio").change(total);
         total();
+
+        $("#<%= TFecha.ClientID %>").datepicker({
+            onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#<%=BFecha.ClientID %>").click(); }
+        });
+        $("#<%= PHistorial.ClientID %>").accordion({
+            autoHeight: false,
+            collapsible: true,
+            active: false
+        });
+
+        FullRowSelect("#<%= GHistorial.ClientID %>");
     });
     </script>
 </asp:Content>
@@ -41,13 +52,60 @@
     <fieldset>
         <legend>Datos</legend>
         <table style="width: 100%;">
+            <td colspan="3">
+                <asp:Panel ID="PHistorial" runat="server">
+                    <h3><a href="#"><asp:Label runat="server" ID="LHistorial"></asp:Label></a></h3>
+                    <div class="hide">
+                        <asp:GridView ID="GHistorial" runat="server" AutoGenerateColumns="False" 
+                            DataSourceID="SHistorial" EmptyDataText="No se encontraron índices anteriores de este paciente" >
+                            <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                            <Columns>
+                                <asp:TemplateField>
+                                    <ItemTemplate>
+                                        <asp:ImageButton CommandArgument='<%# Eval("fecha") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                                <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
+                                <asp:BoundField DataField="diagnostico" HeaderText="Incapacidad funcional" />
+                                <asp:BoundField DataField="resultado" HeaderText="Puntaje" ItemStyle-HorizontalAlign="Right" />
+                            </Columns>
+                        </asp:GridView>
+                        <asp:SqlDataSource ID="SHistorial" runat="server" 
+                            ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            SelectCommand="SELECT indice_barthel.fecha,SUM(varios.descripcion) AS resultado
+                                        ,CASE 
+                                        WHEN SUM(varios.descripcion)<45 THEN 'Severa' 
+                                        WHEN SUM(varios.descripcion)<60 THEN 'Grave' 
+                                        WHEN SUM(varios.descripcion)<80 THEN 'Moderada' 
+                                        WHEN SUM(varios.descripcion)<100 THEN 'Ligera' 
+                                        ELSE '' END AS diagnostico 
+                                        FROM indice_barthel
+                                        LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id)
+                                        LEFT JOIN varios ON (varios.id=analisis_barthel.resultado)
+                                        WHERE indice_barthel.paciente=@paciente
+                                        GROUP BY indice_barthel.fecha
+                                        ORDER BY fecha DESC;
+                                        ">
+                            <SelectParameters>
+                                <asp:ControlParameter ControlID="CCDetallePaciente" PropertyName="IdPaciente" Name="paciente" />
+                            </SelectParameters>
+                        </asp:SqlDataSource>
+                    </div>
+                </asp:Panel>
+            </td>
             <tr>
                 <td>
                     Fecha
                     <asp:HiddenField ID="HIdIndice" runat="server" />
                 </td>
                 <td>
-                    <asp:TextBox ID="TFecha" runat="server" CssClass="fecha"></asp:TextBox>
+                    <asp:TextBox ID="TFecha" runat="server" CssClass="fecha"></asp:TextBox><asp:Button ID="BFecha" CssClass="hide" runat="server" Text="..." onclick="BFecha_Click" />
                 </td>
                 <td>
                     <asp:RangeValidator ID="RangeValidator1" runat="server" MaximumValue="12/12/2100" MinimumValue="12/12/1900" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Type="Date"></asp:RangeValidator></td>
@@ -78,7 +136,8 @@
             </HeaderTemplate>
             <ItemTemplate>
                 <tr>
-                    <td><b><%# DataBinder.Eval(Container.DataItem,"grupo") %>
+                    <td><b>
+                        <asp:Label runat="server" ID="LN" Text='<%# DataBinder.Eval(Container.DataItem,"grupo") %>'></asp:Label>
                         <asp:HiddenField ID="HIdGrupo" runat="server" Value='<%# DataBinder.Eval(Container.DataItem,"id") %>' />
                         <asp:HiddenField ID="HIdAnalisis" runat="server" Value='<%# DataBinder.Eval(Container.DataItem,"idanalisis") %>' />
                         <asp:HiddenField ID="HIdResultado" runat="server" Value='<%# DataBinder.Eval(Container.DataItem,"resultado") %>' />
