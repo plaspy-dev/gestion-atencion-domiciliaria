@@ -17,7 +17,7 @@ public partial class administrador_usuario : System.Web.UI.Page
         if(!IsPostBack) {
             Usuario usuario = Usuario.GetUsuario();
 
-            BMigrar.Visible = usuario.CanAdmin();
+            BMigrar.Visible = false;
             BAceptar.Enabled = usuario.CanInsert();
             GUsuarios.Columns[1].Visible = usuario.CanDelete();
             GUsuarios.Columns[0].Visible = usuario.CanUpdate();

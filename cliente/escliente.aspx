@@ -185,7 +185,7 @@
                         <asp:SqlDataSource ID="SPreguntas" runat="server" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                            SelectCommand="SELECT varios.id,varios.nombre,escliente_calificacion.id AS idr, CAST(IFNULL(escliente_calificacion.calificacion, '-') AS char) AS calificacion
+                            SelectCommand="SELECT varios.id,varios.nombre,escliente_calificacion.id AS idr, CAST(IF(escliente_calificacion.calificacion=0, '-',escliente_calificacion.calificacion) AS char) AS calificacion
                                             FROM varios 
                                             LEFT JOIN escliente_calificacion ON (escliente_calificacion.encuesta=@encuesta AND escliente_calificacion.concepto=varios.id)
                                             WHERE varios.tipo=16 AND varios.parametro1=@id AND varios.szReservado IS NULL" >

@@ -278,15 +278,19 @@ public class Conector
 		return fecha.Substring(0, 10);
 	}
 
-	public static string GetModificacion(string idUsuario, string idDocumento, string tabla)
+	public static string GetModificacion(string idUsuario, string idDocumento, string tabla, string url)
 	{
 		Query query = new Query(tabla);
 		query["id"] = idDocumento;
 		query["fecha"] = "SYSDATE()";
-		string value = HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~");
-		query["url"] = value;
+		query["url"] = url;
 		query["usuario"] = idUsuario;
 		return query.GetInsert();
+	}
+
+	public static string GetModificacion(string idUsuario, string idDocumento, string tabla)
+	{
+		return GetModificacion(idUsuario, idDocumento, tabla, HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~"));
 	}
 
 	public static string GetModificacion(string idUsuario, string idDocumento)
@@ -298,6 +302,12 @@ public class Conector
 	{
 		Usuario usuario = Usuario.GetUsuario();
 		return QueryMod(GetModificacion(usuario.GetID(), idDocumento));
+	}
+
+	public int InsertModificacion(string idDocumento, string url)
+	{
+		Usuario usuario = Usuario.GetUsuario();
+		return QueryMod(GetModificacion(usuario.GetID(), idDocumento, "modificaciones", url));
 	}
 
 	public int InsertModificacionWeb(string idDocumento)

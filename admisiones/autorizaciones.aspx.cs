@@ -25,7 +25,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             Usuario usuario = Usuario.GetUsuario();
             CConectorMS conector = new CConectorMS();
             CGenerar.Visible= conector.QueryString("SELECT perIdPermiso FROM segPermisoEspecial WHERE usIdUsuario='" + usuario.GetLogin() + "' AND perIdPermiso='AUT_AUTOMATICA'")!="";
-            RAutorizacion.Visible= RPreautorizacion.Visible = conector.QueryString("SELECT perIdPermiso FROM segPermisoEspecial WHERE usIdUsuario='" + usuario.GetLogin() + "' AND perIdPermiso='AUT_SELPREAUT'")!="";            
+            RAutorizacion.Visible= RPreautorizacion.Visible = conector.QueryString("SELECT perIdPermiso FROM segPermisoEspecial WHERE usIdUsuario='" + usuario.GetLogin() + "' AND perIdPermiso='AUT_SELPREAUT'")!="";
 
             if (Request.QueryString["aut"] != null)
             {

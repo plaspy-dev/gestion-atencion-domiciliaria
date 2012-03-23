@@ -397,38 +397,63 @@ public partial class paciente_ingreso : System.Web.UI.Page
         TObservacionesCIE10.Text = HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[4].Text).Trim();
     }
 
-    protected string RenderGrid(GridView grid) {
+    protected string RenderGrid(GridView grid, bool pdf) {
 
         String resultado = "<table border=1 width=100% cellspacing=0>";
         resultado += "<tr>";
-        for (int i = 0; i < grid.Columns.Count; i++) {    
-            resultado += "<td><b>" + grid.Columns[i].HeaderText + "</b></td>";
+        for (int i = 0; i < grid.Columns.Count; i++) {
+            if (i == 0 && pdf)
+                resultado += "<td width='300'>";
+            else resultado += "<td>";
+            resultado += "<b>" + grid.Columns[i].HeaderText + "</b></td>";
         }
         resultado += "</tr>";
+        bool negrilla=false;
         for (int i = 0; i < grid.Rows.Count; i++) {
             GridViewRow row = grid.Rows[i];
             resultado += "<tr>";
             for(int j=0; j<row.Cells.Count; j++) {
                 resultado += "<td>";
-                if(row.Cells[j].HasControls()) {
-                    ControlCollection controles= row.Cells[j].Controls;
-                    for(int k=0; k<controles.Count; k++) {
+                if (row.Cells[j].HasControls())
+                {
+                    ControlCollection controles = row.Cells[j].Controls;
+                    for (int k = 0; k < controles.Count; k++)
+                    {
 
-                        if(controles[k] is TextBox) {
+                        if (controles[k] is TextBox)
+                        {
                             String texto = ((TextBox)controles[k]).Text;
                             if (texto.Length == 0)
                                 texto = "&nbsp;";
-                            resultado+= texto;
+                            resultado += texto;
                             break;
-                        } else if(controles[k] is CheckBox) {
-                            if(((CheckBox)controles[k]).Checked)
-                                resultado +=  "X ";
-                            if (((CheckBox)controles[k]).Text.Length>0)
-                                resultado+= ((CheckBox)controles[k]).Text;
+                        }
+                        else if (controles[k] is CheckBox)
+                        {
+                            if (((CheckBox)controles[k]).Checked)
+                            {
+                                negrilla = true;
+                                resultado += "<b>X </b>";
+                            }
+                            if (((CheckBox)controles[k]).Text.Length > 0)
+                            {
+                                if (negrilla)
+                                    resultado += "<b>";
+                                resultado += ((CheckBox)controles[k]).Text;
+                                if (negrilla)
+                                {
+                                    resultado += "</b>";
+                                    negrilla = false;
+                                }
+                            }
                             break;
                         }
                     }
-                } else resultado += row.Cells[j].Text;
+                }
+                else
+                {
+                    resultado += row.Cells[j].Text;
+                }
                 resultado += "</td>";
             }
             resultado += "</tr>";
@@ -441,11 +466,11 @@ public partial class paciente_ingreso : System.Web.UI.Page
     {
         PrintEventArgs evento = (PrintEventArgs)e;
         // aqui modificamos el evento.Contenido
-        evento.Contenido = evento.Contenido.Replace("$GAntecedentes$", RenderGrid(GAntecedentes));
-        evento.Contenido = evento.Contenido.Replace("$GRevision$", RenderGrid(GRevision));
-        evento.Contenido = evento.Contenido.Replace("$GExamenFisico$", RenderGrid(GExamenFisico));
+        evento.Contenido = evento.Contenido.Replace("$GAntecedentes$", RenderGrid(GAntecedentes, evento.pdf));
+        evento.Contenido = evento.Contenido.Replace("$GRevision$", RenderGrid(GRevision, evento.pdf));
+        evento.Contenido = evento.Contenido.Replace("$GExamenFisico$", RenderGrid(GExamenFisico, evento.pdf));
         if (PMujer.Visible)
-            evento.Contenido = evento.Contenido.Replace("$GGinecologico$", RenderGrid(GGinecologico));
+            evento.Contenido = evento.Contenido.Replace("$GGinecologico$", RenderGrid(GGinecologico, evento.pdf));
         else evento.Contenido = evento.Contenido.Replace("$GGinecologico$", "");
 
         evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + TConductaInicial.Text.Replace("\n", "</li><li>") + "</li></ol>");

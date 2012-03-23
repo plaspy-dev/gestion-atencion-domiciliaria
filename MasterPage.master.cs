@@ -14,6 +14,7 @@ using iTextSharp.text.html;
 using iTextSharp.text.html.simpleparser;
 using iTextSharp.text.pdf;
 using iTextSharp.text.xml;
+using iTextSharp.tool.xml;
 
 public partial class MasterPageI : System.Web.UI.MasterPage
 {
@@ -77,7 +78,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             Session["printgridview"] = null;
             Session["printfile"] = null;
         } else {
-            if(Request.QueryString["p"]=="1") {
+            if(Request.QueryString["p"]=="1" && Usuario.GetUsuario().CanPrint()) {
                 // nos preparamos para redireccionar
                 lnkImp_Click(sender, e);
             }
@@ -279,10 +280,9 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
     public void Imprimir(string archivo)
     {
-        lnkImp.Visible = Usuario.GetUsuario().CanPrint();
+        lnkPDF.Visible = lnkExcel.Visible = lnkImp.Visible = Usuario.GetUsuario().CanPrint();
         lnkImp.OnClientClick = "";
         lnkImp.Attributes["r"] = "1";
-        lnkPDF.Visible = true;
         Session["printfile"] = archivo;
     }
 
@@ -333,6 +333,27 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         if (Session["excelgridview"]!=null)
         {
             RenderView((GridView)Session["excelgridview"]);
+        } else if(Session["printfile"]!=null) {
+
+            PrintEventArgs evento = new PrintEventArgs();
+
+            StreamReader reader = new StreamReader(Server.MapPath(Session["printfile"].ToString()));
+            evento.Contenido = reader.ReadToEnd();
+            reader.Close();
+
+            evento.Contenido = ReplaceContenido(cph.Controls, evento.Contenido);
+
+            if (_ImprimirClicked != null)
+            {
+                _ImprimirClicked(this, evento);
+            }
+
+            Response.Clear();
+            Response.AddHeader("Content-Disposition", "inline;filename=" + Page.Title + ".xls");
+            Response.ContentType = "application/vnd.ms-excel";
+            Response.ContentEncoding = System.Text.Encoding.GetEncoding("utf-8");
+            Response.Write(evento.Contenido);
+            Response.End();
         }
     }
 
@@ -378,7 +399,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         Response.Write(pdfDoc);
         Response.End();  */
 
-        PrintEventArgs evento = new PrintEventArgs();
+        PrintEventArgs evento = new PrintEventArgs(true);
         Response.Clear();
         Response.ContentType = "application/pdf";
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
@@ -405,23 +426,24 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         Directory.SetCurrentDirectory(Server.MapPath(""));
 
         Document document = new Document(PageSize.LETTER, 10, 10, 10, 10);
-        PdfWriter.GetInstance(document, Response.OutputStream);
+        PdfWriter writer = PdfWriter.GetInstance(document, Response.OutputStream);
 
         document.AddTitle(Page.Title);
         document.AddSubject(Request.Url.ToString());
         document.AddCreator("OrganizationExample15: " + Version.GetVersion());
         document.AddAuthor(Usuario.GetUsuario().GetNombre());
 
-        HTMLWorker htmlparser = new HTMLWorker(document);
+        // HTMLWorker htmlparser = new HTMLWorker(document);
 
         document.Open();
 
-        IDictionary<string, object> providers = new Dictionary<string, object>();
+        /*IDictionary<string, object> providers = new Dictionary<string, object>();
         providers.Add(HTMLWorker.FONT_PROVIDER, new DefaultFontProvider("Arial"));
-        htmlparser.SetProviders(providers);
+        htmlparser.SetProviders(providers);*/
 
         StringReader sr = new StringReader(evento.Contenido);
-        htmlparser.Parse(sr);
+        // htmlparser.Parse(sr);
+        XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, sr);
         document.Close();
 
         // step 3: we parse the document

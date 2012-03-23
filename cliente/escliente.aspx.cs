@@ -101,7 +101,7 @@ public partial class cliente_escliente : System.Web.UI.Page
 
                 string calificacion=((TextBox)rep.Items[j].FindControl("TRespuesta")).Text;
                 if(calificacion=="-")
-                    calificacion="";
+                    calificacion="0";
                 cal["calificacion"] = calificacion;
                 if(resid.Length==0) {
 

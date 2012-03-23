@@ -190,6 +190,57 @@
                 </td>
             </tr>
             <tr>
+                <td colspan="4" class="celdaTitulo">
+                    Signos vitales</td>
+            </tr>
+            <tr>
+                <td>
+                    TA</td>
+                <td>
+                    <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>
+                    mm/Hg</td>
+                <td>
+                    FC</td>
+                <td>
+                    <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>
+                    Lat/min</td>
+            </tr>
+            <tr>
+                <td>
+                    FR</td>
+                <td>
+                    <asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>
+                    Min</td>
+                <td>
+                    T</td>
+                <td>
+                    <asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox>
+                    °</td>
+            </tr>
+            <tr>
+                <td>
+                    Peso</td>
+                <td>
+                    <asp:TextBox ID="TPeso" runat="server" CssClass="float"></asp:TextBox>
+                    Kg</td>
+                <td>
+                    Saturación</td>
+                <td>
+                    <asp:TextBox ID="TSaturacion" runat="server" CssClass="float"></asp:TextBox>
+                    %</td>
+            </tr>
+            <tr>
+                <td>
+                    Glucometría</td>
+                <td>
+                    <asp:TextBox ID="TGlucometria" runat="server" CssClass="float"></asp:TextBox>
+                    mg/dl</td>
+                <td>
+                    &nbsp;</td>
+                <td>
+                    &nbsp;</td>
+            </tr>
+            <tr>
                 <td>Motivo consulta</td>
                 <td colspan="3"><asp:TextBox ID="TMotivo" runat="server" Width="99%" TextMode="MultiLine"></asp:TextBox></td>
             </tr>
@@ -199,56 +250,20 @@
                 <td></td>
             </tr>
             <tr>
-                <td colspan="3">
+                <td colspan="4">
                     <asp:TextBox ID="TDatosSubjetivos" runat="server" Height="120px" 
                         TextMode="MultiLine" Width="99%"></asp:TextBox>
                 </td>
-                <td><table>
-  <tr>
-  <td>TA</td>
-    <td>
-      <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>
-      </td>
-    <td>
-      mm/Hg</td>
-    </tr>
-                  <tr>
-                    <td>FC</td>
-                    <td>
-                      <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>
-                      </td>
-                    <td>
-                      Lat/min</td>
-                  </tr>
-                  <tr>
-                    <td>FR</td>
-                    <td>
-                      <asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>
-                      </td>
-                    <td>
-                      Min</td>
-                  </tr>
-                  <tr>
-                    <td>T</td>
-                    <td>
-                      <asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox>
-                      </td>
-                    <td>
-                      °</td>
-                  </tr>
-                  <tr>
-                    <td>Peso</td>
-                    <td>
-                      <asp:TextBox ID="TPeso" runat="server" CssClass="float"></asp:TextBox>
-                      </td>
-                    <td>
-                      Kg</td>
-  </tr>
-</table></td>
             </tr>
             <tr>
                 <td colspan="4"><asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" 
                 DataKeyNames="id, antecedente" DataSourceID="SAntecendentes">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
                     <asp:TemplateField HeaderText="Antecedentes">
                         <ItemTemplate>
@@ -276,6 +291,12 @@
                 <td colspan="4">
                 <asp:GridView ID="GExamenFisico" runat="server" AutoGenerateColumns="False"
                 DataKeyNames="id, examen" DataSourceID="SExamenFisico">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
             <Columns>
                 <asp:BoundField DataField="nombre" HeaderText="Examen físico" />
                 <asp:TemplateField HeaderText="Nor">
@@ -313,6 +334,12 @@
                     <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" 
                         AutoGenerateColumns="False" DataKeyNames="id"
                         onselectedindexchanged="GCDiagnostico_SelectedIndexChanged" >
+                        <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />

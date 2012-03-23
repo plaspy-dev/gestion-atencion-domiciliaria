@@ -83,6 +83,8 @@ public partial class paciente_evolucion : System.Web.UI.Page
                         TFC.Text = readermysql["fc"].ToString();
                         TFR.Text = readermysql["fr"].ToString();
                         TT.Text = readermysql["t"].ToString();
+                        TSaturacion.Text = readermysql["saturacion"].ToString();
+                        TGlucometria.Text = readermysql["glucometria"].ToString();
                         TAnalisis.Text = readermysql["analisis"].ToString();
                         TPeso.Text = readermysql["peso"].ToString();
                         if (readermysql["fecha"] != DBNull.Value)
@@ -151,6 +153,8 @@ public partial class paciente_evolucion : System.Web.UI.Page
         qIngreso["analisis"]=TAnalisis.Text;
         qIngreso["fecha"] = CConector.GetDate(Convert.ToDateTime(TFecha.Text));
         qIngreso["plan_manejo"] = TPlanManejo.Text;
+        qIngreso["saturacion"]= TSaturacion.Text;
+        qIngreso["glucometria"]= TGlucometria.Text;
 
         string szQuery;
         string mensaje;
