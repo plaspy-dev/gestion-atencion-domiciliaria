@@ -21,7 +21,7 @@ In the November 24, 2026 local trial, use a disposable MySQL database, a fiction
 
 ### Overview
 
-This cut records the home-care application as archived on 2012-03-23.
+This cut records the home-care application as archived on 2012-04-02.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
@@ -29,11 +29,11 @@ The application keeps the records used to arrange visits and coordinate the peop
 ### Features in the retained source
 
 - Open the batch admission screen to process patient admissions. `admisiones/amasivas.aspx`.
-- Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
 - Retrieve images linked to the clinical files in this edition. `archivo/foto.ashx`.
 - Open the patient record and its care information. `paciente/paciente.aspx`.
 - Open the staff record for the care team. `rh/funcionario.aspx`.
 - View and maintain access groups. `administrador/grupos.aspx`.
+- Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
 
 ### Build and local use
 
@@ -43,7 +43,7 @@ The retained site entry is `directorio/Default.aspx`. Use fictional accounts and
 
 ### Archive notes
 
-The archive inventory counted 0 additions, 10 edits and 0 removals.
+The archive inventory counted 0 additions, 7 edits and 0 removals.
 
 ### Framework versions
 
@@ -92,7 +92,7 @@ En el ensayo local del 24 de noviembre de 2026, usa una base MySQL desechable, u
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2012-03-23.
+Este corte conserva la versión de atención domiciliaria archivada el 2012-04-02.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
@@ -100,11 +100,11 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 ### Funciones en el código conservado
 
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `admisiones/amasivas.aspx`.
-- Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
 - Consulta las imágenes vinculadas a los archivos clínicos de esta edición. `archivo/foto.ashx`.
 - Abre la ficha del paciente y su información de atención. `paciente/paciente.aspx`.
 - Abre la ficha del personal del equipo de atención. `rh/funcionario.aspx`.
 - Consulta y administra los grupos de acceso. `administrador/grupos.aspx`.
+- Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
 
 ### Compilación y uso local
 
@@ -114,7 +114,7 @@ La entrada conservada del sitio es `directorio/Default.aspx`. Usa cuentas fictic
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 0 adiciones, 10 cambios y 0 retiros.
+El inventario del respaldo registró 0 adiciones, 7 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 

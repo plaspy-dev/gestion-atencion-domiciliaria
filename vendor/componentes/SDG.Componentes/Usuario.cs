@@ -16,6 +16,8 @@ public class Usuario
 
 	protected Grupo m_pGrupo;
 
+	protected string m_szUrl;
+
 	public Usuario(string id, string nombre, int grupo, string login)
 	{
 		m_szNombre = nombre;
@@ -23,6 +25,7 @@ public class Usuario
 		m_szID = id;
 		m_szLogin = login;
 		m_pGrupo = new Grupo();
+		m_szUrl = "";
 		HttpContext.Current.Session["Usuario"] = this;
 	}
 
@@ -34,6 +37,22 @@ public class Usuario
 	public void CreateMenu(TreeView tree)
 	{
 		m_pGrupo.CreateMenu(tree, "", this);
+	}
+
+	public string GetForceURL()
+	{
+		return m_szUrl;
+	}
+
+	public void SetForceURL(string url, Conector conector)
+	{
+		m_szUrl = url;
+		conector.QueryMod("UPDATE usuario SET forceurl=" + Query.GetValor(url) + " WHERE id=" + GetID());
+	}
+
+	public void SetForceURL(string url)
+	{
+		m_szUrl = url;
 	}
 
 	public void CreateMenu(TreeView tree, string parametros)

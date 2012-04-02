@@ -154,6 +154,7 @@
                         </asp:SqlDataSource>
                         <asp:RadioButtonList ID="RConceptos" runat="server" DataSourceID="SqlDataSource1" DataTextField="nombre" DataValueField="id">
                         </asp:RadioButtonList>
+                        <asp:RequiredFieldValidator ControlToValidate="RConceptos" ErrorMessage="Por favor selecione un valor." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true"></asp:RequiredFieldValidator>
                       </td>
                  </tr>
             </ItemTemplate>

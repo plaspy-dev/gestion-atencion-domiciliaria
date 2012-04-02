@@ -139,6 +139,7 @@ public partial class paciente_barthel : System.Web.UI.Page
                 conector.QueryMod(analisis.GetInsert());
             }
         }
+        Usuario.GetUsuario().SetForceURL("", conector);
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
         ((MasterPageI)Master).SetResultado(mensaje);
     }
@@ -196,7 +197,7 @@ public partial class paciente_barthel : System.Web.UI.Page
 
         for (int i = 0; i < RGrupos.Items.Count; i++)
         {
-            repeater+="<td><b>" + 
+            repeater+="<tr><td><b>" + 
                         ((Label)RGrupos.Items[i].FindControl("LN")).Text +
                         "</b></td>";
 

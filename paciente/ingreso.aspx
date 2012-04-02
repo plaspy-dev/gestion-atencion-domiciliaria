@@ -36,16 +36,20 @@
                 // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
             }
         });
-        if (!$.browser.msie || $.browser.version>8)
+        if (!$.browser.msie || $.browser.version > 8)
             $("input[name*=TObservaciones]").width("98%");
         $(window).resize(function() {
             $("input[name*=TObservaciones]").each(function() {
                 $(this).width($(this).parent().width() - 15);
             });
-	    $("input[name*=TObservaciones]").each(function() {
+            $("input[name*=TObservaciones]").each(function() {
                 $(this).width($(this).parent().width() - 15);
             });
         });
+        if ($("#<%= PMujer.ClientID %>").length == 0) {
+            $("#tmujer").remove();
+            $("#tfisico").attr("colspan", "4");
+        }
     });
     function rel(text) {
         text = text.replace(/\r/gi, '');
@@ -147,6 +151,186 @@
                 </td>
             </tr>
             <tr>
+                <td>Motivo consulta</td>
+                <td colspan="3"><asp:TextBox ID="TMotivo" runat="server" Width="99%" TextMode="MultiLine"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td>Enfermedad actual</td>
+                <td colspan="3">
+                    <asp:TextBox ID="TEnfermedadActual" runat="server" Height="120px" 
+                        TextMode="MultiLine" Width="99%"></asp:TextBox>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" valign="top">
+                <asp:GridView ID="GRevision" runat="server" AutoGenerateColumns="False" 
+                DataKeyNames="id,revision" DataSourceID="SRevision">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                <Columns>
+                    <asp:BoundField DataField="nombre" HeaderText="Revisión sistemas" />
+                    <asp:TemplateField HeaderText="Nor">
+                        <ItemTemplate>
+                            <asp:CheckBox ID="CNor" runat="server" Checked='<%# Eval("nor").ToString()=="1" ? true : false %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Pat">
+                        <ItemTemplate>
+                            <asp:CheckBox ID="CPat" runat="server" Checked='<%# Eval("pat").ToString()=="1" ? true : false %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%">
+                        <ItemTemplate>
+                            <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
+            <asp:SqlDataSource ID="SRevision" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,revision_ingreso.id AS revision,revision_ingreso.nor AS nor, revision_ingreso.pat AS pat,revision_ingreso.observaciones FROM varios LEFT JOIN revision_ingreso ON (revision_ingreso.ingreso_paciente=@idingreso AND revision_ingreso.motivo=varios.id) WHERE varios.tipo=3 AND varios.szReservado IS NULL" >
+                <SelectParameters>
+                    <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
+                </SelectParameters>
+            </asp:SqlDataSource>
+                </td>
+                <td colspan="2" valign="top">
+                <asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" DataKeyNames="id, antecedente" DataSourceID="SAntecendentes">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                <Columns>
+                    <asp:TemplateField HeaderText="Antecedentes">
+                        <ItemTemplate>
+                            <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
+                        </ItemTemplate>
+                        <ItemStyle Wrap="false" />
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%">
+                        <ItemTemplate>
+                            <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
+            <asp:SqlDataSource ID="SAntecendentes" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,antecedentes_ingreso.id AS antecedente,antecedentes_ingreso.estado AS estado,antecedentes_ingreso.observaciones FROM varios LEFT JOIN antecedentes_ingreso ON (antecedentes_ingreso.ingreso_paciente=@idingreso AND antecedentes_ingreso.motivo=varios.id) WHERE varios.tipo=2 AND varios.szReservado IS NULL" >
+                <SelectParameters>
+                    <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
+                </SelectParameters>
+            </asp:SqlDataSource></td>
+            </tr>
+            <tr>
+                <td colspan="2" valign="top" id="tmujer">
+                    <asp:Panel runat="server" ID="PMujer">
+                        <asp:GridView ID="GGinecologico" runat="server" AutoGenerateColumns="False" 
+                        DataKeyNames="id, varios" DataSourceID="SGinecologico">
+                        <RowStyle CssClass="GridRow"></RowStyle>
+                        <FooterStyle CssClass="GridFooter"></FooterStyle>
+                        <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                        <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                        <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                        <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                        <Columns>
+                            <asp:TemplateField HeaderText="Datos ginecológicos">
+                                <ItemTemplate>
+                                    <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Observaciones">
+                                <ItemTemplate>
+                                    <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                        </Columns>
+                    </asp:GridView>
+                    <asp:SqlDataSource ID="SGinecologico" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,varios_ingreso.id AS varios, varios_ingreso.estado AS estado,varios_ingreso.observaciones FROM varios LEFT JOIN varios_ingreso ON (varios_ingreso.ingreso_paciente=@idingreso AND varios_ingreso.motivo=varios.id) WHERE varios.tipo=5 AND varios.szReservado IS NULL" >
+                        <SelectParameters>
+                            <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
+                        </SelectParameters>
+                    </asp:SqlDataSource>
+                    </asp:Panel>
+                </td>
+                <td colspan="2" valign="top" id="tfisico">
+                <asp:GridView ID="GExamenFisico" runat="server" AutoGenerateColumns="False" DataKeyNames="id, examen" DataSourceID="SExamenFisico">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+            <Columns>
+                <asp:BoundField DataField="nombre" HeaderText="Examen físico" />
+                <asp:TemplateField HeaderText="Nor">
+                    <ItemTemplate>
+                        <asp:CheckBox ID="CNor" runat="server" Checked='<%# Eval("nor").ToString()=="1" ? true : false %>' />
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:TemplateField HeaderText="Pat">
+                    <ItemTemplate>
+                        <asp:CheckBox ID="CPat" runat="server" Checked='<%# Eval("pat").ToString()=="1" ? true : false %>'/>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%" ItemStyle-Width="100%">
+                    <ItemTemplate>
+                        <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
+                    </ItemTemplate>
+                </asp:TemplateField>
+            </Columns>
+            </asp:GridView>
+            <asp:SqlDataSource ID="SExamenFisico" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre, examen_ingreso.id AS examen,examen_ingreso.nor AS nor,examen_ingreso.pat AS pat,examen_ingreso.observaciones FROM varios LEFT JOIN examen_ingreso ON (examen_ingreso.ingreso_paciente=@idingreso AND examen_ingreso.motivo=varios.id) WHERE varios.tipo=4 AND varios.szReservado IS NULL" >
+                <SelectParameters>
+                    <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
+                </SelectParameters>
+            </asp:SqlDataSource>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="celdaTitulo">Código de diagnóstico</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" 
+                        AutoGenerateColumns="False" DataKeyNames="id"
+                        onselectedindexchanged="GCDiagnostico_SelectedIndexChanged" >
+                        <Columns>
+                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:BoundField DataField="codigo" HeaderText="Código" />
+                            <asp:BoundField DataField="descripcion" HeaderText="Descripción" />
+                            <asp:BoundField DataField="observaciones" HeaderText="Observaciones" />
+                        </Columns>
+                        <SelectedRowStyle CssClass="selecteditem" />
+                    </asp:GridView>
+                    <sdg:CustomDataSource ID="SCDiagnostico" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                        SelectCommand="SELECT id,codigo,descripcion,observaciones FROM codigos_ingreso WHERE ingreso_paciente=@ingreso"
+                                        DeleteCommand="DELETE FROM codigos_ingreso WHERE id=@id"
+                                        InsertCommand="INSERT INTO codigos_ingreso(ingreso_paciente,codigo,descripcion,observaciones) VALUES (@ingreso, @codigo, @descripcion, @observaciones)"
+                                        UpdateCommand="UPDATE codigos_ingreso SET codigo=@codigo,descripcion=@descripcion,observaciones=@observaciones WHERE id=@id" 
+                                        >
+                                        <SelectParameters>
+                                            <asp:ControlParameter ControlID="HIdIngreso" DefaultValue="0" PropertyName="Value" Name="ingreso" />
+                                        </SelectParameters>
+                    </sdg:CustomDataSource>
+                </td>
+            </tr>
+            <tr>
                 <td colspan="4" class="celdaTitulo">
                     Signos vitales</td>
             </tr>
@@ -196,185 +380,6 @@
                     &nbsp;</td>
                 <td>
                     &nbsp;</td>
-            </tr>
-            <tr>
-                <td>Motivo consulta</td>
-                <td colspan="3"><asp:TextBox ID="TMotivo" runat="server" Width="99%" TextMode="MultiLine"></asp:TextBox></td>
-            </tr>
-            <tr>
-                <td>Enfermedad actual</td>
-                <td colspan="3">
-                    <asp:TextBox ID="TEnfermedadActual" runat="server" Height="120px" 
-                        TextMode="MultiLine" Width="99%"></asp:TextBox>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" valign="top"><asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" DataKeyNames="id, antecedente" DataSourceID="SAntecendentes">
-                <RowStyle CssClass="GridRow"></RowStyle>
-                <FooterStyle CssClass="GridFooter"></FooterStyle>
-                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-                <Columns>
-                    <asp:TemplateField HeaderText="Antecedentes">
-                        <ItemTemplate>
-                            <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
-                        </ItemTemplate>
-                        <ItemStyle Wrap="false" />
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%">
-                        <ItemTemplate>
-                            <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                </Columns>
-            </asp:GridView>
-            <asp:SqlDataSource ID="SAntecendentes" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,antecedentes_ingreso.id AS antecedente,antecedentes_ingreso.estado AS estado,antecedentes_ingreso.observaciones FROM varios LEFT JOIN antecedentes_ingreso ON (antecedentes_ingreso.ingreso_paciente=@idingreso AND antecedentes_ingreso.motivo=varios.id) WHERE varios.tipo=2 AND varios.szReservado IS NULL" >
-                <SelectParameters>
-                    <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
-                </SelectParameters>
-            </asp:SqlDataSource></td>
-                <td colspan="2" valign="top">
-                <asp:GridView ID="GRevision" runat="server" AutoGenerateColumns="False" 
-                DataKeyNames="id,revision" DataSourceID="SRevision">
-                <RowStyle CssClass="GridRow"></RowStyle>
-                <FooterStyle CssClass="GridFooter"></FooterStyle>
-                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-                <Columns>
-                    <asp:BoundField DataField="nombre" HeaderText="Revisión sistemas" />
-                    <asp:TemplateField HeaderText="Nor">
-                        <ItemTemplate>
-                            <asp:CheckBox ID="CNor" runat="server" Checked='<%# Eval("nor").ToString()=="1" ? true : false %>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Pat">
-                        <ItemTemplate>
-                            <asp:CheckBox ID="CPat" runat="server" Checked='<%# Eval("pat").ToString()=="1" ? true : false %>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%">
-                        <ItemTemplate>
-                            <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                </Columns>
-            </asp:GridView>
-            <asp:SqlDataSource ID="SRevision" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,revision_ingreso.id AS revision,revision_ingreso.nor AS nor, revision_ingreso.pat AS pat,revision_ingreso.observaciones FROM varios LEFT JOIN revision_ingreso ON (revision_ingreso.ingreso_paciente=@idingreso AND revision_ingreso.motivo=varios.id) WHERE varios.tipo=3 AND varios.szReservado IS NULL" >
-                <SelectParameters>
-                    <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
-                </SelectParameters>
-            </asp:SqlDataSource>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" valign="top">
-                <asp:GridView ID="GExamenFisico" runat="server" AutoGenerateColumns="False" DataKeyNames="id, examen" DataSourceID="SExamenFisico">
-                <RowStyle CssClass="GridRow"></RowStyle>
-                <FooterStyle CssClass="GridFooter"></FooterStyle>
-                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-            <Columns>
-                <asp:BoundField DataField="nombre" HeaderText="Examen físico" />
-                <asp:TemplateField HeaderText="Nor">
-                    <ItemTemplate>
-                        <asp:CheckBox ID="CNor" runat="server" Checked='<%# Eval("nor").ToString()=="1" ? true : false %>' />
-                    </ItemTemplate>
-                </asp:TemplateField>
-                <asp:TemplateField HeaderText="Pat">
-                    <ItemTemplate>
-                        <asp:CheckBox ID="CPat" runat="server" Checked='<%# Eval("pat").ToString()=="1" ? true : false %>'/>
-                    </ItemTemplate>
-                </asp:TemplateField>
-                <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%" ItemStyle-Width="100%">
-                    <ItemTemplate>
-                        <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
-                    </ItemTemplate>
-                </asp:TemplateField>
-            </Columns>
-            </asp:GridView>
-            <asp:SqlDataSource ID="SExamenFisico" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre, examen_ingreso.id AS examen,examen_ingreso.nor AS nor,examen_ingreso.pat AS pat,examen_ingreso.observaciones FROM varios LEFT JOIN examen_ingreso ON (examen_ingreso.ingreso_paciente=@idingreso AND examen_ingreso.motivo=varios.id) WHERE varios.tipo=4 AND varios.szReservado IS NULL" >
-                <SelectParameters>
-                    <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
-                </SelectParameters>
-            </asp:SqlDataSource>
-                </td>
-                <td colspan="2" valign="top">
-                    <asp:Panel runat="server" ID="PMujer">
-                        <asp:GridView ID="GGinecologico" runat="server" AutoGenerateColumns="False" 
-                        DataKeyNames="id, varios" DataSourceID="SGinecologico">
-                        <RowStyle CssClass="GridRow"></RowStyle>
-                        <FooterStyle CssClass="GridFooter"></FooterStyle>
-                        <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-                        <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-                        <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-                        <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-                        <Columns>
-                            <asp:TemplateField HeaderText="Datos ginecológicos">
-                                <ItemTemplate>
-                                    <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Observaciones">
-                                <ItemTemplate>
-                                    <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                        </Columns>
-                    </asp:GridView>
-                    <asp:SqlDataSource ID="SGinecologico" runat="server" 
-                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                        SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,varios_ingreso.id AS varios, varios_ingreso.estado AS estado,varios_ingreso.observaciones FROM varios LEFT JOIN varios_ingreso ON (varios_ingreso.ingreso_paciente=@idingreso AND varios_ingreso.motivo=varios.id) WHERE varios.tipo=5 AND varios.szReservado IS NULL" >
-                        <SelectParameters>
-                            <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
-                        </SelectParameters>
-                    </asp:SqlDataSource>
-                    </asp:Panel>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="4" class="celdaTitulo">Código de diagnóstico</td>
-            </tr>
-            <tr>
-                <td colspan="4">
-                    <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" 
-                        AutoGenerateColumns="False" DataKeyNames="id"
-                        onselectedindexchanged="GCDiagnostico_SelectedIndexChanged" >
-                        <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                            <asp:BoundField DataField="codigo" HeaderText="Código" />
-                            <asp:BoundField DataField="descripcion" HeaderText="Descripción" />
-                            <asp:BoundField DataField="observaciones" HeaderText="Observaciones" />
-                        </Columns>
-                        <SelectedRowStyle CssClass="selecteditem" />
-                    </asp:GridView>
-                    <sdg:CustomDataSource ID="SCDiagnostico" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                                        SelectCommand="SELECT id,codigo,descripcion,observaciones FROM codigos_ingreso WHERE ingreso_paciente=@ingreso"
-                                        DeleteCommand="DELETE FROM codigos_ingreso WHERE id=@id"
-                                        InsertCommand="INSERT INTO codigos_ingreso(ingreso_paciente,codigo,descripcion,observaciones) VALUES (@ingreso, @codigo, @descripcion, @observaciones)"
-                                        UpdateCommand="UPDATE codigos_ingreso SET codigo=@codigo,descripcion=@descripcion,observaciones=@observaciones WHERE id=@id" 
-                                        >
-                                        <SelectParameters>
-                                            <asp:ControlParameter ControlID="HIdIngreso" DefaultValue="0" PropertyName="Value" Name="ingreso" />
-                                        </SelectParameters>
-                    </sdg:CustomDataSource>
-                </td>
             </tr>
             <tr>
                 <td colspan="2">CIE10</td>

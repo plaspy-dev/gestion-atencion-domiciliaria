@@ -24,6 +24,16 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
     protected void Page_Load(object sender, EventArgs e)
     {
+        Usuario usuario = Usuario.GetUsuario();
+        if(usuario.GetForceURL().Length!=0) {
+
+            CURLs url = new CURLs(usuario.GetForceURL().ToLower(), "", "");
+            if (HttpContext.Current.Request.Url.ToString().ToLower().IndexOf(url.FullURL) == -1)
+            {// es la misma
+                Response.Redirect(usuario.GetForceURL());
+                return;
+            }
+        }
         if(!IsPostBack) {
 
             CConectorMS conector = new CConectorMS();
@@ -52,8 +62,6 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
 
         LVersion.Text = Version.GetVersion();
-
-        Usuario usuario = Usuario.GetUsuario();
         usuario.CreateMenu(TMenu, Session["parametros"]==null ? "" : Session["parametros"].ToString());
 
         // Session.Remove("parametros");

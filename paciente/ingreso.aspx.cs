@@ -178,9 +178,11 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
         string szQuery;
         string mensaje;
+        bool ingreso = false;
 
         if (HIdIngreso.Value.Length == 0)
         {
+            ingreso = true;
             qIngreso["paciente"] = CCDetallePaciente.IdPaciente;
 
             szQuery = qIngreso.GetInsert();
@@ -324,7 +326,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
             return;
 
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
+        if (ingreso)
+            Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
         ((MasterPageI)Master).SetResultado(mensaje);
+        // Session["szMensaje"] = mensaje;
     }
 
     protected void BCancelar_Click(object sender, EventArgs e)
@@ -402,9 +407,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
         String resultado = "<table border=1 width=100% cellspacing=0>";
         resultado += "<tr>";
         for (int i = 0; i < grid.Columns.Count; i++) {
-            if (i == 0 && pdf)
+            /*if (i == 0 && pdf)
                 resultado += "<td width='300'>";
-            else resultado += "<td>";
+            else */
+            resultado += "<td>";
             resultado += "<b>" + grid.Columns[i].HeaderText + "</b></td>";
         }
         resultado += "</tr>";

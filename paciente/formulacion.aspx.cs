@@ -89,7 +89,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     {
                         ((MasterPageI)Master).Imprimir("formulacion.html");
                         BAceptar.Enabled = usuario.CanUpdate();
-                        BMasFormulacion.Enabled= usuario.CanUpdate();
+                        BMasFormulacion.Enabled= usuario.CanInsert();
 
                         GFormulacion.Columns[0].Visible = usuario.CanUpdate();
                         GFormulacion.Columns[1].Visible = usuario.CanDelete();
