@@ -18,6 +18,22 @@ public class Usuario
 
 	protected string m_szUrl;
 
+	protected ArrayList m_saCampos = new ArrayList();
+
+	protected ArrayList m_saValores = new ArrayList();
+
+	public string this[string campo]
+	{
+		get
+		{
+			return m_saValores[GetCampo(campo)].ToString();
+		}
+		set
+		{
+			m_saValores[GetCampo((campo.Length == 0) ? value : campo)] = value;
+		}
+	}
+
 	public Usuario(string id, string nombre, int grupo, string login)
 	{
 		m_szNombre = nombre;
@@ -181,5 +197,24 @@ public class Usuario
 			usuario.Redirect();
 		}
 		return usuario;
+	}
+
+	protected int GetCampo(string campo)
+	{
+		int num = -1;
+		for (int i = 0; i < m_saCampos.Count; i++)
+		{
+			if (m_saCampos[i].ToString() == campo)
+			{
+				num = i;
+				break;
+			}
+		}
+		if (num == -1)
+		{
+			num = m_saCampos.Add(campo);
+			m_saValores.Add("");
+		}
+		return num;
 	}
 }

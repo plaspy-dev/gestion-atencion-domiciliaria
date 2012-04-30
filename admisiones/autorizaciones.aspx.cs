@@ -206,6 +206,9 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             HId.Value = res.ToString();
             HIdAutorizacion.Value= TNumero.Text;
         } else {
+
+            query["segUsuarioModifica"] = Usuario.GetUsuario().GetLogin();
+            query["segFechaModifica"] = "GETDATE()";
             if(conector.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(HIdAutorizacion.Value)))==-1)
                 return;
         }

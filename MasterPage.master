@@ -22,6 +22,8 @@
     <link href="css/ui-lightness/jquery-ui-numeric-min.css" type="text/css" rel="Stylesheet" />
     <link href="css/estilo.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript">
+        var user_logged = false;
+        var user_logging = true;
         $(function() {
             $("#tabs").tabs();
             $("#ctl00_lnkCambioClave").click(function() {

@@ -9,6 +9,42 @@
             collapsible: true,
             active: -1
         });
+        $("#<%= TNombres.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetPersonal",
+                    data: "{ 'q': '" + request.term + "' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.value, label: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                var nombre = ui.item.label;
+                var pos = nombre.indexOf(" - ");
+                if (pos != -1) {
+                    nombre = nombre.substring(pos + 3);
+                }
+                $("#<%= TNombres.ClientID %>").val(nombre);
+                $("#<%= TIdPersonal.ClientID %>").val(ui.item.value);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TIdPersonal.ClientID %>").val("");
+            }
+        });
     });
 </script>
 </asp:Content>
@@ -22,10 +58,14 @@
             </td>
             <td>
                 <asp:TextBox ID="TNombres" runat="server"></asp:TextBox>
+                <asp:TextBox ID="TIdPersonal" runat="server" CssClass="hide"></asp:TextBox>
             </td>
             <td>
                 <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" 
                     ControlToValidate="TNombres" Display="Dynamic" 
+                    ErrorMessage="Por favor ingrese un nombre." SetFocusOnError="True"></asp:RequiredFieldValidator>
+                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" 
+                    ControlToValidate="TIdPersonal" Display="Dynamic" 
                     ErrorMessage="Por favor ingrese un nombre." SetFocusOnError="True"></asp:RequiredFieldValidator>
             </td>
         </tr>

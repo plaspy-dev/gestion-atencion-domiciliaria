@@ -38,13 +38,19 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
 
                     TFecha.Text = DateTime.Now.ToShortDateString(); 
-
                     PDatos.Visible = true;
-
                     PMujer.Visible = CCDetallePaciente.Sexo!= "M";
-
+                                        
                     BAceptar.Enabled = usuario.CanInsert();
                     BMasCDiagnostico.Enabled = usuario.CanInsert();
+
+                    DMedico.Enabled = usuario.CanAdmin();
+                    if(!usuario.CanAdmin()) {
+                        ListItem item= DMedico.Items.FindByValue(usuario["personal"]);
+                        if (item == null)
+                            BAceptar.Enabled = false;
+                        else item.Selected = true;
+                    }
 
                     DMedico.Focus();
 
@@ -65,13 +71,6 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     qIngreso += "analisis";
                     qIngreso += "glucometria";
                     qIngreso += "tipo_diagnostico";
-                    /*qIngreso += "observacionesa";
-                    qIngreso += "amplacion";
-                    qIngreso += "observacionesef";
-                    qIngreso += "cdi";
-                    qIngreso += "cde";
-                    qIngreso += "ddi";
-                    qIngreso += "dde";*/
                     qIngreso += "conducta";
                     qIngreso += "fecha";
 
@@ -104,13 +103,6 @@ public partial class paciente_ingreso : System.Web.UI.Page
                         if (readermysql["fecha"] != DBNull.Value)
                             TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
                         else TFecha.Text = "";
-                        // TObservacionesAntecedentes.Text = readermysql["observacionesa"].ToString();
-                        // TAmpliacion.Text = readermysql["amplacion"].ToString();
-                        // TObservacionesFisico.Text = readermysql["observacionesef"].ToString();
-                        // TDIngreso.Text = readermysql["cdi"].ToString();
-                        // TDEgreso.Text = readermysql["cde"].ToString();
-                        // TDescripcionIngreso.Text = readermysql["ddi"].ToString();
-                        // TDescripcionEgreso.Text = readermysql["dde"].ToString();
                         TConductaInicial.Text = readermysql["conducta"].ToString();
 
                         ((MasterPageI)Master).SetModificacion(HIdIngreso.Value);
@@ -488,10 +480,14 @@ public partial class paciente_ingreso : System.Web.UI.Page
         query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
         query["szProfesional"] = "admPersonalHS.perDocumento";
         query["szMedico"] = "admPersonalHS.perNombre";
+        query["szCargo"] = "admCargo.carDescripcion";
 
         CConectorMS conectorms = new CConectorMS();
 
-        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"));
+        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente
+            , "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"
+            + " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"
+            ));
         if (reader != null)
         {
             bool l = reader.Read();

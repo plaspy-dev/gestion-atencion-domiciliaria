@@ -157,7 +157,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Personal que llama</td>
+                <td>Quien notifica</td>
                 <td><asp:TextBox runat="server" ID="TPLlama"></asp:TextBox><asp:RequiredFieldValidator ControlToValidate="TPLlama" ErrorMessage="Por favor ingrese una persona que llama." ID="RequiredFieldValidator3" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td>Parentesco</td>
                 <td><asp:TextBox runat="server" ID="TParentesco"></asp:TextBox></td>

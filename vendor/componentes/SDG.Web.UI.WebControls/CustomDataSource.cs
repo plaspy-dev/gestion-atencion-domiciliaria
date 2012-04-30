@@ -10,8 +10,8 @@ using System.Web.UI.WebControls;
 namespace SDG.Web.UI.WebControls;
 
 [Designer(typeof(CustomDataSourceDesigner))]
-[PersistChildren(false)]
 [ParseChildren(true)]
+[PersistChildren(false)]
 public class CustomDataSource : DataSourceControl
 {
 	protected static readonly string[] _views = new string[1] { "DefaultView" };
@@ -30,8 +30,8 @@ public class CustomDataSource : DataSourceControl
 
 	protected CustomDataSourceView _view;
 
-	[Category("ParentDataSource")]
 	[DefaultValue("")]
+	[Category("ParentDataSource")]
 	public string ParentDataSource
 	{
 		get
@@ -142,8 +142,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[Category("Data")]
 	[PersistenceMode(PersistenceMode.InnerProperty)]
+	[Category("Data")]
 	[DefaultValue(null)]
 	[MergableProperty(false)]
 	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]

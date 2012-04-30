@@ -125,9 +125,14 @@
             </tr>
             <tr>
                 <td width="20%">Fecha</td>
-                <td width="30%"><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox></td>
+                <td width="30%"><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox>
+                <asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                <asp:RangeValidator ControlToValidate="TFecha" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator>
+                </td>
                 <td width="20%">Hora</td>
-                <td width="30%"><asp:TextBox ID="THora" runat="server" CssClass="hora"></asp:TextBox></td>
+                <td width="30%"><asp:TextBox ID="THora" runat="server" CssClass="hora"></asp:TextBox>
+                <asp:RequiredFieldValidator ControlToValidate="THora" ErrorMessage="Por favor ingrese una hora." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                </td>
             </tr>
             <tr>
                 <td>
@@ -152,13 +157,17 @@
             </tr>
             <tr>
                 <td>Motivo consulta</td>
-                <td colspan="3"><asp:TextBox ID="TMotivo" runat="server" Width="99%" TextMode="MultiLine"></asp:TextBox></td>
+                <td colspan="3"><asp:TextBox ID="TMotivo" runat="server" Width="99%" TextMode="MultiLine"></asp:TextBox>
+                <asp:RequiredFieldValidator ControlToValidate="TMotivo" ErrorMessage="Por favor ingrese un motivo." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                </td>
             </tr>
             <tr>
                 <td>Enfermedad actual</td>
                 <td colspan="3">
                     <asp:TextBox ID="TEnfermedadActual" runat="server" Height="120px" 
-                        TextMode="MultiLine" Width="99%"></asp:TextBox>
+                        TextMode="MultiLine" Width="99%">
+                        </asp:TextBox>
+                        <asp:RequiredFieldValidator ControlToValidate="TEnfermedadActual" ErrorMessage="Por favor ingrese una enfermedad." ID="RequiredFieldValidator3" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 </td>
             </tr>
             <tr>
@@ -331,57 +340,6 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="4" class="celdaTitulo">
-                    Signos vitales</td>
-            </tr>
-            <tr>
-                <td>
-                    TA</td>
-                <td>
-                    <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>
-                    mm/Hg</td>
-                <td>
-                    FC</td>
-                <td>
-                    <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>
-                    Lat/min</td>
-            </tr>
-            <tr>
-                <td>
-                    FR</td>
-                <td>
-                    <asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>
-                    Min</td>
-                <td>
-                    T</td>
-                <td>
-                    <asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox>
-                    °</td>
-            </tr>
-            <tr>
-                <td>
-                    Peso</td>
-                <td>
-                    <asp:TextBox ID="TPeso" runat="server" CssClass="float"></asp:TextBox>
-                    Kg</td>
-                <td>
-                    Saturación</td>
-                <td>
-                    <asp:TextBox ID="TSaturacion" runat="server" CssClass="float"></asp:TextBox>
-                    %</td>
-            </tr>
-            <tr>
-                <td>
-                    Glucometría</td>
-                <td>
-                    <asp:TextBox ID="TGlucometria" runat="server" CssClass="float"></asp:TextBox>
-                    mg/dl</td>
-                <td>
-                    &nbsp;</td>
-                <td>
-                    &nbsp;</td>
-            </tr>
-            <tr>
                 <td colspan="2">CIE10</td>
                 <td colspan="2">Observaciones</td>
             </tr>
@@ -405,10 +363,62 @@
                 <asp:Button ID="BMasCDiagnostico" runat="server" OnClick="BMasCDiagnostico_Click" Text="+" /></td>
             </tr>
             <tr>
+                <td colspan="4" class="celdaTitulo">
+                    Signos vitales</td>
+            </tr>
+            <tr>
+                <td>
+                    TA</td>
+                <td>
+                    <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>mm/Hg
+                    <asp:RequiredFieldValidator ControlToValidate="TTA" ErrorMessage="Por favor ingrese una tensión arterial." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td>
+                    FC</td>
+                <td>
+                    <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>Lat/min
+                    <asp:RequiredFieldValidator ControlToValidate="TFC" ErrorMessage="Por favor ingrese una frecuencia cardiaca." ID="RequiredFieldValidator6" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            </tr>
+            <tr>
+                <td>
+                    FR</td>
+                <td>
+                    <asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>Min
+                    <asp:RequiredFieldValidator ControlToValidate="TFR" ErrorMessage="Por favor ingrese una frecuencia respiratoria." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td>
+                    T</td>
+                <td>
+                    <asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox>°
+                    <asp:RequiredFieldValidator ControlToValidate="TT" ErrorMessage="Por favor ingrese una temperatura." ID="RequiredFieldValidator8" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            </tr>
+            <tr>
+                <td>
+                    Peso</td>
+                <td>
+                    <asp:TextBox ID="TPeso" runat="server" CssClass="float"></asp:TextBox>Kg
+                    <asp:RequiredFieldValidator ControlToValidate="TPeso" ErrorMessage="Por favor ingrese un peso." ID="RequiredFieldValidator9" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td>
+                    Saturación</td>
+                <td>
+                    <asp:TextBox ID="TSaturacion" runat="server" CssClass="float"></asp:TextBox>%
+                    <asp:RequiredFieldValidator ControlToValidate="TSaturacion" ErrorMessage="Por favor ingrese una saturación." ID="RequiredFieldValidator10" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            </tr>
+            <tr>
+                <td>
+                    Glucometría</td>
+                <td>
+                    <asp:TextBox ID="TGlucometria" runat="server" CssClass="float"></asp:TextBox>mg/dl
+                    <asp:RequiredFieldValidator ControlToValidate="TGlucometria" ErrorMessage="Por favor ingrese una glucometría." ID="RequiredFieldValidator11" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td>
+                    &nbsp;</td>
+                <td>
+                    &nbsp;</td>
+            </tr>
+            <tr>
                 <td>Análisis clínico</td>
                 <td colspan="3">
                     <asp:TextBox ID="TAnalisis" runat="server" Height="120px" 
                         TextMode="MultiLine" Width="99%"></asp:TextBox>
+                    <asp:RequiredFieldValidator ControlToValidate="TAnalisis" ErrorMessage="Por favor ingrese un análisis." ID="RequiredFieldValidator12" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 </td>
             </tr>
             <tr>
@@ -418,10 +428,13 @@
             <tr>
                 <td colspan="4"><asp:TextBox ID="TConductaInicial" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>
                 <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
+                <asp:RequiredFieldValidator ControlToValidate="TConductaInicial" ErrorMessage="Por favor ingrese una conducta inicial." ID="RequiredFieldValidator13" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 </td>
             </tr>
             <tr>
-                <td colspan="4" align="right"><asp:Button ID="BAceptar" runat="server" onclick="BAceptar_Click" 
+                <td colspan="4" align="right">
+                    <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
+                <asp:Button ID="BAceptar" runat="server" onclick="BAceptar_Click" 
             Text="Aceptar" />
         <asp:Button ID="BCancelar" runat="server" CausesValidation="False" 
             onclick="BCancelar_Click" Text="Cancelar" /></td>

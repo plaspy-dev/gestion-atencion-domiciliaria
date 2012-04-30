@@ -7,6 +7,42 @@
 <script type="text/javascript">
     $(function() {
         $("#ctl00_cph_TTA").mask("999/99");
+        $("#<%= TFuncionario.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetPersonal",
+                    data: "{ 'q': '" + request.term + "' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.value, label: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                var nombre = ui.item.label;
+                var pos = nombre.indexOf(" - ");
+                if (pos != -1) {
+                    nombre = nombre.substring(pos + 3);
+                }
+                $("#<%= TFuncionario.ClientID %>").val(nombre);
+                $("#<%= TIdFuncionario.ClientID %>").val(ui.item.value);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TIdFuncionario.ClientID %>").val("");
+            }
+        });
         $("#<%= TCIE10.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -35,9 +71,6 @@
             search: function(event, ui) {
                 // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
             }
-        });
-        $("#<%= TFecha.ClientID %>").datepicker({
-            onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#<%=BFecha.ClientID %>").click(); }
         });
         $("#<%= PEvoluciones.ClientID %>").accordion({
             autoHeight: false,
@@ -133,7 +166,9 @@
                     <h3><a href="#"><asp:Label runat="server" ID="LEvoluciones"></asp:Label></a></h3>
                     <div class="hide">
                         <asp:GridView ID="GEvoluciones" runat="server" AutoGenerateColumns="False" 
-                            DataSourceID="SEvoluciones" EmptyDataText="No se encontraron evoluciones de este paciente" >
+                            DataSourceID="SEvoluciones" 
+                            EmptyDataText="No se encontraron evoluciones de este paciente" 
+                            onrowdatabound="GEvoluciones_RowDataBound" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
                             <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -143,17 +178,19 @@
                             <Columns>
                                 <asp:TemplateField>
                                     <ItemTemplate>
-                                        <asp:ImageButton CommandArgument='<%# Eval("fecha") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
+                                        <asp:ImageButton CommandArgument='<%# Eval("id") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
+                                <asp:BoundField DataField="medico" HeaderText="Funcionario" />
                                 <asp:BoundField DataField="motivo" HeaderText="Motivo" />
                             </Columns>
                         </asp:GridView>
                         <asp:SqlDataSource ID="SEvoluciones" runat="server" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT evolucion_paciente.fecha,evolucion_paciente.motivo
+                            SelectCommand="SELECT evolucion_paciente.id,evolucion_paciente.fecha,evolucion_paciente.motivo
+                                        ,evolucion_paciente.medico
                                         FROM evolucion_paciente
                                         WHERE evolucion_paciente.paciente=@paciente
                                         ORDER BY fecha DESC;">
@@ -170,24 +207,18 @@
             </tr>
             <tr>
                 <td>Fecha</td>
-                <td><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox><asp:Button ID="BFecha" CssClass="hide" runat="server" Text="..." onclick="BFecha_Click" /></td>
+                <td><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox></td>
                 <td>Hora</td>
                 <td><asp:TextBox ID="THora" runat="server" CssClass="hora"></asp:TextBox></td>
             </tr>
             <tr>
                 <td>
-                    Medico que atiende</td>
-                <td>
-                    <asp:DropDownList ID="DMedico" runat="server" DataSourceID="SMedicos" 
-                DataTextField="perNombre" DataValueField="perId"> </asp:DropDownList>
-            <asp:SqlDataSource ID="SMedicos" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="SELECT perId,perNombre FROM admPersonalHS WHERE eEstId=1 and carId=6 ORDER BY perNombre">
-            </asp:SqlDataSource></td>
-                <td>&nbsp;
+                    Funcionario que atiende</td>
+                <td colspan="3">
+                    <asp:TextBox ID="TFuncionario" runat="server" Width="98%"></asp:TextBox>
+                    <asp:TextBox ID="TIdFuncionario" runat="server" CssClass="hide"></asp:TextBox>
+                    <asp:RequiredFieldValidator ControlToValidate="TIdFuncionario" ErrorMessage="Por favor ingrese un funcionario." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                     </td>
-                <td>&nbsp;
-                </td>
             </tr>
             <tr>
                 <td colspan="4" class="celdaTitulo">
@@ -281,9 +312,19 @@
             <asp:SqlDataSource ID="SAntecendentes" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,antecedentes_evolucion.id AS antecedente,antecedentes_evolucion.estado AS estado,antecedentes_evolucion.observaciones FROM varios LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=@idingreso AND antecedentes_evolucion.motivo=varios.id) WHERE varios.tipo=2 AND varios.szReservado IS NULL" >
+                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre
+                                ,antecedentes_evolucion.id AS antecedente
+                                ,IFNULL(IFNULL(antecedentes_evolucion.estado,(SELECT antecedentes_evolucion.estado FROM evolucion_paciente LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=antecedentes_evolucion.id) WHERE evolucion_paciente.paciente=@paciente ORDER BY evolucion_paciente DESC LIMIT 1)),antecedentes_ingreso.estado) AS estado
+                                ,IFNULL(IFNULL(antecedentes_evolucion.observaciones,(SELECT antecedentes_evolucion.observaciones FROM evolucion_paciente LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=antecedentes_evolucion.id) WHERE evolucion_paciente.paciente=@paciente ORDER BY evolucion_paciente DESC LIMIT 1)),antecedentes_ingreso.observaciones) AS observaciones
+                                FROM varios 
+                                LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=@idingreso AND antecedentes_evolucion.motivo=varios.id) 
+                                LEFT JOIN ingreso_paciente ON (ingreso_paciente.paciente=@paciente)
+                                LEFT JOIN antecedentes_ingreso ON (antecedentes_ingreso.ingreso_paciente=ingreso_paciente.id AND antecedentes_ingreso.motivo=varios.id)
+                                WHERE varios.tipo=2 AND varios.szReservado IS NULL
+                                ;" >
                 <SelectParameters>
                     <asp:ControlParameter ControlID="HIdEvolucion" Name="idingreso" PropertyName="Value" DefaultValue="0" />
+                    <asp:ControlParameter ControlID="CCDetallePaciente" Name="paciente" PropertyName="IdPaciente" />
                 </SelectParameters>
             </asp:SqlDataSource></td>
             </tr>
@@ -326,6 +367,7 @@
             </asp:SqlDataSource>
                 </td>
             </tr>
+            <asp:Panel runat="server" ID="PCIE10">
             <tr>
                 <td colspan="4" class="celdaTitulo">Código de diagnóstico</td>
             </tr>
@@ -365,6 +407,7 @@
               <td colspan="3"><asp:TextBox runat="server" Width="90%" ID="TCIE10"></asp:TextBox>
                 <asp:Button ID="BMasCDiagnostico" runat="server" OnClick="BMasCDiagnostico_Click" Text="+" /></td>
             </tr>
+            </asp:Panel>
             <tr>
                 <td colspan="4">Analisis</td>
             </tr>

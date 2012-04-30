@@ -76,7 +76,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         }
                         LFormulacion.Text = DTipo.SelectedItem.Text;
                         LMedicamento.Text = singular;
-                    }                    
+                        GFormulacion.Columns[3].HeaderText = singular;
+                    }
 
                     Query formulacion = new Query("formulacion");
 
@@ -277,6 +278,9 @@ public partial class paciente_formulacion : System.Web.UI.Page
         PrintEventArgs evento = (PrintEventArgs)e;
 
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
+        evento.Contenido = evento.Contenido.Replace("$szMedicamento$", LMedicamento.Text);
+        evento.Contenido = evento.Contenido.Replace("$szPosologia$", LPosologia.Text);
+        
         string encabezado = "";
         if (trPosologia.Visible)
         {

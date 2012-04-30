@@ -62,10 +62,11 @@ public partial class _Default : System.Web.UI.Page
             string id = "";
             string login = "";
             string forceurl = "";
+            string personal = "";
             string nombre = conectorMS.QueryString("SELECT usIdUsuario FROM seg_Usuarios WHERE usIdUsuario='" + usuario + "' AND usClave='" + contrasena + "' AND usActivo=1");
             if (nombre.Length > 0)
             {
-                MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl FROM usuario WHERE usuario='" + usuario + "' AND (estado IS NULL OR estado!=-1)");
+                MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal FROM usuario WHERE usuario='" + usuario + "' AND (estado IS NULL OR estado!=-1)");
                 if (reader != null)
                 {
                     while (reader.Read())
@@ -75,6 +76,7 @@ public partial class _Default : System.Web.UI.Page
                         login = reader["usuario"].ToString();
                         grupo = Convert.ToInt32(reader["grupo"].ToString());
                         forceurl = reader["forceurl"].ToString();
+                        personal = reader["personal"].ToString();
                         break;
                     }
                 }
@@ -82,7 +84,8 @@ public partial class _Default : System.Web.UI.Page
                 {
                     CConector.SetCookie("usuario", m_EUsuario.Text);
                     Usuario pUsuario = new Usuario(id, usuario, grupo, login);
-                    pUsuario.SetForceURL(forceurl);
+                    pUsuario["personal"] = personal;
+                    pUsuario.SetForceURL(forceurl);                    
 
                     SqlDataReader readerms = null;
                     if (grupo == 0)

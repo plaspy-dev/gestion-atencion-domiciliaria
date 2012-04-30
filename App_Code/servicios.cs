@@ -11,7 +11,7 @@ using SDG.Componentes;
 /// <summary>
 /// Descripción breve de servicios
 /// </summary>
-[WebService(Namespace = "http://org-15.example.test/")]
+[WebService(Namespace = "https://org-15.example.test/")]
 [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
 // Para permitir que se llame a este servicio web desde un script, usando ASP.NET AJAX, quite la marca de comentario de la línea siguiente. 
 [System.Web.Script.Services.ScriptService]
@@ -182,9 +182,30 @@ public class servicios : System.Web.Services.WebService
     public List<CJSon> GetPersonal(String q)
     {
         List<CJSon> lista = new List<CJSon>();
-
         CConectorMS conector = new CConectorMS();
-        SqlDataReader reader = conector.Query("SELECT TOP 100 perId AS id,perDocumento AS documento, perNombre AS nombres FROM admPersonalHS WHERE perDocumento LIKE '%" + q + "%' OR perNombre LIKE '%" + q + "%' ORDER BY perNombre");
+
+        string query = "SELECT TOP 100 perId AS id,perDocumento AS documento, perNombre AS nombres FROM admPersonalHS WHERE ";
+        string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
+
+        if (split.Length == 1)
+        { // solo un dato puede ser un documento
+            query += "perDocumento LIKE '%" + q.Trim() + "%' OR ";
+        }
+        query += "(";
+
+        for (int i = 0; i < split.Length; i++)
+        {
+            if (split[i].Length > 0)
+            { // verificamos que no este vacio
+                if (i > 0)
+                    query += " AND ";
+                query += String.Format(" perNombre LIKE '%{0}%' ", split[i]);
+            }
+        }
+
+        query += ") ORDER BY perNombre";
+
+        SqlDataReader reader = conector.Query(query);
         if (reader != null)
         {
             while (reader.Read())
