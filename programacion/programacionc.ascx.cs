@@ -31,7 +31,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         {
             SAutorizacion.SelectCommand = SAutorizacion.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=3");
             SActividad.SelectCommand = SActividad.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=3");
-            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "carId in (6,8,29,27,19,18,9,45)");
+            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "carId in (6,8,29,27,19,18,9,45,48)");
         } else  if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.apoyo)
         {
             SAutorizacion.SelectCommand = SAutorizacion.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=2");
@@ -284,7 +284,10 @@ public partial class phd_programacionc : System.Web.UI.UserControl
             if (reader != null && reader.Read())
             {
                 DateTime autorizacion= (DateTime)reader["autFecha"];
-                DateTime final = (DateTime)reader["autFechaVenc"];
+                DateTime final;
+                if (reader["autFechaVenc"].ToString()=="")
+                    final = autorizacion.AddDays(30);
+                else final = (DateTime)reader["autFechaVenc"];
                 if (HId.Value.Length==0)
                     TObservaciones.Text= reader["autObservaciones"].ToString();
                 if (final == null || final < autorizacion) 

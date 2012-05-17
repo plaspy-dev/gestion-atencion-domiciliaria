@@ -48,7 +48,7 @@
         });
         if ($("#<%= PMujer.ClientID %>").length == 0) {
             $("#tmujer").remove();
-            $("#tfisico").attr("colspan", "4");
+            $("#tfisico").attr("colspan", "4").attr("width", "100%");
         }
     });
     function rel(text) {
@@ -171,8 +171,8 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="2" valign="top">
-                <asp:GridView ID="GRevision" runat="server" AutoGenerateColumns="False" 
+                <td colspan="2" valign="top" width="50%">
+                <asp:GridView ID="GRevision" runat="server" AutoGenerateColumns="False" Width="100%"
                 DataKeyNames="id,revision" DataSourceID="SRevision">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -208,8 +208,8 @@
                 </SelectParameters>
             </asp:SqlDataSource>
                 </td>
-                <td colspan="2" valign="top">
-                <asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" DataKeyNames="id, antecedente" DataSourceID="SAntecendentes">
+                <td colspan="2" valign="top" width="50%">
+                <asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" DataKeyNames="id, antecedente" DataSourceID="SAntecendentes" Width="100%">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
                 <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -240,9 +240,9 @@
             </asp:SqlDataSource></td>
             </tr>
             <tr>
-                <td colspan="2" valign="top" id="tmujer">
+                <td colspan="2" valign="top" id="tmujer" width="50%">
                     <asp:Panel runat="server" ID="PMujer">
-                        <asp:GridView ID="GGinecologico" runat="server" AutoGenerateColumns="False" 
+                        <asp:GridView ID="GGinecologico" runat="server" AutoGenerateColumns="False" Width="100%"
                         DataKeyNames="id, varios" DataSourceID="SGinecologico">
                         <RowStyle CssClass="GridRow"></RowStyle>
                         <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -273,8 +273,8 @@
                     </asp:SqlDataSource>
                     </asp:Panel>
                 </td>
-                <td colspan="2" valign="top" id="tfisico">
-                <asp:GridView ID="GExamenFisico" runat="server" AutoGenerateColumns="False" DataKeyNames="id, examen" DataSourceID="SExamenFisico">
+                <td colspan="2" valign="top" id="tfisico" width="50%">
+                <asp:GridView ID="GExamenFisico" runat="server" AutoGenerateColumns="False" DataKeyNames="id, examen" DataSourceID="SExamenFisico" Width="100%">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
                 <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -344,7 +344,9 @@
                 <td colspan="2">Observaciones</td>
             </tr>
             <tr>
-                <td colspan="2"><asp:TextBox runat="server" Width="98%" ID="TCIE10"></asp:TextBox></td>
+                <td colspan="2"><asp:TextBox runat="server" Width="98%" ID="TCIE10"></asp:TextBox>
+                <asp:RequiredFieldValidator ControlToValidate="TCIE10" ValidationGroup="cie10" ErrorMessage="Por favor ingrese un CIE10." ID="RequiredFieldValidator14" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                </td>
                 <td colspan="2"><asp:TextBox runat="server" Width="98%" ID="TObservacionesCIE10"></asp:TextBox></td>
             </tr>
             <tr>
@@ -360,7 +362,7 @@
                     </asp:SqlDataSource>
                 </td>
                 <td align="right">
-                <asp:Button ID="BMasCDiagnostico" runat="server" OnClick="BMasCDiagnostico_Click" Text="+" /></td>
+                <asp:Button ID="BMasCDiagnostico" runat="server" OnClick="BMasCDiagnostico_Click" Text="+" ValidationGroup="cie10" /></td>
             </tr>
             <tr>
                 <td colspan="4" class="celdaTitulo">
@@ -394,8 +396,7 @@
                 <td>
                     Peso</td>
                 <td>
-                    <asp:TextBox ID="TPeso" runat="server" CssClass="float"></asp:TextBox>Kg
-                    <asp:RequiredFieldValidator ControlToValidate="TPeso" ErrorMessage="Por favor ingrese un peso." ID="RequiredFieldValidator9" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    <asp:TextBox ID="TPeso" runat="server" CssClass="float"></asp:TextBox>Kg</td>
                 <td>
                     Saturación</td>
                 <td>
@@ -406,8 +407,7 @@
                 <td>
                     Glucometría</td>
                 <td>
-                    <asp:TextBox ID="TGlucometria" runat="server" CssClass="float"></asp:TextBox>mg/dl
-                    <asp:RequiredFieldValidator ControlToValidate="TGlucometria" ErrorMessage="Por favor ingrese una glucometría." ID="RequiredFieldValidator11" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    <asp:TextBox ID="TGlucometria" runat="server" CssClass="float"></asp:TextBox>mg/dl</td>
                 <td>
                     &nbsp;</td>
                 <td>
@@ -416,8 +416,7 @@
             <tr>
                 <td>Análisis clínico</td>
                 <td colspan="3">
-                    <asp:TextBox ID="TAnalisis" runat="server" Height="120px" 
-                        TextMode="MultiLine" Width="99%"></asp:TextBox>
+                    <asp:TextBox ID="TAnalisis" runat="server" Height="120px" TextMode="MultiLine" Width="99%"></asp:TextBox>
                     <asp:RequiredFieldValidator ControlToValidate="TAnalisis" ErrorMessage="Por favor ingrese un análisis." ID="RequiredFieldValidator12" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 </td>
             </tr>

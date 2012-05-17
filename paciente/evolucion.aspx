@@ -287,7 +287,7 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="4"><asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" 
+                <td colspan="4" width="100%"><asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" Width="100%" 
                 DataKeyNames="id, antecedente" DataSourceID="SAntecendentes">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -329,8 +329,8 @@
             </asp:SqlDataSource></td>
             </tr>
             <tr>
-                <td colspan="4">
-                <asp:GridView ID="GExamenFisico" runat="server" AutoGenerateColumns="False"
+                <td colspan="4" width="100%">
+                <asp:GridView ID="GExamenFisico" runat="server" AutoGenerateColumns="False" Width="100%"
                 DataKeyNames="id, examen" DataSourceID="SExamenFisico">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -413,6 +413,7 @@
             </tr>
             <tr>
                 <td colspan="4"><asp:TextBox ID="TAnalisis" runat="server" Height="200px" TextMode="MultiLine" Width="99%"></asp:TextBox>
+                <asp:RequiredFieldValidator ControlToValidate="TAnalisis" ErrorMessage="Por favor ingrese un análisis." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 </td>
             </tr>
             <tr>
@@ -424,7 +425,9 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="4" align="right"><asp:Button ID="BAceptar" runat="server" onclick="BAceptar_Click" 
+                <td colspan="4" align="right">
+                <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
+                <asp:Button ID="BAceptar" runat="server" onclick="BAceptar_Click" 
             Text="Aceptar" />
         <asp:Button ID="BCancelar" runat="server" CausesValidation="False" 
             onclick="BCancelar_Click" Text="Cancelar" /></td>

@@ -46,6 +46,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
                     DMedico.Enabled = usuario.CanAdmin();
                     if(!usuario.CanAdmin()) {
+                        DMedico.DataBind();
                         ListItem item= DMedico.Items.FindByValue(usuario["personal"]);
                         if (item == null)
                             BAceptar.Enabled = false;
@@ -86,7 +87,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                         GCDiagnostico.Columns[1].Visible = usuario.CanDelete();
 
                         HIdIngreso.Value = readermysql["id"].ToString();
-                        DMedico.SelectedValue = readermysql["medico"].ToString();
+                        conector.SelectInDropDown(DMedico, readermysql["medico"], "SELECT perNombre FROM admPersonalHS WHERE perId={0}");
                         THora.Text = readermysql["hora"].ToString();
                         TMotivo.Text = readermysql["motivo"].ToString();
                         DMotivo.SelectedValue = readermysql["segun"].ToString();
@@ -342,6 +343,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
     protected void BMasCDiagnostico_Click(object sender, EventArgs e)
     {
+        Validate("cie10");
+        if (!IsValid)
+            return;
+
         string codigo = GetCodigoCIE(TCIE10.Text);
 
         CConectorMS conector = new CConectorMS();

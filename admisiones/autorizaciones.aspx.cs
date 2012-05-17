@@ -73,12 +73,15 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                             LEstado.Text = "Anulada";
                         else LEstado.Text = "Suspendida hasta el " + CConector.GetFromMySQLDate(reader["autFechaSuspension"]);
                     } else {
-                        DateTime vencimiento = (DateTime)reader["autFechaVenc"];
-                        if(vencimiento==null) {
-                            vencimiento = (DateTime)reader["autFecha"];
-                            vencimiento = vencimiento.AddDays(30);
+                        if(reader["autFechaVenc"].ToString()!="") {
+                            DateTime vencimiento = (DateTime)reader["autFechaVenc"];
+                            if (vencimiento == null)
+                            {
+                                vencimiento = (DateTime)reader["autFecha"];
+                                vencimiento = vencimiento.AddDays(30);
+                            }
+                            LEstado.Text = DateTime.Now.Date > vencimiento ? "Vencida" : "Activa";
                         }
-                        LEstado.Text = DateTime.Now.Date>vencimiento ? "Vencida" : "Activa";
                     }
                     BIr_Click(sender, e);
                 }
@@ -394,6 +397,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         
         query["autActivo"] = "0";
         query["autObservacionesAnul"] = TMotivo.Text;
+        query["autProvisional"] = "1";
         if (RSuspender.Checked)
             query["autFechaSuspension"] = TFSuspender.Text;
 

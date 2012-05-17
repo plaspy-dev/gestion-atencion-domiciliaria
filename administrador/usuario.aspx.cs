@@ -30,6 +30,7 @@ public partial class administrador_usuario : System.Web.UI.Page
         CConector.SelectInComboText(DGrupos, HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[4].Text));
         TNombres.Text = HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[2].Text);
         TUsuario.Text = HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[3].Text);
+        TIdPersonal.Text= HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[6].Text).Trim();
         HUsuario.Value = TUsuario.Text;
         
         ((MasterPageI)Master).SetModificacion(HId.Value);
@@ -47,6 +48,8 @@ public partial class administrador_usuario : System.Web.UI.Page
         query["nombre"] = TNombres.Text;
         query["usuario"] = TUsuario.Text;
         query["grupo"] = DGrupos.SelectedValue;
+        query["personal"] = TIdPersonal.Text;
+
         if(TContrasena.Text.Length>0)
             query.AddCampo("contrasena", "PASSWORD(" + Query.GetValor(TContrasena.Text) + ")", false);
 

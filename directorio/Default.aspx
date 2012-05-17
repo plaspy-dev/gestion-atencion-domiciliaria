@@ -28,7 +28,7 @@
                 minLength: 3,
                 select: function(event, ui) {
 
-                    location.href = location.href + "?fiid=" + ui.item.value;
+                    $.goURL("fiid=" + ui.item.value);
                     return true;
                 }
             });

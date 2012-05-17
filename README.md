@@ -21,7 +21,7 @@ In the November 24, 2026 local trial, use a disposable MySQL database, a fiction
 
 ### Overview
 
-This cut records the home-care application as archived on 2012-04-30.
+This cut records the home-care application as archived on 2012-05-17.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
@@ -43,7 +43,7 @@ The retained site entry is `directorio/Default.aspx`. Use fictional accounts and
 
 ### Archive notes
 
-The archive inventory counted 2 additions, 12 edits and 0 removals.
+The archive inventory counted 0 additions, 11 edits and 0 removals.
 
 ### Framework versions
 
@@ -92,7 +92,7 @@ En el ensayo local del 24 de noviembre de 2026, usa una base MySQL desechable, u
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2012-04-30.
+Este corte conserva la versión de atención domiciliaria archivada el 2012-05-17.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
@@ -114,7 +114,7 @@ La entrada conservada del sitio es `directorio/Default.aspx`. Usa cuentas fictic
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 2 adiciones, 12 cambios y 0 retiros.
+El inventario del respaldo registró 0 adiciones, 11 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 

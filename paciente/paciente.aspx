@@ -2,7 +2,7 @@
 <%@ Register src="autorizaciones.ascx" tagname="autorizaciones" tagprefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-
+    <script type="text/javascript" src="../webcam/jquery.webcam.js"></script>
     <script type="text/javascript">
         $(function() {
             $("#<%= TObservaciones.ClientID %>").attr("tabindex", "-1");

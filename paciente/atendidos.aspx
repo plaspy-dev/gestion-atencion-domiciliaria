@@ -51,6 +51,7 @@
                 <asp:BoundField DataField="Fecha" SortExpression="Fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
                 <asp:BoundField DataField="Paciente" SortExpression="Paciente" HeaderText="Paciente" />
                 <asp:BoundField DataField="Documento" SortExpression="Documento" HeaderText="Documento" />
+                <asp:BoundField DataField="Sexo" SortExpression="Sexo" HeaderText="Sexo" />
                 <asp:BoundField DataField="Edad" SortExpression="Edad" HeaderText="Edad" ItemStyle-HorizontalAlign="Right" />
                 <asp:BoundField DataField="Direccion" SortExpression="Direccion" HeaderText="Dirección" />
                 <asp:BoundField DataField="Barrio" SortExpression="Barrio" HeaderText="Barrio" />
@@ -59,7 +60,7 @@
                 <asp:BoundField DataField="Diagnostico1" SortExpression="Diagnostico1" HeaderText="Diagnostico 1" />
                 <asp:BoundField DataField="Diagnostico2" SortExpression="Diagnostico2" HeaderText="Diagnostico 2" />
                 <asp:BoundField DataField="Diagnostico3" SortExpression="Diagnostico3" HeaderText="Diagnostico 3" />
-                <asp:BoundField DataField="Conducta" SortExpression="Conducta" HeaderText="Conducta clínica" />
+                <asp:BoundField DataField="Analisis" SortExpression="Analisis" HeaderText="Análisis clínico" />
             </Columns>
             <RowStyle CssClass="GridRow"></RowStyle>
             <FooterStyle CssClass="GridFooter"></FooterStyle>

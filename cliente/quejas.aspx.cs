@@ -173,7 +173,7 @@ public partial class cliente_quejas : System.Web.UI.Page
         conector.Commit();
 
 
-        ((MasterPageI)Master).SetResultado("Queja de " + CCDetallePaciente.Nombres + " editada.");
+        ((MasterPageI)Master).SetResultado("Queja de " + (RPaciente.Checked ? CCDetallePaciente.Nombres : FuncionarioC.Nombre) + " editada.");
     }
 
     protected void BCancelar_Click(object sender, EventArgs e)

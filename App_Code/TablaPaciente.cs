@@ -36,6 +36,7 @@ public class TablaPaciente
         msquery += "cieCodDx";
         msquery += "cieCodDx_1";
         msquery += "cieCodDx_2";
+        msquery += "sexoDesc";
 
         MySqlDataReader readermysql = conector.Query(szQuery);
         if (readermysql != null)
@@ -45,14 +46,13 @@ public class TablaPaciente
                 todos[0] = readermysql["pacId"].ToString();
                 todos[1] = readermysql["Fecha"];
                 todos[2] = readermysql["Barthel"];
-                todos[3] = HttpUtility.HtmlDecode(readermysql["Conducta"].ToString());
+                todos[3] = HttpUtility.HtmlDecode(readermysql["Analisis"].ToString());
 
-                SqlDataReader readerms = conectorms.Query(msquery.GetSelect("pacId=" + todos[0].ToString()));
+                SqlDataReader readerms = conectorms.Query(msquery.GetSelect("pacId=" + todos[0].ToString(), "LEFT JOIN admSexo ON (admSexo.sexoId=phdPaciente.sexoId)"));
                 if (readerms != null && readerms.Read())
                 {
                     if (entidad == "0" || readerms["entID"].ToString() == entidad)
                     {
-
                         todos[4] = readerms["pacNombres"].ToString();
                         todos[5] = readerms["pacDocumento"].ToString();
                         todos[6] = readerms["pacDireccion"].ToString();
@@ -61,7 +61,7 @@ public class TablaPaciente
                         todos[9] = readerms["cieCodDx"].ToString();
                         todos[10] = readerms["cieCodDx_1"].ToString();
                         todos[11] = readerms["cieCodDx_2"].ToString();
-                        todos[12] = null;
+                        todos[13] = readerms["sexoDesc"].ToString();
 
                         DateTime fechaNacimiento = (DateTime)readerms["pacFechaNac"];
 
@@ -94,7 +94,7 @@ public class TablaPaciente
         m_pTabla.Columns.Add("pacId");
         m_pTabla.Columns.Add("Fecha", typeof(DateTime));
         m_pTabla.Columns.Add("Barthel", typeof(int));
-        m_pTabla.Columns.Add("Conducta");
+        m_pTabla.Columns.Add("Analisis");
         m_pTabla.Columns.Add("Paciente");
         m_pTabla.Columns.Add("Documento");
         m_pTabla.Columns.Add("Direccion");
@@ -104,11 +104,12 @@ public class TablaPaciente
         m_pTabla.Columns.Add("Diagnostico2");
         m_pTabla.Columns.Add("Diagnostico3");
         m_pTabla.Columns.Add("Edad", typeof(int));
+        m_pTabla.Columns.Add("Sexo");
 
         Query querymysql = new Query("ingreso_paciente");
 
         querymysql["Fecha"] = "ingreso_paciente.fecha";
-        querymysql["Conducta"] = "ingreso_paciente.conducta";
+        querymysql["Analisis"] = "ingreso_paciente.analisis";
         querymysql["Barthel"] = "(SELECT SUM(varios.descripcion) FROM indice_barthel LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id) LEFT JOIN varios ON (varios.id=analisis_barthel.resultado) WHERE indice_barthel.paciente=ingreso_paciente.paciente GROUP BY indice_barthel.id ORDER BY indice_barthel.fecha DESC LIMIT 1)";
         querymysql["pacId"] = "ingreso_paciente.paciente";
 
@@ -120,7 +121,7 @@ public class TablaPaciente
         querymysql = new Query("evolucion_paciente");
 
         querymysql["Fecha"] = "evolucion_paciente.fecha";
-        querymysql["Conducta"] = "evolucion_paciente.analisis";
+        querymysql["Analisis"] = "evolucion_paciente.analisis";
         querymysql["Barthel"] = "(SELECT SUM(varios.descripcion) FROM indice_barthel LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id) LEFT JOIN varios ON (varios.id=analisis_barthel.resultado) WHERE indice_barthel.paciente=evolucion_paciente.paciente GROUP BY indice_barthel.id ORDER BY indice_barthel.fecha DESC LIMIT 1)";
         querymysql["pacId"] = "evolucion_paciente.paciente";
 

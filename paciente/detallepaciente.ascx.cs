@@ -12,7 +12,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
 {
     public string Documento { get; set; }
     public string Nombres { 
-        get { return ViewState["phd_detallepaciente_nombres"].ToString(); }
+        get { return ViewState["phd_detallepaciente_nombres"]==null ? "" : ViewState["phd_detallepaciente_nombres"].ToString(); }
         set { ViewState["phd_detallepaciente_nombres"] = value; }
     }
 

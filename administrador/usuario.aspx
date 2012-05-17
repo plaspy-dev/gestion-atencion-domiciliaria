@@ -214,22 +214,21 @@
         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         <Columns>
-                    <asp:CommandField ButtonType="Image" 
-                        ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                    <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" 
-                        ShowDeleteButton="True" />
+                    <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                    <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                     <asp:BoundField DataField="nombre" HeaderText="Nombres" SortExpression="nombre" />
                     <asp:BoundField DataField="usuario" HeaderText="Usuario" SortExpression="usuario" />
                     <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" />
                     <asp:BoundField DataField="ingreso" HeaderText="Último ingreso" SortExpression="ingreso" />
+                    <asp:BoundField DataField="personal" HeaderText="PersonalID" SortExpression="personal" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
         </Columns>
         <SelectedRowStyle CssClass="selecteditem" />
     </asp:GridView>
     <asp:SqlDataSource ID="SUsuarios" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT usuario.id AS id,usuario.nombre AS nombre,usuario.usuario AS usuario,IFNULL(grupo.nombre,'Administrador') AS grupo,usuario.ingreso AS ingreso FROM usuario LEFT JOIN grupo ON (usuario.grupo=grupo.id) WHERE usuario.estado IS NULL OR usuario.estado!=-1 ORDER BY usuario.nombre" 
+                SelectCommand="SELECT usuario.id AS id,usuario.nombre AS nombre,usuario.usuario AS usuario,IFNULL(grupo.nombre,'Administrador') AS grupo,usuario.ingreso AS ingreso,usuario.personal FROM usuario LEFT JOIN grupo ON (usuario.grupo=grupo.id) WHERE usuario.estado IS NULL OR usuario.estado!=-1 ORDER BY usuario.nombre" 
                  DeleteCommand="UPDATE usuario SET estado=-1 WHERE id=@id">
-    </asp:SqlDataSource>    
+    </asp:SqlDataSource>
 </asp:Content>
 
