@@ -124,6 +124,33 @@
         <tr>
             <td colspan="3">
                 <div id="accordion">
+                    <h3><a href="#">Cargos a programar</a></h3>
+                    <div class="hide">
+                        <asp:GridView ID="GCargos" runat="server" DataSourceID="SCargos" 
+                            DataKeyNames="id" AutoGenerateColumns="false" ShowHeader="false"
+                            AllowSorting="True" onrowdatabound="GCargos_RowDataBound">
+                            <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                            <Columns>
+                                <asp:TemplateField HeaderText="Permiso">
+                                    <ItemTemplate>
+                                        <asp:CheckBox runat="server" ID="CCargo" Checked="false" Text='<%# Eval("nombre").ToString() %>' />
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
+                        <asp:SqlDataSource ID="SCargos" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                                SelectCommand="SELECT carId id,carDescripcion nombre FROM dbo.admCargo ORDER BY 2;">
+                                    <SelectParameters>
+                                        <asp:ControlParameter ControlID="HUsuario" Name="usuario" PropertyName="Value" DefaultValue=" " />
+                                    </SelectParameters>
+                        </asp:SqlDataSource>
+                    </div>
                     <h3><a href="#">Permisos especiales</a></h3>
                     <div style="display: none">
                 <asp:GridView ID="GEspeciales" runat="server" DataSourceID="SEspeciales" 

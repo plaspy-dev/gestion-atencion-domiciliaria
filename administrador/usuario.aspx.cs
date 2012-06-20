@@ -21,6 +21,7 @@ public partial class administrador_usuario : System.Web.UI.Page
             BAceptar.Enabled = usuario.CanInsert();
             GUsuarios.Columns[1].Visible = usuario.CanDelete();
             GUsuarios.Columns[0].Visible = usuario.CanUpdate();
+            ViewState["cargos"] = "";
         }
     }
     protected void GUsuarios_SelectedIndexChanged(object sender, EventArgs e)
@@ -32,6 +33,8 @@ public partial class administrador_usuario : System.Web.UI.Page
         TUsuario.Text = HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[3].Text);
         TIdPersonal.Text= HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[6].Text).Trim();
         HUsuario.Value = TUsuario.Text;
+        ViewState["cargos"] = new CConector().QueryString("SELECT cargos FROM usuario WHERE id=" + HId.Value);
+        GCargos.DataBind();
         
         ((MasterPageI)Master).SetModificacion(HId.Value);
     }
@@ -44,11 +47,25 @@ public partial class administrador_usuario : System.Web.UI.Page
         CConector conector = CConector.GetConector();
         string szQuery;
         string mensaje;
+        string cargos = "";
 
         query["nombre"] = TNombres.Text;
         query["usuario"] = TUsuario.Text;
         query["grupo"] = DGrupos.SelectedValue;
         query["personal"] = TIdPersonal.Text;
+
+        // agregamos los cargos que puede programar el usuario
+        for (int i = 0; i < GCargos.Rows.Count; i++ ) {
+
+            CheckBox box = (CheckBox)GCargos.Rows[i].FindControl("CCargo");
+            if (box.Checked)
+            {
+                if (cargos.Length > 0)
+                    cargos += ",";
+                cargos += GCargos.DataKeys[i].Value.ToString();
+            }
+        }
+        query["cargos"] = cargos;
 
         if(TContrasena.Text.Length>0)
             query.AddCampo("contrasena", "PASSWORD(" + Query.GetValor(TContrasena.Text) + ")", false);
@@ -78,8 +95,13 @@ public partial class administrador_usuario : System.Web.UI.Page
 
         query["usIdUsuario"] = TUsuario.Text;
         query["usNombreUsuario"] = TNombres.Text;
+        query["usActivo"] = "1";
         if (TContrasena.Text.Length > 0)
             query["usClave"] = crypt.Encriptar(TContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"));
+
+        // verificamos que el usuario no halla existido anteriormente
+        if (HUsuario.Value.Length == 0)
+            HUsuario.Value = conectorms.QueryString("SELECT usIdUsuario FROM seg_Usuarios WHERE usIdUsuario='" + TUsuario.Text + "'");
 
         if (HUsuario.Value.Length > 0)
         {
@@ -266,6 +288,21 @@ public partial class administrador_usuario : System.Web.UI.Page
             CConectorMS conectorms = new CConectorMS();
             if (conectorms.QueryMod("UPDATE seg_Usuarios SET usActivo=0 WHERE usIdUsuario='" + nombre + "'") == -1)
                 return;
+        }
+    }
+    protected void GCargos_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if(e.Row.RowIndex!=-1) {
+            string []valores= ViewState["cargos"].ToString().Split(',');
+            for (int i = 0; i < valores.Length; i++) {
+
+                if (valores[i] == GCargos.DataKeys[e.Row.RowIndex].Value.ToString())
+                {
+                    CheckBox box = (CheckBox)e.Row.FindControl("CCargo");
+                    box.Checked = true;
+                    break;
+                }
+            }
         }
     }
 }

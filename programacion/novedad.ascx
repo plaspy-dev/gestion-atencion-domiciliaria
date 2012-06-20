@@ -9,7 +9,72 @@
             }
         });
         addDialog("#dParentNovedad", "#dNovedad");
-        $("#<%=DProfesional.ClientID %>").combobox();
+
+        $("#<%= TProfesional.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetPersonalC",
+                    data: "{ 'q': '" + request.term + "', 's': '<%= HIdServicio.Value %>', c: null }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.value, label: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                $("#<%= TProfesionalID.ClientID %>").val(ui.item.value);
+                $("#<%= TProfesional.ClientID %>").val(ui.item.label);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TProfesionalID.ClientID %>").val("");
+            }
+        }).change(function() { if ($(this).val() == "") $("#<%= TProfesionalID.ClientID %>").val(""); });
+
+
+        $("#<%= TProcedimiento.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetMedicamentos",
+                    data: "{ 'q': '" + request.term + "', 't': '173' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.value, label: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
+                $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TProcedimientoID.ClientID %>").val("");
+                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
+            }
+        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
     });
 </script>
 <div id="dParentNovedad">
@@ -17,9 +82,10 @@
 <asp:HiddenField ID="HId" runat="server" />
 <asp:HiddenField ID="HIdProgramacion" runat="server" />
 <asp:HiddenField ID="HIdProgramaciones" runat="server" />
-<asp:HiddenField ID="HIdTipoNovedad" runat="server" />
+<asp:HiddenField ID="HIdServicio" runat="server" />
 <asp:TextBox runat="server" ID="TTipo"></asp:TextBox>
 <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
+<asp:Panel runat="server" ID="PEdicion">
 <div id="tabsnovedad">
     <ul>
         <li><a href="#tnov-1">Cancelación Programación</a></li>
@@ -30,9 +96,9 @@
         <li><a href="#tnov-6">Otro</a></li>
     </ul>
     <div id="tnov-1">
-        <table>
+        <table width="100%">
             <tr>
-                <td style="min-width:100px; text-align:left;">Causa</td>
+                <td style="width: 85px; text-align:left;">Causa</td>
                 <td><asp:DropDownList ID="DCausa1" runat="server" 
                                 DataSourceID="SCausa1" DataTextField="nombre" 
                                 DataValueField="id">
@@ -45,9 +111,9 @@
         </table>
     </div>
     <div id="tnov-3" class="hide">
-        <table>
+        <table width="100%">
             <tr>
-                <td style="min-width:100px; text-align:left;">Causa</td>
+                <td style="width: 85px; text-align:left;">Causa</td>
                 <td><asp:DropDownList ID="DCausa3" runat="server" 
                                 DataSourceID="SCausa3" DataTextField="nombre" 
                                 DataValueField="id">
@@ -66,9 +132,9 @@
         </table>
     </div>
     <div id="tnov-5" class="hide">
-        <table>
+        <table width="100%">
             <tr>
-                <td style="min-width:100px; text-align:left;">Causa</td>
+                <td style="width: 85px; text-align:left;">Causa</td>
                 <td><asp:DropDownList ID="DCausa5" runat="server" 
                                 DataSourceID="SCausa5" DataTextField="nombre" 
                                 DataValueField="id">
@@ -80,21 +146,16 @@
             </tr>
             <tr>
                 <td>Nuevo servicio</td>
-                <td><asp:DropDownList ID="DNuevoServicio" runat="server" 
-                                DataSourceID="SNuevoServicio" DataTextField="nombre" 
-                                DataValueField="id">
-                                </asp:DropDownList>
-                <asp:SqlDataSource ID="SNuevoServicio" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT actId id,actDescripcion nombre FROM dbo.phdActividad INNER JOIN dbo.phdTipoActividad ON phdActividad.tpaId = phdTipoActividad.tpaId WHERE tpaTipoServicio=1 ORDER BY 2">
-                </asp:SqlDataSource></td>
+                <td>
+                <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>
+                </td>
             </tr>
         </table>
     </div>
     <div id="tnov-2" class="hide">
-        <table>
+        <table width="100%">
             <tr>
-                <td style="min-width:100px; text-align:left;">Causa</td>
+                <td style="width: 85px; text-align:left;">Causa</td>
                 <td><asp:DropDownList ID="DCausa2" runat="server" 
                                 DataSourceID="SCausa2" DataTextField="nombre" 
                                 DataValueField="id">
@@ -106,21 +167,17 @@
             </tr>
             <tr>
                 <td>Profesional</td>
-                <td><asp:DropDownList ID="DProfesional" runat="server" Width="200px"
-                                DataSourceID="SProfesional" DataTextField="nombre" 
-                                DataValueField="id" ondatabinding="DProfesional_DataBinding">
-                                </asp:DropDownList>
-                <asp:SqlDataSource ID="SProfesional" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="(SELECT '' AS id,'' AS nombre) UNION (SELECT perId id,perNombre nombre FROM dbo.admPersonalHS where eEstId=1 and (areaid=2 or carId in (8,11,25,27))) ORDER BY 2">
-                </asp:SqlDataSource></td>
+                <td>
+                <asp:TextBox Width="99%" runat="server" ID="TProfesional"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TProfesionalID" CssClass="hide"></asp:TextBox>
+                </td>
             </tr>
         </table>
     </div>
     <div id="tnov-4" class="hide">
-        <table>
+        <table width="100%">
             <tr>
-                <td style="min-width:100px; text-align:left;">Causa</td>
+                <td style="width: 85px; text-align:left;">Causa</td>
                 <td><asp:DropDownList ID="DCausa4" runat="server" 
                                 DataSourceID="SCausa4" DataTextField="nombre" 
                                 DataValueField="id">
@@ -135,19 +192,22 @@
     <div id="tnov-6" class="hide">
     </div>
 </div>
+</asp:Panel>
 <div>
-<table>
+<asp:Panel runat="server" ID="PEdicion2">
+<table width="100%">
 <tr>
-    <td style="min-width:120px">Observaciones</td>
-    <td><asp:TextBox ID="TObservaciones" TextMode="Multiline" runat="server"></asp:TextBox></td>
+    <td style="width: 100px;">Observaciones</td>
+    <td><asp:TextBox ID="TObservaciones" TextMode="Multiline" runat="server" Width="99%"></asp:TextBox></td>
 </tr>
 </table>
 <br />
 <br />
+</asp:Panel>
     <asp:GridView ID="GNovedades" runat="server" AllowPaging="True" 
         AutoGenerateColumns="False" DataSourceID="SNovedades" 
         EmptyDataText="No se encontraron novedades" DataKeyNames="novIden" 
-        AllowSorting="true" onrowdatabound="GNovedades_RowDataBound">
+        AllowSorting="true">
         <RowStyle CssClass="GridRow"></RowStyle>
         <FooterStyle CssClass="GridFooter"></FooterStyle>
         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -156,7 +216,7 @@
         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         <Columns>
             <asp:BoundField DataField="cnoDescripcion" HeaderText="Tipo de Novedad" SortExpression="cnoDescripcion" />
-            <asp:BoundField DataField="novTipo" HeaderText="Causa" SortExpression="novTipo" />
+            <asp:BoundField DataField="novedad" HeaderText="Causa" SortExpression="novedad" />
             <asp:BoundField DataField="perNombre" HeaderText="Profesional Involucrado" SortExpression="perNombre" />
             <asp:BoundField DataField="personal" HeaderText="Profesional Asignado" SortExpression="personal" />
             <asp:BoundField DataField="novObs" HeaderText="Observaciones" SortExpression="novObs" />
@@ -170,15 +230,15 @@
                         phdNovedad.novIden,phdCausaNovedad.cnoDescripcion,personalAnt.perNombre,admPersonalHS.perNombre AS personal
                         ,phdNovedad.novObs,phdNovedad.segUsuarioRegistro,phdNovedad.segFechaRegistro
                         ,phdNovedad.novTipo
+                        ,CASE phdNovedad.novTipo WHEN 1 THEN 'Cancelación Programación' WHEN 2 THEN 'Reasignación' WHEN 3 THEN 'Cambio en num. sesiones' WHEN 4 THEN 'Otro' WHEN 5 THEN 'Paciente desprotegido' WHEN 6 THEN 'Cambio Servicio' ELSE NULL END AS novedad
                         FROM phdNovedad
                         LEFT JOIN admPersonalHS ON (phdNovedad.perId = admPersonalHS.perId)
                         LEFT JOIN admPersonalHS AS personalAnt ON (phdNovedad.perIdAnt = personalAnt.perId) OR (phdNovedad.perIdAnt IS NULL AND personalAnt.perId IS NULL)
                         LEFT JOIN phdCausaNovedad ON (phdNovedad.cnoId = phdCausaNovedad.cnoId)
-                        WHERE phdNovedad.prgId=@programacion AND phdNovedad.prgTipo =@tipo ORDER BY phdNovedad.segFechaRegistro DESC"
+                        WHERE phdNovedad.prgId=@programacion ORDER BY phdNovedad.segFechaRegistro DESC"
                     >
           <SelectParameters>
             <asp:ControlParameter ControlID="HIdProgramacion" Name="programacion" PropertyName="Value" Type="Int32" />
-            <asp:ControlParameter ControlID="HIdTipoNovedad" Name="tipo" PropertyName="Value" Type="Int32" />
           </SelectParameters>
     </asp:SqlDataSource>
     <br />

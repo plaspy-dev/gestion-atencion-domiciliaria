@@ -403,4 +403,15 @@ public partial class rh_funcionario : System.Web.UI.Page
             e.IsValid = Extension == "jpg" || Extension == "jpeg"; // Valid file type
         }
     }
+    protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowIndex != -1)
+        {
+            if (HttpUtility.HtmlDecode(e.Row.Cells[2].Text).Trim().Length == 0)
+            {
+                CConector conector = new CConector();
+                e.Row.Cells[2].Text = HttpUtility.HtmlEncode(conector.QueryString("SELECT CONCAT(codigo,'-',nombre) FROM medicamentos WHERE id=" + Query.GetValor(HttpUtility.HtmlDecode(e.Row.Cells[3].Text).Trim())));
+            }
+        }
+    }
 }

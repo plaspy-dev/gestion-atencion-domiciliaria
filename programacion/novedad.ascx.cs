@@ -13,25 +13,21 @@ public partial class phd_novedad : System.Web.UI.UserControl
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if(!IsPostBack)
-            HIdTipoNovedad.Value = ((int)ProgramacionTipo.TipoServicio).ToString();
-        if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.medico)
-        {
-            SNuevoServicio.SelectCommand = SNuevoServicio.SelectCommand.Replace("tpaTipoServicio=1", "tpaTipoServicio=3");
-            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "carId in (6,8,29,27,19,18,9,45)");
-        }
-        else if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.apoyo)
-        {
-            SNuevoServicio.SelectCommand = SNuevoServicio.SelectCommand.Replace("tpaTipoServicio=1", "tpaTipoServicio=2");
-            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "(areaid=1 OR carId IN (4,23))");
-        }
-        BAceptar.Enabled= Usuario.GetUsuario().CanUpdate();
+        BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
     }
+
     [Bindable(true), Category("Appearance"), DefaultValue("")]
     public string IdNovedad
     {
         get { return HId.Value; }
         set { HId.Value = value; }
+    }
+
+    [Bindable(true), Category("Appearance"), DefaultValue("")]
+    public string IdServicio
+    {
+        get { return HIdServicio.Value; }
+        set { HIdServicio.Value = value; }
     }
 
     [Bindable(true), Category("Appearance"), DefaultValue("")]
@@ -45,6 +41,10 @@ public partial class phd_novedad : System.Web.UI.UserControl
     {
         get { return HIdProgramaciones.Value; }
         set { HIdProgramaciones.Value = value; }
+    }
+    [Bindable(true), Category("Appearance"), DefaultValue("")]
+    public bool Editable {
+        set { PEdicion2.Visible= PEdicion.Visible = BAceptar.Visible = value; }
     }
 
     private static readonly object _AceptarClicked = new object();
@@ -81,7 +81,6 @@ public partial class phd_novedad : System.Web.UI.UserControl
         Query query = new Query("phdNovedad");
         CConectorMS conector = new CConectorMS();
         string []programacion= HIdProgramacion.Value=="" ? HIdProgramaciones.Value.Split(',') : HIdProgramacion.Value.Split(',');
-        query["prgTipo"] = HIdTipoNovedad.Value;
 
         int tipo=(Convert.ToInt32(TTipo.Text) + 1);
         if(tipo>2) // no hay tipo 3
@@ -92,12 +91,12 @@ public partial class phd_novedad : System.Web.UI.UserControl
         query["segFechaRegistro"] = "GETDATE()";
         query["novId"] = "2";
 
-        Query qprogramacion = new Query(ProgramacionTipo.GetNombreTabla());
+        Query qprogramacion = new Query("programacion");
 
         for (int i = 0; i < programacion.Length; i++)
         {
             query["prgId"] = programacion[i];
-            query["perIdAnt"] = conector.QueryString("SELECT perId FROM " + ProgramacionTipo.GetNombreTabla() + " WHERE prgId=" + programacion[i] + "");
+            query["perIdAnt"] = conector.QueryString("SELECT perId FROM programacion WHERE prgId=" + programacion[i] + "");
 
             if (TTipo.Text == "0")
             {
@@ -107,10 +106,10 @@ public partial class phd_novedad : System.Web.UI.UserControl
             else if (TTipo.Text == "1")
             {
                 query["cnoId"] = DCausa2.SelectedValue;
-                if (DProfesional.SelectedIndex == -1 || DProfesional.SelectedValue.Length==0)
+                if (TProfesionalID.Text.Length==0)
                     return;
-                qprogramacion["perId"] = DProfesional.SelectedValue;
-                query["perId"] = DProfesional.SelectedValue;
+                qprogramacion["perId"] = TProfesionalID.Text;
+                query["perId"] = TProfesionalID.Text;
             }
             else if (TTipo.Text == "2")
             {
@@ -126,8 +125,8 @@ public partial class phd_novedad : System.Web.UI.UserControl
             else if (TTipo.Text == "4")
             {
                 query["cnoId"] = DCausa5.SelectedValue;
-                query["actId"] = DNuevoServicio.SelectedValue;
-                qprogramacion["actId"] = DNuevoServicio.SelectedValue;
+                query["actId"] = TProcedimientoID.Text;
+                qprogramacion["actId"] = TProcedimientoID.Text;
             }
 
             if (HId.Value.Length > 0)
@@ -152,8 +151,10 @@ public partial class phd_novedad : System.Web.UI.UserControl
         TObservaciones.Text = "";
         HId.Value = "";
         HIdProgramacion.Value = "";
+        HIdServicio.Value = "";
         HIdProgramaciones.Value = "";
-        DProfesional.SelectedIndex = -1;
+        TProfesional.Text = "";
+        TProfesionalID.Text = "";
         Visible = false;
         EventHandler handler = (EventHandler)base.Events[_AceptarClicked];
         if (handler != null)
@@ -166,47 +167,15 @@ public partial class phd_novedad : System.Web.UI.UserControl
         Visible = false;
         HId.Value = "";
         TObservaciones.Text = "";
-        DProfesional.SelectedIndex = -1;
+        TProfesionalID.Text = "";
+        TProfesional.Text = "";
         HIdProgramacion.Value = "";
+        HIdServicio.Value = "";
         HIdProgramaciones.Value = "";
         EventHandler handler = (EventHandler)base.Events[_CancelarClicked];
         if (handler != null)
         {
             handler(this, e);
         }
-    }
-    protected void GNovedades_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        if(e.Row.RowIndex>-1) {
-            string nombre=e.Row.Cells[1].Text;
-            if(nombre=="1") {
-                nombre="Cancelación Programación";
-            }
-            else if (nombre == "2")
-            {
-                nombre = "Reasignación";
-            }
-            else if (nombre == "4")
-            {
-                nombre = "Cambio en num. sesiones";
-            }
-            else if (nombre == "5")
-            {
-                nombre = "Paciente desprotegido";
-            }
-            else if (nombre == "6")
-            {
-                nombre = "Cambio Servicio";
-            }
-            else 
-            {
-                nombre = "Otro";
-            }
-            e.Row.Cells[1].Text = nombre;
-        }
-    }
-    protected void DProfesional_DataBinding(object sender, EventArgs e)
-    {
-        
     }
 }

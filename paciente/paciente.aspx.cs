@@ -302,13 +302,9 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 return;
             if (conector.QueryMod("insert into dbo.phdAuditServicios(pacId,audIngreso,audUsuario,audFecha,audObs,segFechaIngreso) values(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + TFechaRetiro.Text + "','" + TObservacionesRetiro.Text + "',getdate())") == -1)
                 return;
-            if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM vwphd_ProgramacionTotal pr WHERE pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0 and pr.prgId=phdNovedad.prgId and pr.prgTipo=phdNovedad.prgTipo)") == -1)
+            if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr WHERE pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0 and pr.prgId=phdNovedad.prgId and pr.prgTipo=phdNovedad.prgTipo)") == -1)
                 return;
-            if (conector.QueryMod("update PhdProgramacion set prgActivo=1 where pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0") == -1)
-                return;
-            if (conector.QueryMod("update PhdProgramacionMD set prgActivo=1 where pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0") == -1)
-                return;
-            if (conector.QueryMod("update AtxProgramacion set prgActivo=1 where pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0") == -1)
+            if (conector.QueryMod("UPDATE programacion set prgActivo=1 where pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0") == -1)
                 return;
             if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=1 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaRetiro.Text + "' and autActivo=0") == -1)
                 return;
@@ -323,15 +319,11 @@ public partial class seguimiento_paciente : System.Web.UI.Page
             string cnoId = conector.QueryString("SELECT cnoId FROM phdCausaEgreso WHERE cegId=" + DMotivo.SelectedValue);
             if (cnoId.Length == 0)
                 cnoId = "NULL";
-            if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM vwphd_ProgramacionTotal pr where pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1 and pr.prgId=phdNovedad.prgId and pr.prgTipo=phdNovedad.prgTipo)") == -1)
+            if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1 and pr.prgId=phdNovedad.prgId and pr.prgTipo=phdNovedad.prgTipo)") == -1)
                 return;
-            if (conector.QueryMod("INSERT INTO phdNovedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,prgTipo,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "',getdate() FROM dbo.vwphd_ProgramacionTotal WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
+            if (conector.QueryMod("INSERT INTO phdNovedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,prgTipo,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "',getdate() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
                 return;
-            if (conector.QueryMod("UPDATE PhdProgramacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
-                return;
-            if (conector.QueryMod("UPDATE PhdProgramacionMD set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
-                return;
-            if (conector.QueryMod("UPDATE AtxProgramacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
+            if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
                 return;
             if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaRetiro.Text + "' and autActivo=1") == -1)
                 return;
@@ -354,6 +346,17 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         {
             string Extension = e.Value.Substring(e.Value.LastIndexOf(".") + 1).ToLower();
             e.IsValid = Extension == "jpg" || Extension == "jpeg"; // Valid file type
+        }
+    }
+    protected void GProgramacion_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowIndex != -1)
+        {
+            if (HttpUtility.HtmlDecode(e.Row.Cells[2].Text).Trim().Length == 0)
+            {
+                CConector conector = new CConector();
+                e.Row.Cells[2].Text = HttpUtility.HtmlEncode(conector.QueryString("SELECT CONCAT(codigo,'-',nombre) FROM medicamentos WHERE id=" + Query.GetValor(HttpUtility.HtmlDecode(e.Row.Cells[4].Text).Trim())));
+            }
         }
     }
 }

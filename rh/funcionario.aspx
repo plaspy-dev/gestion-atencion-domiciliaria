@@ -629,7 +629,7 @@
                 </fieldset>
                 <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
                     AutoGenerateColumns="False" EmptyDataText="No se encontraron sesiones" 
-                    AllowPaging="True" PageSize="20" AllowSorting="True" >
+                    AllowPaging="True" PageSize="20" AllowSorting="True" onrowdatabound="GResultados_RowDataBound">
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -640,6 +640,7 @@
                         <asp:BoundField HeaderText="Fecha" DataField="fecha" SortExpression="fecha" DataFormatString="{0:d}"/>
                         <asp:BoundField HeaderText="Paciente" DataField="nombre" SortExpression="nombre"/>
                         <asp:BoundField HeaderText="Actividad" DataField="act" SortExpression="act"/>
+                        <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                     </Columns>
                 </asp:GridView>
                 <div style="text-align: right;">
@@ -647,16 +648,17 @@
                 </div>
                 <asp:SqlDataSource ID="SResultados" runat="server" 
                         ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                        SelectCommand="SELECT vwphd_ProgramacionTotal.prgFechaProg fecha,
+                        SelectCommand="SELECT programacion.prgFechaProg fecha,
                             (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre, 
-                            phdActividad.actDescripcion AS act
-                            FROM vwphd_ProgramacionTotal 
-                            LEFT JOIN phdPaciente ON (phdPaciente.pacId=vwphd_ProgramacionTotal.pacId) 
-                            LEFT JOIN phdActividad ON (phdActividad.actId=vwphd_ProgramacionTotal.actId)
-                            WHERE vwphd_ProgramacionTotal.perId=@perId 
-                            AND (@desde=' ' OR vwphd_ProgramacionTotal.prgFechaProg>=@desde)
-                            AND (@hasta=' ' OR vwphd_ProgramacionTotal.prgFechaProg<=@hasta)
-                            ORDER BY vwphd_ProgramacionTotal.prgFechaProg DESC">
+                            phdActividad.actDescripcion AS act,
+                            programacion.actId
+                            FROM programacion 
+                            LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) 
+                            LEFT JOIN phdActividad ON (phdActividad.actId=programacion.actId)
+                            WHERE programacion.perId=@perId 
+                            AND (@desde=' ' OR programacion.prgFechaProg>=@desde)
+                            AND (@hasta=' ' OR programacion.prgFechaProg<=@hasta)
+                            ORDER BY programacion.prgFechaProg DESC">
                          <SelectParameters>
                             <asp:ControlParameter ControlID="HId" PropertyName="Value" Name="perId" DefaultValue="-1" />
                             <asp:ControlParameter ControlID="TDesde" PropertyName="Text" Name="desde" DefaultValue=" " />

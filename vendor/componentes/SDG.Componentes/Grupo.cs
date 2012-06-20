@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Configuration;
+using System.IO;
 using System.Web;
 using System.Web.UI.WebControls;
 using System.Xml;
@@ -19,24 +21,33 @@ public class Grupo
 		m_bNativo = ConfigurationSettings.AppSettings["app"] == null;
 		m_aURLs = new ArrayList();
 		XmlDocument xmlDocument = new XmlDocument();
-		xmlDocument.Load(HttpContext.Current.Server.MapPath("~/directorio.xml"));
-		XmlNodeList elementsByTagName = xmlDocument.GetElementsByTagName("paginas");
-		XmlNodeList elementsByTagName2 = ((XmlElement)elementsByTagName[0]).GetElementsByTagName("seccion");
-		foreach (XmlElement item in elementsByTagName2)
+		try
 		{
-			XmlNodeList elementsByTagName3 = item.GetElementsByTagName("titulo");
-			string innerText = elementsByTagName3[0].InnerText;
-			XmlNodeList elementsByTagName4 = item.GetElementsByTagName("pagina");
-			foreach (XmlElement item2 in elementsByTagName4)
+			xmlDocument.Load(HttpContext.Current.Server.MapPath("~/directorio.xml"));
+			XmlNodeList elementsByTagName = xmlDocument.GetElementsByTagName("paginas");
+			XmlNodeList elementsByTagName2 = ((XmlElement)elementsByTagName[0]).GetElementsByTagName("seccion");
+			foreach (XmlElement item in elementsByTagName2)
 			{
-				XmlNodeList elementsByTagName5 = item2.GetElementsByTagName("titulo");
-				XmlNodeList elementsByTagName6 = item2.GetElementsByTagName("url");
-				CURLs value = new CURLs(elementsByTagName6[0].InnerText, elementsByTagName5[0].InnerText, innerText)
+				XmlNodeList elementsByTagName3 = item.GetElementsByTagName("titulo");
+				string innerText = elementsByTagName3[0].InnerText;
+				XmlNodeList elementsByTagName4 = item.GetElementsByTagName("pagina");
+				foreach (XmlElement item2 in elementsByTagName4)
 				{
-					m_bNativo = true
-				};
-				m_aURLs.Add(value);
+					XmlNodeList elementsByTagName5 = item2.GetElementsByTagName("titulo");
+					XmlNodeList elementsByTagName6 = item2.GetElementsByTagName("url");
+					CURLs value = new CURLs(elementsByTagName6[0].InnerText, elementsByTagName5[0].InnerText, innerText)
+					{
+						m_bNativo = true
+					};
+					m_aURLs.Add(value);
+				}
 			}
+		}
+		catch (FileNotFoundException)
+		{
+		}
+		catch (Exception)
+		{
 		}
 	}
 

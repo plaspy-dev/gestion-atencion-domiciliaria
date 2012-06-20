@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Programación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="programacion.aspx.cs" Inherits="medico_programacion" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="programacion.aspx.cs" Inherits="programacion_programacion" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register src="~/programacion/programacionc.ascx" tagname="programacion" tagprefix="uc2" %>
@@ -7,7 +7,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
-    <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
+<uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
     <asp:Panel runat="server" id="PDatos" Visible="false" >
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
         <table width="100%">
@@ -25,25 +25,28 @@
                     Actividad
                     <asp:DropDownList ID="DProgramaciones" runat="server" 
                         AppendDataBoundItems="true" AutoPostBack="true" DataSourceID="SProgramaciones" 
-                        DataTextField="nombre" DataValueField="id">
+                        DataTextField="nombre" DataValueField="id" 
+                        ondatabound="DProgramaciones_DataBound">
                         <asp:ListItem Text="(Todas)" Value="0"></asp:ListItem>
                     </asp:DropDownList>
                     <asp:SqlDataSource ID="SProgramaciones" runat="server" 
                         ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                        SelectCommand="SELECT actId id,actDescripcion nombre FROM dbo.phdActividad INNER JOIN dbo.phdTipoActividad ON phdActividad.tpaId = phdTipoActividad.tpaId where tpaTipoServicio=3 order by 2">
+                        SelectCommand="SELECT programacion.actId AS id,phdActividad.actDescripcion AS nombre FROM programacion LEFT JOIN phdActividad ON (phdActividad.actId=programacion.actId) WHERE programacion.pacId=@paciente GROUP BY programacion.actId,phdActividad.actDescripcion">
+                        <SelectParameters>
+                            <asp:ControlParameter ControlID="CCDetallePaciente" Name="paciente" PropertyName="IdPaciente" />
+                        </SelectParameters>
                     </asp:SqlDataSource>
                 </td>
             </tr>
             <tr>
                 <td style="text-align: center" colspan="2">
-                    <div class="styleTb" style=" text-align:left;">
-                    </div>
                 <br />
                     <asp:GridView ID="GProgramacion" runat="server" AllowPaging="True" 
                         AutoGenerateColumns="False" DataSourceID="SProgramacion" 
                         EmptyDataText="No se encontraron programaciones" DataKeyNames="prgId" 
                         AllowSorting="true" onrowediting="GProgramacion_RowEditing" 
-                        onselectedindexchanged="GProgramacion_SelectedIndexChanged">
+                        onselectedindexchanged="GProgramacion_SelectedIndexChanged" 
+                        onrowdatabound="GProgramacion_RowDataBound">
                         <RowStyle CssClass="GridRow"></RowStyle>
                         <FooterStyle CssClass="GridFooter"></FooterStyle>
                         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -69,19 +72,21 @@
                             <asp:BoundField DataField="autorizacion" HeaderText="Autorización" SortExpression="autorizacion" />
                             <asp:BoundField DataField="actDescripcion" HeaderText="Actividad" SortExpression="actDescripcion"/>
                             <asp:CheckBoxField DataField="prgActivo" HeaderText="Activo?" />
+                            <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                         </Columns>
                     </asp:GridView>
                     <asp:SqlDataSource ID="SProgramacion" runat="server" 
                         ConnectionString="<%$ ConnectionStrings:connBD %>" 
                         SelectCommand="SELECT prgId,prgFechaProg,perNombre,prgNumSesion,actDescripcion,prgActivo,
-                                    phdProgramacionMD.autNumero + '[' + CONVERT(VARCHAR, ISNULL(phdDetalleAutorizacion.autNumSesiones,0)) + ']' AS autorizacion
-                                    FROM phdProgramacionMD 
-                                    LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdProgramacionMD.perId) 
-                                    LEFT JOIN phdActividad ON (phdActividad.actId=phdProgramacionMD.actId) 
-                                    LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdProgramacionMD.autNumero AND phdDetalleAutorizacion.actId=phdProgramacionMD.actId)
-                                    WHERE pacId=@paciente AND (@actividad=0 OR phdProgramacionMD.actId=@actividad)
+                                    programacion.autNumero + '[' + CONVERT(VARCHAR, ISNULL(phdDetalleAutorizacion.autNumSesiones,0)) + ']' AS autorizacion
+                                    , programacion.actId
+                                    FROM programacion 
+                                    LEFT JOIN admPersonalHS ON (admPersonalHS.perId=programacion.perId) 
+                                    LEFT JOIN phdActividad ON (phdActividad.actId=programacion.actId) 
+                                    LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=programacion.autNumero AND phdDetalleAutorizacion.actId=programacion.actId)
+                                    WHERE pacId=@paciente AND (@actividad=0 OR programacion.actId=@actividad)
                                     ORDER BY prgFechaProg DESC"
-                                    DeleteCommand="DELETE phdProgramacionMD where prgId=@prgId"
+                                    DeleteCommand="DELETE programacion where prgId=@prgId"
                                     >
                           <SelectParameters>
                             <asp:ControlParameter ControlID="CCDetallePaciente" Name="paciente" PropertyName="IdPaciente" />

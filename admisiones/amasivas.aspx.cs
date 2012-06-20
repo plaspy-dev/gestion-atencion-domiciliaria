@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using System.Collections;
 using System.Data.SqlClient;
 using SDG.Componentes;
+using System.Collections.Specialized;
 
 public partial class admisiones_amasivas : System.Web.UI.Page
 {
@@ -79,16 +80,7 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             LError.Text = "Por favor ingrese por lo menos un paciente.";
             return;
         }
-        bool actividad = false;
-        for (int i = 0; i < GActivades.Rows.Count; i++)
-        {
-            string numero = ((TextBox)GActivades.Rows[i].FindControl("TNSesiones")).Text;
-            if (numero == "" || numero == "0")
-                continue;
-            actividad = true;
-            break;
-        }
-        if (!actividad)
+        if (GActivades.Rows.Count==0)
         {
             LError.Text = "Por favor ingrese por lo menos una actividad.";
             return;
@@ -128,25 +120,22 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             if (conectormysql.InsertModificacion(res.ToString(), "~/admisiones/autorizaciones.aspx") == -1)
                 return;
 
-            Query act = new Query("phdDetalleAutorizacion");
-            act["autNumero"] = autorizacion;
-
-            for (int j = 0; j < GActivades.Rows.Count; j++)
+            string[] querys = SActividades.GetQuerys();
+            string szQuery;
+            if (querys != null)
             {
-                string numero = ((TextBox)GActivades.Rows[j].FindControl("TNSesiones")).Text;
-                if (numero == "" || numero == "0")
-                    continue;
-                act["actId"] = GActivades.DataKeys[j].Value.ToString();
-                act["autNumSesiones"] = numero;
-                act["autSesionesDia"] = ((TextBox)GActivades.Rows[j].FindControl("TSDia")).Text;
-
-                if (conector.QueryMod(act.GetInsert()) == -1)
-                    return;
+                for (int j = 0; j < querys.Length; j++)
+                {
+                    szQuery = querys[j].Replace("@autorizacion", Query.GetValor(autorizacion));
+                    if (conector.QueryMod(szQuery) == -1)
+                        return;
+                }
             }
         }
         conector.Commit();
         ((MasterPageI)Master).SetResultado(pacientes.Count + " programaciones agregadas.");
     }
+
     protected void GPacientes_RowDeleting(object sender, GridViewDeleteEventArgs e)
     {
         ArrayList pacientes = (ArrayList)Session["AMasivasPaciente"];
@@ -166,5 +155,65 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         GPacientes.DataSource = pacientes;
         GPacientes.DataBind();
         TPaciente.Focus();
+    }
+
+    protected void BProcedimiento_Click(object sender, EventArgs e)
+    {
+        Page.Validate("procedimiento");
+        if (!Page.IsValid)
+            return;
+
+        IOrderedDictionary data = new OrderedDictionary();
+        data.Add("procedimiento", TProcedimiento.Text);
+        data.Add("intensidad", TIntensidad.Text.Length == 0 ? null : TIntensidad.Text);
+        data.Add("sesionesdia", TSesionesDia.Text.Length == 0 ? null : TSesionesDia.Text);
+        data.Add("numerosesiones", TNumeroSesiones.Text);
+        data.Add("proc_id", TProcedimientoID.Text);
+        if (sender != BProcedimiento)
+            data.Add("id", TProcedimientoID.Text);
+
+        if (GActivades.SelectedIndex == -1)
+        {
+            SActividades.GetView().Insert(data, OnDataSourceOperationComplete);
+        }
+        else
+        {
+            data.Add("id", GActivades.DataKeys[GActivades.SelectedIndex].Value);
+
+            IOrderedDictionary dataold = new OrderedDictionary();
+            dataold.Add("procedimiento", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim());
+            dataold.Add("sesionesdia", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim());
+            dataold.Add("numerosesiones", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim());
+            dataold.Add("intensidad", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[6].Text).Trim());
+            dataold.Add("proc_id", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim());
+            dataold.Add("id", GActivades.DataKeys[GActivades.SelectedIndex].Value);
+
+            SActividades.GetView().Update(data, data, dataold, OnDataSourceOperationComplete);
+        }
+        GActivades.SelectedIndex = -1;
+        GActivades.DataBind();
+
+        TProcedimientoID.Text = TProcedimiento.Text = TIntensidad.Text = TSesionesDia.Text = TNumeroSesiones.Text = "";
+        TProcedimiento.Focus();
+    }
+
+    private bool OnDataSourceOperationComplete(int count, Exception e)
+    {
+        if (e != null)
+        {
+            throw e;
+        }
+        return false;
+    }
+
+    protected void GActivades_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        TProcedimiento.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim();
+        TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
+        TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
+        TIntensidad.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[6].Text).Trim();
+        TProcedimientoID.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim();
+
+        TProcedimiento.Focus();
     }
 }

@@ -21,6 +21,10 @@ public partial class directorio_Default : System.Web.UI.Page
         if (IsPostBack)
         {
             Session.Remove("directorioid");
+            Conector.SetCookie("directorio_area", DArea.SelectedValue);
+            Conector.SetCookie("directorio_estado", DEStado.SelectedValue);
+            Conector.SetCookie("directorio_cargo", DCargo.SelectedValue);
+            Conector.SetCookie("directorio_disponibilidad", DDisponibilidad.SelectedValue);
         } 
         else
         {
@@ -29,13 +33,11 @@ public partial class directorio_Default : System.Web.UI.Page
                 DEStado.DataBind();
                 DEStado.SelectedValue = "1";
             }
-            CConectorMS conector = new CConectorMS();
-            conector.StartTransaction();
-            conector.QueryMod("TRUNCATE TABLE programacion_directorio;");
-            conector.QueryMod("INSERT INTO programacion_directorio SELECT prgFechaProg, perId, pacId, actId FROM phdProgramacion WHERE prgFechaProg>=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))");
-            conector.QueryMod("INSERT INTO programacion_directorio SELECT prgFechaProg, perId, pacId, actId FROM atxProgramacion WHERE prgFechaProg>=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))");
-            conector.QueryMod("INSERT INTO programacion_directorio SELECT prgFechaProg, perId, pacId, actId FROM phdProgramacionMD WHERE prgFechaProg>=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))");
-            conector.Commit();
+            CConector conector = new CConector();
+            conector.SelectInDropDown(DArea, CConector.GetCookie("directorio_area"));
+            conector.SelectInDropDown(DEStado, CConector.GetCookie("directorio_estado"));
+            conector.SelectInDropDown(DCargo, CConector.GetCookie("directorio_cargo"));
+            conector.SelectInDropDown(DDisponibilidad, CConector.GetCookie("directorio_disponibilidad"));
         }
         Usuario usuario= Usuario.GetUsuario();
         GResultados.Columns[3].Visible = !usuario.CanUpdate();

@@ -32,7 +32,39 @@
                 return false;
             }
         });
-        $("#<%=BAceptar.ClientID %>").click(function() { return confirm("¿Esta seguro de hacer " + $('input[src*="eliminar.gif"]').length + " programaciones?"); });
+        $("#<%= TProcedimiento.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetMedicamentos",
+                    data: "{ 'q': '" + request.term + "', 't': '173' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.value, label: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
+                $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TProcedimientoID.ClientID %>").val("");
+                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
+            }
+        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
+        $("#<%=BAceptar.ClientID %>").click(function() { return confirm("¿Esta seguro de hacer " + $('#<%= GPacientes.ClientID %> input[src*="eliminar.gif"]').length + " programaciones?"); });
     });
 </script>
 </asp:Content>
@@ -95,44 +127,59 @@
             </td>
         </tr>
         <tr>
-            <td>
-                Observaciones</td>
-            <td colspan="3">
-                <asp:TextBox ID="TObservaciones" runat="server" TextMode="MultiLine" Width="99%"></asp:TextBox>
-            </td>
+            <td class="celdaTitulo" colspan="4">Servicios</td>
         </tr>
         <tr>
             <td colspan="4">
-                <asp:GridView ID="GActivades" runat="server" AutoGenerateColumns="False" 
-                    DataKeyNames="actId" DataSourceID="SActividades" >
+                <asp:GridView ID="GActivades" runat="server" DataSourceID="SActividades" 
+                    AutoGenerateColumns="False" DataKeyNames="id" 
+                    onselectedindexchanged="GActivades_SelectedIndexChanged" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
                     <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-                    <Columns>
-                        <asp:BoundField DataField="actDescripcion" HeaderText="Actividad" />
-                        <asp:TemplateField HeaderText="Núm. ses.">
-                            <ItemStyle HorizontalAlign="Right" />
-                            <ItemTemplate>
-                                <asp:TextBox ID="TNSesiones" Width="40" CssClass="entero" runat="server" Text=""></asp:TextBox>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Ses./día">
-                            <ItemStyle HorizontalAlign="Right" />
-                            <ItemTemplate>
-                                <asp:TextBox ID="TSDia" Width="40" CssClass="entero" runat="server" Text=""></asp:TextBox>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                    </Columns>
-                </asp:GridView>
-                <asp:SqlDataSource ID="SActividades" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT phdActividad.actId,phdActividad.actDescripcion
-                                FROM phdActividad
-                                ORDER BY phdActividad.actDescripcion;">
-                </asp:SqlDataSource>
+                        <Columns>
+                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:BoundField DataField="proc_id" HeaderText="idMedicamento" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
+                            <asp:BoundField DataField="procedimiento" HeaderText="Actividad" />
+                            <asp:BoundField DataField="numerosesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="sesionesdia" HeaderText="Ses./día" ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="intensidad" HeaderText="Intensidad" ItemStyle-HorizontalAlign="Right" />
+                        </Columns>
+                    </asp:GridView>
+                    <sdg:CustomDataSource ID="SActividades" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            SelectCommand="SELECT id,nombre AS procedimiento,id AS proc_id,id AS sesionesdia,id AS numerosesiones,id AS intensidad FROM varios WHERE id IS NULL"
+                            DeleteCommand="DELETE FROM phdDetalleAutorizacion WHERE autNumero=@autorizacion AND actId=@id"
+                            InsertCommand="INSERT INTO phdDetalleAutorizacion (autNumero,actId,autNumSesiones,autSesionesDia, intensidad) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia,@intensidad)"
+                            UpdateCommand="UPDATE phdDetalleAutorizacion SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia, intensidad=@intensidad WHERE id=@id"
+                            >
+                    </sdg:CustomDataSource>
+            </td>
+        </tr>
+        <tr>
+            <td>Procedimiento<asp:RequiredFieldValidator ValidationGroup="procedimiento" ControlToValidate="TProcedimientoID" ErrorMessage="Por favor ingrese un procedimiento." ID="RProcedimiento" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td colspan="3"><asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Número de sesiones<asp:RequiredFieldValidator ValidationGroup="procedimiento" ControlToValidate="TNumeroSesiones" ErrorMessage="Por favor ingrese un número." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td><asp:TextBox runat="server" ID="TNumeroSesiones" CssClass="entero"></asp:TextBox></td>
+            <td>Sesiones por día</td>
+            <td><asp:TextBox runat="server" ID="TSesionesDia" CssClass="entero"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Intensidad</td>
+            <td><asp:TextBox runat="server" ID="TIntensidad" CssClass="entero"></asp:TextBox></td>
+            <td colspan="2" align="right"><asp:Button runat="server" ID="BProcedimiento" 
+                    ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
+        </tr>
+        <tr>
+            <td>
+                Observaciones</td>
+            <td colspan="3">
+                <asp:TextBox ID="TObservaciones" runat="server" TextMode="MultiLine" Width="99%"></asp:TextBox>
             </td>
         </tr>
         <tr>

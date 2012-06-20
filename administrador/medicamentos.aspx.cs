@@ -14,6 +14,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TCodigo.Focus();
         if (!IsPostBack)
         {
+            TCodigo.Focus();
             Usuario usuario = Usuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanInsert();
@@ -26,6 +27,37 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                 LTipos_SelectedIndexChanged(sender, e);
             }
             else BAceptar.Enabled = false;
+
+            if (Request.QueryString["imp"] != null && Request.QueryString["imp"].Length > 0) {
+
+                CConector conector = new CConector();
+
+                MySqlDataReader reader= conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo FROM medicamentos WHERE id="+ Query.GetValor(Request.QueryString["imp"].Trim()));
+
+                if (reader != null && reader.Read()) {
+                    
+                    HId.Value = reader["id"].ToString();
+                    TCodigo.Text = reader["codigo"].ToString();
+                    TNombre.Text = reader["nombre"].ToString();
+                    TPrincipio.Text = reader["principio"].ToString();
+                    TForma.Text = reader["forma"].ToString();
+                    TConcentracion.Text = reader["concentracion"].ToString();
+                    TAclaracion.Text = reader["aclaracion"].ToString();
+                    conector.SelectInDropDown(DCargo, reader["area"]);
+
+                    ListItem item= LTipos.Items.FindByValue(reader["tipo"].ToString());
+                    if (item != null)
+                    {
+                        LTipos.SelectedIndex = -1;
+                        item.Selected = true;
+                    }
+                    LTipos_SelectedIndexChanged(sender, e);
+
+                    BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
+
+                    ((MasterPageI)Master).SetModificacion(HId.Value);
+                }
+            }
         }
     }
     protected void BAceptar_Click(object sender, EventArgs e)
@@ -41,6 +73,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         query["principio"]=TPrincipio.Text;
         query["concentracion"]=TConcentracion.Text;
         query["aclaracion"]=TAclaracion.Text;
+        query["area"] = DCargo.SelectedValue;
 
         if (HId.Value.Length == 0)
         {
@@ -76,6 +109,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TPrincipio.Text = "";
         TConcentracion.Text = "";
         TAclaracion.Text = "";
+        Conector.SelectInComboText(DCargo, "");
+        BAceptar.Enabled = Usuario.GetUsuario().CanInsert();
 
         GResultado.SelectedIndex = -1;
     }
@@ -83,17 +118,30 @@ public partial class administrador_medicamentos : System.Web.UI.Page
     protected void GResultado_SelectedIndexChanged(object sender, EventArgs e)
     {
         HId.Value = GResultado.SelectedDataKey.Value.ToString();
-        TCodigo.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[2].Text);
-        TNombre.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[3].Text);
-        TPrincipio.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[4].Text);
-        TForma.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[5].Text);        
-        TConcentracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[6].Text);
-        TAclaracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[7].Text);
+        TCodigo.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[2].Text).Trim();
+        TNombre.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[3].Text).Trim();
+        TPrincipio.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[4].Text).Trim();
+        TForma.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[5].Text).Trim();
+        TConcentracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[6].Text).Trim();
+        TAclaracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[7].Text).Trim();
+        Conector.SelectInComboText(DCargo, HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[8].Text).Trim());
+
+        BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
 
         ((MasterPageI)Master).SetModificacion(HId.Value);
     }
     protected void LTipos_SelectedIndexChanged(object sender, EventArgs e)
     {
         LTipo.Text = LTipos.SelectedItem.Text;
+    }
+    protected void GResultado_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowIndex != -1) {
+            if (HttpUtility.HtmlDecode(e.Row.Cells[8].Text).Trim().Length != 0)
+            {
+                CConectorMS conector = new CConectorMS();
+                e.Row.Cells[8].Text= conector.QueryString("SELECT carDescripcion FROM admCargo WHERE carId=" + HttpUtility.HtmlDecode(e.Row.Cells[8].Text).Trim());
+            }
+        }
     }
 }

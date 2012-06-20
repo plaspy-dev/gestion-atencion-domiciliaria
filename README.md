@@ -9,30 +9,20 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 > [!WARNING]
 > **Status: Archived.** This snapshot preserves an earlier edition. Its build instructions identify the requirements and checks for this cut.
 
-### Verification
-
-In the November 24, 2026 local trial, use a disposable MySQL database, a fictional SQL Server menu and the account alicia_demo. Run demo/Build.ps1 and use only the temporary output. Set debug="true" on the system.web compilation element for IIS Express in that copy. These archived sources do not include a menu catalogue. Put the following directory in directorio.xml at the root of the built site. Both database connections must point to loopback. Sign in and open Inicio.aspx. The protected page returned HTTP 200.
-
-~~~xml
-<?xml version="1.0" encoding="utf-8"?>
-<paginas><seccion><titulo>Demostración</titulo><pagina><titulo>Inicio</titulo><url>~/Inicio.aspx</url></pagina></seccion></paginas>
-~~~
-
-
 ### Overview
 
-This cut records the home-care application as archived on 2012-05-17.
+This cut records the home-care application as archived on 2012-06-20.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
 
 ### Features in the retained source
 
-- Open the patient record and its care information. `paciente/paciente.aspx`.
-- Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
 - Open the batch admission screen to process patient admissions. `admisiones/amasivas.aspx`.
-- Retrieve images linked to the clinical files in this edition. `archivo/foto.ashx`.
+- Open the patient record and its care information. `paciente/paciente.aspx`.
 - Open the staff record for the care team. `rh/funcionario.aspx`.
+- Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
+- Retrieve images linked to the clinical files in this edition. `archivo/foto.ashx`.
 - View and maintain access groups. `administrador/grupos.aspx`.
 
 ### Build and local use
@@ -43,7 +33,7 @@ The retained site entry is `directorio/Default.aspx`. Use fictional accounts and
 
 ### Archive notes
 
-The archive inventory counted 0 additions, 11 edits and 0 removals.
+The archive inventory counted 2 additions, 13 edits and 0 removals.
 
 ### Framework versions
 
@@ -51,7 +41,7 @@ The archive does not record the original framework version. The local build reci
 
 ### Usage
 
-Use the documented local build with a fictional operator. The available screens include `paciente/paciente.aspx` and the other routes above.
+Use the documented local build with a fictional operator. The available screens include `admisiones/amasivas.aspx` and the other routes above.
 
 The retained entry page is `administrador/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
 
@@ -80,30 +70,20 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 > [!WARNING]
 > **Estado: archivado.** Esta copia conserva una edición anterior. Sus instrucciones de compilación indican los requisitos y las pruebas de este corte.
 
-### Verificación
-
-En el ensayo local del 24 de noviembre de 2026, usa una base MySQL desechable, un menú ficticio en SQL Server y la cuenta alicia_demo. Ejecuta demo/Build.ps1 y usa su salida temporal. En esa copia define debug="true" en el elemento compilation de system.web para IIS Express. Estos fuentes archivados carecen del catálogo del menú. Coloca el siguiente directorio en directorio.xml en la raíz del sitio compilado. Ambas conexiones deben apuntar a loopback. Ingresa y abre Inicio.aspx. La pantalla protegida devolvió HTTP 200.
-
-~~~xml
-<?xml version="1.0" encoding="utf-8"?>
-<paginas><seccion><titulo>Demostración</titulo><pagina><titulo>Inicio</titulo><url>~/Inicio.aspx</url></pagina></seccion></paginas>
-~~~
-
-
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2012-05-17.
+Este corte conserva la versión de atención domiciliaria archivada el 2012-06-20.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
 
 ### Funciones en el código conservado
 
-- Abre la ficha del paciente y su información de atención. `paciente/paciente.aspx`.
-- Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `admisiones/amasivas.aspx`.
-- Consulta las imágenes vinculadas a los archivos clínicos de esta edición. `archivo/foto.ashx`.
+- Abre la ficha del paciente y su información de atención. `paciente/paciente.aspx`.
 - Abre la ficha del personal del equipo de atención. `rh/funcionario.aspx`.
+- Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
+- Consulta las imágenes vinculadas a los archivos clínicos de esta edición. `archivo/foto.ashx`.
 - Consulta y administra los grupos de acceso. `administrador/grupos.aspx`.
 
 ### Compilación y uso local
@@ -114,7 +94,7 @@ La entrada conservada del sitio es `directorio/Default.aspx`. Usa cuentas fictic
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 0 adiciones, 11 cambios y 0 retiros.
+El inventario del respaldo registró 2 adiciones, 13 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 
@@ -122,7 +102,7 @@ El respaldo no registra la versión original del framework. La receta local usa 
 
 ### Uso
 
-Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `paciente/paciente.aspx` y las demás rutas de arriba.
+Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `admisiones/amasivas.aspx` y las demás rutas de arriba.
 
 La portada conservada es `administrador/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
 

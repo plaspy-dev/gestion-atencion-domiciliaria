@@ -59,9 +59,42 @@
             $('span[id^="dact"]').hide();
             $("#dact" + $(this).val()).show();
         }).change();
-        $("#<%=DProfesional.ClientID %>").combobox();
+
         addDialog("#dParentProgramacion", "#dProgramacion");
         addDialog("#<%= PConfirmar.ClientID %>", "#dConfirmar");
+
+        $("#<%= TProfesional.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetPersonalC",
+                    data: "{ 'q': '" + request.term + "', 's': '" + $("#<%= DActividad.ClientID %>").val() + "', c: null }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.value, label: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                $("#<%= TProfesionalID.ClientID %>").val(ui.item.value);
+                $("#<%= TProfesional.ClientID %>").val(ui.item.label);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TProfesionalID.ClientID %>").val("");
+                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
+            }
+        }).change(function() { if ($(this).val() == "") $("#<%= TProfesionalID.ClientID %>").val(""); });
     });
 </script>
 <div id="dParentProgramacion">
@@ -78,7 +111,7 @@
         </table>
     </div>
 </asp:Panel>
-<div id="dProgramacion" title="Programación" style="display:none;">
+<div id="dProgramacion" title="Programación" class="hide">
 <asp:HiddenField ID="HId" runat="server" />
 <asp:HiddenField ID="HIdPaciente" runat="server" />
 <asp:ValidationSummary ValidationGroup="CProgramacion" ID="ValidationSummary1" runat="server" />
@@ -102,9 +135,8 @@
                                 phdAutorizacion.autActivo=1
                                 AND phdAutorizacion.pacId=@paciente
                                 AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                                AND phdTipoActividad.tpaTipoServicio=1 
                                 AND
-                                phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(phdProgramacion.prgNumSesion),0) FROM phdProgramacion WHERE phdProgramacion.pacId=phdAutorizacion.pacId AND phdProgramacion.autNumero=phdAutorizacion.autNumero AND phdProgramacion.actId=phdDetalleAutorizacion.actId)
+                                phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.pacId=phdAutorizacion.pacId AND programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId)
                                 GROUP BY phdAutorizacion.autNumero">
 			                <SelectParameters>
 			                    <asp:ControlParameter ControlID="HIdPaciente" PropertyName="Value" Name="paciente" DefaultValue="0" />
@@ -117,7 +149,7 @@
         <td align="left">
             <asp:DropDownList ID="DActividad" runat="server" 
                                 DataSourceID="SActividad" DataTextField="nombre" 
-                                DataValueField="id">
+                                DataValueField="id" ondatabound="DActividad_DataBound">
                                 </asp:DropDownList>
                 <asp:RequiredFieldValidator ValidationGroup="CProgramacion" ControlToValidate="DActividad" ErrorMessage="Por favor seleccione una actividad." ID="RequiredFieldValidator6" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <asp:Repeater runat="server" ID="RActividad" DataSourceID="SActividad" >
@@ -131,7 +163,7 @@
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
                     SelectCommand="SELECT phdDetalleAutorizacion.actId AS id,phdActividad.actDescripcion AS nombre
                         ,phdDetalleAutorizacion.autNumSesiones
-                        ,(SELECT ISNULL(SUM(phdProgramacion.prgNumSesion),0) FROM phdProgramacion WHERE phdProgramacion.pacId=phdAutorizacion.pacId AND phdProgramacion.autNumero=phdAutorizacion.autNumero AND phdProgramacion.actId=phdDetalleAutorizacion.actId) AS realizadas
+                        ,(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.pacId=phdAutorizacion.pacId AND programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId) AS realizadas
                         FROM phdAutorizacion
                         LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
                         LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
@@ -139,8 +171,7 @@
                         WHERE 
                         phdAutorizacion.pacId=@paciente
                         AND phdAutorizacion.autNumero=@autorizacion 
-                        AND phdTipoActividad.tpaTipoServicio=1 
-                        AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(phdProgramacion.prgNumSesion),0) FROM phdProgramacion WHERE phdProgramacion.pacId=phdAutorizacion.pacId AND phdProgramacion.autNumero=phdAutorizacion.autNumero AND phdProgramacion.actId=phdDetalleAutorizacion.actId)
+                        AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.pacId=phdAutorizacion.pacId AND programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId)
                         ORDER BY phdActividad.actDescripcion">
                         <SelectParameters>
                             <asp:ControlParameter ControlID="HIdPaciente" PropertyName="Value" Name="paciente" DefaultValue="0" />
@@ -214,16 +245,11 @@
     <tr><td colspan="2" align="left"><hr /></td></tr>
     <tr>
         <td align="left">Profesional</td>
-        <td align="left"><asp:DropDownList ID="DProfesional" runat="server" Width="200px" 
-                                DataSourceID="SProfesional" DataTextField="nombre"
-                                DataValueField="id">
-                                <asp:ListItem Value="" Text=""></asp:ListItem>
-                                </asp:DropDownList>
-                <asp:RequiredFieldValidator ValidationGroup="CProgramacion" InitialValue="0" ControlToValidate="DProfesional" ErrorMessage="Por favor seleccione un profesional." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                <asp:SqlDataSource ID="SProfesional" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="(SELECT '' AS id,'' AS nombre) UNION (SELECT perId id,perNombre nombre FROM dbo.admPersonalHS where eEstId=1 and (areaid=2 or carId in (8,11,25,27))) ORDER BY 2">
-                </asp:SqlDataSource></td>
+        <td align="left">
+            <asp:TextBox Width="99%" runat="server" ID="TProfesional"></asp:TextBox>
+            <asp:TextBox runat="server" ID="TProfesionalID" CssClass="hide"></asp:TextBox>
+            <asp:RequiredFieldValidator ValidationGroup="CProgramacion" ControlToValidate="TProfesionalID" ErrorMessage="Por favor seleccione un profesional." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+         </td>
     </tr>
     <tr>
         <td align="left">Num Sesiones/Día</td>

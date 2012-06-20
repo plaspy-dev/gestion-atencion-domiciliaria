@@ -8,6 +8,7 @@ using System.Globalization;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
 using System.Data.SqlClient;
+using System.Collections.Specialized;
 
 public partial class admisiones_autorizaciones : System.Web.UI.Page
 {
@@ -83,6 +84,27 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                             LEstado.Text = DateTime.Now.Date > vencimiento ? "Vencida" : "Activa";
                         }
                     }
+                    GActivades.DataBind();
+                    // actualizamos los servicios
+                    reader = conector.Query("SELECT phdDetalleAutorizacion.actId,phdActividad.actDescripcion,phdDetalleAutorizacion.autNumSesiones,phdDetalleAutorizacion.autSesionesDia, phdDetalleAutorizacion.intensidad"
+                        + " FROM phdDetalleAutorizacion"
+                        + " LEFT JOIN phdActividad ON (phdDetalleAutorizacion.actId=phdActividad.actId)"
+                        + " WHERE phdDetalleAutorizacion.autNumero=" + Query.GetValor(HIdAutorizacion.Value)
+                        + " ORDER BY phdActividad.actDescripcion;"
+                        );
+                    if (reader != null) {
+                        CConector conectormy = new CConector();
+                        while (reader.Read()) {
+                            TProcedimientoID.Text = reader["actId"].ToString();
+                            TProcedimiento.Text = reader["actDescripcion"].ToString();
+                            TIntensidad.Text = reader["intensidad"].ToString();
+                            TSesionesDia.Text = reader["autSesionesDia"].ToString();
+                            TNumeroSesiones.Text = reader["autNumSesiones"].ToString();
+                            if (TProcedimiento.Text.Length == 0)
+                                TProcedimiento.Text= conectormy.QueryString("SELECT CONCAT(codigo, ' - ', nombre) FROM medicamentos WHERE id=" + TProcedimientoID.Text);
+                            BProcedimiento_Click(sender, e);
+                        }
+                    }
                     BIr_Click(sender, e);
                 }
             }
@@ -147,16 +169,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 return;
             }
         }
-        bool actividad = false;
-        for (int i = 0; i < GActivades.Rows.Count; i++)
+        if (GActivades.Rows.Count==0)
         {
-            string numero = ((TextBox)GActivades.Rows[i].FindControl("TNSesiones")).Text;
-            if (numero == "" || numero == "0")
-                continue;
-            actividad = true;
-            break;
-        }
-        if(!actividad) {
             LError.Text = "Por favor ingrese por lo menos una actividad.";
             return;
         }
@@ -234,33 +248,22 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             }
         }
 
-        Query act= new Query("phdDetalleAutorizacion");
-        act["autNumero"]= TNumero.Text;
+        // limpiamos los servicioes anteriores
+        if (conector.QueryMod("DELETE FROM phdDetalleAutorizacion WHERE autNumero=" + Query.GetValor(HIdAutorizacion.Value)) == -1)
+            return;
 
-        for(int i=0; i<GActivades.Rows.Count; i++) {
-
-            string numero=((TextBox)GActivades.Rows[i].FindControl("TNSesiones")).Text;
-            string condicion = "FROM phdDetalleAutorizacion WHERE autNumero='" + HIdAutorizacion.Value + "' AND actId='" + GActivades.DataKeys[i].Value.ToString() + "'";
-            if (numero == "" || numero == "0")
+        string []querys= SActividades.GetQuerys();
+        string szQuery;
+        if (querys != null)
+        {
+            for (int i = 0; i < querys.Length; i++)
             {
-                if (conector.QueryMod("DELETE " + condicion) == -1)
-                    return;
-                continue;
-            }
-            string id = conector.QueryString("SELECT actId " + condicion);
-            act["actId"]= GActivades.DataKeys[i].Value.ToString();
-            act["autNumSesiones"]= numero;
-            act["autSesionesDia"]= ((TextBox)GActivades.Rows[i].FindControl("TSDia")).Text;
-
-            if (id.Length == 0)
-            { // no existe
-                if (conector.QueryMod(act.GetInsert()) == -1)
-                    return;
-            } else {
-                if (conector.QueryMod(act.GetUpdate("autNumero='" + HIdAutorizacion.Value + "' AND actId='" + GActivades.DataKeys[i].Value.ToString() + "'")) == -1)
+                szQuery = querys[i].Replace("@autorizacion", Query.GetValor(HIdAutorizacion.Value));
+                if (conector.QueryMod(szQuery) == -1)
                     return;
             }
         }
+
         conector.Commit();
         ((MasterPageI)Master).SetResultado("Número de autorización " + TNumero.Text + " editada.");
     }
@@ -304,8 +307,10 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
         SqlDataReader reader = conector.Query(query.GetSelect("phdPaciente.pacId=" + Query.GetValor(id) + ""
             , "LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)"));
+        PDatos.Visible = false;
         if (reader != null && reader.Read())
         {
+            PDatos.Visible = true;
             double maximo = 0;
             PPaciente.Visible = true;
             HIdPaciente.Value = id;
@@ -408,5 +413,85 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             return;
 
         ((MasterPageI)Master).SetResultado("Autorización " + HIdAutorizacion.Value + (RSuspender.Checked ? " suspendida." : " anulada." ));
+    }
+
+    protected void BProcedimiento_Click(object sender, EventArgs e)
+    {
+        Page.Validate("procedimiento");
+        if (!Page.IsValid)
+            return;
+
+        IOrderedDictionary data = new OrderedDictionary();
+        data.Add("procedimiento", TProcedimiento.Text);
+        data.Add("intensidad", TIntensidad.Text.Length == 0 ? null : TIntensidad.Text);
+        data.Add("sesionesdia", TSesionesDia.Text.Length==0 ? null : TSesionesDia.Text);
+        data.Add("numerosesiones", TNumeroSesiones.Text);
+        data.Add("proc_id", TProcedimientoID.Text);
+        if (sender != BProcedimiento) 
+            data.Add("id", TProcedimientoID.Text);
+
+        if (GActivades.SelectedIndex == -1)
+        {
+            SActividades.GetView().Insert(data, OnDataSourceOperationComplete);
+        }
+        else
+        {
+            data.Add("id", GActivades.DataKeys[GActivades.SelectedIndex].Value);
+
+            IOrderedDictionary dataold = new OrderedDictionary();
+            dataold.Add("procedimiento", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim());
+            dataold.Add("sesionesdia", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim());
+            dataold.Add("numerosesiones", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim());
+            dataold.Add("intensidad", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[6].Text).Trim());
+            dataold.Add("proc_id", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim());
+            dataold.Add("id", GActivades.DataKeys[GActivades.SelectedIndex].Value);
+
+            SActividades.GetView().Update(data, data, dataold, OnDataSourceOperationComplete);
+        }
+        GActivades.SelectedIndex = -1;
+        GActivades.DataBind();
+
+        TProcedimientoID.Text = TProcedimiento.Text = TIntensidad.Text = TSesionesDia.Text = TNumeroSesiones.Text = "";
+        TProcedimiento.Focus();
+    }
+
+    private bool OnDataSourceOperationComplete(int count, Exception e)
+    {
+        if (e != null)
+        {
+            throw e;
+        }
+        return false;
+    }
+
+    protected void GActivades_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        TProcedimiento.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim();
+        TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
+        TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
+        TIntensidad.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[6].Text).Trim();
+        TProcedimientoID.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim();
+
+        TProcedimiento.Focus();
+    }
+    protected void GAutorizaciones_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowIndex != -1) {
+
+            CConector conectormy = new CConector();
+            int pos = e.Row.Cells[3].Text.IndexOf("%%");
+            while(pos!=-1) {
+                
+                string texto = "";
+                for (int i = pos+2; i < e.Row.Cells[3].Text.Length; i++) {
+                    if (e.Row.Cells[3].Text[i] == ' ')
+                        break;
+                    texto+=e.Row.Cells[3].Text[i];
+                }
+                e.Row.Cells[3].Text= e.Row.Cells[3].Text.Replace("%%" + texto, conectormy.QueryString("SELECT CONCAT(codigo, ' - ', nombre) FROM medicamentos WHERE id=" + texto));
+                pos = e.Row.Cells[3].Text.IndexOf("%%");
+            }
+            e.Row.Cells[3].Text= e.Row.Cells[3].Text.Replace(",", "<br/>");
+        }
     }
 }

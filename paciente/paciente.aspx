@@ -495,7 +495,7 @@
     <asp:Panel runat="server" ID="PReactivar">
         <h3><a href="#">Programación próxima</a></h3>
         <div>
-            <asp:GridView ID="GProgramacion" runat="server" AutoGenerateColumns="False" DataSourceID="SProgramacion" EmptyDataText="No se encontraron programaciones">
+            <asp:GridView ID="GProgramacion" runat="server" AutoGenerateColumns="False" DataSourceID="SProgramacion" EmptyDataText="No se encontraron programaciones" onrowdatabound="GProgramacion_RowDataBound">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
                 <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -507,6 +507,7 @@
                     <asp:BoundField DataField="perNombre" HeaderText="Profesional" SortExpression="perNombre" />
                     <asp:BoundField DataField="actDescripcion" HeaderText="Actividad" SortExpression="actDescripcion" />
                     <asp:BoundField DataField="autNumero" HeaderText="Autorización" SortExpression="autNumero" />
+                    <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                 </Columns>
             </asp:GridView>
                 <asp:SqlDataSource ID="SProgramacion" runat="server" 
@@ -514,12 +515,13 @@
                     SelectCommand="SELECT  pr.prgFechaProg, 
 		                    phdActividad.actDescripcion, 
 		                    autNumero,
-		                    admPersonalHS.perNombre
-                    from dbo.vwphd_ProgramacionTotal pr
-		                    INNER JOIN phdPaciente on pr.pacId = phdPaciente.pacId
-		                    INNER JOIN phdActividad ON pr.actId = phdActividad.actId
-		                    INNER JOIN admPersonalHS ON pr.perId = admPersonalHS.perId
-	                    WHERE phdPaciente.pacId=@pacId
+		                    admPersonalHS.perNombre,
+		                    pr.actId
+                            FROM programacion pr
+		                    LEFT JOIN phdPaciente on pr.pacId = phdPaciente.pacId
+		                    LEFT JOIN phdActividad ON pr.actId = phdActividad.actId
+		                    LEFT JOIN admPersonalHS ON pr.perId = admPersonalHS.perId
+	                    WHERE pr.pacId=@pacId
                               AND pr.prgFechaProg >= getdate()
                     order by prgFechaProg desc,phdActividad.actDescripcion">
                       <SelectParameters>

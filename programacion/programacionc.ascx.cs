@@ -11,33 +11,8 @@ using SDG.Componentes;
 
 public partial class phd_programacionc : System.Web.UI.UserControl
 {
-    public ProgramacionTipo.TipoServicios TipoServicio
-    {
-        get
-        {
-            return ProgramacionTipo.TipoServicio;
-        }
-        set
-        {
-            ProgramacionTipo.TipoServicio = value;
-        }
-    }
-
     protected void Page_Load(object sender, EventArgs e)
     {
-        SAutorizacion.SelectCommand = SAutorizacion.SelectCommand.Replace("phdProgramacion", ProgramacionTipo.GetNombreTabla());
-        SActividad.SelectCommand = SActividad.SelectCommand.Replace("phdProgramacion", ProgramacionTipo.GetNombreTabla());
-        if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.medico)
-        {
-            SAutorizacion.SelectCommand = SAutorizacion.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=3");
-            SActividad.SelectCommand = SActividad.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=3");
-            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "carId in (6,8,29,27,19,18,9,45,48)");
-        } else  if (ProgramacionTipo.TipoServicio == ProgramacionTipo.TipoServicios.apoyo)
-        {
-            SAutorizacion.SelectCommand = SAutorizacion.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=2");
-            SActividad.SelectCommand = SActividad.SelectCommand.Replace("AND phdTipoActividad.tpaTipoServicio=1", "AND phdTipoActividad.tpaTipoServicio=2");
-            SProfesional.SelectCommand = SProfesional.SelectCommand.Replace("(areaid=2 or carId in (8,11,25,27))", "(areaid=1 or carId in (4,23))");
-        }
         if(!IsPostBack) {
             Session["phd_programacion"] = null;
         }
@@ -51,7 +26,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
             HId.Value = value;
             if (HId.Value.Length > 0)
             {
-                Query query = new Query(ProgramacionTipo.GetNombreTabla());
+                Query query = new Query("programacion");
 
                 query += "prgFechaProg";
                 query += "perId";
@@ -69,10 +44,11 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                     TFechaFinal.Text= TFecha.Text = reader["prgFechaProg"].ToString();
                     TObservaciones.Text = reader["prgObservaciones"].ToString();
                     TSesiones.Text = reader["prgNumSesion"].ToString();
+                    TProfesionalID.Text = reader["perId"].ToString();
 
                     conector.SelectInDropDown(DAutorizacion, reader["autNumero"], "SELECT '" + reader["autNumero"].ToString() + "'");
-                    conector.SelectInDropDown(DProfesional, reader["perId"], "SELECT perNombre FROM dbo.admPersonalHS where perId='" + reader["perId"].ToString() + "'");
                     conector.SelectInDropDown(DActividad, reader["actId"].ToString(), "SELECT actDescripcion FROM phdActividad WHERE actId='" + reader["actId"].ToString() + "'");
+                    TProfesional.Text = conector.QueryString("SELECT perNombre FROM dbo.admPersonalHS where perId='" + reader["perId"].ToString() + "'");
 
                     DAutorizacion_SelectedIndexChanged(null, null);
                 }
@@ -194,7 +170,8 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         TFecha.Text = "";
         TFechaFinal.Text = "";
         TSesiones.Text = "1";
-        DProfesional.SelectedIndex = -1;
+        TProfesional.Text = "";
+        TProfesionalID.Text = "";
         DActividad.SelectedIndex = -1;
         DAutorizacion.SelectedIndex = -1;
         DAutorizacion.DataBind();
@@ -232,10 +209,10 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         Usuario usuario = Usuario.GetUsuario();
         CConectorMS conector = new CConectorMS();
 
-        Query query = new Query(ProgramacionTipo.GetNombreTabla());
+        Query query = new Query("programacion");
 
         query["pacId"] = HIdPaciente.Value;
-        query["perId"] = DProfesional.SelectedValue;
+        query["perId"] = TProfesionalID.Text;
         query["actId"] = DActividad.SelectedValue;
         query["prgObservaciones"] = TObservaciones.Text;
         query["autNumero"] = DAutorizacion.SelectedValue;
@@ -301,5 +278,13 @@ public partial class phd_programacionc : System.Web.UI.UserControl
     {
         if(DAutorizacion.Items.Count>0)
             DAutorizacion_SelectedIndexChanged(sender, e);
+    }
+    protected void DActividad_DataBound(object sender, EventArgs e)
+    {
+        CConector conector= new CConector();
+        for (int i = 0; i < DActividad.Items.Count; i++) {
+            if (DActividad.Items[i].Text.Length == 0)
+                DActividad.Items[i].Text = conector.QueryString("SELECT CONCAT(codigo, ' - ', nombre) FROM medicamentos WHERE id=" + DActividad.Items[i].Value);
+        }
     }
 }

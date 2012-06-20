@@ -3,7 +3,6 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
     function iniciopagina() {
-        
         $("#<%= TNombres.ClientID %>").autocomplete({
                 source: function(request, response) {
                     $.ajax({
@@ -32,13 +31,13 @@
                     return true;
                 }
             });
-    }
+        }
+    
     $(function() {
         $("#dResultados").attr("title", $("#ctl00_cph_DeDisponibilidad_LNombres").html());
         $("#ctl00_cph_DeDisponibilidad_LNombres").hide();
         addDialog('#<%= PBuscar.ClientID%>', "#dResultados");
-    }
-    );
+    });
 </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
@@ -201,9 +200,9 @@
                     per.perDireccion, per.perBarrio, admDisponibilidad.dispDescripcion
                     ,loctrabajo.locDescripcion AS loctrabajo,locresidencia.locDescripcion AS locresidencia
                     ,ISNULL(per.perTelefono, '') + ' '+ ISNULL(per.perTelefono1, '') AS telefono,per.perCorreoElectronico
-					,(SELECT TOP 1 fecha FROM programacion_directorio WHERE programacion_directorio.perId=per.perId AND programacion_directorio.fecha>GETDATE() ORDER BY fecha) AS fecha
-					,(SELECT TOP 1 ISNULL(phdPaciente.pacNombres,'') + CASE WHEN actId IN (1,9,12,13,15) THEN '(Descansando)' ELSE '' END FROM programacion_directorio LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion_directorio.pacId) WHERE programacion_directorio.perId=per.perId AND programacion_directorio.fecha>GETDATE() ORDER BY fecha) AS nombre
-					,(SELECT TOP 1 ISNULL(phdPaciente.pacNombres,'') + CASE WHEN (SELECT TOP 1 actId FROM programacion_directorio WHERE programacion_directorio.perId=per.perId AND programacion_directorio.fecha=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()-1))) IN (1,9,12,13,15) THEN '(Descansando)' ELSE '' END FROM programacion_directorio LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion_directorio.pacId) WHERE programacion_directorio.perId=per.perId AND programacion_directorio.fecha=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))) AS nombrehoy
+					,(SELECT TOP 1 prgFechaProg FROM programacion WHERE programacion.perId=per.perId AND programacion.prgFechaProg>GETDATE() ORDER BY prgFechaProg) AS fecha
+					,(SELECT TOP 1 ISNULL(phdPaciente.pacNombres,'') + CASE WHEN actId IN (1,9,12,13,15) THEN '(Descansando)' ELSE '' END FROM programacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) WHERE programacion.perId=per.perId AND programacion.prgFechaProg>GETDATE() ORDER BY prgFechaProg) AS nombre
+					,(SELECT TOP 1 ISNULL(phdPaciente.pacNombres,'') + CASE WHEN (SELECT TOP 1 actId FROM programacion WHERE programacion.perId=per.perId AND programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()-1))) IN (1,9,12,13,15) THEN '(Descansando)' ELSE '' END FROM programacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) WHERE programacion.perId=per.perId AND programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))) AS nombrehoy
                     FROM admPersonalHS per 
                     LEFT JOIN admCargo on per.carId = admCargo.carId 
                     LEFT JOIN admDisponibilidad on admDisponibilidad.dispId = per.dispId 

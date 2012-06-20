@@ -179,7 +179,13 @@ public class servicios : System.Web.Services.WebService
 
     [WebMethod]
     // [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<CJSon> GetPersonal(String q)
+    public List<CJSon> GetPersonal(String q) {
+        return GetPersonalC(q, null, null);
+    }
+
+    [WebMethod]
+    // [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<CJSon> GetPersonalC(String q, String c, String s)
     {
         List<CJSon> lista = new List<CJSon>();
         CConectorMS conector = new CConectorMS();
@@ -187,6 +193,20 @@ public class servicios : System.Web.Services.WebService
         string query = "SELECT TOP 100 perId AS id,perDocumento AS documento, perNombre AS nombres FROM admPersonalHS WHERE ";
         string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
+        if (s != null)
+        {
+            if (s.Length == 0)
+                return lista;
+            CConector conectormy = new CConector();
+            c= conectormy.QueryString("SELECT area FROM medicamentos WHERE id=" + Query.GetValor(s.Trim()));
+        }
+
+        if (c != null) {
+            if (c.Length == 0)
+                return lista;
+            query += "carId=" + Query.GetValor(c.Trim()) + " AND ( ";
+        }
+        
         if (split.Length == 1)
         { // solo un dato puede ser un documento
             query += "perDocumento LIKE '%" + q.Trim() + "%' OR ";
@@ -202,7 +222,8 @@ public class servicios : System.Web.Services.WebService
                 query += String.Format(" perNombre LIKE '%{0}%' ", split[i]);
             }
         }
-
+        if (c != null)
+            query += ")";
         query += ") ORDER BY perNombre";
 
         SqlDataReader reader = conector.Query(query);
@@ -263,7 +284,7 @@ public class servicios : System.Web.Services.WebService
         List<CJSon> lista = new List<CJSon>();
 
         CConector conector = new CConector();
-        String query = "SELECT id,nombre,principio,concentracion,forma FROM medicamentos WHERE tipo=" + Query.GetValor(t) +" AND estado IS NULL AND ";
+        String query = "SELECT id,nombre,principio,concentracion,forma,codigo FROM medicamentos WHERE tipo=" + Query.GetValor(t) +" AND estado IS NULL AND ";
 
         string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
@@ -273,11 +294,11 @@ public class servicios : System.Web.Services.WebService
             { // verificamos que no este vacio
                 if (i > 0)
                     query += " AND ";
-                query += String.Format(" (nombre LIKE '%{0}%' OR principio LIKE '%{0}%' OR concentracion LIKE '%{0}%' OR forma LIKE '%{0}%') ", split[i]);
+                query += String.Format(" (nombre LIKE '%{0}%' OR principio LIKE '%{0}%' OR concentracion LIKE '%{0}%' OR forma LIKE '%{0}%' OR codigo LIKE '%{0}%') ", split[i]);
             }
         }
 
-        query += " ORDER BY nombre,principio,concentracion LIMIT 100";
+        query += " ORDER BY nombre,codigo,principio,concentracion LIMIT 100";
         MySqlDataReader reader = conector.Query(query);
         if (reader != null)
         {
@@ -285,7 +306,8 @@ public class servicios : System.Web.Services.WebService
             while (reader.Read())
             {
                 // PARACETAMOL [ACETAMINOFÉN], 100 mg/mL (10%) - SOLUCIÓN ORAL
-                nombre = reader["nombre"].ToString();
+                nombre = reader["codigo"].ToString() + " - ";
+                nombre += reader["nombre"].ToString();
                 if (reader["principio"].ToString().Length!=0)
                     nombre += " [" + reader["principio"].ToString() + "]";
                 if (reader["concentracion"].ToString().Length!=0)

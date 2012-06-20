@@ -82,7 +82,7 @@
                 $("#tauto").hide();
                 $("#<%= TNumero.ClientID %>").attr("readonly", false);
             }
-        });
+        }).change();
         
         $("#<%= TPaciente.ClientID %>").autocomplete({
             source: function(request, response) {
@@ -168,6 +168,39 @@
                 $("#tsuspender").hide();
             }
         });
+        
+        $("#<%= TProcedimiento.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetMedicamentos",
+                    data: "{ 'q': '" + request.term + "', 't': '173' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.value, label: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
+                $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TProcedimientoID.ClientID %>").val("");
+                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
+            }
+        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
     });
 </script>
 </asp:Content>
@@ -210,10 +243,11 @@
                 <asp:Label ID="LInactivo" Text="Inactivo - " Font-Bold="true" runat="server" Visible="false"></asp:Label><asp:Label ID="LNombrePaciente" runat="server"></asp:Label>
             </td>
         </tr>
+        <asp:Panel runat="server" ID="PDatos" Visible="false">
         <tr>
             <td colspan="4">
                 <asp:Panel runat="server" ID="PPaciente">
-                    <table width="100%" border="1">
+                    <table width="100%" border="1" cellpadding=0 cellspacing=0>
                         <tr>
                             <td><b>Entidad</b></td>
                             <td><b>Afiliación</b></td>
@@ -256,7 +290,8 @@
                     <h3><a href="#"><asp:Label runat="server" ID="LAutorizaciones"></asp:Label></a></h3>
                     <div class="hide">
                         <asp:GridView ID="GAutorizaciones" runat="server" AutoGenerateColumns="False" 
-                            DataKeyNames="autNumero" DataSourceID="SAutorizaciones" EmptyDataText="No se encontraron autorizaciones de este usuario" >
+                            DataKeyNames="autNumero" DataSourceID="SAutorizaciones" OnRowDataBound="GAutorizaciones_RowDataBound"
+                            EmptyDataText="No se encontraron autorizaciones de este usuario" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
                             <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -266,11 +301,14 @@
                             <Columns>
                                 <asp:TemplateField>
                                     <ItemTemplate>
-                                        <asp:ImageButton CommandArgument='<%# Eval("autNumero") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
+                                        <asp:ImageButton CommandArgument='<%# Eval("autNumero") %>' ID="IIr" 
+                                            runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" 
+                                            onclick="IIr_Click"/>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="autNumero" HeaderText="Autorización" />
-                                <asp:BoundField DataField="autFecha" HeaderText="Fecha" DataFormatString="{0:d}" />
+                                <asp:BoundField DataField="autFecha" HeaderText="Fecha" 
+                                    DataFormatString="{0:d}" />
                                 <asp:BoundField DataField="detalles" HeaderText="Detalles" />
                             </Columns>
                         </asp:GridView>
@@ -281,7 +319,7 @@
                                         FROM phdAutorizacion
                                         CROSS APPLY
                                         (
-                                            SELECT phdActividad.actDescripcion 
+                                            SELECT ISNULL(phdActividad.actDescripcion,'%%'+ CAST(phdDetalleAutorizacion.actId AS VARCHAR(9))) 
                                                 + ' (' + CAST(ISNULL(phdDetalleAutorizacion.autNumSesiones,0) AS VARCHAR(9))
                                                 + '-' + CAST(ISNULL(phdDetalleAutorizacion.autSesionesDia,0) AS VARCHAR(9)) + '), '
                                             FROM phdDetalleAutorizacion
@@ -372,8 +410,7 @@
                 <asp:Label runat="server" Text="" ID="LVPagado"></asp:Label></td>
         </tr>
         <tr>
-            <td>
-                Número recibo</td>
+            <td>Número recibo</td>
             <td>
                 <asp:TextBox ID="TRecibo" ValidationGroup="abono" runat="server"></asp:TextBox>
             </td>
@@ -390,6 +427,58 @@
             </td>
         </tr>
         <tr>
+            <td class="celdaTitulo" colspan="4">Servicios</td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <asp:GridView ID="GActivades" runat="server" DataSourceID="SActividades" 
+                    AutoGenerateColumns="False" DataKeyNames="id" 
+                    onselectedindexchanged="GActivades_SelectedIndexChanged" >
+                    <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                        <Columns>
+                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:BoundField DataField="proc_id" HeaderText="idMedicamento" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
+                            <asp:BoundField DataField="procedimiento" HeaderText="Actividad" />
+                            <asp:BoundField DataField="numerosesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="sesionesdia" HeaderText="Ses./día" ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="intensidad" HeaderText="Intensidad" ItemStyle-HorizontalAlign="Right" />
+                        </Columns>
+                    </asp:GridView>
+                    <sdg:CustomDataSource ID="SActividades" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            SelectCommand="SELECT id,nombre AS procedimiento,id AS proc_id,id AS sesionesdia,id AS numerosesiones,id AS intensidad FROM varios WHERE id IS NULL"
+                            DeleteCommand="DELETE FROM phdDetalleAutorizacion WHERE autNumero=@autorizacion AND actId=@id"
+                            InsertCommand="INSERT INTO phdDetalleAutorizacion (autNumero,actId,autNumSesiones,autSesionesDia, intensidad) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia,@intensidad)"
+                            UpdateCommand="UPDATE phdDetalleAutorizacion SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia, intensidad=@intensidad WHERE id=@id"
+                            >
+                            <SelectParameters>
+                                <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="-1" />
+                            </SelectParameters>
+                    </sdg:CustomDataSource>
+            </td>
+        </tr>
+        <tr>
+            <td>Procedimiento<asp:RequiredFieldValidator ValidationGroup="procedimiento" ControlToValidate="TProcedimientoID" ErrorMessage="Por favor ingrese un procedimiento." ID="RProcedimiento" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td colspan="3"><asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Número de sesiones<asp:RequiredFieldValidator ValidationGroup="procedimiento" ControlToValidate="TNumeroSesiones" ErrorMessage="Por favor ingrese un número." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td><asp:TextBox runat="server" ID="TNumeroSesiones" CssClass="entero"></asp:TextBox></td>
+            <td>Sesiones por día</td>
+            <td><asp:TextBox runat="server" ID="TSesionesDia" CssClass="entero"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Intensidad</td>
+            <td><asp:TextBox runat="server" ID="TIntensidad" CssClass="entero"></asp:TextBox></td>
+            <td colspan="2" align="right"><asp:Button runat="server" ID="BProcedimiento" 
+                    ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
+        </tr>
+        <tr>
             <td>
                 Observaciones</td>
             <td colspan="3">
@@ -397,42 +486,10 @@
             </td>
         </tr>
         <tr>
-            <td colspan="4">
-                <asp:GridView ID="GActivades" runat="server" AutoGenerateColumns="False" 
-                    DataKeyNames="actId" DataSourceID="SActividades" >
-                    <RowStyle CssClass="GridRow"></RowStyle>
-                    <FooterStyle CssClass="GridFooter"></FooterStyle>
-                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-                    <Columns>
-                        <asp:BoundField DataField="actDescripcion" HeaderText="Actividad" />
-                        <asp:TemplateField HeaderText="Núm. ses.">
-                            <ItemStyle HorizontalAlign="Right" />
-                            <ItemTemplate>
-                                <asp:TextBox ID="TNSesiones" Width="40" CssClass="entero" runat="server" Text='<%# Eval("autNumSesiones") %>'></asp:TextBox>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Ses./día">
-                            <ItemStyle HorizontalAlign="Right" />
-                            <ItemTemplate>
-                                <asp:TextBox ID="TSDia" Width="40" CssClass="entero" runat="server" Text='<%# Eval("autSesionesDia") %>'></asp:TextBox>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                    </Columns>
-                </asp:GridView>
-                <asp:SqlDataSource ID="SActividades" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT phdActividad.actId,phdActividad.actDescripcion,phdDetalleAutorizacion.autNumSesiones,phdDetalleAutorizacion.autSesionesDia
-                                FROM phdActividad
-                                LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=@autorizacion AND phdDetalleAutorizacion.actId=phdActividad.actId)
-                                ORDER BY phdActividad.actDescripcion;">
-                    <SelectParameters>
-                        <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="-1" />
-                    </SelectParameters>
-                </asp:SqlDataSource>
-            </td>
+            <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="4"><hr /></td>
         </tr>
         <tr>
             <td colspan="2">
@@ -447,6 +504,7 @@
                     CausesValidation="false" onclick="BCancelar_Click" />
             </td>
         </tr>
+        </asp:Panel>
     </table>
     <asp:Panel runat="server" ID="PSuspender">
     <div id="dSuspender" title="Anular o suspender" class="hide">
