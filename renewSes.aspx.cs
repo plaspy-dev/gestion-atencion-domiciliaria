@@ -21,7 +21,7 @@ public partial class renewSes : System.Web.UI.Page
         if (Session["passwdtemp"] != null)
         {
             Response.Cookies["contrasena"].Value = Session["passwdtemp"].ToString();
-            Response.Cookies["contrasena"].Expires = DateTime.Now.AddMinutes(10);
+            Response.Cookies["contrasena"].Expires = DateTime.Now.AddMinutes(60);
         }
 
         Response.AddHeader("ContentType", "image/gif");

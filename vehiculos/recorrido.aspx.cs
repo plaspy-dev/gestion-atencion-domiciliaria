@@ -15,7 +15,7 @@ public partial class vehiculos_recorrido : System.Web.UI.Page
                 TFecha.Text = DateTime.Now.ToShortDateString(); // fecha actual
             else TFecha.Text = Request.QueryString["f"];
             TFecha.Focus();
-            Usuario usuario = Usuario.GetUsuario();
+            CUsuario usuario = CUsuario.GetUsuario();
             BAceptar.Enabled = usuario.CanInsert();
             GRecorrido.Columns[1].Visible = usuario.CanDelete();
             GRecorrido.Columns[0].Visible = usuario.CanUpdate();
@@ -43,7 +43,7 @@ public partial class vehiculos_recorrido : System.Web.UI.Page
         if (TObservaciones.Text == " ")
             TObservaciones.Text = "";
         
-        BAceptar.Enabled= Usuario.GetUsuario().CanUpdate();
+        BAceptar.Enabled= CUsuario.GetUsuario().CanUpdate();
         ((MasterPageI)Master).SetModificacion(GRecorrido.SelectedDataKey.Values[0].ToString());
     }
     protected void BAceptar_Click(object sender, EventArgs e)
@@ -68,7 +68,7 @@ public partial class vehiculos_recorrido : System.Web.UI.Page
         if(GRecorrido.SelectedIndex==-1) {
 
             query.AddCampo("segFechaRegistro","getdate()", false);
-            query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
+            query["segUsuarioRegistro"] = CUsuario.GetUsuario().GetLogin();
 
             int res = conector.QueryMod(query.GetInsert(), true);
             if (res == -1)

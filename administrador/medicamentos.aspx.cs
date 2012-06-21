@@ -15,7 +15,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         if (!IsPostBack)
         {
             TCodigo.Focus();
-            Usuario usuario = Usuario.GetUsuario();
+            CUsuario usuario = CUsuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanInsert();
             GResultado.Columns[1].Visible = usuario.CanDelete();
@@ -53,7 +53,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                     }
                     LTipos_SelectedIndexChanged(sender, e);
 
-                    BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
+                    BAceptar.Enabled = CUsuario.GetUsuario().CanUpdate();
 
                     ((MasterPageI)Master).SetModificacion(HId.Value);
                 }
@@ -110,7 +110,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TConcentracion.Text = "";
         TAclaracion.Text = "";
         Conector.SelectInComboText(DCargo, "");
-        BAceptar.Enabled = Usuario.GetUsuario().CanInsert();
+        BAceptar.Enabled = CUsuario.GetUsuario().CanInsert();
 
         GResultado.SelectedIndex = -1;
     }
@@ -126,7 +126,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TAclaracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[7].Text).Trim();
         Conector.SelectInComboText(DCargo, HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[8].Text).Trim());
 
-        BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
+        BAceptar.Enabled = CUsuario.GetUsuario().CanUpdate();
 
         ((MasterPageI)Master).SetModificacion(HId.Value);
     }

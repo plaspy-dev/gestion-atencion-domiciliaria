@@ -31,7 +31,7 @@ public partial class auditoria_eventoa : System.Web.UI.Page
                 MySqlDataReader reader= conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["eaid"])));
                 if(reader!=null && reader.Read()) {
 
-                    Usuario usuario = Usuario.GetUsuario();
+                    CUsuario usuario = CUsuario.GetUsuario();
                     HIdEvento.Value = reader["id"].ToString();
                     BAceptar.Enabled = usuario.CanUpdate();
                     PDatos.Visible = true;
@@ -58,7 +58,7 @@ public partial class auditoria_eventoa : System.Web.UI.Page
                 }
                 else
                 {
-                    Usuario usuario = Usuario.GetUsuario();
+                    CUsuario usuario = CUsuario.GetUsuario();
                     PDatos.Visible = true;
                     BAceptar.Enabled = usuario.CanInsert();
 

@@ -15,7 +15,7 @@ public partial class cliente_quejas : System.Web.UI.Page
         if (!IsPostBack)
         {
             Session["cliente_quejas"] = null;
-            Usuario usuario = Usuario.GetUsuario();
+            CUsuario usuario = CUsuario.GetUsuario();
             if (Request.QueryString["qid"] != null)
             {
                 Query query = new Query("serQuejasReclamos");
@@ -134,7 +134,7 @@ public partial class cliente_quejas : System.Web.UI.Page
         query["qrObsHS"] = TObservaciones.Text;
         query["pacId"]= CCDetallePaciente.IdPaciente;
         query["perId"]= FuncionarioC.IdFuncionario;
-        query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
+        query["segUsuarioIngreso"] = CUsuario.GetUsuario().GetLogin();
         query["segFechaIngreso"] = "GETDATE()";
         query["qrTipoCliente"]= RPaciente.Checked ? "1" : "2";
         query["entId"] = CCDetallePaciente.AsegurdadorID;
@@ -256,7 +256,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                 return;
         }
         
-        query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
+        query["segUsuarioIngreso"] = CUsuario.GetUsuario().GetLogin();
         query["segFechaIngreso"] = "GETDATE()";
 
         if(FArchivo.HasFile) {

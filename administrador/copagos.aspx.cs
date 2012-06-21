@@ -26,7 +26,7 @@ public partial class administrador_copagos : System.Web.UI.Page
 
     protected void LCategoria_SelectedIndexChanged(object sender, EventArgs e)
     {
-        Usuario usuario = Usuario.GetUsuario();
+        CUsuario usuario = CUsuario.GetUsuario();
         
         HId.Value = "";
         TPorcentaje.Text = "";

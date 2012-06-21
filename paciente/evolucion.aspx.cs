@@ -18,7 +18,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
         if (!IsPostBack)
         {
-            Usuario usuario = Usuario.GetUsuario();
+            CUsuario usuario = CUsuario.GetUsuario();
             BAceptar.Enabled = false;
             BMasCDiagnostico.Enabled = false;
             PEvoluciones.Visible = false;
@@ -405,7 +405,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$GExamenFisico$", RenderGrid(GExamenFisico));
 
         evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + TPlanManejo.Text.Replace("\n", "</li><li>") + "</li></ol>");
-        evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
+        evento.Contenido = evento.Contenido.Replace("$szUsuario$", CUsuario.GetUsuario().GetNombre());
 
         CConectorMS conectorms = new CConectorMS();
         Query query = new Query("phdPaciente");

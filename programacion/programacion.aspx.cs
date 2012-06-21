@@ -25,7 +25,7 @@ public partial class programacion_programacion : System.Web.UI.Page
                 {
                     ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
 
-                    Usuario usuario = Usuario.GetUsuario();
+                    CUsuario usuario = CUsuario.GetUsuario();
                     LNuevo.Visible = usuario.CanInsert();
 
                     GProgramacion.Columns[2].Visible = lnkelimMasivo.Visible = usuario.CanDelete();

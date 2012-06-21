@@ -50,106 +50,20 @@ public partial class _Default : System.Web.UI.Page
 
     protected void IngresarOld()
     {
-        CConectorMS conectorMS = CConectorMS.GetConector();
-        CConector conector = CConector.GetConector();
-
-        string usuario = m_EUsuario.Text;
-        string contrasena = m_EContrasena.Text;
-
-        if (contrasena.Length > 0 && usuario.Length > 0)
+        CUsuario usuario=CUsuario.Validar();
+        if (usuario!=null)
         {
-            int grupo = 0;
-            string id = "";
-            string login = "";
-            string forceurl = "";
-            string personal = "";
-            string nombre = conectorMS.QueryString("SELECT usIdUsuario FROM seg_Usuarios WHERE usIdUsuario='" + usuario + "' AND usClave='" + contrasena + "' AND usActivo=1");
-            if (nombre.Length > 0)
-            {
-                MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal FROM usuario WHERE usuario='" + usuario + "' AND (estado IS NULL OR estado!=-1)");
-                if (reader != null)
-                {
-                    while (reader.Read())
-                    {
-                        usuario = reader["nombre"].ToString();
-                        id = reader["id"].ToString();
-                        login = reader["usuario"].ToString();
-                        grupo = Convert.ToInt32(reader["grupo"].ToString());
-                        forceurl = reader["forceurl"].ToString();
-                        personal = reader["personal"].ToString();
-                        break;
-                    }
-                }
-                if (id != "")
-                {
-                    CConector.SetCookie("usuario", m_EUsuario.Text);
-                    Usuario pUsuario = new Usuario(id, usuario, grupo, login);
-                    pUsuario["personal"] = personal;
-                    pUsuario.SetForceURL(forceurl);                    
-
-                    SqlDataReader readerms = null;
-                    if (grupo == 0)
-                    {
-                        readerms = conectorMS.Query("SELECT seg_Menu.meDescMenu AS nombre,seg_Menu.meRuta AS ruta,1 AS ins,1 AS modif,1 AS elim, parent.meDescMenu AS parent"
-                                                + " FROM seg_Menu"
-                                                + " LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre)"
-                                            );
-                    }
-                    else
-                    {
-                        readerms= conectorMS.Query("SELECT seg_Menu.meDescMenu AS nombre, seg_Menu.meRuta AS ruta,ins,modif,elim,parent.meDescMenu AS parent " +
-                                  "FROM dbo.seg_Menu INNER JOIN dbo.fnSeg_ConMenu('" + m_EUsuario.Text + "',0)menuUs ON seg_Menu.meIdMenu = menuUs.IdMenu " +
-                                  "LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre) " +
-                                  " order by parent,seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu");
-                    }
-
-                    if (readerms != null)
-                    {
-                        while (readerms.Read())
-                        {
-                            int permisos = 0;
-                            if(readerms["ins"].ToString()=="1")
-                                permisos+=4;
-                            if (readerms["modif"].ToString() == "1")
-                                permisos += 8;
-                            if (readerms["elim"].ToString() == "1")
-                                permisos += 16;
-                            if (permisos > 0)
-                                permisos += 1;
-
-                            pUsuario.AddPermiso(readerms["parent"].ToString(), readerms["nombre"].ToString(), CURLs.SwitchApp("~" + readerms["ruta"].ToString(), ConfigurationSettings.AppSettings["app"]), permisos);
-                        }
-                    }
-
-                    if (grupo > 0)
-                    {
-                        reader = conector.Query("SELECT url,permiso FROM permisos WHERE grupo='" + grupo + "'");
-                        if (reader != null)
-                        {
-                            while (reader.Read())
-                            {
-                                pUsuario.SetPermiso(reader["url"].ToString(), Convert.ToInt32(reader["permiso"]));
-                            }
-                        }
-                    }
-                    Session["passwdtemp"] = m_EContrasena.Text;
-                    conector.Query("UPDATE usuario SET ingreso=SYSDATE() WHERE id='" + id + "'");
-                    Response.Cookies["loginOrganizationExample15"].Value = m_EUsuario.Text;
-                    Response.Cookies["loginOrganizationExample15"].Expires = DateTime.Now.AddDays(15);
-
-                    string url = Request.QueryString["from"];
-                    if (url == null || url.Length == 0)
-                        pUsuario.Redirect();
-                    else Response.Redirect(url);
-                    Response.End();
-                    return;
-                }
-            }
+            string url = Request.QueryString["from"];
+            if (url == null || url.Length == 0)
+                usuario.Redirect();
+            else Response.Redirect(url);
+            Response.End();
+        } else {
+            m_EContrasena.Text = "";
+            m_EUsuario.Focus();
+            m_SMensaje.Text = "Usuario o contraseña equivocada.";
+            System.Threading.Thread.Sleep(3000);
         }
-        m_EContrasena.Text = "";
-        m_EUsuario.Focus();
-        m_SMensaje.Text = "Usuario o contraseña equivocada.";
-        System.Threading.Thread.Sleep(3000);
     }
 
     protected void m_BIngresar_Click(object sender, EventArgs e)
@@ -186,7 +100,7 @@ public partial class _Default : System.Web.UI.Page
             {
                 CConector.SetCookie("usuario", m_EUsuario.Text);
                 
-                Usuario pUsuario = new Usuario(id, usuario, grupo, login);
+                CUsuario pUsuario = new CUsuario(id, usuario, grupo, login);
                 pUsuario["personal"] = personal;
                 pUsuario.SetForceURL(forceurl);
                 if (grupo > 0)

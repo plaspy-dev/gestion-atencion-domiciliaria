@@ -16,7 +16,7 @@ public partial class directorio_Default : System.Web.UI.Page
             Response.Redirect(Request.Url.AbsolutePath);
             return;
         }
-        if (!Usuario.GetUsuario().CanPrint())
+        if (!CUsuario.GetUsuario().CanPrint())
             SResultados.SelectCommand = SResultados.SelectCommand.Insert(7, "TOP 5 ");
         if (IsPostBack)
         {
@@ -39,7 +39,7 @@ public partial class directorio_Default : System.Web.UI.Page
             conector.SelectInDropDown(DCargo, CConector.GetCookie("directorio_cargo"));
             conector.SelectInDropDown(DDisponibilidad, CConector.GetCookie("directorio_disponibilidad"));
         }
-        Usuario usuario= Usuario.GetUsuario();
+        CUsuario usuario = CUsuario.GetUsuario();
         GResultados.Columns[3].Visible = !usuario.CanUpdate();
         GResultados.Columns[4].Visible = usuario.CanUpdate();
 

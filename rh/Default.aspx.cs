@@ -17,7 +17,7 @@ public partial class rh_Default : System.Web.UI.Page
             Response.Redirect("~/rh/funcionario.aspx?fid=" + Request.QueryString["fid"]);
             return;
         }
-        if(!Usuario.GetUsuario().CanPrint())
+        if(!CUsuario.GetUsuario().CanPrint())
             SResultados.SelectCommand = SResultados.SelectCommand.Replace("SELECT ", "SELECT TOP 10 ");
 
         GResultados.AllowPaging = false;

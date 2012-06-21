@@ -26,7 +26,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             BFormula.Visible = false;
             PFormulaciones.Visible = false;
 
-            Usuario usuario = Usuario.GetUsuario();
+            CUsuario usuario = CUsuario.GetUsuario();
             if (Request.QueryString["pid"] != null)
             {
                 CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
@@ -277,7 +277,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
     {
         PrintEventArgs evento = (PrintEventArgs)e;
 
-        evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
+        evento.Contenido = evento.Contenido.Replace("$szUsuario$", CUsuario.GetUsuario().GetNombre());
         evento.Contenido = evento.Contenido.Replace("$szMedicamento$", LMedicamento.Text);
         evento.Contenido = evento.Contenido.Replace("$szPosologia$", LPosologia.Text);
         
