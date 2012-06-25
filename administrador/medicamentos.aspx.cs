@@ -14,6 +14,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TCodigo.Focus();
         if (!IsPostBack)
         {
+            ViewState["cargos"] = "";
             TCodigo.Focus();
             CUsuario usuario = CUsuario.GetUsuario();
 
@@ -43,7 +44,6 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                     TForma.Text = reader["forma"].ToString();
                     TConcentracion.Text = reader["concentracion"].ToString();
                     TAclaracion.Text = reader["aclaracion"].ToString();
-                    CConector.SelectInDropDown(DCargo, reader["area"]);
 
                     ListItem item= LTipos.Items.FindByValue(reader["tipo"].ToString());
                     if (item != null)
@@ -52,6 +52,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                         item.Selected = true;
                     }
                     LTipos_SelectedIndexChanged(sender, e);
+                    ViewState["cargos"] = conector.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
 
                     BAceptar.Enabled = CUsuario.GetUsuario().CanUpdate();
 
@@ -73,7 +74,6 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         query["principio"]=TPrincipio.Text;
         query["concentracion"]=TConcentracion.Text;
         query["aclaracion"]=TAclaracion.Text;
-        query["area"] = DCargo.SelectedValue;
 
         if (HId.Value.Length == 0)
         {
@@ -94,6 +94,24 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         if (conector.InsertModificacion(HId.Value) == -1)
             return;
 
+        // agregamos los cargos que puede programar el usuario
+        if (conector.QueryMod("DELETE FROM medicamento_area WHERE medicamento=" + HId.Value) == -1)
+            return;
+
+        Query areas = new Query("medicamento_area");
+        areas["medicamento"] = HId.Value;
+
+        for (int i = 0; i < GCargos.Rows.Count; i++)
+        {
+            CheckBox box = (CheckBox)GCargos.Rows[i].FindControl("CCargo");
+            if (box.Checked)
+            {
+                areas["area"]= GCargos.DataKeys[i].Value.ToString();
+                if (conector.QueryMod(areas.GetInsert()) == -1)
+                    return;
+            }
+        }
+
         GResultado.DataBind();
 
         ((MasterPageI)Master).SetTitulo(mensaje);
@@ -109,7 +127,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TPrincipio.Text = "";
         TConcentracion.Text = "";
         TAclaracion.Text = "";
-        Conector.SelectInComboText(DCargo, "");
+        GCargos.DataBind();
         BAceptar.Enabled = CUsuario.GetUsuario().CanInsert();
 
         GResultado.SelectedIndex = -1;
@@ -124,7 +142,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TForma.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[5].Text).Trim();
         TConcentracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[6].Text).Trim();
         TAclaracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[7].Text).Trim();
-        Conector.SelectInComboText(DCargo, HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[8].Text).Trim());
+        ViewState["cargos"] = new CConector().QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
+        GCargos.DataBind();
 
         BAceptar.Enabled = CUsuario.GetUsuario().CanUpdate();
 
@@ -134,13 +153,20 @@ public partial class administrador_medicamentos : System.Web.UI.Page
     {
         LTipo.Text = LTipos.SelectedItem.Text;
     }
-    protected void GResultado_RowDataBound(object sender, GridViewRowEventArgs e)
+
+    protected void GCargos_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowIndex != -1) {
-            if (HttpUtility.HtmlDecode(e.Row.Cells[8].Text).Trim().Length != 0)
+        if (e.Row.RowIndex != -1)
+        {
+            string[] valores = ViewState["cargos"].ToString().Split(',');
+            for (int i = 0; i < valores.Length; i++)
             {
-                CConectorMS conector = new CConectorMS();
-                e.Row.Cells[8].Text= conector.QueryString("SELECT carDescripcion FROM admCargo WHERE carId=" + HttpUtility.HtmlDecode(e.Row.Cells[8].Text).Trim());
+                if (valores[i] == GCargos.DataKeys[e.Row.RowIndex].Value.ToString())
+                {
+                    CheckBox box = (CheckBox)e.Row.FindControl("CCargo");
+                    box.Checked = true;
+                    break;
+                }
             }
         }
     }

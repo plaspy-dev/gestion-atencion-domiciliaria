@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using System.Collections;
 
 public partial class admisiones_consulta : System.Web.UI.Page
 {
@@ -13,35 +14,40 @@ public partial class admisiones_consulta : System.Web.UI.Page
         if (!IsPostBack) {
             TInicio.Text = TFin.Text = DateTime.Now.ToShortDateString();
         }
-        GResultados.AllowPaging = false;
         GResultados.DataBind();
-        LTotal.Text = GResultados.Rows.Count + " Resultados";
         if (GResultados.Rows.Count > 0)
         {
             ((MasterPageI)Master).Excel(GResultados);
             ((MasterPageI)Master).Imprimir(GResultados);
         }
-        GResultados.AllowPaging = true;
-        GResultados.DataBind();
     }
     protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowIndex != -1)
         {
-            int pos = e.Row.Cells[8].Text.IndexOf("%%");
-            while (pos != -1)
-            {
-                string texto = "";
-                for (int i = pos + 2; i < e.Row.Cells[8].Text.Length; i++)
-                {
-                    if (e.Row.Cells[8].Text[i] == ' ')
-                        break;
-                    texto += e.Row.Cells[8].Text[i];
-                }
-                e.Row.Cells[8].Text = e.Row.Cells[8].Text.Replace("%%" + texto, Procedimientos.GetProcedimiento(texto));
-                pos = e.Row.Cells[8].Text.IndexOf("%%");
+            // reemplazamos las actividades
+            e.Row.Cells[8].Text = Procedimientos.ReplaceVarios(
+                                    Procedimientos.ReplaceProcedimientos(e.Row.Cells[8].Text))
+                                    .Replace(",_", "<br/>");
+        }
+    }
+
+    protected void GResumen_RowDataBound(object sender, GridViewRowEventArgs e) {
+        if (e.Row.RowIndex != -1) {
+            switch (e.Row.Cells[0].Text) { 
+                case "-1":
+                    e.Row.Cells[0].Text = "Total Pacientes";
+                    break;
+                case "5000000":
+                    e.Row.Cells[0].Text = "Sesiones Autorizadas";
+                    break;
+                case "-3":
+                    e.Row.Cells[0].Text = "Total Autorizaciones";
+                    break;
+                default:
+                    e.Row.Cells[0].Text = Procedimientos.GetProcedimiento(e.Row.Cells[0].Text);
+                    break;
             }
-            e.Row.Cells[8].Text = e.Row.Cells[8].Text.Replace(",", "<br/>");
         }
     }
 }

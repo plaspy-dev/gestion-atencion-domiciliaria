@@ -128,7 +128,7 @@
             <asp:BoundField HeaderText="Fecha" DataField="prgFechaProg" SortExpression="prgFechaProg" DataFormatString="{0:d}" />
             <asp:HyperLinkField DataTextField="pacDocumento" HeaderText="Documento" 
                 DataNavigateUrlFields="pacId" SortExpression="pacDocumento"
-                DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" 
+                DataNavigateUrlFormatString="~/programacion/programacion.aspx?pid={0}" 
                 ItemStyle-HorizontalAlign="Right" >
 <ItemStyle HorizontalAlign="Right"></ItemStyle>
             </asp:HyperLinkField>
@@ -136,10 +136,7 @@
                 DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" />
             <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre"/>
             <asp:BoundField HeaderText="Actividad" DataField="actDescripcion" SortExpression="actDescripcion"/>
-            <asp:BoundField HeaderText="Actividad" DataField="actId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide">
-                <HeaderStyle CssClass="hide"></HeaderStyle>
-                <ItemStyle CssClass="hide"></ItemStyle>
-            </asp:BoundField>
+            <asp:BoundField HeaderText="Actividad" DataField="actId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
             <asp:BoundField HeaderText="Profesional" DataField="perNombre" SortExpression="perNombre"/>
             <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio"/>
             <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion"/>
@@ -151,6 +148,7 @@
                     <asp:LinkButton ID="LinkButton1" runat="server" CausesValidation="False" Visible='<%# Eval("novIden").ToString()=="" ? false : true %>' CommandName="Select" Text='<%# Eval("novedad").ToString() %>'></asp:LinkButton>
                 </ItemTemplate>
             </asp:TemplateField>
+            <asp:BoundField HeaderText="intensidad" DataField="intensidad" SortExpression="intensidad" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
         </Columns>
     </asp:GridView>
     <div style="text-align: right;">
@@ -165,6 +163,7 @@
                                 ,admEntidad.entNombre
                                 ,admPersonalHS.perNombre
                                 ,programacion.actId,phdActividad.actDescripcion
+                                ,phdDetalleAutorizacion.intensidad
                                 ,phdNovedad.novIden
                                 ,programacion.prgId
                                 ,CASE phdNovedad.novTipo WHEN 1 THEN 'Cancelación Programación' WHEN 2 THEN 'Reasignación' WHEN 3 THEN 'Cambio en num. sesiones' WHEN 4 THEN 'Otro' WHEN 5 THEN 'Paciente desprotegido' WHEN 6 THEN 'Cambio Servicio' ELSE NULL END AS novedad
@@ -174,10 +173,12 @@
                                 LEFT JOIN admPersonalHS ON (admPersonalHS.perId=programacion.perId)
                                 LEFT JOIN phdActividad ON (phdActividad.actId=programacion.actId)
                                 LEFT JOIN phdNovedad ON (phdNovedad.prgId=programacion.prgId)
+                                LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=programacion.autNumero AND phdDetalleAutorizacion.actId=programacion.actId)
                             WHERE programacion.prgFechaProg BETWEEN @inicio AND @fin
                             AND (@asegurador=0 OR programacion.entId=@asegurador)
                             AND (@personal=0 OR programacion.perId=@personal)
                             AND (@procedimiento=0 OR programacion.actId=@procedimiento)
+                            {0}
                             ORDER BY programacion.prgFechaProg,phdPaciente.pacNombres">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />

@@ -97,31 +97,29 @@
             <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio"/>
             <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion"/>
             <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre"/>
-            <asp:BoundField HeaderText="Actividades (Autorizadas-Programadas-Diarias)" DataField="detalles" SortExpression="detalles"/>
+            <asp:BoundField HeaderText="Actividades (Autorizadas-Programadas-Diarias)" DataField="detalles" SortExpression="detalles" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Observaciones" DataField="autObservaciones" SortExpression="autObservaciones"/>
         </Columns>
     </asp:GridView>
-    <div style="text-align: right;">
-        <asp:Label ID="LTotal" runat="server" Text=""></asp:Label>
-    </div>
     </div>
     <asp:SqlDataSource ID="SResultados" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
                 SelectCommand="SELECT phdAutorizacion.autNumero,phdAutorizacion.autFecha,phdAutorizacion.autFechaVenc,phdAutorizacion.autObservaciones
                             ,phdPaciente.pacDocumento,phdPaciente.pacNombres,phdPaciente.pacBarrio,phdPaciente.pacDireccion,phdPaciente.pacId
                             ,admEntidad.entNombre
-                            ,CASE LEN(detalles) WHEN 0 THEN detalles ELSE LEFT(detalles, LEN(detalles)-1) END AS detalles
-                            ,(SELECT COUNT(*) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero) AS programadas
+                            ,detalles
+                            ,(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero) AS programadas
                             FROM phdAutorizacion
                             LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
                             LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
                             CROSS APPLY
                             (
                                 SELECT ISNULL(phdActividad.actDescripcion,'%%'+ CAST(phdDetalleAutorizacion.actId AS VARCHAR(9))) 
+                                    + ISNULL(' [$$' + CAST(phdDetalleAutorizacion.intensidad AS VARCHAR(9)) + ']','')
                                     + ' (' + CAST(ISNULL(phdDetalleAutorizacion.autNumSesiones,0) AS VARCHAR(9))
-                                    + '-' + CAST((SELECT COUNT(*) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId ) AS VARCHAR(9)) 
+                                    + '-' + CAST((SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId ) AS VARCHAR(9)) 
                                     + '-' + CAST(ISNULL(phdDetalleAutorizacion.autSesionesDia,0) AS VARCHAR(9)) 
-                                    + '), '
+                                    + '),_ '
                                 FROM phdDetalleAutorizacion
                                 LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
                                 WHERE phdDetalleAutorizacion.autNumero = phdAutorizacion.autNumero
@@ -131,6 +129,69 @@
                             AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                             AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId=@procedimiento))
                             ORDER BY phdAutorizacion.autFecha">
+                 <SelectParameters>
+                    <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
+                    <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
+                    <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
+                    <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
+                 </SelectParameters>
+    </asp:SqlDataSource>
+    <br />
+    <div align="right">
+    <asp:GridView runat="server" ID="GResumen" AutoGenerateColumns="False" OnRowDataBound="GResumen_RowDataBound" ShowHeader="false" DataSourceID="SResumen" >
+        <RowStyle CssClass="GridRow"></RowStyle>
+        <FooterStyle CssClass="GridFooter"></FooterStyle>
+        <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+        <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+        <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+        <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+        <Columns>
+            <asp:BoundField DataField="nombre" ItemStyle-HorizontalAlign="Left" />
+            <asp:BoundField DataField="des" ItemStyle-HorizontalAlign="Right" />
+        </Columns>
+    </asp:GridView>
+    </div>
+    <asp:SqlDataSource ID="SResumen" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                SelectCommand="( 
+                        SELECT '-3' AS nombre,COUNT(DISTINCT phdAutorizacion.autNumero) AS des
+                                                    FROM phdAutorizacion
+                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
+                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
+							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
+                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
+                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
+                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
+                        ) UNION ( 
+                        SELECT '-1',COUNT(DISTINCT phdPaciente.pacNombres)
+                                                    FROM phdAutorizacion
+                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
+                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
+							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
+                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
+                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
+                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
+                        ) UNION (
+                        SELECT phdDetalleAutorizacion.actId,SUM(autNumSesiones)
+                                                    FROM phdAutorizacion
+                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
+                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
+							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
+                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
+                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
+                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
+							                        GROUP BY phdDetalleAutorizacion.actId
+                        )UNION (
+                        SELECT 5000000,SUM(phdDetalleAutorizacion.autNumSesiones)
+                                                    FROM phdAutorizacion
+                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
+                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
+							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
+                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
+                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
+                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
+                        ) ORDER BY nombre
+                        ">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />

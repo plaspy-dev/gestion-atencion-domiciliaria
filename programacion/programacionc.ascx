@@ -134,9 +134,9 @@
                                 WHERE 
                                 phdAutorizacion.autActivo=1
                                 AND phdAutorizacion.pacId=@paciente
+                                {0}
                                 AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                                AND
-                                phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.pacId=phdAutorizacion.pacId AND programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId)
+                                AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId)
                                 GROUP BY phdAutorizacion.autNumero">
 			                <SelectParameters>
 			                    <asp:ControlParameter ControlID="HIdPaciente" PropertyName="Value" Name="paciente" DefaultValue="0" />
@@ -161,9 +161,10 @@
                 </asp:Repeater>
                 <asp:SqlDataSource ID="SActividad" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT phdDetalleAutorizacion.actId AS id,phdActividad.actDescripcion AS nombre
+                    SelectCommand="SELECT phdDetalleAutorizacion.actId AS id
+                        ,ISNULL(phdActividad.actDescripcion, phdDetalleAutorizacion.intensidad) AS nombre
                         ,phdDetalleAutorizacion.autNumSesiones
-                        ,(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.pacId=phdAutorizacion.pacId AND programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId) AS realizadas
+                        ,(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId) AS realizadas
                         FROM phdAutorizacion
                         LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
                         LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
@@ -171,7 +172,8 @@
                         WHERE 
                         phdAutorizacion.pacId=@paciente
                         AND phdAutorizacion.autNumero=@autorizacion 
-                        AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.pacId=phdAutorizacion.pacId AND programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId)
+                        {0}
+                        AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId)
                         ORDER BY phdActividad.actDescripcion">
                         <SelectParameters>
                             <asp:ControlParameter ControlID="HIdPaciente" PropertyName="Value" Name="paciente" DefaultValue="0" />
@@ -259,8 +261,11 @@
     </tr>
     <tr>
         <td align="left">Observaciones</td>
-        <td align="left"><asp:TextBox runat="server" ID="TObservaciones" TextMode="MultiLine" Width="200px"></asp:TextBox> 
+        <td align="left"><asp:TextBox runat="server" ID="TObservaciones" TextMode="MultiLine" Width="99%"></asp:TextBox> 
         </td>
+    </tr>
+    <tr>
+        <td align="left" colspan="2"><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label></td>
     </tr>
     <tr>
         <td></td>

@@ -84,7 +84,7 @@ a
 	background-color:white;
 	text-align: left;
 	border-color:#adadad;
-	background-image: url(Imagenes/barraSombra.png);
+	background-image: url(../imgs/barraSombra.png);
 	background-repeat:repeat-y;
 	background-position:right;
 	
@@ -446,7 +446,7 @@ a
     border-bottom-color: #CCCCCC;
     background-color: white;
     color: Black;
-    background-image: url(Imagenes/barraSombra.png);
+    background-image: url(../imgs/barraSombra.png);
     background-repeat: repeat-y;
     background-position: right;
     font-size:small;

@@ -77,8 +77,7 @@
                 </tr>
                 <tr>
                     <td align="right">
-                        <asp:Button ID="BMasSuministros" runat="server" onclick="BMasSuministros_Click" 
-                            Text="+" />
+                        <asp:Button ID="BMasSuministros" runat="server" onclick="BMasSuministros_Click" Text="+" />
                     </td>
                 </tr>
             </table>

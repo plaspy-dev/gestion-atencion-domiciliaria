@@ -26,5 +26,8 @@ public partial class paciente_autorizaciones : System.Web.UI.UserControl
             Convert.ToInt32(label.Text);
             label.Text = Procedimientos.GetProcedimiento(label.Text);
         } catch(Exception a) {}
+        label = (Label)e.Item.FindControl("LI");
+        if (label.Text.Length != 0)
+            label.Text = " [" + Procedimientos.GetVarios(label.Text) + "]";
     }
 }

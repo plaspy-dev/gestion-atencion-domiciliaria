@@ -13,6 +13,8 @@ public partial class phd_programacionc : System.Web.UI.UserControl
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        Procedimientos.SetProcedimientos(SAutorizacion, "phdDetalleAutorizacion.actId");
+        Procedimientos.SetProcedimientos(SActividad, "phdDetalleAutorizacion.actId");
         if(!IsPostBack) {
             Session["phd_programacion"] = null;
         }
@@ -48,6 +50,12 @@ public partial class phd_programacionc : System.Web.UI.UserControl
 
                     conector.SelectInDropDown(DAutorizacion, reader["autNumero"], "SELECT '" + reader["autNumero"].ToString() + "'");
                     conector.SelectInDropDown(DActividad, reader["actId"].ToString(), "SELECT actDescripcion FROM phdActividad WHERE actId='" + reader["actId"].ToString() + "'");
+                    ListItem item= DActividad.Items.FindByValue(reader["actId"].ToString());
+                    if (item != null) {
+                        if (item.Text.Length == 0) {
+                            item.Text = Procedimientos.GetProcedimiento(reader["actId"].ToString());
+                        }
+                    }
                     TProfesional.Text = conector.QueryString("SELECT perNombre FROM dbo.admPersonalHS where perId='" + reader["perId"].ToString() + "'");
 
                     DAutorizacion_SelectedIndexChanged(null, null);
@@ -112,16 +120,19 @@ public partial class phd_programacionc : System.Web.UI.UserControl
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid)
+            return;
         CConectorMS conector= new CConectorMS();
         ArrayList fechas = new ArrayList();
         Session["phd_programacion"] = fechas;
+        
+        Label m = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LMaximo");
+        Label r = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LRealizadas");
+        int maximo = Convert.ToInt32(m.Text) - Convert.ToInt32(r.Text);
+        int sesiones = Convert.ToInt32(TSesiones.Text);
 
         if (CRecurrente.Checked) {
 
-            Label m = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LMaximo");
-            Label r = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LRealizadas");
-            int maximo= Convert.ToInt32(m.Text)-Convert.ToInt32(r.Text);
-            int sesiones = Convert.ToInt32(TSesiones.Text);
             if (sesiones > 0)
                 maximo /= sesiones;
 
@@ -160,6 +171,10 @@ public partial class phd_programacionc : System.Web.UI.UserControl
             PConfirmar.Visible = true;
         } else {
             fechas.Add(TFecha.Text);
+            if (sesiones > maximo) {
+                LMensaje.Text = "Máximo de sesiones permitidas " + maximo;
+                return;
+            }
             BSi_Click(sender, e);
         }
     }
@@ -171,6 +186,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         TFechaFinal.Text = "";
         TSesiones.Text = "1";
         TProfesional.Text = "";
+        LMensaje.Text = "";
         TProfesionalID.Text = "";
         DActividad.SelectedIndex = -1;
         DAutorizacion.SelectedIndex = -1;
@@ -282,8 +298,22 @@ public partial class phd_programacionc : System.Web.UI.UserControl
     protected void DActividad_DataBound(object sender, EventArgs e)
     {
         for (int i = 0; i < DActividad.Items.Count; i++) {
+            string nombre = "";
+            try
+            {
+                if (DActividad.Items[i].Text.Length > 0)
+                {
+                    Convert.ToInt32(DActividad.Items[i].Text);
+                    nombre = DActividad.Items[i].Text;
+                    DActividad.Items[i].Text = "";
+                }
+            }
+            catch (Exception ex) { }
             if (DActividad.Items[i].Text.Length == 0)
                 DActividad.Items[i].Text = Procedimientos.GetProcedimiento(DActividad.Items[i].Value);
+            if (nombre.Length > 0) {
+                DActividad.Items[i].Text += " [" + Procedimientos.GetVarios(nombre) + "]";
+            }
         }
     }
 }

@@ -9,9 +9,9 @@ using System.Web.UI.WebControls;
 
 namespace SDG.Web.UI.WebControls;
 
-[Designer(typeof(CustomDataSourceDesigner))]
-[ParseChildren(true)]
 [PersistChildren(false)]
+[ParseChildren(true)]
+[Designer(typeof(CustomDataSourceDesigner))]
 public class CustomDataSource : DataSourceControl
 {
 	protected static readonly string[] _views = new string[1] { "DefaultView" };
@@ -30,8 +30,8 @@ public class CustomDataSource : DataSourceControl
 
 	protected CustomDataSourceView _view;
 
-	[DefaultValue("")]
 	[Category("ParentDataSource")]
+	[DefaultValue("")]
 	public string ParentDataSource
 	{
 		get
@@ -58,8 +58,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("SelectCommand")]
+	[DefaultValue("")]
 	public string SelectCommand
 	{
 		get
@@ -142,25 +142,25 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
+	[PersistenceMode(PersistenceMode.InnerProperty)]
+	[Category("Data")]
 	[DefaultValue(null)]
 	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
 	[MergableProperty(false)]
-	[PersistenceMode(PersistenceMode.InnerProperty)]
-	[Category("Data")]
 	public ParameterCollection SelectParameters => View.SelectParameters;
 
-	[DefaultValue(null)]
-	[Category("Data")]
-	[PersistenceMode(PersistenceMode.InnerProperty)]
-	[MergableProperty(false)]
 	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
+	[PersistenceMode(PersistenceMode.InnerProperty)]
+	[Category("Data")]
+	[DefaultValue(null)]
+	[MergableProperty(false)]
 	public ParameterCollection InsertParameters => View.InsertParameters;
 
 	[MergableProperty(false)]
 	[PersistenceMode(PersistenceMode.InnerProperty)]
-	[DefaultValue(null)]
 	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
 	[Category("Data")]
+	[DefaultValue(null)]
 	public ParameterCollection UpdateParameters => View.UpdateParameters;
 
 	protected CustomDataSourceView View

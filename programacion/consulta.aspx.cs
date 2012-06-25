@@ -10,6 +10,7 @@ public partial class programacion_consulta : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        Procedimientos.SetProcedimientos(SResultados, "programacion.actId");
         if (!IsPostBack)
         {
             TInicio.Text = TFin.Text = DateTime.Now.ToShortDateString();
@@ -31,6 +32,9 @@ public partial class programacion_consulta : System.Web.UI.Page
         {
             if(HttpUtility.HtmlDecode(e.Row.Cells[4].Text).Trim().Length==0) {
                 e.Row.Cells[4].Text= Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[5].Text).Trim());
+                if (HttpUtility.HtmlDecode(e.Row.Cells[12].Text).Trim().Length != 0) {
+                    e.Row.Cells[4].Text += "[" + Procedimientos.GetVarios(e.Row.Cells[12].Text) + "]";
+                }
             }
         }
     }

@@ -34,8 +34,9 @@ public class Archivos
         }
     }
 
-    public Archivos(byte[] archivo, int id) {
-        
+    public Archivos(byte[] archivo, int id)
+    {
+
         Nombre = "Foto";
         Tipo = "image/jpeg";
         Id = id;

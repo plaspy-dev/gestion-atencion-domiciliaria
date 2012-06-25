@@ -1,5 +1,6 @@
 using System;
 using System.Data.SqlClient;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -168,7 +169,7 @@ public class ConectorMS
 		string result = "";
 		if (sqlDataReader != null && sqlDataReader.Read())
 		{
-			result = sqlDataReader[0].ToString();
+			result = ((sqlDataReader[0].GetType() != typeof(byte[])) ? sqlDataReader[0].ToString() : Encoding.UTF8.GetString((byte[])sqlDataReader[0]));
 		}
 		return result;
 	}

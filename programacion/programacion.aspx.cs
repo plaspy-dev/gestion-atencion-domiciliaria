@@ -11,6 +11,9 @@ public partial class programacion_programacion : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        Procedimientos.SetProcedimientos(SProgramacion, "programacion.actId");
+        Procedimientos.SetProcedimientos(SProgramaciones, "programacion.actId");
+        
         if (!IsPostBack)
         {
             if (Request.QueryString["pid"] != null)
@@ -126,6 +129,10 @@ public partial class programacion_programacion : System.Web.UI.Page
             if (HttpUtility.HtmlDecode(e.Row.Cells[8].Text).Trim().Length==0)
             {
                 e.Row.Cells[8].Text = HttpUtility.HtmlEncode(Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[10].Text).Trim()));
+                if (HttpUtility.HtmlDecode(e.Row.Cells[11].Text).Trim().Length != 0)
+                {
+                    e.Row.Cells[8].Text += "[" + Procedimientos.GetVarios(e.Row.Cells[11].Text) + "]";
+                }
             }
         }
     }

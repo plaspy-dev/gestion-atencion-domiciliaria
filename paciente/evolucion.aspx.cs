@@ -172,6 +172,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
         string szQuery;
         string mensaje;
+        bool nuevaevolucion = HIdEvolucion.Value.Length == 0;
 
         if (HIdEvolucion.Value.Length == 0)
         {
@@ -276,6 +277,8 @@ public partial class paciente_evolucion : System.Web.UI.Page
                 return;
         }
 
+        if(nuevaevolucion)
+            CUsuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
         ((MasterPageI)Master).SetResultado(mensaje);
     }

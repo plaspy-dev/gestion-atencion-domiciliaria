@@ -96,7 +96,7 @@
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SCargo" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT carId AS id,carDescripcion AS nombre FROM admCargo ORDER BY carDescripcion">
+                    SelectCommand="SELECT carId AS id,carDescripcion AS nombre FROM admCargo WHERE 1=1 {0} ORDER BY carDescripcion">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -212,6 +212,7 @@
                     WHERE 
                     (@id=0 OR @id=per.perId) 
                     AND (@estado=0 OR per.eEstId=@estado) 
+                    {0}
                     AND (@cargo=0 or per.carId=@cargo) 
                     AND (@disponibilidad=0 OR per.dispId=@disponibilidad)
                     AND (@area=0 OR @area=per.areaId)

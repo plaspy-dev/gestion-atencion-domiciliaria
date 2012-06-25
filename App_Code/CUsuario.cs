@@ -31,10 +31,11 @@ public class CUsuario : Usuario
             string login = "";
             string forceurl = "";
             string personal = "";
+            string cargos = "";
             string nombre = conectorMS.QueryString("SELECT usIdUsuario FROM seg_Usuarios WHERE usIdUsuario='" + usuario + "' AND usClave='" + contrasena + "' AND usActivo=1");
             if (nombre.Length > 0)
             {
-                MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal FROM usuario WHERE usuario='" + usuario + "' AND (estado IS NULL OR estado!=-1)");
+                MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,cargos FROM usuario WHERE usuario='" + usuario + "' AND (estado IS NULL OR estado!=-1)");
                 if (reader != null)
                 {
                     while (reader.Read())
@@ -45,6 +46,7 @@ public class CUsuario : Usuario
                         grupo = Convert.ToInt32(reader["grupo"].ToString());
                         forceurl = reader["forceurl"].ToString();
                         personal = reader["personal"].ToString();
+                        cargos = reader["cargos"].ToString();
                         break;
                     }
                 }
@@ -53,6 +55,10 @@ public class CUsuario : Usuario
                     CConector.SetCookie("usuario", login);
                     CUsuario pUsuario = new CUsuario(id, usuario, grupo, login);
                     pUsuario["personal"] = personal;
+                    pUsuario["cargos"] = cargos;
+                    if (cargos.Length > 0)
+                        pUsuario["procedimientos"] = conector.QueryString("SELECT GROUP_CONCAT(DISTINCT medicamento) FROM medicamento_area WHERE area IN (" + cargos + ")");
+                    
                     pUsuario.SetForceURL(forceurl);
 
                     SqlDataReader readerms = null;
