@@ -422,8 +422,7 @@
         </tr>
         <tr>
             <td align="right" colspan="4">
-                <asp:Button ID="BAgregar" ValidationGroup="abono" runat="server" Text="Agregar" 
-                    onclick="BAgregar_Click" />
+                <asp:Button ID="BAgregar" ValidationGroup="abono" runat="server" Text="Agregar" onclick="BAgregar_Click" />
             </td>
         </tr>
         <tr>
@@ -447,14 +446,15 @@
                             <asp:BoundField DataField="procedimiento" HeaderText="Actividad" />
                             <asp:BoundField DataField="numerosesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="sesionesdia" HeaderText="Ses./día" ItemStyle-HorizontalAlign="Right" />
-                            <asp:BoundField DataField="intensidad" HeaderText="Intensidad" ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="tint" HeaderText="Horas" ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="idint" HeaderText="HorasId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                         </Columns>
                     </asp:GridView>
                     <sdg:CustomDataSource ID="SActividades" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT id,nombre AS procedimiento,id AS proc_id,id AS sesionesdia,id AS numerosesiones,id AS intensidad FROM varios WHERE id IS NULL"
+                            SelectCommand="SELECT id,nombre AS procedimiento,id AS proc_id,id AS sesionesdia,id AS numerosesiones,id AS idint,nombre AS tint FROM varios WHERE id IS NULL"
                             DeleteCommand="DELETE FROM phdDetalleAutorizacion WHERE autNumero=@autorizacion AND actId=@id"
-                            InsertCommand="INSERT INTO phdDetalleAutorizacion (autNumero,actId,autNumSesiones,autSesionesDia, intensidad) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia,@intensidad)"
-                            UpdateCommand="UPDATE phdDetalleAutorizacion SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia, intensidad=@intensidad WHERE id=@id"
+                            InsertCommand="INSERT INTO phdDetalleAutorizacion (autNumero,actId,autNumSesiones,autSesionesDia, intensidad) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia,@idint)"
+                            UpdateCommand="UPDATE phdDetalleAutorizacion SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia, intensidad=@idint WHERE id=@id"
                             >
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="-1" />
@@ -473,10 +473,19 @@
             <td><asp:TextBox runat="server" ID="TSesionesDia" CssClass="entero"></asp:TextBox></td>
         </tr>
         <tr>
-            <td>Intensidad</td>
-            <td><asp:TextBox runat="server" ID="TIntensidad" CssClass="entero"></asp:TextBox></td>
-            <td colspan="2" align="right"><asp:Button runat="server" ID="BProcedimiento" 
-                    ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
+            <td>Horas</td>
+            <td>
+            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" 
+                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                <asp:ListItem Text="(No aplica)" Value=""></asp:ListItem>
+            </asp:DropDownList>
+            <asp:SqlDataSource ID="SIntensidad" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND szReservado IS NULL ORDER BY nombre">
+            </asp:SqlDataSource>
+            <td><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label></td>
+            <td align="right"><asp:Button runat="server" ID="BProcedimiento" ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
         </tr>
         <tr>
             <td>

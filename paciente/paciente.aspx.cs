@@ -354,8 +354,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         {
             if (HttpUtility.HtmlDecode(e.Row.Cells[2].Text).Trim().Length == 0)
             {
-                CConector conector = new CConector();
-                e.Row.Cells[2].Text = HttpUtility.HtmlEncode(conector.QueryString("SELECT CONCAT(codigo,'-',nombre) FROM medicamentos WHERE id=" + Query.GetValor(HttpUtility.HtmlDecode(e.Row.Cells[4].Text).Trim())));
+                e.Row.Cells[2].Text = HttpUtility.HtmlEncode(Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[4].Text).Trim()));
             }
         }
     }

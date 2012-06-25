@@ -130,6 +130,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         CConector conector = CConector.GetConector();
+        CConectorMS conectorms = new CConectorMS();
         CUsuario usuario = CUsuario.GetUsuario();
         string id= conector.QueryString("SELECT id FROM usuario WHERE id='" + usuario.GetID()  + "' AND (estado IS NULL OR estado!=-1) AND contrasena=PASSWORD(" + Query.GetValor(TActual.Text) + ")");
         if (id.Length == 0)
@@ -139,7 +140,9 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
         if (conector.QueryMod("UPDATE usuario SET contrasena=PASSWORD(" + Query.GetValor(TNueva.Text) + ") WHERE id='" + usuario.GetID() + "'") == -1)
             return;
-        lblTitulo.Text += "Contraseña cambiada correctamente.";
+        if (conectorms.QueryMod("UPDATE seg_Usuarios SET usClave=" + Query.GetValor(crypt.Encriptar(TNueva.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"))) + " WHERE usIdUsuario=" + Query.GetValor(usuario.GetLogin())) == -1)
+            return;
+        lblTitulo.Text = "Contraseña cambiada correctamente.";
     }
 
     public LinkButton GetExcelLink()
@@ -190,7 +193,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
 
         Response.Clear();
-        Response.AddHeader("Content-Disposition", "inline;filename=" + Page.Title + ".xls");
+        Response.AddHeader("Content-Disposition", "attachment;filename=" + Page.Title + ".xls");
         Response.ContentType = "application/vnd.ms-excel";
         Response.ContentEncoding = System.Text.Encoding.GetEncoding("ISO-8859-1");
 
@@ -357,7 +360,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             }
 
             Response.Clear();
-            Response.AddHeader("Content-Disposition", "inline;filename=" + Page.Title + ".xls");
+            Response.AddHeader("Content-Disposition", "attachment;filename=" + Page.Title + ".xls");
             Response.ContentType = "application/vnd.ms-excel";
             Response.ContentEncoding = System.Text.Encoding.GetEncoding("utf-8");
             Response.Write(evento.Contenido);

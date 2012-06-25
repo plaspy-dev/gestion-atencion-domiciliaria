@@ -22,6 +22,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             GPagos.Visible = false;
             BAgregar.Visible = false;
             BSuspender.Visible = false;
+            GActivades.DataBind();
 
             CUsuario usuario = CUsuario.GetUsuario();
             CConectorMS conector = new CConectorMS();
@@ -93,15 +94,16 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                         + " ORDER BY phdActividad.actDescripcion;"
                         );
                     if (reader != null) {
-                        CConector conectormy = new CConector();
+
                         while (reader.Read()) {
                             TProcedimientoID.Text = reader["actId"].ToString();
                             TProcedimiento.Text = reader["actDescripcion"].ToString();
-                            TIntensidad.Text = reader["intensidad"].ToString();
+                            conector.SelectInDropDown(DIntensidad, reader["intensidad"]);
                             TSesionesDia.Text = reader["autSesionesDia"].ToString();
                             TNumeroSesiones.Text = reader["autNumSesiones"].ToString();
                             if (TProcedimiento.Text.Length == 0)
-                                TProcedimiento.Text= conectormy.QueryString("SELECT CONCAT(codigo, ' - ', nombre) FROM medicamentos WHERE id=" + TProcedimientoID.Text);
+                                TProcedimiento.Text= Procedimientos.GetProcedimiento(TProcedimientoID.Text);
+
                             BProcedimiento_Click(sender, e);
                         }
                     }
@@ -421,9 +423,18 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         if (!Page.IsValid)
             return;
 
+        for(int i=0; i<GActivades.Rows.Count; i++) { // verificamos que el servicio no se encuentre duplicado
+            if(GActivades.Rows[i].Cells[2].Text==TProcedimientoID.Text && GActivades.SelectedIndex!=i) {
+                LMensaje.Text = "Ya existe este procedimiento";
+                TProcedimiento.Focus();
+                return;
+            }
+        }
+
         IOrderedDictionary data = new OrderedDictionary();
         data.Add("procedimiento", TProcedimiento.Text);
-        data.Add("intensidad", TIntensidad.Text.Length == 0 ? null : TIntensidad.Text);
+        data.Add("tint", DIntensidad.SelectedItem.Text);
+        data.Add("idint", DIntensidad.SelectedValue.Length == 0 ? null : DIntensidad.SelectedValue);
         data.Add("sesionesdia", TSesionesDia.Text.Length==0 ? null : TSesionesDia.Text);
         data.Add("numerosesiones", TNumeroSesiones.Text);
         data.Add("proc_id", TProcedimientoID.Text);
@@ -440,9 +451,10 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
             IOrderedDictionary dataold = new OrderedDictionary();
             dataold.Add("procedimiento", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim());
-            dataold.Add("sesionesdia", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim());
-            dataold.Add("numerosesiones", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim());
-            dataold.Add("intensidad", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[6].Text).Trim());
+            dataold.Add("numerosesiones", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim());
+            dataold.Add("sesionesdia", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim());            
+            dataold.Add("tint", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[6].Text).Trim());
+            dataold.Add("idint", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
             dataold.Add("proc_id", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim());
             dataold.Add("id", GActivades.DataKeys[GActivades.SelectedIndex].Value);
 
@@ -451,7 +463,9 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         GActivades.SelectedIndex = -1;
         GActivades.DataBind();
 
-        TProcedimientoID.Text = TProcedimiento.Text = TIntensidad.Text = TSesionesDia.Text = TNumeroSesiones.Text = "";
+        LMensaje.Text= TProcedimientoID.Text = TProcedimiento.Text = TSesionesDia.Text = TNumeroSesiones.Text = "";
+        DIntensidad.SelectedIndex = 0;
+        BProcedimiento.Text = "Agregar";
         TProcedimiento.Focus();
     }
 
@@ -467,18 +481,18 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
     protected void GActivades_SelectedIndexChanged(object sender, EventArgs e)
     {
         TProcedimiento.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim();
-        TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
-        TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
-        TIntensidad.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[6].Text).Trim();
+        TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
+        TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
+        CConector.SelectInDropDown(DIntensidad, HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
         TProcedimientoID.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim();
 
+        BProcedimiento.Text = "Editar";
         TProcedimiento.Focus();
     }
     protected void GAutorizaciones_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowIndex != -1) {
 
-            CConector conectormy = new CConector();
             int pos = e.Row.Cells[3].Text.IndexOf("%%");
             while(pos!=-1) {
                 
@@ -488,7 +502,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                         break;
                     texto+=e.Row.Cells[3].Text[i];
                 }
-                e.Row.Cells[3].Text= e.Row.Cells[3].Text.Replace("%%" + texto, conectormy.QueryString("SELECT CONCAT(codigo, ' - ', nombre) FROM medicamentos WHERE id=" + texto));
+                e.Row.Cells[3].Text= e.Row.Cells[3].Text.Replace("%%" + texto, Procedimientos.GetProcedimiento(texto));
                 pos = e.Row.Cells[3].Text.IndexOf("%%");
             }
             e.Row.Cells[3].Text= e.Row.Cells[3].Text.Replace(",", "<br/>");

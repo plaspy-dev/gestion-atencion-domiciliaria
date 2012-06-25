@@ -290,6 +290,10 @@ public partial class rh_funcionario : System.Web.UI.Page
             Archivos archivo = new Archivos(FFoto.PostedFile, Convert.ToInt32(HId.Value));
             archivo.SaveFile(new Query("admPersonalHS"));
         }
+        else if (WebCam.GetFoto() != null) {
+            Archivos archivo = new Archivos(WebCam.GetFoto(), Convert.ToInt32(HId.Value));
+            archivo.SaveFile(new Query("admPersonalHS"));
+        }
 
         if(conectorms.QueryMod("DELETE FROM admDocsPersonalHS WHERE perId=" + HId.Value )==-1)
             return;
@@ -409,8 +413,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         {
             if (HttpUtility.HtmlDecode(e.Row.Cells[2].Text).Trim().Length == 0)
             {
-                CConector conector = new CConector();
-                e.Row.Cells[2].Text = HttpUtility.HtmlEncode(conector.QueryString("SELECT CONCAT(codigo,'-',nombre) FROM medicamentos WHERE id=" + Query.GetValor(HttpUtility.HtmlDecode(e.Row.Cells[3].Text).Trim())));
+                e.Row.Cells[2].Text = HttpUtility.HtmlEncode(Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[3].Text).Trim()));
             }
         }
     }

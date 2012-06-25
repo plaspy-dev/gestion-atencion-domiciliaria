@@ -33,11 +33,10 @@ public partial class directorio_Default : System.Web.UI.Page
                 DEStado.DataBind();
                 DEStado.SelectedValue = "1";
             }
-            CConector conector = new CConector();
-            conector.SelectInDropDown(DArea, CConector.GetCookie("directorio_area"));
-            conector.SelectInDropDown(DEStado, CConector.GetCookie("directorio_estado"));
-            conector.SelectInDropDown(DCargo, CConector.GetCookie("directorio_cargo"));
-            conector.SelectInDropDown(DDisponibilidad, CConector.GetCookie("directorio_disponibilidad"));
+            CConector.SelectInDropDown(DArea, CConector.GetCookie("directorio_area"));
+            CConector.SelectInDropDown(DEStado, CConector.GetCookie("directorio_estado"));
+            CConector.SelectInDropDown(DCargo, CConector.GetCookie("directorio_cargo"));
+            CConector.SelectInDropDown(DDisponibilidad, CConector.GetCookie("directorio_disponibilidad"));
         }
         CUsuario usuario = CUsuario.GetUsuario();
         GResultados.Columns[3].Visible = !usuario.CanUpdate();

@@ -262,7 +262,7 @@ public class ConectorMS
 
 	public bool SelectInDropDown(DropDownList lista, object valor)
 	{
-		return SelectInDropDown(lista, valor, "");
+		return new ConectorMS("").SelectInDropDown(lista, valor, "");
 	}
 
 	public bool SelectInDropDown(DropDownList lista, object valor, string query)

@@ -87,8 +87,10 @@ public partial class administrador_Default : System.Web.UI.Page
             parent = Add("Formulación");
             Add("Tipo formulación", 19, parent);
 
-
             // 20
+            parent = Add("Autorizaciones");
+            Add("Horas", 21, parent);
+
 
             if (HTipo.Value.Length == 0)
                 Response.Redirect(Request.Url.AbsolutePath + "?tipo=1");

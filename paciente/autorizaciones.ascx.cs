@@ -19,4 +19,12 @@ public partial class paciente_autorizaciones : System.Web.UI.UserControl
         get { return HId.Value; }
         set { HId.Value = value; }
     }
+    protected void RDetalle_ItemDataBound(object sender, RepeaterItemEventArgs e)
+    {
+        Label label = (Label)e.Item.FindControl("LD");
+        try {
+            Convert.ToInt32(label.Text);
+            label.Text = Procedimientos.GetProcedimiento(label.Text);
+        } catch(Exception a) {}
+    }
 }

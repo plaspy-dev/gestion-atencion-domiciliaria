@@ -34,6 +34,19 @@ public class Archivos
         }
     }
 
+    public Archivos(byte[] archivo, int id) {
+        
+        Nombre = "Foto";
+        Tipo = "image/jpeg";
+        Id = id;
+
+        _contenido = archivo;
+
+        Fecha = DateTime.Now;
+        RealId = "";
+        QueryFile = "";
+    }
+
 	public Archivos(HttpPostedFile archivo, int id)
 	{
         Nombre = archivo.FileName;

@@ -281,10 +281,9 @@ public partial class phd_programacionc : System.Web.UI.UserControl
     }
     protected void DActividad_DataBound(object sender, EventArgs e)
     {
-        CConector conector= new CConector();
         for (int i = 0; i < DActividad.Items.Count; i++) {
             if (DActividad.Items[i].Text.Length == 0)
-                DActividad.Items[i].Text = conector.QueryString("SELECT CONCAT(codigo, ' - ', nombre) FROM medicamentos WHERE id=" + DActividad.Items[i].Value);
+                DActividad.Items[i].Text = Procedimientos.GetProcedimiento(DActividad.Items[i].Value);
         }
     }
 }

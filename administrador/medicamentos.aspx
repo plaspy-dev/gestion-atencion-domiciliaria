@@ -107,7 +107,7 @@
           </tr>
           <tr>
               <td>
-                  Area</td>
+                  Cargos</td>
               <td>
                   <asp:DropDownList ID="DCargo" runat="server" AppendDataBoundItems="true" 
                     DataSourceID="SCargo" DataTextField="nombre" DataValueField="id">

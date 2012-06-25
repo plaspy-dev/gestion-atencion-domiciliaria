@@ -8,14 +8,14 @@
 <ItemTemplate>
         <tr><th colSpan="2">AUTORIZACIÓN <asp:Label runat="server" ID="LAutorizacion" Text='<%# DataBinder.Eval(Container.DataItem, "autnumero") %>'></asp:Label></th></tr>
         <tr><td><%# DataBinder.Eval(Container.DataItem, "autFecha", "{0:d}") %></td><td><%# DataBinder.Eval(Container.DataItem, "autFechaVenc", "{0:d}")%></td></tr>
-        <asp:Repeater runat="server" ID="RDDetalle" DataSourceID="SDDetalle">
+        <asp:Repeater runat="server" ID="RDDetalle" DataSourceID="SDDetalle" onitemdatabound="RDetalle_ItemDataBound">
             <ItemTemplate>
-                <tr><td nowrap="false"><%# DataBinder.Eval(Container.DataItem, "actDescripcion") %></td><td align="right"><%# DataBinder.Eval(Container.DataItem, "autNumSesiones") %></td></tr>
+                <tr><td nowrap="false"><asp:Label ID="LD" runat="server" Text='<%# DataBinder.Eval(Container.DataItem, "actDescripcion") %>'></asp:Label></td><td align="right"><%# DataBinder.Eval(Container.DataItem, "autNumSesiones") %></td></tr>
             </ItemTemplate>
         </asp:Repeater>
         <asp:SqlDataSource ID="SDDetalle" runat="server"
             ConnectionString="<%$ ConnectionStrings:connBD %>" 
-            SelectCommand="SELECT phdActividad.actDescripcion,phdDetalleAutorizacion.autNumSesiones
+            SelectCommand="SELECT ISNULL(phdActividad.actDescripcion, phdDetalleAutorizacion.actId) AS actDescripcion,phdDetalleAutorizacion.autNumSesiones
                 FROM phdDetalleAutorizacion
                 LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
                 WHERE 

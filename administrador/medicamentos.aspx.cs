@@ -43,7 +43,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                     TForma.Text = reader["forma"].ToString();
                     TConcentracion.Text = reader["concentracion"].ToString();
                     TAclaracion.Text = reader["aclaracion"].ToString();
-                    conector.SelectInDropDown(DCargo, reader["area"]);
+                    CConector.SelectInDropDown(DCargo, reader["area"]);
 
                     ListItem item= LTipos.Items.FindByValue(reader["tipo"].ToString());
                     if (item != null)

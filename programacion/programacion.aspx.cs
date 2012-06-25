@@ -125,18 +125,17 @@ public partial class programacion_programacion : System.Web.UI.Page
 
             if (HttpUtility.HtmlDecode(e.Row.Cells[8].Text).Trim().Length==0)
             {
-                CConector conector = new CConector();
-                e.Row.Cells[8].Text = HttpUtility.HtmlEncode(conector.QueryString("SELECT CONCAT(codigo,'-',nombre) FROM medicamentos WHERE id=" + Query.GetValor(HttpUtility.HtmlDecode(e.Row.Cells[10].Text).Trim())));
+                e.Row.Cells[8].Text = HttpUtility.HtmlEncode(Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[10].Text).Trim()));
             }
         }
     }
     protected void DProgramaciones_DataBound(object sender, EventArgs e)
     {
-        CConector conector = new CConector();
         for (int i = 0; i < DProgramaciones.Items.Count; i++)
         {
-            if (DProgramaciones.Items[i].Text.Length == 0)
-                DProgramaciones.Items[i].Text = conector.QueryString("SELECT CONCAT(codigo, '-', nombre) FROM medicamentos WHERE id=" + DProgramaciones.Items[i].Value);
+            if (DProgramaciones.Items[i].Text.Length == 0) {
+                DProgramaciones.Items[i].Text = Procedimientos.GetProcedimiento(DProgramaciones.Items[i].Value);
+            }
         }
     }
 }

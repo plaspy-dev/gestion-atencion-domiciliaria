@@ -28,7 +28,6 @@ public partial class admisiones_consulta : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            CConector conectormy = new CConector();
             int pos = e.Row.Cells[8].Text.IndexOf("%%");
             while (pos != -1)
             {
@@ -39,7 +38,7 @@ public partial class admisiones_consulta : System.Web.UI.Page
                         break;
                     texto += e.Row.Cells[8].Text[i];
                 }
-                e.Row.Cells[8].Text = e.Row.Cells[8].Text.Replace("%%" + texto, conectormy.QueryString("SELECT CONCAT(codigo, ' - ', nombre) FROM medicamentos WHERE id=" + texto));
+                e.Row.Cells[8].Text = e.Row.Cells[8].Text.Replace("%%" + texto, Procedimientos.GetProcedimiento(texto));
                 pos = e.Row.Cells[8].Text.IndexOf("%%");
             }
             e.Row.Cells[8].Text = e.Row.Cells[8].Text.Replace(",", "<br/>");

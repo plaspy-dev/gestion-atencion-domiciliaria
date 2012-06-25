@@ -344,9 +344,9 @@ public class Conector
 		return "";
 	}
 
-	public bool SelectInDropDown(DropDownList lista, object valor)
+	public static bool SelectInDropDown(DropDownList lista, object valor)
 	{
-		return SelectInDropDown(lista, valor, "");
+		return new Conector("").SelectInDropDown(lista, valor, "");
 	}
 
 	public bool SelectInDropDown(DropDownList lista, object valor, string query)

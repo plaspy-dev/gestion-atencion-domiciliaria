@@ -1,7 +1,9 @@
 ﻿<%@ Page Title="Personal" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="funcionario.aspx.cs" Inherits="rh_funcionario" %>
+<%@ Register src="~/webcam/webcam.ascx" tagname="webcam" tagprefix="webcam" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <script type="text/javascript">
+        var webfoto = "#<%= IFoto.ClientID %>";
         $(function() {
             var dates = $("#<%= TDesde.ClientID %>, #<%= THasta.ClientID %>").datepicker({
                 onSelect: function(selectedDate) {
@@ -77,6 +79,8 @@
                         </td>
                         <td rowspan="15" valign="top">
                             <asp:ImageButton runat="server" ID="IFoto" CausesValidation="false" />
+                            <br />
+                            <webcam:webcam runat="server" ID="WebCam" />
                             <br />
                             <asp:FileUpload runat="server" ID="FFoto" Width="100px" />
                             <asp:ImageButton runat="server" ID="IEliminar" ImageUrl="~/imgs/eliminar.gif" 

@@ -30,8 +30,7 @@ public partial class programacion_consulta : System.Web.UI.Page
         if (e.Row.RowIndex != -1)
         {
             if(HttpUtility.HtmlDecode(e.Row.Cells[4].Text).Trim().Length==0) {
-                CConector conector = new CConector();
-                e.Row.Cells[4].Text= conector.QueryString("SELECT CONCAT(codigo, ' - ', nombre) FROM medicamentos WHERE id=" + Query.GetValor(HttpUtility.HtmlDecode(e.Row.Cells[5].Text).Trim()));
+                e.Row.Cells[4].Text= Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[5].Text).Trim());
             }
         }
     }

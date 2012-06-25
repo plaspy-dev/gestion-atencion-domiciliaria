@@ -188,7 +188,7 @@ public class Usuario
 		Usuario usuario = (Usuario)HttpContext.Current.Session["Usuario"];
 		if (usuario == null)
 		{
-			string text = HttpUtility.UrlEncode(HttpContext.Current.Request.Url.AbsoluteUri);
+			string text = HttpUtility.UrlEncode(HttpContext.Current.Request.Url.AbsolutePath);
 			HttpContext.Current.Response.Redirect("~/Default.aspx?from=" + text);
 			HttpContext.Current.Response.End();
 		}
