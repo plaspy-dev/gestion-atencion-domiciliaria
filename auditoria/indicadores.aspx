@@ -11,8 +11,8 @@
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Tipo');
         data.addColumn('number', 'Servicios programados');
-        data.addColumn('number', 'Servicios descubiertos');
         data.addColumn('number', 'Pacientes atendidos');
+        data.addColumn('number', 'Servicios descubiertos');
         data.addRows([
             <asp:Literal runat="server" ID="LChart"></asp:Literal>
         ]);
@@ -113,15 +113,9 @@
                 <asp:BoundField HeaderText="Pacientes atendidos" DataField="atendidos" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
                 <asp:BoundField HeaderText="Mortalidad" DataField="muertos" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
                 <asp:BoundField HeaderText="Egresos" DataField="egresos" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
-                <asp:BoundField HeaderText="Servicios PHD" DataField="phdProgramadas" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
-                <asp:BoundField HeaderText="Servicios descubiertos PHD" DataField="descubiertoenfermeria" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />                
-                <asp:BoundField HeaderText="Pacientes atendidos PHD" DataField="atendidosphd" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
-                <asp:BoundField HeaderText="Servicios apoyo terapeutico" DataField="atxProgramadas" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
-                <asp:BoundField HeaderText="Servicios descubiertos apoyo terapeutico" DataField="descubiertoapoyo" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />                
-                <asp:BoundField HeaderText="Pacientes atendidos apoyo terapeutico" DataField="atendidosatx" ItemStyle-HorizontalAlign="Right" HeaderStyle-HorizontalAlign="Left" />
             </Fields>
         </asp:DetailsView>
-    <asp:SqlDataSource ID="SResultados" runat="server" 
+            <asp:SqlDataSource ID="SResultados" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
                 SelectCommand="SELECT 
                         (SELECT COUNT(*) FROM phdEgresos 
@@ -130,9 +124,7 @@
                         WHERE (@eps=0 OR phdPaciente.entId=@eps) AND phdEgresos.egrFecha BETWEEN @desde AND @hasta AND phdCausaEgreso.cegDescripcion='MUERTE') AS muertos
                         ,(SELECT COUNT(DISTINCT autNumero) FROM phdAutorizacion WHERE 
                         (@eps=0 OR phdAutorizacion.entId=@eps) AND 
-                        autNumero IN ((SELECT phdProgramacion.autNumero FROM phdProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta)
-                        UNION (SELECT phdProgramacionMD.autNumero FROM phdProgramacionMD WHERE prgFechaProg BETWEEN @desde AND @hasta) 
-                        UNION (SELECT atxProgramacion.autNumero FROM atxProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta))) AS atendidos
+                        autNumero IN (SELECT programacion.autNumero FROM programacion WHERE prgFechaProg BETWEEN @desde AND @hasta)) AS atendidos
                         ,
                         (SELECT COUNT(*) FROM phdEgresos
                         LEFT JOIN phdCausaEgreso ON (phdCausaEgreso.cegId=phdEgresos.cegId)
@@ -143,12 +135,6 @@
                         AND 
 						(phdCausaEgreso.cegDescripcion LIKE 'REINGRESO POR AGUDIZACION' OR phdCausaEgreso.cegDescripcion='REINGRESO POR PATOLOGIA ANEXA' OR phdCausaEgreso.cegDescripcion='REINGRESO POR CANALIZACIÓN FALLIDA')
                         ) AS egresos
-                        ,(SELECT COUNT(DISTINCT phdProgramacion.pacId) FROM phdProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta) AS atendidosphd
-                        ,(SELECT COUNT(*) FROM phdNovedad LEFT JOIN phdProgramacion ON (phdProgramacion.prgId=phdNovedad.prgId) LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND phdNovedad.novTipo=5 AND phdNovedad.prgTipo=1 AND phdNovedad.segFechaRegistro BETWEEN @desde AND @hasta) AS descubiertoenfermeria
-                        ,(SELECT COUNT(*) FROM phdProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta) AS phdProgramadas
-                        ,(SELECT COUNT(DISTINCT atxProgramacion.pacId) FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta) AS atendidosatx
-                        ,(SELECT COUNT(*) FROM phdNovedad LEFT JOIN atxProgramacion ON (atxProgramacion.prgId=phdNovedad.prgId) LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND phdNovedad.novTipo=5 AND phdNovedad.prgTipo=2 AND phdNovedad.segFechaRegistro BETWEEN @desde AND @hasta) AS descubiertoapoyo
-                        ,(SELECT COUNT(*) FROM atxProgramacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=atxProgramacion.pacId) WHERE (@eps=0 OR phdPaciente.entId=@eps) AND prgFechaProg BETWEEN @desde AND @hasta) AS atxProgramadas
                         ">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
@@ -276,11 +262,10 @@
                                 LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
                                 LEFT JOIN phdCIE10 ON (phdCIE10.cieCodDx=phdPaciente.cieCodDx)
                                 WHERE 
-                                (@eps=0 OR phdPaciente.entId=@eps)
+                                phdPaciente.cieCodDx IS NOT NULL
+                                AND (@eps=0 OR phdPaciente.entId=@eps)
                                 AND phdAutorizacion.autNumero IN 
-                                ((SELECT autNumero FROM phdProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta)
-                                UNION (SELECT autNumero FROM phdProgramacionMD WHERE prgFechaProg BETWEEN @desde AND @hasta)
-                                UNION (SELECT autNumero FROM atxProgramacion WHERE prgFechaProg BETWEEN @desde AND @hasta))
+                                (SELECT autNumero FROM programacion WHERE prgFechaProg BETWEEN @desde AND @hasta)
                                 GROUP BY phdCIE10.cieCodDx,phdCIE10.cirDescripcion ORDER BY c DESC">
                              <SelectParameters>
                                 <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
@@ -300,7 +285,7 @@
         <tr>
         <td>
         <asp:GridView ID="GDetalle" runat="server" DataSourceID="SDetalle" 
-            AutoGenerateColumns="False" EmptyDataText="No se encontraron quejas" 
+            AutoGenerateColumns="False" EmptyDataText="No se encontraron eventos" 
             AllowPaging="True" PageSize="50" AllowSorting="True" 
                 DataKeyNames="id,pacienteid" onrowdatabound="GDetalle_RowDataBound">
             <RowStyle CssClass="GridRow"></RowStyle>
@@ -322,6 +307,9 @@
         <asp:SqlDataSource ID="SDetalle" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
                     SelectCommand="">
+                    <SelectParameters>
+                        <asp:ControlParameter ControlID="DAsegurador" Name="eps" PropertyName="SelectedValue" />
+                   </SelectParameters>
         </asp:SqlDataSource>
         </td>
         </tr>

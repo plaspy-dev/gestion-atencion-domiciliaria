@@ -112,6 +112,22 @@
             <td></td>
           </tr>
           <tr>
+              <td>
+                  Grupo</td>
+              <td><asp:DropDownList ID="DGrupo" runat="server" DataSourceID="SGrupo" AppendDataBoundItems="true"
+                    DataTextField="nombre" DataValueField="id">
+                    <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SGrupo" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=22 AND szReservado IS NULL ORDER BY nombre">
+                </asp:SqlDataSource>
+                  </td>
+              <td>
+                  &nbsp;</td>
+          </tr>
+          <tr>
               <td colspan="3">
               <div id="accordion">
                     <h3><a href="#">Área</a></h3>
@@ -176,12 +192,13 @@
                     <asp:BoundField DataField="forma" HeaderText="Forma" SortExpression="forma" />
                     <asp:BoundField DataField="concentracion" HeaderText="Concentración" SortExpression="concentracion" />
                     <asp:BoundField DataField="aclaracion" HeaderText="Aclaración" SortExpression="aclaracion" />
+                    <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" />
                 </Columns>
             </asp:GridView>
             <asp:SqlDataSource ID="SqlDataSource1" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion FROM medicamentos WHERE tipo=@tipo AND estado IS NULL ORDER BY nombre" 
+                SelectCommand="SELECT medicamentos.id, medicamentos.nombre, medicamentos.forma,medicamentos.codigo, medicamentos.principio, medicamentos.concentracion, medicamentos.aclaracion,grupo.nombre AS grupo FROM medicamentos LEFT JOIN varios AS grupo ON (grupo.id=medicamentos.grupo) WHERE medicamentos.tipo=@tipo AND medicamentos.estado IS NULL ORDER BY medicamentos.nombre" 
                 DeleteCommand="UPDATE medicamento SET estado=-1 WHERE id=@id" >
                 <SelectParameters>
                     <asp:ControlParameter ControlID="LTipos" PropertyName="SelectedValue" Name="tipo" DefaultValue="0" />

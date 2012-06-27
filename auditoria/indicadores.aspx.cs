@@ -6,9 +6,11 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Configuration;
 using SDG.Componentes;
+using MySql.Data.MySqlClient;
 
 public partial class auditoria_indicadores : System.Web.UI.Page
 {
+    public bool addfield = true;
     protected void Page_Load(object sender, EventArgs e)
     {
         if(!IsPostBack) {
@@ -24,15 +26,90 @@ public partial class auditoria_indicadores : System.Web.UI.Page
         }
     }
 
+    protected void AddField(string titulo, string datafield) {
+
+        if (!addfield)
+            return;
+
+        BoundField campo = new BoundField();
+        campo.DataField = datafield;
+        campo.HeaderText = titulo;
+        campo.ItemStyle.HorizontalAlign = HorizontalAlign.Right;
+        campo.HeaderStyle.HorizontalAlign = HorizontalAlign.Left;
+        DResultados.Fields.Add(campo);
+    }
+
+    protected string AddCampo(string id, string nombre, string servicios) {
+
+        AddField("Servicios " + nombre, "a" + id);
+        AddField("Pacientes atendidos " + nombre, "b" + id);
+        AddField("Servicios descubiertos " + nombre, "c" + id);
+
+        string szProcedimiento = "";
+        string procedimientos="";
+
+        if (servicios == null) // es un servicio
+        {
+            szProcedimiento= new CConector().QueryString("SELECT GROUP_CONCAT(id) FROM medicamentos WHERE grupo=" + id);
+            if (szProcedimiento.Length == 0)
+                procedimientos = "0=1"; // esto es para que no filtre ningun servicio
+            else procedimientos = "programacion.actId IN (" + szProcedimiento + ")";
+        } else { // es el resto
+            if (servicios.Length == 0)
+                procedimientos = "0=0"; // todos los servicios
+            else procedimientos = "programacion.actId NOT IN (" + servicios + ")"; 
+        }
+
+        // agregamos la nueva consulta de servicios
+        string query = ",(SELECT COUNT(*) FROM programacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) WHERE " + procedimientos + " AND prgFechaProg BETWEEN @desde AND @hasta AND (@eps=0 OR phdPaciente.entId=@eps)) AS a" + id;
+        SResultados.SelectCommand += query;
+
+        // agregamos los pacientes atendidos
+        query = ",(SELECT COUNT(DISTINCT programacion.pacId) FROM programacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) WHERE " + procedimientos + " AND prgFechaProg BETWEEN @desde AND @hasta AND (@eps=0 OR phdPaciente.entId=@eps)) AS b" + id;
+        SResultados.SelectCommand += query;
+
+        // agregamos los servicios descubiertos
+        query = ",(SELECT COUNT(*) FROM phdNovedad LEFT JOIN programacion ON (programacion.prgId=phdNovedad.prgId) LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) WHERE phdNovedad.segFechaRegistro BETWEEN @desde AND @hasta AND phdNovedad.novTipo=5 AND phdNovedad.prgTipo=1 AND " + procedimientos + " AND (@eps=0 OR phdPaciente.entId=@eps)) AS c" + id;
+        SResultados.SelectCommand += query;
+
+        return szProcedimiento;
+    }
+
     protected void BBuscar_Click(object sender, EventArgs e)
     {
         PDetalle.Visible = false;
+        string servicios = "";
+
+        addfield = DResultados.Rows.Count==3;
+
+        CConector conector = new CConector();
+
+        MySqlDataReader reader = conector.Query("SELECT id, nombre FROM varios WHERE tipo=22 AND szReservado IS NULL ORDER BY nombre");
+        if (reader != null)
+        {
+            while (reader.Read())
+            {
+
+                string procedimientos = AddCampo(reader["id"].ToString(), reader["nombre"].ToString(), null);
+                if (servicios.Length > 0 && procedimientos.Length > 0)
+                    servicios += ",";
+                servicios += procedimientos;
+            }
+        }
+        // agregamos el resto de los servicios
+        AddCampo("", "(Otros)", servicios);
+
         DResultados.DataBind();
         if (DResultados.Rows.Count == 0)
             return;
 
-        LChart.Text= "['PHD', " + DResultados.Rows[3].Cells[1].Text + ", " + DResultados.Rows[4].Cells[1].Text + ", " + DResultados.Rows[5].Cells[1].Text + "],";
-        LChart.Text+= "['Apoyo terapéutico', " + DResultados.Rows[6].Cells[1].Text + ", " + DResultados.Rows[7].Cells[1].Text + ", " + DResultados.Rows[8].Cells[1].Text + "]";
+        LChart.Text = "";
+        for (int i = 3; i < DResultados.Rows.Count; i+=3 ) {
+
+            servicios= HttpUtility.HtmlDecode(DResultados.Rows[i].Cells[0].Text).Trim();
+            servicios = servicios.Substring("Servicios ".Length);
+            LChart.Text += "['" + servicios + "', " + DResultados.Rows[i].Cells[1].Text + ", " + DResultados.Rows[i+1].Cells[1].Text + ", " + DResultados.Rows[i+2].Cells[1].Text + "],";
+        }
 
         DEventos.DataBind();
 
@@ -89,7 +166,9 @@ public partial class auditoria_indicadores : System.Web.UI.Page
 
         PDetalle.Visible = true;
         GDetalle.DataBind();
+        ScriptManager.RegisterStartupScript(GDetalle, typeof(string), "scroll", "$('html:not(:animated),body:not(:animated)').animate({ scrollTop: $('#" + GDetalle.ClientID + "').offset().top+100 }, 1100);", true);
     }
+
     protected void GDetalle_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowIndex == -1)

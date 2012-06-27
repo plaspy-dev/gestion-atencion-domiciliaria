@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Auditoría Autorizado Vs Realizado" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="autorizadovsrealizado.aspx.cs" Inherits="auditoria_autorizadovsrealizado" %>
+﻿<%@ Page Title="Autorizado Vs Realizado" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="autorizadovsrealizado.aspx.cs" Inherits="auditoria_autorizadovsrealizado" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
@@ -67,7 +67,7 @@
                                 ,SUM(CASE prgActivo WHEN 0 THEN programacion.prgNumSesion ELSE 0 END) AS b
                                 FROM phdAutorizacion
                                 LEFT JOIN phdDetalleautorizacion ON (phdDetalleautorizacion.autNumero=phdAutorizacion.autNumero)
-                                LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId)
+                                LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
                                 WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                 GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId, phdDetalleautorizacion.autNumSesiones
                                 ) AS a
@@ -82,7 +82,7 @@
                                     ,SUM(CASE prgActivo WHEN 0 THEN programacion.prgNumSesion ELSE 0 END) AS b
                                     FROM phdAutorizacion
                                     LEFT JOIN phdDetalleautorizacion ON (phdDetalleautorizacion.autNumero=phdAutorizacion.autNumero)
-                                    LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId)
+                                    LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                     AND phdDetalleautorizacion.actId IS NOT NULL
                                     GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId,phdDetalleautorizacion.autNumSesiones
@@ -99,7 +99,7 @@
                                 ,SUM(CASE prgActivo WHEN 0 THEN programacion.prgNumSesion ELSE 0 END) AS b
                                 FROM phdAutorizacion
                                 LEFT JOIN phdDetalleautorizacion ON (phdDetalleautorizacion.autNumero=phdAutorizacion.autNumero)
-                                LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId)
+                                LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
                                 LEFT JOIN admEntidad ON (admEntidad.entId=phdAutorizacion.entId)
                                 WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                 GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId, admEntidad.entNombre,phdDetalleautorizacion.autNumSesiones

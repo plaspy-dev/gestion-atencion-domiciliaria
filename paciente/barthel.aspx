@@ -52,6 +52,7 @@
     <fieldset>
         <legend>Datos</legend>
         <table style="width: 100%;">
+            <tr>
             <td colspan="3">
                 <asp:Panel ID="PHistorial" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LHistorial"></asp:Label></a></h3>
@@ -99,6 +100,7 @@
                     </div>
                 </asp:Panel>
             </td>
+            </tr>
             <tr>
                 <td>
                     Fecha

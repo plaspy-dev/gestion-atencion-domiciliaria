@@ -33,7 +33,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
 
                 CConector conector = new CConector();
 
-                MySqlDataReader reader= conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo FROM medicamentos WHERE id="+ Query.GetValor(Request.QueryString["imp"].Trim()));
+                MySqlDataReader reader= conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo FROM medicamentos WHERE id="+ Query.GetValor(Request.QueryString["imp"].Trim()));
 
                 if (reader != null && reader.Read()) {
                     
@@ -44,6 +44,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                     TForma.Text = reader["forma"].ToString();
                     TConcentracion.Text = reader["concentracion"].ToString();
                     TAclaracion.Text = reader["aclaracion"].ToString();
+                    CConector.SelectInDropDown(DGrupo, reader["grupo"]);
 
                     ListItem item= LTipos.Items.FindByValue(reader["tipo"].ToString());
                     if (item != null)
@@ -74,6 +75,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         query["principio"]=TPrincipio.Text;
         query["concentracion"]=TConcentracion.Text;
         query["aclaracion"]=TAclaracion.Text;
+        query["grupo"] = DGrupo.SelectedValue;
 
         if (HId.Value.Length == 0)
         {
@@ -127,6 +129,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TPrincipio.Text = "";
         TConcentracion.Text = "";
         TAclaracion.Text = "";
+        DGrupo.SelectedValue = "";
         GCargos.DataBind();
         BAceptar.Enabled = CUsuario.GetUsuario().CanInsert();
 
@@ -142,6 +145,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TForma.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[5].Text).Trim();
         TConcentracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[6].Text).Trim();
         TAclaracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[7].Text).Trim();
+        CConector.SelectInComboText(DGrupo, HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[8].Text).Trim());
+
         ViewState["cargos"] = new CConector().QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
         GCargos.DataBind();
 

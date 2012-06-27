@@ -424,7 +424,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             return;
 
         for(int i=0; i<GActivades.Rows.Count; i++) { // verificamos que el servicio no se encuentre duplicado
-            if(GActivades.Rows[i].Cells[2].Text==TProcedimientoID.Text && GActivades.SelectedIndex!=i) {
+            if (GActivades.Rows[i].Cells[2].Text == TProcedimientoID.Text && DIntensidad.SelectedItem.Text == HttpUtility.HtmlDecode(GActivades.Rows[i].Cells[6].Text).Trim() && GActivades.SelectedIndex != i)
+            {
                 LMensaje.Text = "Ya existe este procedimiento";
                 TProcedimiento.Focus();
                 return;

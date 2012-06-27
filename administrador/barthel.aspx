@@ -17,12 +17,12 @@
             <td>
                 Grupo</td>
             <td>
-                <asp:DropDownList ID="DGrupo" runat="server" DataSourceID="SqlDataSource1" 
+                <asp:DropDownList ID="DGrupo" runat="server" DataSourceID="SGrupo" 
                     DataTextField="nombre" DataValueField="id">
                 </asp:DropDownList>
             </td>
             <td>
-            <asp:SqlDataSource ID="SqlDataSource1" runat="server" 
+            <asp:SqlDataSource ID="SGrupo" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT id, nombre FROM varios WHERE tipo=7 AND szReservado IS NULL">

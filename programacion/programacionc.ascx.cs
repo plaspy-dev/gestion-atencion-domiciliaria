@@ -32,10 +32,11 @@ public partial class phd_programacionc : System.Web.UI.UserControl
 
                 query += "prgFechaProg";
                 query += "perId";
-                query += "actId";
+                query["actId"] = "CAST(actId AS VARCHAR(9))+'_'+ISNULL(CAST(intensidad AS VARCHAR(9)),'')";
                 query += "prgObservaciones";
                 query += "autNumero";
                 query += "prgNumSesion";
+                query += "intensidad";
 
                 CConectorMS conector = new CConectorMS();
 
@@ -47,13 +48,20 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                     TObservaciones.Text = reader["prgObservaciones"].ToString();
                     TSesiones.Text = reader["prgNumSesion"].ToString();
                     TProfesionalID.Text = reader["perId"].ToString();
-
                     conector.SelectInDropDown(DAutorizacion, reader["autNumero"], "SELECT '" + reader["autNumero"].ToString() + "'");
-                    conector.SelectInDropDown(DActividad, reader["actId"].ToString(), "SELECT actDescripcion FROM phdActividad WHERE actId='" + reader["actId"].ToString() + "'");
-                    ListItem item= DActividad.Items.FindByValue(reader["actId"].ToString());
-                    if (item != null) {
-                        if (item.Text.Length == 0) {
-                            item.Text = Procedimientos.GetProcedimiento(reader["actId"].ToString());
+                    
+                    conector.SelectInDropDown(DActividad, reader["actId"]);
+                    ListItem item = DActividad.Items.FindByValue(reader["actId"].ToString());
+                    if (item != null)
+                    {
+                        if (item.Text.Length == 0)
+                        {
+                            string[] ids = item.Text.Split('_');
+                            item.Text= Procedimientos.GetProcedimiento(ids[0]);
+                            if (ids.Length > 1 && ids[1].Length > 0)
+                            {
+                                item.Text += " [" + Procedimientos.GetVarios(ids[1]) + "]";
+                            }
                         }
                     }
                     TProfesional.Text = conector.QueryString("SELECT perNombre FROM dbo.admPersonalHS where perId='" + reader["perId"].ToString() + "'");
@@ -229,7 +237,6 @@ public partial class phd_programacionc : System.Web.UI.UserControl
 
         query["pacId"] = HIdPaciente.Value;
         query["perId"] = TProfesionalID.Text;
-        query["actId"] = DActividad.SelectedValue;
         query["prgObservaciones"] = TObservaciones.Text;
         query["autNumero"] = DAutorizacion.SelectedValue;
         query["prgNumSesion"] = TSesiones.Text;
@@ -237,6 +244,11 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         query["segUsuarioIngreso"] = usuario.GetLogin();
         query["segFechaIngreso"] = "GETDATE()";
         query["entId"] = conector.QueryString("SELECT entId FROM phdPaciente WHERE pacId=" + HIdPaciente.Value);
+
+        string []ids= DActividad.SelectedValue.Split('_');
+        query["actId"] = ids[0];
+        if (ids.Length>1 && ids[1].Length>0)
+            query["intensidad"] = ids[1];
 
         for (int i = 0; i < fechas.Count; i++)
         {
@@ -298,21 +310,12 @@ public partial class phd_programacionc : System.Web.UI.UserControl
     protected void DActividad_DataBound(object sender, EventArgs e)
     {
         for (int i = 0; i < DActividad.Items.Count; i++) {
-            string nombre = "";
-            try
-            {
-                if (DActividad.Items[i].Text.Length > 0)
-                {
-                    Convert.ToInt32(DActividad.Items[i].Text);
-                    nombre = DActividad.Items[i].Text;
-                    DActividad.Items[i].Text = "";
-                }
-            }
-            catch (Exception ex) { }
+            string []ids= DActividad.Items[i].Value.Split('_');
             if (DActividad.Items[i].Text.Length == 0)
-                DActividad.Items[i].Text = Procedimientos.GetProcedimiento(DActividad.Items[i].Value);
-            if (nombre.Length > 0) {
-                DActividad.Items[i].Text += " [" + Procedimientos.GetVarios(nombre) + "]";
+                DActividad.Items[i].Text = Procedimientos.GetProcedimiento(ids[0]);
+            if (ids.Length > 1 && ids[1].Length > 0)
+            {
+                DActividad.Items[i].Text += " [" + Procedimientos.GetVarios(ids[1]) + "]";
             }
         }
     }
