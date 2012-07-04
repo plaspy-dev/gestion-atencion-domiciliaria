@@ -6,23 +6,23 @@
 <script type="text/javascript">
 
     $(function() {
-        $('#ctl00_cph_USignoVital').panelUpdated(function() {
-            addDialog("#ctl00_cph_USignoVital", "#dSignoVital");
+        $('#<%= USignoVital.ClientID %>').panelUpdated(function() {
+            addDialog("#<%= USignoVital.ClientID %>", "#dSignoVital");
         });
-        $('#ctl00_cph_UControlLiquidosA').panelUpdated(function() {
-            addDialog("#ctl00_cph_UControlLiquidosA", "#dControlLiquidosA");
+        $('#<%= UControlLiquidosA.ClientID %>').panelUpdated(function() {
+            addDialog("#<%= UControlLiquidosA.ClientID %>", "#dControlLiquidosA");
         });
-        $('#ctl00_cph_UControlLiquidosE').panelUpdated(function() {
-            addDialog("#ctl00_cph_UControlLiquidosE", "#dControlLiquidosE");
+        $('#<%= UControlLiquidosE.ClientID %>').panelUpdated(function() {
+            addDialog("#<%= UControlLiquidosE.ClientID %>", "#dControlLiquidosE");
         });
-        $('#ctl00_cph_UMedicamentos').panelUpdated(function() {
-            addDialog("#ctl00_cph_UMedicamentos", "#dMedicamentos");
+        $('#<%= UMedicamentos.ClientID %>').panelUpdated(function() {
+            addDialog("#<%= UMedicamentos.ClientID %>", "#dMedicamentos");
         });
-        $('#ctl00_cph_UBitacora').panelUpdated(function() {
-            addDialog("#ctl00_cph_UBitacora", "#dBitacora");
+        $('#<%= UBitacora.ClientID %>').panelUpdated(function() {
+            addDialog("#<%= UBitacora.ClientID %>", "#dBitacora");
         });
-        $("#ctl00_cph_TFecha").datepicker({
-            onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#ctl00_cph_BFecha").click(); }
+        $("#<%= TFecha.ClientID %>").datepicker({
+            onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#<%= BFecha.ClientID %>").click(); }
         });
     });
     </script>
@@ -30,7 +30,8 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <div id="dImprimir">
 <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
-    <asp:Panel runat="server" id="PDatos" Visible="false">
+    <asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional">
+    <ContentTemplate>
         <asp:HiddenField runat="server" ID="HIdValoracion" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
         <table>
@@ -70,6 +71,12 @@
                                 <td>
                                     <asp:GridView ID="GSignoVital" runat="server" DataSourceID="SSignoVital" 
                             AutoGenerateColumns="False" DataKeyNames="id" ShowFooter="True" >
+                            <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
@@ -161,6 +168,12 @@
                     <td>
                         <asp:GridView ID="GControlLiquidosA" runat="server" DataSourceID="SControlLiquidosA" 
                         AutoGenerateColumns="False" DataKeyNames="id" ShowFooter="True" >
+                        <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
             <Columns>                
                 <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                 <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
@@ -274,6 +287,12 @@
                                         <td>
                                             <asp:GridView ID="GControlLiquidosE" runat="server" AutoGenerateColumns="False" 
                                                 DataKeyNames="id" DataSourceID="SControlLiquidosE" ShowFooter="True">
+                                                <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                                                 <Columns>
                                                     <asp:CommandField ButtonType="Image" SelectImageUrl="~/imgs/edit.gif" 
                                                         ShowSelectButton="True" />
@@ -410,6 +429,12 @@
                                         <td>
                                             <asp:GridView ID="GMedicamentos" runat="server" AutoGenerateColumns="False" 
                                                 DataKeyNames="id" DataSourceID="SMedicamentos" ShowFooter="True">
+                                                <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                                                 <Columns>
                                                     <asp:CommandField ButtonType="Image" SelectImageUrl="~/imgs/edit.gif" 
                                                         ShowSelectButton="True" />
@@ -569,6 +594,12 @@
                                         <td>
                                             <asp:GridView ID="GBitacora" runat="server" AutoGenerateColumns="False" 
                                                 DataKeyNames="id" DataSourceID="SBitacora" ShowFooter="True">
+                                                <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                                                 <Columns>
                                                     <asp:CommandField ButtonType="Image" SelectImageUrl="~/imgs/edit.gif" 
                                                         ShowSelectButton="True" />
@@ -675,7 +706,8 @@
                 </tr>
             </tr>
     </table>
-    </asp:Panel>
+    </ContentTemplate>
+    </asp:UpdatePanel>
     </div>
 </asp:Content>
 

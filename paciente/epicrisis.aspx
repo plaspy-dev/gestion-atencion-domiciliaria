@@ -7,7 +7,8 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <div id="dImprimir">
 <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
-    <asp:Panel runat="server" id="PDatos" Visible="false">
+    <asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional">
+        <ContentTemplate>
         <asp:HiddenField runat="server" ID="HIdEpicrisis" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
     <table width="100%">
@@ -73,6 +74,7 @@
             </td>
         </tr>
     </table>
-    </asp:Panel>
+    </ContentTemplate>
+    </asp:UpdatePanel>
     </div>
 </asp:Content>

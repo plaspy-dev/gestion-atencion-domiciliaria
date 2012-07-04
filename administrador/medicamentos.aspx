@@ -154,6 +154,30 @@
                                 SelectCommand="SELECT carId id,carDescripcion nombre FROM dbo.admCargo ORDER BY 2;">
                         </asp:SqlDataSource>
                     </div>
+                    <h3><a href="#">Costos</a></h3>
+                    <div class="hide">
+                        <asp:GridView ID="GEntidades" runat="server" AutoGenerateColumns="False" DataSourceID="SEntidades" 
+                            EmptyDataText="No se encontraron entidades" DataKeyNames="id" onrowdatabound="GEntidades_RowDataBound">
+                            <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                            <Columns>
+                                <asp:BoundField HeaderText="Entidad" DataField="nombre" />
+                                <asp:TemplateField HeaderText="Costo">
+                                    <ItemTemplate>
+                                        <asp:TextBox runat="server" CssClass="dinero" ID="TCosto"></asp:TextBox>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
+                        <asp:SqlDataSource ID="SEntidades" runat="server" 
+                            ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                            SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                        </asp:SqlDataSource>
+                    </div>
                     </div>
                   </td>
           </tr>

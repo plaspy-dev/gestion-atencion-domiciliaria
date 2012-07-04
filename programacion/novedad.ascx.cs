@@ -13,6 +13,7 @@ public partial class phd_novedad : System.Web.UI.UserControl
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        ScriptManager.RegisterStartupScript(this, typeof(string), ClientID, "RegisterStarUpScript('dscriptNovedad');", true);
         BAceptar.Enabled = CUsuario.GetUsuario().CanUpdate();
     }
 

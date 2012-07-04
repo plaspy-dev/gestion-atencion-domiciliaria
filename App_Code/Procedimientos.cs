@@ -14,6 +14,7 @@ public class Procedimientos
 {
     protected Dictionary<string, string> proc = new Dictionary<string, string>();
     protected Dictionary<string, string> varios = new Dictionary<string, string>();
+    protected Dictionary<string, string> costos = new Dictionary<string, string>();
     public Procedimientos()
     {
         HttpContext.Current.Session["Procedimientos"] = this;
@@ -49,6 +50,24 @@ public class Procedimientos
         }
         return nombre;
     }
+    static public string GetCosto(string procedimento, string entidad)
+    {
+        Procedimientos info = GetProcedimientos();
+        string id = procedimento + "," + entidad;
+        string nombre = null;
+        try
+        {
+            nombre = info.proc[id];
+        }
+        catch (Exception ex)
+        {
+            nombre = new CConector().QueryString("SELECT costo FROM medicamento_valor WHERE medicamento=" + Query.GetValor(procedimento) + " AND entidad=" + Query.GetValor(entidad));
+            info.proc[id] = nombre;
+        }
+        return nombre;
+    }
+
+
     static public string ReplaceProcedimientos(string textoIn) {
         
         int pos = textoIn.IndexOf("%%");

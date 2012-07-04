@@ -50,6 +50,16 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                         valoracion += "observaciones";
                         valoracion += "paciente";
 
+                        // panel comun
+                        valoracion += "TA";
+                        valoracion += "FR";
+                        valoracion += "FC";
+                        valoracion += "saturacion";
+                        valoracion += "justificacion";
+                        valoracion += "revision";
+                        valoracion += "actividades";
+                        valoracion += "resultado";
+
                         MySqlDataReader readermysql = conectormy.Query(valoracion.GetSelect("id=" + Request.QueryString["vatid"]));
                         if (readermysql != null && readermysql.Read())
                         {
@@ -69,6 +79,16 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                             TNumeroTerapias.Text = readermysql["numero_terapias"].ToString();
                             TObservaciones.Text= readermysql["observaciones"].ToString();
 
+                            // panel comun
+                            TTA.Text = readermysql["TA"].ToString();
+                            TFR.Text = readermysql["FR"].ToString();
+                            TFC.Text = readermysql["FC"].ToString();
+                            TSaturacion.Text = readermysql["saturacion"].ToString();
+                            TJustificacion.Text = readermysql["justificacion"].ToString();
+                            TPatron.Text = readermysql["revision"].ToString();
+                            TActividades.Text = readermysql["actividades"].ToString();
+                            TResultados.Text = readermysql["resultado"].ToString();
+
                             HIdValoracion.Value = readermysql["id"].ToString();
 
                             ((MasterPageI)Master).SetModificacion(HIdValoracion.Value);
@@ -79,34 +99,20 @@ public partial class paciente_valoracionat : System.Web.UI.Page
 
                                 respiratoria+="eoxigeno";
                                 respiratoria+="szEOxigeno";
-                                respiratoria+="TA";
-                                respiratoria+="FR";
-                                respiratoria+="FC";
-                                respiratoria+="saturacion";
-                                respiratoria+="latrogenia";
-                                respiratoria+="szLatrogenia";
-                                respiratoria+="justificacion";
-                                respiratoria+="revision";
-                                respiratoria+="actividades";
-                                respiratoria+="resultado";
+                                respiratoria += "latrogenia";
+                                respiratoria += "szLatrogenia";
                                 
                                 readermysql = conectormy.Query(respiratoria.GetSelect("valoracion=" + HIdValoracion.Value));
                                 if (readermysql != null && readermysql.Read()) {
 
                                     COxigeno.Checked= readermysql["eoxigeno"].ToString()=="1";
                                     TOxigeno.Text= readermysql["szEOxigeno"].ToString();
-                                    TTA.Text= readermysql["TA"].ToString();
-                                    TFR.Text= readermysql["FR"].ToString();
-                                    TFC.Text= readermysql["FC"].ToString();
-                                    TSaturacion.Text=readermysql["saturacion"].ToString();
-                                    CLatrogenia.Checked= readermysql["latrogenia"].ToString()=="1";
-                                    TLatrogenia.Text= readermysql["szLatrogenia"].ToString();
-                                    TJustificacion.Text= readermysql["justificacion"].ToString();
-                                    TPatron.Text= readermysql["revision"].ToString();
-                                    TActividades.Text= readermysql["actividades"].ToString();
-                                    TResultados.Text= readermysql["resultado"].ToString();
+                                    CLatrogenia.Checked = readermysql["latrogenia"].ToString() == "1";
+                                    TLatrogenia.Text = readermysql["szLatrogenia"].ToString();
                                 }
-                            } else if (DTipo.SelectedValue == "2") { }  else if (DTipo.SelectedValue == "3") {
+                            } else if (DTipo.SelectedValue == "2") { 
+
+                            }  else if (DTipo.SelectedValue == "3") {
                                 
                                 Query apoyo = new Query("valoracionat_ocupacional");
                                 
@@ -126,8 +132,8 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                     }
 
                     GHistorial.DataBind();
-                    LHistorial.Text = GHistorial.Rows.Count + " Índice";
-                    LHistorial.Text += GHistorial.Rows.Count == 1 ? "" : "s";
+                    LHistorial.Text = GHistorial.Rows.Count + " Evaluaci";
+                    LHistorial.Text += GHistorial.Rows.Count == 1 ? "ón" : "ones";
                     PHistorial.Visible = GHistorial.Rows.Count > 0;
                     DTipo_SelectedIndexChanged(sender, e);
                 }
@@ -155,6 +161,14 @@ public partial class paciente_valoracionat : System.Web.UI.Page
         valoracion["tipo"]= DTipo.SelectedValue;
         valoracion["numero_terapias"]= TNumeroTerapias.Text;
         valoracion["observaciones"]= TObservaciones.Text;
+        valoracion["TA"] = TTA.Text;
+        valoracion["FR"] = TFR.Text;
+        valoracion["FC"] = TFC.Text;
+        valoracion["saturacion"] = TSaturacion.Text;
+        valoracion["justificacion"] = TJustificacion.Text;
+        valoracion["revision"] = TPatron.Text;
+        valoracion["actividades"] = TActividades.Text;
+        valoracion["resultado"] = TResultados.Text;
 
         if (HIdValoracion.Value.Length == 0)
         {
@@ -184,6 +198,8 @@ public partial class paciente_valoracionat : System.Web.UI.Page
             return;
         if (conector.QueryMod("DELETE FROM valoracionat_respiratoria WHERE valoracion=" + HIdValoracion.Value) == -1)
             return;
+        if (conector.QueryMod("DELETE FROM valoracionat_fuerza_muscular WHERE valoracion=" + HIdValoracion.Value) == -1)
+            return;
 
         if(DTipo.SelectedValue=="1") { // terapia respiratoria
 
@@ -205,21 +221,26 @@ public partial class paciente_valoracionat : System.Web.UI.Page
             respiratoria["valoracion"] = HIdValoracion.Value;
             respiratoria["eoxigeno"] = COxigeno.Checked ? "1" : "";
             respiratoria["szEOxigeno"] = TOxigeno.Text;
-            respiratoria["TA"] = TTA.Text;
-            respiratoria["FR"] = TFR.Text;
-            respiratoria["FC"] = TFC.Text;
-            respiratoria["saturacion"] = TSaturacion.Text;
             respiratoria["latrogenia"] = CLatrogenia.Checked ? "1" : "";
             respiratoria["szLatrogenia"] = TLatrogenia.Text;
-            respiratoria["justificacion"] = TJustificacion.Text;
-            respiratoria["revision"] =  TPatron.Text;
-            respiratoria["actividades"] =TActividades.Text;
-            respiratoria["resultado"] = TResultados.Text;
 
             if (conector.QueryMod(respiratoria.GetInsert()) == -1)
                 return;
         } else if(DTipo.SelectedValue=="2") { // terapia fisica
 
+            Query fuerza = new Query("valoracionat_fuerza_muscular");
+            fuerza["valoracion"] = HIdValoracion.Value;
+
+            for (int i = 0; i < GFuerza.Rows.Count; i++)
+            {
+                fuerza["izquierda"] = ((TextBox)GFuerza.Rows[i].FindControl("TIzquierda")).Text;
+                fuerza["derecha"] = ((TextBox)GFuerza.Rows[i].FindControl("TDerecha")).Text;
+                fuerza["puntuacion"] = ((TextBox)GFuerza.Rows[i].FindControl("TPuntaje")).Text;
+                fuerza["tipo"] = GFuerza.DataKeys[i].Value.ToString();
+
+                if (conector.QueryMod(fuerza.GetInsert()) == -1)
+                    return;
+            }
         } else if(DTipo.SelectedValue=="3") { // apoyo terapeutico
 
             Query apoyo = new Query("valoracionat_ocupacional");
@@ -244,5 +265,6 @@ public partial class paciente_valoracionat : System.Web.UI.Page
         PRespiratoria.Visible= DTipo.SelectedValue=="1";
         PFisica.Visible = DTipo.SelectedValue == "2";
         POcupacional.Visible = DTipo.SelectedValue == "3";
+        PComun.Visible = PRespiratoria.Visible || PFisica.Visible;
     }
 }

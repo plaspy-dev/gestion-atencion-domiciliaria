@@ -5,8 +5,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tiny_mce.js"></script>
 <script type="text/javascript">
-    $(function() {
-        $("#ctl00_cph_TTA").mask("999/99");
+    var editor = null;
+    addFunctionToStart(function() {
+        editor = null;
+        $("#<%= TTA.ClientID %>").mask("999/99");
         $("#<%= TCIE10.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -36,8 +38,40 @@
                 // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
             }
         });
+        if ($("#<%= PMujer.ClientID %>").length == 0) {
+            $("#tmujer").remove();
+            $("#tfisico").attr("colspan", "4").attr("width", "100%");
+        }
         if (!$.browser.msie || $.browser.version > 8)
             $("input[name*=TObservaciones]").width("98%");
+
+        tinyMCE.init({
+            mode: "exact",
+            elements: "elm1",
+            theme: "advanced",
+            theme_advanced_buttons1: "",
+            theme_advanced_buttons2: "",
+            theme_advanced_buttons3: "",
+            valid_elements: "ol,li,p,br",
+            setup: function(ed) {
+                editor = ed;
+                ed.onSubmit.add(function(ed, e) {
+                    lim();
+                });
+                ed.onInit.add(function(ed) {
+                    var completa = $("#<%= TConductaInicial.ClientID %>").val();
+                    completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
+                    editor.setContent(completa);
+                    blurevent(ed);
+                    $("#elm1").remove();
+                });
+            },
+            paste_preprocess: function(pl, o) {
+                o.content = o.content.replace(/<\S[^><]*>/g, "");
+            }
+        });
+    });
+    $(function() {
         $(window).resize(function() {
             $("input[name*=TObservaciones]").each(function() {
                 $(this).width($(this).parent().width() - 15);
@@ -46,10 +80,6 @@
                 $(this).width($(this).parent().width() - 15);
             });
         });
-        if ($("#<%= PMujer.ClientID %>").length == 0) {
-            $("#tmujer").remove();
-            $("#tfisico").attr("colspan", "4").attr("width", "100%");
-        }
     });
     function rel(text) {
         text = text.replace(/\r/gi, '');
@@ -71,8 +101,6 @@
         return szfinal;
     }
 
-    var editor = null;
-
     function lim() {
         var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
         $("#<%= TConductaInicial.ClientID %>").val(limpio);
@@ -86,37 +114,12 @@
             lim();
         });
     }
-
-    tinyMCE.init({
-        mode: "exact",
-        elements: "elm1",
-        theme: "advanced",
-        theme_advanced_buttons1: "",
-        theme_advanced_buttons2: "",
-        theme_advanced_buttons3: "",
-        valid_elements: "ol,li,p,br",
-        setup: function(ed) {
-            editor = ed;
-            ed.onSubmit.add(function(ed, e) {
-                lim();
-            });
-            ed.onInit.add(function(ed) {
-                var completa = $("#<%= TConductaInicial.ClientID %>").val();
-                completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
-                editor.setContent(completa);
-                blurevent(ed);
-                $("#elm1").remove();
-            });
-        },
-        paste_preprocess: function(pl, o) {
-            o.content = o.content.replace(/<\S[^><]*>/g, "");
-        }
-    });
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
-    <asp:Panel runat="server" id="PDatos" Visible="false">
+    <asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional">
+        <ContentTemplate>
         <asp:HiddenField ID="HIdIngreso" runat="server" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
         <table width="100%">
@@ -318,6 +321,12 @@
                     <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" 
                         AutoGenerateColumns="False" DataKeyNames="id"
                         onselectedindexchanged="GCDiagnostico_SelectedIndexChanged" >
+                        <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
@@ -439,6 +448,7 @@
             onclick="BCancelar_Click" Text="Cancelar" /></td>
             </tr>
         </table>
-    </asp:Panel>
+        </ContentTemplate>
+    </asp:UpdatePanel>
 </asp:Content>
 

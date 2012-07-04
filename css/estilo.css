@@ -45,7 +45,7 @@
 {
     font-family: Verdana, Arial, Helvetica;
     font-size: small;
-    position:absolute;
+    position:fixed;
     top:0;right:0; /*This may prevent it from being seen if the user has scrolled down */
     color:#fff;
     padding:2px 2px 2px 20px;

@@ -173,7 +173,7 @@
                                 LEFT JOIN admPersonalHS ON (admPersonalHS.perId=programacion.perId)
                                 LEFT JOIN phdActividad ON (phdActividad.actId=programacion.actId)
                                 LEFT JOIN phdNovedad ON (phdNovedad.prgId=programacion.prgId)
-                                LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=programacion.autNumero AND phdDetalleAutorizacion.actId=programacion.actId)
+                                LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=programacion.autNumero AND phdDetalleAutorizacion.actId=programacion.actId AND phdDetalleAutorizacion.intensidad=programacion.intensidad)
                             WHERE programacion.prgFechaProg BETWEEN @inicio AND @fin
                             AND (@asegurador=0 OR programacion.entId=@asegurador)
                             AND (@personal=0 OR programacion.perId=@personal)

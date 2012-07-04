@@ -236,7 +236,6 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
          for (int i = 0; i < GExamenFisico.Rows.Count; i++)
         {
-
             Query antecendentes = new Query("examen_ingreso");
             string id = GExamenFisico.DataKeys[i].Values[1].ToString();
 
@@ -380,6 +379,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
             TCIE10.Text = "";
             TObservacionesCIE10.Text = "";
+            TCIE10.Focus();
         }
     }
 

@@ -5,7 +5,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tiny_mce.js"></script>
 <script type="text/javascript">
-    $(function() {
+    var editor = null;
+    addFunctionToStart(function() {
+        editor = null;
         $("#ctl00_cph_TTA").mask("999/99");
         $("#<%= TFuncionario.ClientID %>").autocomplete({
             source: function(request, response) {
@@ -86,11 +88,38 @@
             $("input[name*=TObservaciones]").each(function() {
                 $(this).width($(this).parent().width() - 15);
             });
-	    $("input[name*=TObservaciones]").each(function() {
+            $("input[name*=TObservaciones]").each(function() {
                 $(this).width($(this).parent().width() - 15);
             });
         });
+
+        tinyMCE.init({
+            mode: "exact",
+            elements: "elm1",
+            theme: "advanced",
+            theme_advanced_buttons1: "",
+            theme_advanced_buttons2: "",
+            theme_advanced_buttons3: "",
+            valid_elements: "ol,li,p,br",
+            setup: function(ed) {
+                editor = ed;
+                ed.onSubmit.add(function(ed, e) {
+                    lim();
+                });
+                ed.onInit.add(function(ed) {
+                    var completa = $("#<%= TPlanManejo.ClientID %>").val();
+                    completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
+                    editor.setContent(completa);
+                    blurevent(ed);
+                    $("#elm1").remove();
+                });
+            },
+            paste_preprocess: function(pl, o) {
+                o.content = o.content.replace(/<\S[^><]*>/g, "");
+            }
+        });
     });
+    
     function rel(text) {
         text = text.replace(/\r/gi, '');
         text = text.replace(/&nbsp;/gi, '');
@@ -111,8 +140,6 @@
         return szfinal;
     }
 
-    var editor = null;
-
     function lim() {
         var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
         $("#<%= TPlanManejo.ClientID %>").val(limpio);
@@ -126,37 +153,12 @@
             lim();
         });
     }
-
-    tinyMCE.init({
-        mode: "exact",
-        elements: "elm1",
-        theme: "advanced",
-        theme_advanced_buttons1: "",
-        theme_advanced_buttons2: "",
-        theme_advanced_buttons3: "",
-        valid_elements: "ol,li,p,br",
-        setup: function(ed) {
-            editor = ed;
-            ed.onSubmit.add(function(ed, e) {
-                lim();
-            });
-            ed.onInit.add(function(ed) {
-                var completa = $("#<%= TPlanManejo.ClientID %>").val();
-                completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
-                editor.setContent(completa);
-                blurevent(ed);
-                $("#elm1").remove();
-            });
-        },
-        paste_preprocess: function(pl, o) {
-            o.content = o.content.replace(/<\S[^><]*>/g, "");
-        }
-    });
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
-    <asp:Panel runat="server" id="PDatos" Visible="false">
+    <asp:UpdatePanel runat="server" ID="PDatos" Visible="false" UpdateMode="Conditional">
+        <ContentTemplate>
         <asp:HiddenField ID="HIdEvolucion" runat="server" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
         <table>
@@ -367,47 +369,50 @@
             </asp:SqlDataSource>
                 </td>
             </tr>
-            <asp:Panel runat="server" ID="PCIE10">
-            <tr>
-                <td colspan="4" class="celdaTitulo">Código de diagnóstico</td>
-            </tr>
-            <tr>
-                <td colspan="4">
-                    <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" 
-                        AutoGenerateColumns="False" DataKeyNames="id"
-                        onselectedindexchanged="GCDiagnostico_SelectedIndexChanged" >
-                        <RowStyle CssClass="GridRow"></RowStyle>
-                <FooterStyle CssClass="GridFooter"></FooterStyle>
-                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-                        <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                            <asp:BoundField DataField="codigo" HeaderText="Código" />
-                            <asp:BoundField DataField="descripcion" HeaderText="Descripción" />
-                        </Columns>
-                        <SelectedRowStyle CssClass="selecteditem" />
-                    </asp:GridView>
-                    <sdg:CustomDataSource ID="SCDiagnostico" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                                        SelectCommand="SELECT id,codigo,descripcion FROM codigos_evolucion WHERE evolucion_paciente=@ingreso"
-                                        DeleteCommand="DELETE FROM codigos_evolucion WHERE id=@id"
-                                        InsertCommand="INSERT INTO codigos_evolucion(evolucion_paciente,codigo,descripcion) VALUES (@ingreso, @codigo, @descripcion)"
-                                        UpdateCommand="UPDATE codigos_evolucion SET codigo=@codigo,descripcion=@descripcion WHERE id=@id" 
-                                        >
-                                        <SelectParameters>
-                                            <asp:ControlParameter ControlID="HIdEvolucion" DefaultValue="0" PropertyName="Value" Name="ingreso" />
-                                        </SelectParameters>
-                    </sdg:CustomDataSource>
-                </td>
-            </tr>
-            <tr>
-                <td>CIE10</td>
-              <td colspan="3"><asp:TextBox runat="server" Width="90%" ID="TCIE10"></asp:TextBox>
-                <asp:Button ID="BMasCDiagnostico" runat="server" OnClick="BMasCDiagnostico_Click" Text="+" /></td>
-            </tr>
-            </asp:Panel>
+            <asp:UpdatePanel runat="server" ID="PCIE10" UpdateMode="Conditional">
+            <ContentTemplate>
+                <tr>
+                    <td colspan="4" class="celdaTitulo">Código de diagnóstico</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" 
+                            AutoGenerateColumns="False" DataKeyNames="id"
+                            onselectedindexchanged="GCDiagnostico_SelectedIndexChanged" >
+                            <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                            <Columns>
+                                <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                                <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                                <asp:BoundField DataField="codigo" HeaderText="Código" />
+                                <asp:BoundField DataField="descripcion" HeaderText="Descripción" />
+                            </Columns>
+                            <SelectedRowStyle CssClass="selecteditem" />
+                        </asp:GridView>
+                        <sdg:CustomDataSource ID="SCDiagnostico" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                            SelectCommand="SELECT id,codigo,descripcion FROM codigos_evolucion WHERE evolucion_paciente=@ingreso"
+                                            DeleteCommand="DELETE FROM codigos_evolucion WHERE id=@id"
+                                            InsertCommand="INSERT INTO codigos_evolucion(evolucion_paciente,codigo,descripcion) VALUES (@ingreso, @codigo, @descripcion)"
+                                            UpdateCommand="UPDATE codigos_evolucion SET codigo=@codigo,descripcion=@descripcion WHERE id=@id" 
+                                            >
+                                            <SelectParameters>
+                                                <asp:ControlParameter ControlID="HIdEvolucion" DefaultValue="0" PropertyName="Value" Name="ingreso" />
+                                            </SelectParameters>
+                        </sdg:CustomDataSource>
+                    </td>
+                </tr>
+                <tr>
+                    <td>CIE10</td>
+                  <td colspan="3" nowrap="nowrap"><asp:TextBox runat="server" Width="90%" ID="TCIE10"></asp:TextBox>
+                    <asp:RequiredFieldValidator ControlToValidate="TCIE10" ValidationGroup="cie10" ErrorMessage="Por favor ingrese un CIE10." ID="RequiredFieldValidator14" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                    <asp:Button ID="BMasCDiagnostico" runat="server" OnClick="BMasCDiagnostico_Click" Text="+" ValidationGroup="cie10" /></td>
+                </tr>
+                </ContentTemplate>
+            </asp:UpdatePanel>
             <tr>
                 <td colspan="4">Analisis</td>
             </tr>
@@ -433,6 +438,7 @@
             onclick="BCancelar_Click" Text="Cancelar" /></td>
             </tr>
         </table>
-    </asp:Panel>
+        </ContentTemplate>
+    </asp:UpdatePanel>
 </asp:Content>
 

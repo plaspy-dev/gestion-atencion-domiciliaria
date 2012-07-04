@@ -332,6 +332,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
             GCDiagnostico.DataBind();
 
             TCIE10.Text = "";
+            TCIE10.Focus();
         }
     }
 

@@ -15,6 +15,9 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         if (!IsPostBack)
         {
             ViewState["cargos"] = "";
+            ViewState["costos"] = "";
+            ViewState["entidades"] = "";
+
             TCodigo.Focus();
             CUsuario usuario = CUsuario.GetUsuario();
 
@@ -54,6 +57,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                     }
                     LTipos_SelectedIndexChanged(sender, e);
                     ViewState["cargos"] = conector.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
+                    ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(costo) FROM medicamento_valor WHERE medicamento=" + HId.Value+ " ORDER BY medicamento");
+                    ViewState["entidades"] = conector.QueryString("SELECT GROUP_CONCAT(entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
 
                     BAceptar.Enabled = CUsuario.GetUsuario().CanUpdate();
 
@@ -66,6 +71,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
     {
         Query query = new Query("medicamentos");
         CConector conector = new CConector();
+        CConectorMS conectorms = new CConectorMS();
+
         string szQuery;
         string mensaje;
 
@@ -114,6 +121,28 @@ public partial class administrador_medicamentos : System.Web.UI.Page
             }
         }
 
+        // agregamos los cargos que puede programar el usuario
+        if (conector.QueryMod("DELETE FROM medicamento_valor WHERE medicamento=" + HId.Value) == -1)
+            return;
+
+        Query valores = new Query("medicamento_valor");
+        valores["medicamento"] = HId.Value;
+
+        for (int i = 0; i < GEntidades.Rows.Count; i++)
+        {
+            TextBox texto = (TextBox)GEntidades.Rows[i].FindControl("TCosto");
+
+            if(texto.Text.Length>0) {
+                valores["entidad"] = GEntidades.DataKeys[i].Value.ToString();
+                valores["costo"] = texto.Text.Replace(",", "");
+                if (conector.QueryMod(valores.GetInsert()) == -1)
+                    return;
+                if (conectorms.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(texto.Text.Replace(",", ""))
+                                        + " WHERE actId=" + HId.Value + " AND costo IS NULL AND entId=" + GEntidades.DataKeys[i].Value.ToString()) == -1)
+                    return;
+            }
+        }
+
         GResultado.DataBind();
 
         ((MasterPageI)Master).SetTitulo(mensaje);
@@ -122,6 +151,10 @@ public partial class administrador_medicamentos : System.Web.UI.Page
 
     protected void BCancelar_Click(object sender, EventArgs e)
     {
+        ViewState["cargos"] = "";
+        ViewState["costos"] = "";
+        ViewState["entidades"] = "";
+
         HId.Value = "";
         TNombre.Text = "";
         TForma.Text="";
@@ -131,6 +164,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TAclaracion.Text = "";
         DGrupo.SelectedValue = "";
         GCargos.DataBind();
+        GEntidades.DataBind();
         BAceptar.Enabled = CUsuario.GetUsuario().CanInsert();
 
         GResultado.SelectedIndex = -1;
@@ -147,8 +181,12 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TAclaracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[7].Text).Trim();
         CConector.SelectInComboText(DGrupo, HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[8].Text).Trim());
 
-        ViewState["cargos"] = new CConector().QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
+        CConector conector = new CConector();
+        ViewState["cargos"] = conector.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
+        ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(costo) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
+        ViewState["entidades"] = conector.QueryString("SELECT GROUP_CONCAT(entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
         GCargos.DataBind();
+        GEntidades.DataBind();
 
         BAceptar.Enabled = CUsuario.GetUsuario().CanUpdate();
 
@@ -159,6 +197,23 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         LTipo.Text = LTipos.SelectedItem.Text;
     }
 
+    protected void GEntidades_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowIndex != -1)
+        {
+            string[] valores = ViewState["entidades"].ToString().Split(',');
+            for (int i = 0; i < valores.Length; i++)
+            {
+                if (valores[i] == GEntidades.DataKeys[e.Row.RowIndex].Value.ToString())
+                {
+                    TextBox text = (TextBox)e.Row.FindControl("TCosto");
+                    valores= ViewState["costos"].ToString().Split(',');
+                    text.Text= valores[i];
+                    break;
+                }
+            }
+        }
+    }
     protected void GCargos_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowIndex != -1)

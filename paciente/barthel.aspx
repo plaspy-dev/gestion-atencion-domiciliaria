@@ -5,28 +5,29 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
-    $(function() {
-        function total() {
-            var total = 0;
-            $("input:radio").each(function(i) {
-                if ($(this).is(":checked")) {
-                    total += parseInt($(this).val());
-                }
-            });
-            $("#ctl00_cph_TTotal").val(total);
-            $("#severa").css("font-weight", "");
-            $("#grave").css("font-weight", "");
-            $("#moderada").css("font-weight", "");
-            $("#ligera").css("font-weight", "");
-            if (total < 45)
-                $("#severa").css("font-weight", "bold");
-            else if (total < 60)
-                $("#grave").css("font-weight", "bold");
-            else if (total < 80)
-                $("#moderada").css("font-weight", "bold");
-            else if (total < 100)
-                $("#ligera").css("font-weight", "bold");
-        }
+    function total() {
+        var total = 0;
+        $("input:radio").each(function(i) {
+            if ($(this).is(":checked")) {
+                total += parseInt($(this).val());
+            }
+        });
+        $("#ctl00_cph_TTotal").val(total);
+        $("#severa").css("font-weight", "");
+        $("#grave").css("font-weight", "");
+        $("#moderada").css("font-weight", "");
+        $("#ligera").css("font-weight", "");
+        if (total < 45)
+            $("#severa").css("font-weight", "bold");
+        else if (total < 60)
+            $("#grave").css("font-weight", "bold");
+        else if (total < 80)
+            $("#moderada").css("font-weight", "bold");
+        else // if (total < 100)
+            $("#ligera").css("font-weight", "bold");
+    }
+    
+    addFunctionToStart(function() {
         $("input:radio").change(total);
         total();
 
@@ -46,7 +47,8 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <div id="dImprimir">
 <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
-    <asp:Panel runat="server" id="PDatos" Visible="false">
+    <asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional">
+        <ContentTemplate>
         <asp:HiddenField runat="server" ID="HIdEpicrisis" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
     <fieldset>
@@ -119,7 +121,7 @@
                 </td>
                 <td>
                     <asp:TextBox ID="THora" runat="server" CssClass="hora"></asp:TextBox>
-                    <asp:RequiredFieldValidator ControlToValidate="THora" ErrorMessage="Por favor ingrese un ." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                    <asp:RequiredFieldValidator ControlToValidate="THora" ErrorMessage="Por favor ingrese una Hora." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 </td>
                 <td>
                     &nbsp;</td>
@@ -208,7 +210,8 @@
             </tr>
         </table>
     </fieldset>
-    </asp:Panel>
+    </ContentTemplate>
+    </asp:UpdatePanel>
     </div>
 </asp:Content>
 

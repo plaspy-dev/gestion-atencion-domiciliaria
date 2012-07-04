@@ -1,62 +1,62 @@
 ﻿<%@ Page Title="Admisiones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="autorizaciones.aspx.cs" Inherits="admisiones_autorizaciones" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
-    $(function() {
-        
-        function currencyFormatted(amount) {
-            var i = parseFloat(amount);
-            if (isNaN(i)) { i = 0.00; }
-            var minus = '';
-            if (i < 0) { minus = '-'; }
-            i = Math.abs(i);
-            i = parseInt((i + .005) * 100);
-            i = i / 100;
-            s = new String(i);
-            if (s.indexOf('.') < 0) { s += '.00'; }
-            if (s.indexOf('.') == (s.length - 2)) { s += '0'; }
-            s = minus + s;
-            return '$' + commaFormatted(s);
+    function currencyFormatted(amount) {
+        var i = parseFloat(amount);
+        if (isNaN(i)) { i = 0.00; }
+        var minus = '';
+        if (i < 0) { minus = '-'; }
+        i = Math.abs(i);
+        i = parseInt((i + .005) * 100);
+        i = i / 100;
+        s = new String(i);
+        if (s.indexOf('.') < 0) { s += '.00'; }
+        if (s.indexOf('.') == (s.length - 2)) { s += '0'; }
+        s = minus + s;
+        return '$' + commaFormatted(s);
+    }
+
+    function commaFormatted(amount) {
+
+        var delimiter = ","; // replace comma if desired
+        var a = amount.split('.', 2)
+        var d = a[1];
+        var i = parseInt(a[0]);
+        if (isNaN(i)) { return ''; }
+        var minus = '';
+        if (i < 0) { minus = '-'; }
+        i = Math.abs(i);
+        var n = new String(i);
+        var a = [];
+        while (n.length > 3) {
+            var nn = n.substr(n.length - 3);
+            a.unshift(nn);
+            n = n.substr(0, n.length - 3);
         }
+        if (n.length > 0) { a.unshift(n); }
+        n = a.join(delimiter);
+        if (d.length < 1) { amount = n; }
+        else { amount = n + '.' + d; }
+        amount = minus + amount;
+        return amount;
+    }
 
-        function commaFormatted(amount) {
+    function Calcular() {
 
-            var delimiter = ","; // replace comma if desired
-            var a = amount.split('.', 2)
-            var d = a[1];
-            var i = parseInt(a[0]);
-            if (isNaN(i)) { return ''; }
-            var minus = '';
-            if (i < 0) { minus = '-'; }
-            i = Math.abs(i);
-            var n = new String(i);
-            var a = [];
-            while (n.length > 3) {
-                var nn = n.substr(n.length - 3);
-                a.unshift(nn);
-                n = n.substr(0, n.length - 3);
-            }
-            if (n.length > 0) { a.unshift(n); }
-            n = a.join(delimiter);
-            if (d.length < 1) { amount = n; }
-            else { amount = n + '.' + d; }
-            amount = minus + amount;
-            return amount;
-        }
+        total = $("#<%= TValor.ClientID %>").numeric('value');
+        var abono = $("#<%= TAbono.ClientID %>").numeric('value');
 
-        function Calcular() {
+        $("#vpagado").each(function() {
+            temp = parseFloat($(this).text().replace(/\./g, "").replace(/\$/g, "").replace(/,/g, "."));
+            if (isNaN(temp))
+                temp = 0;
+            abono += temp;
+        });
 
-            total = $("#<%= TValor.ClientID %>").numeric('value');
-            var abono = $("#<%= TAbono.ClientID %>").numeric('value');
-                
-            $("#vpagado").each(function() {
-                temp= parseFloat($(this).text().replace(/\./g, "").replace(/\$/g, "").replace(/,/g, "."));
-                if(isNaN(temp))
-                    temp=0;
-                abono+=temp;
-            });
-
-            $("#<%= LVPagado.ClientID %>").text(currencyFormatted(abono.toString()));
-        }
+        $("#<%= LVPagado.ClientID %>").text(currencyFormatted(abono.toString()));
+    }
+    
+    addFunctionToStart(function() {
         
         $("#<%= TValor.ClientID %>").change(function() {
             
@@ -205,6 +205,8 @@
 </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
+    <asp:UpdatePanel runat="server" ID="PTodo" UpdateMode="Conditional">
+    <ContentTemplate>
     <table style="width: 100%;">
         <tr>
             <td colspan="4">
@@ -515,6 +517,8 @@
         </tr>
         </asp:Panel>
     </table>
+    </ContentTemplate>
+    </asp:UpdatePanel>
     <asp:Panel runat="server" ID="PSuspender">
     <div id="dSuspender" title="Anular o suspender" class="hide">
         <table style="width: 100%;">

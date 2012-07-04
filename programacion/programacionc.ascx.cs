@@ -13,6 +13,8 @@ public partial class phd_programacionc : System.Web.UI.UserControl
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        ScriptManager.RegisterStartupScript(this, typeof(string), ClientID, "RegisterStarUpScript('dscriptProgramacion');", true);
+
         Procedimientos.SetProcedimientos(SAutorizacion, "phdDetalleAutorizacion.actId");
         Procedimientos.SetProcedimientos(SActividad, "phdDetalleAutorizacion.actId");
         if(!IsPostBack) {
@@ -234,6 +236,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         CConectorMS conector = new CConectorMS();
 
         Query query = new Query("programacion");
+        string entidad= conector.QueryString("SELECT entId FROM phdPaciente WHERE pacId=" + HIdPaciente.Value);
 
         query["pacId"] = HIdPaciente.Value;
         query["perId"] = TProfesionalID.Text;
@@ -243,10 +246,14 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         query["prgActivo"] = "1";
         query["segUsuarioIngreso"] = usuario.GetLogin();
         query["segFechaIngreso"] = "GETDATE()";
-        query["entId"] = conector.QueryString("SELECT entId FROM phdPaciente WHERE pacId=" + HIdPaciente.Value);
+        query["entId"] = entidad;
 
         string []ids= DActividad.SelectedValue.Split('_');
         query["actId"] = ids[0];
+        string costo = Procedimientos.GetCosto(ids[0], entidad);
+        if (costo.Length > 0)
+            query["costo"] = costo;
+
         if (ids.Length>1 && ids[1].Length>0)
             query["intensidad"] = ids[1];
 

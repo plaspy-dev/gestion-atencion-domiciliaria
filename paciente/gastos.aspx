@@ -12,7 +12,7 @@
             onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#ctl00_cph_BFecha").click(); }
         });
     });
-    function iniciopagina() {
+    addFunctionToStart(function() {
 
         if ($("#ctl00_cph_DSuministros_DSuministro").length > 0) {
             $("#ctl00_cph_DSuministros_DSuministro").change(function() {
@@ -24,7 +24,7 @@
                 }
             });
         }
-    }
+    });
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
@@ -64,6 +64,12 @@
                     <td>
                         <asp:GridView ID="GSuministros" runat="server" DataSourceID="SSuministros" 
                 AutoGenerateColumns="False" DataKeyNames="id" ShowFooter="True" >
+                <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
             <Columns>
                 <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                 <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />

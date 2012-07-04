@@ -97,7 +97,9 @@ public partial class administrador_Default : System.Web.UI.Page
             parent = Add("Valoración apoyo terapeutico");
             Add("Sistema de bajo flujo", 23, parent);
             Add("Sistema de alto flujo", 24, parent);
-            // disponible 25
+            Add("Fuerza muscular", 25, parent);
+            
+            // disponible 26
 
 
             if (HTipo.Value.Length == 0)

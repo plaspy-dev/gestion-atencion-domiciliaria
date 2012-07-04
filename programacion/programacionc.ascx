@@ -1,9 +1,10 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="programacionc.ascx.cs" Inherits="phd_programacionc" %>
+<div id="dscriptProgramacion">
 <script type="text/javascript">
-    $(function() {
-        function copyfecha(elemento) {
-            $("#<%= TFechaFinal.ClientID %>").val($(elemento).val());
-        }
+    function copyfecha(elemento) {
+        $("#<%= TFechaFinal.ClientID %>").val($(elemento).val());
+    }
+    addFunctionToStart(function() {
         $("#<%= TFecha.ClientID %>").change(function() { copyfecha(this) }).datepicker({
             onClose: function(dateText, inst) {
                 copyfecha(this);
@@ -96,7 +97,7 @@
             }
         }).change(function() { if ($(this).val() == "") $("#<%= TProfesionalID.ClientID %>").val(""); });
     });
-</script>
+</script></div>
 <div id="dParentProgramacion">
 <asp:Panel runat="server" ID="PConfirmar" Visible="false">
     <div id="dConfirmar" title="Confirmación" style="display:none;">

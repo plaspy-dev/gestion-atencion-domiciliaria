@@ -4,14 +4,51 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
-    $(function() {
+    addFunctionToStart(function() {
+        function joinTableRows(selector, indice) {
+            var anterior = null;
+            selector.each(function() {
+                if (anterior && anterior.children("td:eq(" + indice + ")").text() == $(this).children("td:eq(" + indice + ")").text()) {
+                    anterior.children("td:eq(" + indice + ")").attr("rowspan", anterior.children("td:eq(" + indice + ")").attr("rowspan") + 1);
+                    $(this).children("td:eq(" + indice + ")").remove();
+                } else {
+                    anterior = $(this);
+                }
+            });
+            return selector;
+        }
+
+        function joinTableCells(selector) {
+            var anterior = null;
+            selector.each(function() {
+                if (anterior && anterior.text() == $(this).text()) {
+                    anterior.attr("colspan", anterior.attr("colspan") + 1);
+                    $(this).remove();
+                } else {
+                    anterior = $(this);
+                }
+            });
+            return selector;
+        }
+
+        $("#<%= PHistorial.ClientID %>").accordion({
+            autoHeight: false,
+            collapsible: true,
+            active: false
+        });
+        FullRowSelect("#<%= GHistorial.ClientID %>");
+        
         $("#<%= TTA.ClientID %>").mask("999/99");
+        joinTableRows(joinTableRows($("#<%= GOxigeno.ClientID %> tr"), 1), 0);
+        joinTableCells($("#<%= GOxigeno.ClientID %> tr:eq(0) th"));
+        $("#<%= GFuerza.ClientID %> tbody tr:eq(0)").before("<tr class=GridHeader><th colspan=2></th><th colspan=2>Derecha</th><th colspan=2>Izquierda</th><th>Grados</th></tr>");
     });
 </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
-    <asp:Panel runat="server" id="PDatos" Visible="false">
+    <asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional">
+        <ContentTemplate>
         <asp:HiddenField runat="server" ID="HIdValoracion" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
         <table>
@@ -108,7 +145,7 @@
                         <asp:BoundField DataField="grupo" HeaderText="Flujo en lt/min" />
                         <asp:BoundField DataField="nombre" HeaderText="Flujo en lt/min" />
                         <asp:BoundField DataField="descripcion" HeaderText="Flujo en lt/min" ItemStyle-HorizontalAlign="Center" />
-                        <asp:TemplateField HeaderText="FI 02(%)">
+                        <asp:TemplateField HeaderText="FI 02(%)" ItemStyle-HorizontalAlign="Right">
                             <ItemTemplate>
                                 <asp:TextBox runat="server" ID="TValor" Width="40px" Text='<%# Eval("valor") %>'></asp:TextBox>
                             </ItemTemplate>
@@ -118,9 +155,9 @@
                 <asp:SqlDataSource ID="SOxigeno" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="(SELECT 'Sistema de bajo flujo' AS grupo,varios.id,varios.nombre,varios.descripcion,valoracionat_oxigeno.valor FROM varios LEFT JOIN valoracionat_oxigeno ON (valoracionat_oxigeno.valoracion=@valoracion AND valoracionat_oxigeno.tipo) WHERE varios.tipo=23 AND varios.szReservado IS NULL) 
+                    SelectCommand="(SELECT 'Sistema de bajo flujo' AS grupo,varios.id,varios.nombre,varios.descripcion,valoracionat_oxigeno.valor FROM varios LEFT JOIN valoracionat_oxigeno ON (valoracionat_oxigeno.valoracion=@valoracion AND valoracionat_oxigeno.tipo=varios.id) WHERE varios.tipo=23 AND varios.szReservado IS NULL) 
                                     UNION 
-                                    (SELECT 'Sistema de alto flujo' AS grupo,varios.id,varios.nombre,varios.descripcion,valoracionat_oxigeno.valor FROM varios LEFT JOIN valoracionat_oxigeno ON (valoracionat_oxigeno.valoracion=@valoracion AND valoracionat_oxigeno.tipo) WHERE varios.tipo=24 AND varios.szReservado IS NULL)
+                                    (SELECT 'Sistema de alto flujo' AS grupo,varios.id,varios.nombre,varios.descripcion,valoracionat_oxigeno.valor FROM varios LEFT JOIN valoracionat_oxigeno ON (valoracionat_oxigeno.valoracion=@valoracion AND valoracionat_oxigeno.tipo=varios.id) WHERE varios.tipo=24 AND varios.szReservado IS NULL)
                                     ">
                       <SelectParameters>
                         <asp:ControlParameter ControlID="HIdValoracion" Name="valoracion" PropertyName="Value" DefaultValue="0" />
@@ -131,6 +168,73 @@
             <tr>
                 <td><asp:CheckBox runat="server" ID="COxigeno" Text="Efectos secundarios del oxigeno" /></td>
                 <td colspan="3"><asp:TextBox runat="server" ID="TOxigeno" Width="99%"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td nowrap="nowrap"><asp:CheckBox runat="server" ID="CLatrogenia" Text="Latrogenia por uso de dispositivos" /></td>
+                <td colspan="3"><asp:TextBox runat="server" ID="TLatrogenia" Width="99%"></asp:TextBox></td>
+            </tr>
+            </asp:Panel>
+            <asp:Panel runat="server" ID="PFisica">
+            <tr>
+                <td colspan="4" class="celdaTitulo">Terapias físicas</td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                <asp:GridView ID="GFuerza" runat="server" AutoGenerateColumns="False" DataSourceID="SFuerza" DataKeyNames="id">
+                    <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                    <Columns>
+                        <asp:BoundField DataField="nombre" HeaderText="" />
+                        <asp:TemplateField HeaderText="Fuerza muscular" ItemStyle-HorizontalAlign="Right">
+                            <ItemTemplate>
+                                <asp:TextBox runat="server" ID="TPuntaje" Width="40px" Text='<%# Eval("puntuacion") %>' CssClass="entero"></asp:TextBox>
+                                <asp:RegularExpressionValidator ValidationExpression="^[012345]{1}$" ID="RegularExpressionValidator1" ControlToValidate="TPuntaje" ErrorMessage="Por favor ingrese una calificación valida." Display="Dynamic" SetFocusOnError="true" runat="server">*</asp:RegularExpressionValidator></td>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:BoundField DataField="descripcion" HeaderText="Grado" ItemStyle-HorizontalAlign="Center" />
+                        <asp:TemplateField HeaderText="Movilidad" ItemStyle-HorizontalAlign="Right">
+                            <ItemTemplate>
+                                <asp:TextBox runat="server" ID="TIzquierda" Width="40px" Text='<%# Eval("izquierda") %>' CssClass="entero"></asp:TextBox>
+                                <asp:RegularExpressionValidator ValidationExpression="^[012345]{1}$" ID="RegularExpressionValidator2" ControlToValidate="TIzquierda" ErrorMessage="Por favor ingrese una calificación valida." Display="Dynamic" SetFocusOnError="true" runat="server">*</asp:RegularExpressionValidator></td>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:BoundField DataField="descripcion" HeaderText="Grado" ItemStyle-HorizontalAlign="Center" />
+                        <asp:TemplateField HeaderText="Movilidad" ItemStyle-HorizontalAlign="Right">
+                            <ItemTemplate>
+                                <asp:TextBox runat="server" ID="TDerecha" Width="40px" Text='<%# Eval("derecha") %>' CssClass="entero"></asp:TextBox>
+                                <asp:RegularExpressionValidator ValidationExpression="^[012345]{1}$" ID="RegularExpressionValidator3" ControlToValidate="TDerecha" ErrorMessage="Por favor ingrese una calificación valida." Display="Dynamic" SetFocusOnError="true" runat="server">*</asp:RegularExpressionValidator></td>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:BoundField DataField="descripcion" HeaderText="Ideal" ItemStyle-HorizontalAlign="Center" />
+                    </Columns>
+                </asp:GridView>
+                <asp:SqlDataSource ID="SFuerza" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT varios.id,varios.nombre,varios.descripcion,valoracionat_fuerza_muscular.izquierda,valoracionat_fuerza_muscular.derecha,valoracionat_fuerza_muscular.puntuacion
+                                    FROM varios 
+                                    LEFT JOIN valoracionat_fuerza_muscular ON (valoracionat_fuerza_muscular.valoracion=@valoracion AND valoracionat_fuerza_muscular.tipo=varios.id) 
+                                    WHERE varios.tipo=25 AND varios.szReservado IS NULL">
+                      <SelectParameters>
+                        <asp:ControlParameter ControlID="HIdValoracion" Name="valoracion" PropertyName="Value" DefaultValue="0" />
+                      </SelectParameters>
+                </asp:SqlDataSource>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" align="center">
+                    Nota: en la fuerza muscular defina de 0 a 5 según corresponda donde 5 es total y cero nula, se mide la fuerza de un movimiento articular
+                </td>
+            </tr>
+            </asp:Panel>
+            <asp:Panel runat="server" ID="PComun">
+            <tr>
+                <td>Justificación de la terapia</td>
+                <td colspan="3"><asp:TextBox runat="server" ID="TJustificacion" Width="99%"></asp:TextBox></td>
             </tr>
             <tr>
                 <td colspan="4" class="celdaTitulo">Signos vitales</td>
@@ -148,14 +252,6 @@
                 <td><asp:TextBox ID="TSaturacion" runat="server" CssClass="entero"></asp:TextBox></td>
             </tr>
             <tr>
-                <td nowrap="nowrap"><asp:CheckBox runat="server" ID="CLatrogenia" Text="Latrogenia por uso de dispositivos" /></td>
-                <td colspan="3"><asp:TextBox runat="server" ID="TLatrogenia" Width="99%"></asp:TextBox></td>
-            </tr>
-            <tr>
-                <td>Justificación de la terapia</td>
-                <td colspan="3"><asp:TextBox runat="server" ID="TJustificacion" Width="99%"></asp:TextBox></td>
-            </tr>
-            <tr>
                 <td>Revisión del patrón aterado</td>
                 <td colspan="3"><asp:TextBox runat="server" ID="TPatron" Width="99%"></asp:TextBox></td>
             </tr>
@@ -166,17 +262,6 @@
             <tr>
                 <td>Resultado diagnostico</td>
                 <td colspan="3"><asp:TextBox runat="server" ID="TResultados" Width="99%"></asp:TextBox></td>
-            </tr>
-            </asp:Panel>
-            <asp:Panel runat="server" ID="PFisica">
-            <tr>
-                <td colspan="4" class="celdaTitulo">Terapias físicas</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
             </tr>
             </asp:Panel>
             <asp:Panel runat="server" ID="POcupacional">
@@ -203,6 +288,7 @@
                                 <asp:Button ID="BCancelar" runat="server" CausesValidation="False" onclick="BCancelar_Click" Text="Cancelar" /></td>
             </tr>
         </table>
-    </asp:Panel>
+        </ContentTemplate>
+    </asp:UpdatePanel>
 </asp:Content>
 

@@ -1,7 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="novedad.ascx.cs" Inherits="phd_novedad" %>
+<div id="dscriptNovedad" class="hide">
 <script type="text/javascript">
-    $(function() {
-
+    addFunctionToStart(function() {
         $("#<%= TTipo.ClientID %>").hide();
         $("#tabsnovedad").tabs({
             show: function(event, ui) {
@@ -77,6 +77,7 @@
         }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
     });
 </script>
+</div>
 <div id="dParentNovedad">
 <div id="dNovedad" title="Novedad programación" style="display:none;">
 <asp:HiddenField ID="HId" runat="server" />

@@ -2,8 +2,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
-    function iniciopagina() {
-        // $(function() {
+    addFunctionToStart(function() {
         $("#<%= TNombres.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -31,8 +30,7 @@
                 return false;
             }
         });
-    }
-    // });
+    });
 </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">

@@ -6,14 +6,15 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
-    $(function() {
+    addFunctionToStart(function() {
         $("#<%= DProgramaciones.ClientID %>").sortSelect();
     });
 </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
-    <asp:Panel runat="server" id="PDatos" Visible="false" >
+    <asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional" >
+        <ContentTemplate>
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
         <table width="100%">
             <tr>
@@ -89,7 +90,7 @@
                                     FROM programacion 
                                     LEFT JOIN admPersonalHS ON (admPersonalHS.perId=programacion.perId) 
                                     LEFT JOIN phdActividad ON (phdActividad.actId=programacion.actId) 
-                                    LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=programacion.autNumero AND phdDetalleAutorizacion.actId=programacion.actId)
+                                    LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=programacion.autNumero AND phdDetalleAutorizacion.actId=programacion.actId AND phdDetalleAutorizacion.intensidad=programacion.intensidad)
                                     WHERE pacId=@paciente AND (@actividad=0 OR programacion.actId=@actividad) {0}
                                     ORDER BY prgFechaProg DESC"
                                     DeleteCommand="DELETE programacion where prgId=@prgId"
@@ -114,6 +115,7 @@
             </table>
             <uc2:programacion ID="UCProgramacion" runat="server" Visible="False" OnAceptarClicked="UCProgramacion_AceptarClicked" OnCancelarClicked="UCProgramacion_CancelarClicked" />
             <uc3:novedad ID="UCNovedad" runat="server" OnAceptarClicked="UCNovedad_AceptarClicked" Visible="false" OnCancelarClicked="UCNovedad_CancelarClicked" />
-        </asp:Panel>
+            </ContentTemplate>
+        </asp:UpdatePanel>
 </asp:Content>
 

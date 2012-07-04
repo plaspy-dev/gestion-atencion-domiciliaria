@@ -4,7 +4,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
-    function iniciopagina() {
+    addFunctionToStart(function() {
         $("#<%= TMedicamento.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -38,8 +38,7 @@
                 // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
             }
         }).change(function() { if ($(this).val() == "") $("#<%= TMedicamentoID.ClientID %>").val(""); });
-    };
-    $(function() {
+
         $("#<%= TFecha.ClientID %>").datepicker({
             onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#<%=BFecha.ClientID %>").click(); }
         });
@@ -56,7 +55,8 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <div id="dImprimir">
 <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
-    <asp:Panel runat="server" id="PDatos" Visible="false">
+    <asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional">
+        <ContentTemplate>
         <asp:HiddenField ID="HIdFormulacion" runat="server" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
         <table>
@@ -137,6 +137,12 @@
                     <asp:GridView ID="GFormulacion" runat="server" DataSourceID="SFormulacion" 
                     AutoGenerateColumns="False" DataKeyNames="id"
                                         onselectedindexchanged="GFormulacion_SelectedIndexChanged" >
+                                        <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
@@ -204,6 +210,7 @@
                 </td>
             </tr>
         </table>
-    </asp:Panel>
+        </ContentTemplate>
+    </asp:UpdatePanel>
     </div>
 </asp:Content>
