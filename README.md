@@ -29,17 +29,29 @@ The application keeps the records used to arrange visits and coordinate the peop
 
 ### Build and local use
 
-This edition lacks an archived solution or project file. A standalone build requires the application entry point, its shared references and its ASP.NET configuration for this edition.
+On Windows, install PowerShell 7, the .NET SDK, .NET Framework 4.8, IIS Express, Python 3, Git and Docker. The recovered Web Forms site for 2012-07-04 uses its source project and `demo/Build.ps1`. The script builds the shared library and precompiles the site into a new directory.
 
-The retained site entry is `censo/Default.aspx`. Use fictional accounts and a disposable database on loopback.
+```powershell
+pwsh -NoProfile -File demo/Build.ps1 -Output <new-directory>
+```
+
+For a fictional sign-in, install Playwright for Python with its Chromium browser and run `python demo/run-local-webforms.py`. Set `DOMICILIO_CHROMIUM` to a local Chromium executable if you use an existing installation. Load the MySQL 5.7 and SQL Server Developer images pinned by the script before running it. The script creates two disposable local database servers, starts IIS Express on loopback, checks the fictional sign-in and removes its containers afterward.
+
+The July 2012 demo starts IIS Express with Debug enabled in its disposable copy. The archived code redirects the home page in Release. In Debug, the trial reaches the protected page and MySQL records the fictional sign-in. The demo creates empty task tables in its SQL Server container so the home page can load its task panel. The scheduling and reporting pages still require a separate test.
+
+The build restores iTextSharp 5.2.0 from the official NuGet package and checks its SHA-256. Set `DOMICILIO_ITEXTSHARP_PACKAGE` to the same package for an offline build.
+
+Set `DOMICILIO_SESSION_KEY_3` in the IIS process before signing in or using the recovered modules. Use independently generated fictional values for a disposable test.
+
+The 2026 reconstruction restores the Web Forms project and its shared library. It recovers the management scheduling page’s search and row display handlers from the matching 4 July archive.
 
 ### Archive notes
 
-The archive inventory counted 0 additions, 18 edits and 0 removals.
+The archive inventory counted 1 additions, 2 edits and 0 removals.
 
 ### Framework versions
 
-The archive does not record the original framework version. The local build recipe uses the ASP.NET Web Forms compiler for .NET Framework 4.x on Windows and the packages declared in this cut.
+The original Web Site does not declare a framework in a project file. The verified recovery uses .NET Framework 4.8.
 
 ### Usage
 
@@ -92,17 +104,29 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 
 ### Compilación y uso local
 
-Esta edición carece de un archivo de solución o proyecto. Una compilación independiente requiere el punto de entrada, sus referencias compartidas y la configuración ASP.NET de este corte.
+En Windows instala PowerShell 7, el SDK de .NET, .NET Framework 4.8, IIS Express, Python 3, Git y Docker. El sitio Web Forms recuperado del 2012-07-04 usa su proyecto fuente y `demo/Build.ps1`. El script compila la biblioteca propia y precompila el sitio en una carpeta nueva.
 
-La entrada conservada del sitio es `censo/Default.aspx`. Usa cuentas ficticias y una base desechable en la interfaz local.
+```powershell
+pwsh -NoProfile -File demo/Build.ps1 -Output <carpeta-nueva>
+```
+
+Para probar el ingreso ficticio, instala Playwright para Python con su navegador Chromium y ejecuta `python demo/run-local-webforms.py`. Indica `DOMICILIO_CHROMIUM` si usas un ejecutable de Chromium ya instalado. Carga antes las imágenes MySQL 5.7 y SQL Server Developer fijadas por el script. El script crea dos servidores desechables, arranca IIS Express en la interfaz local, comprueba el ingreso ficticio y retira los contenedores al terminar.
+
+La demo de julio de 2012 arranca IIS Express con Debug habilitado en su copia desechable. El código archivado redirige la portada en Release. En Debug, la prueba abre la página protegida y MySQL registra el ingreso ficticio. La demo crea tablas de tareas vacías en su contenedor SQL Server para que la portada pueda cargar ese panel. Queda por probar el recorrido de las pantallas de programación e informes.
+
+La compilación restaura iTextSharp 5.2.0 desde el paquete oficial de NuGet y coteja su SHA-256. Indica una copia del mismo paquete en `DOMICILIO_ITEXTSHARP_PACKAGE` para compilar sin Internet.
+
+Define `DOMICILIO_SESSION_KEY_3` en el proceso de IIS antes de ingresar o usar los módulos recuperados. Genera valores ficticios independientes para una prueba desechable.
+
+La reconstrucción de 2026 restaura el sitio Web Forms y su biblioteca propia. Recupera los eventos de búsqueda y presentación de resultados de la programación de gerencia del respaldo del 4 de julio.
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 0 adiciones, 18 cambios y 0 retiros.
+El inventario del respaldo registró 1 adiciones, 2 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 
-El respaldo no registra la versión original del framework. La receta local usa el compilador de ASP.NET Web Forms para .NET Framework 4.x en Windows y los paquetes declarados en este corte.
+El sitio original no declara el framework en un archivo de proyecto. La recuperación verificada usa .NET Framework 4.8.
 
 ### Uso
 
@@ -125,17 +149,3 @@ Si tienes dudas sobre la compilación o la demostración, abre una incidencia co
 ### Historia
 
 Consulta el historial de commits para comparar esta copia y sus notas de reconstrucción con las ediciones posteriores.
-
-## Recovered local build / Compilación local recuperada
-
-The recovered Web Forms site is in `.`. Run `pwsh -NoProfile -File demo/Build.ps1 -Output <new-directory>` on Windows with .NET Framework 4.8 and the .NET SDK. The build recompiles the original shared library with its own activation optional and uses the sample Web.config in the copy.
-
-El sitio Web Forms recuperado se encuentra en `.`. Ejecuta `pwsh -NoProfile -File demo/Build.ps1 -Output <carpeta-nueva>` en Windows con .NET Framework 4.8 y el SDK de .NET. La compilación reconstruye la biblioteca propia con la activación opcional y usa Web.config de ejemplo en la copia.
-
-The build restores iTextSharp 5.2.0 from the official NuGet package and checks its SHA-256. Set `DOMICILIO_ITEXTSHARP_PACKAGE` to the same package for an offline build.
-
-La compilación restaura iTextSharp 5.2.0 desde el paquete oficial de NuGet y coteja su SHA-256. Indica una copia del mismo paquete en `DOMICILIO_ITEXTSHARP_PACKAGE` para compilar sin Internet.
-
-Set `DOMICILIO_SESSION_KEY_3` in the IIS process before signing in or using the recovered modules. Use independently generated fictional values for a disposable test.
-
-Define `DOMICILIO_SESSION_KEY_3` en el proceso de IIS antes de ingresar o usar los módulos recuperados. Genera valores ficticios independientes para una prueba desechable.

@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery.cookie.js"></script>
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery-ui-1.8.13.custom.min.js"></script>
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery.ui.autocomplete.selectFirst.js"></script>
@@ -297,6 +297,37 @@
         $("#loading").hide();
     });
 
+    // reemplazamos la funcion de validacion de ASP
+    function ValidatorOnChange(event) {
+        if (!event) {
+            event = window.event;
+        }
+        Page_InvalidControlToBeFocused = null;
+        var targetedControl;
+        if ((typeof (event.srcElement) != "undefined") && (event.srcElement != null)) {
+            targetedControl = event.srcElement;
+        }
+        else {
+            targetedControl = event.target;
+        }
+        var vals;
+        if (typeof (targetedControl) == "undefined") { // omitimos este
+        } else if (typeof (targetedControl.Validators) != "undefined") {
+            vals = targetedControl.Validators;
+        } else {
+            if (targetedControl.tagName.toLowerCase() == "label") {
+                targetedControl = document.getElementById(targetedControl.htmlFor);
+                vals = targetedControl.Validators;
+            }
+        }
+        var i;
+        if (vals) {
+            for (i = 0; i < vals.length; i++) {
+                ValidatorValidate(vals[i], null, event);
+            }
+        }
+        ValidatorUpdateIsValid();
+    }
 </script>
 </body>
 </html>

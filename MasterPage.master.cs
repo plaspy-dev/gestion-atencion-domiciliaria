@@ -246,7 +246,6 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
     public string ReplaceContenido(ControlCollection controles, string contenido)
     {
-
         for (int i = 0; i < controles.Count; i++)
         {
             string id = controles[i].ID;
@@ -341,12 +340,15 @@ public partial class MasterPageI : System.Web.UI.MasterPage
     
     protected void lnkExcel_Click(object sender, EventArgs e)
     {
+        PrintEventArgs evento = new PrintEventArgs();
         if (Session["excelgridview"]!=null)
         {
+            if (_ExcelClicked != null)
+            {
+                _ExcelClicked(this, evento);
+            }
             RenderView((GridView)Session["excelgridview"]);
         } else if(Session["printfile"]!=null) {
-
-            PrintEventArgs evento = new PrintEventArgs();
 
             StreamReader reader = new StreamReader(Server.MapPath(Session["printfile"].ToString()));
             evento.Contenido = reader.ReadToEnd();
