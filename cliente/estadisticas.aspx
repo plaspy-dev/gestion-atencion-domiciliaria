@@ -7,46 +7,23 @@
         <script type="text/javascript">
           google.load("visualization", "1", {packages:["corechart"]});
           google.setOnLoadCallback(drawChart);
+          
           function drawChart() {
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Concepto');
-            data.addColumn('number', 'Encuestas');
-            data.addRows([
-                <asp:Literal runat="server" ID="LResultado"></asp:Literal>
-            ]);
-
-            var options = {
+            
+            drawPieChart('chart_div', [<asp:Literal runat="server" ID="LResultado"></asp:Literal>], {
               width: 450, height: 300,
               title: 'Estadisticas'
-            };
-
-            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-            chart.draw(data, options);
+            });
             
-            var data2 = new google.visualization.DataTable();
-            data2.addColumn('string', 'Encuestas');
+            drawPieChart('chart_div2', [['Encuestas','Numero']
             <asp:Repeater runat="server" DataSourceID="SConceptos" ID="RConceptos">
-                <ItemTemplate>data2.addColumn('number', '<%# Eval("concepto") %>');</ItemTemplate>
+                <ItemTemplate>['<%# Eval("concepto") %>','<%# Eval("cal") %>']</ItemTemplate>
             </asp:Repeater>
-            
-            data2.addRows([
-                ['Encuestas'
-                <asp:Repeater runat="server" DataSourceID="SConceptos" ID="RConceptos2">
-                    <ItemTemplate>,<%# Eval("cal").ToString().Replace(",",".") %></ItemTemplate>
-                </asp:Repeater>
-                ]
-            ]);
-
-            var options2 = {
-                width: 600, height: 400,
-                title: 'Encuestas'
-            };
-
-            var chart2 = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
-            chart2.draw(data2, options2);
+                ], {
+              width: 600, height: 400,
+              title: 'Encuestas'
+            });
           }
-          
-        
         </script>
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
     <table>

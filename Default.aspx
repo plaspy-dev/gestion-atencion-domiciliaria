@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Administrador de Servicios Médicos OrganizationExample15::Inicio</title>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery-1.7.2.min.js"></script>
     <link href="css/estilo.css" type="text/css" rel="stylesheet" />
     <style type="text/css">
         .style1

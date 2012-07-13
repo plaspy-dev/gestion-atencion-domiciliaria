@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using System.ComponentModel;
 using System.Collections;
 using System.Data.SqlClient;
+using System.Globalization;
 using SDG.Componentes;
 
 public partial class phd_programacionc : System.Web.UI.UserControl
@@ -250,7 +251,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
 
         string []ids= DActividad.SelectedValue.Split('_');
         query["actId"] = ids[0];
-        string costo = Procedimientos.GetCosto(ids[0], entidad);
+        string costo = Procedimientos.GetCosto(ids[0], entidad).ToString(CultureInfo.InvariantCulture);
         if (costo.Length > 0)
             query["costo"] = costo;
 

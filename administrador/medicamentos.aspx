@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Formulación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="medicamentos.aspx.cs" Inherits="administrador_medicamentos" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
-    $(function() {
+    addFunctionToStart(function() {
         $("#accordion").accordion({
             autoHeight: false,
             navigation: true,
@@ -12,7 +12,7 @@
             source: function(request, response) {
                 $.ajax({
                     url: "../webservices/servicios.asmx/GetMedicamentos",
-                    data: "{ 'q': '" + request.term + "', 't': '<%= LTipos.SelectedValue %>' }",
+                    data: "{ 'q': '" + request.term + "', 't': " + $("#<%= LTipos.ClientID %>").val() + " }",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
@@ -39,6 +39,8 @@
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
+<asp:UpdatePanel runat="server" ID="PDatos" UpdateMode="Conditional">
+<ContentTemplate>
 <asp:Panel ID="Panel1" runat="server" DefaultButton="BAceptar">
     <table width="100%" border="0">
   <tr>
@@ -154,7 +156,7 @@
                                 SelectCommand="SELECT carId id,carDescripcion nombre FROM dbo.admCargo ORDER BY 2;">
                         </asp:SqlDataSource>
                     </div>
-                    <h3><a href="#">Costos</a></h3>
+                    <h3><a href="#">Costos y restricciones</a></h3>
                     <div class="hide">
                         <asp:GridView ID="GEntidades" runat="server" AutoGenerateColumns="False" DataSourceID="SEntidades" 
                             EmptyDataText="No se encontraron entidades" DataKeyNames="id" onrowdatabound="GEntidades_RowDataBound">
@@ -166,9 +168,14 @@
                             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                             <Columns>
                                 <asp:BoundField HeaderText="Entidad" DataField="nombre" />
-                                <asp:TemplateField HeaderText="Costo">
+                                <asp:TemplateField HeaderText="Costo del servicio">
                                     <ItemTemplate>
                                         <asp:TextBox runat="server" CssClass="dinero" ID="TCosto"></asp:TextBox>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="Formulación máxima mensual paciente">
+                                    <ItemTemplate>
+                                        <asp:TextBox runat="server" CssClass="entero" ID="TMaxima"></asp:TextBox>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>
@@ -234,5 +241,7 @@
   </tr>
 </table>
 </asp:Panel>
+</ContentTemplate>
+</asp:UpdatePanel>
 </asp:Content>
 

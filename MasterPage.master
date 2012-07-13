@@ -304,20 +304,23 @@
         }
         Page_InvalidControlToBeFocused = null;
         var targetedControl;
-        if ((typeof (event.srcElement) != "undefined") && (event.srcElement != null)) {
-            targetedControl = event.srcElement;
-        }
-        else {
-            targetedControl = event.target;
+        if (event) {
+            if ((typeof (event.srcElement) != "undefined") && (event.srcElement != null)) {
+                targetedControl = event.srcElement;
+            }
+            else {
+                targetedControl = event.target;
+            }
         }
         var vals;
-        if (typeof (targetedControl) == "undefined") { // omitimos este
-        } else if (typeof (targetedControl.Validators) != "undefined") {
-            vals = targetedControl.Validators;
-        } else {
-            if (targetedControl.tagName.toLowerCase() == "label") {
-                targetedControl = document.getElementById(targetedControl.htmlFor);
+        if (typeof (targetedControl) != "undefined") { // omitimos este
+            if (typeof (targetedControl.Validators) != "undefined") {
                 vals = targetedControl.Validators;
+            } else {
+                if (targetedControl.tagName.toLowerCase() == "label") {
+                    targetedControl = document.getElementById(targetedControl.htmlFor);
+                    vals = targetedControl.Validators;
+                }
             }
         }
         var i;

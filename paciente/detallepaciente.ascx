@@ -29,7 +29,6 @@
                 Asegurador
             </td>
             <td>
-                <asp:HiddenField ID="HIdAsegurador" runat="server" />
                 <asp:Label ID="LAsegurador" runat="server" Font-Bold="true" Text=""></asp:Label>
             </td>
             <td>

@@ -11,13 +11,11 @@ public partial class cliente_estadisticas : System.Web.UI.Page
     {
         GResultados.DataBind();
         int total = 0;
-        LResultado.Text = "";
+        LResultado.Text = "['Concepto','Encuestas']";
         for(int i=0; i<GResultados.Rows.Count; i++) {
             int actual= Convert.ToInt32(GResultados.Rows[i].Cells[1].Text);
             total += actual;
-            if (LResultado.Text.Length > 0)
-                LResultado.Text += ",";
-            LResultado.Text += "['" + GResultados.Rows[i].Cells[0].Text + "', " + actual.ToString() + "]";
+            LResultado.Text += ",['" + GResultados.Rows[i].Cells[0].Text + "', " + actual.ToString() + "]";
         }
         LTotal.Text = total + " Encuesta";
         if (total != 1)

@@ -158,13 +158,13 @@
                     <sdg:CustomDataSource ID="SFormulacion" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             SelectCommand="SELECT medicamento_formulacion.id,medicamento_formulacion.medicamento AS medicamen_id,medicamento_formulacion.formulada,medicamento_formulacion.posologia 
                                             ,IF(medicamentos.principio IS NULL,medicamentos.nombre,CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',medicamentos.forma)) AS medicamento
-                                            ,medicamento_formulacion.via,medicamento_formulacion.tiempo
+                                            ,medicamento_formulacion.via,medicamento_formulacion.tiempo,medicamento_formulacion.costo
                                             FROM medicamento_formulacion 
                                             LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)
                                             WHERE formulacion=@formulacion"
                             DeleteCommand="DELETE FROM medicamento_formulacion WHERE id=@id"
-                            InsertCommand="INSERT INTO medicamento_formulacion (formulacion,medicamento,posologia,formulada,via,tiempo) VALUES (@formulacion,@medicamen_id,@posologia,@formulada,@via,@tiempo)"
-                            UpdateCommand="UPDATE medicamento_formulacion SET medicamento=@medicamen_id,posologia=@posologia,formulada=@formulada,via=@via,tiempo=@tiempo WHERE id=@id"
+                            InsertCommand="INSERT INTO medicamento_formulacion (formulacion,medicamento,posologia,formulada,via,tiempo,costo) VALUES (@formulacion,@medicamen_id,@posologia,@formulada,@via,@tiempo,@costo)"
+                            UpdateCommand="UPDATE medicamento_formulacion SET medicamento=@medicamen_id,posologia=@posologia,formulada=@formulada,via=@via,tiempo=@tiempo,costo=@costo WHERE id=@id"
                             >
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="HIdFormulacion" DefaultValue="0" PropertyName="Value" Name="formulacion" />
@@ -173,9 +173,21 @@
                 </td>
             </tr>
             <tr>
-                <td><asp:Label runat="server" ID="LMedicamento" Text="Medicamento"></asp:Label><asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TMedicamentoID" ErrorMessage="Por favor ingrese un medicamento." ID="RMedicamento" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-                                <td colspan="3"><asp:TextBox Width="99%" runat="server" ID="TMedicamento"></asp:TextBox><asp:TextBox runat="server" ID="TMedicamentoID" CssClass="hide"></asp:TextBox>
-                                </td>
+                <td>&nbsp;</td>
+                                <td colspan="3"><asp:Label runat="server" ID="LMensajeMedicamento" ForeColor="Red"></asp:Label></td>
+            </tr>
+            <tr>
+                <td>
+                    <asp:Label ID="LMedicamento" runat="server" Text="Medicamento"></asp:Label>
+                    <asp:RequiredFieldValidator ID="RMedicamento" runat="server" 
+                        ControlToValidate="TMedicamentoID" Display="Dynamic" 
+                        ErrorMessage="Por favor ingrese un medicamento." SetFocusOnError="true" 
+                        ValidationGroup="medicamento">*</asp:RequiredFieldValidator>
+                </td>
+                <td colspan="3">
+                    <asp:TextBox ID="TMedicamento" runat="server" Width="99%"></asp:TextBox>
+                    <asp:TextBox ID="TMedicamentoID" runat="server" CssClass="hide"></asp:TextBox>
+                </td>
             </tr>
             <tr>
                 <td>Cantidad<asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TCantidad" ErrorMessage="Por favor ingrese una cantidad." ID="RCantidad" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>

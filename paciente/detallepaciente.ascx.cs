@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
+using System.Globalization;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
 
@@ -18,9 +19,79 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
 
     public string AsegurdadorID {
         get {
-            return HIdAsegurador.Value;
+            return ViewState["paciente_asegurador"].ToString();
         }
     }
+    public double TopeAsegurador
+    {
+        get {
+            return (double)ViewState["paciente_asegurador_tope"];
+        }
+    }
+    public double TopePaciente {
+        get {
+            return (double)ViewState["paciente_asegurador_tope_paciente"];
+        }
+    }
+    public double GetCostoPacienteActual {
+        get { 
+            double total= 0;
+            if (ViewState["paciente_costo_paciente_actual"] == null)
+            {
+                string sTotal= new CConectorMS().QueryString("SELECT SUM(costo) FROM programacion WHERE pacId=" + IdPaciente + " AND prgFechaProg>GETDATE()-30");
+                if (sTotal.Length == 0)
+                    total = 0;
+                else total = Convert.ToDouble(sTotal);
+                // agregamos el valor formulado
+                sTotal = new CConector().QueryString("SELECT SUM(medicamento_formulacion.costo*medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.paciente=" + IdPaciente + " AND fecha>DATE_ADD(DATE(SYSDATE()), INTERVAL -30 DAY);");
+                if (sTotal.Length == 0)
+                    total = 0;
+                else total+= Convert.ToDouble(sTotal);
+                ViewState["paciente_costo_paciente_actual"]=total;
+            }
+            else {
+                total = (double)ViewState["paciente_costo_paciente_actual"];
+            }
+            return total;
+        }
+        set
+        {
+            if(value>0)
+                ViewState["paciente_costo_paciente_actual"] = value;
+            else ViewState["paciente_costo_paciente_actual"] = null;
+        }
+    }
+    public double GetCostoAseguradoraActual
+    {
+        get
+        {
+            double total = 0;
+            if (ViewState["paciente_costo_aseguradora_actual"] == null)
+            {
+                string sTotal = new CConectorMS().QueryString("SELECT SUM(costo) FROM programacion WHERE entId='" + AsegurdadorID + "' AND prgFechaProg>GETDATE()-30");
+                if (sTotal.Length == 0)
+                    total = 0;
+                else total = Convert.ToDouble(sTotal);
+                // agregamos el valor formulado
+                sTotal = new CConector().QueryString("SELECT SUM(medicamento_formulacion.costo*medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.asegurador='" + AsegurdadorID + "' AND fecha>DATE_ADD(DATE(SYSDATE()), INTERVAL -30 DAY);");
+                if (sTotal.Length == 0)
+                    total = 0;
+                else total += Convert.ToDouble(sTotal);
+                ViewState["paciente_costo_aseguradora_actual"] = total;
+            }
+            else
+            {
+                total = (double)ViewState["paciente_costo_aseguradora_actual"];
+            }
+            return total;
+        }
+        set {
+            if (value > 0)
+                ViewState["paciente_costo_aseguradora_actual"] = value;
+            else ViewState["paciente_costo_aseguradora_actual"] = null;
+        }
+    }
+
     public string Sexo {
         get {
             return LSexo.Text;
@@ -34,7 +105,11 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
         set {
 
             HIdPaciente.Value = "";
-            HIdAsegurador.Value = "";
+            ViewState["paciente_asegurador"] = "";
+            ViewState["paciente_asegurador_tope_paciente"] = (double)0;
+            ViewState["paciente_asegurador_tope"] = (double)0;
+            ViewState["paciente_costo_paciente_actual"] = null;
+            ViewState["paciente_costo_aseguradora_actual"] = null;
             if (value==null || value.Length == 0)
                 return;
 
@@ -63,6 +138,8 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             query["tipopago"] = "phdPagoDirecto.pdirDescripcion";
             query["estId"] = "phdPaciente.estId";
             query["entId"] = "phdPaciente.entId";
+            query["maximo_paciente"] = "admEntidad.maximo_paciente";
+            query["maximo_mensual"] = "admEntidad.maximo_mensual";
 
             CConectorMS conector = new CConectorMS();
 
@@ -74,7 +151,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             {
                 HIdPaciente.Value = UCAutorizaciones.Value = reader["pacId"].ToString();
 
-                HIdAsegurador.Value = reader["entId"].ToString();
+                ViewState["paciente_asegurador"]= reader["entId"].ToString();
                 Documento= reader["pacDocumento"].ToString();
                 Nombres = reader["pacPApellido"].ToString() +
                     " " + reader["pacSApellido"].ToString() +
@@ -106,6 +183,10 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                 // LEstancia.Text = reader[""].ToString();
                 LFamiliar.Text = reader["pacFamilarResponsable"].ToString();
                 LParentesco.Text = reader["pacParentesco"].ToString();
+                double paciente=reader["maximo_paciente"].ToString()=="" ? 0 : Convert.ToDouble(reader["maximo_paciente"].ToString());
+                double asegurador = reader["maximo_mensual"].ToString() == "" ? 0 : Convert.ToDouble(reader["maximo_mensual"].ToString());
+                ViewState["paciente_asegurador_tope_paciente"] = paciente;
+                ViewState["paciente_asegurador_tope"] = asegurador;
 
                 string cie1 = reader["cieCodDx"].ToString();
                 string cie2 = reader["cieCodDx_1"].ToString();
@@ -153,6 +234,13 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
 
     protected void Page_Load(object sender, EventArgs e)
     {
-
+        if (!IsPostBack)
+        {
+            if(ViewState["paciente_asegurador"]==null) {
+                ViewState["paciente_asegurador"] = "";
+                ViewState["paciente_asegurador_tope_paciente"] = (double)0;
+                ViewState["paciente_asegurador_tope"] = (double)0;
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SDG.Componentes;
 
 public partial class gerencia_programacion : System.Web.UI.Page
 {
@@ -12,41 +13,70 @@ public partial class gerencia_programacion : System.Web.UI.Page
         ((MasterPageI)Master).Excel(GResultados);
         if (!IsPostBack)
         {
+            ViewState["servicios"] = "";
+            ViewState["costos"] = "";
             TInicio.Text = DateTime.Now.AddDays(-30).ToShortDateString();
             TFin.Text = DateTime.Now.ToShortDateString();
+            DGrupo.SelectedValue= Conector.GetCookie("gerencia_programacion_grupo", "0");
             ((MasterPageI)Master).Imprimir(GResultados);
+        }
+        switch (DGrupo.SelectedValue) { 
+            case "0":
+                ViewState["titulo"] = "Servicios";
+                ViewState["grupo"] = "servicio";
+                break;
+            case "1":
+                ViewState["titulo"] = "Aseguradores";
+                ViewState["grupo"] = "servicio";
+                break;
+            case "2":
+                ViewState["titulo"] = "Aseguradores";
+                ViewState["grupo"] = "paciente";
+                break;
         }
     }
     protected void BBuscar_Click(object sender, EventArgs e)
     {
-        LServicios.Text = "";
-        LCostos.Text = "";
+        Conector.SetCookie("gerencia_programacion_grupo", DGrupo.SelectedValue);
+        ViewState["servicios"] = "";
+        ViewState["costos"] = "";
     }
 
     protected void RServicios_ItemDataBound(object sender, RepeaterItemEventArgs e)
     {
         if (e.Item.ItemIndex != -1)
         {
-            Label titulo= (Label)e.Item.FindControl("TTitulo");
+            Label titulo= (Label)e.Item.FindControl("LT");
             Label cantidad = (Label)e.Item.FindControl("LC");
             Label costo = (Label)e.Item.FindControl("LCo");
 
             if (titulo.Text.Length == 0)
-                titulo.Text = Procedimientos.GetProcedimiento(((HiddenField)e.Item.FindControl("HId")).Value);
-            if (LServicios.Text.Length == 0)
-                LServicios.Text = "['Servicio', 'Cantidad']";
-            LServicios.Text += ",['" + titulo.Text + "'," + cantidad.Text + "]";
-
-            if (LCostos.Text.Length > 0)
             {
-                if (LCostos.Text.Length == 0)
-                    LCostos.Text = "['Costos', 'Cantidad']";
-                LCostos.Text += ",['" + titulo.Text + "'," + costo.Text.Replace("$", "").Replace(".", "").Replace(",", ".") + "]";
+                HiddenField field = e.Item.Parent==RServicios ? (HiddenField)e.Item.FindControl("HId") : (HiddenField)e.Item.FindControl("HId2");
+                titulo.Text = Procedimientos.GetProcedimiento(field.Value);
             }
 
-            if (cantidad.Text == "1")
-                cantidad.Text += " servicio";
-            else cantidad.Text += " servicios";
+            if (e.Item.Parent == RServicios)
+            {
+
+                if (ViewState["servicios"].ToString().Length == 0)
+                    ViewState["servicios"] = "['" + ViewState["titulo"].ToString() + "', 'Cantidad']";
+                ViewState["servicios"] = ViewState["servicios"].ToString() + ",['" + titulo.Text + "'," + cantidad.Text + "]";
+
+                if (costo.Text.Length > 0)
+                {
+                    if (ViewState["costos"].ToString().Length == 0)
+                        ViewState["costos"] = "['Costos', 'Cantidad']";
+                    ViewState["costos"] = ViewState["costos"].ToString() + ",['" + titulo.Text + "'," + costo.Text.Replace("$", "").Replace(".", "").Replace(",", ".") + "]";
+                }
+                cantidad.Text += " " + ViewState["grupo"].ToString();
+            }
+            else {
+                cantidad.Text += " " + "servicio";
+            }
+
+            if (cantidad.Text!= "1")
+                cantidad.Text += "s";
             if (costo.Text.Length > 0)
                 costo.Text = ", " + costo.Text;
         }
@@ -76,12 +106,17 @@ public partial class gerencia_programacion : System.Web.UI.Page
         if (repeater != null)
         {
             repeater.Visible = true;
+            repeater.DataSourceID = "SEntidades";
+            repeater.DataBind();
             ScriptManager.RegisterStartupScript(parent, typeof(string), "acordeon", "$('#" + parent.Parent.ClientID + "').find('.tmpacordeon').accordion({autoHeight: false,navigation: true,collapsible: true,active: -1,animated: false,change: function(event, ui) {ui.newContent.children('div:eq(0)').children(':submit').click();}}).removeClass('tmpacordeon');"
             , true);
         }
         else
         {
-            parent.FindControl("GR").Visible = true;
+            GridView gr = (GridView)parent.FindControl("GR");
+            gr.DataSourceID = "SR";
+            gr.DataBind();
+            gr.Visible = true;
         }
     }
 
@@ -89,7 +124,13 @@ public partial class gerencia_programacion : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            e.Row.Cells[2].Text = Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[2].Text).Trim());
+            try
+            {
+                string valor = HttpUtility.HtmlDecode(e.Row.Cells[2].Text).Trim();
+                Convert.ToInt32(valor);
+                e.Row.Cells[2].Text = Procedimientos.GetProcedimiento(valor);
+            }
+            catch (Exception ex) { }
         }
     }
 }

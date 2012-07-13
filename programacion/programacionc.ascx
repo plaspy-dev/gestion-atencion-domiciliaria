@@ -61,8 +61,8 @@
             $("#dact" + $(this).val()).show();
         }).change();
 
-        addDialog("#dParentProgramacion", "#dProgramacion");
-        addDialog("#<%= PConfirmar.ClientID %>", "#dConfirmar");
+        if (!addDialog("#<%= PConfirmar.ClientID %>", "#dConfirmar"))
+            addDialog("#dParentProgramacion", "#dProgramacion");
 
         $("#<%= TProfesional.ClientID %>").autocomplete({
             source: function(request, response) {

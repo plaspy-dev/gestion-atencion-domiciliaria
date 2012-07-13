@@ -57,7 +57,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                     }
                     LTipos_SelectedIndexChanged(sender, e);
                     ViewState["cargos"] = conector.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
-                    ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(costo) FROM medicamento_valor WHERE medicamento=" + HId.Value+ " ORDER BY medicamento");
+                    ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(IFNULL(costo,0),';',IFNULL(maxima,0))) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
                     ViewState["entidades"] = conector.QueryString("SELECT GROUP_CONCAT(entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
 
                     BAceptar.Enabled = CUsuario.GetUsuario().CanUpdate();
@@ -130,15 +130,22 @@ public partial class administrador_medicamentos : System.Web.UI.Page
 
         for (int i = 0; i < GEntidades.Rows.Count; i++)
         {
-            TextBox texto = (TextBox)GEntidades.Rows[i].FindControl("TCosto");
+            TextBox costo = (TextBox)GEntidades.Rows[i].FindControl("TCosto");
+            TextBox maxima = (TextBox)GEntidades.Rows[i].FindControl("TMaxima");
 
-            if(texto.Text.Length>0) {
+            if (costo.Text.Length > 0 || maxima.Text.Length>0)
+            {
                 valores["entidad"] = GEntidades.DataKeys[i].Value.ToString();
-                valores["costo"] = texto.Text.Replace(",", "");
+                valores["costo"] = costo.Text.Replace(",", "");
+                valores["maxima"] = maxima.Text.Replace(",", "");
                 if (conector.QueryMod(valores.GetInsert()) == -1)
                     return;
-                if (conectorms.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(texto.Text.Replace(",", ""))
+                if (conectorms.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(costo.Text.Replace(",", ""))
                                         + " WHERE actId=" + HId.Value + " AND costo IS NULL AND entId=" + GEntidades.DataKeys[i].Value.ToString()) == -1)
+                    return;
+                if(conector.QueryMod("UPDATE medicamento_formulacion LEFT JOIN formulacion ON (medicamento_formulacion.formulacion=formulacion.id) "
+                    + " SET medicamento_formulacion.costo=" + Query.GetValor(costo.Text.Replace(",", ""))
+                    + " WHERE medicamento_formulacion.medicamento=" + HId.Value + " formulacion.asegurador=" + GEntidades.DataKeys[i].Value.ToString() + " AND medicamento_formulacion.costo IS NULL") == -1)
                     return;
             }
         }
@@ -183,7 +190,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
 
         CConector conector = new CConector();
         ViewState["cargos"] = conector.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
-        ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(costo) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
+        ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(IFNULL(costo,0),';',IFNULL(maxima,0))) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
         ViewState["entidades"] = conector.QueryString("SELECT GROUP_CONCAT(entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
         GCargos.DataBind();
         GEntidades.DataBind();
@@ -207,8 +214,11 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                 if (valores[i] == GEntidades.DataKeys[e.Row.RowIndex].Value.ToString())
                 {
                     TextBox text = (TextBox)e.Row.FindControl("TCosto");
+                    TextBox maxima = (TextBox)e.Row.FindControl("TMaxima");
                     valores= ViewState["costos"].ToString().Split(',');
-                    text.Text= valores[i];
+                    valores= valores[i].Split(';');
+                    text.Text= valores[0];
+                    maxima.Text = valores[1];
                     break;
                 }
             }

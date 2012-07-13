@@ -135,6 +135,86 @@ public partial class paciente_formulacion : System.Web.UI.Page
         if (!RMedicamento.IsValid || !RCantidad.IsValid)
             return;
 
+        if (true || !CUsuario.GetUsuario().CanAdmin())
+        {
+            // verificamos que la cantidad no exeda lo permitido por el servicio
+            int maximo = Procedimientos.GetMaxServicios(TMedicamentoID.Text, CCDetallePaciente.AsegurdadorID);
+            int cantidadactual = Convert.ToInt32(TCantidad.Text);
+            if (maximo > 0) // esta restringido
+            {
+                int nuevacantidad = cantidadactual;
+                // esto se guarda linea por linea en la base de datos no hay necesidad de sumar
+                /*for (int i = 0; i < GFormulacion.Rows.Count; i++)
+                {
+                    if (HttpUtility.HtmlDecode(GFormulacion.Rows[i].Cells[2].Text).Trim() == TMedicamentoID.Text)
+                        nuevacantidad += Convert.ToInt32(HttpUtility.HtmlDecode(GFormulacion.Rows[i].Cells[4].Text).Trim());
+                }*/
+
+                if (maximo < nuevacantidad)
+                {  // excede el maximo permitido
+                    LMensajeMedicamento.Text = "Excede la cantidad máxima por servicio permitida (" + maximo.ToString() + ")";
+                    TMedicamento.Focus();
+                    return;
+                }
+
+                // verificamos el acumulado de servicios formulados
+                string formuladaanterior= new CConector().QueryString("SELECT SUM(medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.paciente=" + CCDetallePaciente.AsegurdadorID + " AND medicamento_formulacion.medicamento=" + Query.GetValor(TMedicamentoID.Text) + " AND fecha>DATE_ADD(DATE(SYSDATE()), INTERVAL -30 DAY);");
+                if (formuladaanterior.Length != 0)
+                    nuevacantidad += Convert.ToInt32(formuladaanterior);
+                if (maximo < nuevacantidad)
+                {  // excede el maximo permitido
+                    LMensajeMedicamento.Text = "Excede la cantidad máxima por servicio mensual permitida (" + maximo.ToString() + ")";
+                    TMedicamento.Focus();
+                    return;
+                }
+            }
+
+            // verificamos el valor maximo por paciente
+            double costoprocedimiento = Procedimientos.GetCosto(TMedicamentoID.Text, CCDetallePaciente.AsegurdadorID);
+            if ((CCDetallePaciente.TopePaciente > 0 || CCDetallePaciente.TopeAsegurador > 0) && costoprocedimiento > 0) // el tratamiento tiene costo
+            {
+                double total = cantidadactual * costoprocedimiento; // este es el actual
+                // esto se guarda linea por linea en la base de datos no hay necesidad de sumar
+                /*for (int i = 0; i < GFormulacion.Rows.Count; i++)
+                {
+                    total += Convert.ToInt32(HttpUtility.HtmlDecode(GFormulacion.Rows[i].Cells[4].Text).Trim()) *
+                        Procedimientos.GetCosto(HttpUtility.HtmlDecode(GFormulacion.Rows[i].Cells[2].Text).Trim(), CCDetallePaciente.AsegurdadorID);
+                }*/
+                // verificamos el tope del paciente
+                if (total > CCDetallePaciente.TopePaciente)
+                {
+                    LMensajeMedicamento.Text = "Excede el tope de presupuesto del paciente";
+                    TMedicamento.Focus();
+                    return;
+                }
+                total += CCDetallePaciente.GetCostoPacienteActual;
+                if (total > CCDetallePaciente.TopePaciente)
+                {
+                    LMensajeMedicamento.Text = "Excede el tope de presupuesto mensual del paciente";
+                    TMedicamento.Focus();
+                    return;
+                }
+                // verificamos el tope del asegurador
+                if (total > CCDetallePaciente.TopeAsegurador)
+                {
+                    LMensajeMedicamento.Text = "Excede el tope de presupuesto mensual de la aseguradora";
+                    TMedicamento.Focus();
+                    return;
+                }
+                // verificamos que el tope de todos los servicios del asegurador
+                total -= CCDetallePaciente.GetCostoPacienteActual;
+                total += CCDetallePaciente.GetCostoAseguradoraActual;
+                
+                // verificamos el tope del asegurador
+                if (total > CCDetallePaciente.TopeAsegurador)
+                {
+                    LMensajeMedicamento.Text = "Los servicios exceden el tope de presupuesto mensual de la aseguradora";
+                    TMedicamento.Focus();
+                    return;
+                }
+            }
+        }
+
         IOrderedDictionary data = new OrderedDictionary();
         data.Add("medicamento", TMedicamento.Text);
         data.Add("formulada", TCantidad.Text);
@@ -142,6 +222,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
         data.Add("medicamen_id", TMedicamentoID.Text);
         data.Add("via", TVia.Text);
         data.Add("tiempo", TTiempo.Text);
+        data.Add("costo", Procedimientos.GetCosto(TMedicamentoID.Text, CCDetallePaciente.AsegurdadorID));
 
         if (GFormulacion.SelectedIndex == -1)
         {
@@ -166,8 +247,10 @@ public partial class paciente_formulacion : System.Web.UI.Page
         GFormulacion.DataBind();
 
         TMedicamentoID.Text = TMedicamento.Text = TPosologia.Text = TCantidad.Text = "";
+        CCDetallePaciente.GetCostoPacienteActual = 0;
+        CCDetallePaciente.GetCostoAseguradoraActual = 0;
         BAceptar_Click(sender, e);
-        Response.Redirect(Request.Url.ToString());
+        // Response.Redirect(Request.Url.ToString());
     }
 
     protected void BFecha_Click(object sender, EventArgs e)
