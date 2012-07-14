@@ -11,19 +11,19 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2012-07-13.
+This cut records the home-care application as archived on 2012-07-14.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
 
 ### Features in the retained source
 
+- Open the staff record for the care team. `rh/funcionario.aspx`.
+- Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
 - Open the batch admission screen to process patient admissions. `admisiones/amasivas.aspx`.
 - Retrieve images linked to the clinical files in this edition. `archivo/foto.ashx`.
 - Open the patient record and its care information. `paciente/paciente.aspx`.
-- Open the staff record for the care team. `rh/funcionario.aspx`.
 - View and maintain access groups. `administrador/grupos.aspx`.
-- Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
 - List cases that are waiting to be scheduled. `programacion/sinprogramar.aspx`.
 - Start from the census to review cases recorded in the site. `censo/Default.aspx`.
 
@@ -31,11 +31,11 @@ The application keeps the records used to arrange visits and coordinate the peop
 
 This edition lacks an archived solution or project file. A standalone build requires the application entry point, its shared references and its ASP.NET configuration for this edition.
 
-The retained site entry is `censo/Default.aspx`. Use fictional accounts and a disposable database on loopback.
+The retained site entry is `Default.aspx`. Use fictional accounts and a disposable database on loopback.
 
 ### Archive notes
 
-The archive inventory counted 2 additions, 8 edits and 0 removals.
+The archive inventory counted 1 additions, 23 edits and 1 removals.
 
 ### Framework versions
 
@@ -43,7 +43,7 @@ The archive does not record the original framework version. The local build reci
 
 ### Usage
 
-Use the documented local build with a fictional operator. The available screens include `admisiones/amasivas.aspx` and the other routes above.
+Use the documented local build with a fictional operator. The available screens include `rh/funcionario.aspx` and the other routes above.
 
 The retained entry page is `administrador/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
 
@@ -74,19 +74,19 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2012-07-13.
+Este corte conserva la versión de atención domiciliaria archivada el 2012-07-14.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
 
 ### Funciones en el código conservado
 
+- Abre la ficha del personal del equipo de atención. `rh/funcionario.aspx`.
+- Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `admisiones/amasivas.aspx`.
 - Consulta las imágenes vinculadas a los archivos clínicos de esta edición. `archivo/foto.ashx`.
 - Abre la ficha del paciente y su información de atención. `paciente/paciente.aspx`.
-- Abre la ficha del personal del equipo de atención. `rh/funcionario.aspx`.
 - Consulta y administra los grupos de acceso. `administrador/grupos.aspx`.
-- Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
 - Consulta los casos pendientes de programación. `programacion/sinprogramar.aspx`.
 - Empieza en el censo para consultar los casos registrados en el sitio. `censo/Default.aspx`.
 
@@ -94,11 +94,11 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 
 Esta edición carece de un archivo de solución o proyecto. Una compilación independiente requiere el punto de entrada, sus referencias compartidas y la configuración ASP.NET de este corte.
 
-La entrada conservada del sitio es `censo/Default.aspx`. Usa cuentas ficticias y una base desechable en la interfaz local.
+La entrada conservada del sitio es `Default.aspx`. Usa cuentas ficticias y una base desechable en la interfaz local.
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 2 adiciones, 8 cambios y 0 retiros.
+El inventario del respaldo registró 1 adiciones, 23 cambios y 1 retiros.
 
 ### Versiones de .NET Framework
 
@@ -106,7 +106,7 @@ El respaldo no registra la versión original del framework. La receta local usa 
 
 ### Uso
 
-Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `admisiones/amasivas.aspx` y las demás rutas de arriba.
+Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `rh/funcionario.aspx` y las demás rutas de arriba.
 
 La portada conservada es `administrador/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
 
@@ -136,8 +136,6 @@ The build restores iTextSharp 5.2.0 from the official NuGet package and checks i
 
 La compilación restaura iTextSharp 5.2.0 desde el paquete oficial de NuGet y coteja su SHA-256. Indica una copia del mismo paquete en `DOMICILIO_ITEXTSHARP_PACKAGE` para compilar sin Internet.
 
-## Session setup / Configuración de sesión
+Set `DOMICILIO_SESSION_KEY_3` in the IIS process before signing in or using the recovered modules. Use independently generated fictional values for a disposable test.
 
-Set `DOMICILIO_SESSION_KEY_3` in the ASP.NET process environment before signing in. Generate independent values for your deployment. Use synthetic values in local tests.
-
-Define `DOMICILIO_SESSION_KEY_3` en el entorno del proceso ASP.NET antes de iniciar sesión. Genera valores propios para tu instalación. Usa valores ficticios en las pruebas locales.
+Define `DOMICILIO_SESSION_KEY_3` en el proceso de IIS antes de ingresar o usar los módulos recuperados. Genera valores ficticios independientes para una prueba desechable.

@@ -21,6 +21,7 @@
     <link href="css/ui-lightness/jquery-ui-1.8.13.custom.css" type="text/css" rel="Stylesheet" />
     <link href="css/ui-lightness/jquery-ui-numeric-min.css" type="text/css" rel="Stylesheet" />
     <link href="css/estilo.css" type="text/css" rel="stylesheet" />
+    <link rel="shortcut icon" href="images/tema/favicon.ico" />
     <script type="text/javascript">
         var user_logged = false;
         var user_logging = true;
@@ -60,135 +61,148 @@
     <form id="form1" runat="server" autocomplete="off" >
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" ScriptMode="Release" LoadScriptsBeforeUI="false">
     </asp:ScriptManager>
-<table cellpadding="0" cellspacing="0" width="100%">
-<tr><td align="center" >
-<table cellpadding="0" cellspacing="0">
-<tr><td align="left" >
-            <asp:Panel ID="Panel1" runat="server" CssClass="roundedPanel" >
-            <div style="width:700px; height:0px;"></div>
-            <table cellpadding="0" cellspacing="0" id="tblPr"><tr><td style="width:auto;">
-                <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/imgs/Logo.jpg" 
-                    Width="150" Height="60" CausesValidation="False" PostBackUrl="~/inicio.aspx"/>
-                </td><td valign="bottom" align="left" style="width:40%;"><asp:Label ID="lblUsuario" runat="server" Text=""></asp:Label>
-                    <br />
-                    <asp:Label ID="lblNombre" runat="server" Text=""></asp:Label>
+    <table border="0" align="center" cellpadding="0" cellspacing="0" width="100%">
+    <tr style="background-color: #184580">
+        <td style="width:1000px;"></td>
+        <td style="min-width: 890px;">
+            <!-- encablezado -->
+            <table width="100%" align="center" cellpadding="0" cellspacing="0">
+              <tr>
+                <td class="fhl"></td>
+                <td width="1px">
+                    <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="172" height="55" id="FlashID" title="OrganizationExample15">
+                      <param name="movie" value="<%=ResolveUrl("~/")%>images/logo.swf" />
+                      <param name="quality" value="high" />
+                      <param name="wmode" value="opaque" />
+                      <param name="swfversion" value="6.0.65.0" />
+                      <!-- La siguiente etiqueta object es para navegadores distintos de IE. Ocúltela a IE mediante IECC. -->
+                      <!--[if !IE]>-->
+                      <object type="application/x-shockwave-flash" data="<%=ResolveUrl("~/")%>images/logo.swf" width="172" height="55">
+                        <!--<![endif]-->
+                        <param name="quality" value="high" />
+                        <param name="wmode" value="opaque" />
+                        <param name="swfversion" value="6.0.65.0" />
+                        <!-- El navegador muestra el siguiente contenido alternativo para usuarios con Flash Player 6.0 o versiones anteriores. -->
+                        <asp:ImageButton ID="ILogo" runat="server" ImageUrl="~/images/tema/logop.jpg" Width="150" Height="55" CausesValidation="False" PostBackUrl="~/inicio.aspx"/>
+                        <!--[if !IE]>-->
+                      </object>
+                      <!--<![endif]-->
+                    </object>
                 </td>
-                <td valign="bottom" align="right" >
-                    &nbsp;&nbsp;
-                </td><td valign="bottom" align="right" >
-                    <asp:LinkButton ID="lnkCambioClave" runat="server" CausesValidation="False" 
-                        PostBackUrl="">Cambio de Clave</asp:LinkButton>
-                    &nbsp;<asp:LinkButton ID="lnkSalir" runat="server" CausesValidation="False" 
-                        PostBackUrl="~/Default.aspx?end=1">Salir</asp:LinkButton>
-&nbsp;
-                    </td>
-                    </tr>
-                    <tr>
-                    <td colspan="4" >
-                    <div class="celdaTitulo" >
-                    <table width="100%"  cellpadding="0" cellspacing="0">
-                    <tr><td style="width: 100%" align="center">
-                        <asp:Label ID="lblTitulo" CssClass="lblTituloPagina" runat="server" Text="" ></asp:Label>
-                    </td><td align="right">
-                     <table>
-                     <tr>
-                        <td>
-                            <asp:Menu ID="MAlertas" runat="server" Orientation="Horizontal" 
-                                DynamicHorizontalOffset="2" ForeColor="#FFFFFF">
-                                <StaticItemTemplate>
-                                    <table cellpadding=1 cellspacing=1>
-                                        <tr>
-                                            <td><%# Eval("Text") %></td>
-                                            <td class="circulo">
-                                                <%# Eval("ChildItems.Count") %>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </StaticItemTemplate>
-                                <DynamicItemTemplate>
-                                    <div class="dinamicmenu">
-                                    <%# Eval("Text") %>
-                                    </div>
-                                </DynamicItemTemplate>
-                                <StaticHoverStyle CssClass="Titulo" />
-                                <DynamicHoverStyle CssClass="Titulo" />
-                                <DynamicMenuItemStyle HorizontalPadding="5px" VerticalPadding="3px" />
-                            </asp:Menu>
-                        </td>
-                     </tr>
-                     <tr>
-                     <td align="left" >
-                         <asp:LinkButton ID="lnkNuevo" runat="server" CssClass="linkBH" Visible="False" CausesValidation="False" PostBackUrl="">Nuevo</asp:LinkButton>
-                     </td>
-                     <td align="left" >
-                         <asp:LinkButton ID="lnkImp" runat="server" CssClass="linkBH" Visible="False" CausesValidation="False" OnClientClick="imprimir();return false;" onclick="lnkImp_Click">Imprimir</asp:LinkButton>
-                     </td>
-                     <td align="left" >
-                         <asp:LinkButton ID="lnkGuardar" runat="server" CssClass="linkBH" Visible="False" ValidationGroup="Guardar">Guardar</asp:LinkButton>
-                     </td>
-                     <td align="left" >
-                         <asp:LinkButton ID="lnkExcel" runat="server" CssClass="linkBH" Visible="False" CausesValidation="False" onclick="lnkExcel_Click">Excel</asp:LinkButton>
-                     </td>
-                     <td align="left" >
-                         <asp:LinkButton ID="lnkPDF" runat="server" CssClass="linkBH" Visible="False" CausesValidation="False" onclick="lnkPDF_Click">PDF</asp:LinkButton>
-                     </td>
-                     </tr></table>
-                    </td></tr>
+                <td colspan="2" valign="middle" align="right" style="text-align:right; white-space: nowrap; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;">
+                <asp:LinkButton ID="lnkNuevo" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" PostBackUrl="">Nuevo</asp:LinkButton>
+                <asp:LinkButton ID="lnkImp" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" OnClientClick="imprimir();return false;" onclick="lnkImp_Click">Imprimir</asp:LinkButton>
+                <asp:LinkButton ID="lnkGuardar" runat="server" CssClass="menuArriba" Visible="False" ValidationGroup="Guardar">Guardar</asp:LinkButton>
+                <asp:LinkButton ID="lnkExcel" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" onclick="lnkExcel_Click">Excel</asp:LinkButton>
+                <asp:LinkButton ID="lnkPDF" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" onclick="lnkPDF_Click">PDF</asp:LinkButton>
+                <asp:LinkButton ID="lnkCambioClave" runat="server" CssClass="menuArriba" CausesValidation="False" PostBackUrl="">Contraseña</asp:LinkButton>
+                <asp:LinkButton ID="lnkSalir" runat="server" CssClass="menuArriba" CausesValidation="False" PostBackUrl="~/Default.aspx?end=1">Salir</asp:LinkButton>
+                </td>
+                <td class="fhr"></td>
+              </tr>
+            </table>
+        </td>
+        <td style="width:1000px;"></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>
+            <!-- contenido -->
+                        <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+                          <tr>
+                          <td class="fcl"></td>
+                          <td width="237" align="left" valign="top" class="fondoMenu" bgcolor="#FFFFFF">                            
+                          <table width="220" border="0" align="left" cellpadding="0" cellspacing="0">
+                            <tr><td align="left" valign="top" class="TPagina fondoTituloMenu" style="padding:18px 50px 20px 30px"><b><asp:Label ID="lblUsuario" runat="server" Text=""></asp:Label></b></td></tr>
+	                        <tr><td>
+	                        <div id="tabs" style="min-width: 230px">
+                                <ul>
+                                    <li><a href="#tabs-1">Navegador</a></li>
+                                    <li><a href="#tabs-2">Propiedades</a></li>
+                                </ul>
+                                <div id="tabs-1">
+                                    <asp:TreeView ID="TMenu" runat="server" EnableViewState="False" ExpandImageUrl="~/images/tema/menubg.jpg" CollapseImageUrl="~/images/tema/menubg.jpg">
+                                        <SelectedNodeStyle CssClass="linkMenu linkMenuA" ImageUrl="~/images/tema/menuover.jpg" />
+                                        <NodeStyle CssClass="linkMenu" />
+                                    </asp:TreeView>
+                                </div>
+                                <div id="tabs-2" class="hide">
+                                    <uc1:modificaciones ID="MModificaciones" IdModificacion="" runat="server"/>
+                                </div>
+                            </div>
+	                        </td></tr>
+                              </table></td>
+                      <td width="645" valign="top" bgcolor="#FFFFFF">
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                          <tr>
+                            <td class="fondoTituloUsuario" style="padding:18px 50px 20px 5px" align="right">
+                            <table cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td><b><asp:Label ID="lblTitulo" CssClass="TPagina" runat="server" Text="" ></asp:Label></b></td>
+                                    <td>
+                                    <asp:Menu ID="MAlertas" runat="server" Orientation="Horizontal" DynamicHorizontalOffset="2" Visible="false">
+                                        <StaticItemTemplate>
+                                            <table cellpadding=1 cellspacing=1>
+                                                <tr>
+                                                    <td><%# Eval("Text") %></td>
+                                                    <td class="circulo">
+                                                        <%# Eval("ChildItems.Count") %>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </StaticItemTemplate>
+                                        <DynamicItemTemplate>
+                                            <div class="dinamicmenu">
+                                            <%# Eval("Text") %>
+                                            </div>
+                                        </DynamicItemTemplate>
+                                        <StaticHoverStyle CssClass="Titulo" />
+                                        <DynamicHoverStyle CssClass="Titulo" />
+                                        <DynamicMenuItemStyle HorizontalPadding="5px" VerticalPadding="3px" />
+                                    </asp:Menu>
+                                    </td>
+                                </tr>
+                            </table>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding:10px 20px 5px 5px" class="fondoPagina">
+                            <asp:ContentPlaceHolder ID="cph" runat="server">
+                            </asp:ContentPlaceHolder>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td class="fcr"></td>
+                      </tr>
                     </table>
-                    </div> 
-                    </td>
-                    </tr>
-                    <tr>
-                    <td valign="top">
-                        <div id="tabs" style="min-width: 190px">
-	                    <ul>
-		                    <li><a href="#tabs-1">Navegador</a></li>
-		                    <li><a href="#tabs-2">Propiedades</a></li>
-	                    </ul>
-	                        <div id="tabs-1">
-                                <asp:TreeView ID="TMenu" runat="server" ImageSet="Arrows" 
-                                    EnableViewState="False">
-                                    <ParentNodeStyle Font-Bold="False" />
-                                    <HoverNodeStyle Font-Underline="True" ForeColor="#5555DD" />
-                                    <SelectedNodeStyle Font-Underline="True" ForeColor="#5555DD" 
-                                        HorizontalPadding="0px" VerticalPadding="0px" />
-                                    <NodeStyle Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" 
-                                        HorizontalPadding="5px" NodeSpacing="0px" VerticalPadding="0px" />
-                                </asp:TreeView>
-                            </div>
-                            <div id="tabs-2" class="hide">
-                                <uc1:modificaciones ID="MModificaciones" IdModificacion="" runat="server"/>
-                            </div>
-                        </div>
-                    </td>
-                        <td colspan="3" valign="top" style="border: thin solid #D4D4D4; width:80%;min-width:400px;">
-                            <div runat="server" class='msj' id="dvMsj" visible="false"></div>
-                            <div id="dvContent">
-                                <asp:ContentPlaceHolder ID="cph" runat="server">
-                                </asp:ContentPlaceHolder>
-                            </div>
-                        </td>
-                        <td><div style="width:5px;"></div></td>
-                </tr>
-                    </table>
-                            <div style="height:5px;"/>
-                   
-            </asp:Panel>
-            <div style="text-align:right;">
-    <span style="color: darkgray">Copyright &copy;2011 <a href="http://www.sdg.com.co"><font style="color: darkgray; text-decoration:none">Software Developers Group LTDA</font></a>.All Rights Reserved &nbsp;&nbsp;<br />
-    Versión <asp:Label ID="LVersion" runat="server" Text=""></asp:Label> &nbsp;&nbsp;</span>
-</div>
-</td></tr>
-</table>
-</td></tr>
-</table>
-    <p>
-        &nbsp;</p>
-
-     <asp:HiddenField runat="server" ID="hddDatoC" Value="0" />
-    <div id="dvMensajes" runat="server" style="position:absolute;top:0;left:0" class="dvMensajes" visible="false">
-    <table><tr><td><div runat="server" id="dvMensjesUs"></div></td><td style="width:5px;"></td></tr></table>
-    </div>
+    </td>
+    <td></td>
+    </tr>
+    <tr style="background-color: #184580">
+        <td></td>
+        <td><!-- pie de pagina -->
+            <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#184580">
+              <tr>
+                <td class="fhl"></td>
+                <td align="right" style="background-color: #FFF; padding-right: 30px;">Versión <asp:Label ID="LVersion" runat="server" Text=""></asp:Label></td>
+                <td class="fhr"></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td style="padding:5px 0px 20px 25px;font-size: 10px;color: #ffffff;">
+                <b>Gestión de atención domiciliaria</b> © Marca Registrada - Todos los Derechos Reservados<br />
+                  Dirección de demostración Bogotá D.C. - Colombia / PBX: 000 000 0101<br />
+                  Desarrollado por <a href="http://www.sdg.com.co">Software Developers Group LTDA</a>
+                </td>
+                <td></td>
+              </tr>
+            </table>
+        </td>
+        <td></td>
+    </tr>
+    </table>
+    
     <asp:UpdatePanel ID="UPDiagAux" runat="server" RenderMode="Inline">
         <ContentTemplate>
             <div id="titulo_aux" style="display: none" runat="server"></div>

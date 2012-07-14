@@ -17,7 +17,7 @@ public partial class paciente_epicrisis : System.Web.UI.Page
         ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
         if (!IsPostBack)
         {
-            CUsuario usuario = CUsuario.GetUsuario();
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
             if (Request.QueryString["pid"] != null)
             {
                 CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
@@ -123,7 +123,7 @@ public partial class paciente_epicrisis : System.Web.UI.Page
     {
         PrintEventArgs evento = (PrintEventArgs)e;
         // aqui modificamos el evento
-        evento.Contenido = evento.Contenido.Replace("$szUsuario$", CUsuario.GetUsuario().GetNombre());
+        evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
         Query query = new Query("phdPaciente");
 

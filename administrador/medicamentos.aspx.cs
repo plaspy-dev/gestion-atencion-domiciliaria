@@ -19,7 +19,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
             ViewState["entidades"] = "";
 
             TCodigo.Focus();
-            CUsuario usuario = CUsuario.GetUsuario();
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanInsert();
             GResultado.Columns[1].Visible = usuario.CanDelete();
@@ -60,7 +60,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                     ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(IFNULL(costo,0),';',IFNULL(maxima,0))) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
                     ViewState["entidades"] = conector.QueryString("SELECT GROUP_CONCAT(entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
 
-                    BAceptar.Enabled = CUsuario.GetUsuario().CanUpdate();
+                    BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
 
                     ((MasterPageI)Master).SetModificacion(HId.Value);
                 }
@@ -172,7 +172,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         DGrupo.SelectedValue = "";
         GCargos.DataBind();
         GEntidades.DataBind();
-        BAceptar.Enabled = CUsuario.GetUsuario().CanInsert();
+        BAceptar.Enabled = Usuario.GetUsuario().CanInsert();
 
         GResultado.SelectedIndex = -1;
     }
@@ -195,7 +195,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         GCargos.DataBind();
         GEntidades.DataBind();
 
-        BAceptar.Enabled = CUsuario.GetUsuario().CanUpdate();
+        BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
 
         ((MasterPageI)Master).SetModificacion(HId.Value);
     }

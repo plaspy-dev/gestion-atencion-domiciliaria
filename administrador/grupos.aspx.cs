@@ -34,12 +34,12 @@ public partial class administrador_grupos : System.Web.UI.Page
         BEliminar.Visible = false;
         if(!IsPostBack) {
 
-            CUsuario usuario = CUsuario.GetUsuario();
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
             BAceptar.Enabled = usuario.CanInsert();
 
             TNombre.Focus();
             ArrayList parents= new ArrayList();
-            ArrayList menu = CUsuario.GetUsuario().GetFullMenu();
+            ArrayList menu = Usuario.GetUsuario().GetFullMenu();
             for(int i=0; i<menu.Count; i++) {
 
                 CURLs url = (CURLs)menu[i];
@@ -211,7 +211,7 @@ public partial class administrador_grupos : System.Web.UI.Page
     protected void LGrupos_SelectedIndexChanged(object sender, EventArgs e)
     {
         ArrayList parents = new ArrayList();
-        ArrayList menu = CUsuario.GetUsuario().GetFullMenu();
+        ArrayList menu = Usuario.GetUsuario().GetFullMenu();
 
         for (int i = 0; i < menu.Count; i++)
         {
@@ -249,7 +249,7 @@ public partial class administrador_grupos : System.Web.UI.Page
             TNombre.Text = LGrupos.SelectedItem.Text;
             TDescripcion.Text = "Grupo de administración, con todos los accesos";
         } else {
-            CUsuario usuario = CUsuario.GetUsuario();
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanUpdate();
             BEliminar.Enabled = usuario.CanDelete();

@@ -24,7 +24,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        CUsuario usuario = CUsuario.GetUsuario();
+        CUsuario usuario = (CUsuario) Usuario.GetUsuario();
         if(usuario.GetForceURL().Length!=0) {
 
             CURLs url = new CURLs(usuario.GetForceURL().ToLower(), "", "");
@@ -39,7 +39,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             CConectorMS conector = new CConectorMS();
             CConectorMS conectorc = new CConectorMS();
 
-            SqlDataReader consultas = conectorc.Query("SELECT genTareas.tarTitulo AS nombre,genTareas.consulta,genTareas.url FROM GenUsuarioTarea LEFT JOIN genTareas ON (genTareas.tarId=GenUsuarioTarea.tarId) WHERE usIdUsuario='" + CUsuario.GetUsuario().GetLogin() + "' AND genTareas.consulta IS NOT NULL;");
+            SqlDataReader consultas = conectorc.Query("SELECT genTareas.tarTitulo AS nombre,genTareas.consulta,genTareas.url FROM GenUsuarioTarea LEFT JOIN genTareas ON (genTareas.tarId=GenUsuarioTarea.tarId) WHERE usIdUsuario='" + Usuario.GetUsuario().GetLogin() + "' AND genTareas.consulta IS NOT NULL;");
             if(consultas!=null) {
 
                 while(consultas.Read()) {
@@ -65,7 +65,8 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         usuario.CreateMenu(TMenu, Session["parametros"]==null ? "" : Session["parametros"].ToString());
 
         // Session.Remove("parametros");
-        lblNombre.Text = usuario.GetNombre();
+        // lblNombre.Text = usuario.GetNombre();
+        lblUsuario.Text = usuario.GetLogin();
 
         titulo_aux.Attributes["title"] = "";
         LAuxDiag.Text = "";
@@ -86,7 +87,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             Session["printgridview"] = null;
             Session["printfile"] = null;
         } else {
-            if(Request.QueryString["p"]=="1" && CUsuario.GetUsuario().CanPrint()) {
+            if(Request.QueryString["p"]=="1" && Usuario.GetUsuario().CanPrint()) {
                 // nos preparamos para redireccionar
                 lnkImp_Click(sender, e);
             }
@@ -131,7 +132,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
     {
         CConector conector = CConector.GetConector();
         CConectorMS conectorms = new CConectorMS();
-        CUsuario usuario = CUsuario.GetUsuario();
+        CUsuario usuario = (CUsuario) Usuario.GetUsuario();
         string id= conector.QueryString("SELECT id FROM usuario WHERE id='" + usuario.GetID()  + "' AND (estado IS NULL OR estado!=-1) AND contrasena=PASSWORD(" + Query.GetValor(TActual.Text) + ")");
         if (id.Length == 0)
         {
@@ -158,17 +159,17 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
     public void Excel(GridView view)
     {
-        lnkExcel.Visible = CUsuario.GetUsuario().CanPrint();
+        lnkExcel.Visible = Usuario.GetUsuario().CanPrint();
         Session["excelgridview"] = view;
     }
 
     public void Imprimir() {
-        lnkImp.Visible = CUsuario.GetUsuario().CanPrint();
+        lnkImp.Visible = Usuario.GetUsuario().CanPrint();
     }
 
     public void Imprimir(GridView view)
     {
-        lnkImp.Visible = CUsuario.GetUsuario().CanPrint();
+        lnkImp.Visible = Usuario.GetUsuario().CanPrint();
         lnkImp.OnClientClick = "";
         Session["printgridview"] = view;
     }
@@ -290,7 +291,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
     public void Imprimir(string archivo)
     {
-        lnkPDF.Visible = lnkExcel.Visible = lnkImp.Visible = CUsuario.GetUsuario().CanPrint();
+        lnkPDF.Visible = lnkExcel.Visible = lnkImp.Visible = Usuario.GetUsuario().CanPrint();
         lnkImp.OnClientClick = "";
         lnkImp.Attributes["r"] = "1";
         Session["printfile"] = archivo;
@@ -444,7 +445,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         document.AddTitle(Page.Title);
         document.AddSubject(Request.Url.ToString());
         document.AddCreator("OrganizationExample15: " + Version.GetVersion());
-        document.AddAuthor(CUsuario.GetUsuario().GetNombre());
+        document.AddAuthor(Usuario.GetUsuario().GetNombre());
 
         // HTMLWorker htmlparser = new HTMLWorker(document);
 

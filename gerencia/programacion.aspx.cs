@@ -108,7 +108,7 @@ public partial class gerencia_programacion : System.Web.UI.Page
             repeater.Visible = true;
             repeater.DataSourceID = "SEntidades";
             repeater.DataBind();
-            ScriptManager.RegisterStartupScript(parent, typeof(string), "acordeon", "$('#" + parent.Parent.ClientID + "').find('.tmpacordeon').accordion({autoHeight: false,navigation: true,collapsible: true,active: -1,animated: false,change: function(event, ui) {ui.newContent.children('div:eq(0)').children(':submit').click();}}).removeClass('tmpacordeon');"
+            ScriptManager.RegisterStartupScript(parent, typeof(string), "acordeon", "$('#" + parent.Parent.ClientID + "').find('.tmpacordeon').accordion({autoHeight: false,navigation: true,collapsible: true,active: false,animated: false,change: function(event, ui) {ui.newContent.children('div:eq(0)').children(':submit').click();}}).removeClass('tmpacordeon');"
             , true);
         }
         else

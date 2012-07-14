@@ -1,10 +1,10 @@
-﻿<%@ Page Title="Programación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="programacion.aspx.cs" Inherits="gerencia_programacion" %>
+﻿<%@ Page Title="Informe servicios prestados" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="programacion.aspx.cs" Inherits="gerencia_programacion" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
     $(function() {
-        $("#accordion").accordion({ autoHeight: false, navigation: true, collapsible: true, active: -1, animated: false,
+        $("#accordion").accordion({ autoHeight: false, navigation: true, collapsible: true, active: false, animated: false,
             change: function(event, ui) {
                 ui.newContent.children('div:eq(0)').children(':submit').click();
             }

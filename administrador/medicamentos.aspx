@@ -132,7 +132,7 @@
           <tr>
               <td colspan="3">
               <div id="accordion">
-                    <h3><a href="#">Área</a></h3>
+                    <h3><a href="#">Cargo</a></h3>
                     <div class="hide">
                         <asp:GridView ID="GCargos" runat="server" DataSourceID="SCargos" 
                             DataKeyNames="id" AutoGenerateColumns="false" ShowHeader="false"

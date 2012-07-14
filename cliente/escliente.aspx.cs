@@ -26,7 +26,7 @@ public partial class cliente_escliente : System.Web.UI.Page
                 MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["eid"])));
                 if (reader != null && reader.Read())
                 {
-                    CUsuario usuario = CUsuario.GetUsuario();
+                    CUsuario usuario = (CUsuario) Usuario.GetUsuario();
                     BAceptar.Enabled= usuario.CanUpdate();
 
                     CCDetallePaciente.IdPaciente = reader["paciente"].ToString();
@@ -48,7 +48,7 @@ public partial class cliente_escliente : System.Web.UI.Page
                 }
                 else
                 {
-                    CUsuario usuario = CUsuario.GetUsuario();
+                    CUsuario usuario = (CUsuario) Usuario.GetUsuario();
                     BAceptar.Enabled = usuario.CanInsert();
 
                     SeleccionarPaciente.Documento = CCDetallePaciente.Documento;

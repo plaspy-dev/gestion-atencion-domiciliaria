@@ -14,7 +14,7 @@ public partial class administrador_aseguradores : System.Web.UI.Page
         TNombre.Focus();
         if (!IsPostBack)
         {
-            CUsuario usuario = CUsuario.GetUsuario();
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanInsert();
             GResultado.Columns[1].Visible = usuario.CanDelete();

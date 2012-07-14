@@ -82,6 +82,10 @@ public class ConectorMS
 
 	public void ShowError(string error)
 	{
+		if (HttpContext.Current.Handler.GetType() != typeof(Page))
+		{
+			return;
+		}
 		Page page = (Page)HttpContext.Current.Handler;
 		if (page != null && page.Master != null)
 		{
