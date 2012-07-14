@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Usuarios" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="usuario.aspx.cs" Inherits="administrador_usuario" %>
+﻿<%@ Page Title="Usuario" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="usuario.aspx.cs" Inherits="administrador_usuario" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
@@ -7,7 +7,7 @@
             autoHeight: false,
             navigation: true,
             collapsible: true,
-            active: false
+            active: -1
         });
         $("#<%= TNombres.ClientID %>").autocomplete({
             source: function(request, response) {

@@ -12,7 +12,7 @@ public partial class administrador_barthel : System.Web.UI.Page
     {
         DGrupo.Focus();
         if(!IsPostBack) {
-            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+            CUsuario usuario = CUsuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanInsert();
             GResultado.Columns[1].Visible = usuario.CanDelete();

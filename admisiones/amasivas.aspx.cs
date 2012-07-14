@@ -32,7 +32,7 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         if(!IsPostBack) {
             TPaciente.Focus();
             Session["AMasivasPaciente"] = new ArrayList();
-            BAceptar.Enabled = Usuario.GetUsuario().CanInsert();
+            BAceptar.Enabled = CUsuario.GetUsuario().CanInsert();
         }
     }
 
@@ -95,9 +95,9 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         query["autFechaVenc"] = TVencimiento.Text;
         query["autObservaciones"] = TObservaciones.Text;
         query["autActivo"] = "1";
-        query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
+        query["segUsuarioIngreso"] = CUsuario.GetUsuario().GetLogin();
         query["segFechaIngreso"] = "GETDATE()";
-        query["segUsuarioConfirma"] = Usuario.GetUsuario().GetLogin();
+        query["segUsuarioConfirma"] = CUsuario.GetUsuario().GetLogin();
         query["segFechaConfirma"] = "GETDATE()";
 
         for (int i=0; i<pacientes.Count; i++) {

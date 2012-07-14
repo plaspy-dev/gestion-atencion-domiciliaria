@@ -20,7 +20,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
         if (!IsPostBack)
         {
-            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+            CUsuario usuario = CUsuario.GetUsuario();
             BAceptar.Enabled = false;
             BMasCDiagnostico.Enabled = false;
 
@@ -319,7 +319,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
         if (ingreso)
-            Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
+            CUsuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
         ((MasterPageI)Master).SetResultado(mensaje);
         // Session["szMensaje"] = mensaje;
     }
@@ -477,7 +477,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
         else evento.Contenido = evento.Contenido.Replace("$GGinecologico$", "");
 
         evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + TConductaInicial.Text.Replace("\n", "</li><li>") + "</li></ol>");
-        evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
+        evento.Contenido = evento.Contenido.Replace("$szUsuario$", CUsuario.GetUsuario().GetNombre());
 
         Query query = new Query("phdPaciente");
 

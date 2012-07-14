@@ -54,7 +54,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <asp:ValidationSummary ID="ValidationSummary1" runat="server" DisplayMode="List" />
-        <div id="tabpersonal" style="min-width: 750px">
+        <div id="tabpersonal" style="min-width: 190px">
             <ul>
                 <li><a href="#tabs1">Datos Personales</a></li>
                 <li><a href="#tabs2">Detalles de Contrato</a></li>

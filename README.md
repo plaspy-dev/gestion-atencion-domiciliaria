@@ -31,11 +31,11 @@ The application keeps the records used to arrange visits and coordinate the peop
 
 This edition lacks an archived solution or project file. A standalone build requires the application entry point, its shared references and its ASP.NET configuration for this edition.
 
-The retained site entry is `Default.aspx`. Use fictional accounts and a disposable database on loopback.
+The retained site entry is `censo/Default.aspx`. Use fictional accounts and a disposable database on loopback.
 
 ### Archive notes
 
-The archive inventory counted 1 additions, 23 edits and 1 removals.
+The archive inventory counted 1 additions, 21 edits and 1 removals.
 
 ### Framework versions
 
@@ -94,11 +94,11 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 
 Esta edición carece de un archivo de solución o proyecto. Una compilación independiente requiere el punto de entrada, sus referencias compartidas y la configuración ASP.NET de este corte.
 
-La entrada conservada del sitio es `Default.aspx`. Usa cuentas ficticias y una base desechable en la interfaz local.
+La entrada conservada del sitio es `censo/Default.aspx`. Usa cuentas ficticias y una base desechable en la interfaz local.
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 1 adiciones, 23 cambios y 1 retiros.
+El inventario del respaldo registró 1 adiciones, 21 cambios y 1 retiros.
 
 ### Versiones de .NET Framework
 

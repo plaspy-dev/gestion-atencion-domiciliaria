@@ -24,7 +24,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             BSuspender.Visible = false;
             GActivades.DataBind();
 
-            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+            CUsuario usuario = CUsuario.GetUsuario();
             CConectorMS conector = new CConectorMS();
             CGenerar.Visible= conector.QueryString("SELECT perIdPermiso FROM segPermisoEspecial WHERE usIdUsuario='" + usuario.GetLogin() + "' AND perIdPermiso='AUT_AUTOMATICA'")!="";
             RAutorizacion.Visible= RPreautorizacion.Visible = conector.QueryString("SELECT perIdPermiso FROM segPermisoEspecial WHERE usIdUsuario='" + usuario.GetLogin() + "' AND perIdPermiso='AUT_SELPREAUT'")!="";
@@ -207,13 +207,13 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
         if(HIdAutorizacion.Value.Length==0) {
 
-            query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
+            query["segUsuarioIngreso"] = CUsuario.GetUsuario().GetLogin();
             query["segFechaIngreso"] = "GETDATE()";
             if (CGenerar.Checked && RPreautorizacion.Visible && RPreautorizacion.Checked)
             {
                 if (HIdEntidad.Value == "36" || HIdEntidad.Value == "29") {
 
-                    query["segUsuarioConfirma"] = Usuario.GetUsuario().GetLogin();
+                    query["segUsuarioConfirma"] = CUsuario.GetUsuario().GetLogin();
                     query["segFechaConfirma"] = "GETDATE()";
                 } else {
                     query["autProvisional"] = "1";
@@ -226,7 +226,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             HIdAutorizacion.Value= TNumero.Text;
         } else {
 
-            query["segUsuarioModifica"] = Usuario.GetUsuario().GetLogin();
+            query["segUsuarioModifica"] = CUsuario.GetUsuario().GetLogin();
             query["segFechaModifica"] = "GETDATE()";
             if(conector.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(HIdAutorizacion.Value)))==-1)
                 return;

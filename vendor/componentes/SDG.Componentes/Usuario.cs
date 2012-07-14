@@ -1,7 +1,4 @@
-using System;
 using System.Collections;
-using System.Configuration;
-using System.Reflection;
 using System.Web;
 using System.Web.UI.WebControls;
 
@@ -35,16 +32,6 @@ public class Usuario
 		{
 			m_saValores[GetCampo((campo.Length == 0) ? value : campo)] = value;
 		}
-	}
-
-	protected Usuario()
-	{
-		m_szNombre = "";
-		m_nGrupo = 0;
-		m_szID = "";
-		m_szLogin = "";
-		m_pGrupo = new Grupo();
-		m_szUrl = "";
 	}
 
 	public Usuario(string id, string nombre, int grupo, string login)
@@ -193,37 +180,12 @@ public class Usuario
 		HttpContext.Current.Response.End();
 	}
 
-	protected virtual Usuario ValidateUser()
-	{
-		return null;
-	}
-
-	public static Usuario Validate()
-	{
-		if (!string.IsNullOrEmpty(ConfigurationSettings.AppSettings["Usuario"]))
-		{
-			try
-			{
-				Usuario usuario = (Usuario)Activator.CreateInstance(Assembly.Load("App_Code").GetType("CUsuario"));
-				return usuario.ValidateUser();
-			}
-			catch (Exception)
-			{
-			}
-		}
-		return null;
-	}
-
 	public static Usuario GetUsuario()
 	{
 		HttpContext.Current.Response.AddHeader("pragma", "no-cache");
 		HttpContext.Current.Response.CacheControl = "Private";
 		HttpContext.Current.Response.Expires = 0;
 		Usuario usuario = (Usuario)HttpContext.Current.Session["Usuario"];
-		if (usuario == null)
-		{
-			usuario = Validate();
-		}
 		if (usuario == null)
 		{
 			string text = HttpUtility.UrlEncode(HttpContext.Current.Request.Url.AbsolutePath);

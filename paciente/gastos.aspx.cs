@@ -18,7 +18,7 @@ public partial class paciente_gastos : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+            CUsuario usuario = CUsuario.GetUsuario();
 
             BAceptar.Enabled = false;
             BMasSuministros.Enabled = false;

@@ -159,7 +159,7 @@ public class Procedimientos
 
     static public string SetCargos(SqlDataSource datasource, string variable)
     {
-        CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+        CUsuario usuario = CUsuario.GetUsuario();
         string condicion = "";
         if (!usuario.CanAdmin())
         {
@@ -175,7 +175,7 @@ public class Procedimientos
 
     static public string SetProcedimientos(SqlDataSource datasource, string variable)
     {
-        CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+        CUsuario usuario = CUsuario.GetUsuario();
         string condicion = "";
         if (!usuario.CanAdmin())
         {

@@ -35,7 +35,7 @@ public partial class paciente_informes : System.Web.UI.Page
             return;
         }*/
 
-        if (!Usuario.GetUsuario().CanPrint())
+        if (!CUsuario.GetUsuario().CanPrint())
             SResultados.SelectCommand = SResultados.SelectCommand.Insert(7, "TOP 10 ");
 
         GResultados.AllowPaging = false;
