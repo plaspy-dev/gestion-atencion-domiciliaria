@@ -13,7 +13,7 @@ public partial class inicio : System.Web.UI.Page
     {
 #if DEBUG
 #else
-        Response.Redirect(CURLs.SwitchApp("~/Inicio.aspx", ConfigurationSettings.AppSettings["app"]));
+        // Response.Redirect(CURLs.SwitchApp("~/Inicio.aspx", ConfigurationSettings.AppSettings["app"]));
 #endif
     }
 }

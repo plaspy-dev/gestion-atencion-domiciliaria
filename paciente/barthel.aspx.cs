@@ -19,7 +19,7 @@ public partial class paciente_barthel : System.Web.UI.Page
         ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
         if (!IsPostBack)
         {
-            CUsuario usuario = CUsuario.GetUsuario();
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
             BAceptar.Enabled = false;
             PHistorial.Visible = false;
@@ -139,7 +139,7 @@ public partial class paciente_barthel : System.Web.UI.Page
                 conector.QueryMod(analisis.GetInsert());
             }
         }
-        CUsuario.GetUsuario().SetForceURL("", conector);
+        Usuario.GetUsuario().SetForceURL("", conector);
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
         ((MasterPageI)Master).SetResultado(mensaje);
     }

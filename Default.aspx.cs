@@ -45,12 +45,13 @@ public partial class _Default : System.Web.UI.Page
                 m_BIngresar_Click(sender, e);
                 return;
             }
+            LVersion.Text = Version.GetVersion();
         }
     }
 
     protected void IngresarOld()
     {
-        CUsuario usuario=CUsuario.Validar();
+        CUsuario usuario = (CUsuario)Usuario.Validate();
         if (usuario!=null)
         {
             string url = Request.QueryString["from"];

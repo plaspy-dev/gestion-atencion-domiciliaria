@@ -11,7 +11,7 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2012-07-14.
+This cut records the home-care application as archived on 2012-07-15.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
@@ -31,11 +31,11 @@ The application keeps the records used to arrange visits and coordinate the peop
 
 This edition lacks an archived solution or project file. A standalone build requires the application entry point, its shared references and its ASP.NET configuration for this edition.
 
-The retained site entry is `censo/Default.aspx`. Use fictional accounts and a disposable database on loopback.
+The retained site entry is `Default.aspx`. Use fictional accounts and a disposable database on loopback.
 
 ### Archive notes
 
-The archive inventory counted 1 additions, 21 edits and 1 removals.
+The archive inventory counted 1 additions, 22 edits and 1 removals.
 
 ### Framework versions
 
@@ -74,7 +74,7 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2012-07-14.
+Este corte conserva la versión de atención domiciliaria archivada el 2012-07-15.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
@@ -94,11 +94,11 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 
 Esta edición carece de un archivo de solución o proyecto. Una compilación independiente requiere el punto de entrada, sus referencias compartidas y la configuración ASP.NET de este corte.
 
-La entrada conservada del sitio es `censo/Default.aspx`. Usa cuentas ficticias y una base desechable en la interfaz local.
+La entrada conservada del sitio es `Default.aspx`. Usa cuentas ficticias y una base desechable en la interfaz local.
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 1 adiciones, 21 cambios y 1 retiros.
+El inventario del respaldo registró 1 adiciones, 22 cambios y 1 retiros.
 
 ### Versiones de .NET Framework
 
@@ -136,6 +136,8 @@ The build restores iTextSharp 5.2.0 from the official NuGet package and checks i
 
 La compilación restaura iTextSharp 5.2.0 desde el paquete oficial de NuGet y coteja su SHA-256. Indica una copia del mismo paquete en `DOMICILIO_ITEXTSHARP_PACKAGE` para compilar sin Internet.
 
-Set `DOMICILIO_SESSION_KEY_3` in the IIS process before signing in or using the recovered modules. Use independently generated fictional values for a disposable test.
+## Session setup / Configuración de sesión
 
-Define `DOMICILIO_SESSION_KEY_3` en el proceso de IIS antes de ingresar o usar los módulos recuperados. Genera valores ficticios independientes para una prueba desechable.
+Set `DOMICILIO_SESSION_KEY_3` in the ASP.NET process environment before signing in. Generate independent values for your deployment. Use synthetic values in local tests.
+
+Define `DOMICILIO_SESSION_KEY_3` en el entorno del proceso ASP.NET antes de iniciar sesión. Genera valores propios para tu instalación. Usa valores ficticios en las pruebas locales.

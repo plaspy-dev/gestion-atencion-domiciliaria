@@ -233,7 +233,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
     protected void BSi_Click(object sender, EventArgs e)
     {
         ArrayList fechas= (ArrayList) Session["phd_programacion"];
-        CUsuario usuario = CUsuario.GetUsuario();
+        CUsuario usuario = (CUsuario) Usuario.GetUsuario();
         CConectorMS conector = new CConectorMS();
 
         Query query = new Query("programacion");

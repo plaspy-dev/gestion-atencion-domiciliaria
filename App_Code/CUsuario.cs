@@ -12,12 +12,15 @@ using MySql.Data.MySqlClient;
 /// </summary>
 public class CUsuario : Usuario
 {
+    public CUsuario() { 
+    }
+
     public CUsuario(string id, string nombre, int grupo, string login) : base(id,nombre,grupo, login)
     {
     }
 
-    static public CUsuario Validar() {
-
+    override protected Usuario ValidateUser()
+    {
         string usuario = CConector.GetCookie("loginOrganizationExample15");
         string contrasena = HttpUtility.UrlDecode(CConector.GetCookie("contrasena"));
 
@@ -115,13 +118,5 @@ public class CUsuario : Usuario
             }
         }
         return null;
-    }
-
-    new static public CUsuario GetUsuario()
-    {
-        Usuario pUsuario = (Usuario)HttpContext.Current.Session["Usuario"];
-        if (pUsuario == null)
-            Validar();
-        return (CUsuario)Usuario.GetUsuario();
     }
 }

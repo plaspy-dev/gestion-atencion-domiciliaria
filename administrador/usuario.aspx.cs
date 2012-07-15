@@ -15,7 +15,7 @@ public partial class administrador_usuario : System.Web.UI.Page
     {
         TNombres.Focus();
         if(!IsPostBack) {
-            CUsuario usuario = CUsuario.GetUsuario();
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
             BMigrar.Visible = false;
             BAceptar.Enabled = usuario.CanInsert();

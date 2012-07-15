@@ -13,7 +13,7 @@ public partial class paciente_valoracionat : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-            CUsuario usuario = CUsuario.GetUsuario();
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
             BAceptar.Enabled = false;
             // PHistorial.Visible = false;

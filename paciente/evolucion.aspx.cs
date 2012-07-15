@@ -18,7 +18,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
         if (!IsPostBack)
         {
-            CUsuario usuario = CUsuario.GetUsuario();
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
             BAceptar.Enabled = false;
             BMasCDiagnostico.Enabled = false;
             PEvoluciones.Visible = false;
@@ -278,7 +278,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
         }
 
         if(nuevaevolucion)
-            CUsuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
+            Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
         ((MasterPageI)Master).SetResultado(mensaje);
     }
@@ -409,7 +409,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$GExamenFisico$", RenderGrid(GExamenFisico));
 
         evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + TPlanManejo.Text.Replace("\n", "</li><li>") + "</li></ol>");
-        evento.Contenido = evento.Contenido.Replace("$szUsuario$", CUsuario.GetUsuario().GetNombre());
+        evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
         CConectorMS conectorms = new CConectorMS();
         Query query = new Query("phdPaciente");

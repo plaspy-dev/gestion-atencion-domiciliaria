@@ -45,7 +45,7 @@ public partial class administrador_parametros2 : System.Web.UI.Page
                 return;
             }
 
-            CUsuario usuario = CUsuario.GetUsuario();
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanInsert();
             GResultado.Columns[1].Visible = usuario.CanDelete();

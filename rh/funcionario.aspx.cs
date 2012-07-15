@@ -53,7 +53,7 @@ public partial class rh_funcionario : System.Web.UI.Page
             }
             TApellidos.Focus();
 
-            CUsuario usuario = CUsuario.GetUsuario();
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
             BAceptar.Enabled = usuario.CanInsert();
             lnkAgInfoLab.Visible = usuario.CanInsert();
             IEliminar.Visible = false;

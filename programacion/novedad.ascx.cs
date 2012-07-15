@@ -14,7 +14,7 @@ public partial class phd_novedad : System.Web.UI.UserControl
     protected void Page_Load(object sender, EventArgs e)
     {
         ScriptManager.RegisterStartupScript(this, typeof(string), ClientID, "RegisterStarUpScript('dscriptNovedad');", true);
-        BAceptar.Enabled = CUsuario.GetUsuario().CanUpdate();
+        BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
     }
 
     [Bindable(true), Category("Appearance"), DefaultValue("")]
@@ -88,7 +88,7 @@ public partial class phd_novedad : System.Web.UI.UserControl
             tipo++;
         query["novTipo"] = tipo.ToString();
         query["novObs"] = TObservaciones.Text;
-        query["segUsuarioRegistro"] = CUsuario.GetUsuario().GetLogin();
+        query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
         query["segFechaRegistro"] = "GETDATE()";
         query["novId"] = "2";
 

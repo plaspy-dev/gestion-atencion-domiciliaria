@@ -6,7 +6,7 @@
             autoHeight: false,
             navigation: true,
             collapsible: true,
-            active: -1
+            active: false
         });
         $("#<%= TCodigo.ClientID%>,#<%= TNombre.ClientID %> ").autocomplete({
             source: function(request, response) {
