@@ -27,9 +27,11 @@ public class Procedimientos
 
     public class Procedimiento { 
         public string sNombre;
+        public Boolean bAutomatica;
         public Dictionary<string, Entidad_Costo> pCostos = new Dictionary<string, Entidad_Costo>();
-        public Procedimiento(string nombre) {
+        public Procedimiento(string nombre, bool automatica) {
             sNombre = nombre;
+            bAutomatica = automatica;
         }
     }
 
@@ -46,7 +48,11 @@ public class Procedimientos
             info = new Procedimientos();
         return info;
     }
+
     static public string GetVarios(string id) {
+        
+        if (string.IsNullOrEmpty(id))
+            return "";
         Procedimientos info = GetProcedimientos();
         string nombre = null;
         try
@@ -72,9 +78,17 @@ public class Procedimientos
         catch (Exception ex)
         {
             CConector conector = new CConector();
-            resultado = new Procedimiento(conector.QueryString("SELECT CONCAT(codigo, '-', nombre) FROM medicamentos WHERE id=" + Query.GetValor(id)));
+            string nombre = "";
+            bool automatico = false;
+            MySqlDataReader reader = conector.Query("SELECT CONCAT(codigo, '-', nombre) AS nombre,automatica FROM medicamentos WHERE id=" + Query.GetValor(id));
+            if (reader != null && reader.Read())
+            {
+                nombre= reader["nombre"].ToString();
+                automatico = reader["automatica"].ToString() == "1";
+            }
+            resultado = new Procedimiento(nombre, automatico);
             info.pProcedimentos[id] = resultado;
-            MySqlDataReader reader = conector.Query("SELECT entidad,costo,maxima FROM medicamento_valor WHERE medicamento=" + Query.GetValor(id));
+            reader = conector.Query("SELECT entidad,costo,maxima FROM medicamento_valor WHERE medicamento=" + Query.GetValor(id));
             if (reader != null)
             {
                 while (reader.Read())
@@ -92,6 +106,10 @@ public class Procedimientos
     static public string GetProcedimiento(string id) {
 
         return AddProcedimiento(id).sNombre;
+    }
+    static public bool GetAutomatico(string id) {
+        
+        return AddProcedimiento(id).bAutomatica;
     }
 
     static public double GetCosto(string procedimento, string entidad)
@@ -139,6 +157,7 @@ public class Procedimientos
         }
         return textoIn;
     }
+
     static public string ReplaceVarios(string textoIn)
     {
         int pos = textoIn.IndexOf("[$$");
@@ -187,5 +206,16 @@ public class Procedimientos
         }
         datasource.SelectCommand = string.Format(datasource.SelectCommand, condicion);
         return datasource.SelectCommand;
+    }
+
+    static public string GetCodigoCIE(string text, CConectorMS conector)
+    {
+        if (text.Length > 0)
+        {
+            string codigo = conector.QueryString("SELECT [cieCodDx]+' - '+ [cirDescripcion] FROM phdCIE10 WHERE cieCodDx='" + text + "'");
+            if (codigo.Length > 0)
+                return codigo;
+        }
+        return text;
     }
 }

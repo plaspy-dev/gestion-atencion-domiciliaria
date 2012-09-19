@@ -84,6 +84,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     formulacion += "id";
                     formulacion += "fecha";
                     formulacion += "codigo";
+                    formulacion += "profesional";
 
                     MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Conector.GetDate(Convert.ToDateTime(TFecha.Text)) + "' AND tipo='" + DTipo.SelectedValue + "'"));
                     if (readermysql != null && readermysql.Read())
@@ -97,6 +98,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
                         HIdFormulacion.Value = readermysql["id"].ToString();
                         TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
+                        ViewState["profesional"] = readermysql["profesional"].ToString();
 
                         ((MasterPageI)Master).SetModificacion(HIdFormulacion.Value);
                     } else {
@@ -275,6 +277,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
         formulacion["fecha"]= CConector.GetDate(Convert.ToDateTime( TFecha.Text));
         formulacion["tipo"] = DTipo.SelectedValue;
+        formulacion["profesional"] = CUsuario.GetUsuario()["personal"];
 
         string szQuery;
         string mensaje;
@@ -381,7 +384,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
         CConectorMS conectorms = new CConectorMS();
 
-        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"));
+        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=" + ViewState["profesional"].ToString() + ")"));
         if (reader != null)
         {
             bool l = reader.Read();

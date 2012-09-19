@@ -59,7 +59,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                     {
                         if (item.Text.Length == 0)
                         {
-                            string[] ids = item.Text.Split('_');
+                            string[] ids = item.Value.Split('_');
                             item.Text= Procedimientos.GetProcedimiento(ids[0]);
                             if (ids.Length > 1 && ids[1].Length > 0)
                             {
@@ -68,6 +68,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                         }
                     }
                     TProfesional.Text = conector.QueryString("SELECT perNombre FROM dbo.admPersonalHS where perId='" + reader["perId"].ToString() + "'");
+                    ViewState["maximo"] = TSesiones.Text;
 
                     DAutorizacion_SelectedIndexChanged(null, null);
                 }
@@ -136,11 +137,18 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         CConectorMS conector= new CConectorMS();
         ArrayList fechas = new ArrayList();
         Session["phd_programacion"] = fechas;
-        
-        Label m = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LMaximo");
-        Label r = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LRealizadas");
-        int maximo = Convert.ToInt32(m.Text) - Convert.ToInt32(r.Text);
+
+        int maximo;
+
         int sesiones = Convert.ToInt32(TSesiones.Text);
+        if(RActividad.Items.Count>DActividad.SelectedIndex) {
+
+            Label m = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LMaximo");
+            Label r = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LRealizadas");
+            maximo = Convert.ToInt32(m.Text) - Convert.ToInt32(r.Text);
+        } else {
+            maximo = Convert.ToInt32(ViewState["maximo"]);
+        }
 
         if (CRecurrente.Checked) {
 

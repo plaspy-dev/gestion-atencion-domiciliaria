@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Formulación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="medicamentos.aspx.cs" Inherits="administrador_medicamentos" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<script type="text/javascript">
+
+    <script type="text/javascript">
     addFunctionToStart(function() {
         $("#accordion").accordion({
             autoHeight: false,
@@ -31,7 +32,7 @@
             },
             minLength: 3,
             select: function(event, ui) {
-                $.goURL("iMP=" + ui.item.value);
+                $.goURL("imp=" + ui.item.value);
                 return false;
             }
         });
@@ -39,7 +40,7 @@
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
-<asp:UpdatePanel runat="server" ID="PDatos" UpdateMode="Conditional">
+    <asp:UpdatePanel runat="server" ID="PDatos" UpdateMode="Conditional">
 <ContentTemplate>
 <asp:Panel ID="Panel1" runat="server" DefaultButton="BAceptar">
     <table width="100%" border="0">
@@ -115,7 +116,7 @@
           </tr>
           <tr>
               <td>
-                  Grupo</td>
+                  Área</td>
               <td><asp:DropDownList ID="DGrupo" runat="server" DataSourceID="SGrupo" AppendDataBoundItems="true"
                     DataTextField="nombre" DataValueField="id">
                     <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
@@ -128,6 +129,11 @@
                   </td>
               <td>
                   &nbsp;</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><asp:CheckBox runat="server" ID="CAutomatica" Text="Programación automática" Visible="false" /></td>
+            <td></td>
           </tr>
           <tr>
               <td colspan="3">
@@ -223,7 +229,7 @@
                     <asp:BoundField DataField="forma" HeaderText="Forma" SortExpression="forma" />
                     <asp:BoundField DataField="concentracion" HeaderText="Concentración" SortExpression="concentracion" />
                     <asp:BoundField DataField="aclaracion" HeaderText="Aclaración" SortExpression="aclaracion" />
-                    <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" />
+                    <asp:BoundField DataField="grupo" HeaderText="Área" SortExpression="grupo" />
                 </Columns>
             </asp:GridView>
             <asp:SqlDataSource ID="SqlDataSource1" runat="server" 

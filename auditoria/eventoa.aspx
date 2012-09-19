@@ -100,7 +100,8 @@
             </tr>
             <tr>
                 <td>Descripción</td>
-                <td colspan="3"><asp:TextBox runat="server" ID="TDescripcion" Width="98%" TextMode="MultiLine"></asp:TextBox>
+                <td colspan="3"><asp:TextBox runat="server" ID="TDescripcion" Width="98%" 
+                        TextMode="MultiLine" Height="80px"></asp:TextBox>
                 <asp:RequiredFieldValidator ControlToValidate="TDescripcion" ErrorMessage="Por favor ingrese una descripción." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 </td>
             </tr>
@@ -161,7 +162,8 @@
             </tr>
             <tr>
                 <td>Observaciones</td>
-                <td colspan="3"><asp:TextBox runat="server" ID="TObservaciones" Width="98%" TextMode="MultiLine"></asp:TextBox></td>
+                <td colspan="3"><asp:TextBox runat="server" ID="TObservaciones" Width="98%" 
+                        TextMode="MultiLine" Height="80px"></asp:TextBox></td>
             </tr>
             <tr>
                 <td colspan="4" align="right">

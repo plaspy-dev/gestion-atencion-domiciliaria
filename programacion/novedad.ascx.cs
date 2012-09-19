@@ -91,6 +91,7 @@ public partial class phd_novedad : System.Web.UI.UserControl
         query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
         query["segFechaRegistro"] = "GETDATE()";
         query["novId"] = "2";
+        query["prgTipo"] = "1";
 
         Query qprogramacion = new Query("programacion");
 

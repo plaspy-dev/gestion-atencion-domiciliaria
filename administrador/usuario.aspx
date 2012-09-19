@@ -218,13 +218,13 @@
         </tr>
         <tr>
             <td>
-                <asp:Button ID="BMigrar" Visible="false" runat="server" CausesValidation="False" OnClientClick="return confirm('Esta acción modificara los permisos de los ususarios, ¿esta seguro de continuar?')"
+                <asp:Button ID="BMigrar" Visible="false" runat="server" CausesValidation="False" OnClientClick="confirm('Esta acción modificara los permisos de los ususarios, ¿esta seguro de continuar?')"
                     onclick="BMigrar_Click" Text="Migrar usuarios" />
             </td>
             <td>
                 &nbsp;</td>
-            <td align="right">
-                <asp:Button ID="BAceptar" runat="server" Text="Aceptar" onclick="BAceptar_Click" OnClientClick="return confirm('Esta acción reemplazara los permisos del usuario. ¿Esta seguro de continuar?');" />
+            <td align="right" nowrap="nowrap">
+                <asp:Button ID="BAceptar" runat="server" Text="Aceptar" onclick="BAceptar_Click" OnClientClick="confirm('Esta acción reemplazara los permisos del usuario. ¿Esta seguro de continuar?');" />
                 <asp:Button ID="BCancelar" runat="server" Text="Cancelar" CausesValidation="false" onclick="BCancelar_Click" />
             </td>
         </tr>

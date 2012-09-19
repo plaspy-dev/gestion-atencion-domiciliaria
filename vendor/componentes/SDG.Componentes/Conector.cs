@@ -76,24 +76,31 @@ public class Conector
 
 	public static void SetCookie(string cookie, string valor)
 	{
+		SetCookie(cookie, valor, DateTime.Now.AddYears(1));
+	}
+
+	public static void SetCookie(string cookie, string valor, DateTime expires)
+	{
 		HttpContext.Current.Response.Cookies[cookie].Value = valor.Replace(" ", "%%");
-		HttpContext.Current.Response.Cookies[cookie].Expires = DateTime.Now.AddYears(1);
+		HttpContext.Current.Response.Cookies[cookie].Expires = expires;
 	}
 
 	public void ShowError(string error)
 	{
-		if (HttpContext.Current.Handler.GetType() != typeof(Page))
+		try
 		{
-			return;
-		}
-		Page page = (Page)HttpContext.Current.Handler;
-		if (page != null && page.Master != null)
-		{
-			Label label = (Label)page.Master.FindControl("LMensaje");
-			if (label != null)
+			Page page = (Page)HttpContext.Current.Handler;
+			if (page != null && page.Master != null)
 			{
-				label.Text = error;
+				Label label = (Label)page.Master.FindControl("LMensaje");
+				if (label != null)
+				{
+					label.Text = error;
+				}
 			}
+		}
+		catch (Exception)
+		{
 		}
 	}
 

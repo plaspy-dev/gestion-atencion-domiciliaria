@@ -91,8 +91,8 @@ public partial class administrador_Default : System.Web.UI.Page
             parent = Add("Autorizaciones");
             Add("Horas", 21, parent);
 
-            parent = Add("Medicamentos");
-            Add("Grupo", 22, parent);
+            parent = Add("Formulación");
+            Add("Área", 22, parent);
 
             parent = Add("Valoración apoyo terapeutico");
             Add("Sistema de bajo flujo", 23, parent);

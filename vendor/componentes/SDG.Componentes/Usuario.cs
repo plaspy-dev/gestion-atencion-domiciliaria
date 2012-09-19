@@ -198,13 +198,34 @@ public class Usuario
 		return null;
 	}
 
+	protected virtual Usuario ValidateUser(string usuario, string passwd)
+	{
+		return null;
+	}
+
+	public static Usuario Validate(string usuario, string password)
+	{
+		if (!string.IsNullOrEmpty(ConfigurationSettings.AppSettings["Usuario"]))
+		{
+			try
+			{
+				Usuario usuario2 = (Usuario)Activator.CreateInstance(Assembly.Load("App_Code").GetType(ConfigurationSettings.AppSettings["Usuario"]));
+				return usuario2.ValidateUser(usuario, password);
+			}
+			catch (Exception)
+			{
+			}
+		}
+		return null;
+	}
+
 	public static Usuario Validate()
 	{
 		if (!string.IsNullOrEmpty(ConfigurationSettings.AppSettings["Usuario"]))
 		{
 			try
 			{
-				Usuario usuario = (Usuario)Activator.CreateInstance(Assembly.Load("App_Code").GetType("CUsuario"));
+				Usuario usuario = (Usuario)Activator.CreateInstance(Assembly.Load("App_Code").GetType(ConfigurationSettings.AppSettings["Usuario"]));
 				return usuario.ValidateUser();
 			}
 			catch (Exception)

@@ -11,6 +11,10 @@ public partial class programacion_sinprogramar : System.Web.UI.Page
     {
         Procedimientos.SetProcedimientos(SResultados, "phdDetalleAutorizacion.actId");
         Procedimientos.SetProcedimientos(SResumen, "phdDetalleAutorizacion.actId");
+
+        SResultados.SelectCommand = SResultados.SelectCommand.Replace("@area", DArea.SelectedValue);
+        SResumen.SelectCommand = SResumen.SelectCommand.Replace("@area", DArea.SelectedValue);
+        
         if (!IsPostBack)
         {
             TFin.Text = DateTime.Now.ToShortDateString();
@@ -22,6 +26,7 @@ public partial class programacion_sinprogramar : System.Web.UI.Page
             ((MasterPageI)Master).Excel(GResultados);
             ((MasterPageI)Master).Imprimir(GResultados);
         }
+        GResumen.DataBind();
     }
     protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
     {

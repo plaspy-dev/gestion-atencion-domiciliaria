@@ -36,29 +36,8 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
         if(!IsPostBack) {
 
-            CConectorMS conector = new CConectorMS();
-            CConectorMS conectorc = new CConectorMS();
-
-            SqlDataReader consultas = conectorc.Query("SELECT genTareas.tarTitulo AS nombre,genTareas.consulta,genTareas.url FROM GenUsuarioTarea LEFT JOIN genTareas ON (genTareas.tarId=GenUsuarioTarea.tarId) WHERE usIdUsuario='" + Usuario.GetUsuario().GetLogin() + "' AND genTareas.consulta IS NOT NULL;");
-            if(consultas!=null) {
-
-                while(consultas.Read()) {
-
-                    MenuItem parent = new MenuItem(consultas["nombre"].ToString());
-                    SqlDataReader reader = conector.Query(consultas["consulta"].ToString());
-                    if (reader != null)
-                    {
-                        while (reader.Read())
-                        {
-                            MenuItem item = new MenuItem(reader["nombre"].ToString());
-                            item.NavigateUrl = consultas["url"].ToString() + reader["id"].ToString();
-                            parent.ChildItems.Add(item);
-                        }
-                        if (parent.ChildItems.Count > 0)
-                            MAlertas.Items.Add(parent);
-                    }
-                }
-            }
+            RAlertas.DataSource = Alertas.GetAlertas();
+            RAlertas.DataBind();
         }
 
         LVersion.Text = Version.GetVersion();
@@ -141,7 +120,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
         if (conector.QueryMod("UPDATE usuario SET contrasena=PASSWORD(" + Query.GetValor(TNueva.Text) + ") WHERE id='" + usuario.GetID() + "'") == -1)
             return;
-        if (conectorms.QueryMod("UPDATE seg_Usuarios SET usClave=" + Query.GetValor(crypt.Encriptar(TNueva.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"))) + " WHERE usIdUsuario=" + Query.GetValor(usuario.GetLogin())) == -1)
+        if (conectorms.QueryMod("UPDATE seg_Usuarios SET usClave=" + Query.GetValor(Crypt.Encriptar(TNueva.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"))) + " WHERE usIdUsuario=" + Query.GetValor(usuario.GetLogin())) == -1)
             return;
         lblTitulo.Text = "Contraseña cambiada correctamente.";
     }
@@ -235,7 +214,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             }
             Response.Write("</tr>\n");
         }
-        Response.Write("</body></html>\n");
+        Response.Write("</table></body></html>\n");
         
         Response.End();
 
@@ -386,7 +365,6 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         return base.GetFont(fontName, encoding, embedded, size, style, color, cached);
       }
     }
-
     
     protected void lnkPDF_Click(object sender, EventArgs e) {
 
@@ -463,5 +441,14 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         // step 3: we parse the document
         document.Close();
         Response.End();
+    }
+
+    protected void OnAlerta_Click(object sender, EventArgs e)
+    {
+        LinkButton link= (LinkButton)sender;
+        SAlertas.SelectCommand = link.CommandName;
+        GAlertas.DataBind();
+        ((HyperLinkField)GAlertas.Columns[0]).DataNavigateUrlFormatString = link.CommandArgument;
+        PAlertas.Visible = true;
     }
 }

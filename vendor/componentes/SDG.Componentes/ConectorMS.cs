@@ -82,18 +82,20 @@ public class ConectorMS
 
 	public void ShowError(string error)
 	{
-		if (HttpContext.Current.Handler.GetType() != typeof(Page))
+		try
 		{
-			return;
-		}
-		Page page = (Page)HttpContext.Current.Handler;
-		if (page != null && page.Master != null)
-		{
-			Label label = (Label)page.Master.FindControl("LMensaje");
-			if (label != null)
+			Page page = (Page)HttpContext.Current.Handler;
+			if (page != null && page.Master != null)
 			{
-				label.Text = error;
+				Label label = (Label)page.Master.FindControl("LMensaje");
+				if (label != null)
+				{
+					label.Text = error;
+				}
 			}
+		}
+		catch (Exception)
+		{
 		}
 	}
 

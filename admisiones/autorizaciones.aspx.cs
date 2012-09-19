@@ -7,11 +7,32 @@ using System.Web.UI.WebControls;
 using System.Globalization;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
+using System.Data;
 using System.Data.SqlClient;
 using System.Collections.Specialized;
+using System.Collections;
+using System.Net.Mail;
+using System.IO;
+using System.Configuration;
 
 public partial class admisiones_autorizaciones : System.Web.UI.Page
 {
+    public class Procedimiento {
+
+        public string procedimiento;
+        public string intensidad;
+        public string key;
+        public string profesional;
+
+        public Procedimiento(string prof, string procid,string inten, string k) {
+            
+            procedimiento= procid;
+            intensidad = inten;
+            key = k;
+            profesional = prof;
+        }
+    }
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
@@ -141,10 +162,14 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         BAgregar.Text = "Agregar";
     }
 
-    protected void BAceptar_Click(object sender, EventArgs e)
-    {
-        if (!IsValid)
-            return;
+    protected void BSi_Click(object sender, EventArgs e) {
+
+        // guardamos la autorizacion
+        BNo_Click(sender, e);
+    }
+
+    protected void BNo_Click(object sender, EventArgs e) {
+
         CConectorMS conector = new CConectorMS();
         Query query = new Query("phdAutorizacion");
         conector.StartTransaction();
@@ -156,22 +181,23 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             LError.Text = "Por favor ingrese un número de autorización.";
             return;
         }
-        if(HIdPaciente.Value.Length==0) {
+        if (HIdPaciente.Value.Length == 0)
+        {
             TPaciente.Focus();
             LError.Text = "Por favor ingrese un paciente.";
             return;
         }
-        string temp= TAbono.Text.Replace(",", "");
+        string temp = TAbono.Text.Replace(",", "");
         if (temp.Length != 0 && Convert.ToDouble(temp) > 0) // verificamos que tenga algun valor
         {
-            if(TRecibo.Text.Length==0) {
-
+            if (TRecibo.Text.Length == 0)
+            {
                 TRecibo.Focus();
                 LError.Text = "Por favor ingrese un numero de recibo.";
                 return;
             }
         }
-        if (GActivades.Rows.Count==0)
+        if (GActivades.Rows.Count == 0)
         {
             LError.Text = "Por favor ingrese por lo menos una actividad.";
             return;
@@ -187,9 +213,9 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         }
         // empezamos la insercion.
 
-        if(CGenerar.Checked) {
-
-            DateTime tiempo= Convert.ToDateTime(TFecha.Text);
+        if (CGenerar.Checked)
+        {
+            DateTime tiempo = Convert.ToDateTime(TFecha.Text);
             TNumero.Text = conector.QueryString(
                 String.Format("SELECT 'AD{0}'+RIGHT('000'+CAST(ISNULL(MAX(CONVERT(int,SUBSTRING(autNumero,9,LEN(autnumero)-8))), 0)+1 AS VARCHAR(3)),3)"
                         + " FROM phdAutorizacion"
@@ -200,43 +226,49 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         query["pacId"] = HIdPaciente.Value;
         query["autFecha"] = TFecha.Text;
         query["autFechaVenc"] = TVencimiento.Text;
-        query["total"] = TValor.Text.Replace(",","");
+        query["total"] = TValor.Text.Replace(",", "");
         query["autObservaciones"] = TObservaciones.Text;
         query["entId"] = HIdEntidad.Value;
         query["autActivo"] = "1";
 
-        if(HIdAutorizacion.Value.Length==0) {
+        if (HIdAutorizacion.Value.Length == 0)
+        {
 
             query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
             query["segFechaIngreso"] = "GETDATE()";
             if (CGenerar.Checked && RPreautorizacion.Visible && RPreautorizacion.Checked)
             {
-                if (HIdEntidad.Value == "36" || HIdEntidad.Value == "29") {
+                if (HIdEntidad.Value == "36" || HIdEntidad.Value == "29")
+                {
 
                     query["segUsuarioConfirma"] = Usuario.GetUsuario().GetLogin();
                     query["segFechaConfirma"] = "GETDATE()";
-                } else {
+                }
+                else
+                {
                     query["autProvisional"] = "1";
                 }
             }
-            int res=conector.QueryMod(query.GetInsert(), true);
-            if(res==-1)
+            int res = conector.QueryMod(query.GetInsert(), true);
+            if (res == -1)
                 return;
             HId.Value = res.ToString();
-            HIdAutorizacion.Value= TNumero.Text;
-        } else {
+            HIdAutorizacion.Value = TNumero.Text;
+        }
+        else
+        {
 
             query["segUsuarioModifica"] = Usuario.GetUsuario().GetLogin();
             query["segFechaModifica"] = "GETDATE()";
-            if(conector.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(HIdAutorizacion.Value)))==-1)
+            if (conector.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(HIdAutorizacion.Value))) == -1)
                 return;
         }
-        if(new CConector().InsertModificacion(HId.Value)==-1)
+        if (new CConector().InsertModificacion(HId.Value) == -1)
             return;
 
-        if (GPagos.Rows.Count==0)
+        if (GPagos.Rows.Count == 0)
         {
-            temp= TAbono.Text.Replace(",", "");
+            temp = TAbono.Text.Replace(",", "");
             if (temp.Length != 0 && Convert.ToDouble(temp) > 0) // verificamos que tenga algun valor
             {
                 Query pago = new Query("pago_autorizacion");
@@ -250,12 +282,154 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             }
         }
 
+        ArrayList profesionales = new ArrayList();
+
+        if (sender == BSi)
+        {
+            DataTable dataTable = SActividades.GetTable();
+            for (int i = 0; i < dataTable.Rows.Count; i++)
+            {
+                DataRow row = dataTable.Rows[i];
+                if (row["sqlexists"].ToString().Length == 0)
+                {
+                    if (Procedimientos.GetAutomatico(row["proc_id"].ToString()))
+                    {
+                        string intensidad = row["idint"].ToString();
+                        if (intensidad == "")
+                        {
+                            intensidad = " IS NULL";
+                        }
+                        else
+                        {
+                            intensidad = "=" + intensidad;
+                        }
+                        string personal = conector.QueryString("SELECT TOP 1 perId FROM programacion WHERE pacId=" + HIdPaciente.Value + " AND actId=" + row["proc_id"].ToString() + " AND intensidad" + intensidad + " ORDER BY prgFechaProg DESC;");
+                        if (personal.Length > 0)
+                        { // se encontro programacion antigua
+                            
+                            string nombre = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId=" + personal + " AND eEstId=1 AND perCorreoElectronico IS NOT NULL AND perCorreoElectronico!='';");
+                            if (nombre.Length > 0)
+                            { // se encontro el correo
+
+                                Query programacion = new Query("programacion");
+                                string entidad = conector.QueryString("SELECT entId FROM phdPaciente WHERE pacId=" + HIdPaciente.Value);
+
+                                programacion["pacId"] = HIdPaciente.Value;
+                                programacion["perId"] = personal;
+                                programacion["prgObservaciones"] = TObservaciones.Text;
+                                programacion["autNumero"] = TNumero.Text;
+                                programacion["prgNumSesion"] = "1";
+                                programacion["prgActivo"] = "1";
+                                programacion["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
+                                programacion["segFechaIngreso"] = "GETDATE()";
+                                programacion["entId"] = entidad;
+
+                                programacion["actId"] = row["proc_id"].ToString();
+                                programacion["intensidad"] = row["idint"].ToString();
+                                string costo = Procedimientos.GetCosto(row["proc_id"].ToString(), entidad).ToString(CultureInfo.InvariantCulture);
+                                if (costo.Length > 0)
+                                    programacion["costo"] = costo;
+
+                                int numero = Convert.ToInt32(row["numerosesiones"]);
+                                int periodicidad = 1;
+                                DateTime inicio = DateTime.Now;
+                                int dias=30;
+                                for (int total = numero; total > 0;)
+                                {
+                                    inicio= inicio.AddDays(periodicidad);
+                                    if (numero < 5)
+                                    { // cada semana
+                                        switch (inicio.DayOfWeek)
+                                        {
+                                            case DayOfWeek.Sunday:
+                                            case DayOfWeek.Saturday:
+                                                continue;
+                                        }
+                                        periodicidad = 7;
+                                    }
+                                    else if (numero < 9)
+                                    { // martes y jueves
+                                        switch (inicio.DayOfWeek)
+                                        {
+                                            case DayOfWeek.Thursday:
+                                            case DayOfWeek.Tuesday:
+                                                break;
+                                            default:
+                                                continue;
+                                        }
+                                    }
+                                    else if (numero < 13)
+                                    { // lunes martes  y miercoles
+                                        switch (inicio.DayOfWeek)
+                                        {
+                                            case DayOfWeek.Monday:
+                                            case DayOfWeek.Wednesday:
+                                            case DayOfWeek.Friday:
+                                                break;
+                                            default:
+                                                continue;
+                                        }
+                                    }
+                                    else if (numero < 17) // de lunes a jueves
+                                    {
+                                        switch (inicio.DayOfWeek)
+                                        {
+                                            case DayOfWeek.Monday:
+                                            case DayOfWeek.Thursday:
+                                            case DayOfWeek.Wednesday:
+                                            case DayOfWeek.Tuesday:
+                                            case DayOfWeek.Friday:
+                                                break;
+                                            default:
+                                                continue;
+                                        }
+                                    }
+                                    else if (numero < 21)
+                                    { // todos los dias habiles
+                                        switch (inicio.DayOfWeek)
+                                        {
+                                            case DayOfWeek.Sunday:
+                                            case DayOfWeek.Saturday:
+                                                continue;
+                                        }
+                                    }
+                                    else if (total/2>dias)
+                                    {
+                                        programacion["prgNumSesion"]="3";
+                                        total--;
+                                        total--;
+                                    }
+                                    else if (total>dias)
+                                    {
+                                        programacion["prgNumSesion"] = "2";
+                                        total--;
+                                    } else {
+                                        programacion["prgNumSesion"] = "1";
+                                    }
+
+                                    programacion["prgFechaProg"] = inicio.ToShortDateString();
+                                    if (conector.QueryMod(programacion.GetInsert(), true) == -1)
+                                        return;
+
+                                    total--;
+                                    dias--;
+                                }
+
+                                profesionales.Add(new Procedimiento(personal, row["proc_id"].ToString(), row["idint"].ToString(), row["verificacion"].ToString()));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // limpiamos los servicioes anteriores
         if (conector.QueryMod("DELETE FROM phdDetalleAutorizacion WHERE autNumero=" + Query.GetValor(HIdAutorizacion.Value)) == -1)
             return;
 
-        string []querys= SActividades.GetQuerys();
+        string[] querys = SActividades.GetQuerys();
         string szQuery;
+
         if (querys != null)
         {
             for (int i = 0; i < querys.Length; i++)
@@ -267,9 +441,331 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         }
 
         conector.Commit();
+
+        for (int i = 0; i < profesionales.Count; i++ ) 
+        { // se realizo alguna programacion
+
+            Procedimiento procedimiento = (Procedimiento)profesionales[i];
+            SqlDataReader reader = conector.Query("SELECT perNombre,perCorreoElectronico FROM admPersonalHS WHERE perId=" + procedimiento.profesional + " AND eEstId=1;");
+            if(reader!=null && reader.Read()) {
+
+                string nombre= reader["perNombre"].ToString();
+                string correo= reader["perCorreoElectronico"].ToString();
+                if (IsValidEmail(correo))
+                {
+#if DEBUG
+                    correo="demo@example.invalid";
+#endif
+
+                    MailMessage msg = new MailMessage(new MailAddress("demo@example.invalid", "Contratistas OrganizationExample15")
+                                , new MailAddress(correo, nombre));
+
+                    // msg.Bcc.Add(new MailAddress("demo@example.invalid"));
+                    msg.IsBodyHtml = true;
+                    msg.ReplyTo = new MailAddress("demo@example.invalid");
+
+                    StreamReader archivo = new StreamReader(Server.MapPath("programacion.html"));
+                    msg.Body = archivo.ReadToEnd();
+                    archivo.Close();
+
+                    msg.Body = ((MasterPageI)Master).ReplaceContenido(this.Controls, msg.Body);
+
+                    string programacion = "";
+                    
+                    programacion = "<table border='1'>\n";
+                    programacion += "<tr>\n";
+                    programacion += "<td><strong>Fecha</strong></td>";
+                    programacion += "<td><strong>Actividad</strong></td>";
+                    programacion += "</tr>\n";
+
+                    string intensidad="";
+                    if (procedimiento.intensidad.Length==0)
+                        intensidad = "intensidad IS NULL";
+                    else intensidad = "intensidad=" + procedimiento.intensidad;
+
+                    reader = conector.Query("SELECT prgFechaProg FROM programacion WHERE autNumero=" + Query.GetValor(TNumero.Text) + " AND perId=" + procedimiento.profesional + " AND actId=" + procedimiento.procedimiento + " ORDER BY prgFechaProg;");
+                    if (reader != null)
+                    {
+                        while (reader.Read())
+                        {
+                            DateTime fecha = (DateTime)reader["prgFechaProg"];
+                            intensidad = Procedimientos.GetVarios(procedimiento.intensidad);
+                            if(intensidad.Length>0) 
+                                intensidad = "-" + intensidad;
+
+                            programacion += "<tr>\n";
+                            programacion += "<td>" + fecha.ToLongDateString() + "</td>";
+                            programacion += "<td>" + Procedimientos.GetProcedimiento(procedimiento.procedimiento) + intensidad + "</td>";
+                            programacion += "</tr>\n";
+                        }
+                    }
+
+                    programacion+= "</table>";
+
+                    query = new Query("phdPaciente");
+
+                    query["TPaciente"] = "phdPaciente.pacDocumento";
+                    query["LPaciente"] = "phdPaciente.pacNombres";
+                    query["sexoId"] = "phdPaciente.sexoId";
+                    query["pacFechaNac"] = "phdPaciente.pacFechaNac";
+                    query["LAsegurador"] = "admEntidad.entNombre";
+                    query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
+                    query["LDireccion"] = "phdPaciente.pacDireccion";
+                    query["LBarrio"] = "phdPaciente.pacBarrio";
+                    query["LTipoPago"] = "phdPagoDirecto.pdirDescripcion";
+                    query["LTelefono"] = "phdPaciente.pacTelefono";
+                    query["LFamiliar"] = "phdPaciente.pacFamilarResponsable";
+                    query["LParentesco"] = "phdPaciente.pacParentesco";
+                    query["cieCodDx"] = "phdPaciente.cieCodDx";
+                    query["cieCodDx_1"] = "phdPaciente.cieCodDx_1";
+                    query["cieCodDx_2"] = "phdPaciente.cieCodDx_2";
+
+
+                    reader = conector.Query(query.GetSelect("phdPaciente.pacId=" + HIdPaciente.Value + "",
+                                                "LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)" +
+                                                " LEFT JOIN phdPagoDirecto ON (phdPagoDirecto.pdirId=phdPaciente.pdirId)"));
+                    if (reader != null && reader.Read())
+                    {
+                        msg.Subject = "Programación paciente " + reader["LPaciente"].ToString();
+
+                        for (int h = 0; h < reader.FieldCount; h++)
+                        {
+                            msg.Body = msg.Body.Replace("$" + reader.GetName(h) + "$", reader[h].ToString());
+                        }
+
+                        if (reader["pacFechaNac"] != null && reader["pacFechaNac"].ToString().Length != 0)
+                        {
+                            DateTime birthDate = (DateTime)reader["pacFechaNac"];
+                            DateTime now = DateTime.Now;
+                            int years = now.Year - birthDate.Year;
+
+                            if (now.Month < birthDate.Month || (now.Month == birthDate.Month && now.Day < birthDate.Day))
+                                --years;
+                            msg.Body = msg.Body.Replace("$LFechaNacimiento$", years + " años");
+                        }
+                        else msg.Body = msg.Body.Replace("$LFechaNacimiento$", "");
+                        msg.Body= msg.Body.Replace("$LSexo$", reader["sexoId"].ToString() == "1" ? "F" : "M");
+
+                        string cie1 = reader["cieCodDx"].ToString();
+                        string cie2 = reader["cieCodDx_1"].ToString();
+                        string cie3 = reader["cieCodDx_2"].ToString();
+                        cie1 = Procedimientos.GetCodigoCIE(cie1, conector);
+                        cie2 = Procedimientos.GetCodigoCIE(cie2, conector);
+                        cie3 = Procedimientos.GetCodigoCIE(cie3, conector);
+                        if (cie2.Length > 0 && cie1.Length > 0)
+                            cie1+= "<br/>";
+                        cie1+= cie2;
+                        if (cie3.Length > 0 && cie1.Length > 0)
+                            cie1 += "<br/>";
+                        cie1 += cie3;
+                        msg.Body = msg.Body.Replace("$LCIE10$", cie1);
+                    }
+
+                    msg.Body = msg.Body.Replace("$GProgramacion$", programacion);
+                    msg.Body = msg.Body.Replace("$servidor$", ConfigurationManager.AppSettings["ServidorNotificacion"] + "notificacion/");
+                    msg.Body = msg.Body.Replace("$Autorizacion$", TNumero.Text);
+                    msg.Body = msg.Body.Replace("$key$", procedimiento.key);
+
+                    // build message contents 
+                    SmtpClient client = new SmtpClient();
+                    client.Send(msg);
+                }
+            }
+        }
+        
         ((MasterPageI)Master).SetResultado("Número de autorización " + TNumero.Text + " editada.");
     }
+    
+    public bool IsValidEmail(string emailaddress)
+    {
+        try
+        {
+            MailAddress m = new MailAddress(emailaddress);
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+    }
 
+    protected void BAceptar_Click(object sender, EventArgs e)
+    {
+        if (!IsValid)
+            return;
+
+        CConectorMS conector = new CConectorMS();
+        // realizamos la validaciones
+        if (!CGenerar.Checked && TNumero.Text.Trim().Length == 0)
+        {
+            TNumero.Focus();
+            LError.Text = "Por favor ingrese un número de autorización.";
+            return;
+        }
+        if (HIdPaciente.Value.Length == 0)
+        {
+            TPaciente.Focus();
+            LError.Text = "Por favor ingrese un paciente.";
+            return;
+        }
+        string temp = TAbono.Text.Replace(",", "");
+        if (temp.Length != 0 && Convert.ToDouble(temp) > 0) // verificamos que tenga algun valor
+        {
+            if (TRecibo.Text.Length == 0)
+            {
+
+                TRecibo.Focus();
+                LError.Text = "Por favor ingrese un numero de recibo.";
+                return;
+            }
+        }
+        if (GActivades.Rows.Count == 0)
+        {
+            LError.Text = "Por favor ingrese por lo menos una actividad.";
+            return;
+        }
+        if (HIdAutorizacion.Value.Length == 0 && TNumero.Text.Length > 0)
+        {
+            if (conector.QueryString("SELECT autNumero FROM phdAutorizacion WHERE autNumero='" + TNumero.Text + "'").Length != 0)
+            {
+                TNumero.Focus();
+                LError.Text = "Este numero de autorización ya existe.";
+                return;
+            }
+        }
+
+        LConfirmar.Text = "";
+        ArrayList fechas = new ArrayList();
+        DataTable dataTable = SActividades.GetTable();
+        for (int i = 0; i < dataTable.Rows.Count; i++)
+        {
+            DataRow row = dataTable.Rows[i];
+            if (row["sqlexists"].ToString().Length == 0)
+            {
+                if (Procedimientos.GetAutomatico(row["proc_id"].ToString()))
+                {
+
+                    string intensidad = row["idint"].ToString();
+                    if (intensidad == "")
+                    {
+                        intensidad = " IS NULL";
+                    }
+                    else
+                    {
+                        intensidad = "=" + intensidad;
+                    }
+                    string personal = conector.QueryString("SELECT TOP 1 perId FROM programacion WHERE pacId=" + HIdPaciente.Value + " AND actId=" + row["proc_id"].ToString() + " AND intensidad" + intensidad + " ORDER BY prgFechaProg DESC;");
+                    if (personal.Length > 0)
+                    { // se encontro programacion antigua
+
+                        string correo = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId=" + personal + " AND eEstId=1;");
+                        if (correo.Length > 0)
+                        { // se encontro el correo
+                            if (LConfirmar.Text.Length > 0)
+                                LConfirmar.Text += "<br/>";
+                            LConfirmar.Text += correo + "<br/>";
+#if DEBUG
+                            correo="demo@example.invalid";
+#endif
+                            int numero = Convert.ToInt32(row["numerosesiones"]);
+                            int periodicidad = 1;
+                            DateTime inicio = DateTime.Now;
+                            int dias = 30;
+                            string sessionespordia = "";
+                            for (int total = numero; total > 0;)
+                            {
+                                inicio= inicio.AddDays(periodicidad);
+                                if (numero < 5)
+                                { // cada semana
+                                    switch (inicio.DayOfWeek)
+                                    {
+                                        case DayOfWeek.Sunday:
+                                        case DayOfWeek.Saturday:
+                                            continue;
+                                    }
+                                    periodicidad = 7;
+                                }
+                                else if (numero < 9)
+                                { // martes y jueves
+                                    switch (inicio.DayOfWeek)
+                                    {
+                                        case DayOfWeek.Thursday:
+                                        case DayOfWeek.Tuesday:
+                                            break;
+                                        default:
+                                            continue;
+                                    }
+                                }
+                                else if (numero < 13)
+                                { // lunes martes  y miercoles
+                                    switch (inicio.DayOfWeek)
+                                    {
+                                        case DayOfWeek.Monday:
+                                        case DayOfWeek.Wednesday:
+                                        case DayOfWeek.Friday:
+                                            break;
+                                        default:
+                                            continue;
+                                    }
+                                }
+                                else if (numero < 17) // de lunes a jueves
+                                {
+                                    switch (inicio.DayOfWeek)
+                                    {
+                                        case DayOfWeek.Monday:
+                                        case DayOfWeek.Thursday:
+                                        case DayOfWeek.Wednesday:
+                                        case DayOfWeek.Tuesday:
+                                        case DayOfWeek.Friday:
+                                            break;
+                                        default:
+                                            continue;
+                                    }
+                                }
+                                else if (numero < 21)
+                                { // todos los dias habiles
+                                    switch (inicio.DayOfWeek)
+                                    {
+                                        case DayOfWeek.Sunday:
+                                        case DayOfWeek.Saturday:
+                                            continue;
+                                    }
+                                }
+                                if (total!=numero)
+                                    LConfirmar.Text += ", ";
+
+                                if (total/2>dias)
+                                {
+                                    sessionespordia = "(3)";
+                                    total--;
+                                    total--;
+                                } else if(total>dias) {
+                                    sessionespordia = "(2)";
+                                    total--;
+                                } else {
+                                    sessionespordia = "";
+                                }
+                                total--;
+                                dias--;
+
+                                LConfirmar.Text += inicio.ToShortDateString() + sessionespordia;
+                                fechas.Add(inicio.ToShortDateString());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (fechas.Count>0)
+            PConfirmar.Visible = true;
+        else BNo_Click(sender, e);
+    }
+
+    protected void BCancelarP_Click(object sender, EventArgs e)
+    {
+        PConfirmar.Visible = false;
+    }
     protected void BCancelar_Click(object sender, EventArgs e)
     {
         Response.Redirect(Request.Url.AbsolutePath);
@@ -439,6 +935,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         data.Add("sesionesdia", TSesionesDia.Text.Length==0 ? null : TSesionesDia.Text);
         data.Add("numerosesiones", TNumeroSesiones.Text);
         data.Add("proc_id", TProcedimientoID.Text);
+        data.Add("verificacion", Crypt.GetMD5("JuHU" + DateTime.Now.ToString() + "H0m3s4lud"));
         if (sender != BProcedimiento) 
             data.Add("id", TProcedimientoID.Text);
 

@@ -166,8 +166,12 @@ public class Query
 			{
 				text += ",";
 			}
-			object obj = text;
-			text = string.Concat(obj, m_saValores[i], " AS '", m_saCampos[i], "'");
+			text += m_saValores[i];
+			if (m_saCampos[i] != m_saValores[i])
+			{
+				object obj = text;
+				text = string.Concat(obj, " AS '", m_saCampos[i], "'");
+			}
 		}
 		text = text + " FROM " + m_szTabla + " ";
 		text = text + join + " ";

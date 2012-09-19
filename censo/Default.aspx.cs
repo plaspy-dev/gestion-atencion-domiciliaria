@@ -9,6 +9,8 @@ public partial class censo_Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        SResultados.SelectCommand = SResultados.SelectCommand.Replace("@area", DArea.SelectedValue);
+
         GResultados.AllowPaging = false;
         GResultados.DataBind();
         LTotal.Text = GResultados.Rows.Count + " Resultados";
@@ -20,6 +22,7 @@ public partial class censo_Default : System.Web.UI.Page
         GResultados.AllowPaging = true;
         GResultados.DataBind();
     }
+
     protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowIndex != -1)

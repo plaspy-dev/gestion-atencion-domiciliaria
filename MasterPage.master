@@ -89,7 +89,43 @@
                       <!--<![endif]-->
                     </object>
                 </td>
-                <td colspan="2" valign="middle" align="right" style="text-align:right; white-space: nowrap; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;">
+                <td valign="middle" align="right" style="width:100%; text-align:right; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;">
+                <asp:UpdatePanel runat="server" ID="UAlertas" UpdateMode="Conditional">
+                    <ContentTemplate>
+                        <asp:Repeater runat="server" ID="RAlertas">
+                            <ItemTemplate>
+                                <span class="alerta">
+                                    <asp:LinkButton Text='<%# Eval("Nombre") %>' runat="server" ID="LAlerta" CssClass="" CausesValidation="false" OnClick="OnAlerta_Click" CommandName='<%# Eval("SelectCommand") %>' CommandArgument='<%# Eval("URL") %>'></asp:LinkButton>
+                                    <asp:LinkButton Text='<%# Eval("Numero") %>' runat="server" ID="LNumero" CssClass="alertai" CausesValidation="false" OnClick="OnAlerta_Click" CommandName='<%# Eval("SelectCommand") %>' CommandArgument='<%# Eval("URL") %>'></asp:LinkButton>
+                                </span>
+                            </ItemTemplate>
+                        </asp:Repeater>
+                        <asp:Panel runat="server" ID="PAlertas" Visible="false">
+                        <div class="hide" id="dAlertas" title="Alertas" >
+                            <asp:GridView ID="GAlertas" runat="server" AutoGenerateColumns="False" 
+                                DataSourceID="SAlertas" EmptyDataText="No se encontraron alertas" ShowHeader="false">
+                                <RowStyle CssClass="GridRow"></RowStyle>
+                                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                                <Columns>
+                                    <asp:HyperLinkField DataTextField="nombre" HeaderText="Nombre" DataNavigateUrlFields="id" ItemStyle-HorizontalAlign="Left"
+                                        DataNavigateUrlFormatString="~/" SortExpression="nombre" ItemStyle-Wrap="false" />
+                                </Columns>
+                            </asp:GridView>
+                            <asp:SqlDataSource ID="SAlertas" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                                SelectCommand="">
+                            </asp:SqlDataSource>
+                            <button id="bAlertas" class="hide"></button>
+                        </div>
+                        </asp:Panel>                        
+                    </ContentTemplate>
+                </asp:UpdatePanel>
+                </td>
+                <td valign="middle" align="right" style="text-align:right; white-space: nowrap; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;">
                 <asp:LinkButton ID="lnkNuevo" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" PostBackUrl="">Nuevo</asp:LinkButton>
                 <asp:LinkButton ID="lnkImp" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" OnClientClick="imprimir();return false;" onclick="lnkImp_Click">Imprimir</asp:LinkButton>
                 <asp:LinkButton ID="lnkGuardar" runat="server" CssClass="menuArriba" Visible="False" ValidationGroup="Guardar">Guardar</asp:LinkButton>
@@ -254,16 +290,32 @@
             </tr>
         </table>
     </div>
+    <asp:UpdatePanel ID="UMensaje" runat="server" UpdateMode="Always">
+        <ContentTemplate>
+            <div id="dialog-message" title="Error" class="hide">
+                <asp:Label ID="LMensaje" runat="server" Text=""></asp:Label>
+            </div>
+        </ContentTemplate>
+    </asp:UpdatePanel>
     </form>
-<div id="dialog-message" title="Error">
-    <asp:Label ID="LMensaje" runat="server" Text=""></asp:Label>
-</div>
 <img src="<%=ResolveUrl("~/")%>renewSes.aspx" alt="" name="renewSession" id="renewSession" style="display: none" />
 <script type="text/javascript">
 
-    var g_OpenDialog = null;
+    function getDialogButton(dialog_selector, button_name) {
+        var buttons = $(dialog_selector + ' .ui-dialog-buttonpane button');
+        for (var i = 0; i < buttons.length; ++i) {
+            var jButton = $(buttons[i]);
+            if (jButton.text() == button_name) {
+                return jButton;
+            }
+        }
 
-    $('#ctl00_UPDiagAux').panelUpdated(function() {
+        return null;
+    }
+    
+    var g_OpenDialog = null;
+ 
+    $('#<%= UPDiagAux.ClientID %>').panelUpdated(function() {
 
         if ($("#ctl00_titulo_aux").attr("title").length > 0) {
             $("#dialog_aux").dialog({
@@ -277,20 +329,28 @@
                     }
                 }
             });
+            $(".ui-dialog-buttonpane button").attr('onclick', "$('#dialog-message').dialog('close'); $('#dialog_aux').dialog('close'); ");
         }
     });
 
-    if ($("#<%= LMensaje.ClientID %>").html().length > 0) {
-        $("#dialog-message").dialog({
-            modal: true,
-            width: 'auto',
-            buttons: {
-                "Aceptar": function() {
-                    $(this).dialog("close");
+    $('#<%= UAlertas.ClientID %>').panelUpdated(function() {
+        addDialog("#<%= PAlertas.ClientID %>", "#dAlertas", true);
+    });
+    
+    $('#<%= UMensaje.ClientID %>').panelUpdated(function() {
+        if ($("#<%= LMensaje.ClientID %>").html().length > 0) {
+            $("#dialog-message").dialog({
+                modal: true,
+                width: 'auto',
+                buttons: {
+                    "Aceptar": function() {
+                        $(this).dialog("close");
+                    }
                 }
-            }
-        });
-    }
+            });
+            $(".ui-dialog-buttonpane button").attr('onclick', "$('#dialog-message').dialog('close'); $('#dialog_aux').dialog('close'); ");
+        }
+    });
 
     $(document).ready(function() {
         setInterval("$('#renewSession').attr('src', '" + $('#renewSession').attr('src') + "?par=' + Math.random())", 180000);

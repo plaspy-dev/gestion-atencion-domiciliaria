@@ -77,6 +77,7 @@
             <td>Asegurador</td>
             <td>Actividad</td>
             <td>Paciente</td>
+            <td>Área</td>
             <td></td>
         </tr>
         <tr>
@@ -94,6 +95,16 @@
             </td>
             <td>
                 <asp:TextBox Width="99%" runat="server" ID="TPaciente"></asp:TextBox><asp:TextBox runat="server" ID="TPacienteID" CssClass="hide"></asp:TextBox>
+            </td>
+            <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SArea" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT CAST(GROUP_CONCAT(medicamentos.id) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
+                </asp:SqlDataSource>
             </td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" /></td>
         </tr>
@@ -156,6 +167,7 @@
                                 LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
                                 WHERE ISNULL(phdAutorizacion.autFechaVenc,phdAutorizacion.autfecha+30)>=GETDATE()-1
 								AND phdAutorizacion.pacId=phdPaciente.pacId 
+								AND ('@area'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId IN (@area)))
 								AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId=@procedimiento))
                                 FOR XML PATH('')
                             ) pre_trimmed (detalles)

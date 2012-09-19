@@ -11,6 +11,9 @@ public partial class admisiones_consulta : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        SResultados.SelectCommand = SResultados.SelectCommand.Replace("@area", DArea.SelectedValue);
+        SResumen.SelectCommand = SResumen.SelectCommand.Replace("@area", DArea.SelectedValue);
+        
         if (!IsPostBack) {
             TInicio.Text = TFin.Text = DateTime.Now.ToShortDateString();
         }
@@ -20,6 +23,7 @@ public partial class admisiones_consulta : System.Web.UI.Page
             ((MasterPageI)Master).Excel(GResultados);
             ((MasterPageI)Master).Imprimir(GResultados);
         }
+        GResumen.DataBind();
     }
     protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
     {

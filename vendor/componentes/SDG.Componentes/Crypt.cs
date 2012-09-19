@@ -5,11 +5,11 @@ using System.Text;
 
 namespace SDG.Componentes;
 
-public class crypt
+public class Crypt
 {
 	private static byte[] IV = new byte[8] { 16, 17, 18, 19, 20, 21, 22, 23 };
 
-	private crypt()
+	private Crypt()
 	{
 	}
 
@@ -49,5 +49,19 @@ public class crypt
 		cryptoStream.Write(bytes2, 0, bytes2.Length);
 		cryptoStream.FlushFinalBlock();
 		return Convert.ToBase64String(memoryStream.ToArray());
+	}
+
+	public static string GetMD5(string str)
+	{
+		MD5 mD = MD5.Create();
+		ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
+		byte[] array = null;
+		StringBuilder stringBuilder = new StringBuilder();
+		array = mD.ComputeHash(aSCIIEncoding.GetBytes(str));
+		for (int i = 0; i < array.Length; i++)
+		{
+			stringBuilder.AppendFormat("{0:x2}", array[i]);
+		}
+		return stringBuilder.ToString();
 	}
 }

@@ -10,6 +10,8 @@ public partial class programacion_consulta : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        SResultados.SelectCommand = SResultados.SelectCommand.Replace("@area", DArea.SelectedValue);
+
         Procedimientos.SetProcedimientos(SResultados, "programacion.actId");
         if (!IsPostBack)
         {

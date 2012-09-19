@@ -97,7 +97,7 @@ public partial class administrador_usuario : System.Web.UI.Page
         query["usNombreUsuario"] = TNombres.Text;
         query["usActivo"] = "1";
         if (TContrasena.Text.Length > 0)
-            query["usClave"] = crypt.Encriptar(TContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"));
+            query["usClave"] = Crypt.Encriptar(TContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"));
 
         // verificamos que el usuario no halla existido anteriormente
         if (HUsuario.Value.Length == 0)
@@ -210,7 +210,7 @@ public partial class administrador_usuario : System.Web.UI.Page
                 query["nombre"] = reader["usNombreUsuario"].ToString();
                 query["usuario"] = reader["usIdUsuario"].ToString();
                 string nombre = reader["usIdUsuario"].ToString();
-                string password = crypt.Desencriptar(reader["usClave"].ToString(), System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"));
+                string password = Crypt.Desencriptar(reader["usClave"].ToString(), System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"));
                 query.AddCampo("contrasena", "PASSWORD(" + Query.GetValor(password) + ")", false);
 
                 string grupoid = "";

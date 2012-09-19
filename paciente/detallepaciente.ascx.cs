@@ -16,7 +16,10 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
         get { return ViewState["phd_detallepaciente_nombres"]==null ? "" : ViewState["phd_detallepaciente_nombres"].ToString(); }
         set { ViewState["phd_detallepaciente_nombres"] = value; }
     }
-
+    public bool Activo {
+        get { return (bool)ViewState["phd_detallepaciente_activo"]; }
+        set { ViewState["phd_detallepaciente_activo"] = value;  }
+    }
     public string AsegurdadorID {
         get {
             return ViewState["paciente_asegurador"].ToString();
@@ -157,7 +160,8 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                     " " + reader["pacSApellido"].ToString() +
                     " " + reader["pacPNombre"].ToString() +
                     " " + reader["pacSNombre"].ToString();
-                if (reader["estId"].ToString() == "2")
+                Activo= reader["estId"].ToString() == "1";
+                if (!Activo)
                     Nombres += " (Inactivo)";
                 LFechaNacimiento.Text = ConectorMS.GetDate(reader["pacFechaNac"]) + " ";
                 if (reader["pacFechaNac"] != null && reader["pacFechaNac"].ToString().Length != 0)
@@ -191,9 +195,9 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                 string cie1 = reader["cieCodDx"].ToString();
                 string cie2 = reader["cieCodDx_1"].ToString();
                 string cie3 = reader["cieCodDx_2"].ToString();
-                cie1 = GetCodigoCIE(cie1, conector);
-                cie2 = GetCodigoCIE(cie2, conector);
-                cie3 = GetCodigoCIE(cie3, conector);
+                cie1 = Procedimientos.GetCodigoCIE(cie1, conector);
+                cie2 = Procedimientos.GetCodigoCIE(cie2, conector);
+                cie3 = Procedimientos.GetCodigoCIE(cie3, conector);
                 LCIE10.Text += cie1;
                 if (cie2.Length > 0 && LCIE10.Text.Length > 0)
                     LCIE10.Text += "<br/>";
@@ -219,17 +223,6 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                 }*/
             }
         }
-    }
-
-    static public string GetCodigoCIE(string text, CConectorMS conector)
-    {
-        if (text.Length > 0)
-        {
-            string codigo = conector.QueryString("SELECT [cieCodDx]+' - '+ [cirDescripcion] FROM phdCIE10 WHERE cieCodDx='" + text + "'");
-            if (codigo.Length > 0)
-                return codigo;
-        }
-        return text;
     }
 
     protected void Page_Load(object sender, EventArgs e)

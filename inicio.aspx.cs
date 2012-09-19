@@ -11,9 +11,44 @@ public partial class inicio : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-#if DEBUG
-#else
-        // Response.Redirect(CURLs.SwitchApp("~/Inicio.aspx", ConfigurationSettings.AppSettings["app"]));
-#endif
+        if (!IsPostBack)
+        {
+            RAlertas.DataSource = Alertas.GetAlertas();
+            RAlertas.DataBind();
+        }
+    }
+
+    protected Control GetControl(Control parent, string id)
+    {
+
+        for (int i = 0; i < parent.Controls.Count; i++)
+        {
+            if (parent.Controls[i].ID != null && parent.Controls[i].ID.IndexOf(id) != -1)
+                return parent.Controls[i];
+        }
+        return null;
+    }
+
+    protected void OnClickBA(object sender, EventArgs e)
+    {
+        Button boton = (Button)sender;
+        Control parent = boton.Parent;
+
+        Image img = (Image)GetControl(parent, "IL");
+        if (img != null)
+            img.Visible = false;
+        boton.Visible = false;
+
+        LinkButton link = (LinkButton)GetControl(parent, "LA");
+
+        SqlDataSource SAlertas = (SqlDataSource)GetControl(parent, "SAlertas");
+
+        SAlertas.SelectCommand = link.CommandName;
+
+        GridView GAlertas = (GridView)GetControl(parent, "GAlertas");
+
+        ((HyperLinkField)GAlertas.Columns[0]).DataNavigateUrlFormatString = link.CommandArgument;
+        GAlertas.DataBind();
+        GAlertas.Visible = true;
     }
 }

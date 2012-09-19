@@ -68,7 +68,7 @@
             source: function(request, response) {
                 $.ajax({
                     url: "../webservices/servicios.asmx/GetPersonalC",
-                    data: "{ 'q': '" + request.term + "', 's': '" + $("#<%= DActividad.ClientID %>").val() + "', c: null }",
+                    data: "{ 'q': '" + request.term + "', 's': '" + $("#<%= DActividad.ClientID %>").val().split("_")[0] + "', c: null }",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",

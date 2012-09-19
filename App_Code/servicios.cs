@@ -198,13 +198,13 @@ public class servicios : System.Web.Services.WebService
             if (s.Length == 0)
                 return lista;
             CConector conectormy = new CConector();
-            c= conectormy.QueryString("SELECT area FROM medicamentos WHERE id=" + Query.GetValor(s.Trim()));
+            c = conectormy.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + Query.GetValor(s.Trim()));
         }
 
-        if (c != null) {
+      if (c != null) {
             if (c.Length == 0)
                 return lista;
-            query += "carId=" + Query.GetValor(c.Trim()) + " AND ( ";
+            query += "carId IN (" + c.Trim() + ") AND ( ";
         }
         
         if (split.Length == 1)

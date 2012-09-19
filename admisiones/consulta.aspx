@@ -46,6 +46,7 @@
             <td>Fin</td>
             <td>Asegurador</td>
             <td>Actividad</td>
+            <td>Área</td>
             <td></td>
         </tr>
         <tr>
@@ -68,6 +69,16 @@
                 </asp:SqlDataSource></td>
             <td>
             <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>
+            </td>
+            <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SArea" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT CAST(GROUP_CONCAT(medicamentos.id) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
+                </asp:SqlDataSource>
             </td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" /></td>
         </tr>
@@ -93,7 +104,7 @@
             <asp:HyperLinkField DataTextField="pacDocumento" HeaderText="Documento" DataNavigateUrlFields="pacId" SortExpression="pacDocumento"
                 DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" ItemStyle-HorizontalAlign="Right" />
             <asp:HyperLinkField DataTextField="pacNombres" HeaderText="Paciente" DataNavigateUrlFields="pacId" SortExpression="pacNombres"
-                DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" />
+                DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio"/>
             <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion"/>
             <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre"/>
@@ -128,6 +139,7 @@
                             WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                             AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                             AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId=@procedimiento))
+                            AND ('@area'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId IN (@area)))
                             ORDER BY phdAutorizacion.autFecha">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
@@ -162,6 +174,7 @@
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
+                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
                         ) UNION ( 
                         SELECT '-1',COUNT(DISTINCT phdPaciente.pacNombres)
                                                     FROM phdAutorizacion
@@ -171,6 +184,7 @@
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
+                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
                         ) UNION (
                         SELECT phdDetalleAutorizacion.actId,SUM(autNumSesiones)
                                                     FROM phdAutorizacion
@@ -180,6 +194,7 @@
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
+                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
 							                        GROUP BY phdDetalleAutorizacion.actId
                         )UNION (
                         SELECT 5000000,SUM(phdDetalleAutorizacion.autNumSesiones)
@@ -190,6 +205,7 @@
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
+                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
                         ) ORDER BY nombre
                         ">
                  <SelectParameters>

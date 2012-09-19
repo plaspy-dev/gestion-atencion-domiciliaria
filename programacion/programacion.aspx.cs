@@ -29,7 +29,7 @@ public partial class programacion_programacion : System.Web.UI.Page
                     ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
 
                     CUsuario usuario = (CUsuario) Usuario.GetUsuario();
-                    LNuevo.Visible = usuario.CanInsert();
+                    LNuevo.Visible = usuario.CanInsert() && CCDetallePaciente.Activo;
 
                     GProgramacion.Columns[2].Visible = lnkelimMasivo.Visible = usuario.CanDelete();
                     GProgramacion.Columns[1].Visible = lnkNovedad.Visible = usuario.CanUpdate();
@@ -55,7 +55,7 @@ public partial class programacion_programacion : System.Web.UI.Page
             CheckBox check = (CheckBox)GProgramacion.Rows[i].Cells[0].FindControl("CSeleccionar");
             if (check.Checked)
             {
-                conector.Query("DELETE phdProgramacion where prgId=" + GProgramacion.DataKeys[i].Value.ToString());
+                conector.Query("DELETE programacion where prgId=" + GProgramacion.DataKeys[i].Value.ToString());
             }
         }
         GProgramacion.DataBind();

@@ -192,28 +192,35 @@
         </div>
         <asp:SqlDataSource ID="SResultados" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT per.perId AS id,per.perDocumento AS documento, per.perNombre AS nombres,
+                    SelectCommand="SELECT per.perId AS id
+					,per.perDocumento AS documento, per.perNombre AS nombres,
                     admCargo.carDescripcion AS cargo,admEstadoEstancia.eEstDesc AS estado,per.perCelular AS celular,
                     per.perDireccion, per.perBarrio, admDisponibilidad.dispDescripcion
                     ,loctrabajo.locDescripcion AS loctrabajo,locresidencia.locDescripcion AS locresidencia
                     ,ISNULL(per.perTelefono, '') + ' '+ ISNULL(per.perTelefono1, '') AS telefono,per.perCorreoElectronico
-					,(SELECT TOP 1 prgFechaProg FROM programacion WHERE programacion.perId=per.perId AND programacion.prgFechaProg>GETDATE() ORDER BY prgFechaProg) AS fecha
-					,(SELECT TOP 1 ISNULL(phdPaciente.pacNombres,'') + CASE WHEN actId IN (1,9,12,13,15) THEN '(Descansando)' ELSE '' END FROM programacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) WHERE programacion.perId=per.perId AND programacion.prgFechaProg>GETDATE() ORDER BY prgFechaProg) AS nombre
-					,(SELECT TOP 1 ISNULL(phdPaciente.pacNombres,'') + CASE WHEN (SELECT TOP 1 actId FROM programacion WHERE programacion.perId=per.perId AND programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()-1))) IN (1,9,12,13,15) THEN '(Descansando)' ELSE '' END FROM programacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) WHERE programacion.perId=per.perId AND programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()))) AS nombrehoy
+					,futuro.prgFechaProg AS fecha
+					,ISNULL(phdPacientef.pacNombres,'') + CASE WHEN manana.actId IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END AS nombre
+					,ISNULL(phdPaciente.pacNombres,'')  + CASE WHEN ayer.perId IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END AS nombrehoy
                     FROM admPersonalHS per 
                     LEFT JOIN admCargo on per.carId = admCargo.carId 
                     LEFT JOIN admDisponibilidad on admDisponibilidad.dispId = per.dispId 
                     LEFT JOIN admEstadoEstancia ON (admEstadoEstancia.eEstId=per.eEstId)
                     LEFT JOIN admLocalidad AS loctrabajo ON (loctrabajo.locId=per.locId)
                     LEFT JOIN admLocalidad AS locresidencia ON (locresidencia.locId=per.residencialocId)
+					LEFT JOIN (SELECT perId,MIN(actId) AS actId FROM programacion WHERE programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()-1)) AND actId IN (10001,10009,10012,10013,10015) GROUP BY perId) AS ayer ON (ayer.perId=per.perId)
+					LEFT JOIN (SELECT perId,MIN(actId) AS actId FROM programacion WHERE programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()+1)) AND actId IN (10001,10009,10012,10013,10015) GROUP BY perId) AS manana ON (manana.perId=per.perId)
+					LEFT JOIN (SELECT perId,MIN(pacId) AS pacId FROM programacion WHERE programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE())) GROUP BY perId) AS hoy ON (hoy.perId=per.perId)
+					LEFT JOIN (SELECT perId,MIN(prgFechaProg) AS prgFechaProg,MIN(pacId) AS pacId FROM programacion WHERE programacion.prgFechaProg>GETDATE() GROUP BY perId) AS futuro ON (futuro.perId=per.perId)
+					LEFT JOIN phdPaciente ON (hoy.pacId=phdPaciente.pacId)
+					LEFT JOIN phdPaciente AS phdPacientef ON (hoy.pacId=phdPacientef.pacId)
                     WHERE 
-                    (@id=0 OR @id=per.perId) 
-                    AND (@estado=0 OR per.eEstId=@estado) 
+                    (@id=0 OR @id=per.perId)
+                    AND (@id!=0 OR @estado=0 OR per.eEstId=@estado) 
                     {0}
-                    AND (@cargo=0 or per.carId=@cargo) 
-                    AND (@disponibilidad=0 OR per.dispId=@disponibilidad)
-                    AND (@area=0 OR @area=per.areaId)
-                    AND (@nombres=' ' OR per.perNombre LIKE '%' + @nombres + '%' )
+                    AND (@id!=0 OR @cargo=0 or per.carId=@cargo) 
+                    AND (@id!=0 OR @disponibilidad=0 OR per.dispId=@disponibilidad)
+                    AND (@id!=0 OR @area=0 OR @area=per.areaId)
+                    AND (@id!=0 OR @nombres=' ' OR per.perNombre LIKE '%' + @nombres + '%' )
                     ORDER BY per.perNombre">
                      <SelectParameters>
                         <asp:ControlParameter ControlID="DEStado" PropertyName="SelectedValue" Name="estado" />

@@ -217,11 +217,6 @@ public class Grupo
 				text2 += parametros;
 			}
 			TreeNode treeNode2 = Add(cURLs.Titulo, text2);
-			if (cURLs.FullURL == HttpContext.Current.Request.Url.AbsolutePath)
-			{
-				treeNode2.Selected = true;
-				treeNode.Expand();
-			}
 			TreeNode treeNode3 = null;
 			TreeNodeCollection treeNodeCollection2 = ((treeNode == null) ? treeNodeCollection : treeNode.ChildNodes);
 			int num = -1;
@@ -262,6 +257,19 @@ public class Grupo
 			else
 			{
 				treeNodeCollection2.AddAt(num, treeNode2);
+			}
+			if (!(cURLs.FullURL == HttpContext.Current.Request.Url.AbsolutePath))
+			{
+				continue;
+			}
+			treeNode.Expand();
+			treeNode2.Select();
+			for (int k = 0; k < treeNode.ChildNodes.Count; k++)
+			{
+				if (treeNode.ChildNodes[k].Text == cURLs.Titulo)
+				{
+					treeNode.ChildNodes[k].Select();
+				}
 			}
 		}
 		return result;

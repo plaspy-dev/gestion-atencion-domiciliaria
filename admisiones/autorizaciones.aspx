@@ -55,17 +55,17 @@
 
         $("#<%= LVPagado.ClientID %>").text(currencyFormatted(abono.toString()));
     }
-    
+
     addFunctionToStart(function() {
-        
+
         $("#<%= TValor.ClientID %>").change(function() {
-            
+
             var total = $(this).numeric('value');
             $("#vpagado").each(function() {
-                temp= parseFloat($(this).text().replace(/\./g, "").replace(/\$/g, "").replace(/,/g, "."));
-                if(isNaN(temp))
-                    temp=0;
-                total-=temp;
+                temp = parseFloat($(this).text().replace(/\./g, "").replace(/\$/g, "").replace(/,/g, "."));
+                if (isNaN(temp))
+                    temp = 0;
+                total -= temp;
             });
             $("#<%= TAbono.ClientID %>").val(total);
             $("#<%= TAbono.ClientID %>").numeric('value', total);
@@ -73,7 +73,7 @@
         });
         $("#<%= TAbono.ClientID %>").change(Calcular);
         Calcular();
-        
+
         $("#<%= CGenerar.ClientID %>").change(function() {
             if ($(this).is(":checked")) {
                 $("#tauto").show();
@@ -83,7 +83,7 @@
                 $("#<%= TNumero.ClientID %>").attr("readonly", false);
             }
         }).change();
-        
+
         $("#<%= TPaciente.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -148,7 +148,7 @@
         });
 
         FullRowSelect("#<%= GAutorizaciones.ClientID %>");
-        
+
         // suspender
         $("#<%= BSuspender.ClientID %>").click(function() {
             addDialog('#<%= PSuspender.ClientID%>', "#dSuspender", true);
@@ -168,7 +168,7 @@
                 $("#tsuspender").hide();
             }
         });
-        
+
         $("#<%= TProcedimiento.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -201,6 +201,7 @@
                 // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
             }
         }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
+        addDialog("#<%= PConfirmar.ClientID %>", "#dConfirmar");
     });
 </script>
 </asp:Content>
@@ -453,9 +454,9 @@
                         </Columns>
                     </asp:GridView>
                     <sdg:CustomDataSource ID="SActividades" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT id,nombre AS procedimiento,id AS proc_id,id AS sesionesdia,id AS numerosesiones,id AS idint,nombre AS tint FROM varios WHERE id IS NULL"
+                            SelectCommand="SELECT id,nombre AS procedimiento,id AS proc_id,id AS sesionesdia,id AS numerosesiones,id AS idint,nombre AS tint,nombre AS verificacion FROM varios WHERE id IS NULL"
                             DeleteCommand="DELETE FROM phdDetalleAutorizacion WHERE autNumero=@autorizacion AND actId=@id"
-                            InsertCommand="INSERT INTO phdDetalleAutorizacion (autNumero,actId,autNumSesiones,autSesionesDia, intensidad) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia,@idint)"
+                            InsertCommand="INSERT INTO phdDetalleAutorizacion (autNumero,actId,autNumSesiones,autSesionesDia, intensidad, verificacion) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia,@idint, @verificacion)"
                             UpdateCommand="UPDATE phdDetalleAutorizacion SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia, intensidad=@idint WHERE id=@id"
                             >
                             <SelectParameters>
@@ -506,7 +507,7 @@
             <td colspan="2">
             <asp:Button ID="BSuspender" runat="server" Text="Suspender" CausesValidation="false" />
             <asp:Button CausesValidation="false" runat="server" Text="Eliminar" ID="BEliminar" 
-                    onclick="BEliminar_Click" OnClientClick="return confirm('Esta acción eliminara la autorización, esta acción no se puede deshacer. ¿Esta seguro de continuar?');" />
+                    onclick="BEliminar_Click" OnClientClick="confirm('Esta acción eliminara la autorización, esta acción no se puede deshacer. ¿Esta seguro de continuar?');" />
             </td>
             <td colspan="2" align="right">
                 <asp:Button ID="BAceptar" runat="server" Text="Aceptar" 
@@ -517,6 +518,19 @@
         </tr>
         </asp:Panel>
     </table>
+    <asp:Panel runat="server" ID="PConfirmar" Visible="false">
+            <div id="dConfirmar" title="Confirmación" style="display:none;">
+                <table>
+                    <tr><td>Se va a realizar la siguiente programación a:</td></tr>
+                    <tr><td><asp:Label runat="server" ID="LConfirmar"></asp:Label></td></tr>
+                    <tr><td>¿Desea realizar esta programación?</td></tr>
+                    <tr><td align="right"><asp:Button CausesValidation="false" ID="BSi" runat="server" Text="Si" onclick="BSi_Click" />
+                    <asp:Button ID="BNo" runat="server" Text="No" CausesValidation="false" onclick="BNo_Click" />
+                    <asp:Button ID="BCancelarP" runat="server" Text="Cancelar" CausesValidation="false" onclick="BCancelarP_Click" />
+                    </td></tr>
+                </table>
+            </div>
+        </asp:Panel>
     </ContentTemplate>
     </asp:UpdatePanel>
     <asp:Panel runat="server" ID="PSuspender">

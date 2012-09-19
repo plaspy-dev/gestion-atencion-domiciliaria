@@ -81,6 +81,7 @@
             <td>Asegurador</td>
             <td>Actividad</td>
             <td>Profesional</td>
+            <td>Área</td>
             <td></td>
         </tr>
         <tr>
@@ -106,6 +107,16 @@
             </td>
             <td>
                 <asp:TextBox Width="99%" runat="server" ID="TPersonal"></asp:TextBox><asp:TextBox runat="server" ID="TPersonalID" CssClass="hide"></asp:TextBox>
+            </td>
+            <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SArea" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT CAST(GROUP_CONCAT(medicamentos.id) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
+                </asp:SqlDataSource>
             </td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" /></td>
         </tr>
@@ -143,6 +154,7 @@
             <asp:BoundField HeaderText="Teléfono" DataField="pacTelefono" SortExpression="pacTelefono"/>
             <asp:HyperLinkField DataTextField="autNumero" HeaderText="Autorización" DataNavigateUrlFields="autNumero" 
                 DataNavigateUrlFormatString="~/admisiones/autorizaciones.aspx?aut={0}" SortExpression="autNumero" />
+            <asp:BoundField HeaderText="Observaciones" DataField="prgObservaciones" SortExpression="prgObservaciones"/>
             <asp:TemplateField HeaderText="Novedades" SortExpression="novedad">
                 <ItemTemplate>
                     <asp:LinkButton ID="LinkButton1" runat="server" CausesValidation="False" Visible='<%# Eval("novIden").ToString()=="" ? false : true %>' CommandName="Select" Text='<%# Eval("novedad").ToString() %>'></asp:LinkButton>
@@ -167,6 +179,7 @@
                                 ,phdNovedad.novIden
                                 ,programacion.prgId
                                 ,CASE phdNovedad.novTipo WHEN 1 THEN 'Cancelación Programación' WHEN 2 THEN 'Reasignación' WHEN 3 THEN 'Cambio en num. sesiones' WHEN 4 THEN 'Otro' WHEN 5 THEN 'Paciente desprotegido' WHEN 6 THEN 'Cambio Servicio' ELSE NULL END AS novedad
+                                ,programacion.prgObservaciones
                                 FROM programacion
                                 LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId)
                                 LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
@@ -178,6 +191,7 @@
                             AND (@asegurador=0 OR programacion.entId=@asegurador)
                             AND (@personal=0 OR programacion.perId=@personal)
                             AND (@procedimiento=0 OR programacion.actId=@procedimiento)
+                            AND ('@area'='0' OR programacion.actId IN (@area))
                             {0}
                             ORDER BY programacion.prgFechaProg,phdPaciente.pacNombres">
                  <SelectParameters>

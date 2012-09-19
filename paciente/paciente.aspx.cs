@@ -21,7 +21,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
             PReactivar.Visible = false;
             if (!string.IsNullOrEmpty(Request.QueryString["ip"]))
             {
-                Response.Redirect(Request.Url.AbsolutePath + "?pid=" + crypt.Desencriptar(Request.QueryString["ip"]));
+                Response.Redirect(Request.Url.AbsolutePath + "?pid=" + Crypt.Desencriptar(Request.QueryString["ip"]));
                 Response.End();
                 return;
             }
@@ -151,9 +151,9 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         IEliminar.Visible = usuario.CanDelete();
                     }
 
-                    GetCodigoCIE(TCIE1, conector);
-                    GetCodigoCIE(TCIE2, conector);
-                    GetCodigoCIE(TCIE3, conector);
+                    TCIE1.Text= Procedimientos.GetCodigoCIE(TCIE1.Text, conector);
+                    TCIE2.Text = Procedimientos.GetCodigoCIE(TCIE2.Text, conector);
+                    TCIE3.Text = Procedimientos.GetCodigoCIE(TCIE3.Text, conector);
 
                     PReactivar.Visible = true;
 
@@ -168,15 +168,6 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         }
     }
 
-    protected void GetCodigoCIE(TextBox text, CConectorMS conector) {
-
-        if (text.Text.Length > 0)
-        {
-            string codigo = conector.QueryString("SELECT [cieCodDx]+' - '+ [cirDescripcion] FROM phdCIE10 WHERE cieCodDx='" + text.Text + "'");
-            if (codigo.Length>0)
-                text.Text = codigo;
-        }
-    }
     protected string GetCodigoCIE(string text) {
         int pos= text.IndexOf('-');
         if(pos!=-1) {

@@ -36,7 +36,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
 
                 CConector conector = new CConector();
 
-                MySqlDataReader reader= conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo FROM medicamentos WHERE id="+ Query.GetValor(Request.QueryString["imp"].Trim()));
+                MySqlDataReader reader= conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica FROM medicamentos WHERE id="+ Query.GetValor(Request.QueryString["imp"].Trim()));
 
                 if (reader != null && reader.Read()) {
                     
@@ -47,6 +47,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                     TForma.Text = reader["forma"].ToString();
                     TConcentracion.Text = reader["concentracion"].ToString();
                     TAclaracion.Text = reader["aclaracion"].ToString();
+                    CAutomatica.Checked = reader["automatica"].ToString() == "1";
                     CConector.SelectInDropDown(DGrupo, reader["grupo"]);
 
                     ListItem item= LTipos.Items.FindByValue(reader["tipo"].ToString());
@@ -83,6 +84,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         query["concentracion"]=TConcentracion.Text;
         query["aclaracion"]=TAclaracion.Text;
         query["grupo"] = DGrupo.SelectedValue;
+        query["automatica"] = CAutomatica.Checked ? "1" : "";
 
         if (HId.Value.Length == 0)
         {
@@ -172,6 +174,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         DGrupo.SelectedValue = "";
         GCargos.DataBind();
         GEntidades.DataBind();
+        CAutomatica.Checked = false;
         BAceptar.Enabled = Usuario.GetUsuario().CanInsert();
 
         GResultado.SelectedIndex = -1;
@@ -180,7 +183,10 @@ public partial class administrador_medicamentos : System.Web.UI.Page
     protected void GResultado_SelectedIndexChanged(object sender, EventArgs e)
     {
         HId.Value = GResultado.SelectedDataKey.Value.ToString();
-        TCodigo.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[2].Text).Trim();
+
+        Response.Redirect("~/administrador/medicamentos.aspx?imp=" + HId.Value, true);
+
+        /*TCodigo.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[2].Text).Trim();
         TNombre.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[3].Text).Trim();
         TPrincipio.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[4].Text).Trim();
         TForma.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[5].Text).Trim();
@@ -197,7 +203,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
 
         BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
 
-        ((MasterPageI)Master).SetModificacion(HId.Value);
+        ((MasterPageI)Master).SetModificacion(HId.Value);*/
     }
     protected void LTipos_SelectedIndexChanged(object sender, EventArgs e)
     {
