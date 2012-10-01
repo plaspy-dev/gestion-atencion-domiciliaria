@@ -46,6 +46,8 @@
             <td>Asegurador</td>
             <td>Actividad</td>
             <td>Área</td>
+            <td>Horas</td>
+            <td></td>
             <td></td>
         </tr>
         <tr>
@@ -78,6 +80,20 @@
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT CAST(GROUP_CONCAT(medicamentos.id) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
                 </asp:SqlDataSource>
+            </td>
+            <td>
+            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" 
+                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+            </asp:DropDownList>
+            <asp:SqlDataSource ID="SIntensidad" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND szReservado IS NULL ORDER BY nombre">
+            </asp:SqlDataSource>
+            </td>
+            <td>
+            <asp:CheckBox runat="server" ID="CCompleta" Text="Iniciados" />
             </td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" /></td>
         </tr>
@@ -146,12 +162,20 @@
                             AND ('@area'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId IN (@area)
                                 AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
                             ))
+                            AND (@intensidad=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.intensidad=@intensidad
+                                AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
+                            ))
+                            AND (@completa=1 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero
+                                AND (SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))=0
+                            ))
                             ORDER BY phdAutorizacion.autFecha">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
+                    <asp:ControlParameter ControlID="DIntensidad" PropertyName="SelectedValue" Name="intensidad" />
+                    <asp:ControlParameter ControlID="CCompleta" PropertyName="Checked" Name="completa" />
                  </SelectParameters>
     </asp:SqlDataSource>
     <br />
@@ -184,6 +208,10 @@
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
+                                                    AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
+                                                    AND (@completa=1  OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero
+                                                        AND (SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))=0
+                                                    ))
                         ) UNION ( 
                         SELECT '-1',COUNT(DISTINCT phdPaciente.pacNombres)
                                                     FROM phdAutorizacion
@@ -196,6 +224,10 @@
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
+                                                    AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
+                                                    AND (@completa=1  OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero
+                                                        AND (SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))=0
+                                                    ))
                         ) UNION (
                         SELECT phdDetalleAutorizacion.actId,SUM(autNumSesiones)
                                                     FROM phdAutorizacion
@@ -208,6 +240,10 @@
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
+                                                    AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
+                                                    AND (@completa=1  OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero
+                                                        AND (SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))=0
+                                                    ))
 							                        GROUP BY phdDetalleAutorizacion.actId
                         )UNION (
                         SELECT 5000000,SUM(phdDetalleAutorizacion.autNumSesiones)
@@ -221,6 +257,10 @@
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
+                                                    AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
+                                                    AND (@completa=1  OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero
+                                                        AND (SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))=0
+                                                    ))
                         ) ORDER BY nombre
                         ">
                  <SelectParameters>
@@ -228,6 +268,8 @@
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
+                    <asp:ControlParameter ControlID="DIntensidad" PropertyName="SelectedValue" Name="intensidad" />
+                    <asp:ControlParameter ControlID="CCompleta" PropertyName="Checked" Name="completa" />
                  </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

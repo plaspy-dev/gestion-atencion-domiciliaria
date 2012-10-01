@@ -82,6 +82,7 @@
             <td>Actividad</td>
             <td>Profesional</td>
             <td>Área</td>
+            <td>Horas</td>
             <td></td>
         </tr>
         <tr>
@@ -117,6 +118,17 @@
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT CAST(GROUP_CONCAT(medicamentos.id) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
                 </asp:SqlDataSource>
+            </td>
+            <td>
+            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" 
+                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+            </asp:DropDownList>
+            <asp:SqlDataSource ID="SIntensidad" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND szReservado IS NULL ORDER BY nombre">
+            </asp:SqlDataSource>
             </td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" /></td>
         </tr>
@@ -192,6 +204,7 @@
                             AND (@personal=0 OR programacion.perId=@personal)
                             AND (@procedimiento=0 OR programacion.actId=@procedimiento)
                             AND ('@area'='0' OR programacion.actId IN (@area))
+                            AND (@intensidad=0 OR programacion.intensidad=@intensidad)
                             {0}
                             ORDER BY programacion.prgFechaProg,phdPaciente.pacNombres">
                  <SelectParameters>
@@ -200,6 +213,7 @@
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
                     <asp:ControlParameter ControlID="TPersonalID" Name="personal" PropertyName="Text" DefaultValue="0" />
+                    <asp:ControlParameter ControlID="DIntensidad" PropertyName="SelectedValue" Name="intensidad" />
                  </SelectParameters>
     </asp:SqlDataSource>
     <uc3:novedad ID="UCNovedad" runat="server" OnAceptarClicked="UCNovedad_AceptarClicked" Visible="false" OnCancelarClicked="UCNovedad_CancelarClicked" />

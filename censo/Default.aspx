@@ -2,6 +2,9 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
+    addFunctionToStart(function() {
+        addDialog('#<%= PLocalidad.ClientID%>', "#dLocalidad");
+    });
     $(function() {
         $("#<%= TProcedimiento.ClientID %>").autocomplete({
             source: function(request, response) {
@@ -111,10 +114,14 @@
         </table>
     </asp:Panel>
     <br />
+    <asp:UpdatePanel runat="server" ID="PResultados">
+    <ContentTemplate>
     <div id="dImprimir">
     <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
         AutoGenerateColumns="False" EmptyDataText="No se encontraron autorizaciones" 
-        AllowPaging="True" PageSize="50" AllowSorting="True" OnRowDataBound="GResultados_RowDataBound" >
+        AllowPaging="True" PageSize="50" AllowSorting="True" 
+            OnRowDataBound="GResultados_RowDataBound" 
+            DataKeyNames="pacId">
         <RowStyle CssClass="GridRow"></RowStyle>
         <FooterStyle CssClass="GridFooter"></FooterStyle>
         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -130,6 +137,12 @@
             <asp:BoundField HeaderText="Edad" DataField="pacFechaNac" SortExpression="pacFechaNac" ItemStyle-HorizontalAlign="Right" />
             <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio" ItemStyle-Wrap="false"/>
+            <asp:TemplateField HeaderText="Localidad" InsertVisible="False" SortExpression="locDescripcion">
+                <ItemTemplate>
+                    <asp:LinkButton ID="LLocalidad" runat="server" CausesValidation="False" CommandName='<%# Bind("pacId") %>' CommandArgument='<%# Bind("locId") %>' Text='<%# Bind("locDescripcion") %>' OnClick="LLocalidad_Click" ></asp:LinkButton>
+                </ItemTemplate>
+                <ItemStyle Wrap="False" />
+            </asp:TemplateField>
             <asp:BoundField HeaderText="Teléfono" DataField="pacTelefono" SortExpression="pacTelefono" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Inicio programa" DataField="pacFecIngPrograma" SortExpression="pacFecIngPrograma" DataFormatString="{0:d}" />
             <asp:BoundField HeaderText="CIE10" DataField="cie10" SortExpression="cie10" ItemStyle-Wrap="false" />
@@ -142,11 +155,42 @@
     <div align="right">
         <asp:Label runat="server" ID="LTotal"></asp:Label>
     </div>
+    <asp:Panel runat="server" ID="PLocalidad" Visible="false">
+        <asp:HiddenField runat="server" ID="HPaciente" />
+        <div id="dLocalidad" title="Localidad" class="hide">
+        <table>
+            <tr>
+                <td>Localidad</td>
+                <td><asp:DropDownList ID="DLocalidad" runat="server" 
+                                DataSourceID="SLocalidad" DataTextField="nombre"
+                                DataValueField="id" AppendDataBoundItems="true">
+                                <asp:ListItem Text="" Value=""></asp:ListItem>
+                                </asp:DropDownList>
+                <asp:SqlDataSource ID="SLocalidad" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                    SelectCommand="SELECT locId id, locDescripcion nombre FROM admLocalidad">
+                </asp:SqlDataSource></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="right">
+                    <asp:Button ID="BAceptar" runat="server" Text="Aceptar" 
+                        onclick="BAceptar_Click" />
+                    <asp:Button ID="BCancelar" runat="server" Text="Cancelar" 
+                        CausesValidation="false" onclick="BCancelar_Click"/>
+                </td>
+            </tr>
+        </table>
+        </div>
+    </asp:Panel>
+    </ContentTemplate>
+    </asp:UpdatePanel>
     <asp:SqlDataSource ID="SResultados" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
                 SelectCommand="SELECT phdPaciente.pacDocumento,phdPaciente.pacNombres,phdPaciente.pacBarrio,phdPaciente.pacDireccion,phdPaciente.pacId
 		                    ,phdPaciente.pacTelefono,phdPaciente.pacFecIngPrograma,pdirDescripcion,phdTipoEvento.tipEDescripcion
                             ,admEntidad.entNombre,phdPaciente.pacFechaNac
+                            ,admLocalidad.locDescripcion
+                            ,phdPaciente.locId
                             ,detalles
 							,(SELECT phdCIE10.cieCodDx + '-'  + phdCIE10.cirDescripcion + ',_' FROM phdCIE10 
 								WHERE 
@@ -154,6 +198,7 @@
 								FOR XML PATH('')) AS cie10
                             FROM phdPaciente
                             LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
+                            LEFT JOIN admLocalidad ON (admLocalidad.locId=phdPaciente.locId) 
 							LEFT JOIN phdPagodirecto ON (phdPaciente.pdirId = phdPagodirecto.pdirId)
 							LEFT JOIN phdTipoEvento ON (phdPaciente.tipECod = phdTipoEvento.tipECod)
                             CROSS APPLY

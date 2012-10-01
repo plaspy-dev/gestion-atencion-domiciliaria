@@ -47,4 +47,30 @@ public partial class censo_Default : System.Web.UI.Page
             e.Row.Cells[3].Text = years==0 ? "" : years.ToString();
         }
     }
+    protected void LLocalidad_Click(object sender, EventArgs e)
+    {
+        if (!CUsuario.GetUsuario().CanUpdate())
+            return;
+        LinkButton link = (LinkButton)sender;
+        HPaciente.Value= link.CommandName;
+        if (DLocalidad.Items.Count == 1)
+            DLocalidad.DataBind();
+        try {
+            DLocalidad.SelectedValue = link.CommandArgument;
+        } catch(Exception ex) {
+            DLocalidad.SelectedIndex = 0;
+        }
+        PLocalidad.Visible = true;
+    }
+    protected void BAceptar_Click(object sender, EventArgs e)
+    {
+        CConectorMS conector = new CConectorMS();
+        conector.QueryMod("UPDATE phdPaciente SET locId='" + DLocalidad.SelectedValue + "' WHERE pacId=" + HPaciente.Value);
+        GResultados.DataBind();
+        PLocalidad.Visible = false;
+    }
+    protected void BCancelar_Click(object sender, EventArgs e)
+    {
+        PLocalidad.Visible = false;
+    }
 }
