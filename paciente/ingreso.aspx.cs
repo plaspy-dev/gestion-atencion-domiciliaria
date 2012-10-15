@@ -318,7 +318,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             return;
 
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
-        if (ingreso)
+        if (ingreso && (CCDetallePaciente.Edad==-1 || CCDetallePaciente.Edad>14))
             Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
         ((MasterPageI)Master).SetResultado(mensaje);
         // Session["szMensaje"] = mensaje;

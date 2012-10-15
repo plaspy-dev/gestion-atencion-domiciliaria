@@ -11,21 +11,21 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2012-10-01.
+This cut records the home-care application as archived on 2012-10-15.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
 
 ### Features in the retained source
 
+- Open the patient record and its care information. `paciente/paciente.aspx`.
 - List cases that are waiting to be scheduled. `programacion/sinprogramar.aspx`.
-- Start from the census to review cases recorded in the site. `censo/Default.aspx`.
 - Open the batch admission screen to process patient admissions. `admisiones/amasivas.aspx`.
 - Retrieve images linked to the clinical files in this edition. `archivo/foto.ashx`.
-- Open the patient record and its care information. `paciente/paciente.aspx`.
 - Open the staff record for the care team. `rh/funcionario.aspx`.
 - View and maintain access groups. `administrador/grupos.aspx`.
 - Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
+- Start from the census to review cases recorded in the site. `censo/Default.aspx`.
 
 ### Build and local use
 
@@ -35,7 +35,7 @@ The retained site entry is `Default.aspx`. Use fictional accounts and a disposab
 
 ### Archive notes
 
-The archive inventory counted 0 additions, 4 edits and 0 removals.
+The archive inventory counted 0 additions, 8 edits and 0 removals.
 
 ### Framework versions
 
@@ -43,7 +43,7 @@ The archive does not record the original framework version. The local build reci
 
 ### Usage
 
-Use the documented local build with a fictional operator. The available screens include `programacion/sinprogramar.aspx` and the other routes above.
+Use the documented local build with a fictional operator. The available screens include `paciente/paciente.aspx` and the other routes above.
 
 The retained entry page is `administrador/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
 
@@ -74,21 +74,21 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2012-10-01.
+Este corte conserva la versión de atención domiciliaria archivada el 2012-10-15.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
 
 ### Funciones en el código conservado
 
+- Abre la ficha del paciente y su información de atención. `paciente/paciente.aspx`.
 - Consulta los casos pendientes de programación. `programacion/sinprogramar.aspx`.
-- Empieza en el censo para consultar los casos registrados en el sitio. `censo/Default.aspx`.
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `admisiones/amasivas.aspx`.
 - Consulta las imágenes vinculadas a los archivos clínicos de esta edición. `archivo/foto.ashx`.
-- Abre la ficha del paciente y su información de atención. `paciente/paciente.aspx`.
 - Abre la ficha del personal del equipo de atención. `rh/funcionario.aspx`.
 - Consulta y administra los grupos de acceso. `administrador/grupos.aspx`.
 - Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
+- Empieza en el censo para consultar los casos registrados en el sitio. `censo/Default.aspx`.
 
 ### Compilación y uso local
 
@@ -98,7 +98,7 @@ La entrada conservada del sitio es `Default.aspx`. Usa cuentas ficticias y una b
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 0 adiciones, 4 cambios y 0 retiros.
+El inventario del respaldo registró 0 adiciones, 8 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 
@@ -106,7 +106,7 @@ El respaldo no registra la versión original del framework. La receta local usa 
 
 ### Uso
 
-Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `programacion/sinprogramar.aspx` y las demás rutas de arriba.
+Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `paciente/paciente.aspx` y las demás rutas de arriba.
 
 La portada conservada es `administrador/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
 

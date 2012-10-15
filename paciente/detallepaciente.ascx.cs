@@ -100,7 +100,21 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             return LSexo.Text;
         }
     }
-
+    public int Edad {
+        get {
+            int edad=-1;
+            if(LEdad.Text.Length>0) {
+                string []sedad= LEdad.Text.Split(' ');
+                if(sedad.Length>0) {
+                    try
+                    {
+                        edad = Convert.ToInt32(sedad[0]);
+                    } catch(Exception ex) {}
+                }
+            }
+            return edad;
+        }
+    }
     public string IdPaciente {
         get {
             return HIdPaciente.Value;

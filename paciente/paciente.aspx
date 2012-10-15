@@ -522,6 +522,7 @@
 		                    LEFT JOIN phdActividad ON pr.actId = phdActividad.actId
 		                    LEFT JOIN admPersonalHS ON pr.perId = admPersonalHS.perId
 	                    WHERE pr.pacId=@pacId
+	                          AND pr.prgActivo=1
                               AND pr.prgFechaProg >= getdate()
                     order by prgFechaProg desc,phdActividad.actDescripcion">
                       <SelectParameters>

@@ -154,20 +154,30 @@
                             WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                             AND phdAutorizacion.autActivo=1
                             AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                            AND EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero {0} AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))))
                             AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
-                            AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId=@procedimiento
-                                AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
-                            ))
-                            AND ('@area'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId IN (@area)
-                                AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
-                            ))
-                            AND (@intensidad=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.intensidad=@intensidad
-                                AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
-                            ))
-                            AND (@completa=1 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero
-                                AND (SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))=0
-                            ))
+                            AND EXISTS (
+                                SELECT 1 FROM phdDetalleAutorizacion 
+                                LEFT JOIN (
+                                    SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
+                                    FROM programacion 
+                                    GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
+                                ) AS programacion ON 
+                                (
+                                    programacion.autNumero=phdDetalleAutorizacion.autNumero 
+                                    AND programacion.actId=phdDetalleAutorizacion.actId 
+                                    AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
+                                    (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
+                                ) -- end of on join
+                                WHERE 
+                                phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero 
+                                {0} 
+                                AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
+                                AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
+                                AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
+                                AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
+                                AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
+                                AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
+                            )
                             ORDER BY phdAutorizacion.autFecha">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
@@ -201,49 +211,82 @@
                                                     LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
                                                     LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
 							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
+							                        LEFT JOIN (
+                                                        SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
+                                                        FROM programacion 
+                                                        GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
+                                                    ) AS programacion ON 
+                                                    (
+                                                        programacion.autNumero=phdDetalleAutorizacion.autNumero 
+                                                        AND programacion.actId=phdDetalleAutorizacion.actId 
+                                                        AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
+                                                        (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
+                                                    ) -- end of on join
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                                     AND phdAutorizacion.autActivo=1
                                                     AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                                                    AND EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero {0} AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))))
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
+                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
+                                                    {0}
+                                                    AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
                                                     AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-                                                    AND (@completa=1  OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero
-                                                        AND (SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))=0
-                                                    ))
+                                                    AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
+                                                    AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
                         ) UNION ( 
                         SELECT '-1',COUNT(DISTINCT phdPaciente.pacNombres)
                                                     FROM phdAutorizacion
                                                     LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
                                                     LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
 							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
+							                        LEFT JOIN (
+                                                        SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
+                                                        FROM programacion 
+                                                        GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
+                                                    ) AS programacion ON 
+                                                    (
+                                                        programacion.autNumero=phdDetalleAutorizacion.autNumero 
+                                                        AND programacion.actId=phdDetalleAutorizacion.actId 
+                                                        AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
+                                                        (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
+                                                    ) -- end of on join
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                                     AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                                                    AND EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero {0} AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))))
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
+                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
+                                                    {0}
+                                                    AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
                                                     AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-                                                    AND (@completa=1  OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero
-                                                        AND (SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))=0
-                                                    ))
+                                                    AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
+                                                    AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
                         ) UNION (
                         SELECT phdDetalleAutorizacion.actId,SUM(autNumSesiones)
                                                     FROM phdAutorizacion
                                                     LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
                                                     LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
 							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
+							                        LEFT JOIN (
+                                                        SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
+                                                        FROM programacion 
+                                                        GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
+                                                    ) AS programacion ON 
+                                                    (
+                                                        programacion.autNumero=phdDetalleAutorizacion.autNumero 
+                                                        AND programacion.actId=phdDetalleAutorizacion.actId 
+                                                        AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
+                                                        (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
+                                                    ) -- end of on join
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                                     AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                                                    AND EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero {0} AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))))
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
+                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
+                                                    {0}
+                                                    AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
                                                     AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-                                                    AND (@completa=1  OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero
-                                                        AND (SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))=0
-                                                    ))
+                                                    AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
+                                                    AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
 							                        GROUP BY phdDetalleAutorizacion.actId
                         )UNION (
                         SELECT 5000000,SUM(phdDetalleAutorizacion.autNumSesiones)
@@ -251,16 +294,27 @@
                                                     LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
                                                     LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
 							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
+							                        LEFT JOIN (
+                                                        SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
+                                                        FROM programacion 
+                                                        GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
+                                                    ) AS programacion ON 
+                                                    (
+                                                        programacion.autNumero=phdDetalleAutorizacion.autNumero 
+                                                        AND programacion.actId=phdDetalleAutorizacion.actId 
+                                                        AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
+                                                        (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
+                                                    ) -- end of on join
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                                     AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                                                    AND EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero {0} AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))))
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
+                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
+                                                    {0}
+                                                    AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
                                                     AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-                                                    AND (@completa=1  OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero
-                                                        AND (SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))=0
-                                                    ))
+                                                    AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
+                                                    AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
                         ) ORDER BY nombre
                         ">
                  <SelectParameters>

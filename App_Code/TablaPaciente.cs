@@ -110,25 +110,37 @@ public class TablaPaciente
 
         querymysql["Fecha"] = "ingreso_paciente.fecha";
         querymysql["Analisis"] = "ingreso_paciente.analisis";
-        querymysql["Barthel"] = "(SELECT SUM(varios.descripcion) FROM indice_barthel LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id) LEFT JOIN varios ON (varios.id=analisis_barthel.resultado) WHERE indice_barthel.paciente=ingreso_paciente.paciente GROUP BY indice_barthel.id ORDER BY indice_barthel.fecha DESC LIMIT 1)";
+        querymysql["Barthel"] = "SUM(varios.descripcion)";
         querymysql["pacId"] = "ingreso_paciente.paciente";
 
         Add(m_pTabla, querymysql.GetSelect("ingreso_paciente.fecha BETWEEN "
                             + Query.GetValor(CConector.GetMySQLDateFormat(desde))
                             + " AND "
-                            + Query.GetValor(CConector.GetMySQLDateFormat(hasta))), entidad);
+                            + Query.GetValor(CConector.GetMySQLDateFormat(hasta))
+                            + " AND indice_barthel.id=(SELECT id FROM indice_barthel WHERE paciente=ingreso_paciente.paciente ORDER BY fecha DESC LIMIT 1)"
+                            + " GROUP BY ingreso_paciente.id"
+                            , "LEFT JOIN indice_barthel ON (indice_barthel.paciente=ingreso_paciente.paciente)"
+                            + " LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id)"
+                            + " LEFT JOIN varios ON (varios.id=analisis_barthel.resultado)"
+                            ), entidad);
 
         querymysql = new Query("evolucion_paciente");
 
         querymysql["Fecha"] = "evolucion_paciente.fecha";
         querymysql["Analisis"] = "evolucion_paciente.analisis";
-        querymysql["Barthel"] = "(SELECT SUM(varios.descripcion) FROM indice_barthel LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id) LEFT JOIN varios ON (varios.id=analisis_barthel.resultado) WHERE indice_barthel.paciente=evolucion_paciente.paciente GROUP BY indice_barthel.id ORDER BY indice_barthel.fecha DESC LIMIT 1)";
+        querymysql["Barthel"] = "SUM(varios.descripcion)";
         querymysql["pacId"] = "evolucion_paciente.paciente";
 
         Add(m_pTabla, querymysql.GetSelect("evolucion_paciente.fecha BETWEEN "
                             + Query.GetValor(CConector.GetMySQLDateFormat(desde))
                             + " AND "
-                            + Query.GetValor(CConector.GetMySQLDateFormat(hasta))), entidad);
+                            + Query.GetValor(CConector.GetMySQLDateFormat(hasta))
+                            + " AND indice_barthel.id=(SELECT id FROM indice_barthel WHERE paciente=evolucion_paciente.paciente ORDER BY fecha DESC LIMIT 1)"
+                            + " GROUP BY evolucion_paciente.id"
+                            , "LEFT JOIN indice_barthel ON (indice_barthel.paciente=evolucion_paciente.paciente)"
+                            +" LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id)"
+                            +" LEFT JOIN varios ON (varios.id=analisis_barthel.resultado)"
+        ), entidad);
 
         HttpContext.Current.Session["paciente_atendido"] = m_pTabla;
         return m_pTabla;
