@@ -40,7 +40,7 @@ public partial class auditoria_OrganizationExample51 : System.Web.UI.Page
                     --years;
 
                 texto = years.ToString();
-            } catch(Exception ex){}
+            } catch {}
             e.Row.Cells[1].Text= texto; // edad
 
             if (conectorms == null)

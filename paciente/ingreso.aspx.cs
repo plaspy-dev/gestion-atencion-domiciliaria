@@ -505,5 +505,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                 evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
             }
         }
+        // limpiamos el inactivo de los pacientes
+        evento.Contenido = evento.Contenido.Replace(" (Inactivo)", "");
     }
 }

@@ -32,12 +32,12 @@ public partial class programacion_consulta : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            if(HttpUtility.HtmlDecode(e.Row.Cells[4].Text).Trim().Length==0) {
-                e.Row.Cells[4].Text= Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[5].Text).Trim());
-                if (HttpUtility.HtmlDecode(e.Row.Cells[12].Text).Trim().Length != 0) {
-                    e.Row.Cells[4].Text += "[" + Procedimientos.GetVarios(e.Row.Cells[12].Text) + "]";
-                }
-            }
+            string []valores= e.Row.Cells[4].Text.Split('_');
+            e.Row.Cells[4].Text= Procedimientos.GetProcedimiento(valores[0]);
+            if(valores.Length>1 && valores[1].Length>0)
+                e.Row.Cells[4].Text += " [" + Procedimientos.GetVarios(valores[1]) + "]";
+            LinkButton boton = (LinkButton)e.Row.Cells[11].FindControl("LNovedad");
+            boton.Text = boton.Text.Replace(",_", "<br/>");
         }
     }
     protected void GResultados_SelectedIndexChanged(object sender, EventArgs e)

@@ -26,11 +26,11 @@ public partial class vehiculos_recorrido : System.Web.UI.Page
         try {
             DVehiculo.SelectedValue = GRecorrido.Rows[GRecorrido.SelectedIndex].Cells[2].Text;
         }
-        catch (ArgumentOutOfRangeException ex) { }
+        catch { }
         try {
             DConductor.SelectedValue = GRecorrido.SelectedDataKey.Values[1].ToString();
         }
-        catch (ArgumentOutOfRangeException ex) { }
+        catch { }
         TLugar.Text = HttpUtility.HtmlDecode(GRecorrido.Rows[GRecorrido.SelectedIndex].Cells[4].Text);
         TActividad.Text = HttpUtility.HtmlDecode(GRecorrido.Rows[GRecorrido.SelectedIndex].Cells[5].Text);
         TLlegada.Text = GRecorrido.Rows[GRecorrido.SelectedIndex].Cells[6].Text;
@@ -38,7 +38,7 @@ public partial class vehiculos_recorrido : System.Web.UI.Page
         try
         {
             DProfesional.SelectedValue = GRecorrido.SelectedDataKey.Values[2].ToString();
-        } catch(ArgumentOutOfRangeException ex) {}
+        } catch {}
         TObservaciones.Text = HttpUtility.HtmlDecode(GRecorrido.Rows[GRecorrido.SelectedIndex].Cells[8].Text);
         if (TObservaciones.Text == " ")
             TObservaciones.Text = "";

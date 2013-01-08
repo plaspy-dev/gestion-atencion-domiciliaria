@@ -187,7 +187,7 @@ public partial class paciente_barthel : System.Web.UI.Page
                 incapacidad = "Moderada";
             else if (puntaje < 100)
                 incapacidad = "Ligera";
-        } catch(Exception ex) {
+        } catch {
 
         }
         evento.Contenido = evento.Contenido.Replace("$szPuntaje$", incapacidad);

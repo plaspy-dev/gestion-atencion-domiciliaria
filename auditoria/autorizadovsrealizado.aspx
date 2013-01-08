@@ -69,7 +69,7 @@
                                 LEFT JOIN phdDetalleautorizacion ON (phdDetalleautorizacion.autNumero=phdAutorizacion.autNumero)
                                 LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
                                 WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId, phdDetalleautorizacion.autNumSesiones
+                                GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId,phdDetalleautorizacion.intensidad, phdDetalleautorizacion.autNumSesiones
                                 ) AS a
                             ) UNION (
                                 SELECT 2 AS i,CAST(a.actId AS VARCHAR) AS nombre,SUM(autNumSesiones) AS ses,SUM(a) AS a,SUM(b) AS b
@@ -85,7 +85,7 @@
                                     LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                     AND phdDetalleautorizacion.actId IS NOT NULL
-                                    GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId,phdDetalleautorizacion.autNumSesiones
+                                    GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId,phdDetalleautorizacion.intensidad,phdDetalleautorizacion.autNumSesiones
                                 ) AS a GROUP BY a.actId
                             ) UNION (
                                 
@@ -102,7 +102,7 @@
                                 LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
                                 LEFT JOIN admEntidad ON (admEntidad.entId=phdAutorizacion.entId)
                                 WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId, admEntidad.entNombre,phdDetalleautorizacion.autNumSesiones
+                                GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId,phdDetalleautorizacion.intensidad, admEntidad.entNombre,phdDetalleautorizacion.autNumSesiones
                                 ) AS a
                                 GROUP BY a.entNombre
                             ) ORDER BY i

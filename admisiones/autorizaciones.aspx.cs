@@ -887,6 +887,10 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         {
             return;
         }
+        if (conector.QueryMod("DELETE FROM programacion WHERE autNumero='" + HIdAutorizacion.Value + "'") == -1)
+        {
+            return;
+        }
         if (new CConector().InsertModificacion(HId.Value) == -1)
             return;
         conector.Commit();
@@ -905,6 +909,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             query["autFechaSuspension"] = TFSuspender.Text;
 
         if (conector.QueryMod(query.GetUpdate("autNumero='" + HIdAutorizacion.Value + "'")) == -1)
+            return;
+        if (conector.QueryMod("UPDATE programacion SET prgActivo=0 WHERE autNumero='" + HIdAutorizacion.Value + "'") == -1)
             return;
 
         if (new CConector().InsertModificacion(HId.Value) == -1)

@@ -53,7 +53,11 @@ public partial class gerencia_programacion : System.Web.UI.Page
             if (titulo.Text.Length == 0)
             {
                 HiddenField field = e.Item.Parent==RServicios ? (HiddenField)e.Item.FindControl("HId") : (HiddenField)e.Item.FindControl("HId2");
+                HiddenField fieldi = e.Item.Parent == RServicios ? (HiddenField)e.Item.FindControl("Hi") : (HiddenField)e.Item.FindControl("Hi2");
+
                 titulo.Text = Procedimientos.GetProcedimiento(field.Value);
+                if (fieldi.Value.Length > 0)
+                    titulo.Text += " [" + Procedimientos.GetVarios(fieldi.Value) + "]";
             }
 
             if (e.Item.Parent == RServicios)
@@ -124,13 +128,42 @@ public partial class gerencia_programacion : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
+            bool primero = false;
             try
             {
                 string valor = HttpUtility.HtmlDecode(e.Row.Cells[2].Text).Trim();
-                Convert.ToInt32(valor);
-                e.Row.Cells[2].Text = Procedimientos.GetProcedimiento(valor);
+                string []valores= valor.Split('$');
+                if(valores.Length>1) {
+
+                    Convert.ToInt32(valores[0]);
+                    e.Row.Cells[2].Text = Procedimientos.GetProcedimiento(valores[0]);
+                    if(valores[1].Length>0) 
+                        e.Row.Cells[2].Text += " [" + Procedimientos.GetVarios(valores[1]) + "]";
+                    primero = true;
+                }
             }
-            catch (Exception ex) { }
+            catch { }
+            
+            if(!primero) {
+
+                try
+                {
+                    string valor = HttpUtility.HtmlDecode(e.Row.Cells[5].Text).Trim();
+                    Convert.ToInt32(valor);
+                    e.Row.Cells[5].Text = Procedimientos.GetProcedimiento(valor);
+                    primero = true;
+                }
+                catch { }
+                if(primero) {
+                    try
+                    {
+                        string valor = HttpUtility.HtmlDecode(e.Row.Cells[6].Text).Trim();
+                        Convert.ToInt32(valor);
+                        e.Row.Cells[6].Text = Procedimientos.GetVarios(valor);
+                    }
+                    catch { }
+                }
+            }
         }
     }
 }

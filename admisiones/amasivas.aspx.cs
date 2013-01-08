@@ -11,6 +11,7 @@ using System.Collections.Specialized;
 
 public partial class admisiones_amasivas : System.Web.UI.Page
 {
+    [Serializable]
     class Pacientes {
 
         public string Paciente { get; set; }
@@ -30,9 +31,47 @@ public partial class admisiones_amasivas : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         if(!IsPostBack) {
+
             TPaciente.Focus();
-            Session["AMasivasPaciente"] = new ArrayList();
+            ViewState["AMasivasPaciente"] = new ArrayList();
             BAceptar.Enabled = Usuario.GetUsuario().CanInsert();
+            
+            if(Session["amasivas_paciente"]==null) {
+                string szPacientes = CConector.GetCookie("amasivas_paciente", "");
+                if (szPacientes.Length != 0)
+                {
+                    // agregamos los pacientes
+                    string[] pacientes = szPacientes.Split(';');
+                    for (int i = 0; i < pacientes.Length; i++)
+                    {
+                        AddPaciente(pacientes[i]);
+                    }
+                }
+            } else {
+                CConector.SetCookie("amasivas_paciente", "");
+                Session["amasivas_paciente"] = null;
+            }
+        }
+    }
+
+    protected void AddPaciente(string idpaciente) {
+
+        CConectorMS conector= new CConectorMS();
+        SqlDataReader reader = conector.Query("SELECT admEntidad.entId,admEntidad.entNombre,pacDocumento AS documento, pacPNombre + ' ' + isnull(pacSNombre,'') + ' ' + pacPapellido + ' ' + isnull(pacSApellido, '') AS nombres,EstId AS estado FROM phdPaciente LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId) WHERE pacId=" + Query.GetValor(idpaciente));
+        if(reader!=null && reader.Read()) {
+            string valor = reader["documento"].ToString() + " - " + reader["nombres"].ToString();
+            if (reader["estado"].ToString() == "2")
+                valor = "Inactivo - " + valor;
+
+            ArrayList pacientes = (ArrayList)ViewState["AMasivasPaciente"];
+            pacientes.Add(new Pacientes(idpaciente, valor, reader["entId"].ToString(), reader["entNombre"].ToString()));
+
+            if (TPacientes.Text.Length > 0)
+                TPacientes.Text += ";";
+            TPacientes.Text += idpaciente;
+
+            GPacientes.DataSource = pacientes;
+            GPacientes.DataBind();
         }
     }
 
@@ -41,7 +80,7 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         Validate("paciente");
         if (!IsValid)
             return;
-        ArrayList pacientes = (ArrayList)Session["AMasivasPaciente"];
+        ArrayList pacientes = (ArrayList)ViewState["AMasivasPaciente"];
 
         for (int i = 0; i < pacientes.Count; i++)
         {
@@ -54,26 +93,24 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             }
         }
 
-        CConectorMS conector = new CConectorMS();
-        SqlDataReader reader= conector.Query("SELECT admEntidad.entId,admEntidad.entNombre FROM phdPaciente LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId) WHERE pacId=" + Query.GetValor(TPacienteID.Text));
-        if(reader!=null && reader.Read()) {
-            pacientes.Add(new Pacientes(TPacienteID.Text, TPaciente.Text, reader["entId"].ToString(), reader["entNombre"].ToString()));
-        }
-        GPacientes.DataSource = pacientes;
-        GPacientes.DataBind();
+        AddPaciente(TPacienteID.Text);
+        
         TPacienteID.Text = TPaciente.Text="";
         TPaciente.Focus();
     }
+
     protected void BCancelar_Click(object sender, EventArgs e)
     {
+        Session["amasivas_paciente"] = 1;
         Response.Redirect(Request.Url.AbsolutePath);
     }
+
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         if (!IsValid)
             return;
 
-        ArrayList pacientes = (ArrayList)Session["AMasivasPaciente"];
+        ArrayList pacientes = (ArrayList)ViewState["AMasivasPaciente"];
         if(pacientes.Count==0) {
 
             TPaciente.Focus();
@@ -100,6 +137,8 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         query["segUsuarioConfirma"] = Usuario.GetUsuario().GetLogin();
         query["segFechaConfirma"] = "GETDATE()";
 
+        string[] querys = SActividades.GetQuerys();
+
         for (int i=0; i<pacientes.Count; i++) {
 
             Pacientes paciente= (Pacientes)pacientes[i];
@@ -120,7 +159,6 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             if (conectormysql.InsertModificacion(res.ToString(), "~/admisiones/autorizaciones.aspx") == -1)
                 return;
 
-            string[] querys = SActividades.GetQuerys();
             string szQuery;
             if (querys != null)
             {
@@ -133,12 +171,13 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             }
         }
         conector.Commit();
+        Session["amasivas_paciente"] = 1;
         ((MasterPageI)Master).SetResultado(pacientes.Count + " programaciones agregadas.");
     }
 
     protected void GPacientes_RowDeleting(object sender, GridViewDeleteEventArgs e)
     {
-        ArrayList pacientes = (ArrayList)Session["AMasivasPaciente"];
+        ArrayList pacientes = (ArrayList)ViewState["AMasivasPaciente"];
 
         for(int i=0; i<pacientes.Count; i++) {
 
@@ -165,7 +204,8 @@ public partial class admisiones_amasivas : System.Web.UI.Page
 
         IOrderedDictionary data = new OrderedDictionary();
         data.Add("procedimiento", TProcedimiento.Text);
-        data.Add("intensidad", TIntensidad.Text.Length == 0 ? null : TIntensidad.Text);
+        data.Add("tint", DIntensidad.SelectedItem.Text);
+        data.Add("idint", DIntensidad.SelectedValue.Length == 0 ? null : DIntensidad.SelectedValue);
         data.Add("sesionesdia", TSesionesDia.Text.Length == 0 ? null : TSesionesDia.Text);
         data.Add("numerosesiones", TNumeroSesiones.Text);
         data.Add("proc_id", TProcedimientoID.Text);
@@ -184,7 +224,8 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             dataold.Add("procedimiento", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim());
             dataold.Add("sesionesdia", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim());
             dataold.Add("numerosesiones", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim());
-            dataold.Add("intensidad", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[6].Text).Trim());
+            dataold.Add("tint", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[6].Text).Trim());
+            dataold.Add("idint", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
             dataold.Add("proc_id", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim());
             dataold.Add("id", GActivades.DataKeys[GActivades.SelectedIndex].Value);
 
@@ -193,7 +234,8 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         GActivades.SelectedIndex = -1;
         GActivades.DataBind();
 
-        TProcedimientoID.Text = TProcedimiento.Text = TIntensidad.Text = TSesionesDia.Text = TNumeroSesiones.Text = "";
+        TProcedimientoID.Text = TProcedimiento.Text = TSesionesDia.Text = TNumeroSesiones.Text = "";
+        DIntensidad.SelectedIndex = 0;
         TProcedimiento.Focus();
     }
 
@@ -211,7 +253,7 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         TProcedimiento.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim();
         TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
         TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
-        TIntensidad.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[6].Text).Trim();
+        CConector.SelectInDropDown(DIntensidad, HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
         TProcedimientoID.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim();
 
         TProcedimiento.Focus();

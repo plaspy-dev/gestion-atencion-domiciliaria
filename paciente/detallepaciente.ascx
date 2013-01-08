@@ -5,7 +5,7 @@
         <tr>
             <td colspan="4" style="text-align: center" class="celdaTitulo">Información personal
             </td>
-            <td style="text-align: center" class="celdaTitulo">
+            <td style="text-align: center" class="celdaTitulo" runat="server" id="tServicios">
                 Servicios
             </td>
         </tr>
@@ -20,7 +20,7 @@
                 Sexo
                 <asp:Label ID="LSexo" Font-Bold="true" runat="server" Text=""></asp:Label>
             </td>
-            <td rowspan="8" valign="top">
+            <td rowspan="8" valign="top" runat="server" id="tServiciosD">
                 <uc1:autorizaciones ID="UCAutorizaciones" runat="server" />
             </td>
        </tr>

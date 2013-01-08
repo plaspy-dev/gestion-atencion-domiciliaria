@@ -31,6 +31,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                 query += "qrObsHS";
                 query += "pacId";
                 query += "perId";
+                query += "clasificacion";
 
                 CConectorMS conector = new CConectorMS();
                 SqlDataReader reader = conector.Query(query.GetSelect("qrId=" + Query.GetValor(Request.QueryString["qid"])));
@@ -55,6 +56,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                     TObservaciones.Text = reader["qrObsHS"].ToString();                    
                     CCDetallePaciente.IdPaciente = reader["pacId"].ToString();
                     FuncionarioC.IdFuncionario = reader["perId"].ToString();
+                    CConector.SelectInDropDown(DClasificacion, reader["clasificacion"]);
 
                     if (CCDetallePaciente.IdPaciente.Length != 0)
                     {
@@ -138,6 +140,7 @@ public partial class cliente_quejas : System.Web.UI.Page
         query["segFechaIngreso"] = "GETDATE()";
         query["qrTipoCliente"]= RPaciente.Checked ? "1" : "2";
         query["entId"] = CCDetallePaciente.AsegurdadorID;
+        query["clasificacion"] = DClasificacion.SelectedValue;
 
         if(HIdQuejas.Value.Length==0) {
 
@@ -236,8 +239,6 @@ public partial class cliente_quejas : System.Web.UI.Page
         Query queja = new Query("serQuejasReclamos");
         CConectorMS conector= new CConectorMS();
 
-        query["qrId"] = HIdQuejas.Value;
-        query["sqrId"]= conector.QueryString("(SELECT ISNULL(MAX(sqrId)+1,1) FROM serSeguimiento WHERE qrId=" + HIdQuejas.Value + ")");
         query["sqrDetalles"] = TSDetalles.Text;
         if (TAcciones.Text.Length == 0)
             query.AddCampo("sqrPendiente", "''", false);
@@ -250,6 +251,10 @@ public partial class cliente_quejas : System.Web.UI.Page
             query["sqrRespuestaAsegurador"] = CRAsegurador.Checked ? "1" : "";
             query["sqrRespuestaTelefonica"] = CRTelefonica.Checked ? "1" : "";
             query["sqrRespuestaEnteVig"] = CRVigilancia.Checked ? "1" : "";
+            query["que"] = TQue.Text;
+            query["quien"] = TQuien.Text;
+            query["como"] = TComo.Text;
+            query["porque"] = TPorque.Text;
 
             queja["qrCerrado"] = "1";
             if (!FArchivo.HasFile)
@@ -259,15 +264,29 @@ public partial class cliente_quejas : System.Web.UI.Page
         query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
         query["segFechaIngreso"] = "GETDATE()";
 
-        if(FArchivo.HasFile) {
-            
-            Archivos archivo = new Archivos(FArchivo.PostedFile, 0);
-            if (!archivo.SaveFile(query))
-                return;
+        if (string.IsNullOrEmpty(ViewState["sqrId"].ToString())) {
+            if (FArchivo.HasFile)
+            {
+
+                Archivos archivo = new Archivos(FArchivo.PostedFile, 0);
+                if (!archivo.SaveFile(query))
+                    return;
+            }
+            else
+            {
+                query["qrId"] = HIdQuejas.Value;
+                query["sqrId"]= conector.QueryString("(SELECT ISNULL(MAX(sqrId)+1,1) FROM serSeguimiento WHERE qrId=" + HIdQuejas.Value + ")");
+
+                if (conector.QueryMod(query.GetInsert()) == -1)
+                    return;
+            }
         } else {
-            if (conector.QueryMod(query.GetInsert()) == -1)
+            if (conector.QueryMod(query.GetUpdate(string.Format("qrId={0} AND sqrId={1}"
+                , HIdQuejas.Value
+                , ViewState["sqrId"]))) == -1)
                 return;
         }
+
         queja["qrAtendido"] = "1";
 
         if (conector.QueryMod(queja.GetUpdate("qrId=" + HIdQuejas.Value)) == -1)
@@ -275,24 +294,30 @@ public partial class cliente_quejas : System.Web.UI.Page
 
         GSeguimiento.DataBind();
 
-        TSDetalles.Text="";
-        TAcciones.Text="";
-        CCerrar.Checked=false;
-        CRUsuario.Checked=false;
-        CRAsegurador.Checked=false;
-        CRTelefonica.Checked=false;
-        CRVigilancia.Checked=false;
-
-        PISeguimiento.Visible = false;
+        BCancelarSeguimiento_Click(sender, e);
     }
 
     protected void BCancelarSeguimiento_Click(object sender, EventArgs e)
     {
+        TSDetalles.Text = "";
+        TAcciones.Text = "";
+        TPorque.Text = "";
+        TComo.Text = "";
+        TQue.Text = "";
+        TQuien.Text = "";
+        CCerrar.Checked = false;
+        CRUsuario.Checked = false;
+        CRAsegurador.Checked = false;
+        CRTelefonica.Checked = false;
+        CRVigilancia.Checked = false;
+        ViewState["sqrId"] = null;
+
         PISeguimiento.Visible = false;
     }
 
     protected void LASeguimiento_Click(object sender, EventArgs e)
     {
+        ViewState["sqrId"] = null;
         PISeguimiento.Visible = true;
     }
 
@@ -305,7 +330,8 @@ public partial class cliente_quejas : System.Web.UI.Page
             CRUsuario.Checked &&
             CRTelefonica.Checked &&
             FArchivo.HasFile &&
-            (CRAsegurador.Checked || CRVigilancia.Checked);
+            (CRAsegurador.Checked || CRVigilancia.Checked)
+            ;
         }
     }
     protected void GSeguimiento_SelectedIndexChanged(object sender, EventArgs e) {
@@ -329,5 +355,53 @@ public partial class cliente_quejas : System.Web.UI.Page
 
         archivo.ShowFile(Response);
         GSeguimiento.SelectedIndex=-1;
+    }
+
+    protected void GSeguimiento_Editing(object sender, GridViewEditEventArgs e)
+    {
+        if(e.NewEditIndex!=-1) {
+            
+            BAceptarSeguimiento.Enabled = CUsuario.GetUsuario().CanUpdate();
+
+            Query query = new Query("serSeguimiento");
+            CConectorMS conector = new CConectorMS();
+
+            query+= "sqrDetalles";
+            query+= "sqrPendiente";
+            query+= "sqrCerrar";
+
+            query+= "sqrRespuestaUsuario";
+            query+= "sqrRespuestaAsegurador";
+            query+= "sqrRespuestaTelefonica";
+            query+= "sqrRespuestaEnteVig";
+            query+= "que";
+            query+= "quien";
+            query+= "como";
+            query += "porque";
+
+            SqlDataReader reader= conector.Query(query.GetSelect(string.Format("qrId={0} AND sqrId={1}"
+                , GSeguimiento.DataKeys[e.NewEditIndex].Values[0]
+                , GSeguimiento.DataKeys[e.NewEditIndex].Values[1])));
+            if(reader!=null && reader.Read()) {
+
+                ViewState["sqrId"] = GSeguimiento.DataKeys[e.NewEditIndex].Values[1];
+                TSDetalles.Text= reader["sqrDetalles"].ToString();
+                TAcciones.Text = reader["sqrPendiente"].ToString();
+                CCerrar.Checked= reader["sqrCerrar"].ToString()=="1";
+                if(CCerrar.Checked) {
+
+                    CRUsuario.Checked= reader["sqrRespuestaUsuario"].ToString()== "1";
+                    CRAsegurador.Checked= reader["sqrRespuestaAsegurador"].ToString()== "1";
+                    CRTelefonica.Checked= reader["sqrRespuestaTelefonica"].ToString()== "1";
+                    CRVigilancia.Checked= reader["sqrRespuestaEnteVig"].ToString()== "1";
+                    TQue.Text= reader["que"].ToString();
+                    TQuien.Text= reader["quien"].ToString();
+                    TComo.Text= reader["como"].ToString();
+                    TPorque.Text = reader["porque"].ToString();
+                }
+                PISeguimiento.Visible = true;
+            }
+        }
+        e.Cancel = true;
     }
 }

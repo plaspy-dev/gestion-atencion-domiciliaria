@@ -116,7 +116,7 @@
                 <asp:SqlDataSource ID="SArea" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="SELECT CAST(GROUP_CONCAT(medicamentos.id) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
+                    SelectCommand="SELECT CAST(IFNULL(GROUP_CONCAT(medicamentos.id),-1) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -136,45 +136,48 @@
     </asp:Panel>
     <br />
     <div id="dImprimir">
-    <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
-        AutoGenerateColumns="False" EmptyDataText="No se encontraron autorizaciones" DataKeyNames="prgId"
-        AllowPaging="True" PageSize="50" AllowSorting="True" 
-            OnRowDataBound="GResultados_RowDataBound" 
-            onselectedindexchanged="GResultados_SelectedIndexChanged" >
-        <RowStyle CssClass="GridRow"></RowStyle>
-        <FooterStyle CssClass="GridFooter"></FooterStyle>
-        <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-        <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-        <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-        <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-        <Columns>
-            <asp:BoundField HeaderText="Fecha" DataField="prgFechaProg" SortExpression="prgFechaProg" DataFormatString="{0:d}" />
-            <asp:HyperLinkField DataTextField="pacDocumento" HeaderText="Documento" 
-                DataNavigateUrlFields="pacId" SortExpression="pacDocumento"
-                DataNavigateUrlFormatString="~/programacion/programacion.aspx?pid={0}" 
-                ItemStyle-HorizontalAlign="Right" >
-<ItemStyle HorizontalAlign="Right"></ItemStyle>
-            </asp:HyperLinkField>
-            <asp:HyperLinkField DataTextField="pacNombres" HeaderText="Paciente" DataNavigateUrlFields="pacId" SortExpression="pacNombres"
-                DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" />
-            <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre"/>
-            <asp:BoundField HeaderText="Actividad" DataField="actDescripcion" SortExpression="actDescripcion"/>
-            <asp:BoundField HeaderText="Actividad" DataField="actId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
-            <asp:BoundField HeaderText="Profesional" DataField="perNombre" SortExpression="perNombre"/>
-            <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio"/>
-            <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion"/>
-            <asp:BoundField HeaderText="Teléfono" DataField="pacTelefono" SortExpression="pacTelefono"/>
-            <asp:HyperLinkField DataTextField="autNumero" HeaderText="Autorización" DataNavigateUrlFields="autNumero" 
-                DataNavigateUrlFormatString="~/admisiones/autorizaciones.aspx?aut={0}" SortExpression="autNumero" />
-            <asp:BoundField HeaderText="Observaciones" DataField="prgObservaciones" SortExpression="prgObservaciones"/>
-            <asp:TemplateField HeaderText="Novedades" SortExpression="novedad">
-                <ItemTemplate>
-                    <asp:LinkButton ID="LinkButton1" runat="server" CausesValidation="False" Visible='<%# Eval("novIden").ToString()=="" ? false : true %>' CommandName="Select" Text='<%# Eval("novedad").ToString() %>'></asp:LinkButton>
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:BoundField HeaderText="intensidad" DataField="intensidad" SortExpression="intensidad" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
-        </Columns>
-    </asp:GridView>
+    <asp:UpdatePanel ID="PResultados" runat="server">
+        <ContentTemplate>
+            <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
+                AutoGenerateColumns="False" EmptyDataText="No se encontraron autorizaciones" DataKeyNames="prgId"
+                AllowPaging="True" PageSize="50" AllowSorting="True" 
+                    OnRowDataBound="GResultados_RowDataBound" 
+                    onselectedindexchanged="GResultados_SelectedIndexChanged" >
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                <Columns>
+                    <asp:BoundField HeaderText="Fecha" DataField="prgFechaProg" SortExpression="prgFechaProg" DataFormatString="{0:d}" />
+                    <asp:HyperLinkField DataTextField="pacDocumento" HeaderText="Documento" 
+                        DataNavigateUrlFields="pacId" SortExpression="pacDocumento"
+                        DataNavigateUrlFormatString="~/programacion/programacion.aspx?pid={0}" 
+                        ItemStyle-HorizontalAlign="Right" >
+        <ItemStyle HorizontalAlign="Right"></ItemStyle>
+                    </asp:HyperLinkField>
+                    <asp:HyperLinkField DataTextField="pacNombres" HeaderText="Paciente" DataNavigateUrlFields="pacId" SortExpression="pacNombres"
+                        DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" />
+                    <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre"/>
+                    <asp:BoundField HeaderText="Actividad" DataField="actividad" SortExpression="actividad"/>
+                    <asp:BoundField HeaderText="Profesional" DataField="perNombre" SortExpression="perNombre"/>
+                    <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio"/>
+                    <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion"/>
+                    <asp:BoundField HeaderText="Teléfono" DataField="pacTelefono" SortExpression="pacTelefono"/>
+                    <asp:HyperLinkField DataTextField="autNumero" HeaderText="Autorización" DataNavigateUrlFields="autNumero" 
+                        DataNavigateUrlFormatString="~/admisiones/autorizaciones.aspx?aut={0}" SortExpression="autNumero" />
+                    <asp:BoundField HeaderText="Observaciones" DataField="prgObservaciones" SortExpression="prgObservaciones"/>
+                    <asp:TemplateField HeaderText="Novedades" SortExpression="novedad" ItemStyle-Wrap="false">
+                        <ItemTemplate>
+                            <asp:LinkButton ID="LNovedad" runat="server" CausesValidation="False" Visible='<%# Eval("novedad").ToString()=="" ? false : true %>' CommandName="Select" Text='<%# Eval("novedad").ToString() %>'></asp:LinkButton>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
+            <uc3:novedad ID="UCNovedad" runat="server" OnAceptarClicked="UCNovedad_AceptarClicked" Visible="false" OnCancelarClicked="UCNovedad_CancelarClicked" />
+        </ContentTemplate>
+    </asp:UpdatePanel>
     <div style="text-align: right;">
         <asp:Label ID="LTotal" runat="server" Text=""></asp:Label>
     </div>
@@ -186,18 +189,21 @@
                                 ,phdPaciente.pacTelefono
                                 ,admEntidad.entNombre
                                 ,admPersonalHS.perNombre
-                                ,programacion.actId,phdActividad.actDescripcion
-                                ,phdDetalleAutorizacion.intensidad
-                                ,phdNovedad.novIden
+                                ,CAST(programacion.actId AS VARCHAR(255))+'_'+ISNULL(CAST(programacion.intensidad AS VARCHAR(255)),'') AS actividad
                                 ,programacion.prgId
-                                ,CASE phdNovedad.novTipo WHEN 1 THEN 'Cancelación Programación' WHEN 2 THEN 'Reasignación' WHEN 3 THEN 'Cambio en num. sesiones' WHEN 4 THEN 'Otro' WHEN 5 THEN 'Paciente desprotegido' WHEN 6 THEN 'Cambio Servicio' ELSE NULL END AS novedad
+                                ,novedad
                                 ,programacion.prgObservaciones
                                 FROM programacion
                                 LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId)
                                 LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
                                 LEFT JOIN admPersonalHS ON (admPersonalHS.perId=programacion.perId)
-                                LEFT JOIN phdActividad ON (phdActividad.actId=programacion.actId)
-                                LEFT JOIN phdNovedad ON (phdNovedad.prgId=programacion.prgId)
+                                CROSS APPLY
+                                (
+                                    SELECT (CASE phdNovedad.novTipo WHEN 1 THEN 'Cancelación Programación' WHEN 2 THEN 'Reasignación' WHEN 3 THEN 'Cambio en num. sesiones' WHEN 4 THEN 'Otro' WHEN 5 THEN 'Paciente desprotegido' WHEN 6 THEN 'Cambio Servicio' ELSE NULL END)+',_' AS novedad
+                                    FROM phdNovedad
+                                    WHERE phdNovedad.prgId=programacion.prgId
+                                    FOR XML PATH('')
+                                ) pre_trimmed (novedad)                            
                                 LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=programacion.autNumero AND phdDetalleAutorizacion.actId=programacion.actId AND phdDetalleAutorizacion.intensidad=programacion.intensidad)
                             WHERE programacion.prgFechaProg BETWEEN @inicio AND @fin
                             AND programacion.prgActivo=1
@@ -217,5 +223,4 @@
                     <asp:ControlParameter ControlID="DIntensidad" PropertyName="SelectedValue" Name="intensidad" />
                  </SelectParameters>
     </asp:SqlDataSource>
-    <uc3:novedad ID="UCNovedad" runat="server" OnAceptarClicked="UCNovedad_AceptarClicked" Visible="false" OnCancelarClicked="UCNovedad_CancelarClicked" />
 </asp:Content>

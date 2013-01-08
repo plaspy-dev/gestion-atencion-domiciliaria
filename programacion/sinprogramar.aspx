@@ -78,7 +78,7 @@
                 <asp:SqlDataSource ID="SArea" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="SELECT CAST(GROUP_CONCAT(medicamentos.id) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
+                    SelectCommand="SELECT CAST(IFNULL(GROUP_CONCAT(medicamentos.id),-1) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -140,19 +140,37 @@
                             CROSS APPLY
                             (
                                 SELECT ISNULL(phdActividad.actDescripcion,'%%'+ CAST(phdDetalleAutorizacion.actId AS VARCHAR(9))) 
-                                    + ISNULL('[$$' + CAST(phdDetalleAutorizacion.intensidad AS VARCHAR(9)) + ']','')
+                                    + ISNULL(' [$$' + CAST(phdDetalleAutorizacion.intensidad AS VARCHAR(9)) + ']','')
                                     + ' (' + CAST(ISNULL(phdDetalleAutorizacion.autNumSesiones,0) AS VARCHAR(9))
                                     + '-' + CAST((SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)) ) AS VARCHAR(9)) 
                                     + '-' + CAST(ISNULL(phdDetalleAutorizacion.autSesionesDia,0) AS VARCHAR(9)) 
                                     + '),_ '
                                 FROM phdDetalleAutorizacion
                                 LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
+                                LEFT JOIN (
+                                    SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
+                                    FROM programacion 
+                                    GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
+                                ) AS programacion ON 
+                                (
+                                    programacion.autNumero=phdDetalleAutorizacion.autNumero 
+                                    AND programacion.actId=phdDetalleAutorizacion.actId 
+                                    AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
+                                    (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
+                                ) -- end of on join
                                 WHERE phdDetalleAutorizacion.autNumero = phdAutorizacion.autNumero
-                                AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
+                                {0} 
+                                AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
+                                AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
+                                AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
+                                AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
+                                AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
+                                AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
                                 FOR XML PATH('')
                             ) pre_trimmed (detalles)
                             WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                             AND phdAutorizacion.autActivo=1
+                            AND phdPaciente.estId=1
                             AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
                             AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                             AND EXISTS (
@@ -206,7 +224,7 @@
     <asp:SqlDataSource ID="SResumen" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
                 SelectCommand="( 
-                        SELECT '-3' AS nombre,COUNT(DISTINCT phdAutorizacion.autNumero) AS des
+                        SELECT CAST('-3' AS VARCHAR(9)) AS nombre,COUNT(DISTINCT phdAutorizacion.autNumero) AS des
                                                     FROM phdAutorizacion
                                                     LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
                                                     LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
@@ -224,6 +242,7 @@
                                                     ) -- end of on join
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
                                                     AND phdAutorizacion.autActivo=1
+                                                    AND phdPaciente.estId=1
                                                     AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
                                                     {0}
@@ -234,7 +253,7 @@
                                                     AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
                                                     AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
                         ) UNION ( 
-                        SELECT '-1',COUNT(DISTINCT phdPaciente.pacNombres)
+                        SELECT CAST('-1' AS VARCHAR(9)),COUNT(DISTINCT phdPaciente.pacNombres)
                                                     FROM phdAutorizacion
                                                     LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
                                                     LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
@@ -251,6 +270,8 @@
                                                         (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
                                                     ) -- end of on join
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
+                                                    AND phdAutorizacion.autActivo=1
+                                                    AND phdPaciente.estId=1
                                                     AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
                                                     {0}
@@ -261,7 +282,8 @@
                                                     AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
                                                     AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
                         ) UNION (
-                        SELECT phdDetalleAutorizacion.actId,SUM(autNumSesiones)
+                            SELECT '%%'+ CAST(phdDetalleAutorizacion.actId AS VARCHAR(9)) 
+                                    + ISNULL(' [$$' + CAST(phdDetalleAutorizacion.intensidad AS VARCHAR(9)) + ']',''),SUM(autNumSesiones)
                                                     FROM phdAutorizacion
                                                     LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
                                                     LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
@@ -278,6 +300,8 @@
                                                         (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
                                                     ) -- end of on join
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
+                                                    AND phdAutorizacion.autActivo=1
+                                                    AND phdPaciente.estId=1
                                                     AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
                                                     {0}
@@ -287,9 +311,9 @@
                                                     AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
                                                     AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
                                                     AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
-							                        GROUP BY phdDetalleAutorizacion.actId
+							                        GROUP BY phdDetalleAutorizacion.actId,phdDetalleAutorizacion.intensidad
                         )UNION (
-                        SELECT 5000000,SUM(phdDetalleAutorizacion.autNumSesiones)
+                        SELECT CAST(5000000 AS VARCHAR(9)),SUM(phdDetalleAutorizacion.autNumSesiones)
                                                     FROM phdAutorizacion
                                                     LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
                                                     LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
@@ -306,6 +330,8 @@
                                                         (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
                                                     ) -- end of on join
                                                     WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
+                                                    AND phdAutorizacion.autActivo=1
+                                                    AND phdPaciente.estId=1
                                                     AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
                                                     {0}

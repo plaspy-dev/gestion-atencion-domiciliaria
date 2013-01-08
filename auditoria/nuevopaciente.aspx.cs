@@ -47,7 +47,7 @@ public partial class auditoria_nuevopaciente : System.Web.UI.Page
 
                 texto = years.ToString();
             }
-            catch (Exception ex) { }
+            catch { }
             e.Row.Cells[3].Text = texto; // edad
 
             if (conectorms == null)

@@ -98,8 +98,17 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Sistema de bajo flujo", 23, parent);
             Add("Sistema de alto flujo", 24, parent);
             Add("Fuerza muscular", 25, parent);
+
+            parent = Add("Registro PQR");
+            Add("Clasificación", 26, parent);
+
+            parent = Add("Bitácoras");
+            Add("Novedad administrativa", 27, parent);
+            Add("Novedad del servicio prestado", 28, parent);
+
+            // disponible 29
+
             
-            // disponible 26
 
 
             if (HTipo.Value.Length == 0)

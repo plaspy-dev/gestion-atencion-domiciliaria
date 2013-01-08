@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.Globalization;
 using System.Web;
 using MySql.Data.MySqlClient;
+using SDG.Componentes;
 
 namespace SDG.Web.UI.WebControls;
 
@@ -39,6 +41,14 @@ internal class SessionState
 		if (valor == null)
 		{
 			return "NULL";
+		}
+		if (valor is double num)
+		{
+			return GetValor(num.ToString(CultureInfo.InvariantCulture));
+		}
+		if (valor is DateTime)
+		{
+			return GetValor(Conector.GetMySQLDateFormat((DateTime)valor, horas: true));
 		}
 		return GetValor(valor.ToString());
 	}

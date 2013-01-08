@@ -2,8 +2,8 @@
 
 | Component / Componente | Author / Autor | Source / Origen | License / Licencia | Build path / Ruta de compilación | SHA-256 |
 | --- | --- | --- | --- | --- | --- |
-| iTextSharp 5.2.0 | iText | [NuGet 5.2.0](https://www.nuget.org/packages/iTextSharp/5.2.0) | [AGPL](THIRD-PARTY-LICENSES/iTextSharp-5.2.0-AGPL.txt) | `Bin/itextsharp.dll` | `6604df0949263f645a26aba510a04a80871698b96267cf3586e808dbdec1b6ac` |
-| XML Worker 1.1.1.0 | iText y autores de XML Worker | Copia del respaldo de este corte | [AGPL](THIRD-PARTY-LICENSES/iTextSharp-5.2.0-AGPL.txt) | `Bin/itextsharp.xmlworker.dll` | `044e8268aa9449745cec1c84cea370e308cbbc51f73e8abb3950ca0c74360d13` |
+| iTextSharp 5.3.5 | iText | [Versión de iText 5.3.5](https://kb.itextpdf.com/it5kb/release-itext-5-3-5), copia del respaldo | [AGPL](THIRD-PARTY-LICENSES/iTextSharp-5.3.5-AGPL.txt) | `Bin/itextsharp.dll` | `2171604f6ec5a5633f31597e995de38c3d92450bf9d5d2944aaf6d0dce89792d` |
+| XML Worker 5.3.5 | iText y autores de XML Worker | Respaldo 102, fuentes originales y binario regenerado sin ruta de depuración | [AGPL](THIRD-PARTY-LICENSES/iTextSharp-5.3.5-AGPL.txt) | `Bin/itextsharp.xmlworker.dll` | `8355122dcbcceae0c6c5fed669de5b3e40b21b40fafbe0a3c99722c1c7aa06ff` |
 
 ## Archived ASP.NET assemblies / Ensamblados ASP.NET archivados
 

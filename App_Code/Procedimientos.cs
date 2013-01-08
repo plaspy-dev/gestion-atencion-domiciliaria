@@ -59,7 +59,7 @@ public class Procedimientos
         {
             nombre = info.varios[id];
         }
-        catch (Exception ex)
+        catch 
         {
             nombre = new CConector().QueryString("SELECT nombre FROM varios WHERE id=" + Query.GetValor(id));
             info.varios[id] = nombre;
@@ -75,7 +75,7 @@ public class Procedimientos
         {
             resultado = info.pProcedimentos[id];
         }
-        catch (Exception ex)
+        catch 
         {
             CConector conector = new CConector();
             string nombre = "";
@@ -120,7 +120,7 @@ public class Procedimientos
         {
             costo = info.pCostos[entidad].dCosto;
         }
-        catch (Exception ex)
+        catch 
         {
         }
         return costo;
@@ -134,7 +134,7 @@ public class Procedimientos
         {
             servicios = info.pCostos[entidad].nServicios;
         }
-        catch (Exception ex)
+        catch 
         {
         }
         return servicios;

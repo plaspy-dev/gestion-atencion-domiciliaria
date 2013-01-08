@@ -25,10 +25,11 @@ public partial class auditoria_autorizadovsrealizado : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            try {
+            try
+            {
                 Convert.ToInt32(e.Row.Cells[0].Text);
                 e.Row.Cells[0].Text = Procedimientos.GetProcedimiento(e.Row.Cells[0].Text);
-            } catch(Exception ex) {}
+            } catch {}
         }
     }
 }

@@ -1,0 +1,176 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using SDG.Componentes;
+
+public partial class entrega_turno_bitacora : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if(!IsPostBack) {
+
+            CUsuario usuario = (CUsuario)CUsuario.GetUsuario();
+            TFecha.Text = DateTime.Now.ToShortDateString();
+#if DEBUG
+            TFecha.Text = DateTime.Now.AddDays(-25).ToShortDateString();
+#endif
+
+            BAceptar.Enabled = usuario.CanInsert();
+            GSeguimiento.Columns[0].Visible = usuario.CanUpdate();
+            GSeguimiento.Columns[1].Visible = usuario.CanDelete();
+            BMas.Visible = false;
+
+            if(!string.IsNullOrEmpty(Request.QueryString["bid"])) {
+
+                Query query = new Query("turBitacora");
+                CConectorMS conector = new CConectorMS();
+
+                query += "turBitacora.bitId";
+                query += "turBitacora.bitFecha";
+                query += "turBitacora.bitObservaciones";
+                query += "turBitacora.tpaId";
+                query += "turBitacora.NAdministrativa";
+                query += "turBitacora.NServicio";
+                query += "turBitacora.pacId";
+                query += "phdPaciente.pacNombres";
+
+                SqlDataReader reader = conector.Query(query.GetSelect("bitId=" + Query.GetValor(Request.QueryString["bid"]), "LEFT JOIN phdPaciente ON (phdPaciente.pacId=turBitacora.pacId)"));
+                if(reader!=null && reader.Read()) {
+
+                    HBitacora.Value= reader["bitId"].ToString();
+                    TFecha.Text= CConector.GetFromMySQLDate(reader["bitFecha"]);
+                    TObservaciones.Text = reader["bitObservaciones"].ToString();
+                    DTipo.SelectedValue= reader["tpaId"].ToString();
+                    TPacienteID.Text = reader["pacId"].ToString();
+                    TPaciente.Text = reader["pacNombres"].ToString();
+                    CConector.SelectInDropDown(DNAdministrativa, reader["NAdministrativa"]);
+                    CConector.SelectInDropDown(DNServicio, reader["NServicio"]);
+
+                    CCDetallePaciente.IdPaciente = TPacienteID.Text;
+                    CCDetallePaciente.Visible = TPacienteID.Text.Length > 0;
+
+                    BMas.Visible = true;
+                    BMas.Enabled = usuario.CanInsert();
+                    BAceptar.Enabled = usuario.CanUpdate();
+                }
+            }
+            ((MasterPageI)Master).Excel(GResultados);
+            ((MasterPageI)Master).Imprimir(GResultados);
+        }
+        Utilidades.GetRowsCount(GResultados, LTotal);
+    }
+
+    protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowIndex != -1)
+        {
+            e.Row.Cells[2].Text = Procedimientos.GetVarios(e.Row.Cells[2].Text);
+            e.Row.Cells[3].Text = Procedimientos.GetVarios(e.Row.Cells[3].Text);
+        }
+    }
+    protected void BCancelar_Click(object sender, EventArgs e)
+    {
+        Response.Redirect(Request.Url.AbsolutePath);
+    }
+
+    protected void BAceptar_Click(object sender, EventArgs e)
+    {
+        if (!IsValid)
+            return;
+        Query query = new Query("turBitacora");
+        CConectorMS conector = new CConectorMS();
+
+        conector.StartTransaction();
+
+        query["bitFecha"] = TFecha.Text;
+        query["bitObservaciones"] = TObservaciones.Text;
+        query["tpaId"] = DTipo.SelectedValue;
+        query["NAdministrativa"]= DNAdministrativa.SelectedValue;
+        query["NServicio"]= DNServicio.SelectedValue;
+        query["pacId"] = TPacienteID.Text;
+
+        if (string.IsNullOrEmpty(HBitacora.Value))
+        {
+            query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
+            query["segFechaRegistro"] = "GETDATE()";
+
+            int res = conector.QueryMod(query.GetInsert());
+            if (res == -1)
+                return;
+            HBitacora.Value=res.ToString();
+        } else {
+            if (conector.QueryMod(query.GetUpdate("bitId=" + HBitacora.Value)) == -1)
+                return;
+        }
+        if (new CConector().InsertModificacion(HBitacora.Value) == -1)
+            return;
+
+        conector.Commit();
+        ((MasterPageI)Master).SetResultado("Bitácora editada.");
+    }
+    
+    protected void BBuscar_Click(object sender, EventArgs e)
+    {
+    }
+
+    protected void BMas_Click(object sender, EventArgs e)
+    {
+        ViewState["idmas"] = null;
+        TFechaSeguimiento.Text = DateTime.Now.ToShortDateString();
+        TObjeto.Text = "";
+        DArea.Focus();
+        if (DArea.Items.Count == 0)
+            DArea.DataBind();
+        DArea.SelectedIndex= 0;
+        PMas.Visible = true;
+    }
+
+    protected void BAceptarMas_Click(object sender, EventArgs e)
+    {
+        if (!IsValid)
+            return;
+
+        CConectorMS conector = new CConectorMS();
+        Query query = new Query("bitacora_seguimiento");
+
+        query["bitacora"] = HBitacora.Value;
+        query["fecha"] = TFechaSeguimiento.Text;
+        query["area"] = DArea.SelectedValue;
+        query["objeto"] = TObjeto.Text;
+
+        if (GSeguimiento.SelectedIndex==-1)
+        {
+            if (conector.QueryMod(query.GetInsert()) == -1)
+                return;
+        } else {
+            if (conector.QueryMod(query.GetUpdate("id=" + GSeguimiento.DataKeys[GSeguimiento.SelectedIndex].Value.ToString())) == -1)
+                return;
+        }
+
+        GSeguimiento.DataBind();
+        GSeguimiento.SelectedIndex = -1;
+        PMas.Visible = false;
+    }
+
+    protected void BCancelarMas_Click(object sender, EventArgs e)
+    {
+        ViewState["idmas"] = null;
+        PMas.Visible = false;
+        GSeguimiento.SelectedIndex = -1;
+    }
+
+    protected void GSeguimiento_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        GridViewRow row= GSeguimiento.Rows[GSeguimiento.SelectedIndex];
+        TFechaSeguimiento.Text = HttpUtility.HtmlDecode(row.Cells[2].Text);
+        DArea.DataBind();
+        CConector.SelectInComboText(DArea, HttpUtility.HtmlDecode(row.Cells[3].Text));
+        TObjeto.Text = HttpUtility.HtmlDecode(row.Cells[4].Text);
+
+        PMas.Visible = true;
+    }
+}

@@ -47,7 +47,7 @@ public partial class rh_funcionario : System.Web.UI.Page
             // solo compatibilidad
             if (Request.QueryString["ip"] != null && Request.QueryString["ip"].Length>0)
             {
-                Response.Redirect(Request.Url.AbsolutePath + "?id=" + Crypt.Desencriptar(Request.QueryString["ip"]));
+                Response.Redirect(Request.Url.AbsolutePath + "?id=" + Crypt.DesencriptarDES(Request.QueryString["ip"]));
                 Response.End();
                 return;
             }

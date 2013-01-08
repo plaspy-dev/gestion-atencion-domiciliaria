@@ -55,6 +55,12 @@ public partial class administrador_parametros2 : System.Web.UI.Page
 
             Add("Cargos", "admCargo", parent, "carId,carDescripcion");
 
+            parent = Add("Reporte PQR");
+            Add("Tipos", "serTipoFormulario", parent, "tqrIdTipo,tqrDescripcion");
+
+            parent = Add("Bitácoras");
+            Add("Tipo", "phdTipoActividad", parent, "tpaId,tpaDescripcion");
+
             if (HTipo.Value.Length == 0)
                 Response.Redirect(Request.Url.AbsolutePath + "?tipo=admCargo");
         }

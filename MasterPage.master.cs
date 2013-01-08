@@ -59,12 +59,12 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
         if (lnkExcel.Visible == false)
         {
-            Session["excelgridview"] = null;
+            ViewState["excelgridview"] = null;
         }
         if(lnkImp.Visible==false) {
-            
-            Session["printgridview"] = null;
-            Session["printfile"] = null;
+
+            ViewState["printgridview"] = null;
+            ViewState["printfile"] = null;
         } else {
             if(Request.QueryString["p"]=="1" && Usuario.GetUsuario().CanPrint()) {
                 // nos preparamos para redireccionar
@@ -120,7 +120,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
         if (conector.QueryMod("UPDATE usuario SET contrasena=PASSWORD(" + Query.GetValor(TNueva.Text) + ") WHERE id='" + usuario.GetID() + "'") == -1)
             return;
-        if (conectorms.QueryMod("UPDATE seg_Usuarios SET usClave=" + Query.GetValor(Crypt.Encriptar(TNueva.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"))) + " WHERE usIdUsuario=" + Query.GetValor(usuario.GetLogin())) == -1)
+        if (conectorms.QueryMod("UPDATE seg_Usuarios SET usClave=" + Query.GetValor(Crypt.EncriptarDES(TNueva.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4"))) + " WHERE usIdUsuario=" + Query.GetValor(usuario.GetLogin())) == -1)
             return;
         lblTitulo.Text = "Contraseña cambiada correctamente.";
     }
@@ -139,7 +139,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
     public void Excel(GridView view)
     {
         lnkExcel.Visible = Usuario.GetUsuario().CanPrint();
-        Session["excelgridview"] = view;
+        ViewState["excelgridview"] = view.ID;
     }
 
     public void Imprimir() {
@@ -150,7 +150,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
     {
         lnkImp.Visible = Usuario.GetUsuario().CanPrint();
         lnkImp.OnClientClick = "";
-        Session["printgridview"] = view;
+        ViewState["printgridview"] = view.ID;
     }
 
     public LinkButton GetPrintLink()
@@ -224,6 +224,29 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
     }
 
+    private Control FindControlEx(string id)
+    {
+        return FindControlEx(this.Controls, id);
+    } 
+
+    private Control FindControlEx(ControlCollection controles, string id) 
+    {
+        foreach (Control c in controles)
+        {
+            if (c.ID == id)
+            {
+                return c;
+            }
+            if (c.HasControls())
+            {
+                Control temp= FindControlEx(c.Controls, id);
+                if (temp != null)
+                    return temp;
+            }
+        }
+        return null;
+    } 
+
     public string ReplaceContenido(ControlCollection controles, string contenido)
     {
         for (int i = 0; i < controles.Count; i++)
@@ -273,28 +296,31 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         lnkPDF.Visible = lnkExcel.Visible = lnkImp.Visible = Usuario.GetUsuario().CanPrint();
         lnkImp.OnClientClick = "";
         lnkImp.Attributes["r"] = "1";
-        Session["printfile"] = archivo;
+        ViewState["printfile"] = archivo;
     }
 
     protected void lnkImp_Click(object sender, EventArgs e) {
 
-        if (Session["printgridview"] != null)
+        if (ViewState["printgridview"] != null)
         {
-            GridView view = (GridView)Session["printgridview"];
-            bool paging = view.AllowPaging;
-            if (paging)
+            GridView view = (GridView) FindControlEx(ViewState["printgridview"].ToString());
+            if (view != null)
             {
-                view.AllowPaging = false;
-                view.DataBind();
+                bool paging = view.AllowPaging;
+                if (paging)
+                {
+                    view.AllowPaging = false;
+                    view.DataBind();
+                }
+                LAuxDiag.Text = "<script type='text/javascript'>\n";
+                LAuxDiag.Text += "$(function() { imprimir(); });\n";
+                LAuxDiag.Text += "</script>\n";
             }
-            LAuxDiag.Text = "<script type='text/javascript'>\n";
-            LAuxDiag.Text += "$(function() { imprimir(); });\n";
-            LAuxDiag.Text += "</script>\n";
         }
-        else if (Session["printfile"] != null)
+        else if (ViewState["printfile"] != null)
         {
             PrintEventArgs evento = new PrintEventArgs();
-            StreamReader reader = new StreamReader(Server.MapPath(Session["printfile"].ToString()));
+            StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString()));
             evento.Contenido = reader.ReadToEnd();
             reader.Close();
 
@@ -321,16 +347,18 @@ public partial class MasterPageI : System.Web.UI.MasterPage
     protected void lnkExcel_Click(object sender, EventArgs e)
     {
         PrintEventArgs evento = new PrintEventArgs();
-        if (Session["excelgridview"]!=null)
+        if (ViewState["excelgridview"] != null)
         {
             if (_ExcelClicked != null)
             {
                 _ExcelClicked(this, evento);
             }
-            RenderView((GridView)Session["excelgridview"]);
-        } else if(Session["printfile"]!=null) {
+            RenderView((GridView)FindControlEx(ViewState["excelgridview"].ToString()));
+        }
+        else if (ViewState["printfile"] != null)
+        {
 
-            StreamReader reader = new StreamReader(Server.MapPath(Session["printfile"].ToString()));
+            StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString()));
             evento.Contenido = reader.ReadToEnd();
             reader.Close();
 
@@ -350,22 +378,6 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
     }
 
-    class DefaultFontProvider : FontFactoryImp {
-      private String Default;
-      public DefaultFontProvider(String def) {
-        Default = def;
-      }
-
-      // I believe this is the correct override, but there are quite a few others.
-      override public Font GetFont(String fontName, String encoding, bool embedded, float size, int style, BaseColor color,bool cached) {
-        if (fontName == null || fontName.Length == 0) {
-          fontName = Default;
-        }
-        size = 8;
-        return base.GetFont(fontName, encoding, embedded, size, style, color, cached);
-      }
-    }
-    
     protected void lnkPDF_Click(object sender, EventArgs e) {
 
         /*Response.ContentType = "application/pdf";
@@ -397,7 +409,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
         Response.AddHeader("content-disposition", "attachment;filename=" + Page.Title + ".pdf");
 
-        StreamReader reader = new StreamReader(Server.MapPath(Session["printfile"].ToString()));
+        StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString()));
         evento.Contenido = reader.ReadToEnd();
         reader.Close();
 

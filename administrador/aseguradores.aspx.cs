@@ -78,11 +78,11 @@ public partial class administrador_aseguradores : System.Web.UI.Page
         {
             TMaximoMensual.Text = double.Parse(GResultado.SelectedRow.Cells[4].Text, NumberStyles.Currency).ToString(CultureInfo.InvariantCulture);
         }
-        catch (Exception ex) { }
+        catch { }
         try {
             TMaximoPaciente.Text = double.Parse(GResultado.SelectedRow.Cells[3].Text, NumberStyles.Currency).ToString(CultureInfo.InvariantCulture);
         }
-        catch (Exception ex) { }
+        catch { }
 
         ((MasterPageI)Master).SetModificacion(GResultado.SelectedDataKey.Value.ToString());
     }

@@ -209,7 +209,7 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 		{
 			orderedDictionary = SelectParameters.GetValues(HttpContext.Current, _owner);
 		}
-		catch (ArgumentException)
+		catch
 		{
 		}
 		string text = _owner.SelectCommand;
@@ -253,7 +253,7 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 		{
 			foreach (object key in orderedDictionary.Keys)
 			{
-				object obj = orderedDictionary[key];
+				object obj2 = orderedDictionary[key];
 				text = text.Replace("@" + key.ToString(), SessionState.GetValor(orderedDictionary[key]));
 			}
 		}
@@ -345,7 +345,7 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 				text = text.Replace("@" + item.Key.ToString(), SessionState.GetValor(item.Value));
 			}
 		}
-		catch (ArgumentException)
+		catch
 		{
 		}
 		try
@@ -369,7 +369,7 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 				dataRow[item2.Key.ToString()] = text2;
 			}
 		}
-		catch (ArgumentException)
+		catch
 		{
 		}
 		sessionState.AddQuery(text, sessionState.dataTable.Rows.Count - 1);
@@ -393,10 +393,32 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 			{
 				string text2 = sessionState.dataTable.Rows[i][oldValue.Key.ToString()].ToString();
 				string text3 = ((oldValue.Value == null) ? "" : oldValue.Value.ToString());
-				if (text2 != text3)
+				if (!(text2 != text3))
 				{
-					flag = false;
-					break;
+					continue;
+				}
+				bool flag2 = false;
+				try
+				{
+					flag2 = Convert.ToDouble(text2) == Convert.ToDouble(text3);
+				}
+				catch
+				{
+				}
+				if (!flag2)
+				{
+					try
+					{
+						flag2 = Convert.ToDateTime(text2) == Convert.ToDateTime(text3);
+					}
+					catch
+					{
+					}
+					if (!flag2)
+					{
+						flag = false;
+						break;
+					}
 				}
 			}
 			if (flag)
@@ -425,7 +447,7 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 					text = text.Replace("@" + item.Key.ToString(), SessionState.GetValor(item.Value));
 				}
 			}
-			catch (ArgumentException)
+			catch
 			{
 			}
 		}
@@ -448,7 +470,7 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 				text = text.Replace("@" + item2.Key.ToString(), SessionState.GetValor(item2.Value));
 			}
 		}
-		catch (ArgumentException)
+		catch
 		{
 		}
 		sessionState.AddQuery(text, num);
@@ -472,10 +494,32 @@ public class CustomDataSourceView : DataSourceView, IStateManager
 			{
 				string text2 = sessionState.dataTable.Rows[i][oldValue.Key.ToString()].ToString();
 				string text3 = ((oldValue.Value == null) ? "" : oldValue.Value.ToString());
-				if (text2 != text3)
+				if (!(text2 != text3))
 				{
-					flag = false;
-					break;
+					continue;
+				}
+				bool flag2 = false;
+				try
+				{
+					flag2 = Convert.ToDouble(text2) == Convert.ToDouble(text3);
+				}
+				catch
+				{
+				}
+				if (!flag2)
+				{
+					try
+					{
+						flag2 = Convert.ToDateTime(text2) == Convert.ToDateTime(text3);
+					}
+					catch
+					{
+					}
+					if (!flag2)
+					{
+						flag = false;
+						break;
+					}
 				}
 			}
 			if (flag)

@@ -15,19 +15,6 @@ Get-ChildItem -LiteralPath $siteSource -Force | Where-Object {
 if (Test-Path -LiteralPath (Join-Path $siteSource 'Bin')) {
     Copy-Item -LiteralPath (Join-Path $siteSource 'Bin') -Destination (Join-Path $site 'Bin') -Recurse
 }
-$package = $env:DOMICILIO_ITEXTSHARP_PACKAGE
-if ([string]::IsNullOrWhiteSpace($package)) {
-    $package = Join-Path $target 'itextsharp.5.2.0.nupkg'
-    Invoke-WebRequest -Uri 'https://api.nuget.org/v3-flatcontainer/itextsharp/5.2.0/itextsharp.5.2.0.nupkg' -OutFile $package
-}
-$dependency = Join-Path $target 'itextsharp'
-[IO.Compression.ZipFile]::ExtractToDirectory($package, $dependency)
-$pdfLibrary = Join-Path $dependency 'lib/itextsharp.dll'
-if ((Get-FileHash -LiteralPath $pdfLibrary -Algorithm SHA256).Hash.ToLowerInvariant() -ne
-    '6604df0949263f645a26aba510a04a80871698b96267cf3586e808dbdec1b6ac') {
-    throw 'The package does not match the archived iTextSharp binary.'
-}
-Copy-Item -LiteralPath $pdfLibrary -Destination (Join-Path $site 'Bin')
 
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Web.config.example') -Destination (Join-Path $site 'Web.config') -Force
 $library = Join-Path $target 'componentes'

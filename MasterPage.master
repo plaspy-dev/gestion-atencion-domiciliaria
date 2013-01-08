@@ -51,6 +51,45 @@
             if (imp.attr("r") == "1") {
                 imp.attr("href", window.location + "&p=1").attr("target", "_blank");
             }
+            setInterval("$('#renewSession').attr('src', '" + $('#renewSession').attr('src') + "?par=' + Math.random())", 180000);
+
+            $('#<%= UPDiagAux.ClientID %>').panelUpdated(function() {
+
+                if ($("#ctl00_titulo_aux").attr("title").length > 0) {
+                    $("#dialog_aux").dialog({
+                        modal: true,
+                        autoOpen: true,
+                        width: 'auto',
+                        title: $("#ctl00_titulo_aux").attr("title"),
+                        buttons: {
+                            "Aceptar": function() {
+                                $(this).dialog("close");
+                            }
+                        }
+                    });
+                    $(".ui-dialog-buttonpane button").attr('onclick', "$('#dialog-message').dialog('close'); $('#dialog_aux').dialog('close'); ");
+                }
+            });
+
+            $('#<%= UAlertas.ClientID %>').panelUpdated(function() {
+                addDialog("#<%= PAlertas.ClientID %>", "#dAlertas", true);
+            });
+            
+            addFunctionToStart(function() {
+
+                if ($("#<%= LMensaje.ClientID %>").html().length > 0) {
+                    $("#dialog-message").dialog({
+                        modal: true,
+                        width: 'auto',
+                        buttons: {
+                            "Aceptar": function() {
+                                $(this).dialog("close");
+                            }
+                        }
+                    });
+                    $(".ui-dialog-buttonpane button").attr('onclick', "$('#dialog-message').dialog('close'); $('#dialog_aux').dialog('close'); ");
+                }
+            });
         });
     </script>
     <asp:ContentPlaceHolder id="head" runat="server">
@@ -314,47 +353,6 @@
     }
     
     var g_OpenDialog = null;
- 
-    $('#<%= UPDiagAux.ClientID %>').panelUpdated(function() {
-
-        if ($("#ctl00_titulo_aux").attr("title").length > 0) {
-            $("#dialog_aux").dialog({
-                modal: true,
-                autoOpen: true,
-                width: 'auto',
-                title: $("#ctl00_titulo_aux").attr("title"),
-                buttons: {
-                    "Aceptar": function() {
-                        $(this).dialog("close");
-                    }
-                }
-            });
-            $(".ui-dialog-buttonpane button").attr('onclick', "$('#dialog-message').dialog('close'); $('#dialog_aux').dialog('close'); ");
-        }
-    });
-
-    $('#<%= UAlertas.ClientID %>').panelUpdated(function() {
-        addDialog("#<%= PAlertas.ClientID %>", "#dAlertas", true);
-    });
-    
-    $('#<%= UMensaje.ClientID %>').panelUpdated(function() {
-        if ($("#<%= LMensaje.ClientID %>").html().length > 0) {
-            $("#dialog-message").dialog({
-                modal: true,
-                width: 'auto',
-                buttons: {
-                    "Aceptar": function() {
-                        $(this).dialog("close");
-                    }
-                }
-            });
-            $(".ui-dialog-buttonpane button").attr('onclick', "$('#dialog-message').dialog('close'); $('#dialog_aux').dialog('close'); ");
-        }
-    });
-
-    $(document).ready(function() {
-        setInterval("$('#renewSession').attr('src', '" + $('#renewSession').attr('src') + "?par=' + Math.random())", 180000);
-    });
 
     prm = Sys.WebForms.PageRequestManager.getInstance();
     prm.add_beginRequest(function(sender, args) {

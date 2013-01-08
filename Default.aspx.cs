@@ -84,7 +84,7 @@ public partial class _Default : System.Web.UI.Page
             string personal = "";
             string cargos = "";
 
-            MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,1 AS cargos FROM usuario WHERE usuario='" + usuario + "' AND (estado IS NULL OR estado!=-1) AND contrasena=PASSWORD('" + contrasena + "')");
+            MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,cargos FROM usuario WHERE usuario='" + usuario + "' AND (estado IS NULL OR estado!=-1) AND contrasena=PASSWORD('" + contrasena + "')");
             if (reader != null)
             {
                 while (reader.Read())
@@ -157,7 +157,7 @@ public partial class _Default : System.Web.UI.Page
                     }
                 }
 
-                Session["passwdtemp"] = Crypt.Encriptar(m_EContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_3"));
+                Session["passwdtemp"] = Crypt.EncriptarDES(m_EContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4"));
                 conector.Query("UPDATE usuario SET ingreso=SYSDATE() WHERE id='" + id + "'");
                 Response.Cookies["loginOrganizationExample15"].Value = m_EUsuario.Text;
                 Response.Cookies["loginOrganizationExample15"].Expires = DateTime.Now.AddDays(15);

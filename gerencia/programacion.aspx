@@ -17,14 +17,12 @@
     
     function drawChart() {
         drawPieChart("chart_div", [<%= ViewState["servicios"].ToString() %>], "<%= ViewState["titulo"].ToString() %>");
-        drawPieChart("chart_div2", [<%= LCostos.Text %>], "Costos");
+        drawPieChart("chart_div2", [<%= ViewState["costos"].ToString() %>], "Costos");
     }
     
     google.load("visualization", "1", { packages: ["corechart"] });
     google.setOnLoadCallback(drawChart);
 </script>
-<asp:Literal runat="server" ID="LServicios" Visible="false"></asp:Literal>
-<asp:Literal runat="server" ID="LCostos" Visible="false"></asp:Literal>
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
     <table>
         <tr>
@@ -80,6 +78,7 @@
             <asp:UpdatePanel runat="server" ID="UD" UpdateMode="Conditional">
                 <ContentTemplate>
                     <asp:HiddenField runat="server" ID="HId" Value='<%# Eval("id") %>' />
+                    <asp:HiddenField runat="server" ID="Hi" Value='<%# Eval("i") %>' />
                     <asp:Image runat="server" ID="IL" ImageUrl="~/css/ajax-loader.gif" />
                     <asp:Button runat="server" ID="BA" OnClick="OnClickBA" CssClass="hide" />
                     <asp:Repeater runat="server" ID="RH" DataSourceID="" Visible="false" onitemdatabound="RServicios_ItemDataBound">
@@ -92,6 +91,7 @@
                                 <asp:UpdatePanel runat="server" ID="UD" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:HiddenField runat="server" ID="HId2" Value='<%# Eval("id") %>' />
+                                    <asp:HiddenField runat="server" ID="Hi2" Value='<%# Eval("i") %>' />
                                     <asp:Image runat="server" ID="IL2" ImageUrl="~/css/ajax-loader.gif" />
                                     <asp:Button runat="server" ID="BA2" OnClick="OnClickBA" CssClass="hide" />
                                     <asp:GridView runat="server" ID="GR" Visible="false" AutoGenerateColumns="False" DataSourceID="" AllowSorting="true" OnRowDataBound="GResultados_RowDataBound">
@@ -105,7 +105,7 @@
 	                                        <asp:BoundField DataField="prgFechaProg" HeaderText="Fecha" SortExpression="prgFechaProg" DataFormatString="{0:d}" />
 	                                        <asp:BoundField DataField="autNumero" HeaderText="Autorización" SortExpression="autNumero" />
 	                                        <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" ItemStyle-Wrap="false" />
-	                                        <asp:BoundField DataField="personal" HeaderText="Profesional" SortExpression="personal" ItemStyle-Wrap="false" />
+	                                        <asp:BoundField DataField="sesiones" HeaderText="Sesiones" SortExpression="sesiones" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
 	                                        <asp:BoundField DataField="costo" HeaderText="Costo" SortExpression="costo" DataFormatString="{0:c}" ItemStyle-Wrap="false" />
                                         </Columns>
                                     </asp:GridView>
@@ -113,39 +113,49 @@
                                         ConnectionString="<%$ ConnectionStrings:connBD %>" 
                                         SelectCommand="(
                                                     SELECT 
-                                                        programacion.prgFechaProg, programacion.autNumero, phdPaciente.pacNombres AS nombre, admPersonalHS.perNombre AS personal, programacion.costo
+                                                        phdAutorizacion.autFecha AS prgFechaProg, phdAutorizacion.autNumero, phdPaciente.pacDocumento + ' - ' +  phdPaciente.pacNombres AS nombre, SUM(programacion.costo) AS costo
+                                                        ,COUNT(*) AS sesiones
                                                         FROM programacion
                                                         LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId)
-                                                        LEFT JOIN admPersonalHS ON (admPersonalHS.perId=programacion.perId)
+                                                        LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=programacion.autNumero)
                                                         WHERE 
                                                         @grupo=0
                                                         AND programacion.prgFechaProg BETWEEN @inicio AND @fin 
                                                         AND programacion.actId=@id 
+                                                        AND ((@intensidad!=0 AND programacion.intensidad=@intensidad) OR (@intensidad=0 AND programacion.intensidad IS NULL))
                                                         AND programacion.entId=@id2
                                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
+                                                        GROUP BY phdAutorizacion.autFecha,phdAutorizacion.autNumero,phdPaciente.pacNombres,phdPaciente.pacDocumento
                                                     ) UNION (
                                                     SELECT 
-                                                        programacion.prgFechaProg, programacion.autNumero, phdPaciente.pacNombres AS nombre, admPersonalHS.perNombre AS personal, programacion.costo
+                                                        phdAutorizacion.autFecha AS prgFechaProg, phdAutorizacion.autNumero, phdPaciente.pacDocumento + ' - ' + phdPaciente.pacNombres AS nombre, SUM(programacion.costo) AS costo
+                                                        ,COUNT(*) AS sesiones
                                                         FROM programacion
                                                         LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId)
-                                                        LEFT JOIN admPersonalHS ON (admPersonalHS.perId=programacion.perId)
+                                                        LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=programacion.autNumero)
                                                         WHERE 
                                                         @grupo=1
                                                         AND programacion.prgFechaProg BETWEEN @inicio AND @fin 
                                                         AND programacion.entId=@id 
                                                         AND programacion.actId=@id2
+                                                        AND ((@intensidad2!=0 AND programacion.intensidad=@intensidad2) OR (@intensidad2=0 AND programacion.intensidad IS NULL))
                                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
+                                                        GROUP BY phdAutorizacion.autFecha,phdAutorizacion.autNumero,phdPaciente.pacNombres,phdPaciente.pacDocumento
                                                     ) UNION (
                                                     SELECT 
-                                                        programacion.prgFechaProg, programacion.autNumero, CAST(programacion.actId AS VARCHAR(9)) AS nombre, admPersonalHS.perNombre AS personal, programacion.costo
+                                                        phdAutorizacion.autFecha AS prgFechaProg, phdAutorizacion.autNumero
+                                                        , CAST(programacion.actId AS VARCHAR(9)) + '$' + ISNULL(CAST(programacion.intensidad AS VARCHAR(9)),'') AS nombre
+                                                        , SUM(programacion.costo) AS costo
+                                                        ,COUNT(*) AS sesiones
                                                         FROM programacion
-                                                        LEFT JOIN admPersonalHS ON (admPersonalHS.perId=programacion.perId)
+                                                        LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=programacion.autNumero)
                                                         WHERE 
                                                         @grupo=2
                                                         AND programacion.prgFechaProg BETWEEN @inicio AND @fin 
                                                         AND programacion.entId=@id 
                                                         AND programacion.pacId=@id2
                                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
+                                                        GROUP BY phdAutorizacion.autFecha,phdAutorizacion.autNumero,programacion.actId,programacion.intensidad
                                                     )
                                                     ORDER BY prgFechaProg DESC">
                                           <SelectParameters>
@@ -154,6 +164,8 @@
                                                 <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                                                 <asp:ControlParameter ControlID="HId" Name="id" PropertyName="Value" /> 
                                                 <asp:ControlParameter ControlID="HId2" Name="id2" PropertyName="Value" /> 
+                                                <asp:ControlParameter ControlID="Hi" Name="intensidad" PropertyName="Value" DefaultValue="0" /> 
+                                                <asp:ControlParameter ControlID="Hi2" Name="intensidad2" PropertyName="Value" DefaultValue="0" /> 
                                                 <asp:ControlParameter ControlID="DGrupo" PropertyName="SelectedValue" Name="grupo" />
                                           </SelectParameters>
                                     </asp:SqlDataSource>
@@ -169,24 +181,29 @@
                         ConnectionString="<%$ ConnectionStrings:connBD %>" 
                         SelectCommand="(
                                         SELECT programacion.entId AS id,admEntidad.entNombre AS nombre, COUNT(*) AS c,SUM(programacion.costo) AS s 
+                                        ,0 AS i
                                         FROM programacion 
                                         LEFT JOIN admEntidad ON (admEntidad.entId=programacion.entId)
                                         WHERE 
                                         @grupo=0
-                                        AND programacion.prgFechaProg BETWEEN @inicio AND @fin AND programacion.actId=@id 
+                                        AND programacion.prgFechaProg BETWEEN @inicio AND @fin 
+                                        AND programacion.actId=@id 
+                                        AND ((@intensidad!=0 AND programacion.intensidad=@intensidad) OR (@intensidad=0 AND programacion.intensidad IS NULL))
                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
                                         GROUP BY programacion.entId,admEntidad.entNombre
                                     ) UNION (
                                         SELECT actId AS id,'' AS nombre, COUNT(*) AS c,SUM(programacion.costo) AS s 
+                                        ,programacion.intensidad AS i
                                         FROM programacion 
                                         WHERE 
                                         @grupo=1
                                         AND programacion.prgFechaProg BETWEEN @inicio AND @fin 
                                         AND programacion.entId=@id 
                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
-                                        GROUP BY actId
+                                        GROUP BY actId,intensidad
                                     ) UNION (
-                                        SELECT phdPaciente.pacId AS id,phdPaciente.pacNombres AS nombre, COUNT(*) AS c,SUM(programacion.costo) AS s 
+                                        SELECT phdPaciente.pacId AS id,phdPaciente.pacDocumento + ' - ' + phdPaciente.pacNombres AS nombre, COUNT(*) AS c,SUM(programacion.costo) AS s 
+                                        ,0 AS i
                                         FROM programacion 
 										LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId)
                                         WHERE 
@@ -194,14 +211,15 @@
                                         AND programacion.prgFechaProg BETWEEN @inicio AND @fin 
                                         AND programacion.entId=@id 
                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
-                                        GROUP BY phdPaciente.pacId,phdPaciente.pacNombres
+                                        GROUP BY phdPaciente.pacId,phdPaciente.pacDocumento,phdPaciente.pacNombres
                                     )
-                                    ORDER BY c DESC">
+                                    ORDER BY c,id DESC">
                         <SelectParameters>
                             <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
                             <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                             <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                             <asp:ControlParameter ControlID="HId" Name="id" PropertyName="Value" /> 
+                            <asp:ControlParameter ControlID="Hi" Name="intensidad" PropertyName="Value" DefaultValue="0" /> 
                             <asp:ControlParameter ControlID="DGrupo" PropertyName="SelectedValue" Name="grupo" />
                         </SelectParameters>
                     </asp:SqlDataSource>
@@ -219,14 +237,14 @@
 <asp:SqlDataSource ID="SServicios" runat="server" 
     ConnectionString="<%$ ConnectionStrings:connBD %>" 
     SelectCommand="(
-                        SELECT actId AS id,'' AS nombre, COUNT(*) AS c,SUM(costo) AS s FROM programacion 
+                        SELECT actId AS id,'' AS nombre, COUNT(*) AS c,SUM(costo) AS s,intensidad AS i FROM programacion 
                         WHERE 
                         @grupo=0
                         AND prgFechaProg BETWEEN @inicio AND @fin 
                         AND (@asegurador=0 OR @asegurador=programacion.entId)
-                        GROUP BY actId 
+                        GROUP BY actId,intensidad
                     ) UNION (
-                        SELECT admEntidad.entId AS id,admEntidad.entNombre AS nombre, COUNT(*) AS c,SUM(costo) AS s FROM programacion 
+                        SELECT CAST(admEntidad.entId AS VARCHAR(9)) AS id,admEntidad.entNombre AS nombre, COUNT(*) AS c,SUM(costo) AS s,0 AS i FROM programacion 
 					    LEFT JOIN admEntidad ON (admEntidad.entId=programacion.entId)
 					    WHERE 
 					    @grupo=1
@@ -234,14 +252,14 @@
                         AND (@asegurador=0 OR @asegurador=programacion.entId)
                         GROUP BY admEntidad.entId, admEntidad.entNombre
                     ) UNION (
-                        SELECT admEntidad.entId AS id,admEntidad.entNombre AS nombre, COUNT(DISTINCT programacion.pacId) AS c,SUM(costo) AS s FROM programacion 
+                        SELECT CAST(admEntidad.entId AS VARCHAR(9)) AS id,admEntidad.entNombre AS nombre, COUNT(DISTINCT programacion.pacId) AS c,SUM(costo) AS s,0 AS i FROM programacion 
 					    LEFT JOIN admEntidad ON (admEntidad.entId=programacion.entId)
 					    WHERE 
 					    @grupo=2
                         AND prgFechaProg BETWEEN @inicio AND @fin 
                         AND (@asegurador=0 OR @asegurador=programacion.entId)
                         GROUP BY admEntidad.entId, admEntidad.entNombre
-                    ) ORDER BY c DESC">
+                    ) ORDER BY nombre,id DESC">
     <SelectParameters>
         <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
         <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
@@ -260,24 +278,31 @@
         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         <Columns>
             <asp:BoundField DataField="entidad" HeaderText="Entidad" SortExpression="entidad" />
+            <asp:BoundField DataField="pacDocumento" HeaderText="Documento" SortExpression="pacDocumento" />
             <asp:BoundField DataField="nombre" HeaderText="Paciente" SortExpression="nombre" />
-            <asp:BoundField DataField="actId" HeaderText="Actividad" SortExpression="actId" />
-            <asp:BoundField DataField="prgFechaProg" HeaderText="Fecha" SortExpression="prgFechaProg" DataFormatString="{0:d}" />
+            <asp:BoundField DataField="prgFechaProg" HeaderText="Inicio vigencia autorización" SortExpression="prgFechaProg" DataFormatString="{0:d}" />
             <asp:BoundField DataField="autNumero" HeaderText="Autorización" SortExpression="autNumero" />
-            <asp:BoundField DataField="personal" HeaderText="Profesional" SortExpression="personal" />
+            <asp:BoundField DataField="actId" HeaderText="Actividad" SortExpression="actId" ItemStyle-Wrap="false" />
+            <asp:BoundField DataField="intensidad" HeaderText="Descripción del servicio" SortExpression="intensidad" ItemStyle-Wrap="false" />
+            <asp:BoundField DataField="sesiones" HeaderText="Sesiones" SortExpression="sesiones" ItemStyle-HorizontalAlign="Right" />
             <asp:BoundField DataField="costo" HeaderText="Costo" SortExpression="costo" DataFormatString="{0:c}" />
         </Columns>
     </asp:GridView>
     <asp:SqlDataSource ID="SResultados" runat="server" 
         ConnectionString="<%$ ConnectionStrings:connBD %>" 
-        SelectCommand="SELECT admEntidad.entNombre AS entidad,programacion.actId,
-                        programacion.prgFechaProg, programacion.autNumero, phdPaciente.pacNombres AS nombre, admPersonalHS.perNombre AS personal, programacion.costo
+        SelectCommand="SELECT 
+                        admEntidad.entNombre AS entidad,programacion.actId,programacion.intensidad,
+                        phdPaciente.pacDocumento,
+                        phdAutorizacion.autFecha AS prgFechaProg, phdAutorizacion.autNumero,
+                        phdPaciente.pacNombres AS nombre, SUM(programacion.costo) AS costo
+                        ,COUNT(*) AS sesiones
                         FROM programacion
+                        LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=programacion.autNumero)
                         LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId)
-                        LEFT JOIN admPersonalHS ON (admPersonalHS.perId=programacion.perId)
                         LEFT JOIN admEntidad ON (admEntidad.entId=programacion.entId)
                         WHERE programacion.prgFechaProg BETWEEN @inicio AND @fin 
                         AND (@asegurador=0 OR @asegurador=programacion.entId)
+                        GROUP BY admEntidad.entNombre,phdAutorizacion.autFecha,phdAutorizacion.autNumero,programacion.actId,programacion.intensidad,phdPaciente.pacDocumento,phdPaciente.pacNombres
                         ORDER BY entNombre,pacNombres DESC">
           <SelectParameters>
                 <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />

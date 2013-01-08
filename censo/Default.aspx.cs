@@ -27,11 +27,11 @@ public partial class censo_Default : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            e.Row.Cells[11].Text = Procedimientos.ReplaceVarios(
-                                    Procedimientos.ReplaceProcedimientos(e.Row.Cells[11].Text))
+            e.Row.Cells[12].Text = Procedimientos.ReplaceVarios(
+                                    Procedimientos.ReplaceProcedimientos(e.Row.Cells[12].Text))
                                     .Replace(",_", "<br/>");
 
-            e.Row.Cells[8].Text = e.Row.Cells[8].Text.Replace(",_", "<br/>");
+            e.Row.Cells[9].Text = e.Row.Cells[9].Text.Replace(",_", "<br/>");
 
             // calculamos la edad
             int years = 0;
@@ -43,7 +43,7 @@ public partial class censo_Default : System.Web.UI.Page
                 if (now.Month < birthDate.Month || (now.Month == birthDate.Month && now.Day < birthDate.Day))
                     --years;
             }
-            catch (Exception ex) { }
+            catch  { }
             e.Row.Cells[3].Text = years==0 ? "" : years.ToString();
         }
     }
@@ -57,7 +57,7 @@ public partial class censo_Default : System.Web.UI.Page
             DLocalidad.DataBind();
         try {
             DLocalidad.SelectedValue = link.CommandArgument;
-        } catch(Exception ex) {
+        } catch {
             DLocalidad.SelectedIndex = 0;
         }
         PLocalidad.Visible = true;

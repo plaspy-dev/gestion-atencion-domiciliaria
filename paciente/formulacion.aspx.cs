@@ -379,12 +379,10 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
         query["categoria"] = "categoria";
         query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
-        query["szProfesional"] = "admPersonalHS.perDocumento";
-        query["szMedico"] = "admPersonalHS.perNombre";
 
         CConectorMS conectorms = new CConectorMS();
 
-        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=" + ViewState["profesional"].ToString() + ")"));
+        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente));
         if (reader != null)
         {
             bool l = reader.Read();
@@ -397,6 +395,27 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
             }
         }
+
+        // obtenemos el ID del usuario que lo modifico primero
+        string url = HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~");
+        string idmedico = new CConector().QueryString("SELECT usuario.personal FROM modificaciones LEFT JOIN usuario ON (usuario.id=modificaciones.usuario) WHERE modificaciones.id='" + HIdFormulacion.Value + "' AND modificaciones.url='" + url + "' ORDER BY modificaciones.fecha LIMIT 1");
+
+        query = new Query("admPersonalHS");
+
+        query["szProfesional"] = "admPersonalHS.perDocumento";
+        query["szMedico"] = "admPersonalHS.perNombre";
+
+        reader = conectorms.Query(query.GetSelect("perId=" + Query.GetValor(idmedico)));
+        if (reader != null)
+        {
+            bool l = reader.Read();
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
+            }
+        }
+
+
 
         int paginas= (int)Math.Ceiling((double)GFormulacion.Rows.Count/5);
         if(paginas>1) {
@@ -414,6 +433,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
         // aqui modificamos la primera pagina.
         evento.Contenido = evento.Contenido.Replace("$GFormulacion$", RenderPage(0));
     }
+
     protected void BFormula_Click(object sender, EventArgs e)
     {
         CConector conector = new CConector();

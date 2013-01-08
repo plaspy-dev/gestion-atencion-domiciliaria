@@ -21,7 +21,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
             PReactivar.Visible = false;
             if (!string.IsNullOrEmpty(Request.QueryString["ip"]))
             {
-                Response.Redirect(Request.Url.AbsolutePath + "?pid=" + Crypt.Desencriptar(Request.QueryString["ip"]));
+                Response.Redirect(Request.Url.AbsolutePath + "?pid=" + Crypt.DesencriptarDES(Request.QueryString["ip"]));
                 Response.End();
                 return;
             }

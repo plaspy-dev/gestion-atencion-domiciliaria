@@ -445,6 +445,8 @@ public partial class paciente_evolucion : System.Web.UI.Page
                 evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
             }
         }
+        // limpiamos el inactivo de los pacientes
+        evento.Contenido = evento.Contenido.Replace(" (Inactivo)", "");
     }
 
     protected void IIr_Click(object sender, ImageClickEventArgs e)

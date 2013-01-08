@@ -41,10 +41,7 @@ public class ConectorMS
 				m_pSQLConector.Close();
 			}
 		}
-		catch (SqlException)
-		{
-		}
-		catch (Exception)
+		catch
 		{
 		}
 	}
@@ -52,32 +49,6 @@ public class ConectorMS
 	public SqlConnection GetConexion()
 	{
 		return m_pSQLConector;
-	}
-
-	public static string GetCookie(string cookie)
-	{
-		return GetCookie(cookie, "");
-	}
-
-	public static string GetCookie(string cookie, string defecto)
-	{
-		string result = defecto;
-		if (HttpContext.Current.Request.Cookies[cookie] != null)
-		{
-			result = HttpContext.Current.Request.Cookies[cookie].Value.Replace("%%", " ");
-		}
-		return result;
-	}
-
-	public static int GetCookie(string cookie, int defecto)
-	{
-		return Convert.ToInt32(GetCookie(cookie, defecto.ToString()));
-	}
-
-	public static void SetCookie(string cookie, string valor)
-	{
-		HttpContext.Current.Response.Cookies[cookie].Value = valor.Replace(" ", "%%");
-		HttpContext.Current.Response.Cookies[cookie].Expires = DateTime.Now.AddYears(1);
 	}
 
 	public void ShowError(string error)
@@ -94,7 +65,7 @@ public class ConectorMS
 				}
 			}
 		}
-		catch (Exception)
+		catch
 		{
 		}
 	}

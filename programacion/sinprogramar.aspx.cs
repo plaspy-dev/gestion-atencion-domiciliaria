@@ -54,7 +54,8 @@ public partial class programacion_sinprogramar : System.Web.UI.Page
                     e.Row.Cells[0].Text = "Total Autorizaciones";
                     break;
                 default:
-                    e.Row.Cells[0].Text = Procedimientos.GetProcedimiento(e.Row.Cells[0].Text);
+                    e.Row.Cells[0].Text = Procedimientos.ReplaceVarios(
+                                    Procedimientos.ReplaceProcedimientos(e.Row.Cells[0].Text));
                     break;
             }
         }

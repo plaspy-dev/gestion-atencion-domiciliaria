@@ -55,7 +55,7 @@
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SConductor" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT perId id,perNombre nombre FROM dbo.admPersonalHS where eEstId=1 and carId=20 order by 2">
+                    SelectCommand="SELECT perId id,perNombre nombre FROM dbo.admPersonalHS where eEstId=1 and (carId=20 OR carId=36) order by 2">
                 </asp:SqlDataSource>
             </td>
         </tr>

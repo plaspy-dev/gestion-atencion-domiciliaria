@@ -17,7 +17,7 @@
             
             drawPieChart('chart_div2', [['Encuestas','Numero']
             <asp:Repeater runat="server" DataSourceID="SConceptos" ID="RConceptos">
-                <ItemTemplate>['<%# Eval("concepto") %>','<%# Eval("cal") %>']</ItemTemplate>
+                <ItemTemplate>,['<%# Eval("concepto") %>','<%# Eval("cal") %>']</ItemTemplate>
             </asp:Repeater>
                 ], {
               width: 600, height: 400,

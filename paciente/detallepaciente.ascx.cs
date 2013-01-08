@@ -36,6 +36,14 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             return (double)ViewState["paciente_asegurador_tope_paciente"];
         }
     }
+    public bool ShowServicios {
+        get {
+            return tServicios.Visible;
+        }
+        set {
+            tServicios.Visible = tServiciosD.Visible = value;
+        }
+    }
     public double GetCostoPacienteActual {
         get { 
             double total= 0;
@@ -109,7 +117,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                     try
                     {
                         edad = Convert.ToInt32(sedad[0]);
-                    } catch(Exception ex) {}
+                    } catch {}
                 }
             }
             return edad;

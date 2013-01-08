@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Configuration;
-using System.IO;
 using System.Web;
 using System.Web.UI.WebControls;
 using System.Xml;
@@ -43,10 +41,7 @@ public class Grupo
 				}
 			}
 		}
-		catch (FileNotFoundException)
-		{
-		}
-		catch (Exception)
+		catch
 		{
 		}
 	}
@@ -162,7 +157,7 @@ public class Grupo
 		for (int i = 0; i < m_aURLs.Count; i++)
 		{
 			CURLs cURLs = (CURLs)m_aURLs[i];
-			if (cURLs.m_bNativo != nativo)
+			if (cURLs.m_bNativo != nativo || cURLs.Parent == "__no__")
 			{
 				continue;
 			}

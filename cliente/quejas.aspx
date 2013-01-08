@@ -1,9 +1,15 @@
-﻿<%@ Page Title="Quejas,reclamos,felicitaciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="quejas.aspx.cs" Inherits="cliente_quejas" %>
+﻿<%@ Page Title="Registro PQR" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="quejas.aspx.cs" Inherits="cliente_quejas" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register Src="~/rh/funcionarioc.ascx" TagName="FuncionarioC" TagPrefix="uc6" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<style type="text/css">
+    .detalle 
+    {
+        min-width: 300px;
+    }
+</style>
 <script type="text/javascript">
     $(function() {
         $("#<%= REmpleado.ClientID %>").change(function() {
@@ -58,21 +64,16 @@
         addDialog('#<%= PISeguimiento.ClientID%>', "#dSeguimiento");
 
         $("#<%= CCerrar.ClientID %>").change(function() {
-            if ($("#<%= CCerrar.ClientID %>").is(":checked")) {
-                $("#<%= CRUsuario.ClientID %>").show().next().show();
-                $("#<%= CRTelefonica.ClientID %>").show().next().show();
-                $("#<%= CRAsegurador.ClientID %>").show().next().show();
-                $("#<%= CRVigilancia.ClientID %>").show().next().show();
-                $("#<%= FArchivo.ClientID %>").show();
-                $("#sError").show();
-            } else {
-                $("#<%= CRUsuario.ClientID %>").hide().next().hide();
-                $("#<%= CRTelefonica.ClientID %>").hide().next().hide();
-                $("#<%= CRAsegurador.ClientID %>").hide().next().hide();
-                $("#<%= CRVigilancia.ClientID %>").hide().next().hide();
-                $("#<%= FArchivo.ClientID %>").hide();
-                $("#sError").hide();
-            }
+            var tr = $("#<%= CCerrar.ClientID %>").parent().parent().next();
+            var mostrar=$("#<%= CCerrar.ClientID %>").is(":checked");
+            do {
+                mostrar ? tr.show() : tr.hide();
+                tr = tr.next();
+            } while (tr.next().length);
+            ValidatorEnable($("#<%= RQue.ClientID %>")[0], mostrar);
+            ValidatorEnable($("#<%= RQuien.ClientID %>")[0], mostrar);
+            ValidatorEnable($("#<%= RComo.ClientID %>")[0], mostrar);
+            ValidatorEnable($("#<%= RPorque.ClientID %>")[0], mostrar);
         }).change();
     });
     function OnValidateClick(Source, args) {
@@ -85,7 +86,8 @@
                 $("#<%= CRTelefonica.ClientID %>").is(":checked") &&
                 $("#<%= FArchivo.ClientID %>").val().length > 0 &&
                 ($("#<%= CRAsegurador.ClientID %>").is(":checked") ||
-                $("#<%= CRVigilancia.ClientID %>").is(":checked"));
+                $("#<%= CRVigilancia.ClientID %>").is(":checked"))
+                ;
         }
     }
 </script>
@@ -106,7 +108,7 @@
     <asp:Panel runat="server" id="PDatos" Visible="false">
         <asp:HiddenField runat="server" ID="HIdQuejas" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
-        <table>
+        <table width="100%">
             <tr>
                 <td>Fecha</td>
                 <td><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox><asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
@@ -121,10 +123,18 @@
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="STipo" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT tqrIdTipo id,tqrDescripcion nombre FROM serTipoFormulario">
+                    SelectCommand="SELECT tqrIdTipo id,tqrDescripcion nombre FROM serTipoFormulario ORDER BY nombre">
                 </asp:SqlDataSource></td>
-                <td></td>
-                <td></td>
+                <td>Clasificación</td>
+                <td><asp:DropDownList ID="DClasificacion" runat="server" 
+                                DataSourceID="SClasificacion" DataTextField="nombre" 
+                                DataValueField="id">
+                                </asp:DropDownList>
+                <asp:SqlDataSource ID="SClasificacion" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=26 AND szReservado IS NULL ORDER BY nombre">
+                </asp:SqlDataSource></td>
             </tr>
             <tr>
                 <td colspan="4" class="celdaTitulo">Personal involucrado</td>
@@ -173,8 +183,8 @@
                 <td><asp:TextBox runat="server" ID="TTelefono"></asp:TextBox><asp:RequiredFieldValidator ControlToValidate="TTelefono" ErrorMessage="Por favor ingrese un teléfono." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             </tr>
             <tr>
-                <td>Detalle</td>
-                <td colspan="3"><asp:TextBox runat="server" TextMode="MultiLine" Width="99%" ID="TDetalle"></asp:TextBox><asp:RequiredFieldValidator ControlToValidate="TDetalle" ErrorMessage="Por favor ingrese un detalle." ID="RequiredFieldValidator6" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td>Descripción</td>
+                <td colspan="3"><asp:TextBox runat="server" TextMode="MultiLine" Height="100" Width="99%" ID="TDetalle"></asp:TextBox><asp:RequiredFieldValidator ControlToValidate="TDetalle" ErrorMessage="Por favor ingrese un detalle." ID="RequiredFieldValidator6" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             </tr>
             <tr>
                 <td>Observaciones</td>
@@ -189,6 +199,7 @@
                     <asp:LinkButton runat="server" Text="Registrar seguimiento" ID="LASeguimiento" CausesValidation="false" 
                         onclick="LASeguimiento_Click"></asp:LinkButton>
                     <asp:GridView ID="GSeguimiento" runat="server" AutoGenerateColumns="False" OnSelectedIndexChanged="GSeguimiento_SelectedIndexChanged" 
+                        OnRowEditing="GSeguimiento_Editing"
                         DataKeyNames="qrId,sqrId" EmptyDataText="No se ha encontrado seguimiento" DataSourceID="SSeguimiento" >
                         <RowStyle CssClass="GridRow"></RowStyle>
                         <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -197,7 +208,11 @@
                         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
-                            <asp:BoundField DataField="sqrDetalles" HeaderText="Detalle" />
+                            <asp:TemplateField HeaderText="Detalle">
+                                <ItemTemplate>
+                                    <asp:LinkButton runat="server" ID="LDetalle" CommandName="Edit" Text='<%# Eval("sqrDetalles") %>'></asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:TemplateField>
                             <asp:BoundField DataField="sqrPendiente" HeaderText="Acciones pendientes" />
                             <asp:TemplateField HeaderText="Archivo">
                                 <ItemTemplate>
@@ -219,8 +234,9 @@
                         <div id="dSeguimiento" title="Seguimiento" class="hide">
                             <table>
                                 <tr>
-                                    <td>Detalles</td>
-                                    <td><asp:TextBox TextMode="MultiLine" Width="300" runat="server" ID="TSDetalles"></asp:TextBox></td>
+                                    <td>Detalles<asp:RequiredFieldValidator ControlToValidate="TSDetalles" ValidationGroup="seguimiento" ErrorMessage="Por favor ingrese detalles." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                    </td>
+                                    <td><asp:TextBox TextMode="MultiLine" CssClass="detalle" Width="98%" runat="server" ID="TSDetalles"></asp:TextBox></td>
                                 </tr>
                                 <tr>
                                     <td>Acciones pendientes</td>
@@ -228,6 +244,26 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2"><asp:CheckBox runat="server" ID="CCerrar" Text="¿Esta acción cierra la queja?" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Qué?<asp:RequiredFieldValidator ControlToValidate="TQue" ValidationGroup="seguimiento" ErrorMessage="Por favor ingrese un qué." ID="RQue" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                    </td>
+                                    <td><asp:TextBox runat="server" ID="TQue" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
+                                </tr>
+                                <tr>
+                                    <td>Porque?<asp:RequiredFieldValidator ControlToValidate="TPorque" ValidationGroup="seguimiento" ErrorMessage="Por favor ingrese un porque." ID="RPorque" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                    </td>
+                                    <td><asp:TextBox runat="server" ID="TPorque" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
+                                </tr>
+                                <tr>
+                                    <td>Cómo?<asp:RequiredFieldValidator ControlToValidate="TComo" ValidationGroup="seguimiento" ErrorMessage="Por favor ingrese un cómo." ID="RComo" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                    </td>
+                                    <td><asp:TextBox runat="server" ID="TComo" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
+                                </tr>
+                                <tr>
+                                    <td>Quién?<asp:RequiredFieldValidator ControlToValidate="TQuien" ValidationGroup="seguimiento" ErrorMessage="Por favor ingrese un quién." ID="RQuien" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                    </td>
+                                    <td><asp:TextBox runat="server" ID="TQuien" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
                                 </tr>
                                 <tr>
                                     <td colspan="2"><asp:CheckBox runat="server" ID="CRUsuario" Text="¿Se envió respuesta al usuario?" /></td>
@@ -246,8 +282,8 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2">
-                                    <asp:RequiredFieldValidator ControlToValidate="TSDetalles" ValidationGroup="seguimiento" ErrorMessage="Por favor ingrese detalles." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true"></asp:RequiredFieldValidator>
-                                    <asp:CustomValidator ClientValidationFunction="OnValidateClick" OnServerValidate="OnValidateSeguimiento" runat="server" ValidationGroup="seguimiento" ID="CVSeguimiento" ErrorMessage=""></asp:CustomValidator>
+                                    <asp:ValidationSummary runat="server" ID="VSErrores" />
+                                    <asp:CustomValidator ClientValidationFunction="OnValidateClick" OnServerValidate="OnValidateSeguimiento" runat="server" ValidationGroup="seguimiento" ID="CVSeguimiento" ErrorMessage="">*</asp:CustomValidator>
                                     <br />
                                     <span id="sError" style="color: Red">
                                         Recuerde que una queja/Reclamo solo puede cerrarse si se ha enviado:<br />
@@ -259,7 +295,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td align="right">
+                                    <td align="right" colspan="2">
                                     <asp:Button runat="server" ID="BAceptarSeguimiento" Text="Aceptar" 
                                             ValidationGroup="seguimiento" onclick="BAceptarSeguimiento_Click" />
                                     <asp:Button runat="server" ID="BCancelarSeguimiento" Text="Cancelar" 

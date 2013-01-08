@@ -95,11 +95,12 @@
     <asp:SqlDataSource ID="SResultados" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
                 SelectCommand="SELECT per.perId AS id,per.perNombre AS nombres,  per.perFechaNac,admCargo.carDescripcion AS cargo,perCorreoElectronico,per.perCelular AS celular,YEAR(GETDATE()) AS actual, per.felicitacion
+                ,DATEPART(m, perFechaNac)*100+DATEPART(d, perFechaNac) AS ordenardias
                 FROM dbo.admPersonalHS per  
                 LEFT JOIN admCargo on per.carId = admCargo.carId    
 				WHERE per.eEstId=1 
 				AND DATEADD(yy, YEAR(GETDATE())-YEAR(per.perFechaNac),perFechaNac) BETWEEN @inicio AND @fin
-				ORDER BY perFechaNac">
+				ORDER BY ordenardias">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />

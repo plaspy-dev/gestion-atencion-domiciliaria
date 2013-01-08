@@ -46,9 +46,8 @@
         };
 
         var chart2 = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
-        chart2.draw(data2, options2);
-        
-        
+        chart2.draw(data2, options2);            
+            
         var data3 = new google.visualization.DataTable();
         data3.addColumn('string', 'CIE10');
         <asp:Repeater runat="server" DataSourceID="SCausas" ID="RCausas">
