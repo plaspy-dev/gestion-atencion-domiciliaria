@@ -2,12 +2,15 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Globalization;
+using System.Reflection;
 using System.Web;
+using System.Web.UI;
 using MySql.Data.MySqlClient;
 using SDG.Componentes;
 
 namespace SDG.Web.UI.WebControls;
 
+[Serializable]
 internal class SessionState
 {
 	private class Querys
@@ -29,11 +32,24 @@ internal class SessionState
 
 	public DataTable dataTable;
 
+	public static StateBag GetViewState()
+	{
+		Page target = (Page)HttpContext.Current.CurrentHandler;
+		Type typeFromHandle = typeof(Page);
+		BindingFlags invokeAttr = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetProperty;
+		object obj = typeFromHandle.InvokeMember("ViewState", invokeAttr, null, target, null);
+		if (!(obj is StateBag result))
+		{
+			throw new Exception("something wrong happened");
+		}
+		return result;
+	}
+
 	public SessionState(string owner, string query)
 	{
 		szQuery = query;
 		dataTable = new DataTable();
-		HttpContext.Current.Session["SessionState_" + owner] = this;
+		GetViewState()["SessionState_" + owner] = this;
 	}
 
 	public static string GetValor(object valor)
@@ -161,17 +177,17 @@ internal class SessionState
 
 	public static void Clean(string owner)
 	{
-		HttpContext.Current.Session.Remove("SessionState_" + owner);
+		GetViewState()["SessionState_" + owner] = null;
 	}
 
 	public static SessionState Get(string owner)
 	{
-		return (SessionState)HttpContext.Current.Session["SessionState_" + owner];
+		return (SessionState)GetViewState()["SessionState_" + owner];
 	}
 
 	public static SessionState Get(string owner, string query)
 	{
-		SessionState sessionState = (SessionState)HttpContext.Current.Session["SessionState_" + owner];
+		SessionState sessionState = (SessionState)GetViewState()["SessionState_" + owner];
 		if (sessionState == null || sessionState.szQuery != query)
 		{
 			return null;

@@ -7,6 +7,9 @@
 </style>
 <script type="text/javascript">
     addFunctionToStart(function() {
+        addDialog("#<%= PMas.ClientID %>", "#dMas");
+    });
+    $(function() {
         $("#<%= TPaciente.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -43,13 +46,10 @@
         $("#<%= TFecha.ClientID %>").change(function() {
             $("#<%= BBuscar.ClientID %>").click();
         });
-        addDialog("#<%= PMas.ClientID %>", "#dMas");
     });
 </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
-<asp:UpdatePanel ID="PResultados" runat="server">
-<ContentTemplate>
 <table width="100%">
         <tr>
             <td>Fecha
@@ -115,6 +115,7 @@
         <tr>
             <td colspan="2" class="celdaTitulo">Seguimiento</td>
         </tr>
+        <asp:UpdatePanel runat="server" ID="UMas" UpdateMode="Conditional"><ContentTemplate>
         <tr>
             <td colspan="2">
                 <asp:HiddenField runat="server" ID="HBitacora" />
@@ -157,7 +158,7 @@
             <td align="right" colspan="2">
             <asp:Panel runat="server" ID="PMas" Visible="false">
                 <asp:HiddenField runat="server" ID="HMasId" />
-                <div id="dMas" title="Seguimiento" align="left">                    
+                <div id="dMas" title="Seguimiento" align="left" class="hide">
                 <table>
                     <tr>
                         <td colspan="2">
@@ -207,6 +208,7 @@
             </asp:Panel>
             <asp:Button runat="server" ID="BMas" Text="+" onclick="BMas_Click" CausesValidation="false" /></td>
         </tr>
+        </ContentTemplate></asp:UpdatePanel>
         <tr>
             <td colspan="2">
                 <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
@@ -215,13 +217,14 @@
         <tr>
             <td colspan="2" align="right"><asp:Button runat="server" ID="BAceptar" Text="Aceptar" onclick="BAceptar_Click" />
                 <asp:Button runat="server" ID="BCancelar" CausesValidation="false" Text="Cancelar" onclick="BCancelar_Click" />
-                <asp:Button runat="server" ID="BBuscar" Text="Buscar" CausesValidation="false" 
-                    onclick="BBuscar_Click" />
+                <asp:Button runat="server" ID="BBuscar" Text="Buscar" CausesValidation="false" />
             </td>
         </tr>
         </table>
     <br />
-    <div id="dImprimir">
+    <asp:UpdatePanel ID="PResultados" runat="server" UpdateMode="Conditional">
+    <ContentTemplate>
+        <div id="dImprimir">
             <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
                 AutoGenerateColumns="False" EmptyDataText="No se encontraron bitácoras" DataKeyNames="bitId"
                 AllowPaging="True" PageSize="50" AllowSorting="True" OnRowDataBound="GResultados_RowDataBound" >
@@ -248,6 +251,12 @@
         <asp:Label runat="server" ID="LTotal"></asp:Label>
     </div>
     </ContentTemplate>
+    <Triggers>
+        <asp:AsyncPostBackTrigger ControlID="DTipo" EventName="SelectedIndexChanged" />
+        <asp:AsyncPostBackTrigger ControlID="DNAdministrativa" EventName="SelectedIndexChanged" />
+        <asp:AsyncPostBackTrigger ControlID="DNServicio" EventName="SelectedIndexChanged" />
+        <asp:AsyncPostBackTrigger ControlID="BBuscar" EventName="Click" />
+    </Triggers>
     </asp:UpdatePanel>
     <asp:SqlDataSource ID="SResultados" runat="server" 
         ConnectionString="<%$ ConnectionStrings:connBD %>" 

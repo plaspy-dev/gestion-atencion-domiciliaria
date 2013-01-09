@@ -248,10 +248,24 @@ public class Conector
 		return " WHERE " + campo + " " + comparador + " '" + dato + "'";
 	}
 
-	public static void SelectInComboText(DropDownList lista, string value)
+	public static bool SelectInComboText(DropDownList lista, string texto)
 	{
-		ListItem listItem = lista.Items.FindByText(value);
-		lista.SelectedIndex = ((listItem != null) ? lista.Items.IndexOf(listItem) : 0);
+		bool result = true;
+		if (lista.Items.Count < 2)
+		{
+			lista.DataBind();
+		}
+		lista.SelectedIndex = -1;
+		ListItem listItem = lista.Items.FindByText(texto);
+		if (listItem == null)
+		{
+			result = false;
+		}
+		else
+		{
+			listItem.Selected = true;
+		}
+		return result;
 	}
 
 	public static string GetDate(object fecha)

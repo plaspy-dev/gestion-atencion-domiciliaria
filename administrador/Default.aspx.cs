@@ -106,7 +106,9 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Novedad administrativa", 27, parent);
             Add("Novedad del servicio prestado", 28, parent);
 
-            // disponible 29
+            parent = Add("Gestión archivo");
+            Add("Tipo de solicitud", 29, parent);
+            // disponible 30
 
             
 

@@ -10,6 +10,7 @@ using SDG.Componentes;
 
 public partial class rh_funcionario : System.Web.UI.Page
 {
+    [Serializable] 
     class Empresas {
 
         public string ilabEmpresa { get; set; }
@@ -43,7 +44,8 @@ public partial class rh_funcionario : System.Web.UI.Page
                 ruta += Request.Url.Segments[i];
             Response.Cookies["tabpersonal"].Path = ruta;
 
-            Session[Request.Url.AbsolutePath] = new ArrayList();
+            ViewState["infolaboral"] = new ArrayList();
+            // Session[Request.Url.AbsolutePath] = new ArrayList();
             // solo compatibilidad
             if (Request.QueryString["ip"] != null && Request.QueryString["ip"].Length>0)
             {
@@ -110,6 +112,8 @@ public partial class rh_funcionario : System.Web.UI.Page
                 query += "perParentescoContacto";
                 query += "residencialocId";
                 query += "nombre";
+                query += "inicio_descanso";
+                query += "fin_descanso";
 
                 CConectorMS conector = new CConectorMS();
 
@@ -168,6 +172,9 @@ public partial class rh_funcionario : System.Web.UI.Page
                     TFechaTerminacion.Text = ConectorMS.GetDate(reader["perFechaTermContrato"]);
                     TParentesco.Text = reader["perParentescoContacto"].ToString();
                     DLocalidadVivienda.SelectedValue = reader["residencialocId"].ToString();
+                    TInicioDescanso.Text = CConector.GetFromMySQLDate(reader["inicio_descanso"]);
+                    TFinDescanso.Text = CConector.GetFromMySQLDate(reader["fin_descanso"]);
+
                     if (reader["nombre"].ToString().Length != 0)
                     {
                         IFoto.ImageUrl = "~/archivo/foto.ashx?w=120&i=" + HId.Value;
@@ -178,7 +185,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                     conector.SelectInDropDown(DTipoContrato, reader["tipContId"], "SELECT tipContDesc FROM admTipoContrato WHERE tipContId='" + reader["tipContId"].ToString() + "'");
                     conector.SelectInDropDown(DProfesion, reader["profId"], "SELECT profNombre FROM admProfesion WHERE profId='" + reader["profId"].ToString() + "'");
 
-                    ArrayList lista = (ArrayList)Session[Request.Url.AbsolutePath];
+                    ArrayList lista = (ArrayList)ViewState["infolaboral"]; // Session[Request.Url.AbsolutePath];
                     Query empresa= new Query("admInfoLaboral");
 
                     empresa+="ilabEmpresa";
@@ -214,6 +221,15 @@ public partial class rh_funcionario : System.Web.UI.Page
     {
         if (!IsValid)
             return;
+
+        if(DEstado.SelectedItem.Text=="VACACIONES" || DEstado.SelectedItem.Text=="LICENCIA TEMPORAL") {
+            if(TInicioDescanso.Text.Length==0 || TFinDescanso.Text.Length==0) {
+                LMensaje.Text = "Por favor ingrese una fecha de inicio y fin del descanso";
+                TInicioDescanso.Focus();
+                return;
+            }
+        }
+
         Query query = new Query("admPersonalHS");
 
         query["perApellidos"] = TApellidos.Text;
@@ -262,6 +278,16 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["profId"] = DProfesion.SelectedValue;
         query["perParentescoContacto"] = TParentesco.Text;
         query["residencialocId"] = DLocalidadVivienda.SelectedValue;
+
+        if (DEstado.SelectedItem.Text == "VACACIONES" || DEstado.SelectedItem.Text == "LICENCIA TEMPORAL")
+        {
+            query["inicio_descanso"] = TInicioDescanso.Text;
+            query["fin_descanso"] = TFinDescanso.Text;
+        } else {
+            query["inicio_descanso"] = "";
+            query["fin_descanso"] = "";
+        }
+
         if (HId.Value.Length != 0 && IFoto.PostBackUrl.Length == 0)
         {
             query["nombre"] = "";
@@ -270,6 +296,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         }
 
         CConectorMS conectorms = new CConectorMS();
+        conectorms.StartTransaction();
 
         if (HId.Value.Length>0) {
 
@@ -369,6 +396,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                 return;
         }
 
+        conectorms.Commit();
         ((MasterPageI)Master).SetResultado("Usuario " + TNombres.Text + " Editado.");
     }
 
@@ -379,7 +407,7 @@ public partial class rh_funcionario : System.Web.UI.Page
 
     protected void lnkAgInfoLab_Click(object sender, EventArgs e)
     {
-        ArrayList lista = (ArrayList)Session[Request.Url.AbsolutePath];
+        ArrayList lista = (ArrayList)ViewState["infolaboral"]; // Session[Request.Url.AbsolutePath];
         lista.Add(new Empresas());
         GEmpresas.DataSource = lista;
         GEmpresas.DataBind();
@@ -387,7 +415,7 @@ public partial class rh_funcionario : System.Web.UI.Page
 
     protected void GEmpresas_RowDeleting(object sender, GridViewDeleteEventArgs e)
     {
-        ArrayList lista = (ArrayList)Session[Request.Url.AbsolutePath];
+        ArrayList lista = (ArrayList)ViewState["infolaboral"]; // Session[Request.Url.AbsolutePath];
         lista.RemoveAt(e.RowIndex);
         GEmpresas.DataSource = lista;
         GEmpresas.DataBind();

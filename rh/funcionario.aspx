@@ -49,11 +49,41 @@
                     return false;
                 }
             });
+            $("#<%= DTipoContrato.ClientID %>").change(function() {
+                var texto;
+                if ($("#<%= DTipoContrato.ClientID %>").val() == "1")
+                    texto = "VACACIONES";
+                else texto = "LICENCIA TEMPORAL";
+
+                $("#<%= DEstado.ClientID %> option").each(function() {
+                    if ($(this).text() == "VACACIONES" || $(this).text() == "LICENCIA TEMPORAL") {
+                        $(this).text(texto);
+                    }
+                });
+            }).change();
+            var estadoiniciado = false;
+
+            $("#<%= DEstado.ClientID %>").change(function() {
+
+                if ($(this).children("option:selected").text() == "VACACIONES" || $(this).children("option:selected").text() == "LICENCIA TEMPORAL") {
+                    $("#tdDescanso").show().text($(this).children("option:selected").text());
+                    $(".descanso").show();
+                } else {
+                    $("#tdDescanso").hide();
+                    $(".descanso").hide();
+                    if (estadoiniciado) {
+                        if (confirm('Se ha modificado el estado, ¿desea guardar?'))
+                            $("#<%= BAceptar.ClientID %>").click();
+                    }
+                }
+                estadoiniciado = true;
+            }).change();
         });
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
-<asp:ValidationSummary ID="ValidationSummary1" runat="server" DisplayMode="List" />
+        <asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label>
+        <asp:ValidationSummary ID="ValidationSummary1" runat="server" DisplayMode="List" />
         <div id="tabpersonal" style="min-width: 750px">
             <ul>
                 <li><a href="#tabs1">Datos Personales</a></li>
@@ -375,6 +405,15 @@
                                 SelectCommand="SELECT carId id,carDescripcion nombre FROM dbo.admCargo ORDER BY 2">
                             </asp:SqlDataSource>
                         </td></tr>
+                        <tr class="descanso">
+                            <td colspan="4" class="celdaTitulo" id="tdDescanso">Descanso</td>
+                        </tr>
+                        <tr class="descanso">
+                            <td>Inicio<asp:RangeValidator MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator5" runat="server" ErrorMessage="Por favor ingrese una fecha valida." Display="Dynamic" ControlToValidate="TInicioDescanso" Type="Date">*</asp:RangeValidator></td>
+                            <td><asp:TextBox runat="server" ID="TInicioDescanso" CssClass="fecha"></asp:TextBox></td>
+                            <td>Fin<asp:RangeValidator MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator6" runat="server" ErrorMessage="Por favor ingrese una fecha valida." Display="Dynamic" ControlToValidate="TFinDescanso" Type="Date">*</asp:RangeValidator></td>
+                            <td><asp:TextBox runat="server" ID="TFinDescanso" CssClass="fecha"></asp:TextBox></td>
+                        </tr>
                     <tr><td>Tipo Contrato</td><td>
                         <asp:DropDownList ID="DTipoContrato" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="STipoContrato" DataTextField="nombre" DataValueField="id">

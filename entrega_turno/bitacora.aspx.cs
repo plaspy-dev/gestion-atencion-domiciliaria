@@ -15,9 +15,6 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
 
             CUsuario usuario = (CUsuario)CUsuario.GetUsuario();
             TFecha.Text = DateTime.Now.ToShortDateString();
-#if DEBUG
-            TFecha.Text = DateTime.Now.AddDays(-25).ToShortDateString();
-#endif
 
             BAceptar.Enabled = usuario.CanInsert();
             GSeguimiento.Columns[0].Visible = usuario.CanUpdate();
@@ -113,10 +110,6 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
         ((MasterPageI)Master).SetResultado("Bitácora editada.");
     }
     
-    protected void BBuscar_Click(object sender, EventArgs e)
-    {
-    }
-
     protected void BMas_Click(object sender, EventArgs e)
     {
         ViewState["idmas"] = null;
@@ -166,10 +159,9 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
     protected void GSeguimiento_SelectedIndexChanged(object sender, EventArgs e)
     {
         GridViewRow row= GSeguimiento.Rows[GSeguimiento.SelectedIndex];
-        TFechaSeguimiento.Text = HttpUtility.HtmlDecode(row.Cells[2].Text);
-        DArea.DataBind();
-        CConector.SelectInComboText(DArea, HttpUtility.HtmlDecode(row.Cells[3].Text));
-        TObjeto.Text = HttpUtility.HtmlDecode(row.Cells[4].Text);
+        TFechaSeguimiento.Text = HttpUtility.HtmlDecode(row.Cells[2].Text).Trim();
+        CConector.SelectInComboText(DArea, HttpUtility.HtmlDecode(row.Cells[3].Text).Trim());
+        TObjeto.Text = HttpUtility.HtmlDecode(row.Cells[4].Text).Trim();
 
         PMas.Visible = true;
     }

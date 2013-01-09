@@ -264,19 +264,18 @@ public partial class cliente_quejas : System.Web.UI.Page
         query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
         query["segFechaIngreso"] = "GETDATE()";
 
-        if (string.IsNullOrEmpty(ViewState["sqrId"].ToString())) {
+        if (string.IsNullOrEmpty((string)ViewState["sqrId"])) {
+            
+            query["qrId"] = HIdQuejas.Value;
+            query["sqrId"] = conector.QueryString("(SELECT ISNULL(MAX(sqrId)+1,1) FROM serSeguimiento WHERE qrId=" + HIdQuejas.Value + ")");
             if (FArchivo.HasFile)
             {
-
                 Archivos archivo = new Archivos(FArchivo.PostedFile, 0);
                 if (!archivo.SaveFile(query))
                     return;
             }
             else
             {
-                query["qrId"] = HIdQuejas.Value;
-                query["sqrId"]= conector.QueryString("(SELECT ISNULL(MAX(sqrId)+1,1) FROM serSeguimiento WHERE qrId=" + HIdQuejas.Value + ")");
-
                 if (conector.QueryMod(query.GetInsert()) == -1)
                     return;
             }
@@ -387,13 +386,13 @@ public partial class cliente_quejas : System.Web.UI.Page
                 ViewState["sqrId"] = GSeguimiento.DataKeys[e.NewEditIndex].Values[1];
                 TSDetalles.Text= reader["sqrDetalles"].ToString();
                 TAcciones.Text = reader["sqrPendiente"].ToString();
-                CCerrar.Checked= reader["sqrCerrar"].ToString()=="1";
+                CCerrar.Checked= reader["sqrCerrar"].ToString()=="True";
                 if(CCerrar.Checked) {
 
-                    CRUsuario.Checked= reader["sqrRespuestaUsuario"].ToString()== "1";
-                    CRAsegurador.Checked= reader["sqrRespuestaAsegurador"].ToString()== "1";
-                    CRTelefonica.Checked= reader["sqrRespuestaTelefonica"].ToString()== "1";
-                    CRVigilancia.Checked= reader["sqrRespuestaEnteVig"].ToString()== "1";
+                    CRUsuario.Checked = reader["sqrRespuestaUsuario"].ToString() == "True";
+                    CRAsegurador.Checked = reader["sqrRespuestaAsegurador"].ToString() == "True";
+                    CRTelefonica.Checked = reader["sqrRespuestaTelefonica"].ToString() == "True";
+                    CRVigilancia.Checked = reader["sqrRespuestaEnteVig"].ToString() == "True";
                     TQue.Text= reader["que"].ToString();
                     TQuien.Text= reader["quien"].ToString();
                     TComo.Text= reader["como"].ToString();
