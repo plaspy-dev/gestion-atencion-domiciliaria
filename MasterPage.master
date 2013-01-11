@@ -114,13 +114,15 @@
                       <param name="quality" value="high" />
                       <param name="wmode" value="opaque" />
                       <param name="swfversion" value="6.0.65.0" />
+                      <param name="FlashVars" value="url=<%=ResolveUrl("~/inicio.aspx")%>" />
                       <!-- La siguiente etiqueta object es para navegadores distintos de IE. Ocúltela a IE mediante IECC. -->
                       <!--[if !IE]>-->
-                      <object type="application/x-shockwave-flash" data="<%=ResolveUrl("~/")%>images/logo.swf" width="172" height="55">
+                      <object type="application/x-shockwave-flash" data="<%=ResolveUrl("~/inicio.aspx")%>images/logo.swf" width="172" height="55">
                         <!--<![endif]-->
                         <param name="quality" value="high" />
                         <param name="wmode" value="opaque" />
                         <param name="swfversion" value="6.0.65.0" />
+                        <param name="FlashVars" value="url=<%=ResolveUrl("~/")%>" />
                         <!-- El navegador muestra el siguiente contenido alternativo para usuarios con Flash Player 6.0 o versiones anteriores. -->
                         <asp:ImageButton ID="ILogo" runat="server" ImageUrl="~/images/tema/logop.jpg" Width="150" Height="55" CausesValidation="False" PostBackUrl="~/inicio.aspx"/>
                         <!--[if !IE]>-->

@@ -1,6 +1,14 @@
 ﻿<%@ Page Title="Inicio" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="inicio.aspx.cs" Inherits="inicio" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<link href="css/notas.css" type="text/css" rel="stylesheet" />
+<style type="text/css">
+.closebutton {
+    position: absolute;
+    top: 0px; right: 0px;
+    width: 20px; height: 20px
+}
+</style>
 <script type="text/javascript">
     $(function() {
         $("#accordion").accordion({ autoHeight: false, navigation: true, collapsible: true, active: false, animated: false,
@@ -8,10 +16,68 @@
                 ui.newContent.children('div:eq(0)').children(':submit').click();
             }
         });
+        $(".closebutton").button({
+            icons: {
+                primary: "ui-icon-close"
+            },
+            text: false
+        }).click(function() {
+            $(this).parent().parent().hide();
+            $.cookie("cumple-" + $(this).attr("perid"), "1", { expires: 7 });
+            return false;
+        });
+
+        $("#notas ul li").each(function() {
+            if ($.cookie("cumple-" + $(this).find("span").attr("perid")) == null)
+                $(this).show();
+        });
     });
 </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
+<div id="notas">
+<asp:Repeater runat="server" ID="RCumpleanos" DataSourceID="SCumpleanos">
+    <HeaderTemplate>
+        <ul>
+    </HeaderTemplate>
+    <ItemTemplate>
+        <li class="hide">
+          <a href="mailto:<%# Eval("perCorreoElectronico")%>" onclick="return false;">
+            <span class="closebutton" perid="<%# Eval("id") %>">Close</span> 
+            <h2><%# Eval("dia") %><br /><%# Eval("nombres") %></h2>
+            <p><%# Eval("cargo") %><br />
+            <%# Eval("celular")%><br />
+            <%# Eval("perCorreoElectronico")%><br />
+            </p>
+          </a>
+        </li>
+    </ItemTemplate>
+    <FooterTemplate>
+        </ul>
+    </FooterTemplate>
+</asp:Repeater>
+<asp:SqlDataSource ID="SCumpleanos" runat="server" 
+    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+    SelectCommand="SELECT per.perId AS id,per.perNombre AS nombres
+				,CASE DATEPART(d, perFechaNac) 
+				WHEN DATEPART(d, getdate()) THEN 'Hoy' 
+				WHEN DATEPART(d, getdate()-1) THEN 'Ayer'
+				WHEN DATEPART(d, getdate()-2) THEN 'Anteayer'
+				WHEN DATEPART(d, getdate()-2) THEN 'Mañana'
+				END AS dia
+				,admCargo.carDescripcion AS cargo,perCorreoElectronico,per.perCelular AS celular
+                FROM dbo.admPersonalHS per  
+                LEFT JOIN admCargo on per.carId = admCargo.carId    
+				WHERE per.eEstId=1 
+				AND DATEPART(m, perFechaNac)=DATEPART(m, getdate())
+				AND (DATEPART(d, perFechaNac)=DATEPART(d, getdate())
+				OR DATEPART(d, perFechaNac)=DATEPART(d, getdate()-2)
+				OR DATEPART(d, perFechaNac)=DATEPART(d, getdate()-1)
+				OR DATEPART(d, perFechaNac)=DATEPART(d, getdate()+1)
+				)
+				ORDER BY DATEPART(m, perFechaNac)*100+DATEPART(d, perFechaNac);">
+</asp:SqlDataSource>
+</div>
 <asp:Repeater runat="server" ID="RAlertas">
     <HeaderTemplate>
         <div id="accordion">

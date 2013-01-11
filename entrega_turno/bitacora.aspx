@@ -53,7 +53,7 @@
 <table width="100%">
         <tr>
             <td>Fecha
-            <asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+            <asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator>
                 <asp:RangeValidator ControlToValidate="TFecha" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator>
             </td>
             <td>
@@ -61,7 +61,7 @@
             </td>
         </tr>
         <tr>
-            <td>Tipo<asp:RequiredFieldValidator ControlToValidate="DTipo" InitialValue="0" ErrorMessage="Por favor seleccione un tipo." ID="RequiredFieldValidator3" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td>Tipo<asp:RequiredFieldValidator ControlToValidate="DTipo" InitialValue="0" ErrorMessage="Por favor seleccione un tipo." ID="RequiredFieldValidator3" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator></td>
             <td>
             <asp:DropDownList ID="DTipo" runat="server" AutoPostBack="true"
                                 DataSourceID="STipo" DataTextField="nombre" 
@@ -75,12 +75,12 @@
             </td>
         </tr>
         <tr>
-            <td>Observaciones<asp:RequiredFieldValidator ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese unas observaciones." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td>Observaciones<asp:RequiredFieldValidator ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese unas observaciones." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator></td>
             <td><asp:TextBox runat="server" ID="TObservaciones" Height="80" TextMode="MultiLine" Width="98%"></asp:TextBox>
             </td>
         </tr>
         <tr>
-            <td>Novedad administrativa<asp:RequiredFieldValidator ControlToValidate="DNAdministrativa" InitialValue="0" ErrorMessage="Por favor seleccione una novedad administrativa." ID="RequiredFieldValidator6" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td>Novedad administrativa<asp:RequiredFieldValidator ControlToValidate="DNAdministrativa" InitialValue="0" ErrorMessage="Por favor seleccione una novedad administrativa." ID="RequiredFieldValidator6" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator></td>
             <td>
                 <asp:DropDownList ID="DNAdministrativa" runat="server" AutoPostBack="true" 
                     DataSourceID="SNAdministrativa" 
@@ -94,7 +94,7 @@
             </asp:SqlDataSource></td>
         </tr>
         <tr>
-            <td>Novedad del servicio prestado<asp:RequiredFieldValidator ControlToValidate="DNServicio" InitialValue="0" ErrorMessage="Por favor seleccione una novedad del servicio." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td>Novedad del servicio prestado<asp:RequiredFieldValidator ControlToValidate="DNServicio" InitialValue="0" ErrorMessage="Por favor seleccione una novedad del servicio." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator></td>
             <td>
                 <asp:DropDownList ID="DNServicio" runat="server" AutoPostBack="true" 
                     DataSourceID="SNServicio" 
@@ -131,7 +131,7 @@
                 <Columns>
 		            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                         <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                        <asp:BoundField DataField="fecha" HeaderText="Fecha" SortExpression="fecha" DataFormatString="{0:d}" />
+                        <asp:BoundField DataField="fecha" HeaderText="Fecha" SortExpression="fecha" ItemStyle-Wrap="false" />
                         <asp:BoundField DataField="tpaDescripcion" HeaderText="Área" SortExpression="tpaDescripcion" />
                         <asp:BoundField DataField="objeto" HeaderText="Objeto" SortExpression="objeto" />
                     </Columns>
@@ -147,6 +147,7 @@
                                 FROM bitacora_seguimiento
                                 LEFT JOIN phdTipoActividad ON (phdTipoActividad.tpaId=bitacora_seguimiento.area)
                                 WHERE bitacora_seguimiento.bitacora=@bitacora
+                                ORDER BY bitacora_seguimiento.fecha DESC
                             ">
                        <SelectParameters>
                         <asp:ControlParameter ControlID="HBitacora" Name="bitacora" PropertyName="Value" />
@@ -167,10 +168,12 @@
                     </tr>
                     <tr>
                         <td>Fecha
-                        <asp:RequiredFieldValidator ValidationGroup="mas" ControlToValidate="TFechaSeguimiento" ErrorMessage="Por favor ingrese un fecha." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                        <asp:RequiredFieldValidator ValidationGroup="mas" ControlToValidate="TFechaSeguimiento" ErrorMessage="Por favor ingrese un fecha." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator>
+                        <asp:RequiredFieldValidator ValidationGroup="mas" ControlToValidate="THoraSeguimiento" ErrorMessage="Por favor ingrese un hora." ID="RequiredFieldValidator8" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator>
                         <asp:RangeValidator ValidationGroup="mas" ControlToValidate="TFechaSeguimiento" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator>
                         </td>
                         <td><asp:TextBox runat="server" ID="TFechaSeguimiento" CssClass="fecha"></asp:TextBox>
+                        <asp:TextBox runat="server" ID="THoraSeguimiento" CssClass="hora"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
@@ -187,7 +190,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Objeto<asp:RequiredFieldValidator ValidationGroup="mas" ControlToValidate="TObjeto" ErrorMessage="Por favor ingrese un objeto." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                        <td>Objeto<asp:RequiredFieldValidator ValidationGroup="mas" ControlToValidate="TObjeto" ErrorMessage="Por favor ingrese un objeto." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox runat="server" ID="TObjeto" TextMode="MultiLine" CssClass="objeto" Width="98%"></asp:TextBox>
                         </td>
@@ -267,14 +270,16 @@
                     FROM turBitacora
                     LEFT JOIN phdTipoActividad ON (phdTipoActividad.tpaId=turBitacora.tpaId)
                     LEFT JOIN phdPaciente ON (phdPaciente.pacId=turBitacora.pacId)
-                    WHERE turBitacora.bitFecha=@fecha
-                    AND (@tipo=0 OR turBitacora.tpaId=@tipo)
+                    WHERE 
+                    (@fecha='01/01/1900' OR turBitacora.bitFecha=@fecha)
+                    AND (@tipo='0' OR turBitacora.tpaId=@tipo)
                     AND (@administrativa=0 OR turBitacora.NAdministrativa=@administrativa)
                     AND (@servicio=0 OR turBitacora.NServicio=@servicio)
                     AND (@paciente=0 OR turBitacora.pacId=@paciente)
+                    ORDER BY turBitacora.bitFecha DESC
                     ">
           <SelectParameters>
-            <asp:ControlParameter ControlID="TFecha" PropertyName="Text" Name="fecha" />
+            <asp:ControlParameter ControlID="TFecha" PropertyName="Text" Name="fecha" DefaultValue="01/01/1900" />
             <asp:ControlParameter ControlID="DTipo" PropertyName="SelectedValue" Name="tipo" />
             <asp:ControlParameter ControlID="DNAdministrativa" PropertyName="SelectedValue" Name="administrativa" />
             <asp:ControlParameter ControlID="DNServicio" PropertyName="SelectedValue" Name="servicio" />

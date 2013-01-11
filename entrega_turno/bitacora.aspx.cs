@@ -114,6 +114,7 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
     {
         ViewState["idmas"] = null;
         TFechaSeguimiento.Text = DateTime.Now.ToShortDateString();
+        THoraSeguimiento.Text = DateTime.Now.ToString("H:mm");
         TObjeto.Text = "";
         DArea.Focus();
         if (DArea.Items.Count == 0)
@@ -131,7 +132,7 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
         Query query = new Query("bitacora_seguimiento");
 
         query["bitacora"] = HBitacora.Value;
-        query["fecha"] = TFechaSeguimiento.Text;
+        query["fecha"] = TFechaSeguimiento.Text + " " + THoraSeguimiento.Text + ":00";
         query["area"] = DArea.SelectedValue;
         query["objeto"] = TObjeto.Text;
 
@@ -159,7 +160,9 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
     protected void GSeguimiento_SelectedIndexChanged(object sender, EventArgs e)
     {
         GridViewRow row= GSeguimiento.Rows[GSeguimiento.SelectedIndex];
-        TFechaSeguimiento.Text = HttpUtility.HtmlDecode(row.Cells[2].Text).Trim();
+        DateTime fecha = Convert.ToDateTime(HttpUtility.HtmlDecode(row.Cells[2].Text).Trim());
+        TFechaSeguimiento.Text = fecha.ToShortDateString();
+        THoraSeguimiento.Text = fecha.ToString("H:mm");
         CConector.SelectInComboText(DArea, HttpUtility.HtmlDecode(row.Cells[3].Text).Trim());
         TObjeto.Text = HttpUtility.HtmlDecode(row.Cells[4].Text).Trim();
 

@@ -101,6 +101,9 @@ public partial class administrador_Default : System.Web.UI.Page
 
             parent = Add("Registro PQR");
             Add("Clasificación", 26, parent);
+            Add("Consecuencias conducta abusiva.", 30, parent);
+            Add("Riesgo presentado", 31, parent);
+            Add("Medidas implementadas", 32, parent);
 
             parent = Add("Bitácoras");
             Add("Novedad administrativa", 27, parent);
@@ -108,8 +111,8 @@ public partial class administrador_Default : System.Web.UI.Page
 
             parent = Add("Gestión archivo");
             Add("Tipo de solicitud", 29, parent);
-            // disponible 30
-
+            
+            // disponible 33
             
 
 

@@ -117,9 +117,10 @@
             </tr>
             <tr>
                 <td>Tipo</td>
-                <td><asp:DropDownList ID="DTipo" runat="server" 
+                <td><asp:DropDownList ID="DTipo" runat="server" AutoPostBack="true"
                                 DataSourceID="STipo" DataTextField="nombre" 
-                                DataValueField="id">
+                                DataValueField="id" 
+                        onselectedindexchanged="DTipo_SelectedIndexChanged">
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="STipo" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
@@ -190,6 +191,101 @@
                 <td>Observaciones</td>
                 <td colspan="3"><asp:TextBox runat="server" TextMode="MultiLine" Width="99%" ID="TObservaciones"></asp:TextBox></td>
             </tr>
+            <asp:Panel runat="server" ID="PConductaAbusiva">
+                <tr>
+                    <td colspan="4" class="celdaTitulo">Hecho</td>
+                </tr>
+                <tr>
+                    <td>Lugar<asp:RequiredFieldValidator ControlToValidate="TLugar" ErrorMessage="Por favor ingrese un lugar." ID="RequiredFieldValidator8" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    <td colspan="3"><asp:TextBox runat="server" TextMode="MultiLine" Width="99%" ID="TLugar"></asp:TextBox></td>
+                </tr>
+                <tr>
+                    <td>Circunstancias relacionadas<asp:RequiredFieldValidator ControlToValidate="TCircunstanacias" ErrorMessage="Por favor ingrese unas circunstanacias." ID="RequiredFieldValidator9" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    <td colspan="3"><asp:TextBox runat="server" TextMode="MultiLine" Width="99%" ID="TCircunstanacias"></asp:TextBox></td>
+                </tr>
+                <tr>
+                    <td>Antecedentes que desataron la conducta del usuario<asp:RequiredFieldValidator ControlToValidate="TAntecedentes" ErrorMessage="Por favor ingrese un atencedente." ID="RequiredFieldValidator10" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    <td colspan="3"><asp:TextBox runat="server" TextMode="MultiLine" Width="99%" ID="TAntecedentes"></asp:TextBox></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="celdaTitulo">Fuente de información reportante</td>
+                </tr>
+                <tr>
+                    <td colspan="4"><asp:CheckBox runat="server" ID="CPresentaDano" Text="Presenta daño" /></td>
+                </tr>
+                <tr>
+                    <td colspan="4"><hr /></td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                    <asp:CheckBoxList runat="server" ID="CTipoDano" DataSourceID="STipoDano" 
+                        DataTextField="nombre" DataValueField="id" RepeatColumns="2" ondatabound="CTipoDano_DataBound">
+                    </asp:CheckBoxList>
+                    <asp:SqlDataSource ID="STipoDano" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT id, nombre FROM varios WHERE tipo=30 AND szReservado IS NULL ORDER BY nombre">
+                    </asp:SqlDataSource>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Otro?</td>
+                    <td colspan="3"><asp:TextBox runat="server" ID="TTipoDano" Width="98%"></asp:TextBox></td>
+                </tr>
+                <tr>
+                    <td>Fecha del evento<asp:RequiredFieldValidator ControlToValidate="TFechaEvento" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator11" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                    <asp:RangeValidator ControlToValidate="TFechaEvento" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator>
+                    </td>
+                    <td><asp:TextBox runat="server" ID="TFechaEvento" CssClass="fecha"></asp:TextBox></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="celdaTitulo">Identificación del riesgo</td>
+                </tr>
+                <tr>
+                    <td>Riesgo presentado</td>
+                    <td>
+                    <asp:DropDownList ID="DTipoRiesgo" runat="server" DataSourceID="STipoRiesgo" 
+                        DataTextField="nombre" DataValueField="id">
+                    </asp:DropDownList>
+                    <asp:SqlDataSource ID="STipoRiesgo" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT id, nombre FROM varios WHERE tipo=31 AND szReservado IS NULL ORDER BY nombre">
+                    </asp:SqlDataSource>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <asp:GridView ID="GMedidas" runat="server" AutoGenerateColumns="False" 
+                            DataSourceID="SMedidas" EmptyDataText="No se encontraron medidas" 
+                            DataKeyNames="id" ondatabound="GMedidas_DataBound">
+                            <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                            <Columns>
+                                <asp:BoundField HeaderText="" DataField="nombre" />
+	                            <asp:BoundField HeaderText="Medida" DataField="descripcion" />
+	                            <asp:TemplateField HeaderText="Fecha">
+	                                <ItemTemplate>
+	                                    <asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox>
+	                                    <asp:RangeValidator ControlToValidate="TFecha" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator>
+	                                </ItemTemplate>
+	                            </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
+                        <asp:SqlDataSource ID="SMedidas" runat="server" 
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            SelectCommand="SELECT id, nombre,descripcion FROM varios WHERE tipo=32 AND szReservado IS NULL ORDER BY nombre">
+                        </asp:SqlDataSource>
+                    </td>
+                </tr>
+            </asp:Panel>
             <asp:Panel runat="server" ID="PSeguimiento" Visible="false">
             <tr>
                 <td colspan="4" class="celdaTitulo">Seguimiento</td>
