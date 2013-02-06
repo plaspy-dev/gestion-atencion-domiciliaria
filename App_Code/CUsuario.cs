@@ -19,12 +19,17 @@ public class CUsuario : Usuario
     {
     }
 
-    override protected Usuario ValidateUser()
-    {
-        string usuario = CConector.GetCookie("loginOrganizationExample15");
-        string contrasena = HttpUtility.UrlDecode(CConector.GetCookie("contrasena"));
+    override protected Usuario ValidateUser() {
 
-        if (contrasena.Length > 0 && usuario.Length > 0)
+        string usuario = CConector.GetCookie("loginOrganizationExample15");
+        string contrasena = CConector.GetCookie("contrasena");
+
+        return ValidateUser(usuario, contrasena);
+    }
+
+    override protected Usuario ValidateUser(string usuario, string passwd)
+    {
+        if (passwd.Length > 0 && usuario.Length > 0)
         {
             CConectorMS conectorMS = CConectorMS.GetConector();
             CConector conector = CConector.GetConector();
@@ -35,7 +40,7 @@ public class CUsuario : Usuario
             string forceurl = "";
             string personal = "";
             string cargos = "";
-            string nombre = conectorMS.QueryString("SELECT usIdUsuario FROM seg_Usuarios WHERE usIdUsuario='" + usuario + "' AND usClave='" + contrasena + "' AND usActivo=1");
+            string nombre = conectorMS.QueryString("SELECT usIdUsuario FROM seg_Usuarios WHERE usIdUsuario='" + usuario + "' AND usClave='" + passwd + "' AND usActivo=1");
             if (nombre.Length > 0)
             {
                 MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,cargos FROM usuario WHERE usuario='" + usuario + "' AND (estado IS NULL OR estado!=-1)");
@@ -55,7 +60,6 @@ public class CUsuario : Usuario
                 }
                 if (id != "")
                 {
-                    CConector.SetCookie("usuario", login);
                     CUsuario pUsuario = new CUsuario(id, usuario, grupo, login);
                     pUsuario["personal"] = personal;
                     pUsuario["cargos"] = cargos;
@@ -75,7 +79,7 @@ public class CUsuario : Usuario
                     else
                     {
                         readerms = conectorMS.Query("SELECT seg_Menu.meDescMenu AS nombre, seg_Menu.meRuta AS ruta,ins,modif,elim,parent.meDescMenu AS parent " +
-                                  "FROM dbo.seg_Menu INNER JOIN dbo.fnSeg_ConMenu('" + usuario + "',0)menuUs ON seg_Menu.meIdMenu = menuUs.IdMenu " +
+                                  "FROM dbo.seg_Menu INNER JOIN dbo.fnSeg_ConMenu('" + login + "',0)menuUs ON seg_Menu.meIdMenu = menuUs.IdMenu " +
                                   "LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre) " +
                                   " order by parent,seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu");
                     }
@@ -109,10 +113,9 @@ public class CUsuario : Usuario
                             }
                         }
                     }
-                    HttpContext.Current.Session["passwdtemp"] = contrasena;
+                    CConector.SetCookie("loginOrganizationExample15", login);
+                    CConector.SetCookie("contrasena", passwd, DateTime.Now.AddHours(10));
                     conector.Query("UPDATE usuario SET ingreso=SYSDATE() WHERE id='" + id + "'");
-                    HttpContext.Current.Response.Cookies["loginOrganizationExample15"].Value = login;
-                    HttpContext.Current.Response.Cookies["loginOrganizationExample15"].Expires = DateTime.Now.AddDays(15);
                     return pUsuario;
                 }
             }

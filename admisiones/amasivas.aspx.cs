@@ -156,7 +156,7 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             int res = conector.QueryMod(query.GetInsert(), true);
             if (res == -1)
                 return;
-            if (conectormysql.InsertModificacion(res.ToString(), "~/admisiones/autorizaciones.aspx") == -1)
+            if (conectormysql.InsertModificacion(res.ToString(), null, "~/admisiones/autorizaciones.aspx") == -1)
                 return;
 
             string szQuery;

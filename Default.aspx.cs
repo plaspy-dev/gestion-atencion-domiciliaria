@@ -26,13 +26,25 @@ public partial class _Default : System.Web.UI.Page
                 // Response.Redirect("~/");
                 Response.End();
             }
-            m_EUsuario.Text = CConector.GetCookie("loginOrganizationExample15");
+
+            CUsuario usuario = (CUsuario)Usuario.Validate();
+            if (usuario != null)
+            {
+                string url = Request.QueryString["from"];
+                if (url == null || url.Length == 0)
+                    usuario.Redirect();
+                else Response.Redirect(url);
+                Response.End();
+                return;
+            }
+
+            /*m_EUsuario.Text = CConector.GetCookie("loginOrganizationExample15");
             m_EContrasena.Text = HttpUtility.UrlDecode(CConector.GetCookie("contrasena"));
             if (m_EContrasena.Text.Length > 0)
             {
                 IngresarOld();
                 return;
-            }
+            }*/
             m_EUsuario.Text = CConector.GetCookie("usuario");
             if (m_EUsuario.Text.Length > 0)
                 m_EContrasena.Focus();
@@ -49,7 +61,7 @@ public partial class _Default : System.Web.UI.Page
         }
     }
 
-    protected void IngresarOld()
+    /*protected void IngresarOld()
     {
         CUsuario usuario = (CUsuario)Usuario.Validate();
         if (usuario!=null)
@@ -65,11 +77,26 @@ public partial class _Default : System.Web.UI.Page
             m_SMensaje.Text = "Usuario o contraseña equivocada.";
             System.Threading.Thread.Sleep(3000);
         }
-    }
+    }*/
 
     protected void m_BIngresar_Click(object sender, EventArgs e)
     {
-        Session.Clear();
+        CUsuario usuario = (CUsuario)Usuario.Validate(m_EUsuario.Text, Crypt.EncriptarDES(m_EContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4")));
+        if (usuario != null)
+        {
+            string url = Request.QueryString["from"];
+            if (url == null || url.Length == 0)
+                usuario.Redirect();
+            else Response.Redirect(url);
+            Response.End();
+            return;
+        }
+        m_EContrasena.Text = "";
+        m_EUsuario.Focus();
+        m_SMensaje.Text = "Usuario o contraseña equivocada.";
+        System.Threading.Thread.Sleep(3000);
+
+        /*Session.Clear();
         CConectorMS conectorMS = CConectorMS.GetConector();
         CConector conector = CConector.GetConector();
         string usuario = m_EUsuario.Text;
@@ -157,10 +184,12 @@ public partial class _Default : System.Web.UI.Page
                     }
                 }
 
-                Session["passwdtemp"] = Crypt.EncriptarDES(m_EContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4"));
+                // Session["passwdtemp"] = Crypt.EncriptarDES(m_EContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4"));
                 conector.Query("UPDATE usuario SET ingreso=SYSDATE() WHERE id='" + id + "'");
                 Response.Cookies["loginOrganizationExample15"].Value = m_EUsuario.Text;
                 Response.Cookies["loginOrganizationExample15"].Expires = DateTime.Now.AddDays(15);
+                CConector.SetCookie("contrasena", Crypt.EncriptarDES(m_EContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4")), DateTime.Now.AddHours(10));
+
                 string url = Request.QueryString["from"];
                 if (url == null || url.Length == 0)
                     pUsuario.Redirect();
@@ -172,6 +201,6 @@ public partial class _Default : System.Web.UI.Page
         m_EContrasena.Text = "";
         m_EUsuario.Focus();
         m_SMensaje.Text = "Usuario o contraseña equivocada.";
-        System.Threading.Thread.Sleep(3000);
+        System.Threading.Thread.Sleep(3000);*/
     }
 }

@@ -227,7 +227,7 @@ public partial class cliente_quejas : System.Web.UI.Page
             if(string.IsNullOrEmpty((string)id)) {
 
                 query["queja"]=HIdQuejas.Value;
-                int res=conector.QueryMod(query.GetInsert());
+                int res=conector.QueryMod(query.GetInsert(), true);
                 if(res==-1)
                     return;
                 id= res.ToString();

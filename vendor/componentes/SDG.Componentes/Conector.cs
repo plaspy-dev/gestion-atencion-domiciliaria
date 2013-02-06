@@ -4,6 +4,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
+using MySql.Data.Types;
 
 namespace SDG.Componentes;
 
@@ -14,6 +15,8 @@ public class Conector
 	protected string m_szQuery;
 
 	protected string m_szConexion;
+
+	protected bool m_bTransaccion = false;
 
 	protected MySqlConnection m_pSQLConector;
 
@@ -30,12 +33,22 @@ public class Conector
 
 	~Conector()
 	{
+		if (m_bTransaccion)
+		{
+			RoolBack();
+		}
 		try
 		{
 			if (m_pSQLReader != null)
 			{
 				m_pSQLReader.Close();
 			}
+		}
+		catch
+		{
+		}
+		try
+		{
 			if (m_pSQLConector != null)
 			{
 				m_pSQLConector.Close();
@@ -117,6 +130,9 @@ public class Conector
 				ShowError(m_szLastError);
 				return false;
 			}
+			catch
+			{
+			}
 		}
 		return true;
 	}
@@ -143,10 +159,16 @@ public class Conector
 		{
 			return -1;
 		}
-		if (m_pSQLReader != null)
+		try
 		{
-			m_pSQLReader.Close();
-			m_pSQLReader = null;
+			if (m_pSQLReader != null)
+			{
+				m_pSQLReader.Close();
+				m_pSQLReader = null;
+			}
+		}
+		catch
+		{
 		}
 		try
 		{
@@ -159,6 +181,9 @@ public class Conector
 			num = -1;
 			m_szLastError = ex.Message;
 			ShowError(m_szLastError + "\nEn la consulta:\n" + query);
+		}
+		catch
+		{
 		}
 		if (identity && num != -1)
 		{
@@ -178,6 +203,13 @@ public class Conector
 		if (mySqlDataReader != null && mySqlDataReader.Read())
 		{
 			result = ((mySqlDataReader[0].GetType() != typeof(byte[])) ? mySqlDataReader[0].ToString() : Encoding.UTF8.GetString((byte[])mySqlDataReader[0]));
+		}
+		try
+		{
+			mySqlDataReader.Close();
+		}
+		catch
+		{
 		}
 		return result;
 	}
@@ -199,10 +231,16 @@ public class Conector
 			return null;
 		}
 		m_szQuery = query;
-		if (m_pSQLReader != null)
+		try
 		{
-			m_pSQLReader.Close();
-			m_pSQLReader = null;
+			if (m_pSQLReader != null)
+			{
+				m_pSQLReader.Close();
+				m_pSQLReader = null;
+			}
+		}
+		catch
+		{
 		}
 		try
 		{
@@ -216,6 +254,9 @@ public class Conector
 			m_pSQLReader = null;
 			m_szLastError = ex.Message;
 			ShowError(m_szLastError + "\nEn la consulta:\n" + query);
+		}
+		catch
+		{
 		}
 		return m_pSQLReader;
 	}
@@ -387,6 +428,10 @@ public class Conector
 	{
 		try
 		{
+			if (typeof(MySqlDateTime) == fecha.GetType())
+			{
+				fecha = ((MySqlDateTime)fecha).GetDateTime();
+			}
 			return ((DateTime)fecha).ToShortDateString();
 		}
 		catch
@@ -429,16 +474,19 @@ public class Conector
 
 	public bool StartTransaction()
 	{
+		m_bTransaccion = true;
 		return QueryMod("START TRANSACTION;") != -1;
 	}
 
 	public bool RoolBack()
 	{
+		m_bTransaccion = false;
 		return QueryMod("ROLLBACK;") != -1;
 	}
 
 	public bool Commit()
 	{
+		m_bTransaccion = false;
 		return QueryMod("COMMIT;") != -1;
 	}
 }

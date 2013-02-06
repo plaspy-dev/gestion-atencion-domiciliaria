@@ -30,6 +30,7 @@ public class Alertas
 
         ArrayList alertas = (ArrayList)HttpContext.Current.Session["Alertas"];
         if(alertas==null) {
+            
             alertas = new ArrayList();
             HttpContext.Current.Session["Alertas"] = alertas;
 
@@ -40,12 +41,24 @@ public class Alertas
             {
                 while (consultas.Read())
                 {
+                    string consulta = consultas["consulta"].ToString();
+                    string consultacount = consultas["consultaCount"].ToString();
+
+                    if(consulta.IndexOf("{0}")!=-1) {
+                        consulta= Procedimientos.SetProcedimientos(consulta, "programacion.actId");
+                        consultacount= Procedimientos.SetProcedimientos(consultacount, "programacion.actId");
+                    }
+                    if(consulta.IndexOf("{1}")!=-1) {
+                        consulta = Procedimientos.SetCargos(consulta.Replace("{1}", "{0}"), "admPersonalHS.carId");
+                        consultacount = Procedimientos.SetCargos(consultacount.Replace("{1}", "{0}"), "admPersonalHS.carId");
+                    }
+
                     alertas.Add(new Alertas(
                             consultas["nombre"].ToString(),
                             "0",
                             consultas["url"].ToString(),
-                            consultas["consulta"].ToString(),
-                            consultas["consultaCount"].ToString()
+                            consulta,
+                            consultacount
                     ));
                 }
             }

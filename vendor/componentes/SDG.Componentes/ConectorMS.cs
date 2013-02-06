@@ -15,6 +15,8 @@ public class ConectorMS
 
 	protected string m_szConexion;
 
+	public bool m_bTransaccion = false;
+
 	protected SqlConnection m_pSQLConector;
 
 	protected SqlDataReader m_pSQLReader;
@@ -30,12 +32,22 @@ public class ConectorMS
 
 	~ConectorMS()
 	{
+		if (m_bTransaccion)
+		{
+			RoolBack();
+		}
 		try
 		{
 			if (m_pSQLReader != null)
 			{
 				m_pSQLReader.Close();
 			}
+		}
+		catch
+		{
+		}
+		try
+		{
 			if (m_pSQLConector != null)
 			{
 				m_pSQLConector.Close();
@@ -86,6 +98,9 @@ public class ConectorMS
 				ShowError(m_szLastError);
 				return false;
 			}
+			catch
+			{
+			}
 		}
 		return true;
 	}
@@ -112,10 +127,16 @@ public class ConectorMS
 		{
 			return -1;
 		}
-		if (m_pSQLReader != null)
+		try
 		{
-			m_pSQLReader.Close();
-			m_pSQLReader = null;
+			if (m_pSQLReader != null)
+			{
+				m_pSQLReader.Close();
+				m_pSQLReader = null;
+			}
+		}
+		catch
+		{
 		}
 		try
 		{
@@ -128,6 +149,9 @@ public class ConectorMS
 			num = -1;
 			m_szLastError = ex.Message;
 			ShowError(m_szLastError + "\nEn la consulta:\n" + query);
+		}
+		catch
+		{
 		}
 		if (identity && num != -1)
 		{
@@ -147,6 +171,13 @@ public class ConectorMS
 		if (sqlDataReader != null && sqlDataReader.Read())
 		{
 			result = ((sqlDataReader[0].GetType() != typeof(byte[])) ? sqlDataReader[0].ToString() : Encoding.UTF8.GetString((byte[])sqlDataReader[0]));
+		}
+		try
+		{
+			sqlDataReader.Close();
+		}
+		catch
+		{
 		}
 		return result;
 	}
@@ -168,10 +199,16 @@ public class ConectorMS
 			return null;
 		}
 		m_szQuery = query;
-		if (m_pSQLReader != null)
+		try
 		{
-			m_pSQLReader.Close();
-			m_pSQLReader = null;
+			if (m_pSQLReader != null)
+			{
+				m_pSQLReader.Close();
+				m_pSQLReader = null;
+			}
+		}
+		catch
+		{
 		}
 		try
 		{
@@ -185,6 +222,9 @@ public class ConectorMS
 			m_pSQLReader = null;
 			m_szLastError = ex.Message;
 			ShowError(m_szLastError + "\nEn la consulta:\n" + query);
+		}
+		catch
+		{
 		}
 		return m_pSQLReader;
 	}
@@ -274,16 +314,19 @@ public class ConectorMS
 
 	public bool StartTransaction()
 	{
+		m_bTransaccion = true;
 		return QueryMod("BEGIN TRANSACTION;") != -1;
 	}
 
 	public bool RoolBack()
 	{
+		m_bTransaccion = false;
 		return QueryMod("ROLLBACK") != -1;
 	}
 
 	public bool Commit()
 	{
+		m_bTransaccion = false;
 		return QueryMod("COMMIT;") != -1;
 	}
 }

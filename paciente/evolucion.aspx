@@ -316,12 +316,16 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre
                                 ,antecedentes_evolucion.id AS antecedente
-                                ,IFNULL(IFNULL(antecedentes_evolucion.estado,(SELECT antecedentes_evolucion.estado FROM evolucion_paciente LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=antecedentes_evolucion.id) WHERE evolucion_paciente.paciente=@paciente ORDER BY evolucion_paciente DESC LIMIT 1)),antecedentes_ingreso.estado) AS estado
-                                ,IFNULL(IFNULL(antecedentes_evolucion.observaciones,(SELECT antecedentes_evolucion.observaciones FROM evolucion_paciente LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=antecedentes_evolucion.id) WHERE evolucion_paciente.paciente=@paciente ORDER BY evolucion_paciente DESC LIMIT 1)),antecedentes_ingreso.observaciones) AS observaciones
+                                ,IFNULL(IFNULL(antecedentes_evolucion.estado,antigua.estado),antecedentes_ingreso.estado) AS estado
+                                ,IFNULL(IFNULL(antecedentes_evolucion.observaciones,antigua.observaciones),antecedentes_ingreso.observaciones) AS observaciones
                                 FROM varios 
                                 LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=@idingreso AND antecedentes_evolucion.motivo=varios.id) 
                                 LEFT JOIN ingreso_paciente ON (ingreso_paciente.paciente=@paciente)
                                 LEFT JOIN antecedentes_ingreso ON (antecedentes_ingreso.ingreso_paciente=ingreso_paciente.id AND antecedentes_ingreso.motivo=varios.id)
+                                LEFT JOIN (
+SELECT estado,observaciones,antecedentes_evolucion.motivo FROM evolucion_paciente LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=evolucion_paciente.id) WHERE
+evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) FROM evolucion_paciente WHERE paciente=@paciente)
+                                ) AS antigua ON (antigua.motivo=varios.id)
                                 WHERE varios.tipo=2 AND varios.szReservado IS NULL
                                 ;" >
                 <SelectParameters>

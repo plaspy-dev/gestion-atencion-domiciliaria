@@ -2,9 +2,6 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Globalization;
-using System.Reflection;
-using System.Web;
-using System.Web.UI;
 using MySql.Data.MySqlClient;
 using SDG.Componentes;
 
@@ -13,6 +10,7 @@ namespace SDG.Web.UI.WebControls;
 [Serializable]
 internal class SessionState
 {
+	[Serializable]
 	private class Querys
 	{
 		public int pos;
@@ -32,24 +30,11 @@ internal class SessionState
 
 	public DataTable dataTable;
 
-	public static StateBag GetViewState()
-	{
-		Page target = (Page)HttpContext.Current.CurrentHandler;
-		Type typeFromHandle = typeof(Page);
-		BindingFlags invokeAttr = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetProperty;
-		object obj = typeFromHandle.InvokeMember("ViewState", invokeAttr, null, target, null);
-		if (!(obj is StateBag result))
-		{
-			throw new Exception("something wrong happened");
-		}
-		return result;
-	}
-
 	public SessionState(string owner, string query)
 	{
 		szQuery = query;
 		dataTable = new DataTable();
-		GetViewState()["SessionState_" + owner] = this;
+		Utilidades.GetViewState()["SessionState_" + owner] = this;
 	}
 
 	public static string GetValor(object valor)
@@ -58,9 +43,17 @@ internal class SessionState
 		{
 			return "NULL";
 		}
+		if (valor is float)
+		{
+			return GetValor(((decimal)valor).ToString(CultureInfo.InvariantCulture));
+		}
 		if (valor is double num)
 		{
 			return GetValor(num.ToString(CultureInfo.InvariantCulture));
+		}
+		if (valor is decimal num2)
+		{
+			return GetValor(num2.ToString(CultureInfo.InvariantCulture));
 		}
 		if (valor is DateTime)
 		{
@@ -177,17 +170,17 @@ internal class SessionState
 
 	public static void Clean(string owner)
 	{
-		GetViewState()["SessionState_" + owner] = null;
+		Utilidades.GetViewState()["SessionState_" + owner] = null;
 	}
 
 	public static SessionState Get(string owner)
 	{
-		return (SessionState)GetViewState()["SessionState_" + owner];
+		return (SessionState)Utilidades.GetViewState()["SessionState_" + owner];
 	}
 
 	public static SessionState Get(string owner, string query)
 	{
-		SessionState sessionState = (SessionState)GetViewState()["SessionState_" + owner];
+		SessionState sessionState = (SessionState)Utilidades.GetViewState()["SessionState_" + owner];
 		if (sessionState == null || sessionState.szQuery != query)
 		{
 			return null;

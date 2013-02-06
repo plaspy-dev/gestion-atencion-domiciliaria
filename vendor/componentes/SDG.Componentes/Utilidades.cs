@@ -1,3 +1,5 @@
+using System;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -135,6 +137,27 @@ public class Utilidades
 		return contenido;
 	}
 
+	public static StateBag GetViewState()
+	{
+		StateBag stateBag = null;
+		try
+		{
+			Page target = (Page)HttpContext.Current.CurrentHandler;
+			Type typeFromHandle = typeof(Page);
+			BindingFlags invokeAttr = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetProperty;
+			object obj = typeFromHandle.InvokeMember("ViewState", invokeAttr, null, target, null);
+			stateBag = obj as StateBag;
+		}
+		catch
+		{
+		}
+		if (stateBag == null)
+		{
+			stateBag = new StateBag();
+		}
+		return stateBag;
+	}
+
 	public static void ExportExcel(HttpResponse Response, GridView view, string titulo)
 	{
 		bool allowPaging = view.AllowPaging;
@@ -144,7 +167,7 @@ public class Utilidades
 			view.DataBind();
 		}
 		Response.Clear();
-		Response.AddHeader("Content-Disposition", "attachment;filename=" + titulo + ".xls");
+		Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(titulo + ".xls"));
 		Response.ContentType = "application/vnd.ms-excel";
 		Response.ContentEncoding = Encoding.GetEncoding("ISO-8859-1");
 		Response.Write("<html>");

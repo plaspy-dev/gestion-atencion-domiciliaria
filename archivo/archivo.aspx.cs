@@ -18,6 +18,7 @@ public partial class archivo_archivo : System.Web.UI.Page
                 + "/"
                 + DateTime.Now.Year.ToString().PadLeft(2, '0');
             TFecha.Focus();
+            BMas.Visible = false;
             BAceptar.Enabled = usuario.CanInsert();
 
             if (!string.IsNullOrEmpty(Request.QueryString["aid"]))
@@ -45,6 +46,8 @@ public partial class archivo_archivo : System.Web.UI.Page
                     TPaciente.Text = reader["pacNombres"].ToString();
 
                     BAceptar.Enabled = usuario.CanUpdate();
+                    BMas.Visible = true;
+                    BMas.Enabled = usuario.CanInsert();
                 }
             }
             ((MasterPageI)Master).Excel(GResultados);

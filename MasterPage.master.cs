@@ -71,9 +71,9 @@ public partial class MasterPageI : System.Web.UI.MasterPage
                 lnkImp_Click(sender, e);
             }
         }
-        // actualizamos la contraseña
+        /*// actualizamos la contraseña
         Response.Cookies["contrasena"].Value = Session["passwdtemp"].ToString();
-        Response.Cookies["contrasena"].Expires = DateTime.Now.AddMinutes(60);
+        Response.Cookies["contrasena"].Expires = DateTime.Now.AddMinutes(60);*/
     }
 
     public void SetParametros(string parametros) {

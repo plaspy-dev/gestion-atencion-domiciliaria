@@ -176,9 +176,9 @@ public class Procedimientos
         return textoIn;
     }
 
-    static public string SetCargos(SqlDataSource datasource, string variable)
+    static public string SetCargos(string query, string variable)
     {
-        CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+        CUsuario usuario = (CUsuario)Usuario.GetUsuario();
         string condicion = "";
         if (!usuario.CanAdmin())
         {
@@ -188,13 +188,19 @@ public class Procedimientos
             }
             else condicion = "AND " + variable + "=-1";
         }
-        datasource.SelectCommand = string.Format(datasource.SelectCommand, condicion);
+        query= string.Format(query, condicion);
+        return query;
+    }
+
+    static public string SetCargos(SqlDataSource datasource, string variable)
+    {
+        datasource.SelectCommand = SetCargos(datasource.SelectCommand, variable);
         return datasource.SelectCommand;
     }
 
-    static public string SetProcedimientos(SqlDataSource datasource, string variable)
-    {
-        CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+    static public string SetProcedimientos(string query, string variable) {
+
+        CUsuario usuario = (CUsuario)Usuario.GetUsuario();
         string condicion = "";
         if (!usuario.CanAdmin())
         {
@@ -204,7 +210,13 @@ public class Procedimientos
             }
             else condicion = "AND " + variable + "=-1";
         }
-        datasource.SelectCommand = string.Format(datasource.SelectCommand, condicion);
+        query = string.Format(query, condicion);
+        return query;
+    }
+
+    static public string SetProcedimientos(SqlDataSource datasource, string variable)
+    {
+        datasource.SelectCommand = SetProcedimientos(datasource.SelectCommand, variable);
         return datasource.SelectCommand;
     }
 

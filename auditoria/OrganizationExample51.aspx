@@ -61,21 +61,27 @@
     <asp:SqlDataSource ID="SResultados" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
                 SelectCommand="SELECT phdPaciente.pacNombres,phdPaciente.pacFechaNac,phdPaciente.pacDocumento
-                                ,CASE phdPaciente.entId WHEN 8 THEN 'MP' ELSE 'EPS' END AS tipo
-                                ,ISNULL(phdPaciente.cieCodDx,'')+ ',' + ISNULL(phdPaciente.cieCodDx_1,'') + ','+ ISNULL(phdPaciente.cieCodDx_2,'') AS cied10
-                                ,phdPaciente.pacFecIngPrograma
-                                ,(SELECT SUM(autNumSesiones) FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId IN (5024,5025,10004,10005,10006,10007,10008,10009,10010,10011,10012,10015,10016,10022)) AS enfermeria
-                                ,(SELECT SUM(autNumSesiones) FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId IN (5029,10023)) AS tfisica
-                                ,(SELECT SUM(autNumSesiones) FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId IN (5030,10024,10035)) AS trespiratoria
-                                ,(SELECT SUM(autNumSesiones) FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId IN (5031,10025)) AS tocupacional
-                                ,(SELECT SUM(autNumSesiones) FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId IN (5028,10026)) AS tlenguaje
-                                ,(SELECT SUM(autNumSesiones) FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId IN (5021,5022,5033,10013,10029,10030,10031,10032,10033,10034)) AS vmedica
-                                ,phdPaciente.pacObservaciones
-                                FROM phdPaciente
-                                LEFT JOIN phdAutorizacion ON (phdAutorizacion.pacId=phdPaciente.pacId)
-                                WHERE phdPaciente.entId IN (7,8)
-                                AND phdAutorizacion.AutFecha BETWEEN @inicio AND @fin
-                                ">
+    ,CASE phdPaciente.entId WHEN 8 THEN 'MP' ELSE 'EPS' END AS tipo
+    ,ISNULL(phdPaciente.cieCodDx,'')+ ',' + ISNULL(phdPaciente.cieCodDx_1,'') + ','+ ISNULL(phdPaciente.cieCodDx_2,'') AS cied10
+    ,phdPaciente.pacFecIngPrograma
+	,SUM(enfermeria.autNumSesiones) AS enfermeria
+	,SUM(tfisica.autNumSesiones) AS tfisica
+	,SUM(trespiratoria.autNumSesiones) AS trespiratoria
+	,SUM(tocupacional.autNumSesiones) AS tocupacional
+	,SUM(tlenguaje.autNumSesiones) AS tlenguaje
+	,SUM(vmedica.autNumSesiones) AS vmedica
+    ,phdPaciente.pacObservaciones
+    FROM phdPaciente
+    LEFT JOIN phdAutorizacion ON (phdAutorizacion.pacId=phdPaciente.pacId)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5024,5025,10004,10005,10006,10007,10008,10009,10010,10011,10012,10015,10016,10022) GROUP BY autNumero) AS enfermeria ON (enfermeria.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5029,10023) GROUP BY autNumero) AS tfisica ON (tfisica.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5030,10024,10035) GROUP BY autNumero) AS trespiratoria ON (trespiratoria.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5031,10025) GROUP BY autNumero) AS tocupacional ON (tocupacional.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5028,10026) GROUP BY autNumero) AS tlenguaje ON (tlenguaje.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5021,5022,5033,10013,10029,10030,10031,10032,10033,10034) GROUP BY autNumero) AS vmedica ON (vmedica.autNumero=phdAutorizacion.autNumero)
+    WHERE phdPaciente.entId IN (7,8)
+    AND phdAutorizacion.AutFecha BETWEEN @inicio AND @fin
+	GROUP BY phdPaciente.pacNombres,phdPaciente.pacFechaNac,phdPaciente.pacDocumento,phdPaciente.entId,phdPaciente.pacFecIngPrograma,phdPaciente.cieCodDx,phdPaciente.cieCodDx_1,phdPaciente.cieCodDx_2,phdPaciente.pacObservaciones">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TDesde" Name="inicio" PropertyName="Text" />
                     <asp:ControlParameter ControlID="THasta" Name="fin" PropertyName="Text" />

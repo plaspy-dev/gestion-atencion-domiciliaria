@@ -63,7 +63,7 @@
 				WHEN DATEPART(d, getdate()) THEN 'Hoy' 
 				WHEN DATEPART(d, getdate()-1) THEN 'Ayer'
 				WHEN DATEPART(d, getdate()-2) THEN 'Anteayer'
-				WHEN DATEPART(d, getdate()-2) THEN 'Mañana'
+				WHEN DATEPART(d, getdate()+1) THEN 'Mañana'
 				END AS dia
 				,admCargo.carDescripcion AS cargo,perCorreoElectronico,per.perCelular AS celular
                 FROM dbo.admPersonalHS per  

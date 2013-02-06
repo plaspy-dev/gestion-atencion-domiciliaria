@@ -8,11 +8,8 @@ using System.Web;
 /// </summary>
 public class Version
 {
-    public Version()
-    {
-    }
     static public string GetVersion()
     {
-        return "1.461";
+        return "1.45";
     }
 }

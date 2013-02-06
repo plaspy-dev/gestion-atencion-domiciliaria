@@ -18,11 +18,11 @@ public partial class renewSes : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (Session["passwdtemp"] != null)
+        /*if (Session["passwdtemp"] != null)
         {
             Response.Cookies["contrasena"].Value = Session["passwdtemp"].ToString();
             Response.Cookies["contrasena"].Expires = DateTime.Now.AddMinutes(60);
-        }
+        }*/
 
         Response.AddHeader("ContentType", "image/gif");
         Response.Cache.SetCacheability(HttpCacheability.NoCache);

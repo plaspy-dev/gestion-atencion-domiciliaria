@@ -296,7 +296,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         }
 
         CConectorMS conectorms = new CConectorMS();
-        conectorms.StartTransaction();
+        // conectorms.StartTransaction();
 
         if (HId.Value.Length>0) {
 
@@ -396,7 +396,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                 return;
         }
 
-        conectorms.Commit();
+        // conectorms.Commit();
         ((MasterPageI)Master).SetResultado("Usuario " + TNombres.Text + " Editado.");
     }
 
