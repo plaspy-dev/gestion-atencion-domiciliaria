@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -113,27 +114,23 @@ public partial class paciente_evolucion : System.Web.UI.Page
                         GCDiagnostico.DataBind();
                         if (GCDiagnostico.Rows.Count == 0)
                         { // no se encontraron diagnosticos
-                            SqlDataReader reader= conector.Query("SELECT cieCodDx,cieCodDx_1,cieCodDx_2 FROM phdPaciente WHERE pacId=" + CCDetallePaciente.IdPaciente);
-                            if(reader!=null && reader.Read()) {
+                            ArrayList lista = Procedimientos.GetCodigosCIE10(CCDetallePaciente.IdPaciente);
 
-                                TCIE10.Text= reader["cieCodDx"].ToString();
-                                if (TCIE10.Text.Length > 0)
+                            if (lista.Count == 0)
+                            {
+                                SqlDataReader reader = conector.Query("SELECT cieCodDx,cieCodDx_1,cieCodDx_2 FROM phdPaciente WHERE pacId=" + CCDetallePaciente.IdPaciente);
+                                if (reader != null && reader.Read())
                                 {
-                                    TCIE10.Text += "-";
-                                    BMasCDiagnostico_Click(sender, e);
+                                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx"].ToString());
+                                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx_1"].ToString());
+                                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx_2"].ToString());
                                 }
-                                TCIE10.Text = reader["cieCodDx_1"].ToString();
-                                if (TCIE10.Text.Length > 0)
-                                {
-                                    TCIE10.Text += "-";
-                                    BMasCDiagnostico_Click(sender, e);
-                                }
-                                TCIE10.Text = reader["cieCodDx_2"].ToString();
-                                if (TCIE10.Text.Length > 0)
-                                {
-                                    TCIE10.Text += "-";
-                                    BMasCDiagnostico_Click(sender, e);
-                                }
+                            }
+
+                            for (int i = 0; i < lista.Count; i++)
+                            {
+                                TCIE10.Text = lista[i].ToString() + "-";
+                                BMasCDiagnostico_Click(sender, e);
                             }
                         }
                         TPlanManejo.Text = conectormysql.QueryString("SELECT plan_manejo FROM evolucion_paciente WHERE paciente=" + CCDetallePaciente.IdPaciente + " ORDER BY fecha DESC LIMIT 1");
@@ -351,62 +348,12 @@ public partial class paciente_evolucion : System.Web.UI.Page
         TCIE10.Text += " - " + HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[3].Text).Trim();
     }
 
-    protected string RenderGrid(GridView grid)
-    {
-
-        String resultado = "<table border=1 width=100% cellspacing=0>";
-        resultado += "<tr>";
-        for (int i = 0; i < grid.Columns.Count; i++)
-        {
-            resultado += "<td><b>" + grid.Columns[i].HeaderText + "</b></td>";
-        }
-        resultado += "</tr>";
-        for (int i = 0; i < grid.Rows.Count; i++)
-        {
-            GridViewRow row = grid.Rows[i];
-            resultado += "<tr>";
-            for (int j = 0; j < row.Cells.Count; j++)
-            {
-                resultado += "<td>";
-                if (row.Cells[j].HasControls())
-                {
-                    ControlCollection controles = row.Cells[j].Controls;
-                    for (int k = 0; k < controles.Count; k++)
-                    {
-
-                        if (controles[k] is TextBox)
-                        {
-                            String texto = ((TextBox)controles[k]).Text;
-                            if (texto.Length == 0)
-                                texto = "&nbsp;";
-                            resultado += texto;
-                            break;
-                        }
-                        else if (controles[k] is CheckBox)
-                        {
-                            if (((CheckBox)controles[k]).Checked)
-                                resultado += "X ";
-                            if (((CheckBox)controles[k]).Text.Length > 0)
-                                resultado += ((CheckBox)controles[k]).Text;
-                            break;
-                        }
-                    }
-                }
-                else resultado += row.Cells[j].Text;
-                resultado += "</td>";
-            }
-            resultado += "</tr>";
-        }
-        resultado += "</table>";
-        return resultado;
-    }
-
     protected void OnImprimir(object sender, EventArgs e)
     {
         PrintEventArgs evento = (PrintEventArgs)e;
         // aqui modificamos el evento.Contenido
-        evento.Contenido = evento.Contenido.Replace("$GAntecedentes$", RenderGrid(GAntecedentes));
-        evento.Contenido = evento.Contenido.Replace("$GExamenFisico$", RenderGrid(GExamenFisico));
+        evento.Contenido = evento.Contenido.Replace("$szAntecedentes$", Utilidades.RenderGrid(GAntecedentes, "border=0 cellspacing=0"));
+        evento.Contenido = evento.Contenido.Replace("$szExamenFisico$", Utilidades.RenderGrid(GExamenFisico, "border=0 cellspacing=0"));
 
         evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + TPlanManejo.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());

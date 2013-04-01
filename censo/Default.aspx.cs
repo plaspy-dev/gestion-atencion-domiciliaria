@@ -9,7 +9,23 @@ public partial class censo_Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        if (!IsPostBack)
+        {
+            TInicio.Text = DateTime.Now.AddDays(-30).ToShortDateString();
+            TFin.Text = DateTime.Now.ToShortDateString();
+        }
         SResultados.SelectCommand = SResultados.SelectCommand.Replace("@area", DArea.SelectedValue);
+        SResultados.SelectCommand = SResultados.SelectCommand.Replace("@categoria", DCategoria.SelectedValue);
+
+        SDiario.SelectCommand = SDiario.SelectCommand.Replace("@area", DArea.SelectedValue);
+        SDiario.SelectCommand = SDiario.SelectCommand.Replace("@categoria", DCategoria.SelectedValue);
+
+        SMensual.SelectCommand = SMensual.SelectCommand.Replace("@area", DArea.SelectedValue);
+        SMensual.SelectCommand = SMensual.SelectCommand.Replace("@categoria", DCategoria.SelectedValue);
+
+
+        RGrafica.DataSourceID = DTipo.SelectedValue=="0" ? "SDiario" : "SMensual";
+        RGrafica.DataBind();
 
         GResultados.AllowPaging = false;
         GResultados.DataBind();

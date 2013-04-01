@@ -163,134 +163,6 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         return lnkGuardar;
     }
 
-    protected void RenderView(GridView view) {
-
-        bool paging = view.AllowPaging;
-        if (paging)
-        {
-            view.AllowPaging = false;
-            view.DataBind();
-        }
-
-        Response.Clear();
-        Response.AddHeader("Content-Disposition", "attachment;filename=" + Page.Title + ".xls");
-        Response.ContentType = "application/vnd.ms-excel";
-        Response.ContentEncoding = System.Text.Encoding.GetEncoding("ISO-8859-1");
-
-        Response.Write("<html>");
-        Response.Write("<body>\n");
-        Response.Write("<table border='1'>\n");
-        Response.Write("<tr>\n");
-        for (int i = 0; i < view.Columns.Count; i++)
-        {
-
-            Response.Write("<td><strong>");
-            Response.Write(view.Columns[i].HeaderText);
-            Response.Write("</strong></td>");
-        }
-        Response.Write("</tr>\n");
-
-        for (int i = 0; i < view.Rows.Count; i++)
-        {
-            Response.Write("<tr>\n");
-            for (int j = 0; j < view.Columns.Count; j++)
-            {
-                Response.Write("<td>");
-                if (view.Columns[j].GetType() == typeof(HyperLinkField))
-                {
-                    HyperLink link = (HyperLink)view.Rows[i].Cells[j].Controls[0];
-                    Response.Write(link.Text);
-                }
-                else if (view.Columns[j].GetType() == typeof(CheckBoxField))
-                {
-                    CheckBox check = (CheckBox)view.Rows[i].Cells[j].Controls[0];
-                    Response.Write(check.Checked ? "X" : "");
-                }
-                else
-                {
-                    Response.Write(view.Rows[i].Cells[j].Text);
-                }
-                Response.Write("</td>");
-            }
-            Response.Write("</tr>\n");
-        }
-        Response.Write("</table></body></html>\n");
-        
-        Response.End();
-
-        if (paging)
-        {
-            view.AllowPaging = true;
-        }
-    }
-
-    private Control FindControlEx(string id)
-    {
-        return FindControlEx(this.Controls, id);
-    } 
-
-    private Control FindControlEx(ControlCollection controles, string id) 
-    {
-        foreach (Control c in controles)
-        {
-            if (c.ID == id)
-            {
-                return c;
-            }
-            if (c.HasControls())
-            {
-                Control temp= FindControlEx(c.Controls, id);
-                if (temp != null)
-                    return temp;
-            }
-        }
-        return null;
-    } 
-
-    public string ReplaceContenido(ControlCollection controles, string contenido)
-    {
-        for (int i = 0; i < controles.Count; i++)
-        {
-            string id = controles[i].ID;
-            string valor = "";
-            if (controles[i].Controls.Count > 0)
-            {
-                contenido = ReplaceContenido(controles[i].Controls, contenido);
-                continue;
-            }
-            if (id == null || id.Length == 0)
-                continue;
-            id = "$" + controles[i].ID + "$";
-            if (controles[i].GetType() == typeof(TextBox))
-            {
-                valor = ((TextBox)controles[i]).Text;
-            }
-            else if (controles[i].GetType() == typeof(CheckBox))
-            {
-                valor = ((CheckBox)controles[i]).Checked ? "X" : "";
-            }
-            else if (controles[i].GetType() == typeof(Label))
-            {
-                valor = ((Label)controles[i]).Text;
-            }
-            else if (controles[i].GetType() == typeof(DropDownList))
-            {
-                if (((DropDownList)controles[i]).SelectedItem == null)
-                    ((DropDownList)controles[i]).DataBind(); // solo para depuracion
-                valor = ((DropDownList)controles[i]).SelectedItem.Text;
-            }
-            else if (controles[i].GetType() == typeof(HiddenField))
-            {
-                valor = ((HiddenField)controles[i]).Value;
-            }
-            if (contenido.IndexOf(id) != -1)
-            {
-                contenido = contenido.Replace(id, valor);
-            }
-        }
-        return contenido;
-    }
-
     public void Imprimir(string archivo)
     {
         lnkPDF.Visible = lnkExcel.Visible = lnkImp.Visible = Usuario.GetUsuario().CanPrint();
@@ -303,7 +175,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
         if (ViewState["printgridview"] != null)
         {
-            GridView view = (GridView) FindControlEx(ViewState["printgridview"].ToString());
+            GridView view = (GridView) Utilidades.FindControlForId(Controls,ViewState["printgridview"].ToString());
             if (view != null)
             {
                 bool paging = view.AllowPaging;
@@ -324,7 +196,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido = reader.ReadToEnd();
             reader.Close();
 
-            evento.Contenido = ReplaceContenido(cph.Controls, evento.Contenido);
+            evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
             // agregamos el script para imprimir
 #if DEBUG
             evento.Contenido= evento.Contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {}</script></body>");
@@ -353,7 +225,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             {
                 _ExcelClicked(this, evento);
             }
-            RenderView((GridView)FindControlEx(ViewState["excelgridview"].ToString()));
+            Utilidades.ExportExcel(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title);
         }
         else if (ViewState["printfile"] != null)
         {
@@ -362,7 +234,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido = reader.ReadToEnd();
             reader.Close();
 
-            evento.Contenido = ReplaceContenido(cph.Controls, evento.Contenido);
+            evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
 
             if (_ImprimirClicked != null)
             {
@@ -370,7 +242,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             }
 
             Response.Clear();
-            Response.AddHeader("Content-Disposition", "attachment;filename=" + Page.Title + ".xls");
+            Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(Page.Title) + ".xls");
             Response.ContentType = "application/vnd.ms-excel";
             Response.ContentEncoding = System.Text.Encoding.GetEncoding("utf-8");
             Response.Write(evento.Contenido);
@@ -407,7 +279,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         Response.Clear();
         Response.ContentType = "application/pdf";
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
-        Response.AddHeader("content-disposition", "attachment;filename=" + Page.Title + ".pdf");
+        Response.AddHeader("content-disposition", "attachment;filename=" + HttpUtility.UrlEncode(Page.Title) + ".pdf");
 
         StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString()));
         evento.Contenido = reader.ReadToEnd();
@@ -420,8 +292,8 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido = evento.Contenido.Substring(0, pos) + evento.Contenido.Substring(posf + "</head>".Length);
             pos = posf;
         }
-        
-        evento.Contenido= ReplaceContenido(cph.Controls, evento.Contenido);
+
+        evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
 
         if (_ImprimirClicked != null)
         {

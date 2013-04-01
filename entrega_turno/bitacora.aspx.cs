@@ -14,6 +14,7 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
         if(!IsPostBack) {
 
             CUsuario usuario = (CUsuario)CUsuario.GetUsuario();
+            ViewState["entidades"] = usuario["entidades"];
             TFecha.Text = DateTime.Now.ToShortDateString();
 
             BAceptar.Enabled = usuario.CanInsert();

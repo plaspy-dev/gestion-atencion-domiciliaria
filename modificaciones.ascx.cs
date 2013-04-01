@@ -37,7 +37,7 @@ public partial class modificaciones : System.Web.UI.UserControl
 
     public void Update()
     {
-        CConector conector = CConector.GetConector();
+        CConector conector = new CConector();
         Query query = new Query("modificaciones");
 
         query["usuario"] = "usuario.nombre";

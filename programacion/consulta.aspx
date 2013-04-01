@@ -79,7 +79,7 @@
             <td>Inicio</td>
             <td>Fin</td>
             <td>Asegurador</td>
-            <td>Actividad</td>
+            <td>Actividad o CUPS</td>
             <td>Profesional</td>
             <td>Área</td>
             <td>Horas</td>

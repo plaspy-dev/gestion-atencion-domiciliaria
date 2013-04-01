@@ -44,6 +44,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
             }
 
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+            ViewState["entidades"] = usuario["entidades"];
             BAceptar.Enabled = usuario.CanInsert();
             IEliminar.Visible = false;
 
@@ -91,6 +92,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 query += "cieCodDx_2";
                 query+="categoria";
                 query+= "nombre";
+                query += "diabetico";
 
                 CConectorMS conector = new CConectorMS();
 
@@ -98,6 +100,9 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
                 if (reader != null && reader.Read())
                 {
+                    if (!usuario.CheckEntidad(reader["entId"].ToString()))
+                        return;
+
                     ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
 
                     BAceptar.Enabled = usuario.CanUpdate();
@@ -143,7 +148,9 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                     TCIE1.Text = reader["cieCodDx"].ToString();
                     TCIE2.Text = reader["cieCodDx_1"].ToString();
                     TCIE3.Text = reader["cieCodDx_2"].ToString();
+                    CDiabetico.Checked = reader["diabetico"].ToString() == "1";
                     conector.SelectInDropDown(DCategoria, reader["categoria"]);
+
                     if(reader["nombre"].ToString().Length!=0) {
 
                         IFoto.ImageUrl = "~/archivo/foto.ashx?w=120&i=" + HId.Value;
@@ -159,9 +166,19 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
                     if (DEstado.SelectedValue=="1")
                     {
-                        SMotivo.SelectCommand = "SELECT cegId id,cegDescripcion nombre FROM dbo.phdCausaEgreso ORDER BY 2";
+                        SMotivo.SelectCommand = "SELECT cegId id,cegDescripcion nombre FROM dbo.phdCausaEgreso WHERE cegId!=1 ORDER BY 2;";
                         LReactivar.Text = "Inactivar";
                         BRetiro.Text = "Inactivar";
+                    }
+
+                    reader = conector.Query("SELECT TOP 1 egrFecha,egrObs,expedidoHS FROM phdEgresos WHERE pacId=" + HId.Value +" AND cegId=1 ORDER BY egrFecha DESC;");
+                    if(reader!=null && reader.Read()) {
+                        TFechaDefuncion.Text= CConectorMS.GetDate(reader["egrFEcha"]);
+                        TObservacionesDefuncion.Text = reader["egrObs"].ToString();
+                        CExpedidaOrganizationExample15.Checked = reader["expedidoHS"].ToString() == "1";
+                        BAceptarDefuncion.Enabled= usuario.CanUpdate();
+                    } else {
+                        BAceptarDefuncion.Enabled = usuario.CanInsert();
                     }
                 }
             }
@@ -234,6 +251,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         query["cieCodDx_1"] = GetCodigoCIE(TCIE2.Text);
         query["cieCodDx_2"] = GetCodigoCIE(TCIE3.Text);
         query["categoria"] = DCategoria.SelectedValue;
+        query["diabetico"] = CDiabetico.Checked ? "1" : "";
         query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
         if (HId.Value.Length!=0 && IFoto.PostBackUrl.Length == 0)
         {
@@ -280,6 +298,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
     {
         Response.Redirect(Request.Url.AbsolutePath);
     }
+    
     protected void BRetiro_Click(object sender, EventArgs e)
     {
         CConectorMS conector = new CConectorMS();
@@ -348,5 +367,34 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 e.Row.Cells[2].Text = HttpUtility.HtmlEncode(Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[4].Text).Trim()));
             }
         }
+    }
+
+    protected void BAceptarDefuncion_Click(object sender, EventArgs e)
+    {
+
+        CConectorMS conector = new CConectorMS();
+
+        if (conector.QueryMod("UPDATE dbo.phdPaciente set estId=2,pacCuraciones = 0,pacAdmPuntual = 0,pacTerapiaFisica = 0,pacTerapiaResp = 0,pacTerapiaOcup = 0,pacTerapiaLenguaje = 0,pacValNutricional = 0,pacValMedica = 0,pacEnfermeria_12 = 0,pacEnfermeria_24 = 0,pacEntregaSuministros = 0 WHERE pacId=" + HId.Value) == -1)
+            return;
+        if (conector.QueryMod("INSERT INTO dbo.phdEgresos(pacId,cegId,egrObs,egrFecha,segUsuarioIngreso,expedidoHS) VALUES(" + HId.Value + "," + 1 + ",'" + TObservacionesDefuncion.Text + "','" + TFechaDefuncion.Text + "','" + Usuario.GetUsuario().GetLogin() + "'," + (CExpedidaOrganizationExample15.Checked ? "1" : "0") + ")") == -1)
+            return;
+        if (conector.QueryMod("INSERT INTO dbo.phdAuditServicios(pacId,audEgreso,audUsuario,audFecha,cegId,audObs,segFechaIngreso) VALUES(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + TFechaDefuncion.Text + "'," + 1 + ",'" + TObservacionesDefuncion.Text + "',getdate())") == -1)
+            return;
+        string cnoId = conector.QueryString("SELECT cnoId FROM phdCausaEgreso WHERE cegId=" + 1);
+        if (cnoId.Length == 0)
+            cnoId = "NULL";
+        if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1 and pr.prgId=phdNovedad.prgId)") == -1)
+            return;
+        if (conector.QueryMod("INSERT INTO phdNovedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesDefuncion.Text + "','" + Usuario.GetUsuario().GetLogin() + "',getdate() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1") == -1)
+            return;
+        if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1") == -1)
+            return;
+        if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaDefuncion.Text + "' and autActivo=1") == -1)
+            return;
+
+        CConector conectormysql = new CConector();
+        conectormysql.InsertModificacion(HId.Value);
+
+        ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Inactivado.");
     }
 }

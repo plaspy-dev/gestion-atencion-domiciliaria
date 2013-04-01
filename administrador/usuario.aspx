@@ -9,6 +9,26 @@
             collapsible: true,
             active: false
         });
+        var almacenes = $("#<%= GEntidades.ClientID %>").find("input");
+        var todos = null;
+        almacenes.each(function() {
+            if (todos == null) {
+                var label = $("label[for='" + $(this).attr('id') + "']");
+                if (label.text() == "(Todas)")
+                    todos = $(this);
+            }
+        });
+        almacenes.change(function() {
+            if ($(this).attr("id") == todos.attr("id")) {
+                almacenes.each(function() {
+                    $(this).attr('checked', todos.is(":checked"));
+                });
+            } else {
+                if (!$(this).is(":checked")) {
+                    todos.attr("checked", false);
+                }
+            }
+        });
         $("#<%= TNombres.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -146,9 +166,6 @@
                         <asp:SqlDataSource ID="SCargos" runat="server" 
                                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
                                 SelectCommand="SELECT carId id,carDescripcion nombre FROM dbo.admCargo ORDER BY 2;">
-                                    <SelectParameters>
-                                        <asp:ControlParameter ControlID="HUsuario" Name="usuario" PropertyName="Value" DefaultValue=" " />
-                                    </SelectParameters>
                         </asp:SqlDataSource>
                     </div>
                     <h3><a href="#">Permisos especiales</a></h3>
@@ -212,6 +229,31 @@
                                 <asp:ControlParameter ControlID="HUsuario" Name="usuario" PropertyName="Value" DefaultValue=" " />
                             </SelectParameters>
                 </asp:SqlDataSource>                  
+                    </div>
+                    <h3><a href="#">Entidades</a></h3>
+                    <div style="display: none">                
+                <asp:GridView ID="GEntidades" runat="server" DataSourceID="SEntidades" 
+                    DataKeyNames="id" AutoGenerateColumns="false" ShowHeader="false"
+                    onrowdatabound="GEntidades_RowDataBound"
+                    >
+                    <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                    <Columns>
+                        <asp:TemplateField HeaderText="Entidad">
+                            <ItemTemplate>
+                                <asp:CheckBox runat="server" ID="CEntidad" Checked='false' Text='<%# Eval("nombre").ToString() %>' />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
+                <asp:SqlDataSource ID="SEntidades" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                            SelectCommand="(SELECT 0 AS id,'(Todas)' AS nombre) UNION (SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1) ORDER BY 2">
+                </asp:SqlDataSource>
                     </div>
                 </div>
             </td>

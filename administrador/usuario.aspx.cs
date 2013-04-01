@@ -22,6 +22,7 @@ public partial class administrador_usuario : System.Web.UI.Page
             GUsuarios.Columns[1].Visible = usuario.CanDelete();
             GUsuarios.Columns[0].Visible = usuario.CanUpdate();
             ViewState["cargos"] = "";
+            ViewState["entidades"] = "";
         }
     }
     protected void GUsuarios_SelectedIndexChanged(object sender, EventArgs e)
@@ -33,8 +34,11 @@ public partial class administrador_usuario : System.Web.UI.Page
         TUsuario.Text = HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[3].Text);
         TIdPersonal.Text= HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[6].Text).Trim();
         HUsuario.Value = TUsuario.Text;
-        ViewState["cargos"] = new CConector().QueryString("SELECT cargos FROM usuario WHERE id=" + HId.Value);
+        CConector conector= new CConector();
+        ViewState["cargos"] = conector.QueryString("SELECT cargos FROM usuario WHERE id=" + HId.Value);
+        ViewState["entidades"] = conector.QueryString("SELECT entidades FROM usuario WHERE id=" + HId.Value);
         GCargos.DataBind();
+        GEntidades.DataBind();
         
         ((MasterPageI)Master).SetModificacion(HId.Value);
     }
@@ -48,6 +52,7 @@ public partial class administrador_usuario : System.Web.UI.Page
         string szQuery;
         string mensaje;
         string cargos = "";
+        string entidad = "";
 
         query["nombre"] = TNombres.Text;
         query["usuario"] = TUsuario.Text;
@@ -66,6 +71,21 @@ public partial class administrador_usuario : System.Web.UI.Page
             }
         }
         query["cargos"] = cargos;
+        // agregamos las entidades que puede ver el usuario
+        for (int i = 0; i < GEntidades.Rows.Count; i++)
+        {
+            CheckBox box = (CheckBox)GEntidades.Rows[i].FindControl("CEntidad");
+            if (box.Checked)
+            {
+                if (i == 0) // todas las entidades estan chuleadas
+                    break;
+                if (entidad.Length > 0)
+                    entidad += ",";
+                entidad += GEntidades.DataKeys[i].Value.ToString();
+            }
+        }
+        query["entidades"] = entidad;
+
 
         if(TContrasena.Text.Length>0)
             query.AddCampo("contrasena", "PASSWORD(" + Query.GetValor(TContrasena.Text) + ")", false);
@@ -301,6 +321,30 @@ public partial class administrador_usuario : System.Web.UI.Page
                     CheckBox box = (CheckBox)e.Row.FindControl("CCargo");
                     box.Checked = true;
                     break;
+                }
+            }
+        }
+    }
+    protected void GEntidades_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if(e.Row.RowIndex!=-1) {
+            if (string.IsNullOrEmpty((string)ViewState["entidades"]))
+            {
+                CheckBox box = (CheckBox)e.Row.FindControl("CEntidad");
+                box.Checked = true;
+            }
+            else
+            {
+                string[] valores = ViewState["entidades"].ToString().Split(',');
+                for (int i = 0; i < valores.Length; i++)
+                {
+
+                    if (valores[i] == GEntidades.DataKeys[e.Row.RowIndex].Value.ToString())
+                    {
+                        CheckBox box = (CheckBox)e.Row.FindControl("CEntidad");
+                        box.Checked = true;
+                        break;
+                    }
                 }
             }
         }

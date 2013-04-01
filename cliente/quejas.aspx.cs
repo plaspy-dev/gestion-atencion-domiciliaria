@@ -12,6 +12,7 @@ public partial class cliente_quejas : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
         if (!IsPostBack)
         {
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
@@ -79,8 +80,11 @@ public partial class cliente_quejas : System.Web.UI.Page
                         GPersonal.DataBind();
                     }
                     DTipo_SelectedIndexChanged(sender, e);
-                    if(PConductaAbusiva.Visible) {
+                    if (!PConductaAbusiva.Visible) {
+                        ((MasterPageI)Master).Imprimir("quejas.html");
+                    } else {
 
+                        ((MasterPageI)Master).Imprimir("quejasa.html");
                         query = new Query("conducta_abusiva");
 
                         query += "id";
@@ -236,9 +240,9 @@ public partial class cliente_quejas : System.Web.UI.Page
                     return;
             }
 
-            if (conector.QueryMod("DELETE FROM conducta_abusiva_medidas WHERE conducta_abusiva=" + id) == -1)
+            if (conector.QueryMod("DELETE FROM conducta_abusiva_medidas WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
                 return;
-            if (conector.QueryMod("DELETE FROM conducta_abusiva_consecuencias WHERE conducta_abusiva=" + id) == -1)
+            if (conector.QueryMod("DELETE FROM conducta_abusiva_consecuencias WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
                 return;
             
             query = new Query("conducta_abusiva_consecuencias");
@@ -265,13 +269,13 @@ public partial class cliente_quejas : System.Web.UI.Page
                         return;
                 }
             }
-        } else if (string.IsNullOrEmpty((string)ViewState["idconducta"])) { // limpiamos las tablas
+        } else if (!string.IsNullOrEmpty((string)ViewState["idconducta"])) { // limpiamos las tablas
             string id = (string)ViewState["idconducta"];
-            if (conector.QueryMod("DELETE FROM conducta_abusiva_medidas WHERE conducta_abusiva=" + id) == -1)
+            if (conector.QueryMod("DELETE FROM conducta_abusiva_medidas WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
                 return;
-            if (conector.QueryMod("DELETE FROM conducta_abusiva_consecuencias WHERE conducta_abusiva=" + id) == -1)
+            if (conector.QueryMod("DELETE FROM conducta_abusiva_consecuencias WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
                 return;
-            if (conector.QueryMod("DELETE FROM conducta_abusiva WHERE id=" + id) == -1)
+            if (conector.QueryMod("DELETE FROM conducta_abusiva WHERE id=" + Query.GetValor(id)) == -1)
                 return;
         }
 
@@ -570,5 +574,53 @@ public partial class cliente_quejas : System.Web.UI.Page
                 }
             }
         }
+    }
+
+    protected void OnImprimir(object sender, EventArgs e)
+    {
+        PrintEventArgs evento = (PrintEventArgs)e;
+        // aqui modificamos el evento.Contenido
+        // evento.Contenido = evento.Contenido.Replace("$GPersonal$", RenderGrid(GPersonal));
+        // evento.Contenido = evento.Contenido.Replace("$GExamenFisico$", RenderGrid(GExamenFisico));
+
+        // evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + TPlanManejo.Text.Replace("\n", "</li><li>") + "</li></ol>");
+        evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
+
+        CConectorMS conectorms = new CConectorMS();
+        Query query = new Query("phdPaciente");
+
+        query["categoria"] = "categoria";
+        query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
+
+        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente));
+        if (reader != null)
+        {
+            bool l = reader.Read();
+            if (l)
+            {
+                evento.Contenido = evento.Contenido.Replace("$szCategoria$", new CConector().QueryString("SELECT nombre FROM varios WHERE id='" + reader["categoria"].ToString() + "' AND tipo=13"));
+            }
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
+            }
+        }
+
+        /*query = new Query("admPersonalHS");
+
+        query["szProfesional"] = "admPersonalHS.perDocumento";
+        query["szCargo"] = "admCargo.carDescripcion";
+
+        reader = conectorms.Query(query.GetSelect("perId=" + Query.GetValor(TIdFuncionario.Text), " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"));
+        if (reader != null)
+        {
+            bool l = reader.Read();
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
+            }
+        }*/
+        // limpiamos el inactivo de los pacientes
+        evento.Contenido = evento.Contenido.Replace(" (Inactivo)", "");
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SDG.Componentes;
 
 public partial class auditoria_OrganizationExample51 : System.Web.UI.Page
 {
@@ -12,20 +13,49 @@ public partial class auditoria_OrganizationExample51 : System.Web.UI.Page
     {
 
     }
-    protected void BBuscar_Click(object sender, EventArgs e)
-    {
-        GResultados.DataBind();
-        int rows = GResultados.Rows.Count;
 
+    protected void BindGridView(GridView gview)
+    {
+        GColmedica.Visible= GOrganizationExample51.Visible = false;
+        gview.Visible = true;
+        int rows = Utilidades.GetRowsCount(gview);
         LTotal.Text = rows + " paciente" + (rows == 1 ? "" : "s");
 
-        if (GResultados.Rows.Count > 0)
+        if (rows > 0)
         {
-            ((MasterPageI)Master).Excel(GResultados);
-            ((MasterPageI)Master).Imprimir(GResultados);
+            ((MasterPageI)Master).Excel(gview);
+            ((MasterPageI)Master).Imprimir(gview);
+        } else {
+            ((MasterPageI)Master).Excel(null);
+            ((MasterPageI)Master).Imprimir("");
         }
     }
-    protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
+
+    protected void BBuscar_Click(object sender, EventArgs e)
+    {
+        BindGridView((GridView)Utilidades.FindControlForId(Controls, DTipo.SelectedValue));
+    }
+    protected void GColmedica_RowDataBound(object sender, GridViewRowEventArgs e) {
+        if (e.Row.RowIndex != -1)
+        {
+            e.Row.Cells[0].Text= (e.Row.RowIndex+1).ToString();
+            string texto = "";
+            try
+            {
+                DateTime birthDate = Convert.ToDateTime(e.Row.Cells[11].Text);
+                DateTime now = DateTime.Now;
+                int years = now.Year - birthDate.Year;
+
+                if (now.Month < birthDate.Month || (now.Month == birthDate.Month && now.Day < birthDate.Day))
+                    --years;
+
+                texto = years.ToString();
+            }
+            catch { }
+            e.Row.Cells[11].Text = texto; // edad
+        }
+    }
+    protected void GOrganizationExample51_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if(e.Row.RowIndex!=-1) {
             

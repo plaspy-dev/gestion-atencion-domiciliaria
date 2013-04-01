@@ -11,7 +11,7 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2013-02-06.
+This cut records the home-care application as archived on 2013-04-01.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
@@ -19,13 +19,14 @@ The application keeps the records used to arrange visits and coordinate the peop
 ### Features in the retained source
 
 - Open the batch admission screen to process patient admissions. `admisiones/amasivas.aspx`.
-- Retrieve images linked to the clinical files in this edition. `archivo/foto.ashx`.
 - Open the patient record and its care information. `paciente/paciente.aspx`.
+- Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
+- Consult the pharmacy reports for this edition. `farmacia/informes.aspx`.
+- Start from the census to review cases recorded in the site. `censo/Default.aspx`.
+- Retrieve images linked to the clinical files in this edition. `archivo/foto.ashx`.
 - Open the staff record for the care team. `rh/funcionario.aspx`.
 - View and maintain access groups. `administrador/grupos.aspx`.
-- Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
 - List cases that are waiting to be scheduled. `programacion/sinprogramar.aspx`.
-- Start from the census to review cases recorded in the site. `censo/Default.aspx`.
 
 ### Build and local use
 
@@ -35,7 +36,7 @@ The retained site entry is `Default.aspx`. Use fictional accounts and a disposab
 
 ### Archive notes
 
-The archive inventory counted 0 additions, 6 edits and 0 removals.
+The archive inventory counted 11 additions, 23 edits and 1 removals.
 
 ### Framework versions
 
@@ -74,7 +75,7 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2013-02-06.
+Este corte conserva la versión de atención domiciliaria archivada el 2013-04-01.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
@@ -82,13 +83,14 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 ### Funciones en el código conservado
 
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `admisiones/amasivas.aspx`.
-- Consulta las imágenes vinculadas a los archivos clínicos de esta edición. `archivo/foto.ashx`.
 - Abre la ficha del paciente y su información de atención. `paciente/paciente.aspx`.
+- Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
+- Consulta los informes de farmacia de esta edición. `farmacia/informes.aspx`.
+- Empieza en el censo para consultar los casos registrados en el sitio. `censo/Default.aspx`.
+- Consulta las imágenes vinculadas a los archivos clínicos de esta edición. `archivo/foto.ashx`.
 - Abre la ficha del personal del equipo de atención. `rh/funcionario.aspx`.
 - Consulta y administra los grupos de acceso. `administrador/grupos.aspx`.
-- Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
 - Consulta los casos pendientes de programación. `programacion/sinprogramar.aspx`.
-- Empieza en el censo para consultar los casos registrados en el sitio. `censo/Default.aspx`.
 
 ### Compilación y uso local
 
@@ -98,7 +100,7 @@ La entrada conservada del sitio es `Default.aspx`. Usa cuentas ficticias y una b
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 0 adiciones, 6 cambios y 0 retiros.
+El inventario del respaldo registró 11 adiciones, 23 cambios y 1 retiros.
 
 ### Versiones de .NET Framework
 
@@ -138,6 +140,6 @@ El núcleo archivado iTextSharp 5.3.5 acompaña la compilación de XML Worker 5.
 
 ## Session setup / Configuración de sesión
 
-Set `DOMICILIO_SESSION_KEY_4` in the ASP.NET process environment before signing in. Generate independent values for your deployment. Use synthetic values in local tests.
+Set `DOMICILIO_SESSION_KEY_4`, `DOMICILIO_SESSION_KEY_5` in the ASP.NET process environment before signing in. Generate independent values for your deployment. Use synthetic values in local tests.
 
-Define `DOMICILIO_SESSION_KEY_4` en el entorno del proceso ASP.NET antes de iniciar sesión. Genera valores propios para tu instalación. Usa valores ficticios en las pruebas locales.
+Define `DOMICILIO_SESSION_KEY_4`, `DOMICILIO_SESSION_KEY_5` en el entorno del proceso ASP.NET antes de iniciar sesión. Genera valores propios para tu instalación. Usa valores ficticios en las pruebas locales.

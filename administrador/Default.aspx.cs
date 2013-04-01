@@ -111,9 +111,11 @@ public partial class administrador_Default : System.Web.UI.Page
 
             parent = Add("Gestión archivo");
             Add("Tipo de solicitud", 29, parent);
-            
-            // disponible 33
-            
+
+            parent = Add("Farmacia");
+            Add("Estado productos", 34, parent);
+            Add("Grupos", 35, parent);
+            // disponible 36
 
 
             if (HTipo.Value.Length == 0)

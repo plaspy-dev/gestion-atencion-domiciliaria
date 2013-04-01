@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -123,6 +124,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             return edad;
         }
     }
+
     public string IdPaciente {
         get {
             return HIdPaciente.Value;
@@ -174,6 +176,9 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
 
             if (reader != null && reader.Read())
             {
+                if (!((CUsuario)Usuario.GetUsuario()).CheckEntidad(reader["entId"].ToString()))
+                    return;
+
                 HIdPaciente.Value = UCAutorizaciones.Value = reader["pacId"].ToString();
 
                 ViewState["paciente_asegurador"]= reader["entId"].ToString();
@@ -214,35 +219,32 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                 ViewState["paciente_asegurador_tope_paciente"] = paciente;
                 ViewState["paciente_asegurador_tope"] = asegurador;
 
-                string cie1 = reader["cieCodDx"].ToString();
-                string cie2 = reader["cieCodDx_1"].ToString();
-                string cie3 = reader["cieCodDx_2"].ToString();
-                cie1 = Procedimientos.GetCodigoCIE(cie1, conector);
-                cie2 = Procedimientos.GetCodigoCIE(cie2, conector);
-                cie3 = Procedimientos.GetCodigoCIE(cie3, conector);
-                LCIE10.Text += cie1;
-                if (cie2.Length > 0 && LCIE10.Text.Length > 0)
-                    LCIE10.Text += "<br/>";
-                LCIE10.Text += cie2;
-                if (cie3.Length > 0 && LCIE10.Text.Length > 0)
-                    LCIE10.Text += "<br/>";
-                LCIE10.Text += cie3;
+                ArrayList lista = Procedimientos.GetCodigosCIE10(HIdPaciente.Value);
 
-                /*CConector conectormysql = new CConector();
-                MySqlDataReader readermysql = conectormysql.Query("SELECT codigo FROM ingreso_paciente LEFT JOIN codigos_ingreso ON (codigos_ingreso.ingreso_paciente=ingreso_paciente.id) WHERE paciente="+ HIdPaciente.Value);
-                if(readermysql!=null) {
-                    bool primero=true;
-                    while (readermysql.Read())
-                    {
-                        if(primero) {
-                            LCIE10.Text = "";
-                            primero = false;
-                        }
-                        if (LCIE10.Text.Length > 0)
-                            LCIE10.Text += "<br/>";
-                        LCIE10.Text += GetCodigoCIE(readermysql["codigo"].ToString(), conector);
-                    }
-                }*/
+                if (lista.Count == 0)
+                {
+                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx"].ToString());
+                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx_1"].ToString());
+                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx_2"].ToString());
+                }
+
+                for (int i = 0; i < lista.Count; i++)
+                {
+                    if (i != 0)
+                        LCIE10.Text += "<br/>";
+                    LCIE10.Text += Procedimientos.GetCodigoCIE(lista[i].ToString(), conector);
+                }
+                LAsegurador.Text += " - " + conector.QueryString("SELECT TOP 1"
+                                            + " CASE WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<17 THEN 'Grupo 1' "
+                                            + " WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<49 THEN 'Grupo 2'"
+                                            + " WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<75 THEN 'Grupo 3'"
+                                            + " ELSE 'Grupo 4' END"
+                                            + " FROM phdDetalleAutorizacion "
+                                            + " LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=phdDetalleAutorizacion.autNumero)"
+                                            + " WHERE "
+                                            + " phdAutorizacion.pacId=" + HIdPaciente.Value
+                                            + " AND phdDetalleAutorizacion.actId IN (5028,5029,5030,5031)"
+                                            + " GROUP BY phdDetalleAutorizacion.autNumero,phdAutorizacion.autFecha ORDER BY phdAutorizacion.autFecha DESC;");
             }
         }
     }

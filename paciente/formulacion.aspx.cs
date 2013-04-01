@@ -89,7 +89,9 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Conector.GetDate(Convert.ToDateTime(TFecha.Text)) + "' AND tipo='" + DTipo.SelectedValue + "'"));
                     if (readermysql != null && readermysql.Read())
                     {
-                        ((MasterPageI)Master).Imprimir("formulacion.html");
+                        string ruta = string.Format("formulacion{0}.html", CCDetallePaciente.AsegurdadorID);
+                        ((MasterPageI)Master).Imprimir(File.Exists(Server.MapPath(ruta)) ? ruta : "formulacion.html");
+
                         BAceptar.Enabled = usuario.CanUpdate();
                         BMasFormulacion.Enabled= usuario.CanInsert();
 
@@ -249,6 +251,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
         GFormulacion.DataBind();
 
         TMedicamentoID.Text = TMedicamento.Text = TPosologia.Text = TCantidad.Text = "";
+        TTiempo.Text = TVia.Text = "";
         CCDetallePaciente.GetCostoPacienteActual = 0;
         CCDetallePaciente.GetCostoAseguradoraActual = 0;
         BAceptar_Click(sender, e);
@@ -378,6 +381,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
         Query query = new Query("phdPaciente");
 
         query["categoria"] = "categoria";
+        query["szGrado"] = "pacGrado";
         query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
 
         CConectorMS conectorms = new CConectorMS();
@@ -426,12 +430,12 @@ public partial class paciente_formulacion : System.Web.UI.Page
             string contenido = "";
 
             for(int i=1; i<paginas; i++) {
-                contenido += contenidoreal.Replace("$GFormulacion$", RenderPage(i * 5));
+                contenido += contenidoreal.Replace("$szFormulacion$", RenderPage(i * 5));
             }
             evento.Contenido= evento.Contenido.Insert(posf + 6, contenido);
         }
         // aqui modificamos la primera pagina.
-        evento.Contenido = evento.Contenido.Replace("$GFormulacion$", RenderPage(0));
+        evento.Contenido = evento.Contenido.Replace("$szFormulacion$", RenderPage(0));
     }
 
     protected void BFormula_Click(object sender, EventArgs e)

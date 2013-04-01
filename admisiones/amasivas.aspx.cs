@@ -35,7 +35,10 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             TPaciente.Focus();
             ViewState["AMasivasPaciente"] = new ArrayList();
             BAceptar.Enabled = Usuario.GetUsuario().CanInsert();
-            
+
+            Usuario usuario = Usuario.GetUsuario();
+            ViewState["entidades"] = usuario["entidades"];
+
             if(Session["amasivas_paciente"]==null) {
                 string szPacientes = CConector.GetCookie("amasivas_paciente", "");
                 if (szPacientes.Length != 0)

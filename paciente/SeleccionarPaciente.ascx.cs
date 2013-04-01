@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SDG.Componentes;
 
 public partial class paciente_SeleccionarPaciente : System.Web.UI.UserControl
 {
@@ -24,7 +25,11 @@ public partial class paciente_SeleccionarPaciente : System.Web.UI.UserControl
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if(!IsPostBack)
+        if (!IsPostBack)
+        {
+            Usuario usuario = Usuario.GetUsuario();
+            ViewState["entidades"] = usuario["entidades"];
             TPaciente.Focus();
+        }
     }
 }

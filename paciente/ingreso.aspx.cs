@@ -52,7 +52,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                             BAceptar.Enabled = false;
                         else item.Selected = true;
                     }
-
+                    
                     DMedico.Focus();
 
                     Query qIngreso = new Query("ingreso_paciente");
@@ -75,7 +75,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     qIngreso += "conducta";
                     qIngreso += "fecha";
 
-                    CConector conectormysql = CConector.GetConector();
+                    CConector conectormysql = new CConector();
                     MySqlDataReader readermysql = conectormysql.Query(qIngreso.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
                     if (readermysql != null && readermysql.Read())
                     {
@@ -469,12 +469,12 @@ public partial class paciente_ingreso : System.Web.UI.Page
     {
         PrintEventArgs evento = (PrintEventArgs)e;
         // aqui modificamos el evento.Contenido
-        evento.Contenido = evento.Contenido.Replace("$GAntecedentes$", RenderGrid(GAntecedentes, evento.pdf));
-        evento.Contenido = evento.Contenido.Replace("$GRevision$", RenderGrid(GRevision, evento.pdf));
-        evento.Contenido = evento.Contenido.Replace("$GExamenFisico$", RenderGrid(GExamenFisico, evento.pdf));
+        evento.Contenido = evento.Contenido.Replace("$szAntecedentes$", Utilidades.RenderGrid(GAntecedentes, "border=0 cellspacing=0"));
+        evento.Contenido = evento.Contenido.Replace("$szRevision$", Utilidades.RenderGrid(GRevision, "border=0 cellspacing=0"));
+        evento.Contenido = evento.Contenido.Replace("$szExamenFisico$", Utilidades.RenderGrid(GExamenFisico, "border=0 cellspacing=0"));
         if (PMujer.Visible)
-            evento.Contenido = evento.Contenido.Replace("$GGinecologico$", RenderGrid(GGinecologico, evento.pdf));
-        else evento.Contenido = evento.Contenido.Replace("$GGinecologico$", "");
+            evento.Contenido = evento.Contenido.Replace("$szGinecologico$",Utilidades.RenderGrid(GGinecologico, "border=0 cellspacing=0"));
+        else evento.Contenido = evento.Contenido.Replace("$szGinecologico$", "");
 
         evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + TConductaInicial.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
@@ -495,10 +495,11 @@ public partial class paciente_ingreso : System.Web.UI.Page
             ));
         if (reader != null)
         {
+            CConector conectortemp=new CConector();
             bool l = reader.Read();
             if (l)
             {
-                evento.Contenido = evento.Contenido.Replace("$szCategoria$", new CConector().QueryString("SELECT nombre FROM varios WHERE id='" + reader["categoria"].ToString() + "' AND tipo=13"));
+                evento.Contenido = evento.Contenido.Replace("$szCategoria$", conectortemp.QueryString("SELECT nombre FROM varios WHERE id='" + reader["categoria"].ToString() + "' AND tipo=13"));
             }
             for (int i = 0; i < reader.FieldCount; i++)
             {

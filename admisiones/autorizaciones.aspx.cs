@@ -46,6 +46,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             GActivades.DataBind();
 
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+            ViewState["entidades"] = usuario["entidades"];
             CConectorMS conector = new CConectorMS();
             CGenerar.Visible= conector.QueryString("SELECT perIdPermiso FROM segPermisoEspecial WHERE usIdUsuario='" + usuario.GetLogin() + "' AND perIdPermiso='AUT_AUTOMATICA'")!="";
             RAutorizacion.Visible= RPreautorizacion.Visible = conector.QueryString("SELECT perIdPermiso FROM segPermisoEspecial WHERE usIdUsuario='" + usuario.GetLogin() + "' AND perIdPermiso='AUT_SELPREAUT'")!="";
@@ -468,7 +469,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     msg.Body = archivo.ReadToEnd();
                     archivo.Close();
 
-                    msg.Body = ((MasterPageI)Master).ReplaceContenido(this.Controls, msg.Body);
+                    msg.Body = Utilidades.ReplaceContenido(this.Controls, msg.Body);
 
                     string programacion = "";
                     

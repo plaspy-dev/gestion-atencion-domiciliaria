@@ -1,4 +1,4 @@
-﻿<%@ Page Title="OrganizationExample51" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="OrganizationExample51.aspx.cs" Inherits="auditoria_OrganizationExample51" %>
+﻿<%@ Page Title="Informes EPS" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="OrganizationExample51.aspx.cs" Inherits="auditoria_OrganizationExample51" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
@@ -10,6 +10,7 @@
                 Desde</td>
             <td>
                 Hasta</td>
+            <td>Tipo</td>
             <td>
                 &nbsp;</td>
         </tr>
@@ -25,17 +26,22 @@
                 <asp:RangeValidator ControlToValidate="THasta" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator>
             </td>
             <td>
+                <asp:DropDownList runat="server" ID="DTipo">
+                    <asp:ListItem Text="OrganizationExample51" Value="GOrganizationExample51"></asp:ListItem>
+                    <asp:ListItem Text="Aliansalud y Colmedica" Value="GColmedica"></asp:ListItem>
+                </asp:DropDownList>
+            </td>
+            <td>
                 <asp:Button ID="BBuscar" runat="server" Text="Buscar" onclick="BBuscar_Click" />
             </td>
         </tr>
         </table>
     </asp:Panel>
     <br />
-        <div id="dImprimir">
-        <asp:GridView ID="GResultados" runat="server" 
+        <asp:GridView ID="GOrganizationExample51" runat="server" Visible="false"
             AutoGenerateColumns="False" EmptyDataText="No se encontraron pacientes" 
             AllowPaging="True" PageSize="50" AllowSorting="True" 
-                DataSourceID="SResultados" onrowdatabound="GResultados_RowDataBound" >
+                DataSourceID="SOrganizationExample51" onrowdatabound="GOrganizationExample51_RowDataBound" >
             <Columns>
                 <asp:BoundField HeaderText="Nombre del usuario" DataField="pacNombres" SortExpression="pacNombres" ItemStyle-Wrap="false" />
                 <asp:BoundField HeaderText="Edad" DataField="pacFechaNac" SortExpression="pacFechaNac" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Right" />
@@ -58,7 +64,7 @@
             <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         </asp:GridView>
-    <asp:SqlDataSource ID="SResultados" runat="server" 
+    <asp:SqlDataSource ID="SOrganizationExample51" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
                 SelectCommand="SELECT phdPaciente.pacNombres,phdPaciente.pacFechaNac,phdPaciente.pacDocumento
     ,CASE phdPaciente.entId WHEN 8 THEN 'MP' ELSE 'EPS' END AS tipo
@@ -86,10 +92,166 @@
                     <asp:ControlParameter ControlID="TDesde" Name="inicio" PropertyName="Text" />
                     <asp:ControlParameter ControlID="THasta" Name="fin" PropertyName="Text" />
                  </SelectParameters>
-    </asp:SqlDataSource>        
+    </asp:SqlDataSource>
+    <asp:GridView ID="GColmedica" runat="server" Visible="false"
+            AutoGenerateColumns="False" EmptyDataText="No se encontraron pacientes" 
+            AllowPaging="True" PageSize="50" AllowSorting="True" 
+                DataSourceID="SColmedica" onrowdatabound="GColmedica_RowDataBound" >
+            <Columns>
+                <asp:BoundField HeaderText="NUMERO" DataField="" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="REGIONAL" DataField="REGIONAL" SortExpression="REGIONAL" />
+                <asp:BoundField HeaderText="CIUDAD" DataField="CIUDAD" SortExpression="CIUDAD" />
+                <asp:BoundField HeaderText="IPS DOMICILIARIA" DataField="IPS DOMICILIARIA" SortExpression="IPS DOMICILIARIA" />
+                <asp:BoundField HeaderText="PRODUCTO" DataField="PRODUCTO" SortExpression="PRODUCTO" />
+                <asp:BoundField HeaderText="TUTELA" DataField="TUTELA" SortExpression="TUTELA" />
+                <asp:BoundField HeaderText="PROGRAMA" DataField="PROGRAMA" SortExpression="PROGRAMA" />
+                <asp:BoundField HeaderText="FECHA INGRESO DE AL PROGRAMA CRONICO" DataField="FECHA INGRESO DE AL PROGRAMA CRONICO" SortExpression="FECHA INGRESO DE AL PROGRAMA CRONICO" DataFormatString="{0:d}" />
+                <asp:BoundField HeaderText="NOMBRE DEL PACIENTE" DataField="NOMBRE DEL PACIENTE" SortExpression="NOMBRE DEL PACIENTE" />
+                <asp:BoundField HeaderText="TIPO ID" DataField="TIPO ID" SortExpression="TIPO ID" />
+                <asp:BoundField HeaderText="IDENTIFICACION" DataField="IDENTIFICACION" SortExpression="IDENTIFICACION" />
+                <asp:BoundField HeaderText="EDAD" DataField="EDAD" SortExpression="EDAD" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="DIRECCION" DataField="DIRECCION" SortExpression="DIRECCION" />
+                <asp:BoundField HeaderText="TELEFONO" DataField="TELEFONO" SortExpression="TELEFONO" />
+                <asp:BoundField HeaderText="DIAGNOSTICO PRINCIPAL" DataField="DIAGNOSTICO PRINCIPAL" SortExpression="DIAGNOSTICO PRINCIPAL" />
+                <asp:BoundField HeaderText="CODIGO DE DX CIE-10" DataField="CODIGO DE DX CIE-10" SortExpression="CODIGO DE DX CIE-10" />
+                <asp:BoundField HeaderText="DIAGNOSTICO SECUNDARIO" DataField="DIAGNOSTICO SECUNDARIO" SortExpression="DIAGNOSTICO SECUNDARIO" />
+                <asp:BoundField HeaderText="OTROS DIAGNOSTICOS" DataField="OTROS DIAGNOSTICOS" SortExpression="OTROS DIAGNOSTICOS" />
+                <asp:BoundField HeaderText="FECHA DE EGRESO DEL PROGRAMA" DataField="FECHA DE EGRESO DEL PROGRAMA" SortExpression="FECHA DE EGRESO DEL PROGRAMA" DataFormatString="{0:d}" />
+                <asp:BoundField HeaderText="CAUSA EGRESO DEL PROGRAMA" DataField="CAUSA EGRESO DEL PROGRAMA" SortExpression="CAUSA EGRESO DEL PROGRAMA" />
+                <asp:BoundField HeaderText="OBSERVACIONES DEL PRESTADOR" DataField="OBSERVACIONES DEL PRESTADOR" SortExpression="OBSERVACIONES DEL PRESTADOR" />
+                <asp:BoundField HeaderText="CONSULTA MEDICA GENERAL" DataField="CONSULTA MEDICA GENERAL" SortExpression="CONSULTA MEDICA GENERAL" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="CONSULTA MEDICA ESPECIALIZADA" DataField="CONSULTA MEDICA ESPECIALIZADA" SortExpression="CONSULTA MEDICA ESPECIALIZADA" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="VISITA ENFERMERIA PROFESIONAL" DataField="VISITA ENFERMERIA PROFESIONAL" SortExpression="VISITA ENFERMERIA PROFESIONAL" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="ACTIVIDAD PUNTAL DE ENFERMERIA" DataField="ACTIVIDAD PUNTAL DE ENFERMERIA" SortExpression="ACTIVIDAD PUNTAL DE ENFERMERIA" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="CURACIONES" DataField="CURACIONES" SortExpression="CURACIONES" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="ENFERMERIA 3-6-8 HORAS" DataField="ENFERMERIA 3-6-8 HORAS" SortExpression="ENFERMERIA 3-6-8 HORAS" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="ENFERMERIA 12H" DataField="ENFERMERIA 12H" SortExpression="ENFERMERIA 12H" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="ENFERMERIA 24H" DataField="ENFERMERIA 24H" SortExpression="ENFERMERIA 24H" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="TERAPIA RESPIRATORIA" DataField="TERAPIA RESPIRATORIA" SortExpression="TERAPIA RESPIRATORIA" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="OXIGENOTERAPIA EN DOMICILIO" DataField="OXIGENOTERAPIA EN DOMICILIO" SortExpression="OXIGENOTERAPIA EN DOMICILIO" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="OXIMETRIAS" DataField="OXIMETRIAS" SortExpression="OXIMETRIAS" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="TERAPIA FISICA" DataField="TERAPIA FISICA" SortExpression="TERAPIA FISICA" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="TERAPIA OCUPACIONAL" DataField="TERAPIA OCUPACIONAL" SortExpression="TERAPIA OCUPACIONAL" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="FONOAUDIOLOGIA" DataField="FONOAUDIOLOGIA" SortExpression="FONOAUDIOLOGIA" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="CONSULTA NUTRICION" DataField="CONSULTA NUTRICION" SortExpression="CONSULTA NUTRICION" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="CONSULTA PSICOLOGIA" DataField="CONSULTA PSICOLOGIA" SortExpression="CONSULTA PSICOLOGIA" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="CONSULTA TRABAJO SOCIAL" DataField="CONSULTA TRABAJO SOCIAL" SortExpression="CONSULTA TRABAJO SOCIAL" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="TOMA DE EXAMENES DE LABORATORIO" DataField="TOMA DE EXAMENES DE LABORATORIO" SortExpression="TOMA DE EXAMENES DE LABORATORIO" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField HeaderText="PROCESAMIENTO EXAMENES DE LABORATORIO" DataField="PROCESAMIENTO EXAMENES DE LABORATORIO" SortExpression="PROCESAMIENTO EXAMENES DE LABORATORIO" ItemStyle-HorizontalAlign="Right" />
+            </Columns>
+            <RowStyle CssClass="GridRow"></RowStyle>
+            <FooterStyle CssClass="GridFooter"></FooterStyle>
+            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+        </asp:GridView>
+    <asp:SqlDataSource ID="SColmedica" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                SelectCommand="SELECT 
+	'Cundinamarca' AS REGIONAL
+	,'Bogotá' AS CIUDAD
+	,'OrganizationExample15' AS 'IPS DOMICILIARIA'
+	,CASE phdPaciente.entId WHEN 4 THEN 'EPS' WHEN 25 THEN 'MEDICINA PREPAGADA' ELSE 'CRUCE' END AS PRODUCTO
+	,CASE phdPaciente.pdirId WHEN 2 THEN 'SI' ELSE 'NO' END AS 'TUTELA'
+	,phdTipoEvento.tipEDescripcion AS PROGRAMA
+	,CASE phdPaciente.tipECod WHEN 2 THEN phdPaciente.pacFecIngPrograma ELSE NULL END AS 'FECHA INGRESO DE AL PROGRAMA CRONICO'
+	,phdPaciente.pacNombres AS 'NOMBRE DEL PACIENTE'
+	,phdTipoDocumento.tdocDescripcion AS 'TIPO ID'
+	,phdPaciente.pacDocumento AS 'IDENTIFICACION'
+	,phdPaciente.pacFechaNac AS 'EDAD'
+	,phdPaciente.pacDireccion AS 'DIRECCION'
+	,phdPaciente.pacTelefono AS 'TELEFONO'
+	,phdCIE10.cirDescripcion AS 'DIAGNOSTICO PRINCIPAL'
+	,phdPaciente.cieCodDx AS 'CODIGO DE DX CIE-10'
+	,phdCIE102.cirDescripcion AS 'DIAGNOSTICO SECUNDARIO'
+	,phdCIE103.cirDescripcion AS 'OTROS DIAGNOSTICOS'
+	,CASE WHEN phdPaciente.estId=2 THEN 
+	(SELECT TOP 1 egrFecha FROM phdEgresos WHERE pacId=phdPaciente.pacId ORDER BY egrFecha DESC) 
+	ELSE NULL END AS 'FECHA DE EGRESO DEL PROGRAMA'
+	,CASE WHEN phdPaciente.estId=2 THEN 
+	(SELECT TOP 1 phdCausaEgreso.cegDescripcion FROM phdEgresos LEFT JOIN phdCausaEgreso ON (phdCausaEgreso.cegId=phdEgresos.cegId) WHERE pacId=phdPaciente.pacId ORDER BY egrFecha DESC) 
+	ELSE NULL END AS 'CAUSA EGRESO DEL PROGRAMA'
+	-- ,phdEgresos.egrFecha  AS 'FECHA DE EGRESO DEL PROGRAMA'
+	-- ,phdCausaEgreso.cegDescripcion AS 'CAUSA EGRESO DEL PROGRAMA'
+	,'' AS 'OBSERVACIONES DEL PRESTADOR'
+	,SUM(medicog.autNumSesiones) AS 'CONSULTA MEDICA GENERAL'
+	,SUM(medicoe.autNumSesiones) AS 'CONSULTA MEDICA ESPECIALIZADA'
+	,SUM(enfermeriap.autNumSesiones) AS 'VISITA ENFERMERIA PROFESIONAL'
+	,SUM(enfermeriapuntual.autNumSesiones) AS 'ACTIVIDAD PUNTAL DE ENFERMERIA'
+	,SUM(curaciones.autNumSesiones) AS 'CURACIONES'
+	,SUM(enfermeria368h.autNumSesiones) AS 'ENFERMERIA 3-6-8 HORAS'
+	,SUM(enfermeria12.autNumSesiones) AS 'ENFERMERIA 12H'
+	,SUM(enfermeria24.autNumSesiones) AS 'ENFERMERIA 24H'
+	,SUM(trespiratoria.autNumSesiones)  AS 'TERAPIA RESPIRATORIA'
+	,NULL  AS 'OXIGENOTERAPIA EN DOMICILIO'
+	,SUM(oximetrias.autNumSesiones)  AS 'OXIMETRIAS'
+	,SUM(tfisica.autNumSesiones)  AS 'TERAPIA FISICA'
+	,SUM(tocupacional.autNumSesiones)  AS 'TERAPIA OCUPACIONAL'
+	,SUM(fonoaudiologia.autNumSesiones)  AS 'FONOAUDIOLOGIA'
+	,SUM(nutricion.autNumSesiones)  AS 'CONSULTA NUTRICION'
+	,SUM(sicologia.autNumSesiones)  AS 'CONSULTA PSICOLOGIA'
+	,SUM(tsocial.autNumSesiones)  AS 'CONSULTA TRABAJO SOCIAL'
+	,SUM(laboratorio.autNumSesiones) AS 'TOMA DE EXAMENES DE LABORATORIO'
+	,NULL AS 'PROCESAMIENTO EXAMENES DE LABORATORIO'
+    FROM phdPaciente
+    LEFT JOIN phdAutorizacion ON (phdAutorizacion.pacId=phdPaciente.pacId)
+	LEFT JOIN phdTipoDocumento ON (phdTipoDocumento.tdocId=phdPaciente.tdocId)
+	LEFT JOIN phdCIE10 ON (phdCIE10.cieCodDx=phdPaciente.cieCodDx)
+	LEFT JOIN phdCIE10 AS phdCIE102 ON (phdCIE102.cieCodDx=phdPaciente.cieCodDx_1)
+	LEFT JOIN phdCIE10 AS phdCIE103 ON (phdCIE103.cieCodDx=phdPaciente.cieCodDx_2)
+	-- LEFT JOIN phdEgresos ON (phdPaciente.estId=2 AND phdEgresos.pacId=phdPaciente.pacId)
+	-- LEFT JOIN phdCausaEgreso ON (phdCausaEgreso.cegId=phdEgresos.cegId)
+	LEFT JOIN phdTipoEvento ON (phdTipoEvento.tipECod=phdPaciente.tipECod)
+	-- LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5021,10013,10029) GROUP BY autNumero) AS medicog ON (medicog.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5022,10032,10033,10034) GROUP BY autNumero) AS medicoe ON (medicoe.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10015,10022) OR (actId=5024 AND intensidad IN (204,219,220)) GROUP BY autNumero) AS enfermeriap ON (enfermeriap.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10002,10003) OR (actId=5024 AND intensidad IN (197,201,203,213,214,216)) GROUP BY autNumero) AS enfermeriapuntual ON (enfermeriapuntual.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10017) OR (actId=5024 AND intensidad IN (198,198,199,200)) GROUP BY autNumero) AS curaciones ON (curaciones.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10009,10010,10011,10012) OR (actId=5024 AND intensidad IN (192,193)) GROUP BY autNumero) AS enfermeria368h ON (enfermeria368h.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10001,10004,10005,10006,10007) OR (actId=5024 AND intensidad IN (194,195)) GROUP BY autNumero) AS enfermeria12 ON (enfermeria12.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10008) OR (actId=5024 AND intensidad IN (196)) GROUP BY autNumero) AS enfermeria24 ON (enfermeria24.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10024) GROUP BY autNumero) AS trespiratoria ON (trespiratoria.autNumero=phdAutorizacion.autNumero)
+	-- LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN () GROUP BY autNumero) AS oxigenoterapia ON (oxigenoterapia.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5030,10018,10027,10035) OR (actId=5024 AND intensidad IN (217)) GROUP BY autNumero) AS oximetrias ON (oximetrias.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5029,10023) GROUP BY autNumero) AS tfisica ON (tfisica.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5031,10025,10026) GROUP BY autNumero) AS tocupacional ON (tocupacional.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5028) OR (actId=5024 AND intensidad IN (218)) GROUP BY autNumero) AS fonoaudiologia ON (fonoaudiologia.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5025,10019) GROUP BY autNumero) AS nutricion ON (nutricion.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5026,10030) GROUP BY autNumero) AS sicologia ON (sicologia.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5027,10031) GROUP BY autNumero) AS tsocial ON (tsocial.autNumero=phdAutorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10028) OR (actId=5024 AND intensidad IN (205)) GROUP BY autNumero) AS laboratorio ON (laboratorio.autNumero=phdAutorizacion.autNumero)
+	-- LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN () GROUP BY autNumero) AS prolaboratorio ON (prolaboratorio.autNumero=phdAutorizacion.autNumero)
+    WHERE phdPaciente.entId IN (4,25,62) -- aliansalud, colmedica mp, cruce
+    AND phdAutorizacion.AutFecha BETWEEN @inicio AND @fin
+	GROUP BY 
+	phdTipoDocumento.tdocDescripcion
+	,phdPaciente.pdirId
+	,phdPaciente.tipECod
+	,phdTipoEvento.tipEDescripcion
+	,phdPaciente.entId
+	,phdPaciente.pacDocumento
+	,phdPaciente.pacFechaNac
+	,phdPaciente.pacDireccion
+	,phdPaciente.pacTelefono
+	,phdCIE10.cirDescripcion
+	,phdPaciente.cieCodDx
+	,phdCIE102.cirDescripcion
+	,phdCIE103.cirDescripcion
+	,phdPaciente.pacId
+	,phdPaciente.estId
+	-- ,phdEgresos.egrFecha
+	-- ,phdCausaEgreso.cegDescripcion
+	,phdPaciente.pacNombres,phdPaciente.pacFechaNac,phdPaciente.pacDocumento,phdPaciente.entId,phdPaciente.pacFecIngPrograma,phdPaciente.cieCodDx,phdPaciente.cieCodDx_1,phdPaciente.cieCodDx_2;
+">
+                 <SelectParameters>
+                    <asp:ControlParameter ControlID="TDesde" Name="inicio" PropertyName="Text" />
+                    <asp:ControlParameter ControlID="THasta" Name="fin" PropertyName="Text" />
+                 </SelectParameters>
+    </asp:SqlDataSource>
         <div style="text-align: right;">
             <asp:Label ID="LTotal" runat="server" Text=""></asp:Label>
-        </div>
         </div>
 </asp:Content>
 

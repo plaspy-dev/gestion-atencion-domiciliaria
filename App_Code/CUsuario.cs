@@ -19,6 +19,23 @@ public class CUsuario : Usuario
     {
     }
 
+    public bool CheckEntidad(string entidad)
+    {
+        if (!string.IsNullOrEmpty(this["entidades"]))
+        {
+            string[] entidades = this["entidades"].Split(',');
+            for (int i = 0; i < entidades.Length; i++)
+            {
+                if (entidades[i] == entidad)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
     override protected Usuario ValidateUser() {
 
         string usuario = CConector.GetCookie("loginOrganizationExample15");
@@ -40,10 +57,12 @@ public class CUsuario : Usuario
             string forceurl = "";
             string personal = "";
             string cargos = "";
+            string entidades = "";
+
             string nombre = conectorMS.QueryString("SELECT usIdUsuario FROM seg_Usuarios WHERE usIdUsuario='" + usuario + "' AND usClave='" + passwd + "' AND usActivo=1");
             if (nombre.Length > 0)
             {
-                MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,cargos FROM usuario WHERE usuario='" + usuario + "' AND (estado IS NULL OR estado!=-1)");
+                MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,cargos,entidades FROM usuario WHERE usuario='" + usuario + "' AND (estado IS NULL OR estado!=-1)");
                 if (reader != null)
                 {
                     while (reader.Read())
@@ -55,6 +74,7 @@ public class CUsuario : Usuario
                         forceurl = reader["forceurl"].ToString();
                         personal = reader["personal"].ToString();
                         cargos = reader["cargos"].ToString();
+                        entidades = reader["entidades"].ToString();
                         break;
                     }
                 }
@@ -63,6 +83,8 @@ public class CUsuario : Usuario
                     CUsuario pUsuario = new CUsuario(id, usuario, grupo, login);
                     pUsuario["personal"] = personal;
                     pUsuario["cargos"] = cargos;
+                    pUsuario["entidades"] = entidades;
+
                     if (cargos.Length > 0)
                         pUsuario["procedimientos"] = conector.QueryString("SELECT GROUP_CONCAT(DISTINCT medicamento) FROM medicamento_area WHERE area IN (" + cargos + ")");
                     

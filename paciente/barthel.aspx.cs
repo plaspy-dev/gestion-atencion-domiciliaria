@@ -43,6 +43,19 @@ public partial class paciente_barthel : System.Web.UI.Page
 
                     PDatos.Visible = true;
 
+
+                    TFuncionario.Enabled = usuario.CanAdmin();
+                    if (!usuario.CanAdmin())
+                    {
+                        if (usuario["personal"].Length == 0)
+                            BAceptar.Enabled = false;
+                        else
+                        {
+                            TIdFuncionario.Text = usuario["personal"];
+                            TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
+                        }
+                    }
+
                     TFecha.Focus();
                     BAceptar.Enabled = usuario.CanInsert();
 
@@ -55,6 +68,7 @@ public partial class paciente_barthel : System.Web.UI.Page
                     
                     indice+="id";
                     indice+="fecha";
+                    indice += "medico";
 
                     MySqlDataReader readermysql = conectormy.Query(indice.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND DATE(fecha)='" + Conector.GetDate(Convert.ToDateTime(TFecha.Text)) + "'"));
                     if (readermysql != null && readermysql.Read())
@@ -65,6 +79,9 @@ public partial class paciente_barthel : System.Web.UI.Page
                         HIdIndice.Value = readermysql["id"].ToString();
                         TFecha.Text = ((DateTime) readermysql["fecha"]).ToShortDateString();
                         THora.Text = CConector.GetHora(readermysql["fecha"]);
+                        
+                        TIdFuncionario.Text = readermysql["medico"].ToString();
+                        TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
 
                         TTotal.Text = conectormy.QueryString("SELECT SUM(varios.descripcion) FROM analisis_barthel LEFT JOIN varios ON (varios.id=analisis_barthel.resultado) WHERE analisis_barthel.indice_barthel='" + HIdIndice.Value + "'");
 
@@ -92,6 +109,7 @@ public partial class paciente_barthel : System.Web.UI.Page
         CConector conector = CConector.GetConector();
 
         indice["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text)  + " " + THora.Text + ":00";
+        indice["medico"] = TIdFuncionario.Text;
 
         string szQuery;
         string mensaje;
@@ -222,11 +240,15 @@ public partial class paciente_barthel : System.Web.UI.Page
         query["categoria"] = "categoria";
         query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
         query["szMedico"] = "admPersonalHS.perDocumento";
-        query["szProfesional"] = "admPersonalHS.perNombre";
+        query["szProfesional"] = "admPersonalHS.perDocumento";
+        query["szCargo"] = "admCargo.carDescripcion";
 
         CConectorMS conectorms = new CConectorMS();
 
-        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"));
+        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente
+            , "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"
+            + " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"
+            ));
         if (reader != null)
         {
             bool l = reader.Read();

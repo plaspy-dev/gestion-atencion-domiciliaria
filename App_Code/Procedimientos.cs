@@ -230,4 +230,57 @@ public class Procedimientos
         }
         return text;
     }
+
+    static public ArrayList AddCIE10(ArrayList listaactual, string nuevo_codigo) {
+
+        if (!string.IsNullOrEmpty(nuevo_codigo))
+        {
+            bool found = false;
+            for (int i = 0; i < listaactual.Count; i++)
+            {
+
+                if (listaactual[i].ToString() == nuevo_codigo)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                listaactual.Add(nuevo_codigo);
+        }
+        return listaactual;
+    }
+
+    static public ArrayList GetCodigosCIE10(string paciente) {
+
+        ArrayList lista = new ArrayList();
+        CConector conectormysql = new CConector();
+
+        MySqlDataReader readermysql = conectormysql.Query("SELECT evolucion_paciente.id,codigo FROM evolucion_paciente"
+        + " LEFT JOIN codigos_evolucion ON (codigos_evolucion.evolucion_paciente=evolucion_paciente.id) "
+        + " WHERE evolucion_paciente.id=(SELECT id FROM evolucion_paciente WHERE evolucion_paciente.paciente="
+        + paciente
+        + "  ORDER BY fecha DESC LIMIT 1);");
+
+        if (readermysql != null)
+        {
+            while (readermysql.Read())
+            {
+                AddCIE10(lista, readermysql["codigo"].ToString());
+            }
+        }
+
+        if (lista.Count == 0)
+        {
+            readermysql = conectormysql.Query("SELECT codigo FROM ingreso_paciente LEFT JOIN codigos_ingreso ON (codigos_ingreso.ingreso_paciente=ingreso_paciente.id) WHERE paciente=" + paciente);
+            if (readermysql != null)
+            {
+                while (readermysql.Read())
+                {
+                    AddCIE10(lista, readermysql["codigo"].ToString());
+                }
+            }
+        }
+        return lista;
+    }
 }

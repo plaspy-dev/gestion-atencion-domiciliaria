@@ -26,8 +26,46 @@
         else // if (total < 100)
             $("#ligera").css("font-weight", "bold");
     }
-    
+
     addFunctionToStart(function() {
+
+        $("#<%= TFuncionario.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetPersonal",
+                    data: "{ 'q': '" + request.term + "' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.value, label: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                var nombre = ui.item.label;
+                var pos = nombre.indexOf(" - ");
+                if (pos != -1) {
+                    nombre = nombre.substring(pos + 3);
+                }
+                $("#<%= TFuncionario.ClientID %>").val(nombre);
+                $("#<%= TIdFuncionario.ClientID %>").val(ui.item.value);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TIdFuncionario.ClientID %>").val("");
+            }
+        });
+    
         $("input:radio").change(total);
         total();
 
@@ -117,7 +155,7 @@
             </tr>
             <tr>
                 <td>
-                    Hora
+                    Hora mas larga
                 </td>
                 <td>
                     <asp:TextBox ID="THora" runat="server" CssClass="hora"></asp:TextBox>
@@ -125,6 +163,14 @@
                 </td>
                 <td>
                     &nbsp;</td>
+            </tr>
+            <tr>
+                <td>Funcionario que atiende</td>
+                <td colspan="2">
+                    <asp:TextBox ID="TFuncionario" runat="server" Width="98%"></asp:TextBox>
+                    <asp:TextBox ID="TIdFuncionario" runat="server" CssClass="hide"></asp:TextBox>
+                    <asp:RequiredFieldValidator ControlToValidate="TIdFuncionario" ErrorMessage="Por favor ingrese un funcionario." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                    </td>
             </tr>
         </table>
     </fieldset>

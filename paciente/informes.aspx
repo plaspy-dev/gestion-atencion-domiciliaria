@@ -7,7 +7,7 @@
             source: function(request, response) {
                 $.ajax({
                     url: "../webservices/servicios.asmx/GetPacienteI",
-                    data: "{ 'q': '" + request.term + "' }",
+                    data: "{ 'q': '" + request.term + "', 'e': '<%= ViewState["entidades"].ToString() %>' }",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",

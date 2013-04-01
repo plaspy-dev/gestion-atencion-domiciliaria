@@ -14,6 +14,7 @@ public partial class archivo_archivo : System.Web.UI.Page
         if (!IsPostBack)
         {
             CUsuario usuario = (CUsuario)CUsuario.GetUsuario();
+            ViewState["entidades"] = usuario["entidades"];
             TFecha.Text = DateTime.Now.Month.ToString().PadLeft(2, '0') 
                 + "/"
                 + DateTime.Now.Year.ToString().PadLeft(2, '0');

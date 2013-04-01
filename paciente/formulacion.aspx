@@ -157,7 +157,7 @@
                     </asp:GridView>
                     <sdg:CustomDataSource ID="SFormulacion" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             SelectCommand="SELECT medicamento_formulacion.id,medicamento_formulacion.medicamento AS medicamen_id,medicamento_formulacion.formulada,medicamento_formulacion.posologia 
-                                            ,IF(medicamentos.principio IS NULL,medicamentos.nombre,CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',medicamentos.forma)) AS medicamento
+                                            ,IF(medicamentos.principio IS NULL,medicamentos.nombre,CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',IFNULL(medicamentos.forma,''))) AS medicamento
                                             ,medicamento_formulacion.via,medicamento_formulacion.tiempo,medicamento_formulacion.costo
                                             FROM medicamento_formulacion 
                                             LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)

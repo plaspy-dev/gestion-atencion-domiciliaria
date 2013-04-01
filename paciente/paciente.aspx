@@ -16,7 +16,7 @@
                 source: function(request, response) {
                     $.ajax({
                         url: "../webservices/servicios.asmx/GetPacienteI",
-                        data: "{ 'q': '" + request.term + "' }",
+                        data: "{ 'q': '" + request.term + "', 'e': '<%= ViewState["entidades"].ToString() %>' }",
                         dataType: "json",
                         type: "POST",
                         contentType: "application/json; charset=utf-8",
@@ -106,7 +106,7 @@
                 <asp:Label ID="Label32" runat="server" SkinID="lblsubTitulo" 
                     Text="Información personal"></asp:Label>
             </td>
-            <td rowspan="24">    
+            <td rowspan="25">    
              </td>
             <td class="celdaTitulo" style="width: 150px;">
                 <asp:Label ID="Label33" runat="server" SkinID="lblsubTitulo" Text="Autorizaciones vigentes" Width="120px"></asp:Label>
@@ -145,7 +145,7 @@
                 <asp:TextBox runat="server" ID="TPApellido"></asp:TextBox>
                 <asp:RequiredFieldValidator ControlToValidate="TPApellido" ErrorMessage="Por favor ingrese un apellido." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             </td>
-            <td rowspan="27" valign="top" class="style5">
+            <td rowspan="28" valign="top" class="style5">
                 <uc1:autorizaciones ID="UCAutorizaciones" runat="server" />
                 <br />
                 <br />
@@ -468,6 +468,17 @@
         </tr>
         <tr>
             <td >
+                &nbsp;</td>
+            <td>
+                <asp:CheckBox ID="CDiabetico" runat="server" Text="Diabético" />
+            </td>
+            <td style="margin-left: 160px">
+                &nbsp;</td>
+            <td>
+                &nbsp;</td>
+        </tr>
+        <tr>
+            <td >
                 CIE 10
             </td>
             <td colspan="3">
@@ -591,15 +602,15 @@
         </div>
         <h3><a href="#"><asp:Label runat="server" ID="LReactivar" Text="Reactivar"></asp:Label></a></h3>
         <div>
-            <table border="1">
-                <tr><td>Fecha</asp:Label>
-                </td><td>
-                        <asp:TextBox CssClass="fecha" runat="server" ID="TFechaRetiro"></asp:TextBox>
-                        <asp:RangeValidator ValidationGroup="Reingreso" ControlToValidate="TFechaRetiro" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator4" Display="Dynamic" Type="Date"></asp:RangeValidator>
-                        <asp:RequiredFieldValidator ValidationGroup="Reingreso" ControlToValidate="TFechaRetiro" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator6" runat="server" Display="Dynamic"></asp:RequiredFieldValidator>
-                </td></tr>
-                <tr><td>Motivo</td><td>
-                    <asp:DropDownList ID="DMotivo" runat="server" 
+            <table width="100%">
+                <tr>
+                    <td>Fecha</td>
+                    <td>Motivo</td>
+                    <td>Observaciones</td>
+                </tr>
+                <tr>
+                <td width="1" nowrap="nowrap" valign="top"><asp:TextBox CssClass="fecha" runat="server" ID="TFechaRetiro"></asp:TextBox></td>
+                <td width="1" nowrap="nowrap" valign="top"><asp:DropDownList ID="DMotivo" runat="server" 
                                 DataSourceID="SMotivo" DataTextField="nombre" 
                                 DataValueField="id" AppendDataBoundItems="true">
                                 <asp:ListItem Text="" Value=""></asp:ListItem>
@@ -608,14 +619,34 @@
                             ConnectionString="<%$ ConnectionStrings:connBD %>" 
                             SelectCommand="SELECT cingId id,cingDescripcion nombre FROM dbo.phdCausaReingreso ORDER BY 2">
                         </asp:SqlDataSource>
+                    </td>
+                <td><asp:TextBox runat="server" ID="TObservacionesRetiro" Width="100%" TextMode="MultiLine"></asp:TextBox></td>
+                <tr><td colspan="3" style="text-align: right">
                     <asp:RequiredFieldValidator ValidationGroup="Reingreso" ControlToValidate="DMotivo" ErrorMessage="Por favor seleccione un motivo." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true"></asp:RequiredFieldValidator>
-                    </td></tr>
-                <tr><td>Observaciones</td><td>
-                    <asp:TextBox runat="server" ID="TObservacionesRetiro" Width="100%" TextMode="MultiLine"></asp:TextBox>
-                    </td></tr>
-                <tr><td colspan="2" style="text-align: right">
+                    <asp:RangeValidator ValidationGroup="Reingreso" ControlToValidate="TFechaRetiro" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator4" Display="Dynamic" Type="Date"></asp:RangeValidator>
+                    <asp:RequiredFieldValidator ValidationGroup="Reingreso" ControlToValidate="TFechaRetiro" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator6" runat="server" Display="Dynamic"></asp:RequiredFieldValidator>
                     <asp:Button ValidationGroup="Reingreso" ID="BRetiro" runat="server" 
                         Text="Reactivar" onclick="BRetiro_Click" />
+                    </td></tr>
+                </table>
+        </div>
+        <h3><a href="#">Defunción</a></h3>
+        <div>
+            <table width="100%">
+                <tr>
+                    <td></td>
+                    <td>Fecha</td>
+                    <td>Observaciones</td>
+                </tr>
+                <tr>
+                    <td width="1" nowrap="nowrap" valign="top"><asp:CheckBox ID="CExpedidaOrganizationExample15" runat="server" Text="Expedida por OrganizationExample15" /></td>
+                    <td width="1" nowrap="nowrap" valign="top"><asp:TextBox CssClass="fecha" runat="server" ID="TFechaDefuncion"></asp:TextBox></td>
+                    <td><asp:TextBox runat="server" ID="TObservacionesDefuncion" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
+                </tr>
+                <tr><td colspan="3" style="text-align: right">
+                    <asp:RangeValidator ValidationGroup="defuncion" ControlToValidate="TFechaDefuncion" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator5" Display="Dynamic" Type="Date"></asp:RangeValidator>
+                    <asp:RequiredFieldValidator ValidationGroup="defuncion" ControlToValidate="TFechaDefuncion" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator9" runat="server" Display="Dynamic"></asp:RequiredFieldValidator>
+                    <asp:Button ValidationGroup="defuncion" ID="BAceptarDefuncion" runat="server" Text="Aceptar" onclick="BAceptarDefuncion_Click" />
                     </td></tr>
                 </table>
         </div>
