@@ -19,7 +19,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
         if (!IsPostBack)
         {
-            SeleccionarPaciente.Inactivos = false;
+            // SeleccionarPaciente.Inactivos = false;
             BAceptar.Enabled = false;
             BMasFormulacion.Enabled=false;
             BFecha.Enabled = false;
@@ -331,16 +331,17 @@ public partial class paciente_formulacion : System.Web.UI.Page
         TVia.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[7].Text).Trim();
     }
 
-    protected string RenderPage(int inicio)
+    protected string RenderPage(int inicio, int numero_medicamentos)
     {
         string resultado="";
         GFormulacion.DataBind();
         int i = inicio;
 
-        for (; i < GFormulacion.Rows.Count && i<inicio+5; i++) {
+        for (; i < GFormulacion.Rows.Count && i < inicio + numero_medicamentos; i++)
+        {
 
             resultado += "<tr><td>" + GFormulacion.Rows[i].Cells[3].Text + "</td>";
-            resultado += "<td align='right'>" + GFormulacion.Rows[i].Cells[4].Text + "</td>";
+            resultado += "<td>" + NumerosALetras.ToLetras(Convert.ToInt32(GFormulacion.Rows[i].Cells[4].Text)).ToUpper() + " (" + GFormulacion.Rows[i].Cells[4].Text + ")</td>";
             resultado += "<td>" + GFormulacion.Rows[i].Cells[5].Text + "</td>";
             if(trPosologia.Visible) {
                 resultado += "<td>" + GFormulacion.Rows[i].Cells[6].Text + "</td>";
@@ -348,7 +349,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
             }
             resultado += "</tr>";
         }
-        for (; i < inicio+5; i++) {
+        for (; i < inicio + numero_medicamentos; i++)
+        {
             resultado += "<tr><td>&nbsp;</td>";
             resultado += "<td>&nbsp;</td>";
             resultado += "<td>&nbsp;</td>";
@@ -382,6 +384,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
         query["categoria"] = "categoria";
         query["szGrado"] = "pacGrado";
+        query["cCIE10"] = "cieCodDx";
         query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
 
         CConectorMS conectorms = new CConectorMS();
@@ -398,6 +401,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             {
                 evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
             }
+            evento.Contenido = evento.Contenido.Replace("$szCIE10$", l ? Procedimientos.GetCodigoCIE(reader["cCIE10"].ToString(), conectorms) : "");
         }
 
         // obtenemos el ID del usuario que lo modifico primero
@@ -419,9 +423,14 @@ public partial class paciente_formulacion : System.Web.UI.Page
             }
         }
 
+        int numero_medicamentos = 5;
+        if (CCDetallePaciente.AsegurdadorID == "36")
+        { // disan
+            numero_medicamentos = 3;
+        }
 
 
-        int paginas= (int)Math.Ceiling((double)GFormulacion.Rows.Count/5);
+        int paginas = (int)Math.Ceiling((double)GFormulacion.Rows.Count / numero_medicamentos);
         if(paginas>1) {
             int pos = evento.Contenido.IndexOf("<div");
             int posf = evento.Contenido.IndexOf("</div>");
@@ -430,12 +439,14 @@ public partial class paciente_formulacion : System.Web.UI.Page
             string contenido = "";
 
             for(int i=1; i<paginas; i++) {
-                contenido += contenidoreal.Replace("$szFormulacion$", RenderPage(i * 5));
+                contenido += contenidoreal.Replace("$szFormulacion$", RenderPage(i * numero_medicamentos, numero_medicamentos))
+                    .Replace("$szConsecutivo$", HIdFormulacion.Value + "-" + (i+1));
             }
             evento.Contenido= evento.Contenido.Insert(posf + 6, contenido);
         }
         // aqui modificamos la primera pagina.
-        evento.Contenido = evento.Contenido.Replace("$szFormulacion$", RenderPage(0));
+        evento.Contenido = evento.Contenido.Replace("$szFormulacion$", RenderPage(0, numero_medicamentos))
+            .Replace("$szConsecutivo$", HIdFormulacion.Value + "-1");
     }
 
     protected void BFormula_Click(object sender, EventArgs e)

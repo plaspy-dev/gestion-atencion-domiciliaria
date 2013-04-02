@@ -196,6 +196,11 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido = reader.ReadToEnd();
             reader.Close();
 
+            if (_ImprimirClicked != null)
+            {
+                _ImprimirClicked(this, evento);
+            }
+
             evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
             // agregamos el script para imprimir
 #if DEBUG
@@ -206,10 +211,6 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             // contenido = contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {if(window.name=='popup')return;var venImp = window.open('../imp.htm', 'popup');venImp.document.write(document.documentElement.innerHTML);venImp.document.close();if(venImp.print) {venImp.print();venImp.close();}window.history.back();}</script></body>");
 #endif
             // llamamos a la pagina cliente
-            if (_ImprimirClicked != null)
-            {
-                _ImprimirClicked(this, evento);
-            }
             Response.Clear();
             Response.Write(evento.Contenido);
             Response.End();
@@ -234,12 +235,12 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido = reader.ReadToEnd();
             reader.Close();
 
-            evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
-
             if (_ImprimirClicked != null)
             {
                 _ImprimirClicked(this, evento);
             }
+
+            evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
 
             Response.Clear();
             Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(Page.Title) + ".xls");
@@ -293,12 +294,13 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             pos = posf;
         }
 
-        evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
-
         if (_ImprimirClicked != null)
         {
             _ImprimirClicked(this, evento);
         }
+
+        evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
+        
         Directory.SetCurrentDirectory(Server.MapPath(""));
 
         Document document = new Document(PageSize.LETTER, 10, 10, 10, 10);

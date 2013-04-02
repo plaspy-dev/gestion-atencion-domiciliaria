@@ -51,7 +51,7 @@
             if (imp.attr("r") == "1") {
                 imp.attr("href", window.location + "&p=1").attr("target", "_blank");
             }
-            setInterval("$('#renewSession').attr('src', '" + $('#renewSession').attr('src') + "?par=' + Math.random())", 180000);
+            // setInterval("$('#renewSession').attr('src', '" + $('#renewSession').attr('src') + "?par=' + Math.random())", 180000);
 
             $('#<%= UPDiagAux.ClientID %>').panelUpdated(function() {
 
@@ -339,7 +339,7 @@
         </ContentTemplate>
     </asp:UpdatePanel>
     </form>
-<img src="<%=ResolveUrl("~/")%>renewSes.aspx" alt="" name="renewSession" id="renewSession" style="display: none" />
+<!-- <img src="<%=ResolveUrl("~/")%>renewSes.aspx" alt="" name="renewSession" id="renewSession" style="display: none" /> -->
 <script type="text/javascript">
 
     function getDialogButton(dialog_selector, button_name) {
