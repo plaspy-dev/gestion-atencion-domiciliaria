@@ -11,7 +11,7 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2013-04-02.
+This cut records the home-care application as archived on 2013-04-04.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
@@ -36,7 +36,7 @@ The retained site entry is `Default.aspx`. Use fictional accounts and a disposab
 
 ### Archive notes
 
-The archive inventory counted 0 additions, 3 edits and 0 removals.
+The archive inventory counted 0 additions, 2 edits and 0 removals.
 
 ### Framework versions
 
@@ -75,7 +75,7 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2013-04-02.
+Este corte conserva la versión de atención domiciliaria archivada el 2013-04-04.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
@@ -100,7 +100,7 @@ La entrada conservada del sitio es `Default.aspx`. Usa cuentas ficticias y una b
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 0 adiciones, 3 cambios y 0 retiros.
+El inventario del respaldo registró 0 adiciones, 2 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 

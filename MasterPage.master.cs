@@ -311,9 +311,9 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         document.AddCreator("OrganizationExample15: " + Version.GetVersion());
         document.AddAuthor(Usuario.GetUsuario().GetNombre());
 
-        // HTMLWorker htmlparser = new HTMLWorker(document);
-
         document.Open();
+
+        // HTMLWorker htmlparser = new HTMLWorker(document);
 
         /*IDictionary<string, object> providers = new Dictionary<string, object>();
         providers.Add(HTMLWorker.FONT_PROVIDER, new DefaultFontProvider("Arial"));
@@ -321,11 +321,10 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
         StringReader sr = new StringReader(evento.Contenido);
         // htmlparser.Parse(sr);
+
         XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, sr);
         document.Close();
 
-        // step 3: we parse the document
-        document.Close();
         Response.End();
     }
 

@@ -38,6 +38,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 {
                     ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
 
+                    DTipo.Enabled = usuario.CanAdmin() || CCDetallePaciente.AsegurdadorID != "36";
                     BAceptar.Enabled = usuario.CanInsert();
                     BMasFormulacion.Enabled= usuario.CanInsert();
                     TFecha.Focus();
