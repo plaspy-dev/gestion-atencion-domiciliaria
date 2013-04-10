@@ -143,7 +143,7 @@ public class Utilidades
 
 	public static string RenderGrid(GridView grid)
 	{
-		return RenderGrid(grid, "border=0 width=100% cellspacing=0");
+		return RenderGrid(grid, "border=1 width=100% cellspacing=0");
 	}
 
 	public static string RenderGrid(GridView grid, string parametrostabla)
@@ -212,6 +212,19 @@ public class Utilidades
 					text += gridViewRow.Cells[j].Text;
 				}
 				text += "</td>";
+			}
+			text += "</tr>";
+		}
+		if (grid.ShowFooter && grid.FooterRow != null)
+		{
+			text += "<tr>";
+			for (int i = 0; i < grid.Columns.Count; i++)
+			{
+				if (grid.Columns[i].Visible)
+				{
+					text = ((grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Right) ? (text + "<td align=right>") : ((grid.Columns[i].FooterStyle.HorizontalAlign != HorizontalAlign.Center) ? (text + "<td>") : (text + "<td align=center>")));
+					text = text + "<b>" + grid.FooterRow.Cells[i].Text + "</b></td>";
+				}
 			}
 			text += "</tr>";
 		}

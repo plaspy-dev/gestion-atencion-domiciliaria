@@ -135,7 +135,7 @@
             <tr>
                 <td colspan="4">
                     <asp:GridView ID="GFormulacion" runat="server" DataSourceID="SFormulacion" 
-                    AutoGenerateColumns="False" DataKeyNames="id"
+                    AutoGenerateColumns="False" DataKeyNames="id,codigo"
                                         onselectedindexchanged="GFormulacion_SelectedIndexChanged" >
                                         <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -155,21 +155,22 @@
                         </Columns>
                         <SelectedRowStyle CssClass="selecteditem" />
                     </asp:GridView>
-                    <sdg:CustomDataSource ID="SFormulacion" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    <asp:SqlDataSource ID="SFormulacion" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT medicamento_formulacion.id,medicamento_formulacion.medicamento AS medicamen_id,medicamento_formulacion.formulada,medicamento_formulacion.posologia 
                                             ,IF(medicamentos.principio IS NULL,medicamentos.nombre,CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',IFNULL(medicamentos.forma,''))) AS medicamento
                                             ,medicamento_formulacion.via,medicamento_formulacion.tiempo,medicamento_formulacion.costo
+                                            ,medicamentos.codigo AS codigo
                                             FROM medicamento_formulacion 
                                             LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)
-                                            WHERE formulacion=@formulacion"
+                                            WHERE formulacion=@formulacion
+                                            ORDER BY (codigo>900000 AND codigo<921100)"
                             DeleteCommand="DELETE FROM medicamento_formulacion WHERE id=@id"
-                            InsertCommand="INSERT INTO medicamento_formulacion (formulacion,medicamento,posologia,formulada,via,tiempo,costo) VALUES (@formulacion,@medicamen_id,@posologia,@formulada,@via,@tiempo,@costo)"
-                            UpdateCommand="UPDATE medicamento_formulacion SET medicamento=@medicamen_id,posologia=@posologia,formulada=@formulada,via=@via,tiempo=@tiempo,costo=@costo WHERE id=@id"
                             >
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="HIdFormulacion" DefaultValue="0" PropertyName="Value" Name="formulacion" />
                             </SelectParameters>
-                    </sdg:CustomDataSource>
+                    </asp:SqlDataSource>
                 </td>
             </tr>
             <tr>
