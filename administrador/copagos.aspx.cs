@@ -84,6 +84,7 @@ public partial class administrador_copagos : System.Web.UI.Page
         }
         if (conector.InsertModificacion(HId.Value) == -1)
             return;
+        Procedimientos.RemoveVarios(HId.Value);
         ((MasterPageI)Master).SetTitulo("Categoría " + LCategoria.SelectedItem.Text + " editada.");
     }
 

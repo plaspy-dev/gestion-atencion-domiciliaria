@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -8,8 +9,10 @@ using MySql.Data.Types;
 
 namespace SDG.Componentes;
 
-public class Conector
+public class Conector : IDisposable
 {
+	private static bool bGetKey = false;
+
 	protected string m_szLastError;
 
 	protected string m_szQuery;
@@ -32,6 +35,16 @@ public class Conector
 	}
 
 	~Conector()
+	{
+		CloseAll();
+	}
+
+	void IDisposable.Dispose()
+	{
+		CloseAll();
+	}
+
+	private void CloseAll()
 	{
 		if (m_bTransaccion)
 		{
@@ -116,7 +129,7 @@ public class Conector
 
 	protected bool IsConect()
 	{
-		if (m_pSQLConector == null)
+		if (m_pSQLConector == null && GetKey())
 		{
 			string szConexion = m_szConexion;
 			try
@@ -488,5 +501,36 @@ public class Conector
 	{
 		m_bTransaccion = false;
 		return QueryMod("COMMIT;") != -1;
+	}
+
+	private static bool GetKey()
+	{
+#if ENABLE_LICENSE_CHECK
+		string licenseSeed = Environment.GetEnvironmentVariable("ARCHIVED_DOMAIN_LICENSE_SEED");
+		if (String.IsNullOrEmpty(licenseSeed)) return false;
+		if (bGetKey)
+		{
+			return true;
+		}
+		try
+		{
+			if (HttpContext.Current.Request.Url.Host == "localhost")
+			{
+				return true;
+			}
+			if (string.IsNullOrEmpty(ConfigurationSettings.AppSettings["DomainKey"]))
+			{
+				return false;
+			}
+			bGetKey = Crypt.GetMD5(Crypt.Encriptar3DES(HttpContext.Current.Request.Url.Host.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == ConfigurationSettings.AppSettings["DomainKey"] || Crypt.GetMD5(Crypt.Encriptar3DES(HttpContext.Current.Request.Url.Host.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == ConfigurationSettings.AppSettings["DomainKey1"];
+			return bGetKey;
+		}
+		catch
+		{
+		}
+		return false;
+#else
+		return true;
+#endif
 	}
 }

@@ -5,6 +5,39 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
     addFunctionToStart(function() {
+
+        $("#<%= TIntensidad.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetIntensidad",
+                    data: "{ 'q': '" + request.term + "', 'proc': '" + $("#<%= TMedicamentoID.ClientID %>").val() + "' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                label: item.value, value: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                $("#<%= TIntensidadID.ClientID %>").val(ui.item.value);
+                $("#<%= TIntensidad.ClientID %>").val(ui.item.label);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TIntensidadID.ClientID %>").val("");
+            }
+        }).change(function() { if ($(this).val() == "") $("#<%= TIntensidadID.ClientID %>").val(""); });
+    
         $("#<%= TMedicamento.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -31,13 +64,14 @@
             select: function(event, ui) {
                 $("#<%= TMedicamentoID.ClientID %>").val(ui.item.value);
                 $("#<%= TMedicamento.ClientID %>").val(ui.item.label);
+                $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val("");
                 return false;
             },
             search: function(event, ui) {
                 $("#<%= TMedicamentoID.ClientID %>").val("");
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
+                $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val("");
             }
-        }).change(function() { if ($(this).val() == "") $("#<%= TMedicamentoID.ClientID %>").val(""); });
+        }).change(function() { if ($(this).val() == "") $("#<%= TMedicamentoID.ClientID %>").val(""); $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val(""); });
 
         $("#<%= TFecha.ClientID %>").datepicker({
             onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#<%=BFecha.ClientID %>").click(); }
@@ -67,7 +101,7 @@
                 <td>
                 <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese una fecha." SetFocusOnError="true" ControlToValidate="TFecha" Display="Dynamic"></asp:RequiredFieldValidator><asp:RangeValidator ID="RangeValidator1" runat="server" MinimumValue="12/12/1900" MaximumValue="12/12/2100" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Display="Dynamic" Type="Date"></asp:RangeValidator></td>
                 <td align="right">
-                    &nbsp;
+                    <asp:HyperLink runat="server" ID="HAutorizacion" Target="_blank"></asp:HyperLink>
                 </td>
             </tr>
             <tr>
@@ -135,7 +169,7 @@
             <tr>
                 <td colspan="4">
                     <asp:GridView ID="GFormulacion" runat="server" DataSourceID="SFormulacion" 
-                    AutoGenerateColumns="False" DataKeyNames="id,codigo"
+                    AutoGenerateColumns="False" DataKeyNames="id,codigo,intensidad"
                                         onselectedindexchanged="GFormulacion_SelectedIndexChanged" >
                                         <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -148,6 +182,7 @@
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                             <asp:BoundField DataField="medicamen_id" HeaderText="idMedicamento" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                             <asp:BoundField DataField="medicamento" HeaderText="Nombre del medicamento" />
+                            <asp:BoundField DataField="intensidadnombre" HeaderText="Intensidad" />
                             <asp:BoundField DataField="formulada" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="posologia" HeaderText="Posología" />
                             <asp:BoundField DataField="tiempo" HeaderText="Tiempo" />
@@ -160,9 +195,11 @@
                             SelectCommand="SELECT medicamento_formulacion.id,medicamento_formulacion.medicamento AS medicamen_id,medicamento_formulacion.formulada,medicamento_formulacion.posologia 
                                             ,IF(medicamentos.principio IS NULL,medicamentos.nombre,CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',IFNULL(medicamentos.forma,''))) AS medicamento
                                             ,medicamento_formulacion.via,medicamento_formulacion.tiempo,medicamento_formulacion.costo
-                                            ,medicamentos.codigo AS codigo
+                                            ,medicamento_formulacion.intensidad
+                                            ,medicamentos.codigo AS codigo,varios.nombre AS intensidadnombre
                                             FROM medicamento_formulacion 
                                             LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)
+                                            LEFT JOIN varios ON (varios.id=medicamento_formulacion.intensidad)
                                             WHERE formulacion=@formulacion
                                             ORDER BY (codigo>900000 AND codigo<921100)"
                             DeleteCommand="DELETE FROM medicamento_formulacion WHERE id=@id"
@@ -189,6 +226,10 @@
                     <asp:TextBox ID="TMedicamento" runat="server" Width="99%"></asp:TextBox>
                     <asp:TextBox ID="TMedicamentoID" runat="server" CssClass="hide"></asp:TextBox>
                 </td>
+            </tr>
+            <tr runat="server" id="trIntensidad">
+                <td>Intensidad</td>
+                <td><asp:TextBox runat="server" ID="TIntensidad"></asp:TextBox><asp:TextBox runat="server" ID="TIntensidadID" CssClass="hide"></asp:TextBox></td>
             </tr>
             <tr>
                 <td>Cantidad<asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TCantidad" ErrorMessage="Por favor ingrese una cantidad." ID="RCantidad" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>

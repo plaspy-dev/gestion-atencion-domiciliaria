@@ -12,29 +12,39 @@ using MySql.Data.MySqlClient;
 
 public partial class phd_detallepaciente : System.Web.UI.UserControl
 {
-    public string Documento { get; set; }
-    public string Nombres { 
-        get { return ViewState["phd_detallepaciente_nombres"]==null ? "" : ViewState["phd_detallepaciente_nombres"].ToString(); }
-        set { ViewState["phd_detallepaciente_nombres"] = value; }
+    public string Nombres {
+        get { 
+            Paciente paciente= Paciente.GetPaciente(HIdPaciente.Value);
+            string nombre = paciente.NombreCompleto;
+            if (!paciente.Activo)
+                nombre+= " (Inactivo)";
+            return nombre;
+        }
     }
     public bool Activo {
-        get { return (bool)ViewState["phd_detallepaciente_activo"]; }
-        set { ViewState["phd_detallepaciente_activo"] = value;  }
+        get { return Paciente.GetPaciente(HIdPaciente.Value).Activo; }
     }
     public string AsegurdadorID {
         get {
-            return ViewState["paciente_asegurador"].ToString();
+            return Paciente.GetPaciente(HIdPaciente.Value).entidadId;
+        }
+    }
+    public string Documento
+    {
+        get
+        {
+            return Paciente.GetPaciente(HIdPaciente.Value).documento;
         }
     }
     public double TopeAsegurador
     {
         get {
-            return (double)ViewState["paciente_asegurador_tope"];
+            return Convert.ToDouble(Paciente.GetPaciente(HIdPaciente.Value).MaximoEntidad);
         }
     }
     public double TopePaciente {
         get {
-            return (double)ViewState["paciente_asegurador_tope_paciente"];
+            return Convert.ToDouble(Paciente.GetPaciente(HIdPaciente.Value).MaximoPaciente);
         }
     }
     public bool ShowServicios {
@@ -132,119 +142,42 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
         set {
 
             HIdPaciente.Value = "";
-            ViewState["paciente_asegurador"] = "";
-            ViewState["paciente_asegurador_tope_paciente"] = (double)0;
-            ViewState["paciente_asegurador_tope"] = (double)0;
+
             ViewState["paciente_costo_paciente_actual"] = null;
             ViewState["paciente_costo_aseguradora_actual"] = null;
             if (value==null || value.Length == 0)
                 return;
 
-            Query query = new Query("phdPaciente");
+            Paciente paciente = Paciente.GetPaciente(value);
 
-            query["pacId"] = "phdPaciente.pacId";
-            query["tdocId"] = "phdPaciente.tdocId";
-            query["pacDocumento"] = "phdPaciente.pacDocumento";
-            query["pacPApellido"] = "phdPaciente.pacPApellido";
-            query["pacSApellido"] = "phdPaciente.pacSApellido";
-            query["pacPNombre"] = "phdPaciente.pacPNombre";
-            query["pacSNombre"] = "phdPaciente.pacSNombre";
-            query["sexoId"] = "phdPaciente.sexoId";
-            query["pacFechaNac"] = "phdPaciente.pacFechaNac";
-            query["pacDireccion"] = "phdPaciente.pacDireccion";
-            query["pacTelefono"] = "phdPaciente.pacTelefono";
-            query["pacCelular"] = "phdPaciente.pacCelular";
-            query["pacCarne"] = "phdPaciente.pacCarne";
-            query["pacBarrio"] = "phdPaciente.pacBarrio";
-            query["pacFamilarResponsable"] = "phdPaciente.pacFamilarResponsable";
-            query["pacParentesco"] = "phdPaciente.pacParentesco";
-            query["cieCodDx"] = "phdPaciente.cieCodDx";
-            query["cieCodDx_1"] = "phdPaciente.cieCodDx_1";
-            query["cieCodDx_2"] = "phdPaciente.cieCodDx_2";
-            query["entidad"] = "admEntidad.entNombre";
-            query["tipopago"] = "phdPagoDirecto.pdirDescripcion";
-            query["estId"] = "phdPaciente.estId";
-            query["entId"] = "phdPaciente.entId";
-            query["maximo_paciente"] = "admEntidad.maximo_paciente";
-            query["maximo_mensual"] = "admEntidad.maximo_mensual";
+            if (!((CUsuario)Usuario.GetUsuario()).CheckEntidad(paciente.entidadId))
+                return;
+            UCAutorizaciones.Value = HIdPaciente.Value = value;
 
-            CConectorMS conector = new CConectorMS();
-
-            SqlDataReader reader = conector.Query(query.GetSelect("phdPaciente.pacId=" + Query.GetValor(value) + "",
-                "LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)" +
-                " LEFT JOIN phdPagoDirecto ON (phdPagoDirecto.pdirId=phdPaciente.pdirId)"));
-
-            if (reader != null && reader.Read())
+            try
             {
-                if (!((CUsuario)Usuario.GetUsuario()).CheckEntidad(reader["entId"].ToString()))
-                    return;
+                LFechaNacimiento.Text = ConectorMS.GetDate(Convert.ToDateTime(paciente.FechaNac)) + " ";
+            } catch {}
+            if(paciente.Edad!=-1)
+                LEdad.Text = paciente.Edad + " años";
+            
+            LSexo.Text = paciente.sexoId == "1" ? "F" : "M";
+            LAsegurador.Text = paciente.NombreEntidad;
+            LCarnet.Text = paciente.Carne;
+            LDireccion.Text = paciente.Direccion;
+            LBarrio.Text = paciente.Barrio;
+            LTelefono.Text = paciente.Telefono;
+            LMovil.Text = paciente.Celular;
+            LTipoPago.Text = paciente.tipopago;
+            LFamiliar.Text = paciente.FamiliarResponsable;
+            LParentesco.Text = paciente.parentesco;
+            LAsegurador.Text += " - " + paciente.Grupo;
 
-                HIdPaciente.Value = UCAutorizaciones.Value = reader["pacId"].ToString();
-
-                ViewState["paciente_asegurador"]= reader["entId"].ToString();
-                Documento= reader["pacDocumento"].ToString();
-                Nombres = reader["pacPApellido"].ToString() +
-                    " " + reader["pacSApellido"].ToString() +
-                    " " + reader["pacPNombre"].ToString() +
-                    " " + reader["pacSNombre"].ToString();
-                Activo= reader["estId"].ToString() == "1";
-                if (!Activo)
-                    Nombres += " (Inactivo)";
-                LFechaNacimiento.Text = ConectorMS.GetDate(reader["pacFechaNac"]) + " ";
-                if (reader["pacFechaNac"] != null && reader["pacFechaNac"].ToString().Length != 0)
-                {
-                    DateTime birthDate = (DateTime)reader["pacFechaNac"];
-                    DateTime now = DateTime.Now;
-                    int years = now.Year - birthDate.Year;
-
-                    if (now.Month < birthDate.Month || (now.Month == birthDate.Month && now.Day < birthDate.Day))
-                        --years;
-
-                    LEdad.Text = years + " años";
-                }
-                LSexo.Text = reader["sexoId"].ToString() == "1" ? "F" : "M";
-                LAsegurador.Text = reader["entidad"].ToString();
-                LCarnet.Text = reader["pacCarne"].ToString();
-                LDireccion.Text = reader["pacDireccion"].ToString();
-                LBarrio.Text = reader["pacBarrio"].ToString();
-                LTelefono.Text = reader["pacTelefono"].ToString();
-                LMovil.Text = reader["pacCelular"].ToString();
-                LTipoPago.Text = reader["tipopago"].ToString();
-                // SELECT eEstId codigo,eEstDesc descripcion FROM dbo.admEstadoEstancia
-                // LEstancia.Text = reader[""].ToString();
-                LFamiliar.Text = reader["pacFamilarResponsable"].ToString();
-                LParentesco.Text = reader["pacParentesco"].ToString();
-                double paciente=reader["maximo_paciente"].ToString()=="" ? 0 : Convert.ToDouble(reader["maximo_paciente"].ToString());
-                double asegurador = reader["maximo_mensual"].ToString() == "" ? 0 : Convert.ToDouble(reader["maximo_mensual"].ToString());
-                ViewState["paciente_asegurador_tope_paciente"] = paciente;
-                ViewState["paciente_asegurador_tope"] = asegurador;
-
-                ArrayList lista = Procedimientos.GetCodigosCIE10(HIdPaciente.Value);
-
-                if (lista.Count == 0)
-                {
-                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx"].ToString());
-                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx_1"].ToString());
-                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx_2"].ToString());
-                }
-
-                for (int i = 0; i < lista.Count; i++)
-                {
-                    if (i != 0)
-                        LCIE10.Text += "<br/>";
-                    LCIE10.Text += Procedimientos.GetCodigoCIE(lista[i].ToString(), conector);
-                }
-                LAsegurador.Text += " - " + conector.QueryString("SELECT TOP 1"
-                                            + " CASE WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<17 THEN 'Grupo 1' "
-                                            + " WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<49 THEN 'Grupo 2'"
-                                            + " WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<75 THEN 'Grupo 3'"
-                                            + " ELSE 'Grupo 4' END"
-                                            + " FROM phdDetalleAutorizacion "
-                                            + " LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=phdDetalleAutorizacion.autNumero)"
-                                            + " WHERE "
-                                            + " phdAutorizacion.pacId=" + HIdPaciente.Value
-                                            + " AND phdDetalleAutorizacion.actId IN (5028,5029,5030,5031)"
-                                            + " GROUP BY phdDetalleAutorizacion.autNumero,phdAutorizacion.autFecha ORDER BY phdAutorizacion.autFecha DESC;");
+            for (int i = 0; i < paciente.cie10.Count; i++)
+            {
+                if (i != 0)
+                    LCIE10.Text += "<br/>";
+                LCIE10.Text += Procedimientos.GetCodigoCIE(paciente.cie10[i].ToString());
             }
         }
     }
@@ -253,11 +186,6 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
     {
         if (!IsPostBack)
         {
-            if(ViewState["paciente_asegurador"]==null) {
-                ViewState["paciente_asegurador"] = "";
-                ViewState["paciente_asegurador_tope_paciente"] = (double)0;
-                ViewState["paciente_asegurador_tope"] = (double)0;
-            }
         }
     }
 }

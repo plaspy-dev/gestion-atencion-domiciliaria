@@ -125,12 +125,12 @@ public partial class paciente_epicrisis : System.Web.UI.Page
         // aqui modificamos el evento
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
+        Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+        evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
+        evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
+
         Query query = new Query("phdPaciente");
 
-        // SELECT perDocumento,perNombre FROM phdPaciente LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)
-
-        query["categoria"] = "categoria";
-        query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
         query["szProfesional"] = "admPersonalHS.perDocumento";
         query["szMedico"] = "admPersonalHS.perNombre";
 
@@ -140,10 +140,6 @@ public partial class paciente_epicrisis : System.Web.UI.Page
         if (reader != null)
         {
             bool l = reader.Read();
-            if (l)
-            {
-                evento.Contenido = evento.Contenido.Replace("$szCategoria$", new CConector().QueryString("SELECT nombre FROM varios WHERE id='" + reader["categoria"].ToString() + "' AND tipo=13"));
-            }
             for (int i = 0; i < reader.FieldCount; i++)
             {
                 evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");

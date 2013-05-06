@@ -88,6 +88,7 @@
                     <asp:ListItem Text="Grupo 2"></asp:ListItem>
                     <asp:ListItem Text="Grupo 3"></asp:ListItem>
                     <asp:ListItem Text="Grupo 4"></asp:ListItem>
+                    <asp:ListItem Text="Grupo 5"></asp:ListItem>
                 </asp:DropDownList>
             </td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" /></td>
@@ -129,7 +130,7 @@
                 SelectCommand="SELECT phdAutorizacion.autNumero,phdAutorizacion.autFecha,phdAutorizacion.autFechaVenc,phdAutorizacion.autObservaciones
                             ,phdPaciente.pacDocumento,phdPaciente.pacNombres,phdPaciente.pacBarrio,phdPaciente.pacDireccion,phdPaciente.pacId
                             ,admEntidad.entNombre
-                            ,grupo.grupo
+                            ,ISNULL(grupo.grupo,'Grupo 5') AS grupo
                             ,detalles
                             ,(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero) AS programadas
                             FROM phdAutorizacion
@@ -160,7 +161,7 @@
                             AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                             AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId=@procedimiento))
                             AND ('@area'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId IN (@area)))
-                            AND (@grupo='(Todos)' OR grupo.grupo=@grupo)
+                            AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
                             ORDER BY phdAutorizacion.autFecha">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />

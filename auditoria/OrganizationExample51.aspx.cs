@@ -78,7 +78,7 @@ public partial class auditoria_OrganizationExample51 : System.Web.UI.Page
             texto = "";
             string []cie10 = e.Row.Cells[4].Text.Split(',');
             for (int i = 0; i < cie10.Length; i++) {
-                string temp= Procedimientos.GetCodigoCIE(cie10[i], conectorms);
+                string temp= Procedimientos.GetCodigoCIE(cie10[i]);
                 if(temp.Length!=0) {
                     if (texto.Length > 0)
                         texto += "<br/>";

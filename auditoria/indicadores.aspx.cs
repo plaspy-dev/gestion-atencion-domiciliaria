@@ -174,6 +174,6 @@ public partial class auditoria_indicadores : System.Web.UI.Page
         if (e.Row.RowIndex == -1)
             return;
         CConectorMS conector = new CConectorMS();
-        ((LinkButton)e.Row.FindControl("LPaciente")).Text = conector.QueryString("SELECT pacnombres FROM phdPaciente WHERE pacId=" + ((LinkButton)e.Row.FindControl("LPaciente")).Text);
+        ((LinkButton)e.Row.FindControl("LPaciente")).Text = Paciente.GetPaciente(((LinkButton)e.Row.FindControl("LPaciente")).Text).NombreCompleto;
     }
 }

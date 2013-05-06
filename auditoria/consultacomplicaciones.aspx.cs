@@ -29,7 +29,7 @@ public partial class auditoria_consultacomplicaciones : System.Web.UI.Page
         {
             if (conector == null)
                 conector = new CConectorMS();
-            ((HyperLink)e.Row.Cells[1].Controls[0]).Text = conector.QueryString("SELECT pacNombres FROM phdPaciente WHERE pacId=" + Query.GetValor(((HyperLink)e.Row.Cells[1].Controls[0]).Text));
+            ((HyperLink)e.Row.Cells[1].Controls[0]).Text = Paciente.GetPaciente(((HyperLink)e.Row.Cells[1].Controls[0]).Text).NombreCompleto;
             e.Row.Cells[2].Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId=" + Query.GetValor(e.Row.Cells[2].Text));
         }
     }

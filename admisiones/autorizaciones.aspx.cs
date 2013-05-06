@@ -65,6 +65,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 query += "autActivo";
                 query += "autFechaSuspension";
                 query += "id";
+                query += "formulacion";
 
                 SqlDataReader reader= conector.Query(query.GetSelect("autNumero=" + Query.GetValor(Request.QueryString["aut"])));
                 if(reader!=null && reader.Read()) {
@@ -91,6 +92,10 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     TVencimiento.Text = reader["autFechaVenc"].ToString();
                     TValor.Text = reader["total"].ToString();
                     TObservaciones.Text = reader["autObservaciones"].ToString();
+                    if (reader["formulacion"].ToString().Length>0) {
+                        HFormula.Text = "Orden médica";
+                        HFormula.NavigateUrl = "~/paciente/formulacion.aspx?fid=" + reader["formulacion"].ToString();
+                    }
                     if (reader["autActivo"].ToString().ToLower()=="false") {
 
                         if (reader["autFechaSuspension"].ToString().Length==0)
@@ -120,7 +125,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                         while (reader.Read()) {
                             TProcedimientoID.Text = reader["actId"].ToString();
                             TProcedimiento.Text = reader["actDescripcion"].ToString();
-                            conector.SelectInDropDown(DIntensidad, reader["intensidad"]);
+                            TIntensidadID.Text= reader["intensidad"].ToString();
+                            TIntensidad.Text = Procedimientos.GetVarios(TIntensidadID.Text);
                             TSesionesDia.Text = reader["autSesionesDia"].ToString();
                             TNumeroSesiones.Text = reader["autNumSesiones"].ToString();
                             if (TProcedimiento.Text.Length == 0)
@@ -234,7 +240,6 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
         if (HIdAutorizacion.Value.Length == 0)
         {
-
             query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
             query["segFechaIngreso"] = "GETDATE()";
             if (CGenerar.Checked && RPreautorizacion.Visible && RPreautorizacion.Checked)
@@ -258,7 +263,6 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         }
         else
         {
-
             query["segUsuarioModifica"] = Usuario.GetUsuario().GetLogin();
             query["segFechaModifica"] = "GETDATE()";
             if (conector.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(HIdAutorizacion.Value))) == -1)
@@ -313,7 +317,6 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                             { // se encontro el correo
 
                                 Query programacion = new Query("programacion");
-                                string entidad = conector.QueryString("SELECT entId FROM phdPaciente WHERE pacId=" + HIdPaciente.Value);
 
                                 programacion["pacId"] = HIdPaciente.Value;
                                 programacion["perId"] = personal;
@@ -323,11 +326,11 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                                 programacion["prgActivo"] = "1";
                                 programacion["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
                                 programacion["segFechaIngreso"] = "GETDATE()";
-                                programacion["entId"] = entidad;
+                                programacion["entId"] = Paciente.GetPaciente(HIdPaciente.Value).entidadId;
 
                                 programacion["actId"] = row["proc_id"].ToString();
                                 programacion["intensidad"] = row["idint"].ToString();
-                                string costo = Procedimientos.GetCosto(row["proc_id"].ToString(), entidad).ToString(CultureInfo.InvariantCulture);
+                                string costo = Procedimientos.GetCosto(row["proc_id"].ToString(), Paciente.GetPaciente(HIdPaciente.Value).entidadId).ToString(CultureInfo.InvariantCulture);
                                 if (costo.Length > 0)
                                     programacion["costo"] = costo;
 
@@ -442,6 +445,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         }
 
         conector.Commit();
+        Paciente.RemovePaciente(HIdPaciente.Value);
 
         for (int i = 0; i < profesionales.Count; i++ ) 
         { // se realizo alguna programacion
@@ -503,64 +507,32 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
                     programacion+= "</table>";
 
-                    query = new Query("phdPaciente");
+                    Paciente paciente = Paciente.GetPaciente(HIdPaciente.Value);
+                        
+                    msg.Subject = "Programación paciente " + paciente.NombreCompleto;
 
-                    query["TPaciente"] = "phdPaciente.pacDocumento";
-                    query["LPaciente"] = "phdPaciente.pacNombres";
-                    query["sexoId"] = "phdPaciente.sexoId";
-                    query["pacFechaNac"] = "phdPaciente.pacFechaNac";
-                    query["LAsegurador"] = "admEntidad.entNombre";
-                    query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
-                    query["LDireccion"] = "phdPaciente.pacDireccion";
-                    query["LBarrio"] = "phdPaciente.pacBarrio";
-                    query["LTipoPago"] = "phdPagoDirecto.pdirDescripcion";
-                    query["LTelefono"] = "phdPaciente.pacTelefono";
-                    query["LFamiliar"] = "phdPaciente.pacFamilarResponsable";
-                    query["LParentesco"] = "phdPaciente.pacParentesco";
-                    query["cieCodDx"] = "phdPaciente.cieCodDx";
-                    query["cieCodDx_1"] = "phdPaciente.cieCodDx_1";
-                    query["cieCodDx_2"] = "phdPaciente.cieCodDx_2";
+                    msg.Body = msg.Body.Replace("$TPaciente$", paciente.documento);
+                    msg.Body = msg.Body.Replace("$LPaciente$", paciente.NombreCompleto);
+                    msg.Body = msg.Body.Replace("$LAsegurador$", paciente.NombreEntidad);
+                    msg.Body = msg.Body.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
+                    msg.Body = msg.Body.Replace("$LDireccion$", paciente.Direccion);
+                    msg.Body = msg.Body.Replace("$LBarrio$", paciente.Barrio);
+                    msg.Body = msg.Body.Replace("$LTipoPago$", paciente.tipopago);
+                    msg.Body = msg.Body.Replace("$LTelefono$", paciente.Telefono);
+                    msg.Body = msg.Body.Replace("$LFamiliar$", paciente.FamiliarResponsable);
+                    msg.Body = msg.Body.Replace("$LParentesco$", paciente.parentesco);
+                    msg.Body = msg.Body.Replace("$LFechaNacimiento$", paciente.Edad==-1 ? "" : (paciente.Edad + " años"));
+                    msg.Body= msg.Body.Replace("$LSexo$", paciente.sexoId == "1" ? "F" : "M");
 
-
-                    reader = conector.Query(query.GetSelect("phdPaciente.pacId=" + HIdPaciente.Value + "",
-                                                "LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)" +
-                                                " LEFT JOIN phdPagoDirecto ON (phdPagoDirecto.pdirId=phdPaciente.pdirId)"));
-                    if (reader != null && reader.Read())
+                    string cie10="";
+                    for (int j = 0; j < paciente.cie10.Count; j++)
                     {
-                        msg.Subject = "Programación paciente " + reader["LPaciente"].ToString();
-
-                        for (int h = 0; h < reader.FieldCount; h++)
-                        {
-                            msg.Body = msg.Body.Replace("$" + reader.GetName(h) + "$", reader[h].ToString());
-                        }
-
-                        if (reader["pacFechaNac"] != null && reader["pacFechaNac"].ToString().Length != 0)
-                        {
-                            DateTime birthDate = (DateTime)reader["pacFechaNac"];
-                            DateTime now = DateTime.Now;
-                            int years = now.Year - birthDate.Year;
-
-                            if (now.Month < birthDate.Month || (now.Month == birthDate.Month && now.Day < birthDate.Day))
-                                --years;
-                            msg.Body = msg.Body.Replace("$LFechaNacimiento$", years + " años");
-                        }
-                        else msg.Body = msg.Body.Replace("$LFechaNacimiento$", "");
-                        msg.Body= msg.Body.Replace("$LSexo$", reader["sexoId"].ToString() == "1" ? "F" : "M");
-
-                        string cie1 = reader["cieCodDx"].ToString();
-                        string cie2 = reader["cieCodDx_1"].ToString();
-                        string cie3 = reader["cieCodDx_2"].ToString();
-                        cie1 = Procedimientos.GetCodigoCIE(cie1, conector);
-                        cie2 = Procedimientos.GetCodigoCIE(cie2, conector);
-                        cie3 = Procedimientos.GetCodigoCIE(cie3, conector);
-                        if (cie2.Length > 0 && cie1.Length > 0)
-                            cie1+= "<br/>";
-                        cie1+= cie2;
-                        if (cie3.Length > 0 && cie1.Length > 0)
-                            cie1 += "<br/>";
-                        cie1 += cie3;
-                        msg.Body = msg.Body.Replace("$LCIE10$", cie1);
+                        if (j != 0)
+                            cie10 += "<br/>";
+                        cie10 += Procedimientos.GetCodigoCIE(paciente.cie10[j].ToString());
                     }
+
+                    msg.Body = msg.Body.Replace("$LCIE10$", cie10);
 
                     msg.Body = msg.Body.Replace("$GProgramacion$", programacion);
                     msg.Body = msg.Body.Replace("$servidor$", ConfigurationManager.AppSettings["ServidorNotificacion"] + "notificacion/");
@@ -786,54 +758,33 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         LInactivo.Visible = false;
         PAutorizaciones.Visible = false;
 
-        Query query = new Query("phdPaciente");
-
-        query["pacId"] = "phdPaciente.pacId";
-        query["tdocId"] = "phdPaciente.tdocId";
-        query["pacDocumento"] = "phdPaciente.pacDocumento";
-        query["pacPApellido"] = "phdPaciente.pacPApellido";
-        query["pacSApellido"] = "phdPaciente.pacSApellido";
-        query["pacPNombre"] = "phdPaciente.pacPNombre";
-        query["pacSNombre"] = "phdPaciente.pacSNombre";
-        query["pacTipoAfiliado"] = "phdPaciente.pacTipoAfiliado";
-        query["entId"] = "phdPaciente.entId";
-        query["entidad"] = "admEntidad.entNombre";
-        query["categoria"] = "phdPaciente.categoria";
-        query["estado"] = "phdPaciente.EstId";
-
-        CConectorMS conector = new CConectorMS();
         CConector conectormysql = new CConector();
+        Paciente paciente= Paciente.GetPaciente(id);
 
-        SqlDataReader reader = conector.Query(query.GetSelect("phdPaciente.pacId=" + Query.GetValor(id) + ""
-            , "LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)"));
         PDatos.Visible = false;
-        if (reader != null && reader.Read())
         {
             PDatos.Visible = true;
             double maximo = 0;
             PPaciente.Visible = true;
             HIdPaciente.Value = id;
-            HIdEntidad.Value = reader["entId"].ToString();
+            HIdEntidad.Value = paciente.entidadId;
 
-            TPaciente.Text = reader["pacDocumento"].ToString();
-            LNombrePaciente.Text = reader["pacPApellido"].ToString() +
-                " " + reader["pacSApellido"].ToString() +
-                " " + reader["pacPNombre"].ToString() +
-                " " + reader["pacSNombre"].ToString();
+            TPaciente.Text = paciente.documento;
+            LNombrePaciente.Text = paciente.NombreCompleto;
 
-            LInactivo.Visible = reader["estado"].ToString() == "2";
+            LInactivo.Visible = !paciente.Activo;
             
             // LMaximo.Text = reader[""];
 
-            LEntidad.Text = reader["entidad"].ToString();
+            LEntidad.Text = paciente.NombreEntidad;
             CultureInfo culture = new CultureInfo("en-US");
 
-            if(reader["categoria"].ToString()!="") {
+            if(paciente.Categoria!="") {
 
                 MySqlDataReader rtopes= conectormysql.Query("SELECT varios.nombre AS categoria,topes.nombre AS por, topes.descripcion AS tser, topes.szReservado AS tano "
                                                         + " FROM varios"
                                                         + " LEFT JOIN varios AS topes ON (topes.tipo=14 AND topes.parametro1=varios.id)"
-                                                        + " WHERE varios.id=" + reader["categoria"].ToString());
+                                                        + " WHERE varios.id=" + paciente.Categoria);
                 if (rtopes != null && rtopes.Read())
                 {
                     LCategoria.Text= "<b>" + rtopes["categoria"].ToString() + "</b>";
@@ -843,8 +794,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     LMaximoano.Text = string.Format("{0:c}", maximo);
                 }
             }
-            if (reader["pacTipoAfiliado"].ToString() != "")
-                LCategoria.Text += "/" + (reader["pacTipoAfiliado"].ToString() == "1" ? "Cotizante" : "Beneficiario");
+            if (paciente.TipoAfiliacion != "")
+                LCategoria.Text += "/" + (paciente.TipoAfiliacion == "1" ? "Cotizante" : "Beneficiario");
 
             TFecha.Focus();
             GAutorizaciones.DataBind();
@@ -852,7 +803,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             LAutorizaciones.Text += GAutorizaciones.Rows.Count == 1 ? "ón" : "ones";
             PAutorizaciones.Visible = GAutorizaciones.Rows.Count>0;
 
-            string valor= conector.QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(phdAutorizacion.autFecha)=YEAR(GETDATE())");
+            string valor= new CConector().QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(phdAutorizacion.autFecha)=YEAR(GETDATE())");
             if (valor == "")
                 valor = "0";
             maximo -= Convert.ToDouble(valor, culture.NumberFormat);
@@ -927,18 +878,24 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             return;
 
         for(int i=0; i<GActivades.Rows.Count; i++) { // verificamos que el servicio no se encuentre duplicado
-            if (GActivades.Rows[i].Cells[2].Text == TProcedimientoID.Text && DIntensidad.SelectedItem.Text == HttpUtility.HtmlDecode(GActivades.Rows[i].Cells[6].Text).Trim() && GActivades.SelectedIndex != i)
+            if (GActivades.Rows[i].Cells[2].Text == TProcedimientoID.Text && TIntensidadID.Text == HttpUtility.HtmlDecode(GActivades.Rows[i].Cells[6].Text).Trim() && GActivades.SelectedIndex != i)
             {
                 LMensaje.Text = "Ya existe este procedimiento";
                 TProcedimiento.Focus();
                 return;
             }
         }
+        if(Procedimientos.HasIntensidad(TProcedimientoID.Text) && TIntensidadID.Text.Length==0) {
+
+            LMensaje.Text = "Por favor ingrese una intensidad para el procedimiento.";
+            TIntensidad.Focus();
+            return;
+        }
 
         IOrderedDictionary data = new OrderedDictionary();
         data.Add("procedimiento", TProcedimiento.Text);
-        data.Add("tint", DIntensidad.SelectedItem.Text);
-        data.Add("idint", DIntensidad.SelectedValue.Length == 0 ? null : DIntensidad.SelectedValue);
+        data.Add("tint", TIntensidad.Text);
+        data.Add("idint", TIntensidadID.Text == "" ? null : TIntensidadID.Text);
         data.Add("sesionesdia", TSesionesDia.Text.Length==0 ? null : TSesionesDia.Text);
         data.Add("numerosesiones", TNumeroSesiones.Text);
         data.Add("proc_id", TProcedimientoID.Text);
@@ -969,7 +926,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         GActivades.DataBind();
 
         LMensaje.Text= TProcedimientoID.Text = TProcedimiento.Text = TSesionesDia.Text = TNumeroSesiones.Text = "";
-        DIntensidad.SelectedIndex = 0;
+        TIntensidad.Text = TIntensidadID.Text = "";
         BProcedimiento.Text = "Agregar";
         TProcedimiento.Focus();
     }
@@ -988,7 +945,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         TProcedimiento.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim();
         TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
         TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
-        CConector.SelectInDropDown(DIntensidad, HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
+        TIntensidadID.Text= HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim();
+        TIntensidad.Text = Procedimientos.GetVarios(TIntensidadID.Text);
         TProcedimientoID.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim();
 
         BProcedimiento.Text = "Editar";

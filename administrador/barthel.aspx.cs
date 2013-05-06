@@ -49,6 +49,7 @@ public partial class administrador_barthel : System.Web.UI.Page
             HId.Value = res.ToString();
         if (conector.InsertModificacion(HId.Value) == -1)
             return;
+        Procedimientos.RemoveVarios(HId.Value);
         ((MasterPageI)Master).SetResultado(mensaje);
     }
 

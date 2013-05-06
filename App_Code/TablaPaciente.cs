@@ -24,20 +24,6 @@ public class TablaPaciente
         CConector conector = new CConector();
         CConectorMS conectorms = new CConectorMS();
 
-        Query msquery = new Query("phdPaciente");
-
-        msquery += "entId";
-        msquery += "pacNombres";
-        msquery += "pacDocumento";
-        msquery += "pacFechaNac";
-        msquery += "pacDireccion";
-        msquery += "pacBarrio";
-        msquery += "pacTelefono";
-        msquery += "cieCodDx";
-        msquery += "cieCodDx_1";
-        msquery += "cieCodDx_2";
-        msquery += "sexoDesc";
-
         MySqlDataReader readermysql = conector.Query(szQuery);
         if (readermysql != null)
         {
@@ -48,39 +34,23 @@ public class TablaPaciente
                 todos[2] = readermysql["Barthel"];
                 todos[3] = HttpUtility.HtmlDecode(readermysql["Analisis"].ToString());
 
-                SqlDataReader readerms = conectorms.Query(msquery.GetSelect("pacId=" + todos[0].ToString(), "LEFT JOIN admSexo ON (admSexo.sexoId=phdPaciente.sexoId)"));
-                if (readerms != null && readerms.Read())
+                Paciente paciente = Paciente.GetPaciente(todos[0].ToString());
+
+                if (entidad == "0" || paciente.entidadId == entidad)
                 {
-                    if (entidad == "0" || readerms["entID"].ToString() == entidad)
-                    {
-                        todos[4] = readerms["pacNombres"].ToString();
-                        todos[5] = readerms["pacDocumento"].ToString();
-                        todos[6] = readerms["pacDireccion"].ToString();
-                        todos[7] = readerms["pacBarrio"].ToString();
-                        todos[8] = readerms["pacTelefono"].ToString();
-                        todos[9] = readerms["cieCodDx"].ToString();
-                        todos[10] = readerms["cieCodDx_1"].ToString();
-                        todos[11] = readerms["cieCodDx_2"].ToString();
-                        todos[13] = readerms["sexoDesc"].ToString();
+                    todos[4] = paciente.NombreCompleto;
+                    todos[5] = paciente.documento;
+                    todos[6] = paciente.Direccion;
+                    todos[7] = paciente.Barrio;
+                    todos[8] = paciente.Telefono;
+                    todos[9] = paciente.cie10.Count>0 ? null : paciente.cie10[0].ToString();
+                    todos[10] = paciente.cie10.Count > 1 ? null : paciente.cie10[1].ToString();
+                    todos[11] = paciente.cie10.Count > 2 ? null : paciente.cie10[2].ToString();
+                    todos[13] = paciente.sexoId == "1" ? "F" : "M";
+                    if(paciente.Edad!=-1)
+                        todos[12] = paciente.Edad;
 
-                        DateTime fechaNacimiento = (DateTime)readerms["pacFechaNac"];
-
-                        if (fechaNacimiento != null)
-                        {
-                            int edad = DateTime.Now.Year - fechaNacimiento.Year;
-
-                            //Obtengo la fecha de cumpleaños de este año.
-                            DateTime nacimientoAhora = fechaNacimiento.AddYears(edad);
-                            //Le resto un año si la fecha actual es anterior 
-                            //al día de nacimiento.
-                            if (DateTime.Now.CompareTo(nacimientoAhora) > 0)
-                            {
-                                edad--;
-                            }
-                            todos[12] = edad;
-                        }
-                        m_pTabla.Rows.Add(todos);
-                    }
+                    m_pTabla.Rows.Add(todos);
                 }
             }
         }

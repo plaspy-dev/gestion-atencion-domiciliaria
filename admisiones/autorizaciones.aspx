@@ -169,6 +169,38 @@
             }
         });
 
+        $("#<%= TIntensidad.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetIntensidad",
+                    data: "{ 'q': '" + request.term + "', 'proc': '" + $("#<%= TProcedimientoID.ClientID %>").val() + "' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                label: item.value, value: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                $("#<%= TIntensidadID.ClientID %>").val(ui.item.value);
+                $("#<%= TIntensidad.ClientID %>").val(ui.item.label);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TIntensidadID.ClientID %>").val("");
+            }
+        }).change(function() { if ($(this).val() == "") $("#<%= TIntensidadID.ClientID %>").val(""); });
+        
         $("#<%= TProcedimiento.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -194,13 +226,14 @@
             select: function(event, ui) {
                 $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
                 $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
+                $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val("");
                 return false;
             },
             search: function(event, ui) {
                 $("#<%= TProcedimientoID.ClientID %>").val("");
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
+                $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val("");
             }
-        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
+        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val(""); });
         addDialog("#<%= PConfirmar.ClientID %>", "#dConfirmar");
     });
 </script>
@@ -225,6 +258,7 @@
             <td colspan="2">
                 <asp:Label runat="server" ID="LEstado"></asp:Label>
                 <asp:CheckBox ID="CGenerar" Text="Generar número automático" runat="server" />
+                <asp:HyperLink runat="server" ID="HFormula" Target="_blank"></asp:HyperLink>
             </td>
         </tr>
         <tr id="tauto" class="hide">
@@ -449,7 +483,7 @@
                             <asp:BoundField DataField="procedimiento" HeaderText="Actividad" />
                             <asp:BoundField DataField="numerosesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="sesionesdia" HeaderText="Ses./día" ItemStyle-HorizontalAlign="Right" />
-                            <asp:BoundField DataField="tint" HeaderText="Horas" ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="tint" HeaderText="Intensidad" ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="idint" HeaderText="HorasId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                         </Columns>
                     </asp:GridView>
@@ -476,17 +510,9 @@
             <td><asp:TextBox runat="server" ID="TSesionesDia" CssClass="entero"></asp:TextBox></td>
         </tr>
         <tr>
-            <td>Horas</td>
+            <td>Intensidad</td>
             <td>
-            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" 
-                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                <asp:ListItem Text="(No aplica)" Value=""></asp:ListItem>
-            </asp:DropDownList>
-            <asp:SqlDataSource ID="SIntensidad" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND szReservado IS NULL ORDER BY nombre">
-            </asp:SqlDataSource>
+            <asp:TextBox runat="server" ID="TIntensidad"></asp:TextBox><asp:TextBox runat="server" ID="TIntensidadID" CssClass="hide"></asp:TextBox>
             <td><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label></td>
             <td align="right"><asp:Button runat="server" ID="BProcedimiento" ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
         </tr>

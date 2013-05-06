@@ -11,7 +11,7 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2013-04-10.
+This cut records the home-care application as archived on 2013-05-06.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
@@ -19,10 +19,10 @@ The application keeps the records used to arrange visits and coordinate the peop
 ### Features in the retained source
 
 - Open the batch admission screen to process patient admissions. `admisiones/amasivas.aspx`.
+- View and maintain access groups. `administrador/grupos.aspx`.
 - Retrieve images linked to the clinical files in this edition. `archivo/foto.ashx`.
 - Open the patient record and its care information. `paciente/paciente.aspx`.
 - Open the staff record for the care team. `rh/funcionario.aspx`.
-- View and maintain access groups. `administrador/grupos.aspx`.
 - Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
 - List cases that are waiting to be scheduled. `programacion/sinprogramar.aspx`.
 - Consult the pharmacy reports for this edition. `farmacia/informes.aspx`.
@@ -36,7 +36,7 @@ The retained site entry is `Default.aspx`. Use fictional accounts and a disposab
 
 ### Archive notes
 
-The archive inventory counted 0 additions, 5 edits and 0 removals.
+The archive inventory counted 1 additions, 15 edits and 3 removals.
 
 ### Framework versions
 
@@ -75,7 +75,7 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2013-04-10.
+Este corte conserva la versión de atención domiciliaria archivada el 2013-05-06.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
@@ -83,10 +83,10 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 ### Funciones en el código conservado
 
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `admisiones/amasivas.aspx`.
+- Consulta y administra los grupos de acceso. `administrador/grupos.aspx`.
 - Consulta las imágenes vinculadas a los archivos clínicos de esta edición. `archivo/foto.ashx`.
 - Abre la ficha del paciente y su información de atención. `paciente/paciente.aspx`.
 - Abre la ficha del personal del equipo de atención. `rh/funcionario.aspx`.
-- Consulta y administra los grupos de acceso. `administrador/grupos.aspx`.
 - Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
 - Consulta los casos pendientes de programación. `programacion/sinprogramar.aspx`.
 - Consulta los informes de farmacia de esta edición. `farmacia/informes.aspx`.
@@ -100,7 +100,7 @@ La entrada conservada del sitio es `Default.aspx`. Usa cuentas ficticias y una b
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 0 adiciones, 5 cambios y 0 retiros.
+El inventario del respaldo registró 1 adiciones, 15 cambios y 3 retiros.
 
 ### Versiones de .NET Framework
 

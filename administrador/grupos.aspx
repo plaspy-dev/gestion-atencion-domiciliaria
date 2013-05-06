@@ -63,7 +63,7 @@
                 <asp:SqlDataSource ID="SGrupos" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="SELECT id, nombre FROM grupo" >
+                    SelectCommand="SELECT id, nombre FROM grupo ORDER BY nombre" >
                 </asp:SqlDataSource>
             </td>
             <td>

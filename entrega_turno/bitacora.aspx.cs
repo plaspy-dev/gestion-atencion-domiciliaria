@@ -34,9 +34,8 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
                 query += "turBitacora.NAdministrativa";
                 query += "turBitacora.NServicio";
                 query += "turBitacora.pacId";
-                query += "phdPaciente.pacNombres";
 
-                SqlDataReader reader = conector.Query(query.GetSelect("bitId=" + Query.GetValor(Request.QueryString["bid"]), "LEFT JOIN phdPaciente ON (phdPaciente.pacId=turBitacora.pacId)"));
+                SqlDataReader reader = conector.Query(query.GetSelect("bitId=" + Query.GetValor(Request.QueryString["bid"])));
                 if(reader!=null && reader.Read()) {
 
                     HBitacora.Value= reader["bitId"].ToString();
@@ -44,7 +43,7 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
                     TObservaciones.Text = reader["bitObservaciones"].ToString();
                     DTipo.SelectedValue= reader["tpaId"].ToString();
                     TPacienteID.Text = reader["pacId"].ToString();
-                    TPaciente.Text = reader["pacNombres"].ToString();
+                    TPaciente.Text = Paciente.GetPaciente(TPacienteID.Text).NombreCompleto;
                     CConector.SelectInDropDown(DNAdministrativa, reader["NAdministrativa"]);
                     CConector.SelectInDropDown(DNServicio, reader["NServicio"]);
 

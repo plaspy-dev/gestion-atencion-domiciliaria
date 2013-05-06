@@ -114,22 +114,11 @@ public partial class paciente_evolucion : System.Web.UI.Page
                         GCDiagnostico.DataBind();
                         if (GCDiagnostico.Rows.Count == 0)
                         { // no se encontraron diagnosticos
-                            ArrayList lista = Procedimientos.GetCodigosCIE10(CCDetallePaciente.IdPaciente);
 
-                            if (lista.Count == 0)
+                            Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+                            for (int i = 0; i < paciente.cie10.Count; i++)
                             {
-                                SqlDataReader reader = conector.Query("SELECT cieCodDx,cieCodDx_1,cieCodDx_2 FROM phdPaciente WHERE pacId=" + CCDetallePaciente.IdPaciente);
-                                if (reader != null && reader.Read())
-                                {
-                                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx"].ToString());
-                                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx_1"].ToString());
-                                    lista = Procedimientos.AddCIE10(lista, reader["cieCodDx_2"].ToString());
-                                }
-                            }
-
-                            for (int i = 0; i < lista.Count; i++)
-                            {
-                                TCIE10.Text = lista[i].ToString() + "-";
+                                TCIE10.Text = Procedimientos.GetCodigoCIE(paciente.cie10[i].ToString());
                                 BMasCDiagnostico_Click(sender, e);
                             }
                         }
@@ -274,6 +263,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
                 return;
         }
 
+        Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
         if (nuevaevolucion && (CCDetallePaciente.Edad == -1 || CCDetallePaciente.Edad > 14))
             Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
@@ -359,31 +349,17 @@ public partial class paciente_evolucion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
         CConectorMS conectorms = new CConectorMS();
-        Query query = new Query("phdPaciente");
 
-        query["categoria"] = "categoria";
-        query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";        
+        Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+        evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
+        evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
 
-        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente));
-        if (reader != null)
-        {
-            bool l = reader.Read();
-            if (l)
-            {
-                evento.Contenido = evento.Contenido.Replace("$szCategoria$", new CConector().QueryString("SELECT nombre FROM varios WHERE id='" + reader["categoria"].ToString() + "' AND tipo=13"));
-            }
-            for (int i = 0; i < reader.FieldCount; i++)
-            {
-                evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
-            }
-        }
-
-        query = new Query("admPersonalHS");
+        Query query = new Query("admPersonalHS");
 
         query["szProfesional"] = "admPersonalHS.perDocumento";
         query["szCargo"] = "admCargo.carDescripcion";
 
-        reader = conectorms.Query(query.GetSelect("perId=" + Query.GetValor(TIdFuncionario.Text), " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"));
+        SqlDataReader reader = conectorms.Query(query.GetSelect("perId=" + Query.GetValor(TIdFuncionario.Text), " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"));
         if (reader != null)
         {
             bool l = reader.Read();

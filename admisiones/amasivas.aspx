@@ -83,7 +83,7 @@
             <td colspan="4">
                 <asp:TextBox runat="server" ID="TPacientes" CssClass="hide"></asp:TextBox>
                 <asp:GridView ID="GPacientes" runat="server" AutoGenerateColumns="False" 
-                    DataKeyNames="pacId" onrowdeleting="GPacientes_RowDeleting" >
+                    DataKeyNames="Id" onrowdeleting="GPacientes_RowDeleting" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -92,8 +92,8 @@
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
                         <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                        <asp:BoundField DataField="Paciente" HeaderText="Paciente" />
-                        <asp:BoundField DataField="Entidad" HeaderText="Entidad" />
+                        <asp:BoundField DataField="NombreCompleto" HeaderText="Paciente" />
+                        <asp:BoundField DataField="NombreEntidad" HeaderText="Entidad" />
                     </Columns>
                 </asp:GridView>
             </td>
@@ -177,15 +177,7 @@
         <tr>
             <td>Horas</td>
             <td>
-            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" 
-                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                <asp:ListItem Text="(No aplica)" Value=""></asp:ListItem>
-            </asp:DropDownList>
-            <asp:SqlDataSource ID="SIntensidad" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND szReservado IS NULL ORDER BY nombre">
-            </asp:SqlDataSource>
+            <asp:TextBox runat="server" ID="TIntensidad"></asp:TextBox><asp:TextBox runat="server" ID="TIntensidadID" CssClass="hide"></asp:TextBox>
             <td><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label></td>
             <td align="right"><asp:Button runat="server" ID="BProcedimiento" ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
         </tr>

@@ -88,8 +88,8 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Tipo formulación", 19, parent);
 
             // 20
-            parent = Add("Autorizaciones");
-            Add("Horas", 21, parent);
+            /*parent = Add("Autorizaciones");
+            Add("Horas", 21, parent);*/
 
             parent = Add("Formulación");
             Add("Área", 22, parent);
@@ -150,6 +150,9 @@ public partial class administrador_Default : System.Web.UI.Page
             HId.Value = res.ToString();
         if (conector.InsertModificacion(HId.Value) == -1)
             return;
+
+        Procedimientos.RemoveVarios(HId.Value);
+
         Session["szMensaje"] = mensaje;
         Response.Redirect(Request.Url.AbsolutePath + "?tipo=" + HTipo.Value);
     }

@@ -57,7 +57,7 @@ public partial class farmacia_salida : System.Web.UI.Page
                     TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
                     TDocumento.Text = reader["documento"].ToString();
                     TTerceroID.Text = reader["tercero"].ToString();
-                    TTercero.Text = new CConectorMS().QueryString("SELECT pacNombres FROM phdPaciente WHERE pacId=" + reader["tercero"].ToString());
+                    TTercero.Text = Paciente.GetPaciente(reader["tercero"].ToString()).NombreCompleto;
 
                     TProducto.Focus();
                     GProductos.Columns[0].Visible = usuario.CanDelete();

@@ -114,29 +114,11 @@ public partial class paciente_ingreso : System.Web.UI.Page
                         if (GCDiagnostico.Rows.Count == 0)
                         { // no se encontraron diagnosticos
 
-                            CConectorMS conectorms = new CConectorMS();
-                            SqlDataReader reader = conectorms.Query("SELECT cieCodDx,cieCodDx_1,cieCodDx_2 FROM phdPaciente WHERE pacId=" + CCDetallePaciente.IdPaciente);
-                            if (reader != null && reader.Read())
-                            {
+                            Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
 
-                                TCIE10.Text = reader["cieCodDx"].ToString();
-                                if (TCIE10.Text.Length > 0)
-                                {
-                                    TCIE10.Text += "-";
-                                    BMasCDiagnostico_Click(sender, e);
-                                }
-                                TCIE10.Text = reader["cieCodDx_1"].ToString();
-                                if (TCIE10.Text.Length > 0)
-                                {
-                                    TCIE10.Text += "-";
-                                    BMasCDiagnostico_Click(sender, e);
-                                }
-                                TCIE10.Text = reader["cieCodDx_2"].ToString();
-                                if (TCIE10.Text.Length > 0)
-                                {
-                                    TCIE10.Text += "-";
-                                    BMasCDiagnostico_Click(sender, e);
-                                }
+                            for(int i=0; i<paciente.cie10.Count; i++) {
+                                TCIE10.Text = Procedimientos.GetCodigoCIE(paciente.cie10[i].ToString());
+                                BMasCDiagnostico_Click(sender, e);
                             }
                         }
                     }
@@ -317,6 +299,8 @@ public partial class paciente_ingreso : System.Web.UI.Page
         if (conectorms.QueryMod("UPDATE phdPaciente SET megId=" + Query.GetValor(DMedico.SelectedValue) + ",cieCodDx=" + Query.GetValor(cie10) + ",cieCodDx_1=" + Query.GetValor(cie102) + ",cieCodDx_2=" + Query.GetValor(cie103) + " WHERE pacId=" + CCDetallePaciente.IdPaciente) == -1)
             return;
 
+        Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
+
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
         if (ingreso && (CCDetallePaciente.Edad==-1 || CCDetallePaciente.Edad>14))
             Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
@@ -479,10 +463,12 @@ public partial class paciente_ingreso : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + TConductaInicial.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
+        Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+        evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
+        evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
+
         Query query = new Query("phdPaciente");
 
-        query["categoria"] = "categoria";
-        query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
         query["szProfesional"] = "admPersonalHS.perDocumento";
         query["szMedico"] = "admPersonalHS.perNombre";
         query["szCargo"] = "admCargo.carDescripcion";
@@ -497,10 +483,6 @@ public partial class paciente_ingreso : System.Web.UI.Page
         {
             CConector conectortemp=new CConector();
             bool l = reader.Read();
-            if (l)
-            {
-                evento.Contenido = evento.Contenido.Replace("$szCategoria$", conectortemp.QueryString("SELECT nombre FROM varios WHERE id='" + reader["categoria"].ToString() + "' AND tipo=13"));
-            }
             for (int i = 0; i < reader.FieldCount; i++)
             {
                 evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");

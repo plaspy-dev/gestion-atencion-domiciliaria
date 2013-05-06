@@ -245,7 +245,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         CConectorMS conector = new CConectorMS();
 
         Query query = new Query("programacion");
-        string entidad= conector.QueryString("SELECT entId FROM phdPaciente WHERE pacId=" + HIdPaciente.Value);
+        string entidad = Paciente.GetPaciente(HIdPaciente.Value).entidadId;
 
         query["pacId"] = HIdPaciente.Value;
         query["perId"] = TProfesionalID.Text;

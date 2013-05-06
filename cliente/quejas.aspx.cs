@@ -586,25 +586,11 @@ public partial class cliente_quejas : System.Web.UI.Page
         // evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + TPlanManejo.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
-        CConectorMS conectorms = new CConectorMS();
-        Query query = new Query("phdPaciente");
 
-        query["categoria"] = "categoria";
-        query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
-
-        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente));
-        if (reader != null)
-        {
-            bool l = reader.Read();
-            if (l)
-            {
-                evento.Contenido = evento.Contenido.Replace("$szCategoria$", new CConector().QueryString("SELECT nombre FROM varios WHERE id='" + reader["categoria"].ToString() + "' AND tipo=13"));
-            }
-            for (int i = 0; i < reader.FieldCount; i++)
-            {
-                evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
-            }
-        }
+        Paciente paciente= Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+        
+        evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
+        evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
 
         /*query = new Query("admPersonalHS");
 

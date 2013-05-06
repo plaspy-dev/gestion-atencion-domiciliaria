@@ -138,8 +138,14 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
     public void Excel(GridView view)
     {
-        lnkExcel.Visible = Usuario.GetUsuario().CanPrint();
-        ViewState["excelgridview"] = view.ID;
+        if (view != null)
+        {
+            lnkExcel.Visible = Usuario.GetUsuario().CanPrint();
+            ViewState["excelgridview"] = view.ID;
+        } else {
+            lnkExcel.Visible = false;
+            ViewState["excelgridview"] = null;
+        }
     }
 
     public void Imprimir() {
@@ -148,9 +154,15 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
     public void Imprimir(GridView view)
     {
-        lnkImp.Visible = Usuario.GetUsuario().CanPrint();
-        lnkImp.OnClientClick = "";
-        ViewState["printgridview"] = view.ID;
+        if(view!=null) {
+            lnkImp.Visible = Usuario.GetUsuario().CanPrint();
+            lnkImp.OnClientClick = "";
+            ViewState["printgridview"] = view.ID;
+        } else {
+            lnkImp.Visible = false;
+            lnkImp.OnClientClick = "";
+            ViewState["printgridview"] = null;
+        }
     }
 
     public LinkButton GetPrintLink()

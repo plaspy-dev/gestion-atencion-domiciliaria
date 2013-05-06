@@ -235,10 +235,12 @@ public partial class paciente_barthel : System.Web.UI.Page
         repeater += "</table>";
         evento.Contenido = evento.Contenido.Replace("$GDetalle$", repeater);
 
+        Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+        evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
+        evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
+
         Query query = new Query("phdPaciente");
 
-        query["categoria"] = "categoria";
-        query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
         query["szMedico"] = "admPersonalHS.perDocumento";
         query["szProfesional"] = "admPersonalHS.perDocumento";
         query["szCargo"] = "admCargo.carDescripcion";
@@ -252,10 +254,6 @@ public partial class paciente_barthel : System.Web.UI.Page
         if (reader != null)
         {
             bool l = reader.Read();
-            if (l)
-            {
-                evento.Contenido = evento.Contenido.Replace("$szCategoria$", new CConector().QueryString("SELECT nombre FROM varios WHERE id='" + reader["categoria"].ToString() + "' AND tipo=13"));
-            }
             for (int i = 0; i < reader.FieldCount; i++)
             {
                 evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");

@@ -185,25 +185,6 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         HId.Value = GResultado.SelectedDataKey.Value.ToString();
 
         Response.Redirect("~/administrador/medicamentos.aspx?imp=" + HId.Value, true);
-
-        /*TCodigo.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[2].Text).Trim();
-        TNombre.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[3].Text).Trim();
-        TPrincipio.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[4].Text).Trim();
-        TForma.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[5].Text).Trim();
-        TConcentracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[6].Text).Trim();
-        TAclaracion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[7].Text).Trim();
-        CConector.SelectInComboText(DGrupo, HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[8].Text).Trim());
-
-        CConector conector = new CConector();
-        ViewState["cargos"] = conector.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
-        ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(IFNULL(costo,0),';',IFNULL(maxima,0))) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
-        ViewState["entidades"] = conector.QueryString("SELECT GROUP_CONCAT(entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
-        GCargos.DataBind();
-        GEntidades.DataBind();
-
-        BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
-
-        ((MasterPageI)Master).SetModificacion(HId.Value);*/
     }
     protected void LTipos_SelectedIndexChanged(object sender, EventArgs e)
     {

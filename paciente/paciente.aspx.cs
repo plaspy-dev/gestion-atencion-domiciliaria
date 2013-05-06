@@ -158,9 +158,9 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         IEliminar.Visible = usuario.CanDelete();
                     }
 
-                    TCIE1.Text= Procedimientos.GetCodigoCIE(TCIE1.Text, conector);
-                    TCIE2.Text = Procedimientos.GetCodigoCIE(TCIE2.Text, conector);
-                    TCIE3.Text = Procedimientos.GetCodigoCIE(TCIE3.Text, conector);
+                    TCIE1.Text= Procedimientos.GetCodigoCIE(TCIE1.Text);
+                    TCIE2.Text = Procedimientos.GetCodigoCIE(TCIE2.Text);
+                    TCIE3.Text = Procedimientos.GetCodigoCIE(TCIE3.Text);
 
                     PReactivar.Visible = true;
 
@@ -289,6 +289,8 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
         CConector conectormysql = new CConector();
         conectormysql.InsertModificacion(HId.Value);
+
+        Paciente.RemovePaciente(HId.Value);
 
         ((MasterPageI)Master).SetParametros("?pid=" + HId.Value);
         ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Editado.");

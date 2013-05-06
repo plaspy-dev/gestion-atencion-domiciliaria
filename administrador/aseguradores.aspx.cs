@@ -58,6 +58,8 @@ public partial class administrador_aseguradores : System.Web.UI.Page
         }
         if (new CConector().InsertModificacion(id) == -1)
             return;
+
+        Entidad.RemoveEntidad(id);
         ((MasterPageI)Master).SetResultado(mensaje);
     }
 

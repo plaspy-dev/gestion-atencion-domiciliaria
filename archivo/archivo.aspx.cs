@@ -28,14 +28,13 @@ public partial class archivo_archivo : System.Web.UI.Page
                 CConectorMS conector = new CConectorMS();
 
                 query += "arcArchivoGestion.arcId";
-                query += "phdPaciente.pacNombres";
                 query += "arcArchivoGestion.pacId";
                 query["fecha"] = "REPLACE(STR(CAST(arcArchivoGestion.arcMes AS varchar), 2), SPACE(1), '0') + '/' + CAST(arcArchivoGestion.arcAnio AS varchar)";
                 query += "arcArchivoGestion.arcFactura";
                 query += "arcArchivoGestion.arcAZ";
                 query += "arcArchivoGestion.arcObservaciones";
 
-                SqlDataReader reader = conector.Query(query.GetSelect("arcId=" + Query.GetValor(Request.QueryString["aid"]), "LEFT JOIN phdPaciente ON (phdPaciente.pacId=arcArchivoGestion.pacId)"));
+                SqlDataReader reader = conector.Query(query.GetSelect("arcId=" + Query.GetValor(Request.QueryString["aid"])));
                 if (reader != null && reader.Read())
                 {
                     ViewState["id"] = reader["arcId"].ToString();
@@ -44,7 +43,7 @@ public partial class archivo_archivo : System.Web.UI.Page
                     TFactura.Text = reader["arcFactura"].ToString();
                     TAZ.Text = reader["arcAZ"].ToString();
                     TPacienteID.Text = reader["pacId"].ToString();
-                    TPaciente.Text = reader["pacNombres"].ToString();
+                    TPaciente.Text = Paciente.GetPaciente(TPacienteID.Text).NombreCompleto;
 
                     BAceptar.Enabled = usuario.CanUpdate();
                     BMas.Visible = true;
