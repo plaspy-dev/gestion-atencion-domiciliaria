@@ -147,9 +147,12 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                     return;
                 if(conector.QueryMod("UPDATE medicamento_formulacion LEFT JOIN formulacion ON (medicamento_formulacion.formulacion=formulacion.id) "
                     + " SET medicamento_formulacion.costo=" + Query.GetValor(costo.Text.Replace(",", ""))
-                    + " WHERE medicamento_formulacion.medicamento=" + HId.Value + " formulacion.asegurador=" + GEntidades.DataKeys[i].Value.ToString() + " AND medicamento_formulacion.costo IS NULL") == -1)
+                    + " WHERE medicamento_formulacion.medicamento=" + HId.Value + " AND formulacion.asegurador=" + GEntidades.DataKeys[i].Value.ToString() + " AND medicamento_formulacion.costo IS NULL") == -1)
                     return;
             }
+            // limpiamos los temporales
+            Procedimientos.RemoveCostoProcedimiento(GEntidades.DataKeys[i].Value.ToString(), HId.Value);
+            Procedimientos.RemoveMaximoProcedimiento(GEntidades.DataKeys[i].Value.ToString(), HId.Value);
         }
 
         GResultado.DataBind();

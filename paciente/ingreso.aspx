@@ -52,6 +52,7 @@
             mode: "exact",
             elements: "elm1",
             theme: "advanced",
+            readonly : true,
             theme_advanced_buttons1: "",
             theme_advanced_buttons2: "",
             theme_advanced_buttons3: "",
@@ -434,10 +435,10 @@
             </tr>
             <tr>
                 <td colspan="4">
-                    Conducta inicial</td>
+                    Conducta inicial (Tomada de orden médica)</td>
             </tr>
             <tr>
-                <td colspan="4"><asp:TextBox ID="TConductaInicial" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>
+                <td colspan="4"><asp:TextBox ID="TConductaInicial" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>
                 <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
                 <asp:RequiredFieldValidator ControlToValidate="TConductaInicial" ErrorMessage="Por favor ingrese una conducta inicial." ID="RequiredFieldValidator13" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 </td>

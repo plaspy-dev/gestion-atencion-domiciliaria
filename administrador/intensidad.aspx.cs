@@ -83,6 +83,8 @@ public partial class administrador_intensidad : System.Web.UI.Page
                     + " WHERE medicamento_formulacion.medicamento=" + HId.Value + " formulacion.asegurador=" + GEntidades.DataKeys[i].Value.ToString() + " AND medicamento_formulacion.costo IS NULL") == -1)
                     return;*/
             }
+            // limpiamos los temporales
+            Procedimientos.RemoveCostoIntensidad(GEntidades.DataKeys[i].Value.ToString(), id);
         }
 
         Procedimientos.RemoveVarios(id);

@@ -158,6 +158,7 @@
                                 FOR XML PATH('')
                             ) pre_trimmed (detalles)
                             WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
+                            AND phdAutorizacion.autActivo=1
                             AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                             AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId=@procedimiento))
                             AND ('@area'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId IN (@area)))
@@ -206,7 +207,7 @@
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
-                                                    AND (@grupo='(Todos)' OR grupo.grupo=@grupo)
+                                                    AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
                         ) UNION ( 
                         SELECT '-1',COUNT(DISTINCT phdPaciente.pacNombres)
                                                     FROM phdAutorizacion
@@ -225,7 +226,7 @@
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
-                                                    AND (@grupo='(Todos)' OR grupo.grupo=@grupo)
+                                                    AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
                         ) UNION (
                         SELECT phdDetalleAutorizacion.actId,SUM(autNumSesiones)
                                                     FROM phdAutorizacion
@@ -244,7 +245,7 @@
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
-                                                    AND (@grupo='(Todos)' OR grupo.grupo=@grupo)
+                                                    AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
 							                        GROUP BY phdDetalleAutorizacion.actId
                         )UNION (
                         SELECT 5000000,SUM(phdDetalleAutorizacion.autNumSesiones)
@@ -264,7 +265,7 @@
                                                     AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
                                                     AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
-                                                    AND (@grupo='(Todos)' OR grupo.grupo=@grupo)
+                                                    AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
                         ) ORDER BY nombre
                         ">
                  <SelectParameters>

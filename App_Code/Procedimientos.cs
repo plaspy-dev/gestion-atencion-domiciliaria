@@ -13,22 +13,10 @@ using MySql.Data.MySqlClient;
 /// </summary>
 public class Procedimientos
 {
-    public class Entidad_Costo {
-
-        public double dCosto;
-        public int nServicios;
-
-        public Entidad_Costo(double costo, int servicios) {
-
-            dCosto = costo;
-            nServicios = servicios;
-        }
-    }
-
     public class Procedimiento { 
         public string sNombre;
         public Boolean bAutomatica;
-        public Dictionary<string, Entidad_Costo> pCostos = new Dictionary<string, Entidad_Costo>();
+
         public Procedimiento(string nombre, bool automatica) {
             sNombre = nombre;
             bAutomatica = automatica;
@@ -112,18 +100,7 @@ public class Procedimientos
             }
             resultado = new Procedimiento(nombre, automatico);
             info.pProcedimentos[id] = resultado;
-            reader = conector.Query("SELECT entidad,costo,maxima FROM medicamento_valor WHERE medicamento=" + Query.GetValor(id));
-            if (reader != null)
-            {
-                while (reader.Read())
-                {
-                    double costo= reader["costo"].ToString()=="" ? 0 : (double)reader["costo"];
-                    int maxima = reader["maxima"].ToString()=="" ? 0 : (int)reader["maxima"];
-                    info.pProcedimentos[id].pCostos[reader["entidad"].ToString()] = new Entidad_Costo(costo, maxima);
-                }
-            }
         }
-
         return resultado;
     }
 
@@ -136,32 +113,95 @@ public class Procedimientos
         return AddProcedimiento(id).bAutomatica;
     }
 
-    static public double GetCosto(string procedimento, string entidad)
+    static public void RemoveCostoProcedimiento(string entidad, string procedimiento)
     {
-        Procedimiento info = AddProcedimiento(procedimento);
-        double costo = 0;
+        HttpRuntime.Cache.Remove("cp" + entidad + ";" + procedimiento);
+    }
+
+    static public void RemoveMaximoProcedimiento(string entidad, string procedimiento)
+    {
+        HttpRuntime.Cache.Remove("sp" + entidad + ";" + procedimiento);
+    }
+
+    static public void RemoveCostoIntensidad(string entidad, string intensidad) {
+
+        HttpRuntime.Cache.Remove("ci" + entidad + ";" + intensidad);
+    }
+
+    static public Decimal GetCosto(string entidad, string procedimento, string intensidad) {
+        
+        if (string.IsNullOrEmpty(intensidad))
+            return Convert.ToDecimal(GetCosto(procedimento, entidad));
+        if (string.IsNullOrEmpty(entidad) || string.IsNullOrEmpty(procedimento))
+            return 0;
+
+        string clave= "CONFIGURAR_EN_ENTORNO" + entidad + ";" + intensidad;
+
+        string szCosto = (string)HttpRuntime.Cache[clave];
+        if (szCosto == null)
+        {
+            using (CConector conector = new CConector())
+            {
+                szCosto = conector.QueryString(string.Format("SELECT costo FROM intensidad_valor WHERE entidad={0} AND intensidad={1}", entidad, intensidad));
+                HttpRuntime.Cache.Insert(clave, szCosto);
+            }
+        }
+        if (string.IsNullOrEmpty(szCosto)) // si no esta definido el valor usamos el del procedimiento.
+            return Convert.ToDecimal(GetCosto(procedimento, entidad));
         try
         {
-            costo = info.pCostos[entidad].dCosto;
+            return Convert.ToDecimal(szCosto);
         }
-        catch 
+        catch { }
+        return 0;
+    }
+
+    static public double GetCosto(string procedimento, string entidad)
+    {
+        if (string.IsNullOrEmpty(entidad) || string.IsNullOrEmpty(procedimento))
+            return 0;
+
+        string clave = "CONFIGURAR_EN_ENTORNO" + entidad + ";" + procedimento;
+
+        string szCosto = (string)HttpRuntime.Cache[clave];
+        if (szCosto == null)
         {
+            using (CConector conector = new CConector())
+            {
+                szCosto = conector.QueryString(string.Format("SELECT costo FROM medicamento_valor WHERE entidad={0} AND medicamento={1}", entidad, procedimento));
+                HttpRuntime.Cache.Insert(clave, szCosto);
+            }
         }
-        return costo;
+        try
+        {
+            return Convert.ToDouble(szCosto);
+        }
+        catch { }
+        return 0;
     }
 
     static public int GetMaxServicios(string procedimento, string entidad)
     {
-        Procedimiento info = AddProcedimiento(procedimento);
-        int servicios = 0;
+        if (string.IsNullOrEmpty(entidad) || string.IsNullOrEmpty(procedimento))
+            return 0;
+
+        string clave = "CONFIGURAR_EN_ENTORNO" + entidad + ";" + procedimento;
+
+        string szCosto = (string)HttpRuntime.Cache[clave];
+        if (szCosto == null)
+        {
+            using (CConector conector = new CConector())
+            {
+                szCosto = conector.QueryString(string.Format("SELECT maxima FROM medicamento_valor WHERE entidad={0} AND medicamento={1}", entidad, procedimento));
+                HttpRuntime.Cache.Insert(clave, szCosto);
+            }
+        }
         try
         {
-            servicios = info.pCostos[entidad].nServicios;
+            return Convert.ToInt32(szCosto);
         }
-        catch 
-        {
-        }
-        return servicios;
+        catch { }
+        return 0;
     }
 
     static public string ReplaceProcedimientos(string textoIn) {
@@ -306,5 +346,30 @@ public class Procedimientos
             }
         }
         return lista;
+    }
+
+    static public string GetPlanDeManejo(CConector conector, string idpaciente, string fecha) { 
+
+        string resultado="";
+        
+        Query query= new Query("formulacion");
+        
+        query+="medicamentos.nombre";
+        query+="medicamento_formulacion.formulada";
+        query+="medicamento_formulacion.posologia";
+        
+        MySqlDataReader reader= conector.Query(query.GetSelect("formulacion.paciente=" +Query.GetValor(idpaciente) + " AND formulacion.fecha=" + Query.GetValor(CConector.GetMySQLDateFormat(fecha)), "LEFT JOIN medicamento_formulacion ON (formulacion.id=medicamento_formulacion.formulacion)"
+                            + " LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)"));
+        if(reader!=null) {
+            while(reader.Read()) {
+                resultado += reader["nombre"].ToString();
+                resultado += ", ";
+                resultado += reader["posologia"].ToString();
+                resultado += " (";
+                resultado += reader["formulada"].ToString();
+                resultado += ")\n";
+            }
+        }
+        return resultado;
     }
 }

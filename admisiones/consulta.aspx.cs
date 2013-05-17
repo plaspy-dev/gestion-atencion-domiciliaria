@@ -29,7 +29,6 @@ public partial class admisiones_consulta : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            // reemplazamos las actividades
             e.Row.Cells[8].Text = Procedimientos.ReplaceVarios(
                                     Procedimientos.ReplaceProcedimientos(e.Row.Cells[8].Text))
                                     .Replace(",_", "<br/>");

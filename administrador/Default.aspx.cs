@@ -86,13 +86,11 @@ public partial class administrador_Default : System.Web.UI.Page
 
             parent = Add("Formulación");
             Add("Tipo formulación", 19, parent);
+            Add("Área", 22, parent);
 
             // 20
             /*parent = Add("Autorizaciones");
             Add("Horas", 21, parent);*/
-
-            parent = Add("Formulación");
-            Add("Área", 22, parent);
 
             parent = Add("Valoración apoyo terapeutico");
             Add("Sistema de bajo flujo", 23, parent);
@@ -110,12 +108,14 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Novedad del servicio prestado", 28, parent);
 
             parent = Add("Gestión archivo");
+            Add("Tipo archivo", 36, parent);
             Add("Tipo de solicitud", 29, parent);
 
             parent = Add("Farmacia");
             Add("Estado productos", 34, parent);
             Add("Grupos", 35, parent);
-            // disponible 36
+
+            // disponible 37
 
 
             if (HTipo.Value.Length == 0)

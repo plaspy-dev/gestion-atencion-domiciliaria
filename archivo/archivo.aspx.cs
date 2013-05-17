@@ -9,6 +9,7 @@ using SDG.Componentes;
 
 public partial class archivo_archivo : System.Web.UI.Page
 {
+    protected int columnaTipo=-1;
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
@@ -58,11 +59,13 @@ public partial class archivo_archivo : System.Web.UI.Page
 
     protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        /*if (e.Row.RowIndex != -1)
+        if (e.Row.RowIndex != -1)
         {
-            e.Row.Cells[2].Text = Procedimientos.GetVarios(e.Row.Cells[2].Text);
-            e.Row.Cells[3].Text = Procedimientos.GetVarios(e.Row.Cells[3].Text);
-        }*/
+            if (columnaTipo==-1)
+                columnaTipo= Utilidades.GetGridColumnIndex(GResultados, "Tipo");
+
+            e.Row.Cells[columnaTipo].Text = Procedimientos.GetVarios(e.Row.Cells[columnaTipo].Text);
+        }
     }
     protected void BCancelar_Click(object sender, EventArgs e)
     {
@@ -77,6 +80,16 @@ public partial class archivo_archivo : System.Web.UI.Page
         Query query = new Query("arcArchivoGestion");
         CConectorMS conector = new CConectorMS();
 
+        string antigua=conector.QueryString(string.Format("SELECT arcId FROM arcArchivoGestion WHERE arcFactura={0}", Query.GetValor(TFactura.Text)));
+        if (antigua.Length > 0)
+        {
+            if (string.IsNullOrEmpty((string)ViewState["id"]) || antigua!=ViewState["id"].ToString())
+            {
+                LMensaje.Text = "Ya existe un archivo con la factura '" + TFactura.Text + "'";
+                return;
+            }
+        }
+
         conector.StartTransaction();
 
         query["arcMes"] = TFecha.Text.Split('/')[0];
@@ -85,6 +98,7 @@ public partial class archivo_archivo : System.Web.UI.Page
         query["pacId"] = TPacienteID.Text;
         query["arcFactura"] = TFactura.Text;
         query["arcAZ"] = TAZ.Text;
+        query["tipo"] = DTipoArchivo.SelectedValue;
 
         if (string.IsNullOrEmpty((string)ViewState["id"]))
         {
@@ -116,6 +130,7 @@ public partial class archivo_archivo : System.Web.UI.Page
         TSolicitadoPor.Text = "";
         TEntrega.Text = "";
         TDevolucion.Text = "";
+        DTipoArchivo.SelectedIndex=0;
         DTipo.Focus();
         if (DTipo.Items.Count == 0)
             DTipo.DataBind();
@@ -174,5 +189,10 @@ public partial class archivo_archivo : System.Web.UI.Page
         TDevolucion.Text = HttpUtility.HtmlDecode(row.Cells[7].Text).Trim();
 
         PMas.Visible = true;
+    }
+    protected void GResultados_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        GResultados.PageIndex = e.NewPageIndex;
+        GResultados.DataBind();
     }
 }

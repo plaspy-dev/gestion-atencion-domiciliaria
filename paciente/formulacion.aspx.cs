@@ -14,6 +14,9 @@ using System.Globalization;
 
 public partial class paciente_formulacion : System.Web.UI.Page
 {
+    public const string idprocedimientos = "173";
+    public const string iddisan = "36";
+
     protected void Page_Load(object sender, EventArgs e)
     {
         ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
@@ -28,7 +31,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             PFormulaciones.Visible = false;
 
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
-            if (string.IsNullOrEmpty(Request.QueryString["fid"])) {
+            if (!string.IsNullOrEmpty(Request.QueryString["fid"])) {
 
                 CConector conectormy = CConector.GetConector();
                 Query formulacion = new Query("formulacion");
@@ -39,7 +42,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
                 MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("id=" + Query.GetValor(Request.QueryString["fid"])));
                 if (readermysql != null && readermysql.Read()) {
-                    Response.Redirect("~/paciente/formulacion.aspx?pid=" + readermysql["paciente"].ToString() + "&f=" + string.Format("{0:d}", Convert.ToDateTime(((ImageButton)sender).CommandArgument)) + "&tf=" + ((ImageButton)sender).CommandName);
+                    Response.Redirect("~/paciente/formulacion.aspx?pid=" + readermysql["paciente"].ToString() + "&f=" + string.Format("{0:d}", Convert.ToDateTime(readermysql["fecha"])) + "&tf=" + readermysql["tipo"].ToString());
                 }
             }
             if (Request.QueryString["pid"] != null)
@@ -53,7 +56,18 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 {
                     ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
 
-                    DTipo.Enabled = usuario.CanAdmin() || CCDetallePaciente.AsegurdadorID != "36";
+                    DTipo.DataBind();
+                    if (!usuario.CanAdmin())
+                    {
+                        for (int i = 0; i < DTipo.Items.Count; i++) {
+                            if ((CCDetallePaciente.AsegurdadorID == iddisan && DTipo.Items[i].Text == "Medicamentos")
+                                || (CCDetallePaciente.AsegurdadorID != iddisan && DTipo.Items[i].Text == "Acuerdo 042 y 046"))
+                            {
+                                DTipo.Items.RemoveAt(i);
+                                i--;
+                            }
+                        }
+                    }
                     BAceptar.Enabled = usuario.CanInsert();
                     BMasFormulacion.Enabled= usuario.CanInsert();
                     TFecha.Focus();
@@ -71,11 +85,10 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     if (TFecha.Text.Length == 0)
                         TFecha.Text = DateTime.Now.ToShortDateString();
 
-                    DTipo.DataBind();
                     if (DTipo.Items.FindByValue(Request.QueryString["tf"]) != null)
                         DTipo.SelectedValue = Request.QueryString["tf"];
 
-                    trIntensidad.Visible = DTipo.SelectedValue == "173";
+                    trIntensidad.Visible = DTipo.SelectedValue == idprocedimientos;
 
                     if (DTipo.SelectedIndex != -1)
                     {
@@ -131,7 +144,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         ((MasterPageI)Master).SetModificacion(HIdFormulacion.Value);
                     } else {
 
-                        BFormula.Visible= conectormy.QueryString("SELECT id FROM formulacion WHERE paciente=" + CCDetallePaciente.IdPaciente + " AND tipo='" + DTipo.SelectedValue + "' LIMIT 1;").Length!=0;
+                        BFormula.Visible = DTipo.SelectedValue != idprocedimientos && conectormy.QueryString("SELECT id FROM formulacion WHERE paciente=" + CCDetallePaciente.IdPaciente + " AND tipo='" + DTipo.SelectedValue + "' LIMIT 1;").Length != 0;
                     }
 
                     GFormulaciones.DataBind();
@@ -152,7 +165,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
     protected bool AddMedicamento() {
 
-        if (TMedicamentoID.Text.Length != 0 && HIdFormulacion.Value.Length>0) // ya existe la formula y el medicamento esta en blanco
+        LMensajeMedicamento.Text = "";
+        if (TMedicamentoID.Text.Length == 0 && HIdFormulacion.Value.Length>0) // ya existe la formula y el medicamento esta en blanco
             return true;
 
         Page.Validate("medicamento");
@@ -164,6 +178,41 @@ public partial class paciente_formulacion : System.Web.UI.Page
             // verificamos que la cantidad no exeda lo permitido por el servicio
             int maximo = Procedimientos.GetMaxServicios(TMedicamentoID.Text, CCDetallePaciente.AsegurdadorID);
             int cantidadactual = Convert.ToInt32(TCantidad.Text);
+            if (DTipo.SelectedValue == idprocedimientos)
+            {
+                if (cantidadactual > 93)
+                {
+                    LMensajeMedicamento.Text = "Excede la cantidad máxima diaria permitida";
+                    TCantidad.Focus();
+                    return false;
+                }
+                CConector conector = new CConector();
+                string cantidad = conector.QueryString(string.Format("SELECT medicamento_formulacion.formulada FROM formulacion"
+                    + " LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id)"
+                    + " WHERE"
+                    + " formulacion.paciente={0}"
+                    + " AND medicamento_formulacion.medicamento={2}"
+                    + " AND (({3}='' AND medicamento_formulacion.intensidad IS NULL) OR medicamento_formulacion.intensidad={3} )"
+                    + " ORDER BY formulacion.fecha DESC"
+                    + " LIMIT 1"
+                    , Query.GetValor(CCDetallePaciente.IdPaciente)
+                    , Query.GetValor(Conector.GetMySQLDateFormat(TFecha.Text))
+                    , Query.GetValor(TMedicamentoID.Text)
+                    , Query.GetValor(TIntensidadID.Text)
+                    ));
+                try
+                {
+                    int nCantidad= Convert.ToInt32(cantidad);
+                    nCantidad= Convert.ToInt32(nCantidad*1.1);
+                    if (cantidadactual > nCantidad)
+                    {  // excede la cantidad anterior
+                        LMensajeMedicamento.Text = "Excede la cantidad máxima de sesiones de la orden médica anterior.";
+                        TCantidad.Focus();
+                        return false;
+                    }
+                }
+                catch { }
+            }
             if (maximo > 0) // esta restringido
             {
                 int nuevacantidad = cantidadactual;
@@ -240,7 +289,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
         }
 
         // verificamos que no se halla formulado el mes anterior
-        if (!CUsuario.GetUsuario().CanAdmin() && CCDetallePaciente.AsegurdadorID == "36")
+        if (!CUsuario.GetUsuario().CanAdmin() && CCDetallePaciente.AsegurdadorID == iddisan)
         {
             CConector conector = new CConector();
             string ultimareceta = conector.QueryString(string.Format("SELECT formulacion.fecha FROM formulacion"
@@ -285,7 +334,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
         if (!AddMedicamento())
             return;
 
-        if (DTipo.SelectedValue == "173" && Procedimientos.HasIntensidad(TMedicamentoID.Text) && TIntensidadID.Text.Length == 0)
+        if (DTipo.SelectedValue == idprocedimientos && Procedimientos.HasIntensidad(TMedicamentoID.Text) && TIntensidadID.Text.Length == 0)
         { // es un procedimiento
             LMensajeMedicamento.Text = "Por favor ingrese una intensidad para el procedimiento.";
             TIntensidad.Focus();
@@ -317,7 +366,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
         if (HIdFormulacion.Value.Length == 0)
         {
             formulacion["paciente"] = CCDetallePaciente.IdPaciente;
-            if (DTipo.SelectedValue == "173") { // agregamos la autorizacion
+            if (DTipo.SelectedValue == idprocedimientos)
+            { // agregamos la autorizacion
 
                 string autorizacion= conectorMS.QueryString(
                 String.Format("SELECT 'AD{0}'+RIGHT('000'+CAST(ISNULL(MAX(CONVERT(int,SUBSTRING(autNumero,9,LEN(autnumero)-8))), 0)+1 AS VARCHAR(3)),3)"
@@ -327,7 +377,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 query["autNumero"] = autorizacion;
                 query["pacId"] = CCDetallePaciente.IdPaciente;
                 query["entId"] = CCDetallePaciente.AsegurdadorID;
-                query["autActivo"] = "1";
+                query["autActivo"] = "0";
+                query["autProvisional"] = "1";
                 query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
                 query["segFechaIngreso"] = "GETDATE()";
 
@@ -540,13 +591,13 @@ public partial class paciente_formulacion : System.Web.UI.Page
         }
 
         int numero_medicamentos = 5;
-        if (CCDetallePaciente.AsegurdadorID == "36")
+        if (CCDetallePaciente.AsegurdadorID == iddisan)
         { // disan
             numero_medicamentos = 3;
         }
 
         int paginas = (int)Math.Ceiling((double)GFormulacion.Rows.Count / numero_medicamentos);
-        if (DTipo.SelectedValue == "173") // procedimientos
+        if (DTipo.SelectedValue == idprocedimientos) // procedimientos
         {
             paginas = 0;
             numero_medicamentos = 1;
@@ -567,12 +618,12 @@ public partial class paciente_formulacion : System.Web.UI.Page
             string contenidoreal = evento.Contenido.Substring(pos, posf - pos + 6);
             string contenido = "";
             int inicial = numero_medicamentos;
-            if (DTipo.SelectedValue == "173")
+            if (DTipo.SelectedValue == idprocedimientos)
                 inicial = EsLaboratorio(0) ? 5 : 1;
 
             for(int i=1; i<paginas; i++) {
 
-                if (DTipo.SelectedValue == "173") // procedimientos
+                if (DTipo.SelectedValue == idprocedimientos) // procedimientos
                     numero_medicamentos = EsLaboratorio(i * numero_medicamentos) ? 5 : 1;
                 contenido += contenidoreal.Replace("$szFormulacion$", RenderPage(inicial, numero_medicamentos))
                     .Replace("$szConsecutivo$", HIdFormulacion.Value + "-" + (i+1));
@@ -580,7 +631,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             }
             evento.Contenido= evento.Contenido.Insert(posf + 6, contenido);
         }
-        if (DTipo.SelectedValue == "173") // procedimientos
+        if (DTipo.SelectedValue == idprocedimientos) // procedimientos
             numero_medicamentos = EsLaboratorio(0) ? 5 : 1;
         // aqui modificamos la primera pagina.
         evento.Contenido = evento.Contenido.Replace("$szFormulacion$", RenderPage(0, numero_medicamentos))

@@ -237,6 +237,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         query["autObservaciones"] = TObservaciones.Text;
         query["entId"] = HIdEntidad.Value;
         query["autActivo"] = "1";
+        if(HFormula.Text.Length>0) // es una autorizacion de DMGEN
+            query["autProvisional"] = "0";
 
         if (HIdAutorizacion.Value.Length == 0)
         {
@@ -446,6 +448,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
         conector.Commit();
         Paciente.RemovePaciente(HIdPaciente.Value);
+        Autorizaciones.RemoveAutorizaciones(HIdPaciente.Value);
 
         for (int i = 0; i < profesionales.Count; i++ ) 
         { // se realizo alguna programacion
@@ -803,7 +806,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             LAutorizaciones.Text += GAutorizaciones.Rows.Count == 1 ? "ón" : "ones";
             PAutorizaciones.Visible = GAutorizaciones.Rows.Count>0;
 
-            string valor= new CConector().QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(phdAutorizacion.autFecha)=YEAR(GETDATE())");
+            string valor= new CConectorMS().QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(phdAutorizacion.autFecha)=YEAR(GETDATE())");
             if (valor == "")
                 valor = "0";
             maximo -= Convert.ToDouble(valor, culture.NumberFormat);

@@ -158,6 +158,7 @@ public partial class admisiones_amasivas : System.Web.UI.Page
 
         for (int i = 0; i < pacientes.Count; i++) {
             Paciente.RemovePaciente(pacientes[i]);
+            Autorizaciones.RemoveAutorizaciones(pacientes[i]);
         }
         Session["amasivas_paciente"] = 1;
         ((MasterPageI)Master).SetResultado(pacientes.Count + " programaciones agregadas.");

@@ -52,7 +52,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             return tServicios.Visible;
         }
         set {
-            tServicios.Visible = tServiciosD.Visible = value;
+            tServicios.Visible = UCAutorizaciones.Visible = value;
         }
     }
     public double GetCostoPacienteActual {
@@ -171,7 +171,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             LTipoPago.Text = paciente.tipopago;
             LFamiliar.Text = paciente.FamiliarResponsable;
             LParentesco.Text = paciente.parentesco;
-            LAsegurador.Text += " - " + paciente.Grupo;
+            LGrupo.Text = paciente.Grupo;
 
             for (int i = 0; i < paciente.cie10.Count; i++)
             {

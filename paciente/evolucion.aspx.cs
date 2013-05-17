@@ -107,6 +107,9 @@ public partial class paciente_evolucion : System.Web.UI.Page
                         else TFecha.Text = "";
                         TPlanManejo.Text = readermysql["plan_manejo"].ToString();
                         TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
+                        string procedimientos= Procedimientos.GetPlanDeManejo(conectormysql, CCDetallePaciente.IdPaciente, TFecha.Text);
+                        if (procedimientos.Length > 0)
+                            TPlanManejo.Text = procedimientos;
 
                         ((MasterPageI)Master).SetModificacion(HIdEvolucion.Value);
                     } else {
@@ -122,7 +125,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
                                 BMasCDiagnostico_Click(sender, e);
                             }
                         }
-                        TPlanManejo.Text = conectormysql.QueryString("SELECT plan_manejo FROM evolucion_paciente WHERE paciente=" + CCDetallePaciente.IdPaciente + " ORDER BY fecha DESC LIMIT 1");
+                        // TPlanManejo.Text = conectormysql.QueryString("SELECT plan_manejo FROM evolucion_paciente WHERE paciente=" + CCDetallePaciente.IdPaciente + " ORDER BY fecha DESC LIMIT 1");
                     }
                     
                     GEvoluciones.DataBind();

@@ -1,45 +1,27 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="autorizaciones.ascx.cs" Inherits="paciente_autorizaciones" %>
 <asp:HiddenField ID="HId" runat="server" />
-<asp:Repeater runat="server" ID="RDetalles" DataSourceID="SDetalles">
+<asp:Repeater runat="server" ID="RDetalles" onitemdatabound="RDetalles_ItemDataBound">
 <HeaderTemplate>
-    <table border="1">
-    <tbody>
+<table cellpadding="0" cellspacing="0">
 </HeaderTemplate>
 <ItemTemplate>
-        <tr><th colSpan="2">AUTORIZACIÓN <asp:Label runat="server" ID="LAutorizacion" Text='<%# DataBinder.Eval(Container.DataItem, "autnumero") %>'></asp:Label></th></tr>
-        <tr><td><%# DataBinder.Eval(Container.DataItem, "autFecha", "{0:d}") %></td><td><%# DataBinder.Eval(Container.DataItem, "autFechaVenc", "{0:d}")%></td></tr>
-        <asp:Repeater runat="server" ID="RDDetalle" DataSourceID="SDDetalle" onitemdatabound="RDetalle_ItemDataBound">
+        <tr>
+        <td nowrap="nowrap" colspan="2">
+            <b>AUTORIZACIÓN <asp:label runat="server" id="LA" Text='<%# DataBinder.Eval(Container.DataItem, "Autorizacion") %>'></asp:label> (<%# DataBinder.Eval(Container.DataItem, "fecha", "{0:d}") %>-<%# DataBinder.Eval(Container.DataItem, "vencimiento", "{0:d}")%>)</b>
+        </td>
+        <tr><td colspan="2"><hr /></td></tr>
+        </tr>
+        <asp:Repeater runat="server" ID="RDDetalle">
             <ItemTemplate>
-                <tr><td nowrap="false"><asp:Label ID="LD" runat="server" Text='<%# DataBinder.Eval(Container.DataItem, "actDescripcion") %>'></asp:Label><asp:Label runat="server" ID="LI" Text='<%# DataBinder.Eval(Container.DataItem, "intensidad") %>'></asp:Label></td><td align="right"><%# DataBinder.Eval(Container.DataItem, "autNumSesiones") %></td></tr>
+                <tr>
+                    <td align="right"><b><%# DataBinder.Eval(Container.DataItem, "Cantidad")%></b></td>
+                    <td nowrap="nowrap">&nbsp;<%# DataBinder.Eval(Container.DataItem, "NombreCompleto") %></td>
+                </tr>
             </ItemTemplate>
         </asp:Repeater>
-        <asp:SqlDataSource ID="SDDetalle" runat="server"
-            ConnectionString="<%$ ConnectionStrings:connBD %>" 
-            SelectCommand="SELECT ISNULL(phdActividad.actDescripcion, phdDetalleAutorizacion.actId) AS actDescripcion,phdDetalleAutorizacion.autNumSesiones,phdDetalleAutorizacion.intensidad
-                FROM phdDetalleAutorizacion
-                LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
-                WHERE 
-                phdDetalleAutorizacion.autNumero=@autorizacion">
-                <SelectParameters>
-                    <asp:ControlParameter ControlID="LAutorizacion" PropertyName="Text" Name="autorizacion" />
-                </SelectParameters>
-         </asp:SqlDataSource>
+        <tr><td colspan="2"><hr /></td></tr>
 </ItemTemplate>
 <FooterTemplate>
-    </tbody>
-    </table>
+</table>
 </FooterTemplate>
 </asp:Repeater>
-<asp:SqlDataSource ID="SDetalles" runat="server" 
-ConnectionString="<%$ ConnectionStrings:connBD %>" 
-SelectCommand="SELECT autNumero,autFecha,autFechaVenc
-                FROM phdAutorizacion
-                WHERE 
-                autActivo=1 AND
-                GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60) AND
-                pacId=@paciente
-                ">
-                <SelectParameters>
-                    <asp:ControlParameter ControlID="HId" Name="paciente" DefaultValue="0" PropertyName="Value" />
-                </SelectParameters>
-</asp:SqlDataSource>

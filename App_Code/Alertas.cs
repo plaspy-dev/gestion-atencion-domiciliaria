@@ -34,32 +34,36 @@ public class Alertas
             alertas = new ArrayList();
             HttpContext.Current.Session["Alertas"] = alertas;
 
-            CConectorMS conectorc = new CConectorMS();
-            SqlDataReader consultas = conectorc.Query("SELECT genTareas.tarTitulo AS nombre,genTareas.consulta,genTareas.url,genTareas.consultaCount FROM GenUsuarioTarea LEFT JOIN genTareas ON (genTareas.tarId=GenUsuarioTarea.tarId) WHERE usIdUsuario='" + Usuario.GetUsuario().GetLogin() + "' AND genTareas.consulta IS NOT NULL ORDER BY nombre");
-
-            if (consultas != null)
+            using (CConectorMS conectorc = new CConectorMS())
             {
-                while (consultas.Read())
+                SqlDataReader consultas = conectorc.Query("SELECT genTareas.tarTitulo AS nombre,genTareas.consulta,genTareas.url,genTareas.consultaCount FROM GenUsuarioTarea LEFT JOIN genTareas ON (genTareas.tarId=GenUsuarioTarea.tarId) WHERE usIdUsuario='" + Usuario.GetUsuario().GetLogin() + "' AND genTareas.consulta IS NOT NULL ORDER BY nombre");
+
+                if (consultas != null)
                 {
-                    string consulta = consultas["consulta"].ToString();
-                    string consultacount = consultas["consultaCount"].ToString();
+                    while (consultas.Read())
+                    {
+                        string consulta = consultas["consulta"].ToString();
+                        string consultacount = consultas["consultaCount"].ToString();
 
-                    if(consulta.IndexOf("{0}")!=-1) {
-                        consulta= Procedimientos.SetProcedimientos(consulta, "programacion.actId");
-                        consultacount= Procedimientos.SetProcedimientos(consultacount, "programacion.actId");
-                    }
-                    if(consulta.IndexOf("{1}")!=-1) {
-                        consulta = Procedimientos.SetCargos(consulta.Replace("{1}", "{0}"), "admPersonalHS.carId");
-                        consultacount = Procedimientos.SetCargos(consultacount.Replace("{1}", "{0}"), "admPersonalHS.carId");
-                    }
+                        if (consulta.IndexOf("{0}") != -1)
+                        {
+                            consulta = Procedimientos.SetProcedimientos(consulta, "programacion.actId");
+                            consultacount = Procedimientos.SetProcedimientos(consultacount, "programacion.actId");
+                        }
+                        if (consulta.IndexOf("{1}") != -1)
+                        {
+                            consulta = Procedimientos.SetCargos(consulta.Replace("{1}", "{0}"), "admPersonalHS.carId");
+                            consultacount = Procedimientos.SetCargos(consultacount.Replace("{1}", "{0}"), "admPersonalHS.carId");
+                        }
 
-                    alertas.Add(new Alertas(
-                            consultas["nombre"].ToString(),
-                            "0",
-                            consultas["url"].ToString(),
-                            consulta,
-                            consultacount
-                    ));
+                        alertas.Add(new Alertas(
+                                consultas["nombre"].ToString(),
+                                "0",
+                                consultas["url"].ToString(),
+                                consulta,
+                                consultacount
+                        ));
+                    }
                 }
             }
 
@@ -70,15 +74,17 @@ public class Alertas
     public static ArrayList GetAlertas() {
         
         ArrayList alertas = new ArrayList();
-        CConectorMS conector = new CConectorMS();
+        using (CConectorMS conector = new CConectorMS())
+        {
+            ArrayList fullAlertas = GetFullAlertas();
+            for (int i = 0; i < fullAlertas.Count; i++)
+            {
 
-        ArrayList fullAlertas= GetFullAlertas();
-        for (int i = 0; i < fullAlertas.Count; i++ ) {
-
-            Alertas alerta = (Alertas)fullAlertas[i];
-            alerta.Numero = conector.QueryString(alerta.SelectCount);
-            if(alerta.Numero!="0")
-                alertas.Add(alerta);
+                Alertas alerta = (Alertas)fullAlertas[i];
+                alerta.Numero = conector.QueryString(alerta.SelectCount);
+                if (alerta.Numero != "0")
+                    alertas.Add(alerta);
+            }
         }
         return alertas;
     }

@@ -44,7 +44,7 @@
         .datepicker("option", "dateFormat", "mm/yy")
         .mask("99/9999");
 
-        $("#<%= TFecha.ClientID %>,#<%= TFactura.ClientID %>,#<%= TAZ.ClientID %>").change(function() {
+        $("#<%= TFecha.ClientID %>,#<%= TFactura.ClientID %>,#<%= TAZ.ClientID %>,#<%= DTipoArchivo.ClientID %>").change(function() {
             $("#<%= BBuscar.ClientID %>").click();
         });
     });
@@ -81,13 +81,28 @@
             </td>
         </tr>
         <tr>
-            <td>Observaciones</td>
-            <td><asp:TextBox runat="server" ID="TObservaciones" Height="80" TextMode="MultiLine" Width="98%"></asp:TextBox>
+            <td>Tipo<asp:RequiredFieldValidator ControlToValidate="DTipoArchivo" ErrorMessage="Por favor seleccione un tipo." ID="RequiredFieldValidator8" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td>
+                <asp:DropDownList ID="DTipoArchivo" runat="server" DataSourceID="STipoArchivo" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="STipoArchivo" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=36 AND szReservado IS NULL ORDER BY nombre">
+                </asp:SqlDataSource>
             </td>
         </tr>
         <tr>
-            <td>Paciente</td>
-            <td><asp:TextBox ID="TPaciente" runat="server" Width="98%"></asp:TextBox><asp:TextBox runat="server" ID="TPacienteID" CssClass="hide"></asp:TextBox></td>
+            <td>Paciente<asp:RequiredFieldValidator ControlToValidate="TPacienteID" ErrorMessage="Por favor ingrese un Paciente." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td><asp:TextBox ID="TPaciente" runat="server" Width="98%"></asp:TextBox>
+            <asp:TextBox runat="server" ID="TPacienteID" CssClass="hide"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Observaciones</td>
+            <td><asp:TextBox runat="server" ID="TObservaciones" Height="80" TextMode="MultiLine" Width="98%"></asp:TextBox>
+            </td>
         </tr>
         <tr>
             <td colspan="2" class="celdaTitulo">Solicitudes</td>
@@ -199,6 +214,7 @@
         </ContentTemplate></asp:UpdatePanel>
         <tr>
             <td colspan="2">
+                <asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label>
                 <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
             </td>
         </tr>
@@ -215,7 +231,9 @@
     <div id="dImprimir">
             <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
                 AutoGenerateColumns="False" EmptyDataText="No se encontraron archivos" DataKeyNames="arcId"
-                AllowPaging="True" PageSize="50" AllowSorting="True" OnRowDataBound="GResultados_RowDataBound" >
+                AllowPaging="True" PageSize="50" AllowSorting="True" 
+                OnRowDataBound="GResultados_RowDataBound" 
+                onpageindexchanging="GResultados_PageIndexChanging" >
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
                 <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -230,6 +248,7 @@
                     <asp:BoundField HeaderText="Paciente" DataField="pacNombres" SortExpression="pacNombres" />
                     <asp:BoundField HeaderText="Factura" DataField="arcFactura" SortExpression="arcFactura" />
                     <asp:BoundField HeaderText="A-Z" DataField="arcAZ" SortExpression="arcAZ" />
+                    <asp:BoundField HeaderText="Tipo" DataField="tipo" SortExpression="tipo" />
                     <asp:BoundField HeaderText="Observaciones" DataField="arcObservaciones" SortExpression="arcObservaciones" />
                 </Columns>
             </asp:GridView>
@@ -249,12 +268,14 @@
                     ,arcArchivoGestion.arcFactura
                     ,arcArchivoGestion.arcAZ
                     ,arcArchivoGestion.arcObservaciones
+                    ,arcArchivoGestion.tipo
                     FROM arcArchivoGestion
                     LEFT JOIN phdPaciente ON (phdPaciente.pacId=arcArchivoGestion.pacId)
                     WHERE 
                     (@fecha='0' OR REPLACE(STR(CAST(arcArchivoGestion.arcMes AS varchar), 2), SPACE(1), '0') + '/' + CAST(arcArchivoGestion.arcAnio AS varchar)=@fecha)
                     AND (@az='_' OR arcArchivoGestion.arcAZ LIKE '%' + @az + '%')
                     AND (@factura='_' OR arcArchivoGestion.arcFactura LIKE '%' + @factura + '%')
+                    AND (@tipo=-1 OR arcArchivoGestion.tipo=@tipo)
                     AND (@paciente=0 OR arcArchivoGestion.pacId=@paciente)
                     ">
           <SelectParameters>
@@ -262,6 +283,7 @@
             <asp:ControlParameter ControlID="TPacienteID" PropertyName="Text" Name="paciente" DefaultValue="0" />
             <asp:ControlParameter ControlID="TAZ" PropertyName="Text" Name="az" DefaultValue="_" />
             <asp:ControlParameter ControlID="TFactura" PropertyName="Text" Name="factura" DefaultValue="_" />
+            <asp:ControlParameter ControlID="DTipoArchivo" PropertyName="SelectedValue" Name="tipo" DefaultValue="-1" />
           </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>
