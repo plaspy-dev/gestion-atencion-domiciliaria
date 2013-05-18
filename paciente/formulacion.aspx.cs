@@ -60,11 +60,16 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     if (!usuario.CanAdmin())
                     {
                         for (int i = 0; i < DTipo.Items.Count; i++) {
-                            if ((CCDetallePaciente.AsegurdadorID == iddisan && DTipo.Items[i].Text == "Medicamentos")
-                                || (CCDetallePaciente.AsegurdadorID != iddisan && DTipo.Items[i].Text == "Acuerdo 042 y 046"))
-                            {
-                                DTipo.Items.RemoveAt(i);
-                                i--;
+                            if(CCDetallePaciente.AsegurdadorID == iddisan) {
+                                if(DTipo.Items[i].Text == "Medicamentos") {
+                                    DTipo.Items.RemoveAt(i);
+                                    break;
+                                }
+                            } else {
+                                if(DTipo.Items[i].Text == "Acuerdo 042 y 046") {
+                                    DTipo.Items.RemoveAt(i);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -198,7 +203,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     , Query.GetValor(CCDetallePaciente.IdPaciente)
                     , Query.GetValor(Conector.GetMySQLDateFormat(TFecha.Text))
                     , Query.GetValor(TMedicamentoID.Text)
-                    , Query.GetValor(TIntensidadID.Text)
+                    , Query.GetValor(DIntensidad.SelectedValue)
                     ));
                 try
                 {
@@ -334,10 +339,10 @@ public partial class paciente_formulacion : System.Web.UI.Page
         if (!AddMedicamento())
             return;
 
-        if (DTipo.SelectedValue == idprocedimientos && Procedimientos.HasIntensidad(TMedicamentoID.Text) && TIntensidadID.Text.Length == 0)
+        if (DTipo.SelectedValue == idprocedimientos && Procedimientos.HasIntensidad(TMedicamentoID.Text) && DIntensidad.SelectedValue.Length == 0)
         { // es un procedimiento
             LMensajeMedicamento.Text = "Por favor ingrese una intensidad para el procedimiento.";
-            TIntensidad.Focus();
+            DIntensidad.Focus();
             return;
         }
 
@@ -425,7 +430,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             medicamento["via"] = TVia.Text;
             medicamento["tiempo"] = TTiempo.Text;
             medicamento["costo"] = Procedimientos.GetCosto(TMedicamentoID.Text, CCDetallePaciente.AsegurdadorID).ToString(CultureInfo.InvariantCulture);
-            medicamento["intensidad"] = TIntensidadID.Text;
+            medicamento["intensidad"] = DIntensidad.SelectedValue;
 
             if (GFormulacion.SelectedIndex == -1)
             {
@@ -482,7 +487,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             GFormulacion.SelectedIndex = -1;
             GFormulacion.DataBind();
             TMedicamentoID.Text = TMedicamento.Text = TPosologia.Text = TCantidad.Text = "";
-            TIntensidad.Text = TIntensidadID.Text = "";
+            TMedicamentoID_TextChanged(sender, e);
             TTiempo.Text = TVia.Text = "";
             CCDetallePaciente.GetCostoPacienteActual = 0;
             CCDetallePaciente.GetCostoAseguradoraActual = 0;
@@ -501,8 +506,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
         TPosologia.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[6].Text).Trim();
         TTiempo.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[7].Text).Trim();
         TVia.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[8].Text).Trim();
-        TIntensidadID.Text = GFormulacion.DataKeys[GFormulacion.SelectedIndex].Values["intensidad"].ToString();
-        TIntensidad.Text = Procedimientos.GetVarios(TIntensidadID.Text);
+        TMedicamentoID_TextChanged(sender, e);
+        CConector.SelectInDropDown(DIntensidad, GFormulacion.DataKeys[GFormulacion.SelectedIndex].Values["intensidad"]);
     }
 
     protected string RenderPage(int inicio, int numero_medicamentos)
@@ -683,6 +688,16 @@ public partial class paciente_formulacion : System.Web.UI.Page
     protected void IIr_Click(object sender, ImageClickEventArgs e)
     {
         Response.Redirect("~/paciente/formulacion.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + string.Format("{0:d}", Convert.ToDateTime(((ImageButton)sender).CommandArgument)) + "&tf=" + ((ImageButton)sender).CommandName);
+    }
+
+    protected void TMedicamentoID_TextChanged(object sender, EventArgs e)
+    {
+        DIntensidad.DataBind();
+        RIntensidad.Visible = DIntensidad.Items.Count > 0;
+        DIntensidad.Items.Insert(0, new ListItem("(Ninguna)", ""));
+        DIntensidad.SelectedIndex = 0;
+        if(sender==TMedicamentoID)
+            DIntensidad.Focus();
     }
 }
 

@@ -195,17 +195,17 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         if (!Page.IsValid)
             return;
 
-        if (Procedimientos.HasIntensidad(TProcedimientoID.Text) && TIntensidadID.Text.Length == 0)
+        if (Procedimientos.HasIntensidad(TProcedimientoID.Text) && DIntensidad.SelectedValue.Length== 0)
         {
             LMensaje.Text = "Por favor ingrese una intensidad para el procedimiento.";
-            TIntensidad.Focus();
+            DIntensidad.Focus();
             return;
         }
 
         IOrderedDictionary data = new OrderedDictionary();
         data.Add("procedimiento", TProcedimiento.Text);
-        data.Add("tint", TIntensidad.Text);
-        data.Add("idint", TIntensidadID.Text.Length == 0 ? null : TIntensidadID.Text);
+        data.Add("tint", DIntensidad.SelectedItem.Text);
+        data.Add("idint", DIntensidad.SelectedValue.Length == 0 ? null : DIntensidad.SelectedValue);
         data.Add("sesionesdia", TSesionesDia.Text.Length == 0 ? null : TSesionesDia.Text);
         data.Add("numerosesiones", TNumeroSesiones.Text);
         data.Add("proc_id", TProcedimientoID.Text);
@@ -235,7 +235,7 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         GActivades.DataBind();
 
         TProcedimientoID.Text = TProcedimiento.Text = TSesionesDia.Text = TNumeroSesiones.Text = "";
-        TIntensidadID.Text = TIntensidad.Text = "";
+        BIntensidad_Clicked(sender, e);
         TProcedimiento.Focus();
     }
 
@@ -253,10 +253,17 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         TProcedimiento.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim();
         TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
         TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
-        TIntensidadID.Text= HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim();
-        TIntensidad.Text = Procedimientos.GetVarios(TIntensidadID.Text);
+        CConector.SelectInDropDown(DIntensidad, HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
         TProcedimientoID.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim();
 
         TProcedimiento.Focus();
+    }
+
+    protected void BIntensidad_Clicked(object sender, EventArgs e)
+    {
+        DIntensidad.DataBind();
+        RIntensidad.Visible = DIntensidad.Items.Count > 0;
+        DIntensidad.Items.Insert(0, new ListItem("(Ninguna)", ""));
+        DIntensidad.SelectedIndex = 0;
     }
 }

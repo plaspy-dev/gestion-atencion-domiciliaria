@@ -60,6 +60,7 @@
             select: function(event, ui) {
                 $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
                 $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
+                $("#<%= BIntensidad.ClientID %>").click();
                 return false;
             },
             search: function(event, ui) {
@@ -177,7 +178,27 @@
         <tr>
             <td>Horas</td>
             <td>
-            <asp:TextBox runat="server" ID="TIntensidad"></asp:TextBox><asp:TextBox runat="server" ID="TIntensidadID" CssClass="hide"></asp:TextBox>
+                <asp:UpdatePanel runat="server" ID="UIntensidad" UpdateMode="Conditional">
+                    <ContentTemplate>
+                        <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" DataTextField="nombre" DataValueField="id">
+                            <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
+                        </asp:DropDownList>
+                        <asp:SqlDataSource ID="SIntensidad" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND parametro1=@procedimiento AND szReservado IS NULL ORDER BY nombre">
+                                <SelectParameters>
+                                    <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" DefaultValue="0" />
+                                </SelectParameters>
+                        </asp:SqlDataSource>
+                        <asp:RequiredFieldValidator ID="RIntensidad" runat="server" ErrorMessage="Por favor seleccione una intensidad." SetFocusOnError="true" ControlToValidate="DIntensidad" Display="Dynamic">*</asp:RequiredFieldValidator>
+                        <asp:Button runat="server" ID="BIntensidad" CausesValidation="false" CssClass="hide" OnClick="BIntensidad_Clicked" />
+                    </ContentTemplate>
+                    <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="TProcedimientoID" EventName="TextChanged" />
+                    </Triggers>
+                </asp:UpdatePanel>
+            </td>
             <td><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label></td>
             <td align="right"><asp:Button runat="server" ID="BProcedimiento" ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
         </tr>

@@ -6,38 +6,6 @@
 <script type="text/javascript">
     addFunctionToStart(function() {
 
-        $("#<%= TIntensidad.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetIntensidad",
-                    data: "{ 'q': '" + request.term + "', 'proc': '" + $("#<%= TMedicamentoID.ClientID %>").val() + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                label: item.value, value: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#<%= TIntensidadID.ClientID %>").val(ui.item.value);
-                $("#<%= TIntensidad.ClientID %>").val(ui.item.label);
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TIntensidadID.ClientID %>").val("");
-            }
-        }).change(function() { if ($(this).val() == "") $("#<%= TIntensidadID.ClientID %>").val(""); });
-    
         $("#<%= TMedicamento.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -64,14 +32,13 @@
             select: function(event, ui) {
                 $("#<%= TMedicamentoID.ClientID %>").val(ui.item.value);
                 $("#<%= TMedicamento.ClientID %>").val(ui.item.label);
-                $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val("");
+                $("#<%= TMedicamentoID.ClientID %>").change();
                 return false;
             },
             search: function(event, ui) {
                 $("#<%= TMedicamentoID.ClientID %>").val("");
-                $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val("");
             }
-        }).change(function() { if ($(this).val() == "") $("#<%= TMedicamentoID.ClientID %>").val(""); $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val(""); });
+        }).change(function() { if ($(this).val() == "") $("#<%= TMedicamentoID.ClientID %>").val("");  });
 
         $("#<%= TFecha.ClientID %>").datepicker({
             onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#<%=BFecha.ClientID %>").click(); }
@@ -99,7 +66,7 @@
                 <td><asp:TextBox ID="TFecha" runat="server" CssClass="fecha"></asp:TextBox>
                             <asp:Button ID="BFecha" CssClass="hide" runat="server" Text="..." onclick="BFecha_Click" /></td>
                 <td>
-                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese una fecha." SetFocusOnError="true" ControlToValidate="TFecha" Display="Dynamic"></asp:RequiredFieldValidator><asp:RangeValidator ID="RangeValidator1" runat="server" MinimumValue="12/12/1900" MaximumValue="12/12/2100" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Display="Dynamic" Type="Date"></asp:RangeValidator></td>
+                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese una fecha." SetFocusOnError="true" ControlToValidate="TFecha" Display="Dynamic">*</asp:RequiredFieldValidator><asp:RangeValidator ID="RangeValidator1" runat="server" MinimumValue="12/12/1900" MaximumValue="12/12/2100" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
                 <td align="right">
                     <asp:HyperLink runat="server" ID="HAutorizacion" Target="_blank"></asp:HyperLink>
                 </td>
@@ -224,12 +191,32 @@
                 </td>
                 <td colspan="3">
                     <asp:TextBox ID="TMedicamento" runat="server" Width="99%"></asp:TextBox>
-                    <asp:TextBox ID="TMedicamentoID" runat="server" CssClass="hide"></asp:TextBox>
+                    <asp:TextBox ID="TMedicamentoID" runat="server" CssClass="hide" AutoPostBack="true" ontextchanged="TMedicamentoID_TextChanged"></asp:TextBox>
                 </td>
             </tr>
             <tr runat="server" id="trIntensidad">
                 <td>Intensidad</td>
-                <td><asp:TextBox runat="server" ID="TIntensidad"></asp:TextBox><asp:TextBox runat="server" ID="TIntensidadID" CssClass="hide"></asp:TextBox></td>
+                <td>
+                <asp:UpdatePanel runat="server" ID="UIntensidad" UpdateMode="Conditional">
+                    <ContentTemplate>
+                        <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" DataTextField="nombre" DataValueField="id">
+                            <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
+                        </asp:DropDownList>
+                        <asp:SqlDataSource ID="SIntensidad" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND parametro1=@procedimiento AND szReservado IS NULL ORDER BY nombre">
+                                <SelectParameters>
+                                    <asp:ControlParameter ControlID="TMedicamentoID" Name="procedimiento" DefaultValue="0" />
+                                </SelectParameters>
+                        </asp:SqlDataSource>
+                        <asp:RequiredFieldValidator ID="RIntensidad" runat="server" ErrorMessage="Por favor seleccione una intensidad." SetFocusOnError="true" ControlToValidate="DIntensidad" Display="Dynamic">*</asp:RequiredFieldValidator>
+                    </ContentTemplate>
+                    <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="TMedicamentoID" EventName="TextChanged" />
+                    </Triggers>
+                </asp:UpdatePanel>
+                </td>
             </tr>
             <tr>
                 <td>Cantidad<asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TCantidad" ErrorMessage="Por favor ingrese una cantidad." ID="RCantidad" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>

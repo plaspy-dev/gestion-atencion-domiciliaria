@@ -125,8 +125,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                         while (reader.Read()) {
                             TProcedimientoID.Text = reader["actId"].ToString();
                             TProcedimiento.Text = reader["actDescripcion"].ToString();
-                            TIntensidadID.Text= reader["intensidad"].ToString();
-                            TIntensidad.Text = Procedimientos.GetVarios(TIntensidadID.Text);
+                            BIntensidad_Clicked(sender, e);
+                            CConector.SelectInDropDown(DIntensidad, reader["intensidad"]);
                             TSesionesDia.Text = reader["autSesionesDia"].ToString();
                             TNumeroSesiones.Text = reader["autNumSesiones"].ToString();
                             if (TProcedimiento.Text.Length == 0)
@@ -881,24 +881,24 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             return;
 
         for(int i=0; i<GActivades.Rows.Count; i++) { // verificamos que el servicio no se encuentre duplicado
-            if (GActivades.Rows[i].Cells[2].Text == TProcedimientoID.Text && TIntensidadID.Text == HttpUtility.HtmlDecode(GActivades.Rows[i].Cells[6].Text).Trim() && GActivades.SelectedIndex != i)
+            if (GActivades.Rows[i].Cells[2].Text == TProcedimientoID.Text && DIntensidad.SelectedValue == HttpUtility.HtmlDecode(GActivades.Rows[i].Cells[6].Text).Trim() && GActivades.SelectedIndex != i)
             {
                 LMensaje.Text = "Ya existe este procedimiento";
                 TProcedimiento.Focus();
                 return;
             }
         }
-        if(Procedimientos.HasIntensidad(TProcedimientoID.Text) && TIntensidadID.Text.Length==0) {
-
+        if (Procedimientos.HasIntensidad(TProcedimientoID.Text) && DIntensidad.SelectedValue.Length == 0)
+        {
             LMensaje.Text = "Por favor ingrese una intensidad para el procedimiento.";
-            TIntensidad.Focus();
+            DIntensidad.Focus();
             return;
         }
 
         IOrderedDictionary data = new OrderedDictionary();
         data.Add("procedimiento", TProcedimiento.Text);
-        data.Add("tint", TIntensidad.Text);
-        data.Add("idint", TIntensidadID.Text == "" ? null : TIntensidadID.Text);
+        data.Add("tint", DIntensidad.SelectedItem.Text);
+        data.Add("idint", DIntensidad.SelectedValue == "" ? null : DIntensidad.SelectedValue);
         data.Add("sesionesdia", TSesionesDia.Text.Length==0 ? null : TSesionesDia.Text);
         data.Add("numerosesiones", TNumeroSesiones.Text);
         data.Add("proc_id", TProcedimientoID.Text);
@@ -929,7 +929,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         GActivades.DataBind();
 
         LMensaje.Text= TProcedimientoID.Text = TProcedimiento.Text = TSesionesDia.Text = TNumeroSesiones.Text = "";
-        TIntensidad.Text = TIntensidadID.Text = "";
+        BIntensidad_Clicked(sender, e);
         BProcedimiento.Text = "Agregar";
         TProcedimiento.Focus();
     }
@@ -948,8 +948,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         TProcedimiento.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim();
         TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
         TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
-        TIntensidadID.Text= HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim();
-        TIntensidad.Text = Procedimientos.GetVarios(TIntensidadID.Text);
+        CConector.SelectInDropDown(DIntensidad, HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
         TProcedimientoID.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim();
 
         BProcedimiento.Text = "Editar";
@@ -973,5 +972,13 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             }
             e.Row.Cells[3].Text= e.Row.Cells[3].Text.Replace(",", "<br/>");
         }
+    }
+
+    protected void BIntensidad_Clicked(object sender, EventArgs e)
+    {
+        DIntensidad.DataBind();
+        RIntensidad.Visible = DIntensidad.Items.Count > 0;
+        DIntensidad.Items.Insert(0, new ListItem("(Ninguna)", ""));
+        DIntensidad.SelectedIndex = 0;
     }
 }

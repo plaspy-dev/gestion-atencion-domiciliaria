@@ -55,9 +55,9 @@
 
         $("#<%= LVPagado.ClientID %>").text(currencyFormatted(abono.toString()));
     }
-
+    
     addFunctionToStart(function() {
-
+        
         $("#<%= TValor.ClientID %>").change(function() {
 
             var total = $(this).numeric('value');
@@ -168,38 +168,6 @@
                 $("#tsuspender").hide();
             }
         });
-
-        $("#<%= TIntensidad.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetIntensidad",
-                    data: "{ 'q': '" + request.term + "', 'proc': '" + $("#<%= TProcedimientoID.ClientID %>").val() + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                label: item.value, value: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#<%= TIntensidadID.ClientID %>").val(ui.item.value);
-                $("#<%= TIntensidad.ClientID %>").val(ui.item.label);
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TIntensidadID.ClientID %>").val("");
-            }
-        }).change(function() { if ($(this).val() == "") $("#<%= TIntensidadID.ClientID %>").val(""); });
         
         $("#<%= TProcedimiento.ClientID %>").autocomplete({
             source: function(request, response) {
@@ -226,14 +194,13 @@
             select: function(event, ui) {
                 $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
                 $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
-                $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val("");
+                $("#<%= BIntensidad.ClientID %>").click();
                 return false;
             },
             search: function(event, ui) {
                 $("#<%= TProcedimientoID.ClientID %>").val("");
-                $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val("");
             }
-        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); $("#<%= TIntensidad.ClientID %>,#<%= TIntensidadID.ClientID %>").val(""); });
+        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
         addDialog("#<%= PConfirmar.ClientID %>", "#dConfirmar");
     });
 </script>
@@ -512,7 +479,27 @@
         <tr>
             <td>Intensidad</td>
             <td>
-            <asp:TextBox runat="server" ID="TIntensidad"></asp:TextBox><asp:TextBox runat="server" ID="TIntensidadID" CssClass="hide"></asp:TextBox>
+                <asp:UpdatePanel runat="server" ID="UIntensidad" UpdateMode="Conditional">
+                    <ContentTemplate>
+                        <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" DataTextField="nombre" DataValueField="id">
+                            <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
+                        </asp:DropDownList>
+                        <asp:SqlDataSource ID="SIntensidad" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND parametro1=@procedimiento AND szReservado IS NULL ORDER BY nombre">
+                                <SelectParameters>
+                                    <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" DefaultValue="0" />
+                                </SelectParameters>
+                        </asp:SqlDataSource>
+                        <asp:RequiredFieldValidator ID="RIntensidad" runat="server" ErrorMessage="Por favor seleccione una intensidad." SetFocusOnError="true" ControlToValidate="DIntensidad" Display="Dynamic">*</asp:RequiredFieldValidator>
+                        <asp:Button runat="server" ID="BIntensidad" CausesValidation="false" CssClass="hide" OnClick="BIntensidad_Clicked" />
+                    </ContentTemplate>
+                    <Triggers>
+                        <asp:AsyncPostBackTrigger ControlID="TProcedimientoID" EventName="TextChanged" />
+                    </Triggers>
+                </asp:UpdatePanel>
+            </td>
             <td><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label></td>
             <td align="right"><asp:Button runat="server" ID="BProcedimiento" ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
         </tr>
