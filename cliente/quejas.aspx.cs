@@ -12,6 +12,7 @@ public partial class cliente_quejas : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        Logs.WriteLog("Preba");
         ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
         if (!IsPostBack)
         {
@@ -181,124 +182,141 @@ public partial class cliente_quejas : System.Web.UI.Page
     {
         if (!IsValid)
             return;
-        Query query = new Query("serQuejasReclamos");
-        CConectorMS conector= new CConectorMS();
 
-        conector.StartTransaction();
+        using (CConectorMS conector = new CConectorMS())
+        {
 
-        query["qrFecha"] = TFecha.Text + " " + THora.Text;
-        query["tqrIdTipo"] = DTipo.SelectedValue;
-        query["qrPersonaLlama"] = TPLlama.Text;
-        query["qrParentesco"] = TParentesco.Text;
-        query["qrEmail"] = TEmail.Text;
-        query["qrTelefono"] = TTelefono.Text;
-        query["qrDetalle"] = TDetalle.Text;
-        query["qrObsHS"] = TObservaciones.Text;
-        query["pacId"]= CCDetallePaciente.IdPaciente;
-        query["perId"]= FuncionarioC.IdFuncionario;
-        query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
-        query["segFechaIngreso"] = "GETDATE()";
-        query["qrTipoCliente"]= RPaciente.Checked ? "1" : "2";
-        query["entId"] = CCDetallePaciente.AsegurdadorID;
-        query["clasificacion"] = DClasificacion.SelectedValue;
+            Query query = new Query("serQuejasReclamos");
+            conector.StartTransaction();
 
-        if(HIdQuejas.Value.Length==0) {
+            query["qrFecha"] = TFecha.Text + " " + THora.Text;
+            query["tqrIdTipo"] = DTipo.SelectedValue;
+            query["qrPersonaLlama"] = TPLlama.Text;
+            query["qrParentesco"] = TParentesco.Text;
+            query["qrEmail"] = TEmail.Text;
+            query["qrTelefono"] = TTelefono.Text;
+            query["qrDetalle"] = TDetalle.Text;
+            query["qrObsHS"] = TObservaciones.Text;
+            query["pacId"] = CCDetallePaciente.IdPaciente;
+            query["perId"] = FuncionarioC.IdFuncionario;
+            query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
+            query["segFechaIngreso"] = "GETDATE()";
+            query["qrTipoCliente"] = RPaciente.Checked ? "1" : "2";
+            query["entId"] = CCDetallePaciente.AsegurdadorID;
+            query["clasificacion"] = DClasificacion.SelectedValue;
 
-            int res= conector.QueryMod(query.GetInsert(), true);
-            if (res == -1)
-                return;
-            HIdQuejas.Value= res.ToString();
-        } else {
-            if (conector.QueryMod(query.GetUpdate("qrId=" + HIdQuejas.Value)) == -1)
-                return;
-        }
-        if (new CConector().InsertModificacion(HIdQuejas.Value) == -1)
-            return;
+            if (HIdQuejas.Value.Length == 0)
+            {
 
-        if(PConductaAbusiva.Visible) {
-
-            query = new Query("conducta_abusiva");
-
-            query["lugar"]= TLugar.Text;
-            query["circunstancias"]= TCircunstanacias.Text;
-            query["antecedentes"]= TAntecedentes.Text;
-            query["presentadano"]= CPresentaDano.Checked ? "1" : "0";
-            query["otro"]= TTipoDano.Text;
-            query["fecha"]= TFechaEvento.Text;
-            query["riesgo"]= DTipoRiesgo.SelectedValue;
-            string id=(string)ViewState["idconducta"];
-
-            if(string.IsNullOrEmpty((string)id)) {
-
-                query["queja"]=HIdQuejas.Value;
-                int res=conector.QueryMod(query.GetInsert(), true);
-                if(res==-1)
+                int res = conector.QueryMod(query.GetInsert(), true);
+                if (res == -1)
                     return;
-                id= res.ToString();
-            } else {
-                if(conector.QueryMod(query.GetUpdate("id=" + id))==-1)
+                HIdQuejas.Value = res.ToString();
+            }
+            else
+            {
+                if (conector.QueryMod(query.GetUpdate("qrId=" + HIdQuejas.Value)) == -1)
+                    return;
+            }
+            if (new CConector().InsertModificacion(HIdQuejas.Value) == -1)
+                return;
+
+            if (PConductaAbusiva.Visible)
+            {
+
+                query = new Query("conducta_abusiva");
+
+                query["lugar"] = TLugar.Text;
+                query["circunstancias"] = TCircunstanacias.Text;
+                query["antecedentes"] = TAntecedentes.Text;
+                query["presentadano"] = CPresentaDano.Checked ? "1" : "0";
+                query["otro"] = TTipoDano.Text;
+                query["fecha"] = TFechaEvento.Text;
+                query["riesgo"] = DTipoRiesgo.SelectedValue;
+                string id = (string)ViewState["idconducta"];
+
+                if (string.IsNullOrEmpty((string)id))
+                {
+
+                    query["queja"] = HIdQuejas.Value;
+                    int res = conector.QueryMod(query.GetInsert(), true);
+                    if (res == -1)
+                        return;
+                    id = res.ToString();
+                }
+                else
+                {
+                    if (conector.QueryMod(query.GetUpdate("id=" + id)) == -1)
+                        return;
+                }
+
+                if (conector.QueryMod("DELETE FROM conducta_abusiva_medidas WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
+                    return;
+                if (conector.QueryMod("DELETE FROM conducta_abusiva_consecuencias WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
+                    return;
+
+                query = new Query("conducta_abusiva_consecuencias");
+                query["conducta_abusiva"] = id;
+
+                for (int i = 0; i < CTipoDano.Items.Count; i++)
+                {
+                    if (CTipoDano.Items[i].Selected)
+                    {
+                        query["consecuencia"] = CTipoDano.Items[i].Value;
+                        if (conector.QueryMod(query.GetInsert()) == -1)
+                            return;
+                    }
+                }
+
+                query = new Query("conducta_abusiva_medidas");
+                query["conducta_abusiva"] = id;
+
+                for (int i = 0; i < GMedidas.Rows.Count; i++)
+                {
+
+                    TextBox fecha = (TextBox)GMedidas.Rows[i].FindControl("TFecha");
+                    if (fecha.Text.Length != 0)
+                    {
+                        query["medida"] = GMedidas.DataKeys[i].Value.ToString();
+                        query["fecha"] = fecha.Text;
+                        if (conector.QueryMod(query.GetInsert()) == -1)
+                            return;
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty((string)ViewState["idconducta"]))
+            { // limpiamos las tablas
+                string id = (string)ViewState["idconducta"];
+                if (conector.QueryMod("DELETE FROM conducta_abusiva_medidas WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
+                    return;
+                if (conector.QueryMod("DELETE FROM conducta_abusiva_consecuencias WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
+                    return;
+                if (conector.QueryMod("DELETE FROM conducta_abusiva WHERE id=" + Query.GetValor(id)) == -1)
                     return;
             }
 
-            if (conector.QueryMod("DELETE FROM conducta_abusiva_medidas WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
-                return;
-            if (conector.QueryMod("DELETE FROM conducta_abusiva_consecuencias WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
-                return;
-            
-            query = new Query("conducta_abusiva_consecuencias");
-            query["conducta_abusiva"]=id;
+            BAgregar_Click(sender, e);
 
-            for(int i=0; i<CTipoDano.Items.Count; i++) {
-                if(CTipoDano.Items[i].Selected) {
-                    query["consecuencia"] = CTipoDano.Items[i].Value;
-                    if (conector.QueryMod(query.GetInsert()) == -1)
+            ArrayList personas = (ArrayList)ViewState["cliente_quejas"];
+            if (personas != null)
+            {
+
+                Query qpersonas = new Query("serQuejaRecPersonal");
+                qpersonas["qrId"] = HIdQuejas.Value;
+
+                if (conector.QueryMod(qpersonas.GetDelete("qrId=" + HIdQuejas.Value)) == -1)
+                    return;
+
+                for (int i = 0; i < personas.Count; i++)
+                {
+                    Miscelaneos info = (Miscelaneos)personas[i];
+                    qpersonas["perId"] = info.Id;
+                    if (conector.QueryMod(qpersonas.GetInsert()) == -1)
                         return;
                 }
             }
-
-            query = new Query("conducta_abusiva_medidas");
-            query["conducta_abusiva"] = id;
-
-            for(int i=0; i<GMedidas.Rows.Count; i++) {
-
-                TextBox fecha= (TextBox)GMedidas.Rows[i].FindControl("TFecha");
-                if(fecha.Text.Length!=0) {
-                    query["medida"] = GMedidas.DataKeys[i].Value.ToString();
-                    query["fecha"] = fecha.Text;
-                    if (conector.QueryMod(query.GetInsert()) == -1)
-                        return;
-                }
-            }
-        } else if (!string.IsNullOrEmpty((string)ViewState["idconducta"])) { // limpiamos las tablas
-            string id = (string)ViewState["idconducta"];
-            if (conector.QueryMod("DELETE FROM conducta_abusiva_medidas WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
-                return;
-            if (conector.QueryMod("DELETE FROM conducta_abusiva_consecuencias WHERE conducta_abusiva=" + Query.GetValor(id)) == -1)
-                return;
-            if (conector.QueryMod("DELETE FROM conducta_abusiva WHERE id=" + Query.GetValor(id)) == -1)
-                return;
+            conector.Commit();
         }
-
-        BAgregar_Click(sender, e);
-
-        ArrayList personas = (ArrayList)ViewState["cliente_quejas"];
-        if(personas!=null) {
-
-            Query qpersonas = new Query("serQuejaRecPersonal");
-            qpersonas["qrId"] = HIdQuejas.Value;
-
-            if (conector.QueryMod(qpersonas.GetDelete("qrId=" + HIdQuejas.Value)) == -1)
-                return;
-
-            for(int i=0; i<personas.Count; i++) {
-                Miscelaneos info = (Miscelaneos)personas[i];
-                qpersonas["perId"] = info.Id;
-                if (conector.QueryMod(qpersonas.GetInsert())==-1)
-                    return;
-            }
-        }
-        conector.Commit();
-
 
         ((MasterPageI)Master).SetResultado("Queja de " + (RPaciente.Checked ? CCDetallePaciente.Nombres : FuncionarioC.Nombre) + " editada.");
     }

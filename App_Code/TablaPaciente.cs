@@ -43,9 +43,9 @@ public class TablaPaciente
                     todos[6] = paciente.Direccion;
                     todos[7] = paciente.Barrio;
                     todos[8] = paciente.Telefono;
-                    todos[9] = paciente.cie10.Count>0 ? null : paciente.cie10[0].ToString();
-                    todos[10] = paciente.cie10.Count > 1 ? null : paciente.cie10[1].ToString();
-                    todos[11] = paciente.cie10.Count > 2 ? null : paciente.cie10[2].ToString();
+                    todos[9] = paciente.cie10.Count > 0 ? paciente.cie10[0].ToString() : null;
+                    todos[10] = paciente.cie10.Count > 1 ? paciente.cie10[1].ToString() : null;
+                    todos[11] = paciente.cie10.Count > 2 ? paciente.cie10[2].ToString() : null;
                     todos[13] = paciente.sexoId == "1" ? "F" : "M";
                     if(paciente.Edad!=-1)
                         todos[12] = paciente.Edad;

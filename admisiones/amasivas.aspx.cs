@@ -191,20 +191,23 @@ public partial class admisiones_amasivas : System.Web.UI.Page
 
     protected void BProcedimiento_Click(object sender, EventArgs e)
     {
-        Page.Validate("procedimiento");
-        if (!Page.IsValid)
-            return;
-
-        if (Procedimientos.HasIntensidad(TProcedimientoID.Text) && DIntensidad.SelectedValue.Length== 0)
+        if (sender == BProcedimiento)
         {
-            LMensaje.Text = "Por favor ingrese una intensidad para el procedimiento.";
-            DIntensidad.Focus();
-            return;
+            Page.Validate("procedimiento");
+            if (!Page.IsValid)
+                return;
+
+            if (Procedimientos.HasIntensidad(TProcedimientoID.Text) && DIntensidad.SelectedValue.Length == 0)
+            {
+                LMensaje.Text = "Por favor ingrese una intensidad para el procedimiento.";
+                DIntensidad.Focus();
+                return;
+            }
         }
 
         IOrderedDictionary data = new OrderedDictionary();
         data.Add("procedimiento", TProcedimiento.Text);
-        data.Add("tint", DIntensidad.SelectedItem.Text);
+        data.Add("tint", DIntensidad.SelectedItem == null ? "" : DIntensidad.SelectedItem.Text);
         data.Add("idint", DIntensidad.SelectedValue.Length == 0 ? null : DIntensidad.SelectedValue);
         data.Add("sesionesdia", TSesionesDia.Text.Length == 0 ? null : TSesionesDia.Text);
         data.Add("numerosesiones", TNumeroSesiones.Text);

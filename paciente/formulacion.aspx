@@ -210,7 +210,7 @@
                                     <asp:ControlParameter ControlID="TMedicamentoID" Name="procedimiento" DefaultValue="0" />
                                 </SelectParameters>
                         </asp:SqlDataSource>
-                        <asp:RequiredFieldValidator ID="RIntensidad" runat="server" ErrorMessage="Por favor seleccione una intensidad." SetFocusOnError="true" ControlToValidate="DIntensidad" Display="Dynamic">*</asp:RequiredFieldValidator>
+                        <asp:RequiredFieldValidator ID="RIntensidad" Visible="false" runat="server" ErrorMessage="Por favor seleccione una intensidad." SetFocusOnError="true" ControlToValidate="DIntensidad" Display="Dynamic">*</asp:RequiredFieldValidator>
                     </ContentTemplate>
                     <Triggers>
                         <asp:AsyncPostBackTrigger ControlID="TMedicamentoID" EventName="TextChanged" />

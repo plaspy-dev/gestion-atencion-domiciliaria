@@ -44,7 +44,12 @@ public class Conector : IDisposable
 		CloseAll();
 	}
 
-	private void CloseAll()
+	public void Dispose()
+	{
+		CloseAll();
+	}
+
+	public void CloseAll()
 	{
 		if (m_bTransaccion)
 		{
@@ -494,13 +499,17 @@ public class Conector : IDisposable
 	public bool RoolBack()
 	{
 		m_bTransaccion = false;
-		return QueryMod("ROLLBACK;") != -1;
+		bool result = QueryMod("ROLLBACK;") != -1;
+		CloseAll();
+		return result;
 	}
 
 	public bool Commit()
 	{
 		m_bTransaccion = false;
-		return QueryMod("COMMIT;") != -1;
+		bool result = QueryMod("COMMIT;") != -1;
+		CloseAll();
+		return result;
 	}
 
 	private static bool GetKey()

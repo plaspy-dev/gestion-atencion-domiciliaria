@@ -492,7 +492,7 @@
                                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" DefaultValue="0" />
                                 </SelectParameters>
                         </asp:SqlDataSource>
-                        <asp:RequiredFieldValidator ID="RIntensidad" runat="server" ErrorMessage="Por favor seleccione una intensidad." SetFocusOnError="true" ControlToValidate="DIntensidad" Display="Dynamic">*</asp:RequiredFieldValidator>
+                        <asp:RequiredFieldValidator ID="RIntensidad" Visible="false" runat="server" ErrorMessage="Por favor seleccione una intensidad." SetFocusOnError="true" ControlToValidate="DIntensidad" Display="Dynamic">*</asp:RequiredFieldValidator>
                         <asp:Button runat="server" ID="BIntensidad" CausesValidation="false" CssClass="hide" OnClick="BIntensidad_Clicked" />
                     </ContentTemplate>
                     <Triggers>

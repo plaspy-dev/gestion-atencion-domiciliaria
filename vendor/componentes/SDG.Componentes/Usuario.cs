@@ -254,6 +254,11 @@ public class Usuario
 		return null;
 	}
 
+	public static Usuario GetInstance()
+	{
+		return GetUsuario();
+	}
+
 	public static Usuario GetUsuario()
 	{
 		HttpContext.Current.Response.AddHeader("pragma", "no-cache");

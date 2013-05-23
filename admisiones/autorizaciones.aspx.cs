@@ -849,6 +849,10 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         if (new CConector().InsertModificacion(HId.Value) == -1)
             return;
         conector.Commit();
+
+        Paciente.RemovePaciente(HIdPaciente.Value);
+        Autorizaciones.RemoveAutorizaciones(HIdPaciente.Value);
+
         ((MasterPageI)Master).SetResultado("Autorización " + HIdAutorizacion.Value + " eliminada.");
     }
 
@@ -871,14 +875,26 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         if (new CConector().InsertModificacion(HId.Value) == -1)
             return;
 
+        Paciente.RemovePaciente(HIdPaciente.Value);
+        Autorizaciones.RemoveAutorizaciones(HIdPaciente.Value);
+
         ((MasterPageI)Master).SetResultado("Autorización " + HIdAutorizacion.Value + (RSuspender.Checked ? " suspendida." : " anulada." ));
     }
 
     protected void BProcedimiento_Click(object sender, EventArgs e)
     {
-        Page.Validate("procedimiento");
-        if (!Page.IsValid)
-            return;
+        if (sender == BProcedimiento)
+        {
+            Page.Validate("procedimiento");
+            if (!Page.IsValid)
+                return;
+            if (Procedimientos.HasIntensidad(TProcedimientoID.Text) && DIntensidad.SelectedValue.Length == 0)
+            {
+                LMensaje.Text = "Por favor ingrese una intensidad para el procedimiento.";
+                DIntensidad.Focus();
+                return;
+            }
+        }
 
         for(int i=0; i<GActivades.Rows.Count; i++) { // verificamos que el servicio no se encuentre duplicado
             if (GActivades.Rows[i].Cells[2].Text == TProcedimientoID.Text && DIntensidad.SelectedValue == HttpUtility.HtmlDecode(GActivades.Rows[i].Cells[6].Text).Trim() && GActivades.SelectedIndex != i)
@@ -888,16 +904,10 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 return;
             }
         }
-        if (Procedimientos.HasIntensidad(TProcedimientoID.Text) && DIntensidad.SelectedValue.Length == 0)
-        {
-            LMensaje.Text = "Por favor ingrese una intensidad para el procedimiento.";
-            DIntensidad.Focus();
-            return;
-        }
 
         IOrderedDictionary data = new OrderedDictionary();
         data.Add("procedimiento", TProcedimiento.Text);
-        data.Add("tint", DIntensidad.SelectedItem.Text);
+        data.Add("tint", DIntensidad.SelectedItem==null ? "" : DIntensidad.SelectedItem.Text);
         data.Add("idint", DIntensidad.SelectedValue == "" ? null : DIntensidad.SelectedValue);
         data.Add("sesionesdia", TSesionesDia.Text.Length==0 ? null : TSesionesDia.Text);
         data.Add("numerosesiones", TNumeroSesiones.Text);

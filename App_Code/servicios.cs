@@ -346,7 +346,7 @@ public class servicios : System.Web.Services.WebService
 
         using (CConectorMS conector = new CConectorMS())
         {
-            string query = "SELECT TOP 20 cieCodDx,[cieCodDx]+' - '+ [cirDescripcion] AS descripcion FROM phdCIE10 WHERE ";
+            string query = "SELECT TOP 50 cieCodDx,[cieCodDx]+' - '+ [cirDescripcion] AS descripcion FROM phdCIE10 WHERE ";
 
             string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
@@ -362,7 +362,7 @@ public class servicios : System.Web.Services.WebService
                 { // verificamos que no este vacio
                     if (i > 0)
                         query += " AND ";
-                    query += String.Format("cieCodDx LIKE '{0}%' OR cirDescripcion LIKE '%{0}%'", split[i]);
+                    query += String.Format("(cieCodDx LIKE '{0}%' OR cirDescripcion LIKE '%{0}%')", split[i]);
                 }
             }
 

@@ -32,18 +32,18 @@ public class Autorizaciones
     public static List<Autorizaciones>GetAutorizaciones(string idpaciente) {
         if (string.IsNullOrEmpty(idpaciente))
             return null;
-        List<Autorizaciones> autorizaciones = (List<Autorizaciones>)HttpRuntime.Cache["aut" + idpaciente];
+        List<Autorizaciones> autorizaciones = (List<Autorizaciones>)HttpRuntime.Cache["au" + idpaciente];
         if(autorizaciones==null) {
 
             autorizaciones = new List<Autorizaciones>();
             using(CConectorMS conector = new CConectorMS()) {
                 Query query = new Query("phdAutorizacion");
                 
-                query += "TOP 3 autNumero";
+                query += "autNumero";
                 query += "autFecha";
                 query += "autFechaVenc";
 
-                SqlDataReader reader= conector.Query(query.GetSelect("autActivo=1 AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60) AND pacId=" + Query.GetValor(idpaciente) + " ORDER BY autFecha DESC"));
+                SqlDataReader reader= conector.Query(query.GetSelect("autActivo=1 AND GETDATE()<=ISNULL(autFechaVenc,autFecha+30) AND pacId=" + Query.GetValor(idpaciente) + " ORDER BY autFecha DESC"));
                 if(reader!=null) {
                     using (CConectorMS conector2 = new CConectorMS())
                     {
@@ -80,12 +80,12 @@ public class Autorizaciones
                     }
                 }
             }
-            HttpRuntime.Cache.Insert("aut" + idpaciente, autorizaciones);
+            HttpRuntime.Cache.Insert("au" + idpaciente, autorizaciones);
         }
         return autorizaciones;
     }
 
     public static void RemoveAutorizaciones(string idpaciente) {
-        HttpRuntime.Cache.Remove("aut" + idpaciente);
+        HttpRuntime.Cache.Remove("au" + idpaciente);
     }
 }
