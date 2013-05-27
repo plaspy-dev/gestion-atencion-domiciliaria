@@ -470,7 +470,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             query = new Query("phdAutorizacion");
 
             query["formulacion"] = HIdFormulacion.Value;
-            query["autObservaciones"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(nombre,': ',posologia) SEPARATOR '\n') FROM medicamento_formulacion LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento) WHERE formulacion=" + Query.GetValor(HIdFormulacion.Value) + " AND posologia IS NOT NULL");
+            // query["autObservaciones"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(nombre,': ',posologia) SEPARATOR '\n') FROM medicamento_formulacion LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento) WHERE formulacion=" + Query.GetValor(HIdFormulacion.Value) + " AND posologia IS NOT NULL");
 
             if (conectorMS.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(ViewState["autorizacion"].ToString()))) == -1)
                 return;

@@ -97,7 +97,7 @@
             mode: "exact",
             elements: "elm1",
             theme: "advanced",
-            // readonly: true,
+            readonly: true,
             theme_advanced_buttons1: "",
             theme_advanced_buttons2: "",
             theme_advanced_buttons3: "",
@@ -430,7 +430,7 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
                 <td colspan="4">Plan de manejo (Tomado de orden médica)</td>
             </tr>
             <tr>
-                <td colspan="4"><asp:TextBox ID="TPlanManejo" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>
+                <td colspan="4"><asp:TextBox ID="TPlanManejo" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>
                 <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
                 </td>
             </tr>

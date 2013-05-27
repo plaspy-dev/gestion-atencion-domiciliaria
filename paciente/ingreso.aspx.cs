@@ -105,9 +105,9 @@ public partial class paciente_ingreso : System.Web.UI.Page
                             TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
                         else TFecha.Text = "";
                         TConductaInicial.Text = readermysql["conducta"].ToString();
-                        /*string procedimientos = Procedimientos.GetPlanDeManejo(conectormysql, CCDetallePaciente.IdPaciente, TFecha.Text);
+                        string procedimientos = Procedimientos.GetPlanDeManejo(conectormysql, CCDetallePaciente.IdPaciente, TFecha.Text);
                         if (procedimientos.Length > 0)
-                            TConductaInicial.Text = procedimientos;*/
+                            TConductaInicial.Text = procedimientos;
 
                         ((MasterPageI)Master).SetModificacion(HIdIngreso.Value);
                     }
