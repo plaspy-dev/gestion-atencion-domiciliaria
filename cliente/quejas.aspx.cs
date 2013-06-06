@@ -206,7 +206,6 @@ public partial class cliente_quejas : System.Web.UI.Page
 
             if (HIdQuejas.Value.Length == 0)
             {
-
                 int res = conector.QueryMod(query.GetInsert(), true);
                 if (res == -1)
                     return;

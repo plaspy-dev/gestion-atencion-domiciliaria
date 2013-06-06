@@ -466,27 +466,33 @@ public class Conector : IDisposable
 	public bool SelectInDropDown(DropDownList lista, object valor, string query)
 	{
 		bool result = true;
-		if (lista.Items.Count < 2)
+		try
 		{
-			lista.DataBind();
-		}
-		lista.SelectedIndex = -1;
-		ListItem listItem = lista.Items.FindByValue(valor.ToString());
-		if (listItem == null)
-		{
-			Conector conector = new Conector(m_szConexion);
-			string text = "";
-			if (query.Length > 0)
+			if (lista.Items.Count < 2)
 			{
-				if (query.IndexOf("{") != -1 && query.IndexOf("}") != -1)
-				{
-					query = string.Format(query, valor);
-				}
-				text = conector.QueryString(query);
+				lista.DataBind();
 			}
-			listItem = new ListItem(text, valor.ToString());
+			lista.SelectedIndex = -1;
+			ListItem listItem = lista.Items.FindByValue(valor.ToString());
+			if (listItem == null)
+			{
+				Conector conector = new Conector(m_szConexion);
+				string text = "";
+				if (query.Length > 0)
+				{
+					if (query.IndexOf("{") != -1 && query.IndexOf("}") != -1)
+					{
+						query = string.Format(query, valor);
+					}
+					text = conector.QueryString(query);
+				}
+				listItem = new ListItem(text, valor.ToString());
+			}
+			listItem.Selected = true;
 		}
-		listItem.Selected = true;
+		catch
+		{
+		}
 		return result;
 	}
 
@@ -531,8 +537,16 @@ public class Conector : IDisposable
 			{
 				return false;
 			}
-			bGetKey = Crypt.GetMD5(Crypt.Encriptar3DES(HttpContext.Current.Request.Url.Host.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == ConfigurationSettings.AppSettings["DomainKey"] || Crypt.GetMD5(Crypt.Encriptar3DES(HttpContext.Current.Request.Url.Host.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == ConfigurationSettings.AppSettings["DomainKey1"];
-			return bGetKey;
+			string[] array = ConfigurationSettings.AppSettings["DomainKey"].Split(';');
+			for (int i = 0; i < array.Length; i++)
+			{
+				if (Crypt.GetMD5(Crypt.Encriptar3DES(HttpContext.Current.Request.Url.Host.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
+				{
+					bGetKey = true;
+					return true;
+				}
+			}
+			return false;
 		}
 		catch
 		{

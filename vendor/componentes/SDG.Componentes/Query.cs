@@ -25,7 +25,7 @@ public class Query
 		}
 		set
 		{
-			m_saValores[GetCampo((campo.Length == 0) ? value : campo)] = value;
+			m_saValores[GetCampo((campo.Length == 0) ? value : campo)] = ((value == null) ? "" : value);
 		}
 	}
 
@@ -81,7 +81,7 @@ public class Query
 
 	public void AddCampo(string campo, string valor, bool quotes)
 	{
-		m_saValores[GetCampo(campo)] = valor;
+		m_saValores[GetCampo(campo)] = ((valor == null) ? "" : valor);
 		m_baQuoted[GetCampo(campo)] = quotes;
 	}
 
@@ -222,7 +222,16 @@ public class Query
 			{
 				return false;
 			}
-			return Crypt.GetMD5(Crypt.Encriptar3DES(HttpContext.Current.Request.Url.Host.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == ConfigurationSettings.AppSettings["DomainKey"] || Crypt.GetMD5(Crypt.Encriptar3DES(HttpContext.Current.Request.Url.Host.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == ConfigurationSettings.AppSettings["DomainKey1"];
+			string[] array = ConfigurationSettings.AppSettings["DomainKey"].Split(';');
+			for (int i = 0; i < array.Length; i++)
+			{
+				if (Crypt.GetMD5(Crypt.Encriptar3DES(HttpContext.Current.Request.Url.Host.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
+				{
+					bGetKey = true;
+					return true;
+				}
+			}
+			return false;
 		}
 		catch
 		{

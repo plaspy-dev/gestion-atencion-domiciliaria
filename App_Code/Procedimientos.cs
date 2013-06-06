@@ -292,7 +292,7 @@ public class Procedimientos
                 descripcion = conector.QueryString("SELECT [cieCodDx]+' - '+ [cirDescripcion] FROM phdCIE10 WHERE cieCodDx='" + text + "'");
             HttpRuntime.Cache.Insert("cie10" + text, descripcion);
         }
-        return text + " - " + descripcion;
+        return descripcion;
     }
 
     static public ArrayList AddCIE10(ArrayList listaactual, string nuevo_codigo) {
@@ -355,6 +355,9 @@ public class Procedimientos
         Query query= new Query("formulacion");
         
         query+="medicamentos.nombre";
+        query += "medicamentos.concentracion";
+        query += "medicamento_formulacion.via";
+        query += "medicamento_formulacion.tiempo";
         query+="medicamento_formulacion.formulada";
         query+="medicamento_formulacion.posologia";
         
@@ -364,7 +367,17 @@ public class Procedimientos
             while(reader.Read()) {
                 resultado += reader["nombre"].ToString();
                 resultado += ", ";
+                resultado += reader["concentracion"].ToString();
+                resultado += ". ";
                 resultado += reader["posologia"].ToString();
+                if (reader["via"].ToString().Length!=0)
+                {
+                    resultado += " [Vía: ";
+                    resultado += reader["via"].ToString();
+                    resultado += " , Tiempo: ";
+                    resultado += reader["tiempo"].ToString();
+                    resultado += " ]";
+                }
                 resultado += " (";
                 resultado += reader["formulada"].ToString();
                 resultado += ")\n";

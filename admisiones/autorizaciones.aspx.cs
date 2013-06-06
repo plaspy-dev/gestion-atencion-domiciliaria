@@ -123,17 +123,26 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     if (reader != null) {
 
                         while (reader.Read()) {
-                            TProcedimientoID.Text = reader["actId"].ToString();
-                            TProcedimiento.Text = reader["actDescripcion"].ToString();
-                            BIntensidad_Clicked(sender, e);
-                            CConector.SelectInDropDown(DIntensidad, reader["intensidad"]);
-                            TSesionesDia.Text = reader["autSesionesDia"].ToString();
-                            TNumeroSesiones.Text = reader["autNumSesiones"].ToString();
-                            if (TProcedimiento.Text.Length == 0)
-                                TProcedimiento.Text= Procedimientos.GetProcedimiento(TProcedimientoID.Text);
 
-                            BProcedimiento_Click(sender, e);
+                            IOrderedDictionary data = new OrderedDictionary();
+                            
+                            // data.Add("id", TProcedimientoID.Text);
+
+                            data.Add("procedimiento", Procedimientos.GetProcedimiento(reader["actId"].ToString()));
+                            data.Add("tint", reader["intensidad"].ToString() == "" ? "" : Procedimientos.GetVarios(reader["intensidad"].ToString()));
+                            data.Add("idint", reader["intensidad"].ToString() == "" ? null : reader["intensidad"].ToString());
+                            data.Add("sesionesdia", reader["autSesionesDia"].ToString().Length == 0 ? null : reader["autSesionesDia"].ToString());
+                            data.Add("numerosesiones", reader["autNumSesiones"].ToString());
+                            data.Add("proc_id", reader["actId"].ToString());
+                            data.Add("verificacion", Crypt.GetMD5("JuHU" + DateTime.Now.ToString() + "H0m3s4lud"));
+
+                            SActividades.GetView().Insert(data, OnDataSourceOperationComplete);
+
+                            
+                            BIntensidad_Clicked(sender, e);
+
                         }
+                        GActivades.DataBind();
                     }
                     BIr_Click(sender, e);
                 }
@@ -445,7 +454,6 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     return;
             }
         }
-
         conector.Commit();
         Paciente.RemovePaciente(HIdPaciente.Value);
         Autorizaciones.RemoveAutorizaciones(HIdPaciente.Value);
@@ -958,8 +966,9 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         TProcedimiento.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim();
         TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
         TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
-        CConector.SelectInDropDown(DIntensidad, HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
         TProcedimientoID.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim();
+        CConector.SelectInDropDown(DIntensidad, HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
+        
 
         BProcedimiento.Text = "Editar";
         TProcedimiento.Focus();

@@ -160,7 +160,7 @@
                     <asp:SqlDataSource ID="SFormulacion" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT medicamento_formulacion.id,medicamento_formulacion.medicamento AS medicamen_id,medicamento_formulacion.formulada,medicamento_formulacion.posologia 
-                                            ,IF(medicamentos.principio IS NULL,medicamentos.nombre,CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',IFNULL(medicamentos.forma,''))) AS medicamento
+                                            ,IF(medicamentos.principio IS NULL,IF(medicamentos.concentracion IS NULL, medicamentos.nombre, CONCAT(medicamentos.nombre, ', ', medicamentos.forma, ' ',medicamentos.concentracion)),CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',IFNULL(medicamentos.forma,''))) AS medicamento
                                             ,medicamento_formulacion.via,medicamento_formulacion.tiempo,medicamento_formulacion.costo
                                             ,medicamento_formulacion.intensidad
                                             ,medicamentos.codigo AS codigo,varios.nombre AS intensidadnombre

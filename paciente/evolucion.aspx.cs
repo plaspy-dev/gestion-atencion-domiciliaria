@@ -186,7 +186,6 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
         for (int i = 0; i < GAntecedentes.Rows.Count; i++)
         {
-
             Query antecendentes = new Query("antecedentes_evolucion");
             string id = GAntecedentes.DataKeys[i].Values[1].ToString();
 

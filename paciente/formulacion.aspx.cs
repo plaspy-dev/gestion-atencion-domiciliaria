@@ -347,150 +347,158 @@ public partial class paciente_formulacion : System.Web.UI.Page
         }
 
         Query formulacion = new Query("formulacion");
-        Query query = new Query("phdAutorizacion");
-
-        CConector conector = new CConector();
-        CConectorMS conectorMS = new CConectorMS();
-
-        conector.StartTransaction();
-        conectorMS.StartTransaction();
-
-        DateTime fecha = Convert.ToDateTime(TFecha.Text);
-
-        formulacion["fecha"]= CConector.GetMySQLDateFormat(TFecha.Text);
-        formulacion["tipo"] = DTipo.SelectedValue;
-        formulacion["profesional"] = CUsuario.GetUsuario()["personal"];
-
-
-        query["autFecha"] = fecha.ToShortDateString();
-        query["autFechaVenc"] = fecha.AddDays(30).ToShortDateString();
+        // Query query = new Query("phdAutorizacion");
 
         string szQuery;
         string mensaje;
 
-        if (HIdFormulacion.Value.Length == 0)
+        using (CConector conector = new CConector())
         {
-            formulacion["paciente"] = CCDetallePaciente.IdPaciente;
-            if (DTipo.SelectedValue == idprocedimientos)
-            { // agregamos la autorizacion
-
-                string autorizacion= conectorMS.QueryString(
-                String.Format("SELECT 'AD{0}'+RIGHT('000'+CAST(ISNULL(MAX(CONVERT(int,SUBSTRING(autNumero,9,LEN(autnumero)-8))), 0)+1 AS VARCHAR(3)),3)"
-                        + " FROM phdAutorizacion"
-                        + " WHERE autNumero LIKE 'AD{0}%'", fecha.ToString("yyMMdd")));
-
-                query["autNumero"] = autorizacion;
-                query["pacId"] = CCDetallePaciente.IdPaciente;
-                query["entId"] = CCDetallePaciente.AsegurdadorID;
-                query["autActivo"] = "0";
-                query["autProvisional"] = "1";
-                query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
-                query["segFechaIngreso"] = "GETDATE()";
-
-                if (conectorMS.QueryMod(query.GetInsert()) == -1)
-                    return;
-
-                formulacion["autorizacion"] = autorizacion;
-                ViewState["autorizacion"] = autorizacion;
-            }
-
-            szQuery = formulacion.GetInsert();
-            mensaje = CCDetallePaciente.Nombres + " ingresado";
-            int resultado = conector.QueryMod(szQuery, true);
-            if (resultado == -1)
-                return;
-            HIdFormulacion.Value = resultado.ToString();
-        }
-        else
-        {
-            szQuery = formulacion.GetUpdate("id='" + HIdFormulacion.Value + "'");
-            mensaje = CCDetallePaciente.Nombres + " editado";
-            if (conector.QueryMod(szQuery) == -1)
-                return;
-            if (!string.IsNullOrEmpty((string)ViewState["autorizacion"])) {
-                if (conectorMS.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(ViewState["autorizacion"].ToString()))) == -1)
-                    return;
-            }
-        }
-        if (conector.InsertModificacion(HIdFormulacion.Value) == -1)
-            return;
-        if (!string.IsNullOrEmpty((string)ViewState["autorizacion"]))
-        {
-            /*if (new CConector().InsertModificacion(ViewState["autorizacion"].ToString(), null, "~/admisiones/autorizaciones.aspx") == -1)
-                return;*/
-        }
-
-        if(TMedicamentoID.Text.Length>0) {
-
-            Query medicamento = new Query("medicamento_formulacion");
-
-            medicamento["medicamento"] = TMedicamentoID.Text;
-            medicamento["formulada"] = TCantidad.Text;
-            medicamento["posologia"] = TPosologia.Text;
-            medicamento["via"] = TVia.Text;
-            medicamento["tiempo"] = TTiempo.Text;
-            medicamento["costo"] = Procedimientos.GetCosto(TMedicamentoID.Text, CCDetallePaciente.AsegurdadorID).ToString(CultureInfo.InvariantCulture);
-            medicamento["intensidad"] = DIntensidad.SelectedValue;
-
-            if (GFormulacion.SelectedIndex == -1)
+            using (CConectorMS conectorMS = new CConectorMS())
             {
-                medicamento["formulacion"] = HIdFormulacion.Value;
-                if (conector.QueryMod(medicamento.GetInsert()) == -1)
-                    return;
-            }
-            else
-            {
-                if (conector.QueryMod(medicamento.GetUpdate("id=" + GFormulacion.DataKeys[GFormulacion.SelectedIndex].Values["id"].ToString())) == -1)
-                    return;
-            }
-        }
 
-        if (!string.IsNullOrEmpty((string)ViewState["autorizacion"]))
-        {
-            if (conectorMS.QueryMod("DELETE FROM phdDetalleAutorizacion WHERE autNumero=" + Query.GetValor(ViewState["autorizacion"].ToString())) == -1)
-                return;
+                conector.StartTransaction();
+                conectorMS.StartTransaction();
 
-            Query detalle = new Query("phdDetalleAutorizacion");
+                DateTime fecha = Convert.ToDateTime(TFecha.Text);
 
-            detalle["autNumero"] = ViewState["autorizacion"].ToString();
+                formulacion["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
+                formulacion["tipo"] = DTipo.SelectedValue;
+                formulacion["profesional"] = CUsuario.GetUsuario()["personal"];
 
-            MySqlDataReader reader = conector.Query("SELECT medicamento,formulada,intensidad FROM medicamento_formulacion WHERE formulacion=" + Query.GetValor(HIdFormulacion.Value));
-            if(reader!=null) {
-                while(reader.Read()) {
-                    
-                    detalle["actId"] = reader["medicamento"].ToString();
-                    detalle["autNumSesiones"] = reader["formulada"].ToString();
-                    detalle["intensidad"] = reader["intensidad"].ToString();
 
-                    if (conectorMS.QueryMod(detalle.GetInsert()) == -1)
+                /*query["autFecha"] = fecha.ToShortDateString();
+                query["autFechaVenc"] = fecha.AddDays(30).ToShortDateString();*/
+
+                if (HIdFormulacion.Value.Length == 0)
+                {
+                    formulacion["paciente"] = CCDetallePaciente.IdPaciente;
+                    /*if (DTipo.SelectedValue == idprocedimientos)
+                    { // agregamos la autorizacion
+
+                        string autorizacion= conectorMS.QueryString(
+                        String.Format("SELECT 'AD{0}'+RIGHT('000'+CAST(ISNULL(MAX(CONVERT(int,SUBSTRING(autNumero,9,LEN(autnumero)-8))), 0)+1 AS VARCHAR(3)),3)"
+                                + " FROM phdAutorizacion"
+                                + " WHERE autNumero LIKE 'AD{0}%'", fecha.ToString("yyMMdd")));
+
+                        query["autNumero"] = autorizacion;
+                        query["pacId"] = CCDetallePaciente.IdPaciente;
+                        query["entId"] = CCDetallePaciente.AsegurdadorID;
+                        query["autActivo"] = "0";
+                        query["autProvisional"] = "1";
+                        query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
+                        query["segFechaIngreso"] = "GETDATE()";
+
+                        if (conectorMS.QueryMod(query.GetInsert()) == -1)
+                            return;
+
+                        formulacion["autorizacion"] = autorizacion;
+                        ViewState["autorizacion"] = autorizacion;
+                    }*/
+
+                    szQuery = formulacion.GetInsert();
+                    mensaje = CCDetallePaciente.Nombres + " ingresado";
+                    int resultado = conector.QueryMod(szQuery, true);
+                    if (resultado == -1)
                         return;
+                    HIdFormulacion.Value = resultado.ToString();
+                }
+                else
+                {
+                    szQuery = formulacion.GetUpdate("id='" + HIdFormulacion.Value + "'");
+                    mensaje = CCDetallePaciente.Nombres + " editado";
+                    if (conector.QueryMod(szQuery) == -1)
+                        return;
+                    /*if (!string.IsNullOrEmpty((string)ViewState["autorizacion"]))
+                    {
+                        if (conectorMS.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(ViewState["autorizacion"].ToString()))) == -1)
+                            return;
+                    }*/
+                }
+                if (conector.InsertModificacion(HIdFormulacion.Value) == -1)
+                    return;
+                if (!string.IsNullOrEmpty((string)ViewState["autorizacion"]))
+                {
+                    /*if (new CConector().InsertModificacion(ViewState["autorizacion"].ToString(), null, "~/admisiones/autorizaciones.aspx") == -1)
+                        return;*/
+                }
+
+                if (TMedicamentoID.Text.Length > 0)
+                {
+
+                    Query medicamento = new Query("medicamento_formulacion");
+
+                    medicamento["medicamento"] = TMedicamentoID.Text;
+                    medicamento["formulada"] = TCantidad.Text;
+                    medicamento["posologia"] = TPosologia.Text;
+                    medicamento["via"] = TVia.Text;
+                    medicamento["tiempo"] = TTiempo.Text;
+                    medicamento["costo"] = Procedimientos.GetCosto(TMedicamentoID.Text, CCDetallePaciente.AsegurdadorID).ToString(CultureInfo.InvariantCulture);
+                    medicamento["intensidad"] = DIntensidad.SelectedValue;
+
+                    if (GFormulacion.SelectedIndex == -1)
+                    {
+                        medicamento["formulacion"] = HIdFormulacion.Value;
+                        if (conector.QueryMod(medicamento.GetInsert()) == -1)
+                            return;
+                    }
+                    else
+                    {
+                        if (conector.QueryMod(medicamento.GetUpdate("id=" + GFormulacion.DataKeys[GFormulacion.SelectedIndex].Values["id"].ToString())) == -1)
+                            return;
+                    }
+                }
+
+                /*if (!string.IsNullOrEmpty((string)ViewState["autorizacion"]))
+                {
+                    if (conectorMS.QueryMod("DELETE FROM phdDetalleAutorizacion WHERE autNumero=" + Query.GetValor(ViewState["autorizacion"].ToString())) == -1)
+                        return;
+
+                    Query detalle = new Query("phdDetalleAutorizacion");
+
+                    detalle["autNumero"] = ViewState["autorizacion"].ToString();
+
+                    MySqlDataReader reader = conector.Query("SELECT medicamento,formulada,intensidad FROM medicamento_formulacion WHERE formulacion=" + Query.GetValor(HIdFormulacion.Value));
+                    if (reader != null)
+                    {
+                        while (reader.Read())
+                        {
+
+                            detalle["actId"] = reader["medicamento"].ToString();
+                            detalle["autNumSesiones"] = reader["formulada"].ToString();
+                            detalle["intensidad"] = reader["intensidad"].ToString();
+
+                            if (conectorMS.QueryMod(detalle.GetInsert()) == -1)
+                                return;
+                        }
+                    }
+
+                    query = new Query("phdAutorizacion");
+
+                    query["formulacion"] = HIdFormulacion.Value;
+                    // query["autObservaciones"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(nombre,': ',posologia) SEPARATOR '\n') FROM medicamento_formulacion LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento) WHERE formulacion=" + Query.GetValor(HIdFormulacion.Value) + " AND posologia IS NOT NULL");
+
+                    if (conectorMS.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(ViewState["autorizacion"].ToString()))) == -1)
+                        return;
+
+                    HAutorizacion.Text = "Autorización " + ViewState["autorizacion"].ToString();
+                    HAutorizacion.NavigateUrl = "~/admisiones/autorizaciones.aspx?aut=" + ViewState["autorizacion"].ToString();
+                }*/
+
+                conector.Commit();
+                conectorMS.Commit();
+
+                if (sender != BAceptar)
+                {
+                    GFormulacion.SelectedIndex = -1;
+                    GFormulacion.DataBind();
+                    TMedicamentoID.Text = TMedicamento.Text = TPosologia.Text = TCantidad.Text = "";
+                    TMedicamentoID_TextChanged(sender, e);
+                    TTiempo.Text = TVia.Text = "";
+                    CCDetallePaciente.GetCostoPacienteActual = 0;
+                    CCDetallePaciente.GetCostoAseguradoraActual = 0;
                 }
             }
-
-            query = new Query("phdAutorizacion");
-
-            query["formulacion"] = HIdFormulacion.Value;
-            // query["autObservaciones"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(nombre,': ',posologia) SEPARATOR '\n') FROM medicamento_formulacion LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento) WHERE formulacion=" + Query.GetValor(HIdFormulacion.Value) + " AND posologia IS NOT NULL");
-
-            if (conectorMS.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(ViewState["autorizacion"].ToString()))) == -1)
-                return;
-
-            HAutorizacion.Text = "Autorización " + ViewState["autorizacion"].ToString();
-            HAutorizacion.NavigateUrl = "~/admisiones/autorizaciones.aspx?aut=" + ViewState["autorizacion"].ToString();
-        }
-
-        conector.Commit();
-        conectorMS.Commit();
-
-        if (sender != BAceptar)
-        {
-            GFormulacion.SelectedIndex = -1;
-            GFormulacion.DataBind();
-            TMedicamentoID.Text = TMedicamento.Text = TPosologia.Text = TCantidad.Text = "";
-            TMedicamentoID_TextChanged(sender, e);
-            TTiempo.Text = TVia.Text = "";
-            CCDetallePaciente.GetCostoPacienteActual = 0;
-            CCDetallePaciente.GetCostoAseguradoraActual = 0;
         }
 
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);

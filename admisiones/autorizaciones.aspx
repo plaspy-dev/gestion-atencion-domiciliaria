@@ -408,7 +408,7 @@
                     </SelectParameters>
                 </asp:SqlDataSource>
             </td>
-            <td valign="bottom">
+            <td valign="bottom" nowrap="nowrap">
                 Valor pagado</td>
             <td valign="bottom">
                 <asp:Label runat="server" Text="" ID="LVPagado"></asp:Label></td>
@@ -478,7 +478,7 @@
         </tr>
         <tr>
             <td>Intensidad</td>
-            <td>
+            <td colspan="2">
                 <asp:UpdatePanel runat="server" ID="UIntensidad" UpdateMode="Conditional">
                     <ContentTemplate>
                         <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" DataTextField="nombre" DataValueField="id">
@@ -500,8 +500,7 @@
                     </Triggers>
                 </asp:UpdatePanel>
             </td>
-            <td><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label></td>
-            <td align="right"><asp:Button runat="server" ID="BProcedimiento" ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
+            <td align="right"><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label><asp:Button runat="server" ID="BProcedimiento" ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
         </tr>
         <tr>
             <td>
