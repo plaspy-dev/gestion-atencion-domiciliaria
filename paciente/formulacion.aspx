@@ -38,7 +38,7 @@
             search: function(event, ui) {
                 $("#<%= TMedicamentoID.ClientID %>").val("");
             }
-        }).change(function() { if ($(this).val() == "") $("#<%= TMedicamentoID.ClientID %>").val("");  });
+        }).change(function() { if ($(this).val() == "") $("#<%= TMedicamentoID.ClientID %>").val(""); });
 
         $("#<%= TFecha.ClientID %>").datepicker({
             onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#<%=BFecha.ClientID %>").click(); }
@@ -135,9 +135,9 @@
             </tr>
             <tr>
                 <td colspan="4">
-                    <asp:GridView ID="GFormulacion" runat="server" DataSourceID="SFormulacion" 
-                    AutoGenerateColumns="False" DataKeyNames="id,codigo,intensidad"
-                                        onselectedindexchanged="GFormulacion_SelectedIndexChanged" >
+                    <asp:GridView ID="GFormulacion" runat="server" AutoGenerateColumns="False" DataKeyNames="IdGrid"
+                                        onselectedindexchanged="GFormulacion_SelectedIndexChanged" 
+                        onrowdeleting="GFormulacion_RowDeleting" >
                                         <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
                             <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -147,34 +147,15 @@
                         <Columns>
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                            <asp:BoundField DataField="medicamen_id" HeaderText="idMedicamento" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
-                            <asp:BoundField DataField="medicamento" HeaderText="Nombre del medicamento" />
-                            <asp:BoundField DataField="intensidadnombre" HeaderText="Intensidad" />
-                            <asp:BoundField DataField="formulada" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
-                            <asp:BoundField DataField="posologia" HeaderText="Posología" />
-                            <asp:BoundField DataField="tiempo" HeaderText="Tiempo" />
-                            <asp:BoundField DataField="via" HeaderText="Vía" />
+                            <asp:BoundField DataField="Nombre" HeaderText="Nombre del medicamento" />
+                            <asp:BoundField DataField="Intensidad" HeaderText="Intensidad" />
+                            <asp:BoundField DataField="Formulada" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="Posologia" HeaderText="Posología" />
+                            <asp:BoundField DataField="Tiempo" HeaderText="Tiempo" />
+                            <asp:BoundField DataField="Via" HeaderText="Vía" />
                         </Columns>
                         <SelectedRowStyle CssClass="selecteditem" />
                     </asp:GridView>
-                    <asp:SqlDataSource ID="SFormulacion" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                            SelectCommand="SELECT medicamento_formulacion.id,medicamento_formulacion.medicamento AS medicamen_id,medicamento_formulacion.formulada,medicamento_formulacion.posologia 
-                                            ,IF(medicamentos.principio IS NULL,IF(medicamentos.concentracion IS NULL, medicamentos.nombre, CONCAT(medicamentos.nombre, ', ', medicamentos.forma, ' ',medicamentos.concentracion)),CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',IFNULL(medicamentos.forma,''))) AS medicamento
-                                            ,medicamento_formulacion.via,medicamento_formulacion.tiempo,medicamento_formulacion.costo
-                                            ,medicamento_formulacion.intensidad
-                                            ,medicamentos.codigo AS codigo,varios.nombre AS intensidadnombre
-                                            FROM medicamento_formulacion 
-                                            LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)
-                                            LEFT JOIN varios ON (varios.id=medicamento_formulacion.intensidad)
-                                            WHERE formulacion=@formulacion
-                                            ORDER BY (codigo>900000 AND codigo<921100)"
-                            DeleteCommand="DELETE FROM medicamento_formulacion WHERE id=@id"
-                            >
-                            <SelectParameters>
-                                <asp:ControlParameter ControlID="HIdFormulacion" DefaultValue="0" PropertyName="Value" Name="formulacion" />
-                            </SelectParameters>
-                    </asp:SqlDataSource>
                 </td>
             </tr>
             <tr>
@@ -197,25 +178,18 @@
             <tr runat="server" id="trIntensidad">
                 <td>Intensidad</td>
                 <td>
-                <asp:UpdatePanel runat="server" ID="UIntensidad" UpdateMode="Conditional">
-                    <ContentTemplate>
-                        <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" DataTextField="nombre" DataValueField="id">
-                            <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
-                        </asp:DropDownList>
-                        <asp:SqlDataSource ID="SIntensidad" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND parametro1=@procedimiento AND szReservado IS NULL ORDER BY nombre">
-                                <SelectParameters>
-                                    <asp:ControlParameter ControlID="TMedicamentoID" Name="procedimiento" DefaultValue="0" />
-                                </SelectParameters>
-                        </asp:SqlDataSource>
-                        <asp:RequiredFieldValidator ID="RIntensidad" Visible="false" runat="server" ErrorMessage="Por favor seleccione una intensidad." SetFocusOnError="true" ControlToValidate="DIntensidad" Display="Dynamic">*</asp:RequiredFieldValidator>
-                    </ContentTemplate>
-                    <Triggers>
-                        <asp:AsyncPostBackTrigger ControlID="TMedicamentoID" EventName="TextChanged" />
-                    </Triggers>
-                </asp:UpdatePanel>
+                    <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" DataTextField="nombre" DataValueField="id">
+                        <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
+                    </asp:DropDownList>
+                    <asp:SqlDataSource ID="SIntensidad" runat="server" 
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND parametro1=@procedimiento AND szReservado IS NULL ORDER BY nombre">
+                            <SelectParameters>
+                                <asp:ControlParameter ControlID="TMedicamentoID" Name="procedimiento" DefaultValue="0" />
+                            </SelectParameters>
+                    </asp:SqlDataSource>
+                    <asp:RequiredFieldValidator ID="RIntensidad" Visible="false" runat="server" ErrorMessage="Por favor seleccione una intensidad." SetFocusOnError="true" ControlToValidate="DIntensidad" Display="Dynamic">*</asp:RequiredFieldValidator>
                 </td>
             </tr>
             <tr>
@@ -239,6 +213,7 @@
             <tr>
                 <td colspan="4" align="right">
                                 <asp:ValidationSummary runat="server" ID="ValidationSummary1" ShowMessageBox="true" ValidationGroup="medicamento" />
+                                <asp:HiddenField runat="server" ID="HFormulacion" EnableViewState="false" />
                                 <asp:Button ID="BMasFormulacion" ValidationGroup="medicamento" runat="server" onclick="BMasFormulacion_Click" Text="+" />
                                 </td>
             </tr>

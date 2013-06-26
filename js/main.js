@@ -84,26 +84,27 @@ function obs() {
 function inicio() {
 
     // todos los campos hora
-    $(".hora").mask("99:99");
-    $(".hora").timeEntry({ show24Hours: true });
-    $(".hora").timepicker({ hourText: 'Horas',
-        minuteText: 'Minutos',
-        amPmText: ['AM', 'PM']
-    });
+    $(".hora:not(.rhora)").mask("99:99")
+        .timeEntry({ show24Hours: true })
+        .timepicker({ hourText: 'Horas',
+            minuteText: 'Minutos',
+            amPmText: ['AM', 'PM']
+        }).addClass("rhora");
+        
     // todos los campos fecha
-    $(".fecha").mask("99/99/9999");
+        $(".fecha:not(.rfecha)").mask("99/99/9999").
+        datepicker($.datepicker.regional["es"]).addClass("rfecha");
     // $(".fecha").datepicker({ onSelect: function() { } });
-    $(".fecha").datepicker($.datepicker.regional["es"]);
-    
+
     // todos los campos entero
-    $('.entero').numeric({ format: "0", buttons: false, minValue: 0 });
+    $('.entero:not(.rentero)').numeric({ format: "0", buttons: false, minValue: 0 }).addClass("rentero");
 
     // todos los reales
-    $('.float').numeric({ format: "0.########", buttons: false, minValue: 0 });
+    $('.float:not(.rfloat)').numeric({ format: "0.########", buttons: false, minValue: 0 }).addClass("rfloat");
     // $('.float').numeric({ format: "0.00", buttons: false, minValue: 0 });
     
     // dinero
-    $('.dinero').numeric({ format: "#,000.##", buttons: false, minValue: 0 });
+    $('.dinero:not(.rdinero)').numeric({ format: "#,000.##", buttons: false, minValue: 0 }).addClass("rdinero");
 
     $('img[src*="menubg.jpg"]').hover(function() {
         $(this).attr("src", $(this).attr("src").replace("menubg", "menuover"));

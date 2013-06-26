@@ -14,6 +14,35 @@ using System.Globalization;
 
 public partial class paciente_formulacion : System.Web.UI.Page
 {
+    [Serializable]
+    public class Medicamento {
+
+        public int IdGrid { get; set; }
+        public string Id { get; set; }
+        public string IdMedicamento { get; set; }
+        public string IdIntensidad { get; set; }
+        public string Formulada { get; set; }
+        public string Posologia { get; set; }
+        public string Tiempo { get; set; }
+        public string Via { get; set; }
+        public string Codigo { get; set; }
+
+        public string Nombre { get; set; }
+        public string Intensidad
+        {
+            get
+            {
+                return Procedimientos.GetVarios(IdIntensidad);
+            }
+        }
+
+        public Medicamento(int idgrid) {
+            IdGrid = idgrid;
+        }
+
+        
+    }
+
     public const string idprocedimientos = "173";
     public const string iddisan = "36";
 
@@ -94,6 +123,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         DTipo.SelectedValue = Request.QueryString["tf"];
 
                     trIntensidad.Visible = DTipo.SelectedValue == idprocedimientos;
+                    TMedicamentoID.AutoPostBack = DTipo.SelectedValue == idprocedimientos;
 
                     if (DTipo.SelectedIndex != -1)
                     {
@@ -104,16 +134,16 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         }
                         else singular = DTipo.SelectedItem.Text;
                         CConector conectormysql = new CConector();
-                        GFormulacion.Columns[6].HeaderText = LPosologia.Text = conectormysql.QueryString("SELECT descripcion FROM varios WHERE id=" + DTipo.SelectedValue);
+                        GFormulacion.Columns[5].HeaderText = LPosologia.Text = conectormysql.QueryString("SELECT descripcion FROM varios WHERE id=" + DTipo.SelectedValue);
                         if (LPosologia.Text.ToLower() != "posología") {
+                            GFormulacion.Columns[6].Visible = false;
                             GFormulacion.Columns[7].Visible = false;
-                            GFormulacion.Columns[8].Visible = false;
                             trPosologia.Visible = false;
                         }
 
                         LFormulacion.Text = DTipo.SelectedItem.Text;
                         LMedicamento.Text = singular;
-                        GFormulacion.Columns[3].HeaderText = singular;
+                        GFormulacion.Columns[2].HeaderText = singular;
                     }
 
                     Query formulacion = new Query("formulacion");
@@ -145,6 +175,42 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         }
                         TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
                         ViewState["profesional"] = readermysql["profesional"].ToString();
+
+                        List<Medicamento> medicamentos = new List<Medicamento>();
+
+                        Query qmedicamentos = new Query("medicamento_formulacion");
+
+                        qmedicamentos["id"]= "medicamento_formulacion.id";
+                        qmedicamentos["idmedicamento"]="medicamento_formulacion.medicamento";
+                        qmedicamentos["formulada"]="medicamento_formulacion.formulada";
+                        qmedicamentos["posologia"]="medicamento_formulacion.posologia";
+                        qmedicamentos["nombre"]="IF(medicamentos.principio IS NULL,IF(medicamentos.concentracion IS NULL, medicamentos.nombre, CONCAT(medicamentos.nombre, ', ', medicamentos.forma, ' ',medicamentos.concentracion)),CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',IFNULL(medicamentos.forma,'')))";
+                        qmedicamentos["via"]="medicamento_formulacion.via";
+                        qmedicamentos["tiempo"]="medicamento_formulacion.tiempo";
+                        qmedicamentos["intensidad"]="medicamento_formulacion.intensidad";
+                        qmedicamentos["codigo"] = "medicamentos.codigo";
+
+                        readermysql= conectormy.Query(qmedicamentos.GetSelect("formulacion=" + HIdFormulacion.Value + " ORDER BY (codigo>900000 AND codigo<921100)"
+                            ,"LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)"));
+                        if (readermysql != null) {
+                            while (readermysql.Read()) {
+                                Medicamento info = new Medicamento(medicamentos.Count);
+                                info.Id = readermysql["id"].ToString();
+                                info.IdMedicamento = readermysql["idmedicamento"].ToString();
+                                info.Formulada = readermysql["formulada"].ToString();
+                                info.Posologia = readermysql["posologia"].ToString();
+                                info.Nombre = readermysql["nombre"].ToString();
+                                info.Via = readermysql["via"].ToString();
+                                info.Tiempo = readermysql["tiempo"].ToString();
+                                info.IdIntensidad = readermysql["intensidad"].ToString();
+                                info.Codigo = readermysql["codigo"].ToString();
+                                medicamentos.Add(info);
+                            }
+                        }
+
+                        HFormulacion.Value = Serializar.SerializeBinary(medicamentos);
+                        GFormulacion.DataSource = medicamentos;
+                        GFormulacion.DataBind();
 
                         ((MasterPageI)Master).SetModificacion(HIdFormulacion.Value);
                     } else {
@@ -293,8 +359,46 @@ public partial class paciente_formulacion : System.Web.UI.Page
             }
         }
 
+        List<Medicamento> medicamentos = Serializar.DesSerializeBinary <List<Medicamento>>(HFormulacion.Value);
+
+        Medicamento info = null;
+        if (GFormulacion.SelectedIndex != -1)
+        {
+            List<Medicamento> resultado = (from t in medicamentos
+                                                             where t.IdGrid.ToString() == GFormulacion.SelectedDataKey.Value.ToString()
+                                                             select t).ToList();
+            if (resultado.Count != 0)
+                info = resultado.First();
+        }
+        if (info == null) {
+            info = new Medicamento(medicamentos.Count);
+            medicamentos.Add(info);
+        }
+
+        info.IdMedicamento = TMedicamentoID.Text;
+        info.Formulada = TCantidad.Text;
+        info.Posologia = TPosologia.Text;
+        info.Nombre = TMedicamento.Text;
+        info.Via = TVia.Text;
+        info.Tiempo = TTiempo.Text;
+        info.IdIntensidad = DIntensidad.SelectedValue;
+
+        HFormulacion.Value = Serializar.SerializeBinary(medicamentos);
+        GFormulacion.SelectedIndex = -1;
+        GFormulacion.DataSource = medicamentos;
+        GFormulacion.DataBind();
+
+
+        TMedicamentoID.Text= TCantidad.Text= TPosologia.Text = TMedicamento.Text = TVia.Text = TTiempo.Text= "";
+        DIntensidad.SelectedIndex = -1;
+        TMedicamentoID_TextChanged(null, null);
+
+        CCDetallePaciente.GetCostoPacienteActual = 0;
+        CCDetallePaciente.GetCostoAseguradoraActual = 0;
+        TMedicamento.Focus();
+
         // verificamos que no se halla formulado el mes anterior
-        if (!CUsuario.GetUsuario().CanAdmin() && CCDetallePaciente.AsegurdadorID == iddisan)
+        /*if (!CUsuario.GetUsuario().CanAdmin() && CCDetallePaciente.AsegurdadorID == iddisan && DTipo.SelectedValue != idprocedimientos)
         {
             CConector conector = new CConector();
             string ultimareceta = conector.QueryString(string.Format("SELECT formulacion.fecha FROM formulacion"
@@ -314,13 +418,15 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 TMedicamento.Focus();
                 return false;
             }
-        }
+        }*/
         return true;
     }
 
     protected void BMasFormulacion_Click(object sender, EventArgs e)
     {
-        BAceptar_Click(sender, e);
+        if (!IsValid)
+            return;
+        AddMedicamento();
     }
 
     protected void BFecha_Click(object sender, EventArgs e)
@@ -335,16 +441,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
             if (!IsValid)
                 return;
         } catch {}
-
-        if (!AddMedicamento())
-            return;
-
-        if (DTipo.SelectedValue == idprocedimientos && Procedimientos.HasIntensidad(TMedicamentoID.Text) && DIntensidad.SelectedValue.Length == 0)
-        { // es un procedimiento
-            LMensajeMedicamento.Text = "Por favor ingrese una intensidad para el procedimiento.";
-            DIntensidad.Focus();
-            return;
-        }
 
         Query formulacion = new Query("formulacion");
         // Query query = new Query("phdAutorizacion");
@@ -365,7 +461,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 formulacion["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
                 formulacion["tipo"] = DTipo.SelectedValue;
                 formulacion["profesional"] = CUsuario.GetUsuario()["personal"];
-
 
                 /*query["autFecha"] = fecha.ToShortDateString();
                 query["autFechaVenc"] = fecha.AddDays(30).ToShortDateString();*/
@@ -423,20 +518,23 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         return;*/
                 }
 
-                if (TMedicamentoID.Text.Length > 0)
-                {
+                Query medicamento = new Query("medicamento_formulacion");
 
-                    Query medicamento = new Query("medicamento_formulacion");
+                List<Medicamento> medicamentos = Serializar.DesSerializeBinary<List<Medicamento>>(HFormulacion.Value);
+                for (int i = 0; i < medicamentos.Count; i++) {
+                    
 
-                    medicamento["medicamento"] = TMedicamentoID.Text;
-                    medicamento["formulada"] = TCantidad.Text;
-                    medicamento["posologia"] = TPosologia.Text;
-                    medicamento["via"] = TVia.Text;
-                    medicamento["tiempo"] = TTiempo.Text;
-                    medicamento["costo"] = Procedimientos.GetCosto(TMedicamentoID.Text, CCDetallePaciente.AsegurdadorID).ToString(CultureInfo.InvariantCulture);
-                    medicamento["intensidad"] = DIntensidad.SelectedValue;
+                    Medicamento info = medicamentos[i];
 
-                    if (GFormulacion.SelectedIndex == -1)
+                    medicamento["medicamento"] = info.IdMedicamento;
+                    medicamento["formulada"] = info.Formulada;
+                    medicamento["posologia"] = info.Posologia;
+                    medicamento["via"] = info.Via;
+                    medicamento["tiempo"] = info.Tiempo;
+                    medicamento["costo"] = Procedimientos.GetCosto(info.IdMedicamento, CCDetallePaciente.AsegurdadorID).ToString(CultureInfo.InvariantCulture);
+                    medicamento["intensidad"] = info.IdIntensidad;
+
+                    if (string.IsNullOrEmpty(info.Id))
                     {
                         medicamento["formulacion"] = HIdFormulacion.Value;
                         if (conector.QueryMod(medicamento.GetInsert()) == -1)
@@ -444,7 +542,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     }
                     else
                     {
-                        if (conector.QueryMod(medicamento.GetUpdate("id=" + GFormulacion.DataKeys[GFormulacion.SelectedIndex].Values["id"].ToString())) == -1)
+                        if (conector.QueryMod(medicamento.GetUpdate("id=" + info.Id)) == -1)
                             return;
                     }
                 }
@@ -487,35 +585,33 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
                 conector.Commit();
                 conectorMS.Commit();
-
-                if (sender != BAceptar)
-                {
-                    GFormulacion.SelectedIndex = -1;
-                    GFormulacion.DataBind();
-                    TMedicamentoID.Text = TMedicamento.Text = TPosologia.Text = TCantidad.Text = "";
-                    TMedicamentoID_TextChanged(sender, e);
-                    TTiempo.Text = TVia.Text = "";
-                    CCDetallePaciente.GetCostoPacienteActual = 0;
-                    CCDetallePaciente.GetCostoAseguradoraActual = 0;
-                }
             }
         }
 
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
-        if(sender==BAceptar)
-            ((MasterPageI)Master).SetResultado(mensaje);
+        ((MasterPageI)Master).SetResultado(mensaje);
     }
 
     protected void GFormulacion_SelectedIndexChanged(object sender, EventArgs e)
     {
-        TMedicamentoID.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[2].Text).Trim();
-        TMedicamento.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[3].Text).Trim();
-        TCantidad.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[5].Text).Trim();
-        TPosologia.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[6].Text).Trim();
-        TTiempo.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[7].Text).Trim();
-        TVia.Text = HttpUtility.HtmlDecode(GFormulacion.SelectedRow.Cells[8].Text).Trim();
-        TMedicamentoID_TextChanged(sender, e);
-        CConector.SelectInDropDown(DIntensidad, GFormulacion.DataKeys[GFormulacion.SelectedIndex].Values["intensidad"]);
+        List<Medicamento> medicamentos = Serializar.DesSerializeBinary<List<Medicamento>>(HFormulacion.Value);
+        List<Medicamento> resultado = (from info in medicamentos
+                                      where info.IdGrid.ToString() == GFormulacion.SelectedDataKey.Value.ToString()
+                                      select info).ToList();
+
+        if (resultado.Count != 0) {
+            
+            Medicamento info= resultado.First();
+
+            TMedicamentoID.Text = info.IdMedicamento;
+            TMedicamento.Text = info.Nombre;
+            TCantidad.Text = info.Formulada;
+            TPosologia.Text = info.Posologia;
+            TTiempo.Text = info.Tiempo;
+            TVia.Text = info.Via;
+            TMedicamentoID_TextChanged(sender, e);
+            CConector.SelectInDropDown(DIntensidad, info.IdIntensidad);
+        }
     }
 
     protected string RenderPage(int inicio, int numero_medicamentos)
@@ -663,6 +759,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
         catch { }
         return false;
     }
+
     protected void BFormula_Click(object sender, EventArgs e)
     {
         CConector conector = new CConector();
@@ -706,6 +803,36 @@ public partial class paciente_formulacion : System.Web.UI.Page
         DIntensidad.SelectedIndex = 0;
         if(sender==TMedicamentoID)
             DIntensidad.Focus();
+    }
+
+    protected void GFormulacion_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        e.Cancel = true;
+        List<Medicamento> medicamentos = Serializar.DesSerializeBinary<List<Medicamento>>(HFormulacion.Value);
+        List<Medicamento> resultado = (from t in medicamentos
+                                                         where t.IdGrid.ToString() == GFormulacion.DataKeys[e.RowIndex].Value.ToString()
+                                                         select t).ToList();
+        if (resultado.Count != 0) {
+
+            Medicamento info = resultado.First();
+            if (!string.IsNullOrEmpty(info.Id)) {
+                using (CConector conector = new CConector()) {
+                    if (conector.QueryMod("DELETE FROM medicamento_formulacion WHERE id=" + Query.GetValor(info.Id)) == -1) {
+                        LMensajeMedicamento.Text = conector.GetLastError();
+                        return;
+                    }
+                }
+            }
+            
+            medicamentos.Remove(info);
+            for (int i = 0; i < medicamentos.Count; i++)
+                medicamentos[i].IdGrid = i;
+
+            HFormulacion.Value = Serializar.SerializeBinary(medicamentos);
+            GFormulacion.SelectedIndex = -1;
+            GFormulacion.DataSource = medicamentos;
+            GFormulacion.DataBind();
+        }
     }
 }
 

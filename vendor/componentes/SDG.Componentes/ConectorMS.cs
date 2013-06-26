@@ -1,6 +1,8 @@
 using System;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -363,18 +365,28 @@ public class ConectorMS : IDisposable
 		}
 		try
 		{
-			if (HttpContext.Current.Request.Url.Host == "localhost")
+			string[] array = null;
+			string text;
+			if (HttpContext.Current == null)
 			{
-				return true;
+				text = Path.GetFileName(Assembly.GetEntryAssembly().Location);
 			}
-			if (string.IsNullOrEmpty(ConfigurationSettings.AppSettings["DomainKey"]))
+			else
 			{
-				return false;
+				if (HttpContext.Current.Request.Url.Host == "localhost")
+				{
+					return true;
+				}
+				if (string.IsNullOrEmpty(ConfigurationSettings.AppSettings["DomainKey"]))
+				{
+					return false;
+				}
+				text = HttpContext.Current.Request.Url.Host;
 			}
-			string[] array = ConfigurationSettings.AppSettings["DomainKey"].Split(';');
+			array = ConfigurationSettings.AppSettings["DomainKey"].Split(';');
 			for (int i = 0; i < array.Length; i++)
 			{
-				if (Crypt.GetMD5(Crypt.Encriptar3DES(HttpContext.Current.Request.Url.Host.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
+				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
 				{
 					bGetKey = true;
 					return true;
