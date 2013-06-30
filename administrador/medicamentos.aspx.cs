@@ -36,7 +36,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
 
                 CConector conector = new CConector();
 
-                MySqlDataReader reader= conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica FROM medicamentos WHERE id="+ Query.GetValor(Request.QueryString["imp"].Trim()));
+                MySqlDataReader reader = conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica,hoja_sola FROM medicamentos WHERE id=" + Query.GetValor(Request.QueryString["imp"].Trim()));
 
                 if (reader != null && reader.Read()) {
                     
@@ -48,6 +48,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                     TConcentracion.Text = reader["concentracion"].ToString();
                     TAclaracion.Text = reader["aclaracion"].ToString();
                     CAutomatica.Checked = reader["automatica"].ToString() == "1";
+                    CImprimirHoja.Checked = reader["hoja_sola"].ToString() == "1";
                     CConector.SelectInDropDown(DGrupo, reader["grupo"]);
 
                     ListItem item= LTipos.Items.FindByValue(reader["tipo"].ToString());
@@ -85,6 +86,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         query["aclaracion"]=TAclaracion.Text;
         query["grupo"] = DGrupo.SelectedValue;
         query["automatica"] = CAutomatica.Checked ? "1" : "";
+        query["hoja_sola"]= CImprimirHoja.Checked ? "1" : "";
 
         if (HId.Value.Length == 0)
         {
@@ -175,6 +177,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TConcentracion.Text = "";
         TAclaracion.Text = "";
         DGrupo.SelectedValue = "";
+        CImprimirHoja.Checked = false;
         GCargos.DataBind();
         GEntidades.DataBind();
         CAutomatica.Checked = false;

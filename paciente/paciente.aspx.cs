@@ -303,46 +303,49 @@ public partial class seguimiento_paciente : System.Web.UI.Page
     
     protected void BRetiro_Click(object sender, EventArgs e)
     {
-        CConectorMS conector = new CConectorMS();
-
-        if(LReactivar.Text == "Reactivar") {
-
-            // reingreso paciente
-            if (conector.QueryMod("UPDATE dbo.phdPaciente set estId=1 WHERE pacId=" + HId.Value)==-1)
-                return;
-            if (conector.QueryMod("INSERT INTO dbo.phdReingresos(pacId,cingId,rinFecha,rinObs,segUsuarioIngreso) VALUES(" + HId.Value + "," + DMotivo.SelectedValue + ",'" + TFechaRetiro.Text + "','" + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "')") == -1)
-                return;
-            if (conector.QueryMod("insert into dbo.phdAuditServicios(pacId,audIngreso,audUsuario,audFecha,audObs,segFechaIngreso) values(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + TFechaRetiro.Text + "','" + TObservacionesRetiro.Text + "',getdate())") == -1)
-                return;
-            if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr WHERE pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0 and pr.prgId=phdNovedad.prgId)") == -1)
-                return;
-            if (conector.QueryMod("UPDATE programacion set prgActivo=1 where pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0") == -1)
-                return;
-            if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=1 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaRetiro.Text + "' and autActivo=0") == -1)
-                return;
-        } else { // retiro paciente
-
-            if (conector.QueryMod("UPDATE dbo.phdPaciente set estId=2,pacCuraciones = 0,pacAdmPuntual = 0,pacTerapiaFisica = 0,pacTerapiaResp = 0,pacTerapiaOcup = 0,pacTerapiaLenguaje = 0,pacValNutricional = 0,pacValMedica = 0,pacEnfermeria_12 = 0,pacEnfermeria_24 = 0,pacEntregaSuministros = 0 WHERE pacId=" + HId.Value) == -1)
-                return;
-            if (conector.QueryMod("INSERT INTO dbo.phdEgresos(pacId,cegId,egrObs,egrFecha,segUsuarioIngreso) VALUES(" + HId.Value + "," + DMotivo.SelectedValue + ",'" + TObservacionesRetiro.Text + "','" + TFechaRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "')") == -1)
-                return;
-            if (conector.QueryMod("INSERT INTO dbo.phdAuditServicios(pacId,audEgreso,audUsuario,audFecha,cegId,audObs,segFechaIngreso) VALUES(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + TFechaRetiro.Text + "'," + DMotivo.SelectedValue + ",'" + TObservacionesRetiro.Text + "',getdate())") == -1)
-                return;
-            string cnoId = conector.QueryString("SELECT cnoId FROM phdCausaEgreso WHERE cegId=" + DMotivo.SelectedValue);
-            if (cnoId.Length == 0)
-                cnoId = "NULL";
-            if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1 and pr.prgId=phdNovedad.prgId)") == -1)
-                return;
-            if (conector.QueryMod("INSERT INTO phdNovedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "',getdate() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
-                return;
-            if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
-                return;
-            if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaRetiro.Text + "' and autActivo=1") == -1)
-                return;
+        using (CConectorMS conector = new CConectorMS())
+        {
+            if (LReactivar.Text == "Reactivar")
+            {
+                // reingreso paciente
+                if (conector.QueryMod("UPDATE dbo.phdPaciente set estId=1 WHERE pacId=" + HId.Value) == -1)
+                    return;
+                if (conector.QueryMod("INSERT INTO dbo.phdReingresos(pacId,cingId,rinFecha,rinObs,segUsuarioIngreso) VALUES(" + HId.Value + "," + DMotivo.SelectedValue + ",'" + TFechaRetiro.Text + "','" + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "')") == -1)
+                    return;
+                if (conector.QueryMod("insert into dbo.phdAuditServicios(pacId,audIngreso,audUsuario,audFecha,audObs,segFechaIngreso) values(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + TFechaRetiro.Text + "','" + TObservacionesRetiro.Text + "',getdate())") == -1)
+                    return;
+                if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr WHERE pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0 and pr.prgId=phdNovedad.prgId)") == -1)
+                    return;
+                if (conector.QueryMod("UPDATE programacion set prgActivo=1 where pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0") == -1)
+                    return;
+                if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=1 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaRetiro.Text + "' and autActivo=0") == -1)
+                    return;
+            }
+            else
+            { // retiro paciente
+                if (conector.QueryMod("UPDATE dbo.phdPaciente set estId=2,pacCuraciones = 0,pacAdmPuntual = 0,pacTerapiaFisica = 0,pacTerapiaResp = 0,pacTerapiaOcup = 0,pacTerapiaLenguaje = 0,pacValNutricional = 0,pacValMedica = 0,pacEnfermeria_12 = 0,pacEnfermeria_24 = 0,pacEntregaSuministros = 0 WHERE pacId=" + HId.Value) == -1)
+                    return;
+                if (conector.QueryMod("INSERT INTO dbo.phdEgresos(pacId,cegId,egrObs,egrFecha,segUsuarioIngreso) VALUES(" + HId.Value + "," + DMotivo.SelectedValue + ",'" + TObservacionesRetiro.Text + "','" + TFechaRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "')") == -1)
+                    return;
+                if (conector.QueryMod("INSERT INTO dbo.phdAuditServicios(pacId,audEgreso,audUsuario,audFecha,cegId,audObs,segFechaIngreso) VALUES(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + TFechaRetiro.Text + "'," + DMotivo.SelectedValue + ",'" + TObservacionesRetiro.Text + "',getdate())") == -1)
+                    return;
+                string cnoId = conector.QueryString("SELECT cnoId FROM phdCausaEgreso WHERE cegId=" + DMotivo.SelectedValue);
+                if (cnoId.Length == 0)
+                    cnoId = "NULL";
+                if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1 and pr.prgId=phdNovedad.prgId)") == -1)
+                    return;
+                if (conector.QueryMod("INSERT INTO phdNovedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "',getdate() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
+                    return;
+                if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
+                    return;
+                if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaRetiro.Text + "' and autActivo=1") == -1)
+                    return;
+            }
         }
-        CConector conectormysql = new CConector();
-        conectormysql.InsertModificacion(HId.Value);
-
+        using(CConector conectormysql = new CConector())
+            conectormysql.InsertModificacion(HId.Value);
+        
+        Paciente.RemovePaciente(HId.Value);
         ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Editado.");
     }
     protected void IEliminar_Click(object sender, ImageClickEventArgs e)
@@ -374,28 +377,32 @@ public partial class seguimiento_paciente : System.Web.UI.Page
     protected void BAceptarDefuncion_Click(object sender, EventArgs e)
     {
 
-        CConectorMS conector = new CConectorMS();
+        using (CConectorMS conector = new CConectorMS())
+        {
 
-        if (conector.QueryMod("UPDATE dbo.phdPaciente set estId=2,pacCuraciones = 0,pacAdmPuntual = 0,pacTerapiaFisica = 0,pacTerapiaResp = 0,pacTerapiaOcup = 0,pacTerapiaLenguaje = 0,pacValNutricional = 0,pacValMedica = 0,pacEnfermeria_12 = 0,pacEnfermeria_24 = 0,pacEntregaSuministros = 0 WHERE pacId=" + HId.Value) == -1)
-            return;
-        if (conector.QueryMod("INSERT INTO dbo.phdEgresos(pacId,cegId,egrObs,egrFecha,segUsuarioIngreso,expedidoHS) VALUES(" + HId.Value + "," + 1 + ",'" + TObservacionesDefuncion.Text + "','" + TFechaDefuncion.Text + "','" + Usuario.GetUsuario().GetLogin() + "'," + (CExpedidaOrganizationExample15.Checked ? "1" : "0") + ")") == -1)
-            return;
-        if (conector.QueryMod("INSERT INTO dbo.phdAuditServicios(pacId,audEgreso,audUsuario,audFecha,cegId,audObs,segFechaIngreso) VALUES(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + TFechaDefuncion.Text + "'," + 1 + ",'" + TObservacionesDefuncion.Text + "',getdate())") == -1)
-            return;
-        string cnoId = conector.QueryString("SELECT cnoId FROM phdCausaEgreso WHERE cegId=" + 1);
-        if (cnoId.Length == 0)
-            cnoId = "NULL";
-        if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1 and pr.prgId=phdNovedad.prgId)") == -1)
-            return;
-        if (conector.QueryMod("INSERT INTO phdNovedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesDefuncion.Text + "','" + Usuario.GetUsuario().GetLogin() + "',getdate() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1") == -1)
-            return;
-        if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1") == -1)
-            return;
-        if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaDefuncion.Text + "' and autActivo=1") == -1)
-            return;
+            if (conector.QueryMod("UPDATE dbo.phdPaciente set estId=2,pacCuraciones = 0,pacAdmPuntual = 0,pacTerapiaFisica = 0,pacTerapiaResp = 0,pacTerapiaOcup = 0,pacTerapiaLenguaje = 0,pacValNutricional = 0,pacValMedica = 0,pacEnfermeria_12 = 0,pacEnfermeria_24 = 0,pacEntregaSuministros = 0 WHERE pacId=" + HId.Value) == -1)
+                return;
+            if (conector.QueryMod("INSERT INTO dbo.phdEgresos(pacId,cegId,egrObs,egrFecha,segUsuarioIngreso,expedidoHS) VALUES(" + HId.Value + "," + 1 + ",'" + TObservacionesDefuncion.Text + "','" + TFechaDefuncion.Text + "','" + Usuario.GetUsuario().GetLogin() + "'," + (CExpedidaOrganizationExample15.Checked ? "1" : "0") + ")") == -1)
+                return;
+            if (conector.QueryMod("INSERT INTO dbo.phdAuditServicios(pacId,audEgreso,audUsuario,audFecha,cegId,audObs,segFechaIngreso) VALUES(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + TFechaDefuncion.Text + "'," + 1 + ",'" + TObservacionesDefuncion.Text + "',getdate())") == -1)
+                return;
+            string cnoId = conector.QueryString("SELECT cnoId FROM phdCausaEgreso WHERE cegId=" + 1);
+            if (cnoId.Length == 0)
+                cnoId = "NULL";
+            if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1 and pr.prgId=phdNovedad.prgId)") == -1)
+                return;
+            if (conector.QueryMod("INSERT INTO phdNovedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesDefuncion.Text + "','" + Usuario.GetUsuario().GetLogin() + "',getdate() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1") == -1)
+                return;
+            if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1") == -1)
+                return;
+            if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaDefuncion.Text + "' and autActivo=1") == -1)
+                return;
+        }
 
-        CConector conectormysql = new CConector();
-        conectormysql.InsertModificacion(HId.Value);
+        using(CConector conectormysql = new CConector()) 
+            conectormysql.InsertModificacion(HId.Value);
+
+        Paciente.RemovePaciente(HId.Value);
 
         ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Inactivado.");
     }

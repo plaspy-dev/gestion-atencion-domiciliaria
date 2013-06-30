@@ -6,14 +6,10 @@
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
     <table>
         <tr>
-            <td>
-                Desde</td>
-            <td>
-                Hasta</td>
-            <td>
-                Entidad</td>
-            <td>
-                &nbsp;</td>
+            <td>Desde</td>
+            <td>Hasta</td>
+            <td>Entidad</td>
+            <td>&nbsp;</td>
         </tr>
         <tr>
             <td>
@@ -46,21 +42,22 @@
         <div id="dImprimir">
         <asp:GridView ID="GResultados" runat="server" 
             AutoGenerateColumns="False" EmptyDataText="No se encontraron pacientes" 
-            AllowPaging="True" PageSize="50" AllowSorting="True" DataSourceID="SResultados" >
+            AllowPaging="True" PageSize="50" AllowSorting="True" 
+                DataSourceID="SResultados" onrowdatabound="GResultados_RowDataBound" >
             <Columns>
-                <asp:BoundField DataField="Fecha" SortExpression="Fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
-                <asp:BoundField DataField="Paciente" SortExpression="Paciente" HeaderText="Paciente" />
-                <asp:BoundField DataField="Documento" SortExpression="Documento" HeaderText="Documento" />
-                <asp:BoundField DataField="Sexo" SortExpression="Sexo" HeaderText="Sexo" />
-                <asp:BoundField DataField="Edad" SortExpression="Edad" HeaderText="Edad" ItemStyle-HorizontalAlign="Right" />
-                <asp:BoundField DataField="Direccion" SortExpression="Direccion" HeaderText="Dirección" />
-                <asp:BoundField DataField="Barrio" SortExpression="Barrio" HeaderText="Barrio" />
-                <asp:BoundField DataField="Telefonos" SortExpression="Telefonos" HeaderText="Teléfonos" />
-                <asp:BoundField DataField="Barthel" SortExpression="Barthel" HeaderText="Índice de Barthel" ItemStyle-HorizontalAlign="Right" />
-                <asp:BoundField DataField="Diagnostico1" SortExpression="Diagnostico1" HeaderText="Diagnostico 1" />
-                <asp:BoundField DataField="Diagnostico2" SortExpression="Diagnostico2" HeaderText="Diagnostico 2" />
-                <asp:BoundField DataField="Diagnostico3" SortExpression="Diagnostico3" HeaderText="Diagnostico 3" />
-                <asp:BoundField DataField="Analisis" SortExpression="Analisis" HeaderText="Análisis clínico" />
+                <asp:BoundField DataField="fecha" SortExpression="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
+                <asp:BoundField DataField="paciente"  HeaderText="Paciente" />
+                <asp:BoundField DataField="paciente"  HeaderText="Documento" />
+                <asp:BoundField DataField="paciente"  HeaderText="Sexo" />
+                <asp:BoundField DataField="paciente"  HeaderText="Edad" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField DataField="paciente"  HeaderText="Dirección" />
+                <asp:BoundField DataField="paciente"  HeaderText="Barrio" />
+                <asp:BoundField DataField="paciente"  HeaderText="Teléfonos" />
+                <asp:BoundField DataField="barthel" SortExpression="barthel" HeaderText="Índice de Barthel" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField DataField="paciente"  HeaderText="Diagnostico 1" />
+                <asp:BoundField DataField="paciente"  HeaderText="Diagnostico 2" />
+                <asp:BoundField DataField="paciente"  HeaderText="Diagnostico 3" />
+                <asp:BoundField DataField="analisis" SortExpression="analisis" HeaderText="Análisis clínico" />
             </Columns>
             <RowStyle CssClass="GridRow"></RowStyle>
             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -69,8 +66,44 @@
             <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         </asp:GridView>
-        <asp:ObjectDataSource runat="server" ID="SResultados" TypeName="TablaPaciente" SelectMethod="GetDataTable">
-        </asp:ObjectDataSource>
+        <asp:SqlDataSource ID="SResultados" runat="server" 
+            ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+            SelectCommand="(SELECT 
+                                ingreso_paciente.fecha
+                                ,ingreso_paciente.analisis
+                                ,SUM(varios.descripcion) AS barthel
+                                ,ingreso_paciente.paciente
+                                FROM ingreso_paciente 
+                                LEFT JOIN indice_barthel ON (indice_barthel.paciente=ingreso_paciente.paciente)
+                                LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id)
+                                LEFT JOIN varios ON (varios.id=analisis_barthel.resultado)
+                                WHERE 
+                                ingreso_paciente.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                                AND (@asegurador=0 OR @asegurador=ingreso_paciente.asegurador)
+                                GROUP BY ingreso_paciente.id
+                            ) UNION (
+                            SELECT 
+                                evolucion_paciente.fecha
+                                ,evolucion_paciente.analisis
+                                ,SUM(varios.descripcion) AS barthel
+                                ,evolucion_paciente.paciente
+                                FROM evolucion_paciente 
+                                LEFT JOIN indice_barthel ON (indice_barthel.paciente=evolucion_paciente.paciente)
+                                LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id)
+                                LEFT JOIN varios ON (varios.id=analisis_barthel.resultado)
+                                WHERE 
+                                evolucion_paciente.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                                AND (@asegurador=0 OR @asegurador=evolucion_paciente.asegurador)
+                                GROUP BY evolucion_paciente.id
+                            ) ORDER BY fecha;
+                            ">
+            <SelectParameters>
+                <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
+                <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />
+                <asp:ControlParameter ControlID="DAsegurador" Name="asegurador" PropertyName="SelectedValue" />
+            </SelectParameters>
+        </asp:SqlDataSource>
         <div style="text-align: right;">
             <asp:Label ID="LTotal" runat="server" Text=""></asp:Label>
         </div>

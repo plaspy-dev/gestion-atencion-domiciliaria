@@ -75,54 +75,67 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     qIngreso += "conducta";
                     qIngreso += "fecha";
 
-                    CConector conectormysql = new CConector();
-                    MySqlDataReader readermysql = conectormysql.Query(qIngreso.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
-                    if (readermysql != null && readermysql.Read())
+                    using (CConector conectormysql = new CConector())
                     {
-                        BAceptar.Enabled = usuario.CanUpdate();
-                        BMasCDiagnostico.Enabled = usuario.CanUpdate();
-                        ((MasterPageI)Master).Imprimir("ingreso.html");
+                        MySqlDataReader readermysql = conectormysql.Query(qIngreso.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
+                        if (readermysql != null && readermysql.Read())
+                        {
+                            BAceptar.Enabled = usuario.CanUpdate();
+                            BMasCDiagnostico.Enabled = usuario.CanUpdate();
+                            ((MasterPageI)Master).Imprimir("ingreso.html");
 
-                        GCDiagnostico.Columns[0].Visible = usuario.CanUpdate();
-                        GCDiagnostico.Columns[1].Visible = usuario.CanDelete();
+                            GCDiagnostico.Columns[0].Visible = usuario.CanUpdate();
+                            GCDiagnostico.Columns[1].Visible = usuario.CanDelete();
 
-                        HIdIngreso.Value = readermysql["id"].ToString();
-                        conector.SelectInDropDown(DMedico, readermysql["medico"], "SELECT perNombre FROM admPersonalHS WHERE perId={0}");
-                        THora.Text = readermysql["hora"].ToString();
-                        TMotivo.Text = readermysql["motivo"].ToString();
-                        DMotivo.SelectedValue = readermysql["segun"].ToString();
-                        TEnfermedadActual.Text = readermysql["enfermedad_actual"].ToString();
-                        TTA.Text = readermysql["ta"].ToString();
-                        TFC.Text = readermysql["fc"].ToString();
-                        TFR.Text = readermysql["fr"].ToString();
-                        TT.Text = readermysql["t"].ToString();
-                        TPeso.Text = readermysql["peso"].ToString();
-                        TSaturacion.Text = readermysql["saturacion"].ToString();
-                        TAnalisis.Text = readermysql["analisis"].ToString();
-                        TGlucometria.Text = readermysql["glucometria"].ToString();
-                        conector.SelectInDropDown(DTipoDiagnostico, readermysql["tipo_diagnostico"]);
-                        if (readermysql["fecha"] != DBNull.Value)
-                            TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
-                        else TFecha.Text = "";
-                        TConductaInicial.Text = readermysql["conducta"].ToString();
-                        string procedimientos = Procedimientos.GetPlanDeManejo(conectormysql, CCDetallePaciente.IdPaciente, TFecha.Text);
-                        if (procedimientos.Length > 0)
-                            TConductaInicial.Text = procedimientos;
-
-                        ((MasterPageI)Master).SetModificacion(HIdIngreso.Value);
-                    }
-                    else
-                    {
-                        GCDiagnostico.DataBind();
-                        if (GCDiagnostico.Rows.Count == 0)
-                        { // no se encontraron diagnosticos
-
-                            Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
-
-                            for(int i=0; i<paciente.cie10.Count; i++) {
-                                TCIE10.Text = Procedimientos.GetCodigoCIE(paciente.cie10[i].ToString());
-                                BMasCDiagnostico_Click(sender, e);
+                            HIdIngreso.Value = readermysql["id"].ToString();
+                            conector.SelectInDropDown(DMedico, readermysql["medico"], "SELECT perNombre FROM admPersonalHS WHERE perId={0}");
+                            THora.Text = readermysql["hora"].ToString();
+                            TMotivo.Text = readermysql["motivo"].ToString();
+                            DMotivo.SelectedValue = readermysql["segun"].ToString();
+                            TEnfermedadActual.Text = readermysql["enfermedad_actual"].ToString();
+                            TTA.Text = readermysql["ta"].ToString();
+                            TFC.Text = readermysql["fc"].ToString();
+                            TFR.Text = readermysql["fr"].ToString();
+                            TT.Text = readermysql["t"].ToString();
+                            TPeso.Text = readermysql["peso"].ToString();
+                            TSaturacion.Text = readermysql["saturacion"].ToString();
+                            TAnalisis.Text = readermysql["analisis"].ToString();
+                            TGlucometria.Text = readermysql["glucometria"].ToString();
+                            conector.SelectInDropDown(DTipoDiagnostico, readermysql["tipo_diagnostico"]);
+                            if (readermysql["fecha"] != DBNull.Value)
+                                TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
+                            else TFecha.Text = "";
+                            TConductaInicial.Text = readermysql["conducta"].ToString();
+                            if (TConductaInicial.Text.Length == 0)
+                            {
+                                string procedimientos = Procedimientos.GetPlanDeManejo(conectormysql, CCDetallePaciente.IdPaciente, TFecha.Text);
+                                if (procedimientos.Length > 0)
+                                {
+                                    ViewState["procedimientos"] = procedimientos;
+                                    TConductaInicial.Text = procedimientos;
+                                }
                             }
+
+                            TConductaInicial.ReadOnly = !usuario.CanAdmin();
+                            BEliminar.Visible = usuario.CanDelete();
+
+                            ((MasterPageI)Master).SetModificacion(HIdIngreso.Value);
+                        }
+                        else
+                        {
+                            GCDiagnostico.DataBind();
+                            if (GCDiagnostico.Rows.Count == 0)
+                            { // no se encontraron diagnosticos
+
+                                Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+
+                                for (int i = 0; i < paciente.cie10.Count; i++)
+                                {
+                                    TCIE10.Text = Procedimientos.GetCodigoCIE(paciente.cie10[i].ToString());
+                                    BMasCDiagnostico_Click(sender, e);
+                                }
+                            }
+                            TConductaInicial.ReadOnly = !usuario.CanAdmin();
                         }
                     }
                 }
@@ -134,180 +147,190 @@ public partial class paciente_ingreso : System.Web.UI.Page
     {
         if (!IsValid)
             return;
-        CConector conector = CConector.GetConector();
-        Query qIngreso = new Query("ingreso_paciente");
-
-        qIngreso["medico"]= DMedico.SelectedValue;
-        qIngreso["hora"]= THora.Text;
-        qIngreso["motivo"]= TMotivo.Text;
-        qIngreso["segun"]= DMotivo.SelectedValue;
-        qIngreso["enfermedad_actual"]= TEnfermedadActual.Text;
-        qIngreso["ta"]= TTA.Text;
-        qIngreso["fc"]= TFC.Text;
-        qIngreso["fr"]= TFR.Text;
-        qIngreso["t"]= TT.Text;
-        qIngreso["peso"]= TPeso.Text;
-        qIngreso["fecha"] = CConector.GetDate(Convert.ToDateTime(TFecha.Text));
-        qIngreso["conducta"]= TConductaInicial.Text;
-        qIngreso["saturacion"] = TSaturacion.Text;
-        qIngreso["analisis"] = TAnalisis.Text;
-        qIngreso["glucometria"] = TGlucometria.Text;
-        qIngreso["tipo_diagnostico"] = DTipoDiagnostico.SelectedValue;
-
-        string szQuery;
-        string mensaje;
-        bool ingreso = false;
-
-        if (HIdIngreso.Value.Length == 0)
+        using (CConector conector = CConector.GetConector())
         {
-            ingreso = true;
-            qIngreso["paciente"] = CCDetallePaciente.IdPaciente;
+            Query qIngreso = new Query("ingreso_paciente");
 
-            szQuery = qIngreso.GetInsert();
-            mensaje = CCDetallePaciente.Nombres + " ingresado";
-            int resultado = conector.QueryMod(szQuery, true);
-            if (resultado == -1)
-                return;
-            HIdIngreso.Value = resultado.ToString();
-        }
-        else
-        {
-            szQuery = qIngreso.GetUpdate("id='" + HIdIngreso.Value + "'");
-            mensaje = CCDetallePaciente.Nombres + " editado";
-            if (conector.QueryMod(szQuery) == -1)
-                return;
-        }
-        if (conector.InsertModificacion(HIdIngreso.Value) == -1)
-            return;
+            qIngreso["medico"] = DMedico.SelectedValue;
+            qIngreso["hora"] = THora.Text;
+            qIngreso["motivo"] = TMotivo.Text;
+            qIngreso["segun"] = DMotivo.SelectedValue;
+            qIngreso["enfermedad_actual"] = TEnfermedadActual.Text;
+            qIngreso["ta"] = TTA.Text;
+            qIngreso["fc"] = TFC.Text;
+            qIngreso["fr"] = TFR.Text;
+            qIngreso["t"] = TT.Text;
+            qIngreso["peso"] = TPeso.Text;
+            qIngreso["fecha"] = CConector.GetDate(Convert.ToDateTime(TFecha.Text));
+            qIngreso["saturacion"] = TSaturacion.Text;
+            qIngreso["analisis"] = TAnalisis.Text;
+            qIngreso["glucometria"] = TGlucometria.Text;
+            qIngreso["tipo_diagnostico"] = DTipoDiagnostico.SelectedValue;
+            qIngreso["asegurador"] = CCDetallePaciente.AsegurdadorID;
+            qIngreso["conducta"] =
+                (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TConductaInicial.Text != ViewState["procedimientos"].ToString())
+                ? TConductaInicial.Text
+                : ""; // guardamos la conducta si es diferente a la inicial
 
-        for(int i=0; i<GAntecedentes.Rows.Count; i++) {
+            string szQuery;
+            string mensaje;
+            bool ingreso = false;
 
-            Query antecendentes = new Query("antecedentes_ingreso");
-            string id= GAntecedentes.DataKeys[i].Values[1].ToString();
-
-            antecendentes["estado"] = ((CheckBox)GAntecedentes.Rows[i].Cells[0].FindControl("CSi")).Checked ? "1" : "";
-            antecendentes["observaciones"] = ((TextBox)GAntecedentes.Rows[i].Cells[1].FindControl("TObservaciones")).Text;
-            if(id.Length>0) {
-                id = antecendentes.GetUpdate("id='" + id + "'");
-            } else {
-                antecendentes["ingreso_paciente"] = HIdIngreso.Value;
-                antecendentes["motivo"] = GAntecedentes.DataKeys[i].Values[0].ToString();
-                id = antecendentes.GetInsert();
-            }
-            conector.QueryMod(id);
-        }
-
-        for (int i = 0; i < GRevision.Rows.Count; i++)
-        {
-            Query antecendentes = new Query("revision_ingreso");
-            string id = GRevision.DataKeys[i].Values[1].ToString();
-
-            antecendentes["nor"] = ((CheckBox)GRevision.Rows[i].Cells[1].FindControl("CNor")).Checked ? "1" : "";
-            antecendentes["pat"] = ((CheckBox)GRevision.Rows[i].Cells[2].FindControl("CPat")).Checked ? "1" : "";
-            antecendentes["observaciones"] = ((TextBox)GRevision.Rows[i].Cells[3].FindControl("TObservaciones")).Text;
-
-            if (id.Length > 0)
+            if (HIdIngreso.Value.Length == 0)
             {
-                id = antecendentes.GetUpdate("id='" + id + "'");
+                ingreso = true;
+                qIngreso["paciente"] = CCDetallePaciente.IdPaciente;
+
+                szQuery = qIngreso.GetInsert();
+                mensaje = CCDetallePaciente.Nombres + " ingresado";
+                int resultado = conector.QueryMod(szQuery, true);
+                if (resultado == -1)
+                    return;
+                HIdIngreso.Value = resultado.ToString();
             }
             else
             {
-                antecendentes["ingreso_paciente"] = HIdIngreso.Value;
-                antecendentes["motivo"] = GRevision.DataKeys[i].Values[0].ToString();
-                id = antecendentes.GetInsert();
-            }
-            conector.QueryMod(id);
-        }
-
-         for (int i = 0; i < GExamenFisico.Rows.Count; i++)
-        {
-            Query antecendentes = new Query("examen_ingreso");
-            string id = GExamenFisico.DataKeys[i].Values[1].ToString();
-
-            antecendentes["nor"] = ((CheckBox)GExamenFisico.Rows[i].Cells[1].FindControl("CNor")).Checked ? "1" : "";
-            antecendentes["pat"] = ((CheckBox)GExamenFisico.Rows[i].Cells[2].FindControl("CPat")).Checked ? "1" : "";
-            antecendentes["observaciones"] = ((TextBox)GExamenFisico.Rows[i].Cells[3].FindControl("TObservaciones")).Text;
-
-            if (id.Length > 0)
-            {
-                id = antecendentes.GetUpdate("id='" + id + "'");
-            }
-            else
-            {
-                antecendentes["ingreso_paciente"] = HIdIngreso.Value;
-                antecendentes["motivo"] = GExamenFisico.DataKeys[i].Values[0].ToString();
-                id = antecendentes.GetInsert();
-            }
-            conector.QueryMod(id);
-        }
-
-         if (PMujer.Visible)
-         {
-             for (int i = 0; i < GGinecologico.Rows.Count; i++)
-             {
-
-                 Query antecendentes = new Query("varios_ingreso");
-                 string id = GGinecologico.DataKeys[i].Values[1].ToString();
-
-                 antecendentes["estado"] = ((CheckBox)GGinecologico.Rows[i].Cells[0].FindControl("CSi")).Checked ? "1" : "";
-                 antecendentes["observaciones"] = ((TextBox)GGinecologico.Rows[i].Cells[1].FindControl("TObservaciones")).Text;
-                 if (id.Length > 0)
-                 {
-                     id = antecendentes.GetUpdate("id='" + id + "'");
-                 }
-                 else
-                 {
-                     antecendentes["ingreso_paciente"] = HIdIngreso.Value;
-                     antecendentes["motivo"] = GGinecologico.DataKeys[i].Values[0].ToString();
-                     id = antecendentes.GetInsert();
-                 }
-                 conector.QueryMod(id);
-             }
-         }
-
-        string[] querys = SCDiagnostico.GetQuerys();
-        if (querys != null)
-        {
-            for (int i = 0; i < querys.Length; i++)
-            {
-                szQuery = querys[i].Replace("@ingreso", Query.GetValor(HIdIngreso.Value));
+                szQuery = qIngreso.GetUpdate("id='" + HIdIngreso.Value + "'");
+                mensaje = CCDetallePaciente.Nombres + " editado";
                 if (conector.QueryMod(szQuery) == -1)
                     return;
             }
-        }
+            if (conector.InsertModificacion(HIdIngreso.Value) == -1)
+                return;
 
-
-        // actualizamos el cie10 del paciente
-        string cie10 = "", cie102 = "", cie103 = "";
-
-        MySqlDataReader reader = conector.Query("SELECT codigo FROM codigos_ingreso WHERE ingreso_paciente=" + HIdIngreso.Value);
-        if (reader != null)
-        {
-
-            if (reader.Read())
+            for (int i = 0; i < GAntecedentes.Rows.Count; i++)
             {
-                cie10 = reader["codigo"].ToString();
+
+                Query antecendentes = new Query("antecedentes_ingreso");
+                string id = GAntecedentes.DataKeys[i].Values[1].ToString();
+
+                antecendentes["estado"] = ((CheckBox)GAntecedentes.Rows[i].Cells[0].FindControl("CSi")).Checked ? "1" : "";
+                antecendentes["observaciones"] = ((TextBox)GAntecedentes.Rows[i].Cells[1].FindControl("TObservaciones")).Text;
+                if (id.Length > 0)
+                {
+                    id = antecendentes.GetUpdate("id='" + id + "'");
+                }
+                else
+                {
+                    antecendentes["ingreso_paciente"] = HIdIngreso.Value;
+                    antecendentes["motivo"] = GAntecedentes.DataKeys[i].Values[0].ToString();
+                    id = antecendentes.GetInsert();
+                }
+                conector.QueryMod(id);
+            }
+
+            for (int i = 0; i < GRevision.Rows.Count; i++)
+            {
+                Query antecendentes = new Query("revision_ingreso");
+                string id = GRevision.DataKeys[i].Values[1].ToString();
+
+                antecendentes["nor"] = ((CheckBox)GRevision.Rows[i].Cells[1].FindControl("CNor")).Checked ? "1" : "";
+                antecendentes["pat"] = ((CheckBox)GRevision.Rows[i].Cells[2].FindControl("CPat")).Checked ? "1" : "";
+                antecendentes["observaciones"] = ((TextBox)GRevision.Rows[i].Cells[3].FindControl("TObservaciones")).Text;
+
+                if (id.Length > 0)
+                {
+                    id = antecendentes.GetUpdate("id='" + id + "'");
+                }
+                else
+                {
+                    antecendentes["ingreso_paciente"] = HIdIngreso.Value;
+                    antecendentes["motivo"] = GRevision.DataKeys[i].Values[0].ToString();
+                    id = antecendentes.GetInsert();
+                }
+                conector.QueryMod(id);
+            }
+
+            for (int i = 0; i < GExamenFisico.Rows.Count; i++)
+            {
+                Query antecendentes = new Query("examen_ingreso");
+                string id = GExamenFisico.DataKeys[i].Values[1].ToString();
+
+                antecendentes["nor"] = ((CheckBox)GExamenFisico.Rows[i].Cells[1].FindControl("CNor")).Checked ? "1" : "";
+                antecendentes["pat"] = ((CheckBox)GExamenFisico.Rows[i].Cells[2].FindControl("CPat")).Checked ? "1" : "";
+                antecendentes["observaciones"] = ((TextBox)GExamenFisico.Rows[i].Cells[3].FindControl("TObservaciones")).Text;
+
+                if (id.Length > 0)
+                {
+                    id = antecendentes.GetUpdate("id='" + id + "'");
+                }
+                else
+                {
+                    antecendentes["ingreso_paciente"] = HIdIngreso.Value;
+                    antecendentes["motivo"] = GExamenFisico.DataKeys[i].Values[0].ToString();
+                    id = antecendentes.GetInsert();
+                }
+                conector.QueryMod(id);
+            }
+
+            if (PMujer.Visible)
+            {
+                for (int i = 0; i < GGinecologico.Rows.Count; i++)
+                {
+
+                    Query antecendentes = new Query("varios_ingreso");
+                    string id = GGinecologico.DataKeys[i].Values[1].ToString();
+
+                    antecendentes["estado"] = ((CheckBox)GGinecologico.Rows[i].Cells[0].FindControl("CSi")).Checked ? "1" : "";
+                    antecendentes["observaciones"] = ((TextBox)GGinecologico.Rows[i].Cells[1].FindControl("TObservaciones")).Text;
+                    if (id.Length > 0)
+                    {
+                        id = antecendentes.GetUpdate("id='" + id + "'");
+                    }
+                    else
+                    {
+                        antecendentes["ingreso_paciente"] = HIdIngreso.Value;
+                        antecendentes["motivo"] = GGinecologico.DataKeys[i].Values[0].ToString();
+                        id = antecendentes.GetInsert();
+                    }
+                    conector.QueryMod(id);
+                }
+            }
+
+            string[] querys = SCDiagnostico.GetQuerys();
+            if (querys != null)
+            {
+                for (int i = 0; i < querys.Length; i++)
+                {
+                    szQuery = querys[i].Replace("@ingreso", Query.GetValor(HIdIngreso.Value));
+                    if (conector.QueryMod(szQuery) == -1)
+                        return;
+                }
+            }
+
+
+            // actualizamos el cie10 del paciente
+            string cie10 = "", cie102 = "", cie103 = "";
+
+            MySqlDataReader reader = conector.Query("SELECT codigo FROM codigos_ingreso WHERE ingreso_paciente=" + HIdIngreso.Value);
+            if (reader != null)
+            {
+
                 if (reader.Read())
                 {
-                    cie102 = reader["codigo"].ToString();
+                    cie10 = reader["codigo"].ToString();
                     if (reader.Read())
                     {
-                        cie103 = reader["codigo"].ToString();
+                        cie102 = reader["codigo"].ToString();
+                        if (reader.Read())
+                        {
+                            cie103 = reader["codigo"].ToString();
+                        }
                     }
                 }
             }
+
+            CConectorMS conectorms = new CConectorMS();
+            if (conectorms.QueryMod("UPDATE phdPaciente SET megId=" + Query.GetValor(DMedico.SelectedValue) + ",cieCodDx=" + Query.GetValor(cie10) + ",cieCodDx_1=" + Query.GetValor(cie102) + ",cieCodDx_2=" + Query.GetValor(cie103) + " WHERE pacId=" + CCDetallePaciente.IdPaciente) == -1)
+                return;
+
+            Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
+
+            ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
+            if (ingreso && (CCDetallePaciente.Edad == -1 || CCDetallePaciente.Edad > 14))
+                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
+            ((MasterPageI)Master).SetResultado(mensaje);
         }
-
-        CConectorMS conectorms = new CConectorMS();
-        if (conectorms.QueryMod("UPDATE phdPaciente SET megId=" + Query.GetValor(DMedico.SelectedValue) + ",cieCodDx=" + Query.GetValor(cie10) + ",cieCodDx_1=" + Query.GetValor(cie102) + ",cieCodDx_2=" + Query.GetValor(cie103) + " WHERE pacId=" + CCDetallePaciente.IdPaciente) == -1)
-            return;
-
-        Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
-
-        ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
-        if (ingreso && (CCDetallePaciente.Edad==-1 || CCDetallePaciente.Edad>14))
-            Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
-        ((MasterPageI)Master).SetResultado(mensaje);
         // Session["szMensaje"] = mensaje;
     }
 
@@ -493,5 +516,26 @@ public partial class paciente_ingreso : System.Web.UI.Page
         }
         // limpiamos el inactivo de los pacientes
         evento.Contenido = evento.Contenido.Replace(" (Inactivo)", "");
+    }
+    protected void BEliminar_Click(object sender, EventArgs e)
+    {
+        using (CConector conector = new CConector())
+        {
+            conector.StartTransaction();
+            if (conector.QueryMod("DELETE FROM antecedentes_ingreso WHERE ingreso_paciente=" + HIdIngreso.Value) == -1)
+                return;
+            if (conector.QueryMod("DELETE FROM revision_ingreso WHERE ingreso_paciente=" + HIdIngreso.Value) == -1)
+                return;
+            if (conector.QueryMod("DELETE FROM examen_ingreso WHERE ingreso_paciente=" + HIdIngreso.Value) == -1)
+                return;
+            if (conector.QueryMod("DELETE FROM varios_ingreso WHERE ingreso_paciente=" + HIdIngreso.Value) == -1)
+                return;
+            if (conector.QueryMod("DELETE FROM codigos_ingreso WHERE ingreso_paciente=" + HIdIngreso.Value) == -1)
+                return;
+            if (conector.QueryMod("DELETE FROM ingreso_paciente WHERE id=" + HIdIngreso.Value) == -1)
+                return;
+            conector.Commit();
+            Response.Redirect(Request.Url.ToString());
+        }
     }
 }

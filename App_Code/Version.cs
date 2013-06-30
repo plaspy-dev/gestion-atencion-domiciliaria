@@ -10,6 +10,6 @@ public class Version
 {
     static public string GetVersion()
     {
-        return "1.48";
+        return "1.49";
     }
 }

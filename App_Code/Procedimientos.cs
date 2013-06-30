@@ -383,6 +383,39 @@ public class Procedimientos
                 resultado += ")\n";
             }
         }
+
+        // buscamos los formatos CTC
+        query = new Query("formato_ctc");
+
+        query += "formato_ctc_items.nombre";
+        query += "formato_ctc_items.cantidad";
+        query += "formato_ctc_items.tiempo";
+        query += "formato_ctc_items.efecto";
+        query += "formato_ctc_items.respuesta";
+        query += "formato_ctc_items.efecto_secundario";
+
+        reader = conector.Query(query.GetSelect("formato_ctc.paciente=" + Query.GetValor(idpaciente) + " AND formato_ctc.fecha=" + Query.GetValor(CConector.GetMySQLDateFormat(fecha)), "LEFT JOIN formato_ctc_items ON (formato_ctc.id=formato_ctc_items.formato_ctc)"));
+        if (reader != null)
+        {
+            while (reader.Read())
+            {
+                resultado += reader["nombre"].ToString();
+                resultado += " ";
+                resultado += reader["cantidad"].ToString();
+                resultado += " (";
+                resultado += reader["tiempo"].ToString();
+                resultado += ")";
+                resultado += ", efecto: ";
+                resultado += reader["efecto"].ToString();
+                resultado += ", respuesta: ";
+                resultado += reader["respuesta"].ToString();
+                resultado += ", Efecto secundario: ";
+                resultado += reader["efecto_secundario"].ToString();
+                resultado += ".";
+                resultado += "\n";
+            }
+        }
+
         return resultado;
     }
 }

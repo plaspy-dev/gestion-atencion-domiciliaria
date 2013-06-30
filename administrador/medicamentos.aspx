@@ -131,9 +131,19 @@
                   &nbsp;</td>
           </tr>
           <tr>
-            <td></td>
-            <td><asp:CheckBox runat="server" ID="CAutomatica" Text="Programación automática" Visible="false" /></td>
-            <td></td>
+            <td>&nbsp;</td>
+            <td><asp:CheckBox ID="CImprimirHoja" runat="server" Text="Imprimir en una sola hoja" /></td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+              <td>
+              </td>
+              <td>
+                  <asp:CheckBox ID="CAutomatica" runat="server" Text="Programación automática" 
+                      Visible="false" />
+              </td>
+              <td>
+              </td>
           </tr>
           <tr>
               <td colspan="3">

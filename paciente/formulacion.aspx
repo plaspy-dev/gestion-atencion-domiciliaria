@@ -85,8 +85,7 @@
                 <td>
                     &nbsp;</td>
                 <td align="right">
-                    <asp:Button ID="BFormula" runat="server" CausesValidation="False" 
-                        onclick="BFormula_Click" Text="Última" /></td>
+                    <asp:Button ID="BFormula" runat="server" CausesValidation="False" onclick="BFormula_Click" Text="Última" /></td>
             </tr>
             <tr>
                 <td colspan="4">
@@ -135,9 +134,7 @@
             </tr>
             <tr>
                 <td colspan="4">
-                    <asp:GridView ID="GFormulacion" runat="server" AutoGenerateColumns="False" DataKeyNames="IdGrid"
-                                        onselectedindexchanged="GFormulacion_SelectedIndexChanged" 
-                        onrowdeleting="GFormulacion_RowDeleting" >
+                    <asp:GridView ID="GFormulacion" runat="server" AutoGenerateColumns="False" DataKeyNames="IdGrid" onselectedindexchanged="GFormulacion_SelectedIndexChanged" onrowdeleting="GFormulacion_RowDeleting" >
                                         <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
                             <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>

@@ -97,7 +97,7 @@
             mode: "exact",
             elements: "elm1",
             theme: "advanced",
-            readonly: true,
+            readonly: <%= TPlanManejo.ReadOnly ? "true" : "false" %>,
             theme_advanced_buttons1: "",
             theme_advanced_buttons2: "",
             theme_advanced_buttons3: "",
@@ -216,11 +216,10 @@
             </tr>
             <tr>
                 <td>
-                    Funcionario que atiende</td>
+                    Funcionario que atiende<asp:RequiredFieldValidator ControlToValidate="TIdFuncionario" ErrorMessage="Por favor ingrese un funcionario." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td colspan="3">
                     <asp:TextBox ID="TFuncionario" runat="server" Width="98%"></asp:TextBox>
                     <asp:TextBox ID="TIdFuncionario" runat="server" CssClass="hide"></asp:TextBox>
-                    <asp:RequiredFieldValidator ControlToValidate="TIdFuncionario" ErrorMessage="Por favor ingrese un funcionario." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                     </td>
             </tr>
             <tr>
@@ -229,24 +228,22 @@
             </tr>
             <tr>
                 <td>
-                    TA</td>
+                    TA<asp:RequiredFieldValidator ID="RequiredFieldValidator2" ControlToValidate="TTA" ErrorMessage="Por favor ingrese una TA." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td>
-                    <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>
-                    mm/Hg</td>
+                    <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>mm/Hg</td>
                 <td>
-                    FC</td>
+                    FC<asp:RequiredFieldValidator ID="RequiredFieldValidator3" ControlToValidate="TFC" ErrorMessage="Por favor ingrese una FC." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td>
-                    <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>
-                    Lat/min</td>
+                    <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>Lat/min</td>
             </tr>
             <tr>
                 <td>
-                    FR</td>
+                    FR<asp:RequiredFieldValidator ID="RequiredFieldValidator5" ControlToValidate="TFR" ErrorMessage="Por favor ingrese una FR." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td>
                     <asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>
                     Min</td>
                 <td>
-                    T</td>
+                    T<asp:RequiredFieldValidator ID="RequiredFieldValidator6" ControlToValidate="TT" ErrorMessage="Por favor ingrese una T." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td>
                     <asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox>
                     °</td>
@@ -275,11 +272,11 @@
                     &nbsp;</td>
             </tr>
             <tr>
-                <td>Motivo consulta</td>
+                <td>Motivo consulta<asp:RequiredFieldValidator ID="RequiredFieldValidator7" ControlToValidate="TMotivo" ErrorMessage="Por favor ingrese un motivo." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td colspan="3"><asp:TextBox ID="TMotivo" runat="server" Width="99%" TextMode="MultiLine"></asp:TextBox></td>
             </tr>
             <tr>
-                <td colspan="2">Datos subjetivos</td>
+                <td colspan="2">Datos subjetivos<asp:RequiredFieldValidator ID="RequiredFieldValidator8" ControlToValidate="TDatosSubjetivos" ErrorMessage="Por favor ingrese unos datos subjetivos." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td></td>
                 <td></td>
             </tr>
@@ -302,6 +299,7 @@
                     <asp:TemplateField HeaderText="Antecedentes">
                         <ItemTemplate>
                             <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
+                            <asp:RequiredFieldValidator ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         </ItemTemplate>
                         <ItemStyle Wrap="false" />
                     </asp:TemplateField>
@@ -346,7 +344,11 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
                 <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                 <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
             <Columns>
-                <asp:BoundField DataField="nombre" HeaderText="Examen físico" />
+                <asp:TemplateField HeaderText="Examen físico">
+                    <ItemTemplate>
+                        <%# Eval("nombre").ToString() %><asp:RequiredFieldValidator ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                    </ItemTemplate>
+                </asp:TemplateField>
                 <asp:TemplateField HeaderText="Nor">
                     <ItemTemplate>
                         <asp:CheckBox ID="CNor" runat="server" Checked='<%# Eval("nor").ToString()=="1" ? true : false %>' />
@@ -419,11 +421,10 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
                 </ContentTemplate>
             </asp:UpdatePanel>
             <tr>
-                <td colspan="4">Analisis</td>
+                <td colspan="4">Analisis<asp:RequiredFieldValidator ControlToValidate="TAnalisis" ErrorMessage="Por favor ingrese un análisis." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             </tr>
             <tr>
                 <td colspan="4"><asp:TextBox ID="TAnalisis" runat="server" Height="200px" TextMode="MultiLine" Width="99%"></asp:TextBox>
-                <asp:RequiredFieldValidator ControlToValidate="TAnalisis" ErrorMessage="Por favor ingrese un análisis." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 </td>
             </tr>
             <tr>
@@ -437,10 +438,11 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
             <tr>
                 <td colspan="4" align="right">
                 <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
-                <asp:Button ID="BAceptar" runat="server" onclick="BAceptar_Click" 
-            Text="Aceptar" />
-        <asp:Button ID="BCancelar" runat="server" CausesValidation="False" 
-            onclick="BCancelar_Click" Text="Cancelar" /></td>
+                <asp:Button ID="BAceptar" runat="server" onclick="BAceptar_Click" Text="Aceptar" />
+                <asp:Button ID="BCancelar" runat="server" CausesValidation="False" onclick="BCancelar_Click" Text="Cancelar" />
+                <asp:Button Text="Eliminar" runat="server" ID="BEliminar" Visible="false" OnClientClick="confirm('¿Esta seguro de eliminar esta hoja de evolución?')" 
+                        CausesValidation="false" onclick="BEliminar_Click" />
+                </td>
             </tr>
         </table>
         </ContentTemplate>

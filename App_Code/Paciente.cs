@@ -32,6 +32,7 @@ public class Paciente
     public string Grado { get; set; }
     public string Grupo { get; set; }
     public string Categoria { get; set; }
+    public DateTime FechaDefuncion { get; set; }
     public string TipoAfiliacion { get; set; }
     public ArrayList cie10 { get; set; }
     public bool Activo { get { return estado == "1"; } }
@@ -64,6 +65,13 @@ public class Paciente
     }
     public Decimal MaximoEntidad {
         get { return Entidad.GetEntidad(entidadId).MaximoEntidad; }
+    }
+
+
+    public bool IsAlive { 
+        get {
+            return FechaDefuncion == DateTime.MinValue;
+        }
     }
     
 
@@ -104,56 +112,62 @@ public class Paciente
             query["categoria"] = "phdPaciente.categoria";
             query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
 
-            CConectorMS conector = new CConectorMS();
-
-            SqlDataReader reader = conector.Query(query.GetSelect("phdPaciente.pacId=" + Query.GetValor(id) + "",
-                " LEFT JOIN phdPagoDirecto ON (phdPagoDirecto.pdirId=phdPaciente.pdirId)"));
-
-            if (reader != null && reader.Read())
+            using (CConectorMS conector = new CConectorMS())
             {
-                paciente.Id = id;
-                paciente.tipodoc= reader["tdocId"].ToString();
-                paciente.documento = reader["pacDocumento"].ToString();
-                paciente.pApellido =reader["pacPApellido"].ToString();
-                paciente.sApellido =reader["pacSApellido"].ToString();
-                paciente.pNombre =reader["pacPNombre"].ToString();
-                paciente.sNombre =reader["pacSNombre"].ToString();
-                paciente.sexoId =reader["sexoId"].ToString();
-                paciente.FechaNac =reader["pacFechaNac"].ToString();
-                paciente.Direccion =reader["pacDireccion"].ToString();
-                paciente.Telefono =reader["pacTelefono"].ToString();
-                paciente.Celular =reader["pacCelular"].ToString();
-                paciente.Carne =reader["pacCarne"].ToString();
-                paciente.Barrio =reader["pacBarrio"].ToString();
-                paciente.FamiliarResponsable =reader["pacFamilarResponsable"].ToString();
-                paciente.parentesco =reader["pacParentesco"].ToString();
-                paciente.tipopago =reader["tipopago"].ToString();
-                paciente.estado =reader["estId"].ToString();
-                paciente.entidadId =reader["entId"].ToString();
-                paciente.TipoAfiliacion = reader["szTipoAfiliacion"].ToString();
-                paciente.Categoria = reader["categoria"].ToString();
-                paciente.Grado = reader["pacGrado"].ToString();
+                SqlDataReader reader = conector.Query(query.GetSelect("phdPaciente.pacId=" + Query.GetValor(id) + "",
+                    " LEFT JOIN phdPagoDirecto ON (phdPagoDirecto.pdirId=phdPaciente.pdirId)"));
 
-                paciente.cie10 = Procedimientos.GetCodigosCIE10(id);
-
-                if (paciente.cie10.Count == 0)
+                if (reader != null && reader.Read())
                 {
-                    paciente.cie10 = Procedimientos.AddCIE10(paciente.cie10, reader["cieCodDx"].ToString());
-                    paciente.cie10 = Procedimientos.AddCIE10(paciente.cie10, reader["cieCodDx_1"].ToString());
-                    paciente.cie10 = Procedimientos.AddCIE10(paciente.cie10, reader["cieCodDx_2"].ToString());
-                }
+                    paciente.Id = id;
+                    paciente.tipodoc = reader["tdocId"].ToString();
+                    paciente.documento = reader["pacDocumento"].ToString();
+                    paciente.pApellido = reader["pacPApellido"].ToString();
+                    paciente.sApellido = reader["pacSApellido"].ToString();
+                    paciente.pNombre = reader["pacPNombre"].ToString();
+                    paciente.sNombre = reader["pacSNombre"].ToString();
+                    paciente.sexoId = reader["sexoId"].ToString();
+                    paciente.FechaNac = reader["pacFechaNac"].ToString();
+                    paciente.Direccion = reader["pacDireccion"].ToString();
+                    paciente.Telefono = reader["pacTelefono"].ToString();
+                    paciente.Celular = reader["pacCelular"].ToString();
+                    paciente.Carne = reader["pacCarne"].ToString();
+                    paciente.Barrio = reader["pacBarrio"].ToString();
+                    paciente.FamiliarResponsable = reader["pacFamilarResponsable"].ToString();
+                    paciente.parentesco = reader["pacParentesco"].ToString();
+                    paciente.tipopago = reader["tipopago"].ToString();
+                    paciente.estado = reader["estId"].ToString();
+                    paciente.entidadId = reader["entId"].ToString();
+                    paciente.TipoAfiliacion = reader["szTipoAfiliacion"].ToString();
+                    paciente.Categoria = reader["categoria"].ToString();
+                    paciente.Grado = reader["pacGrado"].ToString();
 
-                paciente.Grupo= conector.QueryString("SELECT TOP 1"
-                                        + " CASE WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<17 THEN 'Grupo 1' "
-                                        + " WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<49 THEN 'Grupo 2'"
-                                        + " WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<75 THEN 'Grupo 3'"
-                                        + " ELSE 'Grupo 4' END"
-                                        + " FROM phdDetalleAutorizacion "
-                                        + " LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=phdDetalleAutorizacion.autNumero)"
-                                        + " WHERE "
-                                        + " phdAutorizacion.pacId=" + id
-                                        + " AND phdDetalleAutorizacion.actId IN (5028,5029,5030,5031)"
-                                        + " GROUP BY phdDetalleAutorizacion.autNumero,phdAutorizacion.autFecha ORDER BY phdAutorizacion.autFecha DESC;");
+                    paciente.cie10 = Procedimientos.GetCodigosCIE10(id);
+
+                    if (paciente.cie10.Count == 0)
+                    {
+                        paciente.cie10 = Procedimientos.AddCIE10(paciente.cie10, reader["cieCodDx"].ToString());
+                        paciente.cie10 = Procedimientos.AddCIE10(paciente.cie10, reader["cieCodDx_1"].ToString());
+                        paciente.cie10 = Procedimientos.AddCIE10(paciente.cie10, reader["cieCodDx_2"].ToString());
+                    }
+
+                    try {
+                        paciente.FechaDefuncion = DateTime.MinValue;
+                        paciente.FechaDefuncion = Convert.ToDateTime(conector.QueryString("SELECT TOP 1 egrFecha FROM phdEgresos WHERE pacId=" + paciente.Id + " AND cegId=1 ORDER BY egrFecha DESC;"));
+                    } catch {}
+
+                    paciente.Grupo = conector.QueryString("SELECT TOP 1"
+                                            + " CASE WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<17 THEN 'Grupo 1' "
+                                            + " WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<49 THEN 'Grupo 2'"
+                                            + " WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<75 THEN 'Grupo 3'"
+                                            + " ELSE 'Grupo 4' END"
+                                            + " FROM phdDetalleAutorizacion "
+                                            + " LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=phdDetalleAutorizacion.autNumero)"
+                                            + " WHERE "
+                                            + " phdAutorizacion.pacId=" + id
+                                            + " AND phdDetalleAutorizacion.actId IN (5028,5029,5030,5031)"
+                                            + " GROUP BY phdDetalleAutorizacion.autNumero,phdAutorizacion.autFecha ORDER BY phdAutorizacion.autFecha DESC;");
+                }
             }
 
             HttpRuntime.Cache.Insert("p" + id, paciente);

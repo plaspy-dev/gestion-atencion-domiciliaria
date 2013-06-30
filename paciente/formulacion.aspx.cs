@@ -45,6 +45,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
     public const string idprocedimientos = "173";
     public const string iddisan = "36";
+    public const string idecopetrol = "29";
+    public const string idmedicamentosecopetrol = "269";
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -62,16 +64,19 @@ public partial class paciente_formulacion : System.Web.UI.Page
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
             if (!string.IsNullOrEmpty(Request.QueryString["fid"])) {
 
-                CConector conectormy = CConector.GetConector();
-                Query formulacion = new Query("formulacion");
+                using (CConector conectormy = new CConector())
+                {
+                    Query formulacion = new Query("formulacion");
 
-                formulacion += "paciente";
-                formulacion += "fecha";
-                formulacion += "tipo";
+                    formulacion += "paciente";
+                    formulacion += "fecha";
+                    formulacion += "tipo";
 
-                MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("id=" + Query.GetValor(Request.QueryString["fid"])));
-                if (readermysql != null && readermysql.Read()) {
-                    Response.Redirect("~/paciente/formulacion.aspx?pid=" + readermysql["paciente"].ToString() + "&f=" + string.Format("{0:d}", Convert.ToDateTime(readermysql["fecha"])) + "&tf=" + readermysql["tipo"].ToString());
+                    MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("id=" + Query.GetValor(Request.QueryString["fid"])));
+                    if (readermysql != null && readermysql.Read())
+                    {
+                        Response.Redirect("~/paciente/formulacion.aspx?pid=" + readermysql["paciente"].ToString() + "&f=" + string.Format("{0:d}", Convert.ToDateTime(readermysql["fecha"])) + "&tf=" + readermysql["tipo"].ToString());
+                    }
                 }
             }
             if (Request.QueryString["pid"] != null)
@@ -89,16 +94,25 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     if (!usuario.CanAdmin())
                     {
                         for (int i = 0; i < DTipo.Items.Count; i++) {
-                            if(CCDetallePaciente.AsegurdadorID == iddisan) {
-                                if(DTipo.Items[i].Text == "Medicamentos") {
-                                    DTipo.Items.RemoveAt(i);
+                            switch (DTipo.Items[i].Text) { 
+                                case "Medicamentos":
+                                    if(CCDetallePaciente.AsegurdadorID == iddisan || CCDetallePaciente.AsegurdadorID==idecopetrol) {
+                                        DTipo.Items.RemoveAt(i);
+                                        i--;
+                                    }
                                     break;
-                                }
-                            } else {
-                                if(DTipo.Items[i].Text == "Acuerdo 042 y 046") {
-                                    DTipo.Items.RemoveAt(i);
+                                case "Acuerdo 042 y 046":
+                                    if(CCDetallePaciente.AsegurdadorID != iddisan){
+                                        DTipo.Items.RemoveAt(i);
+                                        i--;
+                                    }
                                     break;
-                                }
+                                case "Medicamentos Ecopetrol":
+                                    if(CCDetallePaciente.AsegurdadorID != idecopetrol){
+                                        DTipo.Items.RemoveAt(i);
+                                        i--;
+                                    }
+                                    break;
                             }
                         }
                     }
@@ -112,118 +126,127 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
                     PDatos.Visible = true;
 
-                    CConectorMS conector = CConectorMS.GetConector();
-                    CConector conectormy = CConector.GetConector();
-
-                    TFecha.Text = Request.QueryString["f"];
-                    if (TFecha.Text.Length == 0)
-                        TFecha.Text = DateTime.Now.ToShortDateString();
-
-                    if (DTipo.Items.FindByValue(Request.QueryString["tf"]) != null)
-                        DTipo.SelectedValue = Request.QueryString["tf"];
-
-                    trIntensidad.Visible = DTipo.SelectedValue == idprocedimientos;
-                    TMedicamentoID.AutoPostBack = DTipo.SelectedValue == idprocedimientos;
-
-                    if (DTipo.SelectedIndex != -1)
+                    using(CConectorMS conector = new CConectorMS())
+                    using (CConector conectormy = new CConector())
                     {
-                        string singular = DTipo.SelectedItem.Text.ToLower();
-                        if (singular[singular.Length - 1] == 's')
+
+                        TFecha.Text = Request.QueryString["f"];
+                        if (TFecha.Text.Length == 0)
+                            TFecha.Text = DateTime.Now.ToShortDateString();
+
+                        if (DTipo.Items.FindByValue(Request.QueryString["tf"]) != null)
+                            DTipo.SelectedValue = Request.QueryString["tf"];
+
+                        Utilidades.GetGridColumn(GFormulacion, "Intensidad").Visible= 
+                        trIntensidad.Visible = DTipo.SelectedValue == idprocedimientos;
+
+                        TMedicamentoID.AutoPostBack = DTipo.SelectedValue == idprocedimientos;
+
+                        if (DTipo.SelectedIndex != -1)
                         {
-                            singular = DTipo.SelectedItem.Text.Substring(0, DTipo.SelectedItem.Text.Length - 1);
-                        }
-                        else singular = DTipo.SelectedItem.Text;
-                        CConector conectormysql = new CConector();
-                        GFormulacion.Columns[5].HeaderText = LPosologia.Text = conectormysql.QueryString("SELECT descripcion FROM varios WHERE id=" + DTipo.SelectedValue);
-                        if (LPosologia.Text.ToLower() != "posología") {
-                            GFormulacion.Columns[6].Visible = false;
-                            GFormulacion.Columns[7].Visible = false;
-                            trPosologia.Visible = false;
-                        }
-
-                        LFormulacion.Text = DTipo.SelectedItem.Text;
-                        LMedicamento.Text = singular;
-                        GFormulacion.Columns[2].HeaderText = singular;
-                    }
-
-                    Query formulacion = new Query("formulacion");
-
-                    formulacion += "id";
-                    formulacion += "fecha";
-                    formulacion += "codigo";
-                    formulacion += "profesional";
-                    formulacion += "autorizacion";
-
-                    MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Conector.GetDate(Convert.ToDateTime(TFecha.Text)) + "' AND tipo='" + DTipo.SelectedValue + "'"));
-                    if (readermysql != null && readermysql.Read())
-                    {
-                        string ruta = string.Format("formulacion{0}.html", CCDetallePaciente.AsegurdadorID);
-                        ((MasterPageI)Master).Imprimir(File.Exists(Server.MapPath(ruta)) ? ruta : "formulacion.html");
-
-                        BAceptar.Enabled = usuario.CanUpdate();
-                        BMasFormulacion.Enabled= usuario.CanInsert();
-
-                        GFormulacion.Columns[0].Visible = usuario.CanUpdate();
-                        GFormulacion.Columns[1].Visible = usuario.CanDelete();
-
-                        HIdFormulacion.Value = readermysql["id"].ToString();
-                        if (readermysql["autorizacion"].ToString().Length > 0)
-                        {
-                            HAutorizacion.Text = "Autorización " + readermysql["autorizacion"].ToString();
-                            HAutorizacion.NavigateUrl = "~/admisiones/autorizaciones.aspx?aut=" + readermysql["autorizacion"].ToString();
-                            ViewState["autorizacion"] = readermysql["autorizacion"].ToString();
-                        }
-                        TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
-                        ViewState["profesional"] = readermysql["profesional"].ToString();
-
-                        List<Medicamento> medicamentos = new List<Medicamento>();
-
-                        Query qmedicamentos = new Query("medicamento_formulacion");
-
-                        qmedicamentos["id"]= "medicamento_formulacion.id";
-                        qmedicamentos["idmedicamento"]="medicamento_formulacion.medicamento";
-                        qmedicamentos["formulada"]="medicamento_formulacion.formulada";
-                        qmedicamentos["posologia"]="medicamento_formulacion.posologia";
-                        qmedicamentos["nombre"]="IF(medicamentos.principio IS NULL,IF(medicamentos.concentracion IS NULL, medicamentos.nombre, CONCAT(medicamentos.nombre, ', ', medicamentos.forma, ' ',medicamentos.concentracion)),CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',IFNULL(medicamentos.forma,'')))";
-                        qmedicamentos["via"]="medicamento_formulacion.via";
-                        qmedicamentos["tiempo"]="medicamento_formulacion.tiempo";
-                        qmedicamentos["intensidad"]="medicamento_formulacion.intensidad";
-                        qmedicamentos["codigo"] = "medicamentos.codigo";
-
-                        readermysql= conectormy.Query(qmedicamentos.GetSelect("formulacion=" + HIdFormulacion.Value + " ORDER BY (codigo>900000 AND codigo<921100)"
-                            ,"LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)"));
-                        if (readermysql != null) {
-                            while (readermysql.Read()) {
-                                Medicamento info = new Medicamento(medicamentos.Count);
-                                info.Id = readermysql["id"].ToString();
-                                info.IdMedicamento = readermysql["idmedicamento"].ToString();
-                                info.Formulada = readermysql["formulada"].ToString();
-                                info.Posologia = readermysql["posologia"].ToString();
-                                info.Nombre = readermysql["nombre"].ToString();
-                                info.Via = readermysql["via"].ToString();
-                                info.Tiempo = readermysql["tiempo"].ToString();
-                                info.IdIntensidad = readermysql["intensidad"].ToString();
-                                info.Codigo = readermysql["codigo"].ToString();
-                                medicamentos.Add(info);
+                            string singular = DTipo.SelectedItem.Text.ToLower();
+                            if (singular[singular.Length - 1] == 's')
+                            {
+                                singular = DTipo.SelectedItem.Text.Substring(0, DTipo.SelectedItem.Text.Length - 1);
                             }
+                            else singular = DTipo.SelectedItem.Text;
+                            CConector conectormysql = new CConector();
+                            GFormulacion.Columns[5].HeaderText = LPosologia.Text = conectormysql.QueryString("SELECT descripcion FROM varios WHERE id=" + DTipo.SelectedValue);
+                            if (LPosologia.Text.ToLower() != "posología")
+                            {
+                                GFormulacion.Columns[6].Visible = false;
+                                GFormulacion.Columns[7].Visible = false;
+                                trPosologia.Visible = false;
+                            }
+
+                            LFormulacion.Text = DTipo.SelectedItem.Text;
+                            LMedicamento.Text = singular;
+                            GFormulacion.Columns[2].HeaderText = singular;
                         }
 
-                        HFormulacion.Value = Serializar.SerializeBinary(medicamentos);
-                        GFormulacion.DataSource = medicamentos;
-                        GFormulacion.DataBind();
+                        Query formulacion = new Query("formulacion");
 
-                        ((MasterPageI)Master).SetModificacion(HIdFormulacion.Value);
-                    } else {
+                        formulacion += "id";
+                        formulacion += "fecha";
+                        formulacion += "codigo";
+                        formulacion += "profesional";
+                        formulacion += "autorizacion";
 
-                        BFormula.Visible = DTipo.SelectedValue != idprocedimientos && conectormy.QueryString("SELECT id FROM formulacion WHERE paciente=" + CCDetallePaciente.IdPaciente + " AND tipo='" + DTipo.SelectedValue + "' LIMIT 1;").Length != 0;
+                        MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Conector.GetDate(Convert.ToDateTime(TFecha.Text)) + "' AND tipo='" + DTipo.SelectedValue + "'"));
+                        if (readermysql != null && readermysql.Read())
+                        {
+                            string ruta = string.Format("formulacion{0}.html", CCDetallePaciente.AsegurdadorID);
+                            ((MasterPageI)Master).Imprimir(File.Exists(Server.MapPath(ruta)) ? ruta : "formulacion.html");
+
+                            BAceptar.Enabled = usuario.CanUpdate();
+                            BMasFormulacion.Enabled = usuario.CanInsert();
+
+                            GFormulacion.Columns[0].Visible = usuario.CanUpdate();
+                            GFormulacion.Columns[1].Visible = usuario.CanDelete();
+
+                            HIdFormulacion.Value = readermysql["id"].ToString();
+                            if (readermysql["autorizacion"].ToString().Length > 0)
+                            {
+                                HAutorizacion.Text = "Autorización " + readermysql["autorizacion"].ToString();
+                                HAutorizacion.NavigateUrl = "~/admisiones/autorizaciones.aspx?aut=" + readermysql["autorizacion"].ToString();
+                                ViewState["autorizacion"] = readermysql["autorizacion"].ToString();
+                            }
+                            TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
+                            ViewState["profesional"] = readermysql["profesional"].ToString();
+
+                            List<Medicamento> medicamentos = new List<Medicamento>();
+
+                            Query qmedicamentos = new Query("medicamento_formulacion");
+
+                            qmedicamentos["id"] = "medicamento_formulacion.id";
+                            qmedicamentos["idmedicamento"] = "medicamento_formulacion.medicamento";
+                            qmedicamentos["formulada"] = "medicamento_formulacion.formulada";
+                            qmedicamentos["posologia"] = "medicamento_formulacion.posologia";
+                            qmedicamentos["nombre"] = "IF(medicamentos.principio IS NULL,IF(medicamentos.concentracion IS NULL, medicamentos.nombre, CONCAT(medicamentos.nombre, ', ', medicamentos.forma, ' ',medicamentos.concentracion)),CONCAT(medicamentos.nombre,' [',medicamentos.principio,'], ',medicamentos.concentracion,'-',IFNULL(medicamentos.forma,'')))";
+                            qmedicamentos["via"] = "medicamento_formulacion.via";
+                            qmedicamentos["tiempo"] = "medicamento_formulacion.tiempo";
+                            qmedicamentos["intensidad"] = "medicamento_formulacion.intensidad";
+                            qmedicamentos["codigo"] = "IF(hoja_sola IS NULL, medicamentos.codigo, 'hoja_sola')";
+
+                            readermysql = conectormy.Query(qmedicamentos.GetSelect("formulacion=" + HIdFormulacion.Value + " ORDER BY medicamentos.hoja_sola IS NULL OR (codigo>900000 AND codigo<921100)"
+                                , "LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)"));
+                            if (readermysql != null)
+                            {
+                                while (readermysql.Read())
+                                {
+                                    Medicamento info = new Medicamento(medicamentos.Count);
+                                    info.Id = readermysql["id"].ToString();
+                                    info.IdMedicamento = readermysql["idmedicamento"].ToString();
+                                    info.Formulada = readermysql["formulada"].ToString();
+                                    info.Posologia = readermysql["posologia"].ToString();
+                                    info.Nombre = readermysql["nombre"].ToString();
+                                    info.Via = readermysql["via"].ToString();
+                                    info.Tiempo = readermysql["tiempo"].ToString();
+                                    info.IdIntensidad = readermysql["intensidad"].ToString();
+                                    info.Codigo = readermysql["codigo"].ToString();
+                                    medicamentos.Add(info);
+                                }
+                            }
+
+                            HFormulacion.Value = Serializar.SerializeBinary(medicamentos);
+                            GFormulacion.DataSource = medicamentos;
+                            GFormulacion.DataBind();
+
+                            ((MasterPageI)Master).SetModificacion(HIdFormulacion.Value);
+                        }
+                        else
+                        {
+
+                            BFormula.Visible = DTipo.SelectedValue != idprocedimientos && conectormy.QueryString("SELECT id FROM formulacion WHERE paciente=" + CCDetallePaciente.IdPaciente + " AND tipo='" + DTipo.SelectedValue + "' LIMIT 1;").Length != 0;
+                        }
+
+                        GFormulaciones.DataBind();
+                        LFormulaciones.Text = GFormulaciones.Rows.Count + " Orden";
+                        LFormulaciones.Text += GFormulaciones.Rows.Count == 1 ? "" : "es";
+                        LFormulaciones.Text += " médica";
+                        LFormulaciones.Text += GFormulaciones.Rows.Count == 1 ? "" : "s";
+                        PFormulaciones.Visible = GFormulaciones.Rows.Count > 0;
                     }
-
-                    GFormulaciones.DataBind();
-                    LFormulaciones.Text = GFormulaciones.Rows.Count + " Orden";
-                    LFormulaciones.Text += GFormulaciones.Rows.Count == 1 ? "" : "es";
-                    LFormulaciones.Text += " médica";
-                    LFormulaciones.Text += GFormulaciones.Rows.Count == 1 ? "" : "s";
-                    PFormulaciones.Visible = GFormulaciones.Rows.Count > 0;
                 }
             }
         }
@@ -461,6 +484,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 formulacion["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
                 formulacion["tipo"] = DTipo.SelectedValue;
                 formulacion["profesional"] = CUsuario.GetUsuario()["personal"];
+                formulacion["asegurador"] = CCDetallePaciente.AsegurdadorID;
 
                 /*query["autFecha"] = fecha.ToShortDateString();
                 query["autFechaVenc"] = fecha.AddDays(30).ToShortDateString();*/
@@ -622,12 +646,12 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
         for (; i < GFormulacion.Rows.Count && i < inicio + numero_medicamentos; i++)
         {
-            resultado += "<tr><td>" + GFormulacion.Rows[i].Cells[3].Text + "</td>";
-            resultado += "<td>" + NumerosALetras.ToLetras(Convert.ToInt32(GFormulacion.Rows[i].Cells[5].Text)).ToUpper() + " (" + GFormulacion.Rows[i].Cells[5].Text + ")</td>";
-            resultado += "<td>" + GFormulacion.Rows[i].Cells[6].Text + "</td>";
+            resultado += "<tr><td>" + GFormulacion.Rows[i].Cells[2].Text + "</td>";
+            resultado += "<td>" + NumerosALetras.ToLetras(Convert.ToInt32(GFormulacion.Rows[i].Cells[4].Text)).ToUpper() + " (" + GFormulacion.Rows[i].Cells[4].Text + ")</td>";
+            resultado += "<td>" + GFormulacion.Rows[i].Cells[5].Text + "</td>";
             if(trPosologia.Visible) {
+                resultado += "<td>" + GFormulacion.Rows[i].Cells[6].Text + "</td>";
                 resultado += "<td>" + GFormulacion.Rows[i].Cells[7].Text + "</td>";
-                resultado += "<td>" + GFormulacion.Rows[i].Cells[8].Text + "</td>";
             }
             if(trIntensidad.Visible) {
                 resultado += "<td>" + GFormulacion.Rows[i].Cells[Utilidades.GetGridColumnIndex(GFormulacion, "Intensidad")].Text + "</td>";
@@ -699,10 +723,12 @@ public partial class paciente_formulacion : System.Web.UI.Page
             }
         }
 
+        int total_medicamentos = 5;
         int numero_medicamentos = 5;
+
         if (CCDetallePaciente.AsegurdadorID == iddisan)
         { // disan
-            numero_medicamentos = 3;
+            total_medicamentos = numero_medicamentos = 3;
         }
 
         int paginas = (int)Math.Ceiling((double)GFormulacion.Rows.Count / numero_medicamentos);
@@ -710,14 +736,29 @@ public partial class paciente_formulacion : System.Web.UI.Page
         {
             paginas = 0;
             numero_medicamentos = 1;
-            for(int i=0; i<GFormulacion.Rows.Count; i++) {
+            for (int i = 0; i < GFormulacion.Rows.Count; i++)
+            {
                 paginas++;
-                if(EsLaboratorio(i)) {
-                    i += 4;
+                if (EsLaboratorio(i))
+                {
+                    i += total_medicamentos - 1;
                     continue;
                 }
             }
-            numero_medicamentos = EsLaboratorio(0) ? 5 : 1;
+            numero_medicamentos = EsLaboratorio(0) ? total_medicamentos : 1;
+        } else { // para el resto
+            paginas = 0;
+            numero_medicamentos = 1;
+            for (int i = 0; i < GFormulacion.Rows.Count; i++)
+            {
+                paginas++;
+                if (!UnaSolaHoja(i))
+                {
+                    i += total_medicamentos - 1;
+                    continue;
+                }
+            }
+            numero_medicamentos = UnaSolaHoja(0) ? 1 : total_medicamentos;
         }
 
         if(paginas>1) {
@@ -728,12 +769,14 @@ public partial class paciente_formulacion : System.Web.UI.Page
             string contenido = "";
             int inicial = numero_medicamentos;
             if (DTipo.SelectedValue == idprocedimientos)
-                inicial = EsLaboratorio(0) ? 5 : 1;
+                inicial = EsLaboratorio(0) ? total_medicamentos : 1;
 
             for(int i=1; i<paginas; i++) {
 
                 if (DTipo.SelectedValue == idprocedimientos) // procedimientos
-                    numero_medicamentos = EsLaboratorio(i * numero_medicamentos) ? 5 : 1;
+                    numero_medicamentos = EsLaboratorio(i * numero_medicamentos) ? total_medicamentos : 1;
+                else numero_medicamentos = UnaSolaHoja(i * numero_medicamentos) ? 1 : total_medicamentos;
+
                 contenido += contenidoreal.Replace("$szFormulacion$", RenderPage(inicial, numero_medicamentos))
                     .Replace("$szConsecutivo$", HIdFormulacion.Value + "-" + (i+1));
                 inicial += numero_medicamentos;
@@ -741,16 +784,38 @@ public partial class paciente_formulacion : System.Web.UI.Page
             evento.Contenido= evento.Contenido.Insert(posf + 6, contenido);
         }
         if (DTipo.SelectedValue == idprocedimientos) // procedimientos
-            numero_medicamentos = EsLaboratorio(0) ? 5 : 1;
+            numero_medicamentos = EsLaboratorio(0) ? total_medicamentos : 1;
+        else numero_medicamentos = UnaSolaHoja(0) ? 1 : total_medicamentos;
         // aqui modificamos la primera pagina.
         evento.Contenido = evento.Contenido.Replace("$szFormulacion$", RenderPage(0, numero_medicamentos))
             .Replace("$szConsecutivo$", HIdFormulacion.Value + "-1");
     }
 
+    protected bool UnaSolaHoja(int posicion) {
+        try
+        {
+            List<Medicamento> medicamentos = Serializar.DesSerializeBinary<List<Medicamento>>(HFormulacion.Value);
+            List<Medicamento> resultado = (from t in medicamentos
+                                           where t.IdGrid.ToString() == GFormulacion.DataKeys[posicion].Value.ToString()
+                                           select t).ToList();
+            Medicamento info = resultado.First();
+
+            return info.Codigo == "hoja_sola";
+        }
+        catch { }
+        return false;
+    }
+
     protected bool EsLaboratorio(int posicion) {
         try
         {
-            int codigo = Convert.ToInt32(GFormulacion.DataKeys[posicion].Values["codigo"]);
+            List<Medicamento> medicamentos = Serializar.DesSerializeBinary<List<Medicamento>>(HFormulacion.Value);
+            List<Medicamento> resultado = (from t in medicamentos
+                                           where t.IdGrid.ToString() == GFormulacion.DataKeys[posicion].Value.ToString()
+                                           select t).ToList();
+            Medicamento info = resultado.First();
+
+            int codigo = Convert.ToInt32(info.Codigo);
             if (codigo > 900000 && codigo < 921100)
             { // es un laboratorio
                 return true;
@@ -762,29 +827,34 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
     protected void BFormula_Click(object sender, EventArgs e)
     {
-        CConector conector = new CConector();
-        string id= conector.QueryString("SELECT id FROM formulacion WHERE paciente=" + CCDetallePaciente.IdPaciente + " AND tipo='" + DTipo.SelectedValue + "' ORDER BY fecha DESC LIMIT 1;");
-        if(id.Length!=0) {
+        using (CConector conector = new CConector())
+        {
+            string id = conector.QueryString("SELECT id FROM formulacion WHERE paciente=" + CCDetallePaciente.IdPaciente + " AND tipo='" + DTipo.SelectedValue + "' ORDER BY fecha DESC LIMIT 1;");
+            if (id.Length != 0)
+            {
 
-            Query medicamento = new Query("medicamento_formulacion");
+                Query medicamento = new Query("medicamento_formulacion");
 
-            medicamento+="medicamento";
-            medicamento+="formulada";
-            medicamento+="posologia";
-            medicamento+="via";
-            medicamento+="tiempo";
+                medicamento += "medicamento";
+                medicamento += "formulada";
+                medicamento += "posologia";
+                medicamento += "via";
+                medicamento += "tiempo";
 
-            MySqlDataReader reader = conector.Query(medicamento.GetSelect("formulacion=" + id));
-            if(reader!=null) {
-                while(reader.Read()) {
-                    
-                    TMedicamentoID.Text= reader["medicamento"].ToString();
-                    TCantidad.Text = reader["formulada"].ToString();
-                    TPosologia.Text = reader["posologia"].ToString();
-                    TVia.Text = reader["via"].ToString();
-                    TTiempo.Text = reader["tiempo"].ToString();
+                MySqlDataReader reader = conector.Query(medicamento.GetSelect("formulacion=" + id));
+                if (reader != null)
+                {
+                    while (reader.Read())
+                    {
 
-                    BMasFormulacion_Click(sender, e);
+                        TMedicamentoID.Text = reader["medicamento"].ToString();
+                        TCantidad.Text = reader["formulada"].ToString();
+                        TPosologia.Text = reader["posologia"].ToString();
+                        TVia.Text = reader["via"].ToString();
+                        TTiempo.Text = reader["tiempo"].ToString();
+
+                        BMasFormulacion_Click(sender, e);
+                    }
                 }
             }
         }
