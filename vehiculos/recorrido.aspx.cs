@@ -51,37 +51,43 @@ public partial class vehiculos_recorrido : System.Web.UI.Page
         if (!IsValid)
             return;
         Query query = new Query("vehRecorrido");
-        CConectorMS conector = new CConectorMS();
+        using (CConectorMS conector = new CConectorMS())
+        {
 
-        query["vrcFecha"] = TFecha.Text;
-        query["vehPlaca"] = DVehiculo.SelectedValue;
-        query["perId"] = DConductor.SelectedValue;
-        query["vrcDestino"] = TLugar.Text;
-        query["vrcActividad"] = TActividad.Text;
-        query["perIdProf"] = DProfesional.SelectedValue;
-        query["vrcHoraLleg"] = TLlegada.Text;
-        query["vrcHoraSal"] = TSalida.Text;
-        query["vrcObservacion"] = TObservaciones.Text;
+            query["vrcFecha"] = TFecha.Text;
+            query["vehPlaca"] = DVehiculo.SelectedValue;
+            query["perId"] = DConductor.SelectedValue;
+            query["vrcDestino"] = TLugar.Text;
+            query["vrcActividad"] = TActividad.Text;
+            query["perIdProf"] = DProfesional.SelectedValue;
+            query["vrcHoraLleg"] = TLlegada.Text;
+            query["vrcHoraSal"] = TSalida.Text;
+            query["vrcObservacion"] = TObservaciones.Text;
 
-        string id="";
+            string id = "";
 
-        if(GRecorrido.SelectedIndex==-1) {
+            if (GRecorrido.SelectedIndex == -1)
+            {
 
-            query.AddCampo("segFechaRegistro","getdate()", false);
-            query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
+                query.AddCampo("segFechaRegistro", "getdate()", false);
+                query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
 
-            int res = conector.QueryMod(query.GetInsert(), true);
-            if (res == -1)
-                return;
-            id= res.ToString();
-        } else {
-            id = GRecorrido.SelectedDataKey.Values[0].ToString();
-            if (conector.QueryMod(query.GetUpdate("vrcId=" + id)) == -1)
-                return;
+                int res = conector.QueryMod(query.GetInsert(), true);
+                if (res == -1)
+                    return;
+                id = res.ToString();
+            }
+            else
+            {
+                id = GRecorrido.SelectedDataKey.Values[0].ToString();
+                if (conector.QueryMod(query.GetUpdate("vrcId=" + id)) == -1)
+                    return;
+            }
+
+            using(CConector conectorm= new CConector()) 
+                if (conectorm.InsertModificacion(id) == -1)
+                    return;
         }
-
-        if (new CConector().InsertModificacion(id) == -1)
-            return;
         Session["szMensaje"] = "Recorrido de " + DVehiculo.Text + " editado.";
         Response.Redirect(Request.Url.AbsolutePath + "?f=" + TFecha.Text);
     }

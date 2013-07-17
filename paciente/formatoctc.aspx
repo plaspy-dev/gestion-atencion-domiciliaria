@@ -20,8 +20,8 @@ addFunctionToStart(function() {
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
-<!--<asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional">
-<ContentTemplate>-->
+<asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional">
+<ContentTemplate>
     <asp:HiddenField ID="HIdFormulacion" runat="server" />
     <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
     <table>
@@ -61,7 +61,7 @@ addFunctionToStart(function() {
                         <asp:SqlDataSource ID="SFormulaciones" runat="server" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT formato_ctc.fecha,COUNT(*) AS cantidad
+                            SelectCommand="SELECT formato_ctc.fecha,COUNT(formato_ctc_items.id) AS cantidad
                                         FROM formato_ctc
                                         LEFT JOIN formato_ctc_items ON (formato_ctc_items.formato_ctc=formato_ctc.id)
                                         WHERE formato_ctc.paciente=@paciente
@@ -142,6 +142,6 @@ addFunctionToStart(function() {
                 </td>
             </tr>
         </table>
-<!--</ContentTemplate>
-</asp:UpdatePanel>-->
+</ContentTemplate>
+</asp:UpdatePanel>
 </asp:Content>

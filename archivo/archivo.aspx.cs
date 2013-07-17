@@ -26,33 +26,35 @@ public partial class archivo_archivo : System.Web.UI.Page
             if (!string.IsNullOrEmpty(Request.QueryString["aid"]))
             {
                 Query query = new Query("arcArchivoGestion");
-                CConectorMS conector = new CConectorMS();
-
-                query += "arcArchivoGestion.arcId";
-                query += "arcArchivoGestion.pacId";
-                query["fecha"] = "REPLACE(STR(CAST(arcArchivoGestion.arcMes AS varchar), 2), SPACE(1), '0') + '/' + CAST(arcArchivoGestion.arcAnio AS varchar)";
-                query += "arcArchivoGestion.arcFactura";
-                query += "arcArchivoGestion.arcAZ";
-                query += "arcArchivoGestion.arcObservaciones";
-
-                SqlDataReader reader = conector.Query(query.GetSelect("arcId=" + Query.GetValor(Request.QueryString["aid"])));
-                if (reader != null && reader.Read())
+                using (CConectorMS conector = new CConectorMS())
                 {
-                    ViewState["id"] = reader["arcId"].ToString();
-                    TFecha.Text = reader["fecha"].ToString();
-                    TObservaciones.Text = reader["arcObservaciones"].ToString();
-                    TFactura.Text = reader["arcFactura"].ToString();
-                    TAZ.Text = reader["arcAZ"].ToString();
-                    TPacienteID.Text = reader["pacId"].ToString();
-                    TPaciente.Text = Paciente.GetPaciente(TPacienteID.Text).NombreCompleto;
 
-                    BAceptar.Enabled = usuario.CanUpdate();
-                    BMas.Visible = true;
-                    BMas.Enabled = usuario.CanInsert();
+                    query += "arcArchivoGestion.arcId";
+                    query += "arcArchivoGestion.pacId";
+                    query["fecha"] = "REPLACE(STR(CAST(arcArchivoGestion.arcMes AS varchar), 2), SPACE(1), '0') + '/' + CAST(arcArchivoGestion.arcAnio AS varchar)";
+                    query += "arcArchivoGestion.arcFactura";
+                    query += "arcArchivoGestion.arcAZ";
+                    query += "arcArchivoGestion.arcObservaciones";
+
+                    SqlDataReader reader = conector.Query(query.GetSelect("arcId=" + Query.GetValor(Request.QueryString["aid"])));
+                    if (reader != null && reader.Read())
+                    {
+                        ViewState["id"] = reader["arcId"].ToString();
+                        TFecha.Text = reader["fecha"].ToString();
+                        TObservaciones.Text = reader["arcObservaciones"].ToString();
+                        TFactura.Text = reader["arcFactura"].ToString();
+                        TAZ.Text = reader["arcAZ"].ToString();
+                        TPacienteID.Text = reader["pacId"].ToString();
+                        TPaciente.Text = Paciente.GetPaciente(TPacienteID.Text).NombreCompleto;
+
+                        BAceptar.Enabled = usuario.CanUpdate();
+                        BMas.Visible = true;
+                        BMas.Enabled = usuario.CanInsert();
+                    }
                 }
+                ((MasterPageI)Master).Excel(GResultados);
+                ((MasterPageI)Master).Imprimir(GResultados);
             }
-            ((MasterPageI)Master).Excel(GResultados);
-            ((MasterPageI)Master).Imprimir(GResultados);
         }
         Utilidades.GetRowsCount(GResultados, LTotal);
     }
@@ -78,47 +80,50 @@ public partial class archivo_archivo : System.Web.UI.Page
             return;
 
         Query query = new Query("arcArchivoGestion");
-        CConectorMS conector = new CConectorMS();
-
-        string antigua=conector.QueryString(string.Format("SELECT arcId FROM arcArchivoGestion WHERE arcFactura={0}", Query.GetValor(TFactura.Text)));
-        if (antigua.Length > 0)
+        using (CConectorMS conector = new CConectorMS())
         {
-            if (string.IsNullOrEmpty((string)ViewState["id"]) || antigua!=ViewState["id"].ToString())
+
+            string antigua = conector.QueryString(string.Format("SELECT arcId FROM arcArchivoGestion WHERE arcFactura={0}", Query.GetValor(TFactura.Text)));
+            if (antigua.Length > 0)
             {
-                LMensaje.Text = "Ya existe un archivo con la factura '" + TFactura.Text + "'";
-                return;
+                if (string.IsNullOrEmpty((string)ViewState["id"]) || antigua != ViewState["id"].ToString())
+                {
+                    LMensaje.Text = "Ya existe un archivo con la factura '" + TFactura.Text + "'";
+                    return;
+                }
             }
+
+            conector.StartTransaction();
+
+            query["arcMes"] = TFecha.Text.Split('/')[0];
+            query["arcAnio"] = TFecha.Text.Split('/')[1];
+            query["arcObservaciones"] = TObservaciones.Text;
+            query["pacId"] = TPacienteID.Text;
+            query["arcFactura"] = TFactura.Text;
+            query["arcAZ"] = TAZ.Text;
+            query["tipo"] = DTipoArchivo.SelectedValue;
+
+            if (string.IsNullOrEmpty((string)ViewState["id"]))
+            {
+                query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
+                query["segFechaIngreso"] = "GETDATE()";
+
+                int res = conector.QueryMod(query.GetInsert());
+                if (res == -1)
+                    return;
+                ViewState["id"] = res.ToString();
+            }
+            else
+            {
+                if (conector.QueryMod(query.GetUpdate("arcId=" + ViewState["id"].ToString())) == -1)
+                    return;
+            }
+            using(CConector conectorm= new CConector()) 
+                if (conectorm.InsertModificacion(ViewState["id"].ToString()) == -1)
+                    return;
+
+            conector.Commit();
         }
-
-        conector.StartTransaction();
-
-        query["arcMes"] = TFecha.Text.Split('/')[0];
-        query["arcAnio"] = TFecha.Text.Split('/')[1];
-        query["arcObservaciones"] = TObservaciones.Text;
-        query["pacId"] = TPacienteID.Text;
-        query["arcFactura"] = TFactura.Text;
-        query["arcAZ"] = TAZ.Text;
-        query["tipo"] = DTipoArchivo.SelectedValue;
-
-        if (string.IsNullOrEmpty((string)ViewState["id"]))
-        {
-            query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
-            query["segFechaIngreso"] = "GETDATE()";
-
-            int res = conector.QueryMod(query.GetInsert());
-            if (res == -1)
-                return;
-            ViewState["id"] = res.ToString();
-        }
-        else
-        {
-            if (conector.QueryMod(query.GetUpdate("arcId=" + ViewState["id"].ToString())) == -1)
-                return;
-        }
-        if (new CConector().InsertModificacion(ViewState["id"].ToString()) == -1)
-            return;
-
-        conector.Commit();
         ((MasterPageI)Master).SetResultado("Archivo editada.");
     }
 
@@ -144,26 +149,28 @@ public partial class archivo_archivo : System.Web.UI.Page
         if (!IsValid)
             return;
 
-        CConectorMS conector = new CConectorMS();
-        Query query = new Query("prestamo_archivo");
-
-        query["archivo"] = Request.QueryString["aid"];
-        query["tipo"] = DTipo.SelectedValue;
-        query["solicitadopor"] = TSolicitadoPor.Text;
-        query["solicitud"] = TFechaPrestamos.Text;
-        query["entrega"] = TEntrega.Text;
-        query["devolucion"] = TDevolucion.Text;
-        query["objeto"] = TObjeto.Text;
-
-        if (GPrestamos.SelectedIndex == -1)
+        using (CConectorMS conector = new CConectorMS())
         {
-            if (conector.QueryMod(query.GetInsert()) == -1)
-                return;
-        }
-        else
-        {
-            if (conector.QueryMod(query.GetUpdate("id=" + GPrestamos.DataKeys[GPrestamos.SelectedIndex].Value.ToString())) == -1)
-                return;
+            Query query = new Query("prestamo_archivo");
+
+            query["archivo"] = Request.QueryString["aid"];
+            query["tipo"] = DTipo.SelectedValue;
+            query["solicitadopor"] = TSolicitadoPor.Text;
+            query["solicitud"] = TFechaPrestamos.Text;
+            query["entrega"] = TEntrega.Text;
+            query["devolucion"] = TDevolucion.Text;
+            query["objeto"] = TObjeto.Text;
+
+            if (GPrestamos.SelectedIndex == -1)
+            {
+                if (conector.QueryMod(query.GetInsert()) == -1)
+                    return;
+            }
+            else
+            {
+                if (conector.QueryMod(query.GetUpdate("id=" + GPrestamos.DataKeys[GPrestamos.SelectedIndex].Value.ToString())) == -1)
+                    return;
+            }
         }
 
         GPrestamos.DataBind();

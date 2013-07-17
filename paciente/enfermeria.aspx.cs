@@ -29,97 +29,98 @@ public partial class paciente_enfermeria : System.Web.UI.Page
 
             BFecha.Enabled = false;
 
-            CConectorMS conector = CConectorMS.GetConector();
-            CConector conectormy = CConector.GetConector();
-
-            if (Request.QueryString["pid"] != null)
+            using (CConector conectormy = new CConector())
             {
-                CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
-                if (CCDetallePaciente.IdPaciente.Length == 0)
+
+                if (Request.QueryString["pid"] != null)
                 {
-                    Response.Redirect(Request.Url.AbsolutePath);
-                }
-                else
-                {
-                    ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
-
-                    SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
-                    SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
-
-                    PDatos.Visible = true;
-
-                    TFecha.Text = Request.QueryString["f"];
-                    if (TFecha.Text.Length == 0)
-                        TFecha.Text = DateTime.Now.ToShortDateString();
-
-                    BAceptar.Enabled = usuario.CanInsert();
-                    BMasControlLiquidosA.Enabled = usuario.CanInsert();
-                    BMaSControlLiquidosE.Enabled = usuario.CanInsert();
-                    BMasMedicamentos.Enabled = usuario.CanInsert();
-                    BMasSVital.Enabled = usuario.CanInsert();
-                    BMasBitacora.Enabled = usuario.CanInsert();
-                    TFecha.Focus();
-
-                    BFecha.Enabled = true;
-
-                    Query hoja = new Query("hoja_enfermeria");
-
-                    hoja += "id";
-                    hoja += "fecha";
-                    hoja += "diagnostico";
-                    hoja += "dieta";
-
-                    MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + CConector.GetDate(Convert.ToDateTime(TFecha.Text)) + "'"));
-                    if (readermysql != null && readermysql.Read())
+                    CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
+                    if (CCDetallePaciente.IdPaciente.Length == 0)
                     {
-                        HIdHoja.Value = readermysql["id"].ToString();
-                        TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
-                        DDieta.Text = readermysql["dieta"].ToString();
-                        
-                        DDieta.Focus();
+                        Response.Redirect(Request.Url.AbsolutePath);
                     }
-                    if (HIdHoja.Value.Length > 0)
+                    else
                     {
-                        ((MasterPageI)Master).Imprimir();
+                        ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
 
-                        Query valoracion = new Query("valoracion_hoja_enfermeria");
-                        
-                        valoracion += "id";
-                        valoracion += "neurologico";
-                        valoracion += "cabeza";
-                        valoracion += "cuello";
-                        valoracion += "torax";
-                        valoracion += "abdomen";
-                        valoracion += "msss";
-                        valoracion += "msls";
-                        valoracion += "genitourinario";
-                        valoracion += "observaciones";
+                        SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
+                        SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
 
-                        readermysql = conectormy.Query(valoracion.GetSelect("hoja_enfermeria='" + HIdHoja.Value + "'"));
+                        PDatos.Visible = true;
+
+                        TFecha.Text = Request.QueryString["f"];
+                        if (TFecha.Text.Length == 0)
+                            TFecha.Text = DateTime.Now.ToShortDateString();
+
+                        BAceptar.Enabled = usuario.CanInsert();
+                        BMasControlLiquidosA.Enabled = usuario.CanInsert();
+                        BMaSControlLiquidosE.Enabled = usuario.CanInsert();
+                        BMasMedicamentos.Enabled = usuario.CanInsert();
+                        BMasSVital.Enabled = usuario.CanInsert();
+                        BMasBitacora.Enabled = usuario.CanInsert();
+                        TFecha.Focus();
+
+                        BFecha.Enabled = true;
+
+                        Query hoja = new Query("hoja_enfermeria");
+
+                        hoja += "id";
+                        hoja += "fecha";
+                        hoja += "diagnostico";
+                        hoja += "dieta";
+
+                        MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + CConector.GetDate(Convert.ToDateTime(TFecha.Text)) + "'"));
                         if (readermysql != null && readermysql.Read())
                         {
-                            BAceptar.Enabled = usuario.CanUpdate();
-                            BMasControlLiquidosA.Enabled = usuario.CanUpdate();
-                            BMaSControlLiquidosE.Enabled = usuario.CanUpdate();
-                            BMasMedicamentos.Enabled = usuario.CanUpdate();
-                            BMasSVital.Enabled = usuario.CanUpdate();
-                            BMasBitacora.Enabled = usuario.CanUpdate();
+                            HIdHoja.Value = readermysql["id"].ToString();
+                            TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
+                            DDieta.Text = readermysql["dieta"].ToString();
 
-                            GSignoVital.Columns[0].Visible = GControlLiquidosA.Columns[0].Visible = GControlLiquidosE.Columns[0].Visible = GMedicamentos.Columns[0].Visible = GBitacora.Columns[0].Visible = usuario.CanUpdate();
-                            GSignoVital.Columns[1].Visible = GControlLiquidosA.Columns[1].Visible = GControlLiquidosE.Columns[1].Visible = GMedicamentos.Columns[1].Visible = GBitacora.Columns[1].Visible = usuario.CanDelete();
+                            DDieta.Focus();
+                        }
+                        if (HIdHoja.Value.Length > 0)
+                        {
+                            ((MasterPageI)Master).Imprimir();
 
-                            HIdValoracion.Value = readermysql["id"].ToString();
-                            TNeurologico.Text= readermysql["neurologico"].ToString();
-                            TCabeza.Text = readermysql["cabeza"].ToString();
-                            TCuello.Text = readermysql["cuello"].ToString();
-                            TTorax.Text = readermysql["torax"].ToString();
-                            TAbdomen.Text = readermysql["abdomen"].ToString();
-                            TMsss.Text = readermysql["msss"].ToString();
-                            TMsls.Text = readermysql["msls"].ToString();
-                            TGenitourinario.Text = readermysql["genitourinario"].ToString();
-                            TObservaciones.Text = readermysql["observaciones"].ToString();
+                            Query valoracion = new Query("valoracion_hoja_enfermeria");
 
-                            ((MasterPageI)Master).SetModificacion(HIdValoracion.Value);
+                            valoracion += "id";
+                            valoracion += "neurologico";
+                            valoracion += "cabeza";
+                            valoracion += "cuello";
+                            valoracion += "torax";
+                            valoracion += "abdomen";
+                            valoracion += "msss";
+                            valoracion += "msls";
+                            valoracion += "genitourinario";
+                            valoracion += "observaciones";
+
+                            readermysql = conectormy.Query(valoracion.GetSelect("hoja_enfermeria='" + HIdHoja.Value + "'"));
+                            if (readermysql != null && readermysql.Read())
+                            {
+                                BAceptar.Enabled = usuario.CanUpdate();
+                                BMasControlLiquidosA.Enabled = usuario.CanUpdate();
+                                BMaSControlLiquidosE.Enabled = usuario.CanUpdate();
+                                BMasMedicamentos.Enabled = usuario.CanUpdate();
+                                BMasSVital.Enabled = usuario.CanUpdate();
+                                BMasBitacora.Enabled = usuario.CanUpdate();
+
+                                GSignoVital.Columns[0].Visible = GControlLiquidosA.Columns[0].Visible = GControlLiquidosE.Columns[0].Visible = GMedicamentos.Columns[0].Visible = GBitacora.Columns[0].Visible = usuario.CanUpdate();
+                                GSignoVital.Columns[1].Visible = GControlLiquidosA.Columns[1].Visible = GControlLiquidosE.Columns[1].Visible = GMedicamentos.Columns[1].Visible = GBitacora.Columns[1].Visible = usuario.CanDelete();
+
+                                HIdValoracion.Value = readermysql["id"].ToString();
+                                TNeurologico.Text = readermysql["neurologico"].ToString();
+                                TCabeza.Text = readermysql["cabeza"].ToString();
+                                TCuello.Text = readermysql["cuello"].ToString();
+                                TTorax.Text = readermysql["torax"].ToString();
+                                TAbdomen.Text = readermysql["abdomen"].ToString();
+                                TMsss.Text = readermysql["msss"].ToString();
+                                TMsls.Text = readermysql["msls"].ToString();
+                                TGenitourinario.Text = readermysql["genitourinario"].ToString();
+                                TObservaciones.Text = readermysql["observaciones"].ToString();
+
+                                ((MasterPageI)Master).SetModificacion(HIdValoracion.Value);
+                            }
                         }
                     }
                 }
@@ -136,73 +137,75 @@ public partial class paciente_enfermeria : System.Web.UI.Page
         if (!IsValid)
             return;
         Query hoja = new Query("hoja_enfermeria");
-        CConector conector = CConector.GetConector();
-
-        hoja["fecha"]= CConector.GetDate(Convert.ToDateTime( TFecha.Text));
-        hoja["dieta"] = DDieta.Text;
-        
-        string szQuery;
-        string mensaje;
-
-        if (HIdHoja.Value.Length == 0)
+        using (CConector conector = new CConector())
         {
-            hoja["paciente"] = CCDetallePaciente.IdPaciente;
 
-            szQuery = hoja.GetInsert();
-            mensaje = CCDetallePaciente.Nombres + " ingresado";
-            int resultado = conector.QueryMod(szQuery, true);
-            if (resultado == -1)
+            hoja["fecha"] = CConector.GetDate(Convert.ToDateTime(TFecha.Text));
+            hoja["dieta"] = DDieta.Text;
+
+            string szQuery;
+            string mensaje;
+
+            if (HIdHoja.Value.Length == 0)
+            {
+                hoja["paciente"] = CCDetallePaciente.IdPaciente;
+
+                szQuery = hoja.GetInsert();
+                mensaje = CCDetallePaciente.Nombres + " ingresado";
+                int resultado = conector.QueryMod(szQuery, true);
+                if (resultado == -1)
+                    return;
+                HIdHoja.Value = resultado.ToString();
+            }
+            else
+            {
+                szQuery = hoja.GetUpdate("id='" + HIdHoja.Value + "'");
+                mensaje = CCDetallePaciente.Nombres + " editado";
+                if (conector.QueryMod(szQuery) == -1)
+                    return;
+            }
+            if (conector.InsertModificacion(HIdHoja.Value) == -1)
                 return;
-            HIdHoja.Value = resultado.ToString();
-        }
-        else
-        {
-            szQuery = hoja.GetUpdate("id='" + HIdHoja.Value + "'");
-            mensaje = CCDetallePaciente.Nombres + " editado";
-            if (conector.QueryMod(szQuery) == -1)
+
+            Query valoracion = new Query("valoracion_hoja_enfermeria");
+
+            valoracion["neurologico"] = TNeurologico.Text;
+            valoracion["cabeza"] = TCabeza.Text;
+            valoracion["cuello"] = TCuello.Text;
+            valoracion["torax"] = TTorax.Text;
+            valoracion["abdomen"] = TAbdomen.Text;
+            valoracion["msss"] = TMsss.Text;
+            valoracion["msls"] = TMsls.Text;
+            valoracion["genitourinario"] = TGenitourinario.Text;
+            valoracion["observaciones"] = TObservaciones.Text;
+
+            if (HIdValoracion.Value.Length == 0)
+            {
+                valoracion["hoja_enfermeria"] = HIdHoja.Value;
+                szQuery = valoracion.GetInsert();
+                if (conector.QueryMod(szQuery) == -1)
+                    return;
+            }
+            else
+            {
+                szQuery = valoracion.GetUpdate("id='" + HIdValoracion.Value + "'");
+                if (conector.QueryMod(szQuery) == -1)
+                    return;
+            }
+            if (!UpdateCambios(conector, SSignoVital.GetQuerys()))
                 return;
-        }
-        if (conector.InsertModificacion(HIdHoja.Value) == -1)
-            return;
-
-        Query valoracion = new Query("valoracion_hoja_enfermeria");
-
-        valoracion["neurologico"]= TNeurologico.Text;
-        valoracion["cabeza"] = TCabeza.Text;
-        valoracion["cuello"] =TCuello.Text;
-        valoracion["torax"] = TTorax.Text;
-        valoracion["abdomen"] = TAbdomen.Text;
-        valoracion["msss"] =TMsss.Text;
-        valoracion["msls"] =TMsls.Text;
-        valoracion["genitourinario"] = TGenitourinario.Text;
-        valoracion["observaciones"] = TObservaciones.Text;
-
-        if (HIdValoracion.Value.Length == 0)
-        {
-            valoracion["hoja_enfermeria"] = HIdHoja.Value;
-            szQuery = valoracion.GetInsert();
-            if (conector.QueryMod(szQuery) == -1)
+            if (!UpdateCambios(conector, SControlLiquidosA.GetQuerys()))
                 return;
-        }
-        else
-        {
-            szQuery = valoracion.GetUpdate("id='" + HIdValoracion.Value + "'");
-            if (conector.QueryMod(szQuery) == -1)
+            if (!UpdateCambios(conector, SControlLiquidosE.GetQuerys()))
                 return;
-        }
-        if (!UpdateCambios(conector, SSignoVital.GetQuerys()))
-            return;
-        if (!UpdateCambios(conector, SControlLiquidosA.GetQuerys()))
-            return;
-        if (!UpdateCambios(conector, SControlLiquidosE.GetQuerys()))
-            return;
-        if (!UpdateCambios(conector, SMedicamentos.GetQuerys()))
-            return;
-        if (!UpdateCambios(conector, SBitacora.GetQuerys()))
-            return;
+            if (!UpdateCambios(conector, SMedicamentos.GetQuerys()))
+                return;
+            if (!UpdateCambios(conector, SBitacora.GetQuerys()))
+                return;
 
-        ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
-        ((MasterPageI)Master).SetResultado(mensaje);
+            ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
+            ((MasterPageI)Master).SetResultado(mensaje);
+        }
     }
 
     protected bool UpdateCambios(CConector conector, string []querys) {

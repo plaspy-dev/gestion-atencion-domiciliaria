@@ -82,30 +82,33 @@ public partial class administrador_parametros2 : System.Web.UI.Page
         if (!IsValid)
             return;
         Query query = new Query(HTipo.Value);
-        CConectorMS conector = new CConectorMS();
-        string mensaje;
-
-        string[] parametros = ViewState["parametros"].ToString().Split(',');
-        query[parametros[1]] = TNombre.Text;
-
-        if (HId.Value.Length == 0)
+        using (CConectorMS conector = new CConectorMS())
         {
-            int res=conector.QueryMod(query.GetInsert(), true);
-            if (res==-1)
-                return;
-            HId.Value = res.ToString();
-            mensaje = TNombre.Text + " ingresado";
+            string mensaje;
+
+            string[] parametros = ViewState["parametros"].ToString().Split(',');
+            query[parametros[1]] = TNombre.Text;
+
+            if (HId.Value.Length == 0)
+            {
+                int res = conector.QueryMod(query.GetInsert(), true);
+                if (res == -1)
+                    return;
+                HId.Value = res.ToString();
+                mensaje = TNombre.Text + " ingresado";
+            }
+            else
+            {
+                if (conector.QueryMod(query.GetUpdate(parametros[0] + "='" + HId.Value + "'")) == -1)
+                    return;
+                mensaje = TNombre.Text + " editado";
+            }
+            using(CConector conectorm= new CConector()) 
+                if (conectorm.InsertModificacion(HId.Value) == -1)
+                    return;
+            Session["szMensaje"] = mensaje;
+            Response.Redirect(Request.Url.AbsolutePath + "?tipo=" + HTipo.Value);
         }
-        else
-        {
-            if (conector.QueryMod(query.GetUpdate(parametros[0] + "='" + HId.Value + "'")) == -1)
-                return;
-            mensaje = TNombre.Text + " editado";
-        }
-        if (new CConector().InsertModificacion(HId.Value) == -1)
-            return;
-        Session["szMensaje"] = mensaje;
-        Response.Redirect(Request.Url.AbsolutePath + "?tipo=" + HTipo.Value);
     }
 
     protected void BCancelar_Click(object sender, EventArgs e)

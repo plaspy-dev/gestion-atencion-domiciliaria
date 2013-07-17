@@ -295,8 +295,8 @@ public class servicios : System.Web.Services.WebService
             {
                 if (s.Length == 0)
                     return lista;
-                CConector conectormy = new CConector();
-                c = conectormy.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + Query.GetValor(s.Trim()));
+                using(CConector conectormy= new CConector()) 
+                    c = conectormy.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + Query.GetValor(s.Trim()));
             }
 
             if (c != null)

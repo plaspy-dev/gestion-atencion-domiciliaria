@@ -109,20 +109,22 @@ public partial class MasterPageI : System.Web.UI.MasterPage
     }
     protected void BAceptar_Click(object sender, EventArgs e)
     {
-        CConector conector = CConector.GetConector();
-        CConectorMS conectorms = new CConectorMS();
-        CUsuario usuario = (CUsuario) Usuario.GetUsuario();
-        string id= conector.QueryString("SELECT id FROM usuario WHERE id='" + usuario.GetID()  + "' AND (estado IS NULL OR estado!=-1) AND contrasena=PASSWORD(" + Query.GetValor(TActual.Text) + ")");
-        if (id.Length == 0)
+        using(CConector conector= new CConector()) 
+        using (CConectorMS conectorms = new CConectorMS())
         {
-            SetMensaje("Contraseña actual equivocada");
-            return;
+            CUsuario usuario = (CUsuario)Usuario.GetUsuario();
+            string id = conector.QueryString("SELECT id FROM usuario WHERE id='" + usuario.GetID() + "' AND (estado IS NULL OR estado!=-1) AND contrasena=PASSWORD(" + Query.GetValor(TActual.Text) + ")");
+            if (id.Length == 0)
+            {
+                SetMensaje("Contraseña actual equivocada");
+                return;
+            }
+            if (conector.QueryMod("UPDATE usuario SET contrasena=PASSWORD(" + Query.GetValor(TNueva.Text) + ") WHERE id='" + usuario.GetID() + "'") == -1)
+                return;
+            if (conectorms.QueryMod("UPDATE seg_Usuarios SET usClave=" + Query.GetValor(Crypt.EncriptarDES(TNueva.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4"))) + " WHERE usIdUsuario=" + Query.GetValor(usuario.GetLogin())) == -1)
+                return;
+            lblTitulo.Text = "Contraseña cambiada correctamente.";
         }
-        if (conector.QueryMod("UPDATE usuario SET contrasena=PASSWORD(" + Query.GetValor(TNueva.Text) + ") WHERE id='" + usuario.GetID() + "'") == -1)
-            return;
-        if (conectorms.QueryMod("UPDATE seg_Usuarios SET usClave=" + Query.GetValor(Crypt.EncriptarDES(TNueva.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4"))) + " WHERE usIdUsuario=" + Query.GetValor(usuario.GetLogin())) == -1)
-            return;
-        lblTitulo.Text = "Contraseña cambiada correctamente.";
     }
 
     public LinkButton GetExcelLink()

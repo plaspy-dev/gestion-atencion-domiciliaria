@@ -17,27 +17,29 @@ public partial class cliente_escliente : System.Web.UI.Page
             if (Request.QueryString["eid"] != null) {
 
                 Query query = new Query("escliente");
-                CConector conector = new CConector();
-
-                query += "id";
-                query += "paciente";
-                query += "fecha";
-
-                MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["eid"])));
-                if (reader != null && reader.Read())
+                using (CConector conector = new CConector())
                 {
-                    CUsuario usuario = (CUsuario) Usuario.GetUsuario();
-                    BAceptar.Enabled= usuario.CanUpdate();
 
-                    CCDetallePaciente.IdPaciente = reader["paciente"].ToString();
-                    SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
-                    SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
-                    PDatos.Visible = true;
+                    query += "id";
+                    query += "paciente";
+                    query += "fecha";
 
-                    HIdEncuesta.Value = reader["id"].ToString();
-                    TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
+                    MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["eid"])));
+                    if (reader != null && reader.Read())
+                    {
+                        CUsuario usuario = (CUsuario)Usuario.GetUsuario();
+                        BAceptar.Enabled = usuario.CanUpdate();
 
-                    ((MasterPageI)Master).SetModificacion(HIdEncuesta.Value);
+                        CCDetallePaciente.IdPaciente = reader["paciente"].ToString();
+                        SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
+                        SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
+                        PDatos.Visible = true;
+
+                        HIdEncuesta.Value = reader["id"].ToString();
+                        TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
+
+                        ((MasterPageI)Master).SetModificacion(HIdEncuesta.Value);
+                    }
                 }
             } else if (Request.QueryString["pid"] != null)
             {
@@ -70,52 +72,60 @@ public partial class cliente_escliente : System.Web.UI.Page
         if (!IsValid)
             return;
         Query query = new Query("escliente");
-        CConector conector = new CConector();
-
-        query["fecha"]= CConector.GetMySQLDateFormat(TFecha.Text);
-        query["calificacion"] = HCalificacion.Value;
-
-        if (HIdEncuesta.Value.Length == 0)
+        using (CConector conector = new CConector())
         {
-            query["paciente"] = CCDetallePaciente.IdPaciente;
 
-            int res = conector.QueryMod(query.GetInsert(), true);
-            if (res == -1)
+            query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
+            query["calificacion"] = HCalificacion.Value;
+
+            if (HIdEncuesta.Value.Length == 0)
+            {
+                query["paciente"] = CCDetallePaciente.IdPaciente;
+
+                int res = conector.QueryMod(query.GetInsert(), true);
+                if (res == -1)
+                    return;
+                HIdEncuesta.Value = res.ToString();
+            }
+            else
+            {
+                if (conector.QueryMod(query.GetUpdate("id=" + HIdEncuesta.Value)) == -1)
+                    return;
+            }
+            if (conector.InsertModificacion(HIdEncuesta.Value) == -1)
                 return;
-            HIdEncuesta.Value = res.ToString();
-        } else {
-            if (conector.QueryMod(query.GetUpdate("id=" + HIdEncuesta.Value)) == -1)
-                return;
-        }
-        if (conector.InsertModificacion(HIdEncuesta.Value) == -1)
-            return;
 
-        Query cal = new Query("escliente_calificacion");
+            Query cal = new Query("escliente_calificacion");
 
-        for(int i=0; i<RGrupos.Items.Count; i++) {
+            for (int i = 0; i < RGrupos.Items.Count; i++)
+            {
 
-            Repeater rep= (Repeater)RGrupos.Items[i].FindControl("RPreguntas");
-            for(int j=0; j<rep.Items.Count; j++) {
-                string sharedid= ((HiddenField)rep.Items[j].FindControl("HId")).Value;
-                string resid = ((HiddenField)rep.Items[j].FindControl("HIdr")).Value;
+                Repeater rep = (Repeater)RGrupos.Items[i].FindControl("RPreguntas");
+                for (int j = 0; j < rep.Items.Count; j++)
+                {
+                    string sharedid = ((HiddenField)rep.Items[j].FindControl("HId")).Value;
+                    string resid = ((HiddenField)rep.Items[j].FindControl("HIdr")).Value;
 
-                string calificacion=((TextBox)rep.Items[j].FindControl("TRespuesta")).Text;
-                if(calificacion=="-")
-                    calificacion="0";
-                cal["calificacion"] = calificacion;
-                if(resid.Length==0) {
+                    string calificacion = ((TextBox)rep.Items[j].FindControl("TRespuesta")).Text;
+                    if (calificacion == "-")
+                        calificacion = "0";
+                    cal["calificacion"] = calificacion;
+                    if (resid.Length == 0)
+                    {
 
-                    cal["encuesta"] = HIdEncuesta.Value;
-                    cal["concepto"] = sharedid;
-                    if (conector.QueryMod(cal.GetInsert()) == -1)
-                        return;
-                } else {
-                    if (conector.QueryMod(cal.GetUpdate("id=" + resid)) == -1)
-                        return;
-                }                
+                        cal["encuesta"] = HIdEncuesta.Value;
+                        cal["concepto"] = sharedid;
+                        if (conector.QueryMod(cal.GetInsert()) == -1)
+                            return;
+                    }
+                    else
+                    {
+                        if (conector.QueryMod(cal.GetUpdate("id=" + resid)) == -1)
+                            return;
+                    }
+                }
             }
         }
-
         ((MasterPageI)Master).SetResultado("Encuesta de " + CCDetallePaciente.Nombres + " editada.");
     }
 

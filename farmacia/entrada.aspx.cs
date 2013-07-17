@@ -36,53 +36,56 @@ public partial class farmacia_entrada : System.Web.UI.Page
             {
 
                 Query query = new Query("entrada" + m_nAlmacen);
-                CConector conector = new CConector();
-
-                query += "id";
-                query += "observaciones";
-                query += "fecha";
-                query += "desde";
-                query += "traslado";
-                query += "documento";
-                query += "tercero";
-
-                MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["ei"])));
-                if (reader != null && reader.Read())
+                using (CConector conector = new CConector())
                 {
 
-                    HId.Value = TNumero.Text = reader["id"].ToString();
-                    ((MasterPageI)Master).SetModificacion(HId.Value);
-                    TObservaciones.Text = reader["observaciones"].ToString();
-                    TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
-                    TDocumento.Text = reader["documento"].ToString();
-                    TTerceroID.Text = reader["tercero"].ToString();
-                    TTercero.Text = Almacen.GetNombreTercero(reader["tercero"].ToString());
+                    query += "id";
+                    query += "observaciones";
+                    query += "fecha";
+                    query += "desde";
+                    query += "traslado";
+                    query += "documento";
+                    query += "tercero";
 
-                    bool traslado = false;
-                    if (!string.IsNullOrEmpty(reader["traslado"].ToString()))
+                    MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["ei"])));
+                    if (reader != null && reader.Read())
                     {
 
-                        traslado = true;
-                        HTraslado.Text = "Traslado No. " + reader["traslado"].ToString() + " desde ";
-                        HTraslado.NavigateUrl = "~/farmacia/traslado.aspx?ti=" + reader["traslado"].ToString() + "&alm=" + reader["desde"].ToString();
-                        if (reader["desde"].ToString() == "0")
-                            HTraslado.Text += "(Ajustes)";
-                        else HTraslado.Text += conector.QueryString("SELECT nombre FROM almacen WHERE id=" + reader["desde"].ToString());
+                        HId.Value = TNumero.Text = reader["id"].ToString();
+                        ((MasterPageI)Master).SetModificacion(HId.Value);
+                        TObservaciones.Text = reader["observaciones"].ToString();
+                        TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
+                        TDocumento.Text = reader["documento"].ToString();
+                        TTerceroID.Text = reader["tercero"].ToString();
+                        TTercero.Text = Almacen.GetNombreTercero(reader["tercero"].ToString());
+
+                        bool traslado = false;
+                        if (!string.IsNullOrEmpty(reader["traslado"].ToString()))
+                        {
+
+                            traslado = true;
+                            HTraslado.Text = "Traslado No. " + reader["traslado"].ToString() + " desde ";
+                            HTraslado.NavigateUrl = "~/farmacia/traslado.aspx?ti=" + reader["traslado"].ToString() + "&alm=" + reader["desde"].ToString();
+                            if (reader["desde"].ToString() == "0")
+                                HTraslado.Text += "(Ajustes)";
+                            else HTraslado.Text += conector.QueryString("SELECT nombre FROM almacen WHERE id=" + reader["desde"].ToString());
+                        }
+
+                        GProductos.Columns[9].Visible = TFecha.Text.Length != 0;
+                        GProductos.Columns[10].Visible = TFecha.Text.Length == 0;
+
+                        TProducto.Focus();
+                        GProductos.Columns[0].Visible = !traslado;
+                        BAgregar.Enabled = !traslado;
+                        GProductos.Columns[1].Visible = usuario.CanDelete();
+                        BAceptar.Enabled = usuario.CanUpdate();
+                        return;
                     }
-
-                    GProductos.Columns[9].Visible = TFecha.Text.Length != 0;
-                    GProductos.Columns[10].Visible = TFecha.Text.Length == 0;
-
-                    TProducto.Focus();
-                    GProductos.Columns[0].Visible = !traslado;
-                    BAgregar.Enabled = !traslado;
-                    GProductos.Columns[1].Visible = usuario.CanDelete();
-                    BAceptar.Enabled = usuario.CanUpdate();
-                    return;
                 }
             }
             BAceptar.Enabled = usuario.CanInsert();
-            TNumero.Text = new CConector().QueryString("SELECT IF(MAX(id),MAX(id)+1,1) FROM entrada" + m_nAlmacen);
+            using(CConector conector= new CConector()) 
+                TNumero.Text = new CConector().QueryString("SELECT IF(MAX(id),MAX(id)+1,1) FROM entrada" + m_nAlmacen);
             TFecha.Text = DateTime.Now.ToShortDateString();
             TNumero.Focus();
         }
@@ -240,96 +243,98 @@ public partial class farmacia_entrada : System.Web.UI.Page
         }
 
         Query query = new Query("entrada" + m_nAlmacen);
-        CConector conector = new CConector();
-
-        query["observaciones"] = TObservaciones.Text;
-        query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
-        query["documento"] = TDocumento.Text;
-        query["tercero"] = TTerceroID.Text;
-
-        conector.StartTransaction();
-
-        bool existe = HId.Value.Length > 0;
-
-        if (HId.Value.Length == 0)
+        using (CConector conector = new CConector())
         {
-            int res = conector.QueryMod(query.GetInsert(), true);
-            if (res == -1)
+
+            query["observaciones"] = TObservaciones.Text;
+            query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
+            query["documento"] = TDocumento.Text;
+            query["tercero"] = TTerceroID.Text;
+
+            conector.StartTransaction();
+
+            bool existe = HId.Value.Length > 0;
+
+            if (HId.Value.Length == 0)
             {
-                LMensaje.Text = conector.GetLastError();
-                return;
-            }
-            HId.Value = res.ToString();
-        }
-        else
-        {
-            if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(HId.Value))) == -1)
-            {
-                LMensaje.Text = conector.GetLastError();
-                return;
-            }
-        }
-
-        if (conector.InsertModificacion(HId.Value) == -1)
-        {
-            LMensaje.Text = conector.GetLastError();
-            return;
-        }
-
-        string[] productos = SProductos.GetQuerys();
-        for (int i = 0; i < productos.Length; i++)
-        {
-            if (conector.QueryMod(string.Format(productos[i], m_nAlmacen).Replace("@rentrada", HId.Value)) == -1)
-            {
-                LMensaje.Text = conector.GetLastError();
-                return;
-            }
-        }
-
-        if (existe)
-        {
-
-            MySqlDataReader reader = conector.Query("SELECT desde,traslado FROM entrada" + m_nAlmacen + " WHERE id=" + HId.Value);
-            if (reader != null && reader.Read())
-            {
-                string almacendesde = reader["desde"].ToString();
-                string trasladoId = reader["traslado"].ToString();
-
-                if (almacendesde.Length > 0 && trasladoId.Length > 0)
-                    if (conector.QueryMod(string.Format("DELETE traslado_items{0} FROM traslado_items{0} LEFT JOIN entrada_items{1} ON (entrada_items{1}.id=traslado_items{0}.entrada_items) WHERE traslado_items{0}.traslado=" + trasladoId + " AND entrada_items{1}.id IS NULL;", almacendesde, m_nAlmacen)) == -1)
-                    {
-                        LMensaje.Text = conector.GetLastError();
-                        return;
-                    }
-
-            }
-        }
-
-        if (TFecha.Text.Length > 0)
-        {
-            if (GProductos.Columns[9].Visible)
-            {
-                for (int i = 0; i < GProductos.Rows.Count; i++)
+                int res = conector.QueryMod(query.GetInsert(), true);
+                if (res == -1)
                 {
-                    DropDownList ubicacion = (DropDownList)GProductos.Rows[i].FindControl("DUbicacion");
-                    if (ubicacion.SelectedValue != "0")
-                    { // se modifico la ubicacion.
-                        if (conector.QueryMod("UPDATE entrada_items" + m_nAlmacen + " SET ubicacion=" + ubicacion.SelectedValue + " WHERE id=" + GProductos.DataKeys[i].Values[0]) == -1)
+                    LMensaje.Text = conector.GetLastError();
+                    return;
+                }
+                HId.Value = res.ToString();
+            }
+            else
+            {
+                if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(HId.Value))) == -1)
+                {
+                    LMensaje.Text = conector.GetLastError();
+                    return;
+                }
+            }
+
+            if (conector.InsertModificacion(HId.Value) == -1)
+            {
+                LMensaje.Text = conector.GetLastError();
+                return;
+            }
+
+            string[] productos = SProductos.GetQuerys();
+            for (int i = 0; i < productos.Length; i++)
+            {
+                if (conector.QueryMod(string.Format(productos[i], m_nAlmacen).Replace("@rentrada", HId.Value)) == -1)
+                {
+                    LMensaje.Text = conector.GetLastError();
+                    return;
+                }
+            }
+
+            if (existe)
+            {
+
+                MySqlDataReader reader = conector.Query("SELECT desde,traslado FROM entrada" + m_nAlmacen + " WHERE id=" + HId.Value);
+                if (reader != null && reader.Read())
+                {
+                    string almacendesde = reader["desde"].ToString();
+                    string trasladoId = reader["traslado"].ToString();
+
+                    if (almacendesde.Length > 0 && trasladoId.Length > 0)
+                        if (conector.QueryMod(string.Format("DELETE traslado_items{0} FROM traslado_items{0} LEFT JOIN entrada_items{1} ON (entrada_items{1}.id=traslado_items{0}.entrada_items) WHERE traslado_items{0}.traslado=" + trasladoId + " AND entrada_items{1}.id IS NULL;", almacendesde, m_nAlmacen)) == -1)
                         {
                             LMensaje.Text = conector.GetLastError();
                             return;
                         }
-                    }
+
                 }
             }
-            if (conector.QueryMod("UPDATE entrada_items" + m_nAlmacen + " SET ingreso=SYSDATE() WHERE entrada=" + HId.Value + " AND ingreso IS NULL") == -1)
-            {
-                LMensaje.Text = conector.GetLastError();
-                return;
-            }
-        }
 
-        conector.Commit();
+            if (TFecha.Text.Length > 0)
+            {
+                if (GProductos.Columns[9].Visible)
+                {
+                    for (int i = 0; i < GProductos.Rows.Count; i++)
+                    {
+                        DropDownList ubicacion = (DropDownList)GProductos.Rows[i].FindControl("DUbicacion");
+                        if (ubicacion.SelectedValue != "0")
+                        { // se modifico la ubicacion.
+                            if (conector.QueryMod("UPDATE entrada_items" + m_nAlmacen + " SET ubicacion=" + ubicacion.SelectedValue + " WHERE id=" + GProductos.DataKeys[i].Values[0]) == -1)
+                            {
+                                LMensaje.Text = conector.GetLastError();
+                                return;
+                            }
+                        }
+                    }
+                }
+                if (conector.QueryMod("UPDATE entrada_items" + m_nAlmacen + " SET ingreso=SYSDATE() WHERE entrada=" + HId.Value + " AND ingreso IS NULL") == -1)
+                {
+                    LMensaje.Text = conector.GetLastError();
+                    return;
+                }
+            }
+
+            conector.Commit();
+        }
         Session["entrada_clean"] = 1;
         ((MasterPageI)Master).SetMensaje("Entrada " + HId.Value + " editada.");
         ((MasterPageI)Master).SetResultado("Entrada " + HId.Value + " editada.");

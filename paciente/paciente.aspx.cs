@@ -28,19 +28,22 @@ public partial class seguimiento_paciente : System.Web.UI.Page
             TDocumento.Focus();
             if (!string.IsNullOrEmpty(Request.QueryString["doc"]) && !string.IsNullOrEmpty(Request.QueryString["tdoc"]))
             {
-                
-                CConectorMS conector = new CConectorMS();
 
-                TDocumento.Text = Request.QueryString["doc"];
-                conector.SelectInDropDown(DDocumento, Request.QueryString["tdoc"]);
+                using (CConectorMS conector = new CConectorMS())
+                {
 
-                string id = conector.QueryString("SELECT pacId FROM phdPaciente WHERE pacDocumento=" + Query.GetValor(TDocumento.Text) + " AND tdocId=" + Query.GetValor(DDocumento.SelectedValue));
-                if(id.Length!=0) {
-                    Response.Redirect(Request.Url.AbsolutePath + "?pid=" + id);
-                    Response.End();
-                    return;
+                    TDocumento.Text = Request.QueryString["doc"];
+                    conector.SelectInDropDown(DDocumento, Request.QueryString["tdoc"]);
+
+                    string id = conector.QueryString("SELECT pacId FROM phdPaciente WHERE pacDocumento=" + Query.GetValor(TDocumento.Text) + " AND tdocId=" + Query.GetValor(DDocumento.SelectedValue));
+                    if (id.Length != 0)
+                    {
+                        Response.Redirect(Request.Url.AbsolutePath + "?pid=" + id);
+                        Response.End();
+                        return;
+                    }
+                    TPApellido.Focus();
                 }
-                TPApellido.Focus();
             }
 
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
@@ -90,95 +93,101 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 query += "cieCodDx";
                 query += "cieCodDx_1";
                 query += "cieCodDx_2";
-                query+="categoria";
-                query+= "nombre";
+                query += "categoria";
+                query += "nombre";
                 query += "diabetico";
 
-                CConectorMS conector = new CConectorMS();
-
-                SqlDataReader reader = conector.Query(query.GetSelect("pacId=" + Query.GetValor(Request.QueryString["pid"]) + ""));
-
-                if (reader != null && reader.Read())
+                using (CConectorMS conector = new CConectorMS())
                 {
-                    if (!usuario.CheckEntidad(reader["entId"].ToString()))
-                        return;
 
-                    ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
+                    SqlDataReader reader = conector.Query(query.GetSelect("pacId=" + Query.GetValor(Request.QueryString["pid"]) + ""));
 
-                    BAceptar.Enabled = usuario.CanUpdate();
-                    ((MasterPageI)Master).Imprimir();
-
-                    UCAutorizaciones.Value= HId.Value = reader["pacId"].ToString();
-                    ((MasterPageI)Master).SetModificacion(HId.Value);
-
-                    conector.SelectInDropDown(DDocumento, reader["tdocId"]);
-                    TDocumento.Text = reader["pacDocumento"].ToString();
-                    TPApellido.Text = reader["pacPApellido"].ToString();
-                    TObservaciones.Text = reader["pacObservaciones"].ToString();
-                    TSApellido.Text = reader["pacSApellido"].ToString();
-                    TPNombre.Text = reader["pacPNombre"].ToString();
-                    TSNombre.Text = reader["pacSNombre"].ToString();
-                    conector.SelectInDropDown(DSexo ,reader["sexoId"]);
-                    TNacimiento.Text = ConectorMS.GetDate(reader["pacFechaNac"]);
-                    TDireccion.Text = reader["pacDireccion"].ToString();
-                    TBarrio.Text = reader["pacBarrio"].ToString();
-                    TTelefono.Text = reader["pacTelefono"].ToString();
-                    TTelefono1.Text = reader["pacTelefono1"].ToString();
-                    TMovil.Text = reader["pacCelular"].ToString();
-                    TEMail.Text = reader["pacCorreo"].ToString();
-                    TLlegada.Text = reader["pacEspecLlegada"].ToString();
-                    conector.SelectInDropDown(DLocalidad, reader["locId"], "SELECT locDescripcion FROM admLocalidad WHERE locId={0}");
-                    TEstrato.Text = reader["pacEstrato"].ToString();
-                    TFResponsable.Text = reader["pacFamilarResponsable"].ToString();
-                    TParentesco.Text = reader["pacParentesco"].ToString();
-                    conector.SelectInDropDown(DPago, reader["pdirId"], "SELECT pdirDescripcion FROM phdPagoDirecto WHERE pdirId={0}");
-                    TCarnet.Text = reader["pacCarne"].ToString();
-                    TZona.Text = reader["pacZona"].ToString();
-                    CSuministros.Checked = reader["pacEntregaSuministros"].ToString() == "1" ? true : false;
-                    conector.SelectInDropDown(DAsegurador, reader["entId"], "SELECT entNombre FROM admEntidad WHERE entId={0}");
-                    conector.SelectInDropDown(DMedico, reader["megId"], "SELECT megNombre FROM phdMegas WHERE megId={0}");
-                    TFechaIngresoAsegurador.Text = ConectorMS.GetDate(reader["pacFecIngAsegurador"]);
-                    TGrado.Text = reader["pacGrado"].ToString();
-                    conector.SelectInDropDown(DTipoAfiliado , reader["pacTipoAfiliado"]);
-                    conector.SelectInDropDown(DTipoEvento, reader["tipECod"], "SELECT tipEDescripcion FROM phdTipoEvento WHERE tipECod={0}");
-                    TFechaIngreso.Text = ConectorMS.GetDate(reader["pacFecIngPrograma"]);
-                    conector.SelectInDropDown(DEstado, reader["estId"], "SELECT estDesc FROM phdEstado WHERE estId={0}");
-                    TNumeroETB.Text = reader["pacNumeroETB"].ToString();
-                    TIntensidadTerapias.Text = reader["pacIntensidadTerapias"].ToString();
-                    TCIE1.Text = reader["cieCodDx"].ToString();
-                    TCIE2.Text = reader["cieCodDx_1"].ToString();
-                    TCIE3.Text = reader["cieCodDx_2"].ToString();
-                    CDiabetico.Checked = reader["diabetico"].ToString() == "1";
-                    conector.SelectInDropDown(DCategoria, reader["categoria"]);
-
-                    if(reader["nombre"].ToString().Length!=0) {
-
-                        IFoto.ImageUrl = "~/archivo/foto.ashx?w=120&i=" + HId.Value;
-                        IFoto.PostBackUrl = "~/archivo/foto.ashx?i=" + HId.Value;
-                        IEliminar.Visible = usuario.CanDelete();
-                    }
-
-                    TCIE1.Text= Procedimientos.GetCodigoCIE(TCIE1.Text);
-                    TCIE2.Text = Procedimientos.GetCodigoCIE(TCIE2.Text);
-                    TCIE3.Text = Procedimientos.GetCodigoCIE(TCIE3.Text);
-
-                    PReactivar.Visible = true;
-
-                    if (DEstado.SelectedValue=="1")
+                    if (reader != null && reader.Read())
                     {
-                        SMotivo.SelectCommand = "SELECT cegId id,cegDescripcion nombre FROM dbo.phdCausaEgreso WHERE cegId!=1 ORDER BY 2;";
-                        LReactivar.Text = "Inactivar";
-                        BRetiro.Text = "Inactivar";
-                    }
+                        if (!usuario.CheckEntidad(reader["entId"].ToString()))
+                            return;
 
-                    reader = conector.Query("SELECT TOP 1 egrFecha,egrObs,expedidoHS FROM phdEgresos WHERE pacId=" + HId.Value +" AND cegId=1 ORDER BY egrFecha DESC;");
-                    if(reader!=null && reader.Read()) {
-                        TFechaDefuncion.Text= CConectorMS.GetDate(reader["egrFEcha"]);
-                        TObservacionesDefuncion.Text = reader["egrObs"].ToString();
-                        CExpedidaOrganizationExample15.Checked = reader["expedidoHS"].ToString() == "1";
-                        BAceptarDefuncion.Enabled= usuario.CanUpdate();
-                    } else {
-                        BAceptarDefuncion.Enabled = usuario.CanInsert();
+                        ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
+
+                        BAceptar.Enabled = usuario.CanUpdate();
+                        ((MasterPageI)Master).Imprimir();
+
+                        UCAutorizaciones.Value = HId.Value = reader["pacId"].ToString();
+                        ((MasterPageI)Master).SetModificacion(HId.Value);
+
+                        conector.SelectInDropDown(DDocumento, reader["tdocId"]);
+                        TDocumento.Text = reader["pacDocumento"].ToString();
+                        TPApellido.Text = reader["pacPApellido"].ToString();
+                        TObservaciones.Text = reader["pacObservaciones"].ToString();
+                        TSApellido.Text = reader["pacSApellido"].ToString();
+                        TPNombre.Text = reader["pacPNombre"].ToString();
+                        TSNombre.Text = reader["pacSNombre"].ToString();
+                        conector.SelectInDropDown(DSexo, reader["sexoId"]);
+                        TNacimiento.Text = ConectorMS.GetDate(reader["pacFechaNac"]);
+                        TDireccion.Text = reader["pacDireccion"].ToString();
+                        TBarrio.Text = reader["pacBarrio"].ToString();
+                        TTelefono.Text = reader["pacTelefono"].ToString();
+                        TTelefono1.Text = reader["pacTelefono1"].ToString();
+                        TMovil.Text = reader["pacCelular"].ToString();
+                        TEMail.Text = reader["pacCorreo"].ToString();
+                        TLlegada.Text = reader["pacEspecLlegada"].ToString();
+                        conector.SelectInDropDown(DLocalidad, reader["locId"], "SELECT locDescripcion FROM admLocalidad WHERE locId={0}");
+                        TEstrato.Text = reader["pacEstrato"].ToString();
+                        TFResponsable.Text = reader["pacFamilarResponsable"].ToString();
+                        TParentesco.Text = reader["pacParentesco"].ToString();
+                        conector.SelectInDropDown(DPago, reader["pdirId"], "SELECT pdirDescripcion FROM phdPagoDirecto WHERE pdirId={0}");
+                        TCarnet.Text = reader["pacCarne"].ToString();
+                        TZona.Text = reader["pacZona"].ToString();
+                        CSuministros.Checked = reader["pacEntregaSuministros"].ToString() == "1" ? true : false;
+                        conector.SelectInDropDown(DAsegurador, reader["entId"], "SELECT entNombre FROM admEntidad WHERE entId={0}");
+                        conector.SelectInDropDown(DMedico, reader["megId"], "SELECT megNombre FROM phdMegas WHERE megId={0}");
+                        TFechaIngresoAsegurador.Text = ConectorMS.GetDate(reader["pacFecIngAsegurador"]);
+                        TGrado.Text = reader["pacGrado"].ToString();
+                        conector.SelectInDropDown(DTipoAfiliado, reader["pacTipoAfiliado"]);
+                        conector.SelectInDropDown(DTipoEvento, reader["tipECod"], "SELECT tipEDescripcion FROM phdTipoEvento WHERE tipECod={0}");
+                        TFechaIngreso.Text = ConectorMS.GetDate(reader["pacFecIngPrograma"]);
+                        conector.SelectInDropDown(DEstado, reader["estId"], "SELECT estDesc FROM phdEstado WHERE estId={0}");
+                        TNumeroETB.Text = reader["pacNumeroETB"].ToString();
+                        TIntensidadTerapias.Text = reader["pacIntensidadTerapias"].ToString();
+                        TCIE1.Text = reader["cieCodDx"].ToString();
+                        TCIE2.Text = reader["cieCodDx_1"].ToString();
+                        TCIE3.Text = reader["cieCodDx_2"].ToString();
+                        CDiabetico.Checked = reader["diabetico"].ToString() == "1";
+                        conector.SelectInDropDown(DCategoria, reader["categoria"]);
+
+                        if (reader["nombre"].ToString().Length != 0)
+                        {
+
+                            IFoto.ImageUrl = "~/archivo/foto.ashx?w=120&i=" + HId.Value;
+                            IFoto.PostBackUrl = "~/archivo/foto.ashx?i=" + HId.Value;
+                            IEliminar.Visible = usuario.CanDelete();
+                        }
+
+                        TCIE1.Text = Procedimientos.GetCodigoCIE(TCIE1.Text);
+                        TCIE2.Text = Procedimientos.GetCodigoCIE(TCIE2.Text);
+                        TCIE3.Text = Procedimientos.GetCodigoCIE(TCIE3.Text);
+
+                        PReactivar.Visible = true;
+
+                        if (DEstado.SelectedValue == "1")
+                        {
+                            SMotivo.SelectCommand = "SELECT cegId id,cegDescripcion nombre FROM dbo.phdCausaEgreso WHERE cegId!=1 ORDER BY 2;";
+                            LReactivar.Text = "Inactivar";
+                            BRetiro.Text = "Inactivar";
+                        }
+
+                        reader = conector.Query("SELECT TOP 1 egrFecha,egrObs,expedidoHS FROM phdEgresos WHERE pacId=" + HId.Value + " AND cegId=1 ORDER BY egrFecha DESC;");
+                        if (reader != null && reader.Read())
+                        {
+                            TFechaDefuncion.Text = CConectorMS.GetDate(reader["egrFEcha"]);
+                            TObservacionesDefuncion.Text = reader["egrObs"].ToString();
+                            CExpedidaOrganizationExample15.Checked = reader["expedidoHS"].ToString() == "1";
+                            BAceptarDefuncion.Enabled = usuario.CanUpdate();
+                        }
+                        else
+                        {
+                            BAceptarDefuncion.Enabled = usuario.CanInsert();
+                        }
                     }
                 }
             }
@@ -260,35 +269,39 @@ public partial class seguimiento_paciente : System.Web.UI.Page
             query["archivo"] = "";
         }
 
-        CConectorMS conectorms = new CConectorMS();
-
-        if (HId.Value.Length > 0)
+        using (CConectorMS conectorms = new CConectorMS())
         {
-            if (conectorms.QueryMod(query.GetUpdate("pacId='" + HId.Value + "'")) == -1)
-                return;
-        }
-        else
-        {
-            string id = conectorms.QueryString("SELECT pacId FROM phdPaciente WHERE tdocId=" + DDocumento.SelectedValue + " AND pacDocumento='"+ GetCleanDoc(TDocumento.Text) +"'");
-            if(id.Length>0) {
 
-                ((MasterPageI)Master).SetMensaje("Ya existe un paciente con este documento.");
-                return;
+            if (HId.Value.Length > 0)
+            {
+                if (conectorms.QueryMod(query.GetUpdate("pacId='" + HId.Value + "'")) == -1)
+                    return;
             }
+            else
+            {
+                string id = conectorms.QueryString("SELECT pacId FROM phdPaciente WHERE tdocId=" + DDocumento.SelectedValue + " AND pacDocumento='" + GetCleanDoc(TDocumento.Text) + "'");
+                if (id.Length > 0)
+                {
 
-            int res = conectorms.QueryMod(query.GetInsert(), true);
-            if (res == -1)
-                return;
-            HId.Value = res.ToString();
+                    ((MasterPageI)Master).SetMensaje("Ya existe un paciente con este documento.");
+                    return;
+                }
+
+                int res = conectorms.QueryMod(query.GetInsert(), true);
+                if (res == -1)
+                    return;
+                HId.Value = res.ToString();
+            }
+            if (FFoto.HasFile)
+            {
+
+                Archivos archivo = new Archivos(FFoto.PostedFile, Convert.ToInt32(HId.Value));
+                archivo.SaveFile(new Query("phdPaciente"));
+            }
         }
-        if(FFoto.HasFile) {
 
-            Archivos archivo = new Archivos(FFoto.PostedFile, Convert.ToInt32(HId.Value));
-            archivo.SaveFile(new Query("phdPaciente"));
-        }
-
-        CConector conectormysql = new CConector();
-        conectormysql.InsertModificacion(HId.Value);
+        using(CConector conectorm= new CConector()) 
+            conectorm.InsertModificacion(HId.Value);
 
         Paciente.RemovePaciente(HId.Value);
 

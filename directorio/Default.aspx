@@ -140,9 +140,7 @@
                 <asp:BoundField HeaderText="Cargo" DataField="cargo" SortExpression="cargo">
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
-                <asp:BoundField HeaderText="Disponibilidad" DataField="dispDescripcion" SortExpression="dispDescripcion">
-                    <ItemStyle Wrap="False" />
-                </asp:BoundField>
+                <asp:BoundField HeaderText="Disponibilidad" DataField="dispDescripcion" SortExpression="dispDescripcion"><ItemStyle Wrap="False" /></asp:BoundField>
                 <asp:TemplateField HeaderText="Disponibilidad" InsertVisible="False" SortExpression="dispDescripcion">
                     <ItemTemplate>
                         <asp:LinkButton ID="LDisponibilidad" runat="server" CausesValidation="False" CommandName="Select" Text='<%# Bind("dispDescripcion") %>'></asp:LinkButton>

@@ -32,39 +32,43 @@ public partial class administrador_medicamentos : System.Web.UI.Page
             }
             else BAceptar.Enabled = false;
 
-            if (Request.QueryString["imp"] != null && Request.QueryString["imp"].Length > 0) {
+            if (Request.QueryString["imp"] != null && Request.QueryString["imp"].Length > 0)
+            {
 
-                CConector conector = new CConector();
+                using (CConector conector = new CConector())
+                {
 
-                MySqlDataReader reader = conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica,hoja_sola FROM medicamentos WHERE id=" + Query.GetValor(Request.QueryString["imp"].Trim()));
+                    MySqlDataReader reader = conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica,hoja_sola FROM medicamentos WHERE id=" + Query.GetValor(Request.QueryString["imp"].Trim()));
 
-                if (reader != null && reader.Read()) {
-                    
-                    HId.Value = reader["id"].ToString();
-                    TCodigo.Text = reader["codigo"].ToString();
-                    TNombre.Text = reader["nombre"].ToString();
-                    TPrincipio.Text = reader["principio"].ToString();
-                    TForma.Text = reader["forma"].ToString();
-                    TConcentracion.Text = reader["concentracion"].ToString();
-                    TAclaracion.Text = reader["aclaracion"].ToString();
-                    CAutomatica.Checked = reader["automatica"].ToString() == "1";
-                    CImprimirHoja.Checked = reader["hoja_sola"].ToString() == "1";
-                    CConector.SelectInDropDown(DGrupo, reader["grupo"]);
-
-                    ListItem item= LTipos.Items.FindByValue(reader["tipo"].ToString());
-                    if (item != null)
+                    if (reader != null && reader.Read())
                     {
-                        LTipos.SelectedIndex = -1;
-                        item.Selected = true;
+
+                        HId.Value = reader["id"].ToString();
+                        TCodigo.Text = reader["codigo"].ToString();
+                        TNombre.Text = reader["nombre"].ToString();
+                        TPrincipio.Text = reader["principio"].ToString();
+                        TForma.Text = reader["forma"].ToString();
+                        TConcentracion.Text = reader["concentracion"].ToString();
+                        TAclaracion.Text = reader["aclaracion"].ToString();
+                        CAutomatica.Checked = reader["automatica"].ToString() == "1";
+                        CImprimirHoja.Checked = reader["hoja_sola"].ToString() == "1";
+                        CConector.SelectInDropDown(DGrupo, reader["grupo"]);
+
+                        ListItem item = LTipos.Items.FindByValue(reader["tipo"].ToString());
+                        if (item != null)
+                        {
+                            LTipos.SelectedIndex = -1;
+                            item.Selected = true;
+                        }
+                        LTipos_SelectedIndexChanged(sender, e);
+                        ViewState["cargos"] = conector.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
+                        ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(IFNULL(costo,0),';',IFNULL(maxima,0))) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
+                        ViewState["entidades"] = conector.QueryString("SELECT GROUP_CONCAT(entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
+
+                        BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
+
+                        ((MasterPageI)Master).SetModificacion(HId.Value);
                     }
-                    LTipos_SelectedIndexChanged(sender, e);
-                    ViewState["cargos"] = conector.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
-                    ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(IFNULL(costo,0),';',IFNULL(maxima,0))) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
-                    ViewState["entidades"] = conector.QueryString("SELECT GROUP_CONCAT(entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
-
-                    BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
-
-                    ((MasterPageI)Master).SetModificacion(HId.Value);
                 }
             }
         }
@@ -72,95 +76,97 @@ public partial class administrador_medicamentos : System.Web.UI.Page
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         Query query = new Query("medicamentos");
-        CConector conector = new CConector();
-        CConectorMS conectorms = new CConectorMS();
-
-        string szQuery;
-        string mensaje;
-
-        query["nombre"] = TNombre.Text;
-        query["forma"]=TForma.Text;
-        query["codigo"]=TCodigo.Text;
-        query["principio"]=TPrincipio.Text;
-        query["concentracion"]=TConcentracion.Text;
-        query["aclaracion"]=TAclaracion.Text;
-        query["grupo"] = DGrupo.SelectedValue;
-        query["automatica"] = CAutomatica.Checked ? "1" : "";
-        query["hoja_sola"]= CImprimirHoja.Checked ? "1" : "";
-
-        if (HId.Value.Length == 0)
+        using(CConector conector= new CConector()) 
+        using (CConectorMS conectorms = new CConectorMS())
         {
-            query["tipo"] = LTipos.SelectedValue;
-            szQuery = query.GetInsert();
-            mensaje = TNombre.Text + " ingresado";
-        }
-        else
-        {
-            szQuery = query.GetUpdate("id='" + HId.Value + "'");
-            mensaje = TNombre.Text + " editado";
-        }
-        int res = conector.QueryMod(szQuery, true);
-        if (res == -1)
-            return;
-        if (HId.Value.Length == 0)
-            HId.Value = res.ToString();
-        if (conector.InsertModificacion(HId.Value) == -1)
-            return;
 
-        // agregamos los cargos que puede programar el usuario
-        if (conector.QueryMod("DELETE FROM medicamento_area WHERE medicamento=" + HId.Value) == -1)
-            return;
+            string szQuery;
+            string mensaje;
 
-        Query areas = new Query("medicamento_area");
-        areas["medicamento"] = HId.Value;
+            query["nombre"] = TNombre.Text;
+            query["forma"] = TForma.Text;
+            query["codigo"] = TCodigo.Text;
+            query["principio"] = TPrincipio.Text;
+            query["concentracion"] = TConcentracion.Text;
+            query["aclaracion"] = TAclaracion.Text;
+            query["grupo"] = DGrupo.SelectedValue;
+            query["automatica"] = CAutomatica.Checked ? "1" : "";
+            query["hoja_sola"] = CImprimirHoja.Checked ? "1" : "";
 
-        for (int i = 0; i < GCargos.Rows.Count; i++)
-        {
-            CheckBox box = (CheckBox)GCargos.Rows[i].FindControl("CCargo");
-            if (box.Checked)
+            if (HId.Value.Length == 0)
             {
-                areas["area"]= GCargos.DataKeys[i].Value.ToString();
-                if (conector.QueryMod(areas.GetInsert()) == -1)
-                    return;
+                query["tipo"] = LTipos.SelectedValue;
+                szQuery = query.GetInsert();
+                mensaje = TNombre.Text + " ingresado";
             }
-        }
-
-        // agregamos los cargos que puede programar el usuario
-        if (conector.QueryMod("DELETE FROM medicamento_valor WHERE medicamento=" + HId.Value) == -1)
-            return;
-
-        Query valores = new Query("medicamento_valor");
-        valores["medicamento"] = HId.Value;
-
-        for (int i = 0; i < GEntidades.Rows.Count; i++)
-        {
-            TextBox costo = (TextBox)GEntidades.Rows[i].FindControl("TCosto");
-            TextBox maxima = (TextBox)GEntidades.Rows[i].FindControl("TMaxima");
-
-            if (costo.Text.Length > 0 || maxima.Text.Length>0)
+            else
             {
-                valores["entidad"] = GEntidades.DataKeys[i].Value.ToString();
-                valores["costo"] = costo.Text.Replace(",", "");
-                valores["maxima"] = maxima.Text.Replace(",", "");
-                if (conector.QueryMod(valores.GetInsert()) == -1)
-                    return;
-                if (conectorms.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(costo.Text.Replace(",", ""))
-                                        + " WHERE actId=" + HId.Value + " AND costo IS NULL AND entId=" + GEntidades.DataKeys[i].Value.ToString()) == -1)
-                    return;
-                if(conector.QueryMod("UPDATE medicamento_formulacion LEFT JOIN formulacion ON (medicamento_formulacion.formulacion=formulacion.id) "
-                    + " SET medicamento_formulacion.costo=" + Query.GetValor(costo.Text.Replace(",", ""))
-                    + " WHERE medicamento_formulacion.medicamento=" + HId.Value + " AND formulacion.asegurador=" + GEntidades.DataKeys[i].Value.ToString() + " AND medicamento_formulacion.costo IS NULL") == -1)
-                    return;
+                szQuery = query.GetUpdate("id='" + HId.Value + "'");
+                mensaje = TNombre.Text + " editado";
             }
-            // limpiamos los temporales
-            Procedimientos.RemoveCostoProcedimiento(GEntidades.DataKeys[i].Value.ToString(), HId.Value);
-            Procedimientos.RemoveMaximoProcedimiento(GEntidades.DataKeys[i].Value.ToString(), HId.Value);
+            int res = conector.QueryMod(szQuery, true);
+            if (res == -1)
+                return;
+            if (HId.Value.Length == 0)
+                HId.Value = res.ToString();
+            if (conector.InsertModificacion(HId.Value) == -1)
+                return;
+
+            // agregamos los cargos que puede programar el usuario
+            if (conector.QueryMod("DELETE FROM medicamento_area WHERE medicamento=" + HId.Value) == -1)
+                return;
+
+            Query areas = new Query("medicamento_area");
+            areas["medicamento"] = HId.Value;
+
+            for (int i = 0; i < GCargos.Rows.Count; i++)
+            {
+                CheckBox box = (CheckBox)GCargos.Rows[i].FindControl("CCargo");
+                if (box.Checked)
+                {
+                    areas["area"] = GCargos.DataKeys[i].Value.ToString();
+                    if (conector.QueryMod(areas.GetInsert()) == -1)
+                        return;
+                }
+            }
+
+            // agregamos los cargos que puede programar el usuario
+            if (conector.QueryMod("DELETE FROM medicamento_valor WHERE medicamento=" + HId.Value) == -1)
+                return;
+
+            Query valores = new Query("medicamento_valor");
+            valores["medicamento"] = HId.Value;
+
+            for (int i = 0; i < GEntidades.Rows.Count; i++)
+            {
+                TextBox costo = (TextBox)GEntidades.Rows[i].FindControl("TCosto");
+                TextBox maxima = (TextBox)GEntidades.Rows[i].FindControl("TMaxima");
+
+                if (costo.Text.Length > 0 || maxima.Text.Length > 0)
+                {
+                    valores["entidad"] = GEntidades.DataKeys[i].Value.ToString();
+                    valores["costo"] = costo.Text.Replace(",", "");
+                    valores["maxima"] = maxima.Text.Replace(",", "");
+                    if (conector.QueryMod(valores.GetInsert()) == -1)
+                        return;
+                    if (conectorms.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(costo.Text.Replace(",", ""))
+                                            + " WHERE actId=" + HId.Value + " AND costo IS NULL AND entId=" + GEntidades.DataKeys[i].Value.ToString()) == -1)
+                        return;
+                    if (conector.QueryMod("UPDATE medicamento_formulacion LEFT JOIN formulacion ON (medicamento_formulacion.formulacion=formulacion.id) "
+                        + " SET medicamento_formulacion.costo=" + Query.GetValor(costo.Text.Replace(",", ""))
+                        + " WHERE medicamento_formulacion.medicamento=" + HId.Value + " AND formulacion.asegurador=" + GEntidades.DataKeys[i].Value.ToString() + " AND medicamento_formulacion.costo IS NULL") == -1)
+                        return;
+                }
+                // limpiamos los temporales
+                Procedimientos.RemoveCostoProcedimiento(GEntidades.DataKeys[i].Value.ToString(), HId.Value);
+                Procedimientos.RemoveMaximoProcedimiento(GEntidades.DataKeys[i].Value.ToString(), HId.Value);
+            }
+
+            GResultado.DataBind();
+
+            ((MasterPageI)Master).SetTitulo(mensaje);
+            BCancelar_Click(sender, e);
         }
-
-        GResultado.DataBind();
-
-        ((MasterPageI)Master).SetTitulo(mensaje);
-        BCancelar_Click(sender, e);
     }
 
     protected void BCancelar_Click(object sender, EventArgs e)

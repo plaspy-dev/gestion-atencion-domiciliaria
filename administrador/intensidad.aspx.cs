@@ -28,70 +28,73 @@ public partial class administrador_intensidad : System.Web.UI.Page
         if (!IsValid)
             return;
         Query query = new Query("varios");
-        CConector conector = new CConector();
-        conector.StartTransaction();
-        
-        string szQuery;
-        string mensaje;
-        string id = GResultado.SelectedIndex == -1 ? "" : GResultado.SelectedDataKey.Values["id"].ToString();
-
-        query["nombre"] = TNombre.Text;
-        query["parametro1"] = TProcedimientoID.Text;
-
-        if (id.Length == 0)
+        using (CConector conector = new CConector())
         {
-            query["tipo"] = "21";
-            szQuery = query.GetInsert();
-            mensaje = TNombre.Text + " ingresado";
-            int res = conector.QueryMod(szQuery, true);
-            if (res == -1)
-                return;
-            id = res.ToString();
-        }
-        else
-        {
-            szQuery = query.GetUpdate("id='" + id + "'");
-            mensaje = TNombre.Text + " editado";
-            if (conector.QueryMod(szQuery) == -1)
-                return;
-        }
-        if (new CConector().InsertModificacion(id) == -1)
-            return;
+            conector.StartTransaction();
 
-        // agregamos los cargos que puede programar el usuario
-        if (conector.QueryMod("DELETE FROM intensidad_valor WHERE intensidad=" + id) == -1)
-            return;
+            string szQuery;
+            string mensaje;
+            string id = GResultado.SelectedIndex == -1 ? "" : GResultado.SelectedDataKey.Values["id"].ToString();
 
-        Query valores = new Query("intensidad_valor");
-        valores["intensidad"] = id;
+            query["nombre"] = TNombre.Text;
+            query["parametro1"] = TProcedimientoID.Text;
 
-        for (int i = 0; i < GEntidades.Rows.Count; i++)
-        {
-            TextBox costo = (TextBox)GEntidades.Rows[i].FindControl("TCosto");
-
-            if (costo.Text.Length > 0)
+            if (id.Length == 0)
             {
-                valores["entidad"] = GEntidades.DataKeys[i].Value.ToString();
-                valores["costo"] = costo.Text.Replace(",", "");
-                if (conector.QueryMod(valores.GetInsert()) == -1)
+                query["tipo"] = "21";
+                szQuery = query.GetInsert();
+                mensaje = TNombre.Text + " ingresado";
+                int res = conector.QueryMod(szQuery, true);
+                if (res == -1)
                     return;
-                /*if (conectorms.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(costo.Text.Replace(",", ""))
-                                        + " WHERE actId=" + HId.Value + " AND costo IS NULL AND entId=" + GEntidades.DataKeys[i].Value.ToString()) == -1)
-                    return;
-                if (conector.QueryMod("UPDATE medicamento_formulacion LEFT JOIN formulacion ON (medicamento_formulacion.formulacion=formulacion.id) "
-                    + " SET medicamento_formulacion.costo=" + Query.GetValor(costo.Text.Replace(",", ""))
-                    + " WHERE medicamento_formulacion.medicamento=" + HId.Value + " formulacion.asegurador=" + GEntidades.DataKeys[i].Value.ToString() + " AND medicamento_formulacion.costo IS NULL") == -1)
-                    return;*/
+                id = res.ToString();
             }
-            // limpiamos los temporales
-            Procedimientos.RemoveCostoIntensidad(GEntidades.DataKeys[i].Value.ToString(), id);
+            else
+            {
+                szQuery = query.GetUpdate("id='" + id + "'");
+                mensaje = TNombre.Text + " editado";
+                if (conector.QueryMod(szQuery) == -1)
+                    return;
+            }
+            using (CConector conectorm = new CConector())
+                if (conectorm.InsertModificacion(id) == -1)
+                    return;
+
+            // agregamos los cargos que puede programar el usuario
+            if (conector.QueryMod("DELETE FROM intensidad_valor WHERE intensidad=" + id) == -1)
+                return;
+
+            Query valores = new Query("intensidad_valor");
+            valores["intensidad"] = id;
+
+            for (int i = 0; i < GEntidades.Rows.Count; i++)
+            {
+                TextBox costo = (TextBox)GEntidades.Rows[i].FindControl("TCosto");
+
+                if (costo.Text.Length > 0)
+                {
+                    valores["entidad"] = GEntidades.DataKeys[i].Value.ToString();
+                    valores["costo"] = costo.Text.Replace(",", "");
+                    if (conector.QueryMod(valores.GetInsert()) == -1)
+                        return;
+                    /*if (conectorms.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(costo.Text.Replace(",", ""))
+                                            + " WHERE actId=" + HId.Value + " AND costo IS NULL AND entId=" + GEntidades.DataKeys[i].Value.ToString()) == -1)
+                        return;
+                    if (conector.QueryMod("UPDATE medicamento_formulacion LEFT JOIN formulacion ON (medicamento_formulacion.formulacion=formulacion.id) "
+                        + " SET medicamento_formulacion.costo=" + Query.GetValor(costo.Text.Replace(",", ""))
+                        + " WHERE medicamento_formulacion.medicamento=" + HId.Value + " formulacion.asegurador=" + GEntidades.DataKeys[i].Value.ToString() + " AND medicamento_formulacion.costo IS NULL") == -1)
+                        return;*/
+                }
+                // limpiamos los temporales
+                Procedimientos.RemoveCostoIntensidad(GEntidades.DataKeys[i].Value.ToString(), id);
+            }
+
+            Procedimientos.RemoveVarios(id);
+            Procedimientos.RemoveIntensidad(TProcedimientoID.Text);
+
+            conector.Commit();
+            ((MasterPageI)Master).SetResultado(mensaje);
         }
-
-        Procedimientos.RemoveVarios(id);
-        Procedimientos.RemoveIntensidad(TProcedimientoID.Text);
-
-        conector.Commit();
-        ((MasterPageI)Master).SetResultado(mensaje);
     }
 
     protected void BCancelar_Click(object sender, EventArgs e)

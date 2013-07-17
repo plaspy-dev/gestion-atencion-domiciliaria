@@ -13,9 +13,4 @@ public class CConector : Conector
     public CConector() : base(ConfigurationManager.ConnectionStrings["MySQLConnectionString"].ConnectionString)
     {
     }
-
-    static public CConector GetConector() 
-    {
-        return new CConector();
-    }
 }

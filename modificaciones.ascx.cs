@@ -37,35 +37,37 @@ public partial class modificaciones : System.Web.UI.UserControl
 
     public void Update()
     {
-        CConector conector = new CConector();
-        Query query = new Query("modificaciones");
+        using(CConector conector = new CConector()) {
+            
+            Query query = new Query("modificaciones");
 
-        query["usuario"] = "usuario.nombre";
-        query["fecha"] = "modificaciones.fecha";
-        string url = HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~");
-        MySqlDataReader reader = conector.Query(query.GetSelect("modificaciones.id='" + IdModificacion + "' AND modificaciones.url='" + url + "' ORDER BY modificaciones.fecha", "LEFT JOIN usuario ON (usuario.id=modificaciones.usuario)"));
-        if (reader != null)
-        {
-            PModificaciones.Visible = false;
-            if (reader.Read())
+            query["usuario"] = "usuario.nombre";
+            query["fecha"] = "modificaciones.fecha";
+            string url = HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~");
+            MySqlDataReader reader = conector.Query(query.GetSelect("modificaciones.id='" + IdModificacion + "' AND modificaciones.url='" + url + "' ORDER BY modificaciones.fecha", "LEFT JOIN usuario ON (usuario.id=modificaciones.usuario)"));
+            if (reader != null)
             {
-                PModificaciones.Visible = true;
-                GModificaciones.EmptyDataText = "";
-                LCreadoPor.Text = reader["usuario"].ToString();
-                LFechaCreacion.Text = reader["fecha"].ToString();
-            }
-            ArrayList lista = new ArrayList();
-            while (reader.Read())
-            {
-                if (LModificadoPor.Text.Length != 0)
+                PModificaciones.Visible = false;
+                if (reader.Read())
                 {
-                    lista.Add(new Mods(LModificadoPor.Text, LFechaModificacion.Text));
+                    PModificaciones.Visible = true;
+                    GModificaciones.EmptyDataText = "";
+                    LCreadoPor.Text = reader["usuario"].ToString();
+                    LFechaCreacion.Text = reader["fecha"].ToString();
                 }
-                LModificadoPor.Text = reader["usuario"].ToString();
-                LFechaModificacion.Text = reader["fecha"].ToString();
+                ArrayList lista = new ArrayList();
+                while (reader.Read())
+                {
+                    if (LModificadoPor.Text.Length != 0)
+                    {
+                        lista.Add(new Mods(LModificadoPor.Text, LFechaModificacion.Text));
+                    }
+                    LModificadoPor.Text = reader["usuario"].ToString();
+                    LFechaModificacion.Text = reader["fecha"].ToString();
+                }
+                GModificaciones.DataSource = lista;
+                GModificaciones.DataBind();
             }
-            GModificaciones.DataSource = lista;
-            GModificaciones.DataBind();
         }
     }
 

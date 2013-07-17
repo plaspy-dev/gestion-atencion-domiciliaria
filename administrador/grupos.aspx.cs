@@ -73,126 +73,137 @@ public partial class administrador_grupos : System.Web.UI.Page
         if (!IsValid)
             return;
         Query query= new Query("grupo");
-        CConector conector = CConector.GetConector();
-        string szQuery;
-        string mensaje;
-        string grupo = "";
-
-        query["nombre"] = TNombre.Text;
-        query["descripcion"] = TDescripcion.Text;
-
-        if(LGrupos.SelectedIndex==-1) {
-
-            szQuery = query.GetInsert();
-            mensaje = TNombre.Text + " ingresado";
-            int resultado = conector.QueryMod(szQuery, true);
-            if (resultado == -1)
-                return;
-            grupo = resultado.ToString();
-        } else {
-            szQuery = query.GetUpdate("id='" + LGrupos.SelectedValue + "'");
-            mensaje = TNombre.Text + " editado";
-            if (conector.QueryMod(szQuery) == -1)
-                return;
-            grupo = LGrupos.SelectedValue;
-        }
-        if (conector.InsertModificacion(grupo) == -1)
-            return;
-        if (conector.QueryMod("DELETE FROM permisos WHERE grupo='" + grupo + "'") == -1)
-            return;
-
-        for (int j = 0; j < R.Items.Count; j++)
+        using (CConector conector = new CConector())
         {
-            GridView grid = (GridView)R.Items[j].FindControl("P");
-            Query permisos = new Query("permisos");
+            string szQuery;
+            string mensaje;
+            string grupo = "";
 
-            for (int i = 0; i < grid.Rows.Count; i++)
+            query["nombre"] = TNombre.Text;
+            query["descripcion"] = TDescripcion.Text;
+
+            if (LGrupos.SelectedIndex == -1)
             {
-                permisos["grupo"] = grupo;
-                permisos["url"] = grid.DataKeys[i].Value.ToString();
-                int per = 0;
 
-                CheckBox check;
-                check = (CheckBox)grid.Rows[i].FindControl("a");
-                if (check.Checked)
-                    per += 32;
-                check = (CheckBox)grid.Rows[i].FindControl("e");
-                if (check.Checked)
-                    per += 16;
-                check = (CheckBox)grid.Rows[i].FindControl("d");
-                if (check.Checked)
-                    per += 8;
-                check = (CheckBox)grid.Rows[i].FindControl("i");
-                if (check.Checked)
-                    per += 4;
-                check = (CheckBox)grid.Rows[i].FindControl("m");
-                if (check.Checked)
-                    per += 2;
-                check = (CheckBox)grid.Rows[i].FindControl("l");
-                if (check.Checked)
-                    per += 1;
-                if (per == 0) // lo omitimos
-                    continue;
-                if (per > 0 && (per & 1) != 1)
-                    per += 1;
-                permisos["permiso"] = per.ToString();
-
-                if (conector.QueryMod(permisos.GetInsert()) == -1)
+                szQuery = query.GetInsert();
+                mensaje = TNombre.Text + " ingresado";
+                int resultado = conector.QueryMod(szQuery, true);
+                if (resultado == -1)
                     return;
+                grupo = resultado.ToString();
             }
-        }
-
-        MySqlDataReader reader= conector.Query("SELECT usuario FROM usuario WHERE grupo=" + grupo);
-        if(reader!=null) {
-
-            CConectorMS conectorms = new CConectorMS();
-            CConector conector2 = new CConector();
-            conectorms.StartTransaction();
-
-            while(reader.Read()) {
-
-                string usuario= reader["usuario"].ToString();
-                if (conectorms.QueryMod("DELETE FROM Seg_UsuarioMenu WHERE usIdUsuario='" + usuario + "'") == -1)
+            else
+            {
+                szQuery = query.GetUpdate("id='" + LGrupos.SelectedValue + "'");
+                mensaje = TNombre.Text + " editado";
+                if (conector.QueryMod(szQuery) == -1)
                     return;
+                grupo = LGrupos.SelectedValue;
+            }
+            if (conector.InsertModificacion(grupo) == -1)
+                return;
+            if (conector.QueryMod("DELETE FROM permisos WHERE grupo='" + grupo + "'") == -1)
+                return;
 
-                query = new Query("permisos");
+            for (int j = 0; j < R.Items.Count; j++)
+            {
+                GridView grid = (GridView)R.Items[j].FindControl("P");
+                Query permisos = new Query("permisos");
 
-                query += "url";
-                query += "permiso";
-
-                MySqlDataReader reader2 = conector2.Query(query.GetSelect("grupo='" + grupo + "'"));
-                if (reader2 != null)
+                for (int i = 0; i < grid.Rows.Count; i++)
                 {
-                    while (reader2.Read())
+                    permisos["grupo"] = grupo;
+                    permisos["url"] = grid.DataKeys[i].Value.ToString();
+                    int per = 0;
+
+                    CheckBox check;
+                    check = (CheckBox)grid.Rows[i].FindControl("a");
+                    if (check.Checked)
+                        per += 32;
+                    check = (CheckBox)grid.Rows[i].FindControl("e");
+                    if (check.Checked)
+                        per += 16;
+                    check = (CheckBox)grid.Rows[i].FindControl("d");
+                    if (check.Checked)
+                        per += 8;
+                    check = (CheckBox)grid.Rows[i].FindControl("i");
+                    if (check.Checked)
+                        per += 4;
+                    check = (CheckBox)grid.Rows[i].FindControl("m");
+                    if (check.Checked)
+                        per += 2;
+                    check = (CheckBox)grid.Rows[i].FindControl("l");
+                    if (check.Checked)
+                        per += 1;
+                    if (per == 0) // lo omitimos
+                        continue;
+                    if (per > 0 && (per & 1) != 1)
+                        per += 1;
+                    permisos["permiso"] = per.ToString();
+
+                    if (conector.QueryMod(permisos.GetInsert()) == -1)
+                        return;
+                }
+            }
+
+            MySqlDataReader reader = conector.Query("SELECT usuario FROM usuario WHERE grupo=" + grupo);
+            if (reader != null)
+            {
+
+                using (CConectorMS conectorms = new CConectorMS())
+                {
+                    using (CConector conector2 = new CConector())
                     {
-                        string url = reader2["url"].ToString();
-                        if (url[0] == '/')
-                        { // es de los nuevos
+                        conectorms.StartTransaction();
 
-                            url = url.Replace("/" + ConfigurationSettings.AppSettings["app"], "");
-                            Permisos info = new Permisos("", url, (int)reader2["permiso"]);
+                        while (reader.Read())
+                        {
 
-                            string id = conectorms.QueryString("SELECT meIdMenu FROM seg_menu WHERE meRuta='" + info.pagina + "'");
-                            if (id.Length == 0)
-                                continue;
-
-                            query = new Query("Seg_UsuarioMenu");
-                            query["meIdMenu"] = id;
-                            query["usIdUsuario"] = usuario;
-                            query["umInserta"] = info.insercion ? "1" : "0";
-                            query["umModifica"] = info.edicion ? "1" : "0";
-                            query["umElimina"] = info.eliminar ? "1" : "0";
-
-                            if (conectorms.QueryMod(query.GetInsert()) == -1)
+                            string usuario = reader["usuario"].ToString();
+                            if (conectorms.QueryMod("DELETE FROM Seg_UsuarioMenu WHERE usIdUsuario='" + usuario + "'") == -1)
                                 return;
+
+                            query = new Query("permisos");
+
+                            query += "url";
+                            query += "permiso";
+
+                            MySqlDataReader reader2 = conector2.Query(query.GetSelect("grupo='" + grupo + "'"));
+                            if (reader2 != null)
+                            {
+                                while (reader2.Read())
+                                {
+                                    string url = reader2["url"].ToString();
+                                    if (url[0] == '/')
+                                    { // es de los nuevos
+
+                                        url = url.Replace("/" + ConfigurationSettings.AppSettings["app"], "");
+                                        Permisos info = new Permisos("", url, (int)reader2["permiso"]);
+
+                                        string id = conectorms.QueryString("SELECT meIdMenu FROM seg_menu WHERE meRuta='" + info.pagina + "'");
+                                        if (id.Length == 0)
+                                            continue;
+
+                                        query = new Query("Seg_UsuarioMenu");
+                                        query["meIdMenu"] = id;
+                                        query["usIdUsuario"] = usuario;
+                                        query["umInserta"] = info.insercion ? "1" : "0";
+                                        query["umModifica"] = info.edicion ? "1" : "0";
+                                        query["umElimina"] = info.eliminar ? "1" : "0";
+
+                                        if (conectorms.QueryMod(query.GetInsert()) == -1)
+                                            return;
+                                    }
+                                }
+                            }
                         }
+                        conectorms.Commit();
                     }
                 }
             }
-            conectorms.Commit();
-        }
 
-        ((MasterPageI)Master).SetResultado(mensaje);
+            ((MasterPageI)Master).SetResultado(mensaje);
+        }
     }
     protected void BCancelar_Click(object sender, EventArgs e)
     {
@@ -200,13 +211,15 @@ public partial class administrador_grupos : System.Web.UI.Page
     }
     protected void BEliminar_Click(object sender, EventArgs e)
     {
-        CConector conector = CConector.GetConector();
-        if (conector.QueryMod("DELETE FROM permisos WHERE grupo='" + LGrupos.SelectedValue + "'") == -1)
-            return;
-        if (conector.QueryMod("DELETE FROM grupo WHERE id='" + LGrupos.SelectedValue + "'") == -1)
-            return;
-        conector.InsertModificacion(LGrupos.SelectedValue);
-        ((MasterPageI)Master).SetResultado("Grupo " + TNombre.Text + " Eliminado.");
+        using (CConector conector = new CConector())
+        {
+            if (conector.QueryMod("DELETE FROM permisos WHERE grupo='" + LGrupos.SelectedValue + "'") == -1)
+                return;
+            if (conector.QueryMod("DELETE FROM grupo WHERE id='" + LGrupos.SelectedValue + "'") == -1)
+                return;
+            conector.InsertModificacion(LGrupos.SelectedValue);
+            ((MasterPageI)Master).SetResultado("Grupo " + TNombre.Text + " Eliminado.");
+        }
     }
     protected void LGrupos_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -255,29 +268,31 @@ public partial class administrador_grupos : System.Web.UI.Page
             BEliminar.Enabled = usuario.CanDelete();
             BEliminar.Visible = true;
 
-            CConector conector= CConector.GetConector();
-
-            TNombre.Text = LGrupos.SelectedItem.Text;
-            TDescripcion.Text = conector.QueryString("SELECT descripcion FROM grupo WHERE id='" + LGrupos.SelectedValue + "'");
-
-            Query query = new Query("permisos");
-            query += "url";
-            query += "permiso";
-
-            MySqlDataReader reader= conector.Query(query.GetSelect("grupo='" + LGrupos.SelectedValue + "'"));
-            if (reader != null)
+            using (CConector conector = new CConector())
             {
-                while (reader.Read())
+
+                TNombre.Text = LGrupos.SelectedItem.Text;
+                TDescripcion.Text = conector.QueryString("SELECT descripcion FROM grupo WHERE id='" + LGrupos.SelectedValue + "'");
+
+                Query query = new Query("permisos");
+                query += "url";
+                query += "permiso";
+
+                MySqlDataReader reader = conector.Query(query.GetSelect("grupo='" + LGrupos.SelectedValue + "'"));
+                if (reader != null)
                 {
-                    string url= reader["url"].ToString();
-                    int nPermisos = Convert.ToInt32(reader["permiso"]);
-                    for (int i = 0; i < parents.Count; i++)
+                    while (reader.Read())
                     {
-                        Parents pagina = (Parents)parents[i];
-                        Permisos info = pagina.FindURL(url);
-                        if (info!=null)
+                        string url = reader["url"].ToString();
+                        int nPermisos = Convert.ToInt32(reader["permiso"]);
+                        for (int i = 0; i < parents.Count; i++)
                         {
-                            info.SetPermisos(nPermisos);
+                            Parents pagina = (Parents)parents[i];
+                            Permisos info = pagina.FindURL(url);
+                            if (info != null)
+                            {
+                                info.SetPermisos(nPermisos);
+                            }
                         }
                     }
                 }

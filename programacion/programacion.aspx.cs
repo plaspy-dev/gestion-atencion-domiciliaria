@@ -48,17 +48,19 @@ public partial class programacion_programacion : System.Web.UI.Page
 
     protected void lnkelimMasivo_Click(object sender, EventArgs e)
     {
-        CConectorMS conector = new CConectorMS();
-
-        for (int i = 0; i < GProgramacion.Rows.Count; i++)
+        using (CConectorMS conector = new CConectorMS())
         {
-            CheckBox check = (CheckBox)GProgramacion.Rows[i].Cells[0].FindControl("CSeleccionar");
-            if (check.Checked)
+
+            for (int i = 0; i < GProgramacion.Rows.Count; i++)
             {
-                conector.Query("DELETE programacion where prgId=" + GProgramacion.DataKeys[i].Value.ToString());
+                CheckBox check = (CheckBox)GProgramacion.Rows[i].Cells[0].FindControl("CSeleccionar");
+                if (check.Checked)
+                {
+                    conector.Query("DELETE programacion where prgId=" + GProgramacion.DataKeys[i].Value.ToString());
+                }
             }
+            GProgramacion.DataBind();
         }
-        GProgramacion.DataBind();
     }
 
     protected void lnkNovedad_Click(object sender, EventArgs e)

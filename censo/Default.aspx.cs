@@ -80,8 +80,8 @@ public partial class censo_Default : System.Web.UI.Page
     }
     protected void BAceptar_Click(object sender, EventArgs e)
     {
-        CConectorMS conector = new CConectorMS();
-        conector.QueryMod("UPDATE phdPaciente SET locId='" + DLocalidad.SelectedValue + "' WHERE pacId=" + HPaciente.Value);
+        using(CConectorMS conector = new CConectorMS()) 
+            conector.QueryMod("UPDATE phdPaciente SET locId='" + DLocalidad.SelectedValue + "' WHERE pacId=" + HPaciente.Value);
         GResultados.DataBind();
         PLocalidad.Visible = false;
     }

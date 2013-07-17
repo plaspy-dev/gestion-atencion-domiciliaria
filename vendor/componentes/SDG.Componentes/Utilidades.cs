@@ -150,6 +150,51 @@ public class Utilidades
 		return RenderGrid(grid, "border=1 width=100% cellspacing=0");
 	}
 
+	public static string GetGridRowCellHTML(GridView grid, GridViewRow row, int columna)
+	{
+		string text = "";
+		text = ((grid.Columns[columna].ItemStyle.HorizontalAlign == HorizontalAlign.Right) ? (text + "<td align=right>") : ((grid.Columns[columna].ItemStyle.HorizontalAlign != HorizontalAlign.Center) ? (text + "<td>") : (text + "<td align=center>")));
+		if (row.Cells[columna].HasControls())
+		{
+			ControlCollection controls = row.Cells[columna].Controls;
+			for (int i = 0; i < controls.Count; i++)
+			{
+				if (controls[i] is TextBox)
+				{
+					string text2 = ((TextBox)controls[i]).Text;
+					if (text2.Length == 0)
+					{
+						text2 = "&nbsp;";
+					}
+					text += text2;
+					break;
+				}
+				if (controls[i] is CheckBox)
+				{
+					text = ((!((CheckBox)controls[i]).Checked) ? (text + "_ ") : (text + "X "));
+					if (((CheckBox)controls[i]).Text.Length > 0)
+					{
+						text += ((CheckBox)controls[i]).Text;
+					}
+					break;
+				}
+				if (controls[i] is LinkButton)
+				{
+					text += ((LinkButton)controls[i]).Text;
+				}
+				else if (controls[i] is HyperLink)
+				{
+					text += ((HyperLink)controls[i]).Text;
+				}
+			}
+		}
+		else
+		{
+			text += row.Cells[columna].Text;
+		}
+		return text + "</td>";
+	}
+
 	public static string RenderGrid(GridView grid, string parametrostabla)
 	{
 		if (new Random().Next(10) == 1 && !GetKey())
@@ -176,50 +221,10 @@ public class Utilidades
 			text += "<tr>";
 			for (int j = 0; j < gridViewRow.Cells.Count; j++)
 			{
-				if (!grid.Columns[j].Visible)
+				if (grid.Columns[j].Visible)
 				{
-					continue;
+					text += GetGridRowCellHTML(grid, gridViewRow, j);
 				}
-				text = ((grid.Columns[j].ItemStyle.HorizontalAlign == HorizontalAlign.Right) ? (text + "<td align=right>") : ((grid.Columns[j].ItemStyle.HorizontalAlign != HorizontalAlign.Center) ? (text + "<td>") : (text + "<td align=center>")));
-				if (gridViewRow.Cells[j].HasControls())
-				{
-					ControlCollection controls = gridViewRow.Cells[j].Controls;
-					for (int k = 0; k < controls.Count; k++)
-					{
-						if (controls[k] is TextBox)
-						{
-							string text2 = ((TextBox)controls[k]).Text;
-							if (text2.Length == 0)
-							{
-								text2 = "&nbsp;";
-							}
-							text += text2;
-							break;
-						}
-						if (controls[k] is CheckBox)
-						{
-							text = ((!((CheckBox)controls[k]).Checked) ? (text + "_ ") : (text + "X "));
-							if (((CheckBox)controls[k]).Text.Length > 0)
-							{
-								text += ((CheckBox)controls[k]).Text;
-							}
-							break;
-						}
-						if (controls[k] is LinkButton)
-						{
-							text += ((LinkButton)controls[k]).Text;
-						}
-						else if (controls[k] is HyperLink)
-						{
-							text += ((HyperLink)controls[k]).Text;
-						}
-					}
-				}
-				else
-				{
-					text += gridViewRow.Cells[j].Text;
-				}
-				text += "</td>";
 			}
 			text += "</tr>";
 		}
@@ -367,9 +372,12 @@ public class Utilidades
 		Response.Write("<tr>\n");
 		for (int i = 0; i < view.Columns.Count; i++)
 		{
-			Response.Write("<td><strong>");
-			Response.Write(view.Columns[i].HeaderText);
-			Response.Write("</strong></td>");
+			if (view.Columns[i].Visible)
+			{
+				Response.Write("<td><strong>");
+				Response.Write(view.Columns[i].HeaderText);
+				Response.Write("</strong></td>");
+			}
 		}
 		Response.Write("</tr>\n");
 		for (int i = 0; i < view.Rows.Count; i++)
@@ -377,22 +385,10 @@ public class Utilidades
 			Response.Write("<tr>\n");
 			for (int j = 0; j < view.Columns.Count; j++)
 			{
-				Response.Write("<td>");
-				if (view.Columns[j].GetType() == typeof(HyperLinkField))
+				if (view.Columns[j].Visible)
 				{
-					HyperLink hyperLink = (HyperLink)view.Rows[i].Cells[j].Controls[0];
-					Response.Write(hyperLink.Text);
+					Response.Write(GetGridRowCellHTML(view, view.Rows[i], j));
 				}
-				else if (view.Columns[j].GetType() == typeof(CheckBoxField))
-				{
-					CheckBox checkBox = (CheckBox)view.Rows[i].Cells[j].Controls[0];
-					Response.Write(checkBox.Checked ? "X" : "");
-				}
-				else
-				{
-					Response.Write(view.Rows[i].Cells[j].Text);
-				}
-				Response.Write("</td>");
 			}
 			Response.Write("</tr>\n");
 		}

@@ -50,7 +50,8 @@ public partial class auditoria_indicadores : System.Web.UI.Page
 
         if (servicios == null) // es un servicio
         {
-            szProcedimiento= new CConector().QueryString("SELECT GROUP_CONCAT(id) FROM medicamentos WHERE grupo=" + id);
+            using(CConector conector= new CConector()) 
+                szProcedimiento= conector.QueryString("SELECT GROUP_CONCAT(id) FROM medicamentos WHERE grupo=" + id);
             if (szProcedimiento.Length == 0)
                 procedimientos = "0=1"; // esto es para que no filtre ningun servicio
             else procedimientos = "programacion.actId IN (" + szProcedimiento + ")";
@@ -82,18 +83,20 @@ public partial class auditoria_indicadores : System.Web.UI.Page
 
         addfield = DResultados.Rows.Count==3;
 
-        CConector conector = new CConector();
-
-        MySqlDataReader reader = conector.Query("SELECT id, nombre FROM varios WHERE tipo=22 AND szReservado IS NULL ORDER BY nombre");
-        if (reader != null)
+        using (CConector conector = new CConector())
         {
-            while (reader.Read())
-            {
 
-                string procedimientos = AddCampo(reader["id"].ToString(), reader["nombre"].ToString(), null);
-                if (servicios.Length > 0 && procedimientos.Length > 0)
-                    servicios += ",";
-                servicios += procedimientos;
+            MySqlDataReader reader = conector.Query("SELECT id, nombre FROM varios WHERE tipo=22 AND szReservado IS NULL ORDER BY nombre");
+            if (reader != null)
+            {
+                while (reader.Read())
+                {
+
+                    string procedimientos = AddCampo(reader["id"].ToString(), reader["nombre"].ToString(), null);
+                    if (servicios.Length > 0 && procedimientos.Length > 0)
+                        servicios += ",";
+                    servicios += procedimientos;
+                }
             }
         }
         // agregamos el resto de los servicios
@@ -173,7 +176,6 @@ public partial class auditoria_indicadores : System.Web.UI.Page
     {
         if (e.Row.RowIndex == -1)
             return;
-        CConectorMS conector = new CConectorMS();
         ((LinkButton)e.Row.FindControl("LPaciente")).Text = Paciente.GetPaciente(((LinkButton)e.Row.FindControl("LPaciente")).Text).NombreCompleto;
     }
 }

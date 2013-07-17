@@ -42,19 +42,21 @@ public partial class administrador_copagos : System.Web.UI.Page
         query += "descripcion";
         query += "szReservado";
 
-        CConector conector = new CConector();
-        MySqlDataReader reader = conector.Query(query.GetSelect("tipo=14 AND szReservado!=-1 AND parametro1='" + LCategoria.SelectedValue + "'"));
-        if (reader != null)
+        using (CConector conector = new CConector())
         {
-            while (reader.Read())
+            MySqlDataReader reader = conector.Query(query.GetSelect("tipo=14 AND szReservado!=-1 AND parametro1='" + LCategoria.SelectedValue + "'"));
+            if (reader != null)
             {
-                BAceptar.Enabled = usuario.CanUpdate();
-                HId.Value = reader["id"].ToString();
-                TPorcentaje.Text = reader["nombre"].ToString();
-                TServicio.Text = reader["descripcion"].ToString();
-                TTotal.Text = reader["szReservado"].ToString();
+                while (reader.Read())
+                {
+                    BAceptar.Enabled = usuario.CanUpdate();
+                    HId.Value = reader["id"].ToString();
+                    TPorcentaje.Text = reader["nombre"].ToString();
+                    TServicio.Text = reader["descripcion"].ToString();
+                    TTotal.Text = reader["szReservado"].ToString();
 
-                ((MasterPageI)Master).SetModificacion(HId.Value);
+                    ((MasterPageI)Master).SetModificacion(HId.Value);
+                }
             }
         }
     }
@@ -63,27 +65,32 @@ public partial class administrador_copagos : System.Web.UI.Page
     {
         if (!IsValid)
             return;
-        CConector conector = new CConector();
-        Query query = new Query("varios");
+        using (CConector conector = new CConector())
+        {
+            Query query = new Query("varios");
 
-        query["nombre"]= TPorcentaje.Text;
-        query["descripcion"]= TServicio.Text.Replace(",", "");
-        query["szReservado"] = TTotal.Text.Replace(",", "");
+            query["nombre"] = TPorcentaje.Text;
+            query["descripcion"] = TServicio.Text.Replace(",", "");
+            query["szReservado"] = TTotal.Text.Replace(",", "");
 
-        if(HId.Value.Length==0) {
+            if (HId.Value.Length == 0)
+            {
 
-            query["tipo"] = "14";
-            query["parametro1"]= LCategoria.SelectedValue;
-            int res= conector.QueryMod(query.GetInsert(), true);
-            if(res==-1)
-                return;
-            HId.Value= res.ToString();
-        } else {
-            if(conector.QueryMod(query.GetUpdate("id='" + HId.Value + "'"))==-1)
+                query["tipo"] = "14";
+                query["parametro1"] = LCategoria.SelectedValue;
+                int res = conector.QueryMod(query.GetInsert(), true);
+                if (res == -1)
+                    return;
+                HId.Value = res.ToString();
+            }
+            else
+            {
+                if (conector.QueryMod(query.GetUpdate("id='" + HId.Value + "'")) == -1)
+                    return;
+            }
+            if (conector.InsertModificacion(HId.Value) == -1)
                 return;
         }
-        if (conector.InsertModificacion(HId.Value) == -1)
-            return;
         Procedimientos.RemoveVarios(HId.Value);
         ((MasterPageI)Master).SetTitulo("Categoría " + LCategoria.SelectedItem.Text + " editada.");
     }

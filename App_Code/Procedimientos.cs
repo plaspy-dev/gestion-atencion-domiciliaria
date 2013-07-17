@@ -29,6 +29,7 @@ public class Procedimientos
     {
         HttpContext.Current.Session["Procedimientos"] = this;
     }
+
     static public Procedimientos GetProcedimientos() {
         Procedimientos info= (Procedimientos)HttpContext.Current.Session["Procedimientos"];
         if (info == null)
@@ -89,19 +90,44 @@ public class Procedimientos
         }
         catch 
         {
-            CConector conector = new CConector();
-            string nombre = "";
-            bool automatico = false;
-            MySqlDataReader reader = conector.Query("SELECT CONCAT(codigo, '-', nombre) AS nombre,automatica FROM medicamentos WHERE id=" + Query.GetValor(id));
-            if (reader != null && reader.Read())
+            using (CConector conector = new CConector())
             {
-                nombre= reader["nombre"].ToString();
-                automatico = reader["automatica"].ToString() == "1";
+                string nombre = "";
+                bool automatico = false;
+                MySqlDataReader reader = conector.Query("SELECT CONCAT(codigo, '-', nombre) AS nombre,automatica FROM medicamentos WHERE id=" + Query.GetValor(id));
+                if (reader != null && reader.Read())
+                {
+                    nombre = reader["nombre"].ToString();
+                    automatico = reader["automatica"].ToString() == "1";
+                }
+                resultado = new Procedimiento(nombre, automatico);
+                info.pProcedimentos[id] = resultado;
             }
-            resultado = new Procedimiento(nombre, automatico);
-            info.pProcedimentos[id] = resultado;
         }
         return resultado;
+    }
+
+    static public string GetNombreMedicamento(string id) {
+
+        string nombre = "";
+        using (CConector conector = new CConector())
+        {
+            MySqlDataReader reader = conector.Query("SELECT id,nombre,principio,concentracion,forma,codigo FROM medicamentos WHERE id=" + Query.GetValor(id));
+            if (reader != null && reader.Read())
+            {
+                // PARACETAMOL [ACETAMINOFÉN], 100 mg/mL (10%) - SOLUCIÓN ORAL
+                nombre = reader["codigo"].ToString() + " - ";
+                nombre += reader["nombre"].ToString();
+                if (reader["principio"].ToString().Length != 0)
+                    nombre += " [" + reader["principio"].ToString() + "]";
+                if (reader["concentracion"].ToString().Length != 0)
+                    nombre += ", " + reader["concentracion"].ToString();
+                if (reader["forma"].ToString().Length != 0)
+                    nombre += "-" + reader["forma"].ToString();
+            }
+            // lo agregamos al cache.
+        }
+        return nombre;
     }
 
     static public string GetProcedimiento(string id) {
@@ -318,30 +344,32 @@ public class Procedimientos
     static public ArrayList GetCodigosCIE10(string paciente) {
 
         ArrayList lista = new ArrayList();
-        CConector conectormysql = new CConector();
-
-        MySqlDataReader readermysql = conectormysql.Query("SELECT evolucion_paciente.id,codigo FROM evolucion_paciente"
-        + " LEFT JOIN codigos_evolucion ON (codigos_evolucion.evolucion_paciente=evolucion_paciente.id) "
-        + " WHERE evolucion_paciente.id=(SELECT id FROM evolucion_paciente WHERE evolucion_paciente.paciente="
-        + paciente
-        + "  ORDER BY fecha DESC LIMIT 1);");
-
-        if (readermysql != null)
+        using (CConector conectormysql = new CConector())
         {
-            while (readermysql.Read())
-            {
-                AddCIE10(lista, readermysql["codigo"].ToString());
-            }
-        }
 
-        if (lista.Count == 0)
-        {
-            readermysql = conectormysql.Query("SELECT codigo FROM ingreso_paciente LEFT JOIN codigos_ingreso ON (codigos_ingreso.ingreso_paciente=ingreso_paciente.id) WHERE paciente=" + paciente);
+            MySqlDataReader readermysql = conectormysql.Query("SELECT evolucion_paciente.id,codigo FROM evolucion_paciente"
+            + " LEFT JOIN codigos_evolucion ON (codigos_evolucion.evolucion_paciente=evolucion_paciente.id) "
+            + " WHERE evolucion_paciente.id=(SELECT id FROM evolucion_paciente WHERE evolucion_paciente.paciente="
+            + paciente
+            + "  ORDER BY fecha DESC LIMIT 1);");
+
             if (readermysql != null)
             {
                 while (readermysql.Read())
                 {
                     AddCIE10(lista, readermysql["codigo"].ToString());
+                }
+            }
+
+            if (lista.Count == 0)
+            {
+                readermysql = conectormysql.Query("SELECT codigo FROM ingreso_paciente LEFT JOIN codigos_ingreso ON (codigos_ingreso.ingreso_paciente=ingreso_paciente.id) WHERE paciente=" + paciente);
+                if (readermysql != null)
+                {
+                    while (readermysql.Read())
+                    {
+                        AddCIE10(lista, readermysql["codigo"].ToString());
+                    }
                 }
             }
         }
@@ -361,7 +389,10 @@ public class Procedimientos
         query+="medicamento_formulacion.formulada";
         query+="medicamento_formulacion.posologia";
         
-        MySqlDataReader reader= conector.Query(query.GetSelect("formulacion.paciente=" +Query.GetValor(idpaciente) + " AND formulacion.fecha=" + Query.GetValor(CConector.GetMySQLDateFormat(fecha)), "LEFT JOIN medicamento_formulacion ON (formulacion.id=medicamento_formulacion.formulacion)"
+        MySqlDataReader reader= conector.Query(query.GetSelect("formulacion.paciente=" +Query.GetValor(idpaciente) 
+                            + " AND formulacion.fecha=" + Query.GetValor(CConector.GetMySQLDateFormat(fecha))
+                            + " AND medicamento_formulacion.id IS NOT NULL"
+                            , "LEFT JOIN medicamento_formulacion ON (formulacion.id=medicamento_formulacion.formulacion)"
                             + " LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)"));
         if(reader!=null) {
             while(reader.Read()) {
@@ -394,7 +425,10 @@ public class Procedimientos
         query += "formato_ctc_items.respuesta";
         query += "formato_ctc_items.efecto_secundario";
 
-        reader = conector.Query(query.GetSelect("formato_ctc.paciente=" + Query.GetValor(idpaciente) + " AND formato_ctc.fecha=" + Query.GetValor(CConector.GetMySQLDateFormat(fecha)), "LEFT JOIN formato_ctc_items ON (formato_ctc.id=formato_ctc_items.formato_ctc)"));
+        reader = conector.Query(query.GetSelect("formato_ctc.paciente=" + Query.GetValor(idpaciente) 
+            + " AND formato_ctc.fecha=" + Query.GetValor(CConector.GetMySQLDateFormat(fecha))
+            + " AND formato_ctc_items.id IS NOT NULL"
+            , "LEFT JOIN formato_ctc_items ON (formato_ctc.id=formato_ctc_items.formato_ctc)"));
         if (reader != null)
         {
             while (reader.Read())

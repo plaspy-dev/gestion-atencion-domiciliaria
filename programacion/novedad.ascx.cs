@@ -80,88 +80,90 @@ public partial class phd_novedad : System.Web.UI.UserControl
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         Query query = new Query("phdNovedad");
-        CConectorMS conector = new CConectorMS();
-        string []programacion= HIdProgramacion.Value=="" ? HIdProgramaciones.Value.Split(',') : HIdProgramacion.Value.Split(',');
-
-        int tipo=(Convert.ToInt32(TTipo.Text) + 1);
-        if(tipo>2) // no hay tipo 3
-            tipo++;
-        query["novTipo"] = tipo.ToString();
-        query["novObs"] = TObservaciones.Text;
-        query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
-        query["segFechaRegistro"] = "GETDATE()";
-        query["novId"] = "2";
-        query["prgTipo"] = "1";
-
-        Query qprogramacion = new Query("programacion");
-
-        for (int i = 0; i < programacion.Length; i++)
+        using (CConectorMS conector = new CConectorMS())
         {
-            query["prgId"] = programacion[i];
-            query["perIdAnt"] = conector.QueryString("SELECT perId FROM programacion WHERE prgId=" + programacion[i] + "");
+            string[] programacion = HIdProgramacion.Value == "" ? HIdProgramaciones.Value.Split(',') : HIdProgramacion.Value.Split(',');
 
-            if (TTipo.Text == "0")
-            {
-                query["cnoId"] = DCausa1.SelectedValue;
-                qprogramacion["prgActivo"] = "0";
-            }
-            else if (TTipo.Text == "1")
-            {
-                query["cnoId"] = DCausa2.SelectedValue;
-                if (TProfesionalID.Text.Length==0)
-                    return;
-                qprogramacion["perId"] = TProfesionalID.Text;
-                query["perId"] = TProfesionalID.Text;
-            }
-            else if (TTipo.Text == "2")
-            {
-                query["cnoId"] = DCausa3.SelectedValue;
-                query["novNS"] = TNumero.Text;
-                qprogramacion["prgNumSesion"] = TNumero.Text;
-            }
-            else if (TTipo.Text == "3")
-            {
-                query["cnoId"] = DCausa4.SelectedValue;
-                qprogramacion["perId"] = "0";
-            }
-            else if (TTipo.Text == "4")
-            {
-                query["cnoId"] = DCausa5.SelectedValue;
-                query["actId"] = TProcedimientoID.Text;
-                qprogramacion["actId"] = TProcedimientoID.Text;
-            }
+            int tipo = (Convert.ToInt32(TTipo.Text) + 1);
+            if (tipo > 2) // no hay tipo 3
+                tipo++;
+            query["novTipo"] = tipo.ToString();
+            query["novObs"] = TObservaciones.Text;
+            query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
+            query["segFechaRegistro"] = "GETDATE()";
+            query["novId"] = "2";
+            query["prgTipo"] = "1";
 
-            if (HId.Value.Length > 0)
+            Query qprogramacion = new Query("programacion");
+
+            for (int i = 0; i < programacion.Length; i++)
             {
-                if (conector.QueryMod(query.GetUpdate("novIden=" + HId.Value)) == -1)
-                    return;
+                query["prgId"] = programacion[i];
+                query["perIdAnt"] = conector.QueryString("SELECT perId FROM programacion WHERE prgId=" + programacion[i] + "");
+
+                if (TTipo.Text == "0")
+                {
+                    query["cnoId"] = DCausa1.SelectedValue;
+                    qprogramacion["prgActivo"] = "0";
+                }
+                else if (TTipo.Text == "1")
+                {
+                    query["cnoId"] = DCausa2.SelectedValue;
+                    if (TProfesionalID.Text.Length == 0)
+                        return;
+                    qprogramacion["perId"] = TProfesionalID.Text;
+                    query["perId"] = TProfesionalID.Text;
+                }
+                else if (TTipo.Text == "2")
+                {
+                    query["cnoId"] = DCausa3.SelectedValue;
+                    query["novNS"] = TNumero.Text;
+                    qprogramacion["prgNumSesion"] = TNumero.Text;
+                }
+                else if (TTipo.Text == "3")
+                {
+                    query["cnoId"] = DCausa4.SelectedValue;
+                    qprogramacion["perId"] = "0";
+                }
+                else if (TTipo.Text == "4")
+                {
+                    query["cnoId"] = DCausa5.SelectedValue;
+                    query["actId"] = TProcedimientoID.Text;
+                    qprogramacion["actId"] = TProcedimientoID.Text;
+                }
+
+                if (HId.Value.Length > 0)
+                {
+                    if (conector.QueryMod(query.GetUpdate("novIden=" + HId.Value)) == -1)
+                        return;
+                }
+                else
+                {
+                    int res = conector.QueryMod(query.GetInsert(), true);
+                    if (res == -1)
+                        return;
+                    HId.Value = res.ToString();
+                }
+                // no se actualizo nada
+                string szQueryProgramacion = qprogramacion.GetUpdate("prgId=" + programacion[i]);
+                if (szQueryProgramacion.Length > 0)
+                    if (conector.QueryMod(szQueryProgramacion) == -1)
+                        return;
+                HId.Value = "";
             }
-            else
-            {
-                int res = conector.QueryMod(query.GetInsert(), true);
-                if (res == -1)
-                    return;
-                HId.Value = res.ToString();
-            }
-            // no se actualizo nada
-            string szQueryProgramacion=qprogramacion.GetUpdate("prgId=" + programacion[i]);
-            if(szQueryProgramacion.Length>0)
-                if (conector.QueryMod(szQueryProgramacion)==-1)
-                    return;
+            TObservaciones.Text = "";
             HId.Value = "";
-        }
-        TObservaciones.Text = "";
-        HId.Value = "";
-        HIdProgramacion.Value = "";
-        HIdServicio.Value = "";
-        HIdProgramaciones.Value = "";
-        TProfesional.Text = "";
-        TProfesionalID.Text = "";
-        Visible = false;
-        EventHandler handler = (EventHandler)base.Events[_AceptarClicked];
-        if (handler != null)
-        {
-            handler(this, e);
+            HIdProgramacion.Value = "";
+            HIdServicio.Value = "";
+            HIdProgramaciones.Value = "";
+            TProfesional.Text = "";
+            TProfesionalID.Text = "";
+            Visible = false;
+            EventHandler handler = (EventHandler)base.Events[_AceptarClicked];
+            if (handler != null)
+            {
+                handler(this, e);
+            }
         }
     }
     protected void BCancelar_Click(object sender, EventArgs e)

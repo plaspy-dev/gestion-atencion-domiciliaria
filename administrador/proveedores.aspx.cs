@@ -26,41 +26,43 @@ public partial class administrador_proveedores : System.Web.UI.Page
         if (!IsValid)
             return;
         Query query = new Query("tercero");
-        CConector conector = CConector.GetConector();
-        string szQuery;
-        string mensaje;
-
-        conector.StartTransaction();
-
-        query["nombre"] = TNombre.Text;
-        query["descripcion"] = TDescripcion.Text;
-        query["tipo"] = "1";// DTipo.SelectedValue;
-        query["identificacion"] = TIdentificacion.Text;
-
-        if (HId.Value.Length == 0)
+        using (CConector conector = new CConector())
         {
-            szQuery = query.GetInsert();
-            mensaje = TNombre.Text + " ingresado";
+            string szQuery;
+            string mensaje;
+
+            conector.StartTransaction();
+
+            query["nombre"] = TNombre.Text;
+            query["descripcion"] = TDescripcion.Text;
+            query["tipo"] = "1";// DTipo.SelectedValue;
+            query["identificacion"] = TIdentificacion.Text;
+
+            if (HId.Value.Length == 0)
+            {
+                szQuery = query.GetInsert();
+                mensaje = TNombre.Text + " ingresado";
+            }
+            else
+            {
+                szQuery = query.GetUpdate("id='" + HId.Value + "'");
+                mensaje = TNombre.Text + " editado";
+            }
+            int res = conector.QueryMod(szQuery, true);
+            if (res == -1)
+                return;
+            if (HId.Value.Length == 0)
+                HId.Value = res.ToString();
+
+            if (conector.InsertModificacion(HId.Value) == -1)
+                return;
+
+            conector.Commit();
+
+            Almacen.RemoveTercero(HId.Value);
+
+            ((MasterPageI)Master).SetResultado(mensaje);
         }
-        else
-        {
-            szQuery = query.GetUpdate("id='" + HId.Value + "'");
-            mensaje = TNombre.Text + " editado";
-        }
-        int res = conector.QueryMod(szQuery, true);
-        if (res == -1)
-            return;
-        if (HId.Value.Length == 0)
-            HId.Value = res.ToString();
-
-        if (conector.InsertModificacion(HId.Value) == -1)
-            return;
-
-        conector.Commit();
-
-        Almacen.RemoveTercero(HId.Value);
-
-        ((MasterPageI)Master).SetResultado(mensaje);
     }
 
     protected void BCancelar_Click(object sender, EventArgs e)

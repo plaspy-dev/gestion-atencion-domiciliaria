@@ -114,7 +114,7 @@
                         <asp:SqlDataSource ID="SFormulaciones" runat="server" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT formulacion.fecha,formulacion.tipo AS idtipo,varios.nombre AS tipo, COUNT(*) AS medicamentos
+                            SelectCommand="SELECT formulacion.fecha,formulacion.tipo AS idtipo,varios.nombre AS tipo, COUNT(medicamento_formulacion.id) AS medicamentos
                                         FROM formulacion
                                         LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id)
                                         LEFT JOIN varios ON (varios.id=formulacion.tipo)

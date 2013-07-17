@@ -60,16 +60,20 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             double total= 0;
             if (ViewState["paciente_costo_paciente_actual"] == null)
             {
-                string sTotal= new CConectorMS().QueryString("SELECT SUM(costo) FROM programacion WHERE pacId=" + IdPaciente + " AND prgFechaProg>GETDATE()-30");
-                if (sTotal.Length == 0)
-                    total = 0;
-                else total = Convert.ToDouble(sTotal);
-                // agregamos el valor formulado
-                sTotal = new CConector().QueryString("SELECT SUM(medicamento_formulacion.costo*medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.paciente=" + IdPaciente + " AND fecha>DATE_ADD(DATE(SYSDATE()), INTERVAL -30 DAY);");
-                if (sTotal.Length == 0)
-                    total = 0;
-                else total+= Convert.ToDouble(sTotal);
-                ViewState["paciente_costo_paciente_actual"]=total;
+                using(CConector conector= new CConector()) 
+                using (CConectorMS conectorms = new CConectorMS())
+                {
+                    string sTotal = conectorms.QueryString("SELECT SUM(costo) FROM programacion WHERE pacId=" + IdPaciente + " AND prgFechaProg>GETDATE()-30");
+                    if (sTotal.Length == 0)
+                        total = 0;
+                    else total = Convert.ToDouble(sTotal);
+                    // agregamos el valor formulado
+                    sTotal = conector.QueryString("SELECT SUM(medicamento_formulacion.costo*medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.paciente=" + IdPaciente + " AND fecha>DATE_ADD(DATE(SYSDATE()), INTERVAL -30 DAY);");
+                    if (sTotal.Length == 0)
+                        total = 0;
+                    else total += Convert.ToDouble(sTotal);
+                    ViewState["paciente_costo_paciente_actual"] = total;
+                }
             }
             else {
                 total = (double)ViewState["paciente_costo_paciente_actual"];
@@ -90,16 +94,20 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             double total = 0;
             if (ViewState["paciente_costo_aseguradora_actual"] == null)
             {
-                string sTotal = new CConectorMS().QueryString("SELECT SUM(costo) FROM programacion WHERE entId='" + AsegurdadorID + "' AND prgFechaProg>GETDATE()-30");
-                if (sTotal.Length == 0)
-                    total = 0;
-                else total = Convert.ToDouble(sTotal);
-                // agregamos el valor formulado
-                sTotal = new CConector().QueryString("SELECT SUM(medicamento_formulacion.costo*medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.asegurador='" + AsegurdadorID + "' AND fecha>DATE_ADD(DATE(SYSDATE()), INTERVAL -30 DAY);");
-                if (sTotal.Length == 0)
-                    total = 0;
-                else total += Convert.ToDouble(sTotal);
-                ViewState["paciente_costo_aseguradora_actual"] = total;
+                using(CConector conector= new CConector()) 
+                using (CConectorMS conectorms = new CConectorMS())
+                {
+                    string sTotal = conectorms.QueryString("SELECT SUM(costo) FROM programacion WHERE entId='" + AsegurdadorID + "' AND prgFechaProg>GETDATE()-30");
+                    if (sTotal.Length == 0)
+                        total = 0;
+                    else total = Convert.ToDouble(sTotal);
+                    // agregamos el valor formulado
+                    sTotal = conector.QueryString("SELECT SUM(medicamento_formulacion.costo*medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.asegurador='" + AsegurdadorID + "' AND fecha>DATE_ADD(DATE(SYSDATE()), INTERVAL -30 DAY);");
+                    if (sTotal.Length == 0)
+                        total = 0;
+                    else total += Convert.ToDouble(sTotal);
+                    ViewState["paciente_costo_aseguradora_actual"] = total;
+                }
             }
             else
             {

@@ -51,8 +51,11 @@ public class Almacen
             return "(Ninguna)";
         string nombre= (string)HttpRuntime.Cache["ubicacion" + ubicacion.ToString()];
         if(nombre==null) {
-            nombre = new CConector().QueryString("SELECT nombre FROM ubicacion WHERE id=" + Query.GetValor(ubicacion.ToString()));
-            HttpRuntime.Cache.Insert("ubicacion" + ubicacion.ToString(), nombre, null, DateTime.Now.AddHours(1), System.Web.Caching.Cache.NoSlidingExpiration);
+            using (CConector conector = new CConector())
+            {
+                nombre = conector.QueryString("SELECT nombre FROM ubicacion WHERE id=" + Query.GetValor(ubicacion.ToString()));
+                HttpRuntime.Cache.Insert("ubicacion" + ubicacion.ToString(), nombre, null, DateTime.Now.AddHours(1), System.Web.Caching.Cache.NoSlidingExpiration);
+            }
         }
         return nombre;
     }
@@ -69,8 +72,11 @@ public class Almacen
         string nombre = (string)HttpRuntime.Cache["estado" + estado.ToString()];
         if (nombre == null)
         {
-            nombre = new CConector().QueryString("SELECT nombre FROM varios WHERE id=" + Query.GetValor(estado.ToString()));
-            HttpRuntime.Cache.Insert("estado" + estado.ToString(), nombre, null, DateTime.Now.AddHours(1), System.Web.Caching.Cache.NoSlidingExpiration);
+            using (CConector conector = new CConector())
+            {
+                nombre = conector.QueryString("SELECT nombre FROM varios WHERE id=" + Query.GetValor(estado.ToString()));
+                HttpRuntime.Cache.Insert("estado" + estado.ToString(), nombre, null, DateTime.Now.AddHours(1), System.Web.Caching.Cache.NoSlidingExpiration);
+            }
         }
         return nombre;
     }
@@ -87,8 +93,11 @@ public class Almacen
         string nombre = (string)HttpRuntime.Cache["tercero" + tercero];
         if (nombre == null)
         {
-            nombre = new CConector().QueryString("SELECT IF(identificacion IS NULL,nombre, CONCAT(identificacion,'-',nombre)) FROM tercero WHERE id=" + Query.GetValor(tercero));
-            HttpRuntime.Cache.Insert("tercero" + tercero, nombre, null, DateTime.Now.AddHours(1), System.Web.Caching.Cache.NoSlidingExpiration);
+            using (CConector conector = new CConector())
+            {
+                nombre = conector.QueryString("SELECT IF(identificacion IS NULL,nombre, CONCAT(identificacion,'-',nombre)) FROM tercero WHERE id=" + Query.GetValor(tercero));
+                HttpRuntime.Cache.Insert("tercero" + tercero, nombre, null, DateTime.Now.AddHours(1), System.Web.Caching.Cache.NoSlidingExpiration);
+            }
         }
         return nombre;
     }

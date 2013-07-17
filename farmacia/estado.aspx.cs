@@ -183,23 +183,25 @@ public partial class farmacia_estado : System.Web.UI.Page
             serial = "''";
         else serial = Query.GetValor(serial);
 
-        CConector conector = new CConector();
-        conector.StartTransaction();
+        using (CConector conector = new CConector())
+        {
+            conector.StartTransaction();
 
-        // descontamos del producto original
-        if (conector.QueryMod(string.Format("UPDATE estado{0} SET cantidad=cantidad-{1},modificacion=SYSDATE() WHERE producto={2} AND lote={3} AND vence={4} AND szSerial={6} AND ubicacion={5} AND estado={7};"
-            , almacen, TCantidad.Text, producto, lote, vence, ubicacion, serial, estado)) == -1)
-            return;
+            // descontamos del producto original
+            if (conector.QueryMod(string.Format("UPDATE estado{0} SET cantidad=cantidad-{1},modificacion=SYSDATE() WHERE producto={2} AND lote={3} AND vence={4} AND szSerial={6} AND ubicacion={5} AND estado={7};"
+                , almacen, TCantidad.Text, producto, lote, vence, ubicacion, serial, estado)) == -1)
+                return;
 
-        // insertmaos la nueva posicion con la nueva ubicacion.
-        if (conector.QueryMod(string.Format("UPDATE estado{0} SET cantidad=cantidad+{1},modificacion=SYSDATE() WHERE producto={2} AND lote={3} AND vence={4} AND szSerial={6} AND ubicacion={5} AND estado={7};"
-            , almacen, TCantidad.Text, producto, lote, vence, DNuevaUbicacion.SelectedValue, serial, estado)) == -1)
-            return;
-        if (conector.QueryMod(string.Format("INSERT IGNORE INTO estado{0} (producto, lote, vence, cantidad, szSerial, ubicacion, estado, modificacion) VALUES ({2}, {3}, {4}, {1}, {6}, {5},{7}, SYSDATE());"
-            , almacen, TCantidad.Text, producto, lote, vence, DNuevaUbicacion.SelectedValue, serial, estado)) == -1)
-            return;
+            // insertmaos la nueva posicion con la nueva ubicacion.
+            if (conector.QueryMod(string.Format("UPDATE estado{0} SET cantidad=cantidad+{1},modificacion=SYSDATE() WHERE producto={2} AND lote={3} AND vence={4} AND szSerial={6} AND ubicacion={5} AND estado={7};"
+                , almacen, TCantidad.Text, producto, lote, vence, DNuevaUbicacion.SelectedValue, serial, estado)) == -1)
+                return;
+            if (conector.QueryMod(string.Format("INSERT IGNORE INTO estado{0} (producto, lote, vence, cantidad, szSerial, ubicacion, estado, modificacion) VALUES ({2}, {3}, {4}, {1}, {6}, {5},{7}, SYSDATE());"
+                , almacen, TCantidad.Text, producto, lote, vence, DNuevaUbicacion.SelectedValue, serial, estado)) == -1)
+                return;
 
-        conector.Commit();
+            conector.Commit();
+        }
         ViewState["producto"] = null;
         PUbicacion.Visible = false;
         GResultados.SelectedIndex = -1;
@@ -308,23 +310,25 @@ public partial class farmacia_estado : System.Web.UI.Page
             serial = "''";
         else serial = Query.GetValor(serial);
 
-        CConector conector = new CConector();
-        conector.StartTransaction();
+        using (CConector conector = new CConector())
+        {
+            conector.StartTransaction();
 
-        // descontamos del producto original
-        if (conector.QueryMod(string.Format("UPDATE estado{0} SET cantidad=cantidad-{1},modificacion=SYSDATE() WHERE producto={2} AND lote={3} AND vence={4} AND szSerial={6} AND estado={5} AND ubicacion={7};"
-            , almacen, TEstadoCantidad.Text, producto, lote, vence, estado, serial, ubicacion)) == -1)
-            return;
+            // descontamos del producto original
+            if (conector.QueryMod(string.Format("UPDATE estado{0} SET cantidad=cantidad-{1},modificacion=SYSDATE() WHERE producto={2} AND lote={3} AND vence={4} AND szSerial={6} AND estado={5} AND ubicacion={7};"
+                , almacen, TEstadoCantidad.Text, producto, lote, vence, estado, serial, ubicacion)) == -1)
+                return;
 
-        // insertmaos la nueva posicion con la nueva ubicacion.
-        if (conector.QueryMod(string.Format("UPDATE estado{0} SET cantidad=cantidad+{1},modificacion=SYSDATE() WHERE producto={2} AND lote={3} AND vence={4} AND szSerial={6} AND estado={5} AND ubicacion={7};"
-            , almacen, TEstadoCantidad.Text, producto, lote, vence, DNuevoEstado.SelectedValue, serial, ubicacion)) == -1)
-            return;
-        if (conector.QueryMod(string.Format("INSERT IGNORE INTO estado{0} (producto, lote, vence, cantidad, szSerial, estado, ubicacion, modificacion) VALUES ({2}, {3}, {4}, {1}, {6}, {5}, {7},SYSDATE());"
-            , almacen, TEstadoCantidad.Text, producto, lote, vence, DNuevoEstado.SelectedValue, serial, ubicacion)) == -1)
-            return;
+            // insertmaos la nueva posicion con la nueva ubicacion.
+            if (conector.QueryMod(string.Format("UPDATE estado{0} SET cantidad=cantidad+{1},modificacion=SYSDATE() WHERE producto={2} AND lote={3} AND vence={4} AND szSerial={6} AND estado={5} AND ubicacion={7};"
+                , almacen, TEstadoCantidad.Text, producto, lote, vence, DNuevoEstado.SelectedValue, serial, ubicacion)) == -1)
+                return;
+            if (conector.QueryMod(string.Format("INSERT IGNORE INTO estado{0} (producto, lote, vence, cantidad, szSerial, estado, ubicacion, modificacion) VALUES ({2}, {3}, {4}, {1}, {6}, {5}, {7},SYSDATE());"
+                , almacen, TEstadoCantidad.Text, producto, lote, vence, DNuevoEstado.SelectedValue, serial, ubicacion)) == -1)
+                return;
 
-        conector.Commit();
+            conector.Commit();
+        }
         DEstado.Visible = false;
         ViewState["producto"] = null;
         GResultados.SelectedIndex = -1;

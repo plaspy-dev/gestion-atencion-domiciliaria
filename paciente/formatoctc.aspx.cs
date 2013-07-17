@@ -145,9 +145,11 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                         }
                         else
                         {
-
                             BFormula.Visible = conectormy.QueryString("SELECT id FROM formato_ctc WHERE paciente=" + CCDetallePaciente.IdPaciente + " LIMIT 1;").Length != 0;
                         }
+
+                        BAceptar.OnClientClick = GFormulacion.Rows.Count == 0 ? "confirm('¿Está seguro de guardar la orden sin medicamentos o procedimientos?')" : "";
+
 
                         GFormulaciones.DataBind();
                         LFormulaciones.Text = GFormulaciones.Rows.Count + " Formato";
@@ -165,8 +167,11 @@ public partial class paciente_formatoctc : System.Web.UI.Page
 
     protected void BMasFormulacion_Click(object sender, EventArgs e)
     {
-        if (!IsValid)
-            return;
+        try
+        {
+            if (!IsValid)
+                return;
+        } catch { }
 
         List<Medicamento> medicamentos = Serializar.DesSerializeBinary<List<Medicamento>>(HFormulacion.Value);
 
@@ -197,6 +202,8 @@ public partial class paciente_formatoctc : System.Web.UI.Page
         GFormulacion.DataSource = medicamentos;
         GFormulacion.DataBind();
 
+        BAceptar.OnClientClick = GFormulacion.Rows.Count == 0 ? "confirm('¿Está seguro de guardar la orden sin medicamentos o procedimientos?')" : "";
+
         TNombre.Text= TCantidad.Text = TTiempo.Text= TEfecto.Text= TRespuesta.Text= TEfectosSecundarios.Text= "";
         TNombre.Focus();
     }
@@ -215,7 +222,14 @@ public partial class paciente_formatoctc : System.Web.UI.Page
         }
         catch { }
 
+        CUsuario usuario = (CUsuario)CUsuario.GetInstance();
         Query formulacion = new Query("formato_ctc");
+
+        if (!usuario.CanDelete() && GFormulacion.Rows.Count == 0)
+        {
+            LMensajeMedicamento.Text = "Por favor ingrese por lo menos un medicamento.";
+            return;
+        }
 
         string szQuery;
         string mensaje;
@@ -230,7 +244,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                 DateTime fecha = Convert.ToDateTime(TFecha.Text);
 
                 formulacion["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
-                formulacion["profesional"] = CUsuario.GetUsuario()["personal"];
+                formulacion["profesional"] = usuario["personal"];
                 formulacion["asegurador"] = CCDetallePaciente.AsegurdadorID;
 
                 if (HIdFormulacion.Value.Length == 0)
@@ -461,6 +475,8 @@ public partial class paciente_formatoctc : System.Web.UI.Page
             GFormulacion.SelectedIndex = -1;
             GFormulacion.DataSource = medicamentos;
             GFormulacion.DataBind();
+
+            BAceptar.OnClientClick = GFormulacion.Rows.Count == 0 ? "confirm('¿Está seguro de guardar la orden sin medicamentos o procedimientos?')" : "";
         }
     }
 }

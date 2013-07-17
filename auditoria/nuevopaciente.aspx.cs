@@ -7,7 +7,6 @@ using System.Web.UI.WebControls;
 
 public partial class auditoria_nuevopaciente : System.Web.UI.Page
 {
-    CConectorMS conectorms = null;
     protected void Page_Load(object sender, EventArgs e)
     {
         if(!IsPostBack) {
@@ -50,8 +49,6 @@ public partial class auditoria_nuevopaciente : System.Web.UI.Page
             catch { }
             e.Row.Cells[3].Text = texto; // edad
 
-            if (conectorms == null)
-                conectorms = new CConectorMS();
             texto = "";
             string[] cie10 = e.Row.Cells[4].Text.Split(',');
             for (int i = 0; i < cie10.Length; i++)

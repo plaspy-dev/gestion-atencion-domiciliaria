@@ -41,36 +41,38 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                 query += "prgNumSesion";
                 query += "intensidad";
 
-                CConectorMS conector = new CConectorMS();
-
-                SqlDataReader reader = conector.Query(query.GetSelect("prgId=" + HId.Value));
-                if (reader != null && reader.Read())
+                using (CConectorMS conector = new CConectorMS())
                 {
-                    CRecurrente.Checked = false;
-                    TFechaFinal.Text= TFecha.Text = reader["prgFechaProg"].ToString();
-                    TObservaciones.Text = reader["prgObservaciones"].ToString();
-                    TSesiones.Text = reader["prgNumSesion"].ToString();
-                    TProfesionalID.Text = reader["perId"].ToString();
-                    conector.SelectInDropDown(DAutorizacion, reader["autNumero"], "SELECT '" + reader["autNumero"].ToString() + "'");
-                    
-                    conector.SelectInDropDown(DActividad, reader["actId"]);
-                    ListItem item = DActividad.Items.FindByValue(reader["actId"].ToString());
-                    if (item != null)
+
+                    SqlDataReader reader = conector.Query(query.GetSelect("prgId=" + HId.Value));
+                    if (reader != null && reader.Read())
                     {
-                        if (item.Text.Length == 0)
+                        CRecurrente.Checked = false;
+                        TFechaFinal.Text = TFecha.Text = reader["prgFechaProg"].ToString();
+                        TObservaciones.Text = reader["prgObservaciones"].ToString();
+                        TSesiones.Text = reader["prgNumSesion"].ToString();
+                        TProfesionalID.Text = reader["perId"].ToString();
+                        conector.SelectInDropDown(DAutorizacion, reader["autNumero"], "SELECT '" + reader["autNumero"].ToString() + "'");
+
+                        conector.SelectInDropDown(DActividad, reader["actId"]);
+                        ListItem item = DActividad.Items.FindByValue(reader["actId"].ToString());
+                        if (item != null)
                         {
-                            string[] ids = item.Value.Split('_');
-                            item.Text= Procedimientos.GetProcedimiento(ids[0]);
-                            if (ids.Length > 1 && ids[1].Length > 0)
+                            if (item.Text.Length == 0)
                             {
-                                item.Text += " [" + Procedimientos.GetVarios(ids[1]) + "]";
+                                string[] ids = item.Value.Split('_');
+                                item.Text = Procedimientos.GetProcedimiento(ids[0]);
+                                if (ids.Length > 1 && ids[1].Length > 0)
+                                {
+                                    item.Text += " [" + Procedimientos.GetVarios(ids[1]) + "]";
+                                }
                             }
                         }
-                    }
-                    TProfesional.Text = conector.QueryString("SELECT perNombre FROM dbo.admPersonalHS where perId='" + reader["perId"].ToString() + "'");
-                    ViewState["maximo"] = TSesiones.Text;
+                        TProfesional.Text = conector.QueryString("SELECT perNombre FROM dbo.admPersonalHS where perId='" + reader["perId"].ToString() + "'");
+                        ViewState["maximo"] = TSesiones.Text;
 
-                    DAutorizacion_SelectedIndexChanged(null, null);
+                        DAutorizacion_SelectedIndexChanged(null, null);
+                    }
                 }
             }
         }
@@ -134,67 +136,79 @@ public partial class phd_programacionc : System.Web.UI.UserControl
     {
         if (!Page.IsValid)
             return;
-        CConectorMS conector= new CConectorMS();
-        ArrayList fechas = new ArrayList();
-        Session["phd_programacion"] = fechas;
+        using (CConectorMS conector = new CConectorMS())
+        {
+            ArrayList fechas = new ArrayList();
+            Session["phd_programacion"] = fechas;
 
-        int maximo;
+            int maximo;
 
-        int sesiones = Convert.ToInt32(TSesiones.Text);
-        if(RActividad.Items.Count>DActividad.SelectedIndex) {
-
-            Label m = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LMaximo");
-            Label r = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LRealizadas");
-            maximo = Convert.ToInt32(m.Text) - Convert.ToInt32(r.Text);
-        } else {
-            maximo = Convert.ToInt32(ViewState["maximo"]);
-        }
-
-        if (CRecurrente.Checked) {
-
-            if (sesiones > 0)
-                maximo /= sesiones;
-
-            DateTime inicio= Convert.ToDateTime(TFecha.Text);
-            DateTime fin = Convert.ToDateTime(TFechaFinal.Text);
-
-            if (RPeriodicidad.SelectedValue == "1" || RPeriodicidad.SelectedValue == "2")
+            int sesiones = Convert.ToInt32(TSesiones.Text);
+            if (RActividad.Items.Count > DActividad.SelectedIndex)
             {
-                int dias = 1;
-                if (RPeriodicidad.SelectedValue == "2")
-                    dias = Convert.ToInt32(TDias.Text);
-                while (inicio <= fin)
+
+                Label m = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LMaximo");
+                Label r = (Label)RActividad.Items[DActividad.SelectedIndex].FindControl("LRealizadas");
+                maximo = Convert.ToInt32(m.Text) - Convert.ToInt32(r.Text);
+            }
+            else
+            {
+                maximo = Convert.ToInt32(ViewState["maximo"]);
+            }
+
+            if (CRecurrente.Checked)
+            {
+
+                if (sesiones > 0)
+                    maximo /= sesiones;
+
+                DateTime inicio = Convert.ToDateTime(TFecha.Text);
+                DateTime fin = Convert.ToDateTime(TFechaFinal.Text);
+
+                if (RPeriodicidad.SelectedValue == "1" || RPeriodicidad.SelectedValue == "2")
                 {
-                    AddFecha(fechas, inicio.ToShortDateString(),maximo);
-                    inicio= inicio.AddDays(dias);
-                }
-            } else { // dias en especial
-                while (inicio <= fin)
-                {
-                    for(int i=0; i<CSemana.Items.Count; i++) { // verificamos que sea un dia de las semana
-                        if (CSemana.Items[i].Selected && ((int)inicio.DayOfWeek).ToString() == CSemana.Items[i].Value)
-                        {
-                            AddFecha(fechas, inicio.ToShortDateString(), maximo);
-                        }
+                    int dias = 1;
+                    if (RPeriodicidad.SelectedValue == "2")
+                        dias = Convert.ToInt32(TDias.Text);
+                    while (inicio <= fin)
+                    {
+                        AddFecha(fechas, inicio.ToShortDateString(), maximo);
+                        inicio = inicio.AddDays(dias);
                     }
-                    inicio= inicio.AddDays(1);
                 }
+                else
+                { // dias en especial
+                    while (inicio <= fin)
+                    {
+                        for (int i = 0; i < CSemana.Items.Count; i++)
+                        { // verificamos que sea un dia de las semana
+                            if (CSemana.Items[i].Selected && ((int)inicio.DayOfWeek).ToString() == CSemana.Items[i].Value)
+                            {
+                                AddFecha(fechas, inicio.ToShortDateString(), maximo);
+                            }
+                        }
+                        inicio = inicio.AddDays(1);
+                    }
+                }
+                LConfirmar.Text = "";
+                for (int i = 0; i < fechas.Count; i++)
+                {
+                    if (i > 0)
+                        LConfirmar.Text += "<br/>";
+                    LConfirmar.Text += fechas[i].ToString();
+                }
+                PConfirmar.Visible = true;
             }
-            LConfirmar.Text = "";
-            for (int i = 0; i < fechas.Count; i++)
+            else
             {
-                if (i > 0)
-                    LConfirmar.Text += "<br/>";
-                LConfirmar.Text += fechas[i].ToString();
+                fechas.Add(TFecha.Text);
+                if (sesiones > maximo)
+                {
+                    LMensaje.Text = "Máximo de sesiones permitidas " + maximo;
+                    return;
+                }
+                BSi_Click(sender, e);
             }
-            PConfirmar.Visible = true;
-        } else {
-            fechas.Add(TFecha.Text);
-            if (sesiones > maximo) {
-                LMensaje.Text = "Máximo de sesiones permitidas " + maximo;
-                return;
-            }
-            BSi_Click(sender, e);
         }
     }
 
@@ -219,12 +233,14 @@ public partial class phd_programacionc : System.Web.UI.UserControl
 
         if (DAutorizacion.SelectedIndex != -1)
         {
-            CConectorMS conector = new CConectorMS();
-            SqlDataReader reader = conector.Query("SELECT autFecha,autFechaVenc FROM phdAutorizacion WHERE autNumero='" + DAutorizacion.SelectedValue + "'");
-            if (reader != null && reader.Read())
+            using (CConectorMS conector = new CConectorMS())
             {
-                RFechaFinal.MinimumValue = RFecha.MinimumValue = CConectorMS.GetDate(reader["autFecha"]);
-                RFechaFinal.MaximumValue = RFecha.MaximumValue = CConectorMS.GetDate(reader["autFechaVenc"]);
+                SqlDataReader reader = conector.Query("SELECT autFecha,autFechaVenc FROM phdAutorizacion WHERE autNumero='" + DAutorizacion.SelectedValue + "'");
+                if (reader != null && reader.Read())
+                {
+                    RFechaFinal.MinimumValue = RFecha.MinimumValue = CConectorMS.GetDate(reader["autFecha"]);
+                    RFechaFinal.MaximumValue = RFecha.MaximumValue = CConectorMS.GetDate(reader["autFechaVenc"]);
+                }
             }
         }
 
@@ -242,54 +258,57 @@ public partial class phd_programacionc : System.Web.UI.UserControl
     {
         ArrayList fechas= (ArrayList) Session["phd_programacion"];
         CUsuario usuario = (CUsuario) Usuario.GetUsuario();
-        CConectorMS conector = new CConectorMS();
-
-        Query query = new Query("programacion");
-        string entidad = Paciente.GetPaciente(HIdPaciente.Value).entidadId;
-
-        query["pacId"] = HIdPaciente.Value;
-        query["perId"] = TProfesionalID.Text;
-        query["prgObservaciones"] = TObservaciones.Text;
-        query["autNumero"] = DAutorizacion.SelectedValue;
-        query["prgNumSesion"] = TSesiones.Text;
-        query["prgActivo"] = "1";
-        query["segUsuarioIngreso"] = usuario.GetLogin();
-        query["segFechaIngreso"] = "GETDATE()";
-        query["entId"] = entidad;
-
-        string []ids= DActividad.SelectedValue.Split('_');
-        query["actId"] = ids[0];
-        string costo = Procedimientos.GetCosto(ids[0], entidad).ToString(CultureInfo.InvariantCulture);
-        if (costo.Length > 0)
-            query["costo"] = costo;
-
-        if (ids.Length>1 && ids[1].Length>0)
-            query["intensidad"] = ids[1];
-
-        for (int i = 0; i < fechas.Count; i++)
+        using (CConectorMS conector = new CConectorMS())
         {
-            query["prgFechaProg"] = fechas[i].ToString();
-            if (HId.Value.Length == 0)
-            {
-                int res = conector.QueryMod(query.GetInsert(), true);
-                if (res == -1)
-                    return;
-                HId.Value = res.ToString();
-            }
-            else
-            {
-                if (conector.QueryMod(query.GetUpdate("prgId=" + HId.Value)) == -1)
-                    return;
-            }
-            (new CConector()).InsertModificacion(HId.Value);
-            HId.Value = "";
-        }
 
-        BCancelar_Click(sender, e);
-        EventHandler handler = (EventHandler)base.Events[_AceptarClicked];
-        if (handler != null)
-        {
-            handler(this, e);
+            Query query = new Query("programacion");
+            string entidad = Paciente.GetPaciente(HIdPaciente.Value).entidadId;
+
+            query["pacId"] = HIdPaciente.Value;
+            query["perId"] = TProfesionalID.Text;
+            query["prgObservaciones"] = TObservaciones.Text;
+            query["autNumero"] = DAutorizacion.SelectedValue;
+            query["prgNumSesion"] = TSesiones.Text;
+            query["prgActivo"] = "1";
+            query["segUsuarioIngreso"] = usuario.GetLogin();
+            query["segFechaIngreso"] = "GETDATE()";
+            query["entId"] = entidad;
+
+            string[] ids = DActividad.SelectedValue.Split('_');
+            query["actId"] = ids[0];
+            string costo = Procedimientos.GetCosto(ids[0], entidad).ToString(CultureInfo.InvariantCulture);
+            if (costo.Length > 0)
+                query["costo"] = costo;
+
+            if (ids.Length > 1 && ids[1].Length > 0)
+                query["intensidad"] = ids[1];
+
+            for (int i = 0; i < fechas.Count; i++)
+            {
+                query["prgFechaProg"] = fechas[i].ToString();
+                if (HId.Value.Length == 0)
+                {
+                    int res = conector.QueryMod(query.GetInsert(), true);
+                    if (res == -1)
+                        return;
+                    HId.Value = res.ToString();
+                }
+                else
+                {
+                    if (conector.QueryMod(query.GetUpdate("prgId=" + HId.Value)) == -1)
+                        return;
+                }
+                using(CConector conectorm= new CConector()) 
+                    conectorm.InsertModificacion(HId.Value);
+                HId.Value = "";
+            }
+
+            BCancelar_Click(sender, e);
+            EventHandler handler = (EventHandler)base.Events[_AceptarClicked];
+            if (handler != null)
+            {
+                handler(this, e);
+            }
         }
     }
     protected void BNo_Click(object sender, EventArgs e)
@@ -300,21 +319,23 @@ public partial class phd_programacionc : System.Web.UI.UserControl
     {
         if (DAutorizacion.SelectedIndex != -1)
         {
-            CConectorMS conector = new CConectorMS();
-            SqlDataReader reader = conector.Query("SELECT autFecha,autFechaVenc,autObservaciones FROM phdAutorizacion WHERE autNumero='" + DAutorizacion.SelectedValue + "'");
-            if (reader != null && reader.Read())
+            using (CConectorMS conector = new CConectorMS())
             {
-                DateTime autorizacion= (DateTime)reader["autFecha"];
-                DateTime final;
-                if (reader["autFechaVenc"].ToString()=="")
-                    final = autorizacion.AddDays(30);
-                else final = (DateTime)reader["autFechaVenc"];
-                if (HId.Value.Length==0)
-                    TObservaciones.Text= reader["autObservaciones"].ToString();
-                if (final == null || final < autorizacion) 
-                    final = autorizacion.AddDays(30);
-                RFechaFinal.MinimumValue = RFecha.MinimumValue = CConectorMS.GetDate(autorizacion);
-                RFechaFinal.MaximumValue = RFecha.MaximumValue = CConectorMS.GetDate(final);
+                SqlDataReader reader = conector.Query("SELECT autFecha,autFechaVenc,autObservaciones FROM phdAutorizacion WHERE autNumero='" + DAutorizacion.SelectedValue + "'");
+                if (reader != null && reader.Read())
+                {
+                    DateTime autorizacion = (DateTime)reader["autFecha"];
+                    DateTime final;
+                    if (reader["autFechaVenc"].ToString() == "")
+                        final = autorizacion.AddDays(30);
+                    else final = (DateTime)reader["autFechaVenc"];
+                    if (HId.Value.Length == 0)
+                        TObservaciones.Text = reader["autObservaciones"].ToString();
+                    if (final == null || final < autorizacion)
+                        final = autorizacion.AddDays(30);
+                    RFechaFinal.MinimumValue = RFecha.MinimumValue = CConectorMS.GetDate(autorizacion);
+                    RFechaFinal.MaximumValue = RFecha.MaximumValue = CConectorMS.GetDate(final);
+                }
             }
         }
     }

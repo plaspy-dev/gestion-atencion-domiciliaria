@@ -8,7 +8,6 @@ using SDG.Componentes;
 
 public partial class auditoria_OrganizationExample51 : System.Web.UI.Page
 {
-    CConectorMS conectorms = null;
     protected void Page_Load(object sender, EventArgs e)
     {
 
@@ -73,8 +72,6 @@ public partial class auditoria_OrganizationExample51 : System.Web.UI.Page
             } catch {}
             e.Row.Cells[1].Text= texto; // edad
 
-            if (conectorms == null)
-                conectorms = new CConectorMS();
             texto = "";
             string []cie10 = e.Row.Cells[4].Text.Split(',');
             for (int i = 0; i < cie10.Length; i++) {

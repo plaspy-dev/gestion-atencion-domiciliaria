@@ -78,6 +78,11 @@ public class ConectorMS : IDisposable
 		}
 	}
 
+	public string GetConexionString()
+	{
+		return m_szConexion;
+	}
+
 	public SqlConnection GetConexion()
 	{
 		return m_pSQLConector;

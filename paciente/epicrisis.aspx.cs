@@ -38,36 +38,37 @@ public partial class paciente_epicrisis : System.Web.UI.Page
                 }
                 TFecha.Focus();
 
-                CConectorMS conector = CConectorMS.GetConector();
-                CConector conectormy = CConector.GetConector();
-
-                Query epicrisis = new Query("epicrisis");
-
-                epicrisis += "id";
-                epicrisis += "fecha";
-                epicrisis += "valoracion_inicial";
-                epicrisis += "valoracion_final";
-                epicrisis += "intervencion_propuesta";
-                epicrisis += "intervencion_realizada";
-                epicrisis += "logros";
-                epicrisis += "observaciones";
-
-                MySqlDataReader readermysql = conectormy.Query(epicrisis.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
-                if (readermysql != null && readermysql.Read())
+                using (CConector conectormy = new CConector())
                 {
-                    ((MasterPageI)Master).Imprimir("epicrisis.html");
-                    BAceptar.Enabled = usuario.CanUpdate();
 
-                    HIdEpicrisis.Value = readermysql["id"].ToString();
-                    TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
-                    TValoracionInicial.Text = readermysql["valoracion_inicial"].ToString();
-                    TValoracionFinal.Text = readermysql["valoracion_final"].ToString();
-                    TIntervencionPropuesta.Text = readermysql["intervencion_propuesta"].ToString();
-                    TIntervencionRealizada.Text = readermysql["intervencion_realizada"].ToString();
-                    TLogros.Text = readermysql["logros"].ToString();
-                    TObservaciones.Text = readermysql["observaciones"].ToString();
+                    Query epicrisis = new Query("epicrisis");
 
-                    ((MasterPageI)Master).SetModificacion(HIdEpicrisis.Value);
+                    epicrisis += "id";
+                    epicrisis += "fecha";
+                    epicrisis += "valoracion_inicial";
+                    epicrisis += "valoracion_final";
+                    epicrisis += "intervencion_propuesta";
+                    epicrisis += "intervencion_realizada";
+                    epicrisis += "logros";
+                    epicrisis += "observaciones";
+
+                    MySqlDataReader readermysql = conectormy.Query(epicrisis.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
+                    if (readermysql != null && readermysql.Read())
+                    {
+                        ((MasterPageI)Master).Imprimir("epicrisis.html");
+                        BAceptar.Enabled = usuario.CanUpdate();
+
+                        HIdEpicrisis.Value = readermysql["id"].ToString();
+                        TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
+                        TValoracionInicial.Text = readermysql["valoracion_inicial"].ToString();
+                        TValoracionFinal.Text = readermysql["valoracion_final"].ToString();
+                        TIntervencionPropuesta.Text = readermysql["intervencion_propuesta"].ToString();
+                        TIntervencionRealizada.Text = readermysql["intervencion_realizada"].ToString();
+                        TLogros.Text = readermysql["logros"].ToString();
+                        TObservaciones.Text = readermysql["observaciones"].ToString();
+
+                        ((MasterPageI)Master).SetModificacion(HIdEpicrisis.Value);
+                    }
                 }
             }
         }
@@ -82,41 +83,43 @@ public partial class paciente_epicrisis : System.Web.UI.Page
         if (!IsValid)
             return;
         Query epicrisis = new Query("epicrisis");
-        CConector conector = CConector.GetConector();
-        string szQuery;
-        string mensaje;
-
-        epicrisis["fecha"]= CConector.GetDate(Convert.ToDateTime( TFecha.Text));
-        epicrisis["valoracion_inicial"]= TValoracionInicial.Text;
-        epicrisis["valoracion_final"]= TValoracionFinal.Text;
-        epicrisis["intervencion_propuesta"]= TIntervencionPropuesta.Text;
-        epicrisis["intervencion_realizada"]= TIntervencionRealizada.Text;
-        epicrisis["logros"]= TLogros.Text;
-        epicrisis["observaciones"]= TObservaciones.Text;
-                
-        if (HIdEpicrisis.Value.Length == 0)
+        using (CConector conector = new CConector())
         {
-            epicrisis["paciente"] = CCDetallePaciente.IdPaciente;
+            string szQuery;
+            string mensaje;
 
-            szQuery = epicrisis.GetInsert();
-            mensaje = CCDetallePaciente.Nombres + " ingresado";
-            int resultado = conector.QueryMod(szQuery, true);
-            if (resultado == -1)
-                return;
-            HIdEpicrisis.Value = resultado.ToString();
-        }
-        else
-        {
-            szQuery = epicrisis.GetUpdate("id='" + HIdEpicrisis.Value + "'");
-            mensaje = CCDetallePaciente.Nombres + " editado";
-            if (conector.QueryMod(szQuery) == -1)
-                return;
-        }
-        if (conector.InsertModificacion(HIdEpicrisis.Value) == -1)
-            return;
+            epicrisis["fecha"] = CConector.GetDate(Convert.ToDateTime(TFecha.Text));
+            epicrisis["valoracion_inicial"] = TValoracionInicial.Text;
+            epicrisis["valoracion_final"] = TValoracionFinal.Text;
+            epicrisis["intervencion_propuesta"] = TIntervencionPropuesta.Text;
+            epicrisis["intervencion_realizada"] = TIntervencionRealizada.Text;
+            epicrisis["logros"] = TLogros.Text;
+            epicrisis["observaciones"] = TObservaciones.Text;
 
-        ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
-        ((MasterPageI)Master).SetResultado(mensaje);
+            if (HIdEpicrisis.Value.Length == 0)
+            {
+                epicrisis["paciente"] = CCDetallePaciente.IdPaciente;
+
+                szQuery = epicrisis.GetInsert();
+                mensaje = CCDetallePaciente.Nombres + " ingresado";
+                int resultado = conector.QueryMod(szQuery, true);
+                if (resultado == -1)
+                    return;
+                HIdEpicrisis.Value = resultado.ToString();
+            }
+            else
+            {
+                szQuery = epicrisis.GetUpdate("id='" + HIdEpicrisis.Value + "'");
+                mensaje = CCDetallePaciente.Nombres + " editado";
+                if (conector.QueryMod(szQuery) == -1)
+                    return;
+            }
+            if (conector.InsertModificacion(HIdEpicrisis.Value) == -1)
+                return;
+
+            ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
+            ((MasterPageI)Master).SetResultado(mensaje);
+        }
     }
 
     protected void OnImprimir(object sender, EventArgs e)
@@ -134,15 +137,17 @@ public partial class paciente_epicrisis : System.Web.UI.Page
         query["szProfesional"] = "admPersonalHS.perDocumento";
         query["szMedico"] = "admPersonalHS.perNombre";
 
-        CConectorMS conectorms = new CConectorMS();
-
-        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"));
-        if (reader != null)
+        using (CConectorMS conectorms = new CConectorMS())
         {
-            bool l = reader.Read();
-            for (int i = 0; i < reader.FieldCount; i++)
+
+            SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"));
+            if (reader != null)
             {
-                evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
+                bool l = reader.Read();
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
+                }
             }
         }
     }

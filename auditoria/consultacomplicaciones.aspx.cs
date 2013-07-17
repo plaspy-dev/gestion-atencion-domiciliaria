@@ -8,7 +8,6 @@ using SDG.Componentes;
 
 public partial class auditoria_consultacomplicaciones : System.Web.UI.Page
 {
-    CConectorMS conector = null;
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
@@ -27,10 +26,9 @@ public partial class auditoria_consultacomplicaciones : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            if (conector == null)
-                conector = new CConectorMS();
             ((HyperLink)e.Row.Cells[1].Controls[0]).Text = Paciente.GetPaciente(((HyperLink)e.Row.Cells[1].Controls[0]).Text).NombreCompleto;
-            e.Row.Cells[2].Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId=" + Query.GetValor(e.Row.Cells[2].Text));
+            using(CConectorMS conector = new CConectorMS()) 
+                e.Row.Cells[2].Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId=" + Query.GetValor(e.Row.Cells[2].Text));
         }
     }
 }

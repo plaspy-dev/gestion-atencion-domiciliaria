@@ -24,54 +24,55 @@ public partial class paciente_gastos : System.Web.UI.Page
             BMasSuministros.Enabled = false;
             BFecha.Enabled = false;
 
-            CConectorMS conector = CConectorMS.GetConector();
-            CConector conectormy = CConector.GetConector();
-
-            if (Request.QueryString["pid"] != null)
+            using (CConector conectormy = new CConector())
             {
-                CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
-                if (CCDetallePaciente.IdPaciente.Length == 0)
+
+                if (Request.QueryString["pid"] != null)
                 {
-                    Response.Redirect(Request.Url.AbsolutePath);
-                }
-                else
-                {
-                    ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
-
-                    SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
-                    SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
-
-                    PDatos.Visible = true;
-
-                    TFecha.Text = Request.QueryString["f"];
-                    if (TFecha.Text.Length == 0)
-                        TFecha.Text = DateTime.Now.ToShortDateString();
-
-                    BAceptar.Enabled = usuario.CanInsert();
-                    BMasSuministros.Enabled = usuario.CanInsert();
-                    BFecha.Enabled = usuario.CanInsert();
-                    TFecha.Focus();
-
-                    Query hoja = new Query("hoja_gastos");
-
-                    hoja += "id";
-                    hoja += "fecha";
-
-                    MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + CConector.GetDate(Convert.ToDateTime(TFecha.Text)) + "'"));
-                    if (readermysql != null && readermysql.Read())
+                    CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
+                    if (CCDetallePaciente.IdPaciente.Length == 0)
                     {
-                        ((MasterPageI)Master).Imprimir();
-                        BAceptar.Enabled = usuario.CanUpdate();
-                        BMasSuministros.Enabled = usuario.CanUpdate();
-                        BFecha.Enabled = usuario.CanUpdate();
-                        GSuministros.Columns[0].Visible = usuario.CanUpdate();
-                        GSuministros.Columns[1].Visible = usuario.CanDelete();
+                        Response.Redirect(Request.Url.AbsolutePath);
+                    }
+                    else
+                    {
+                        ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
 
-                        HIdHoja.Value = readermysql["id"].ToString();
-                        TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
-                        BMasSuministros.Focus();
+                        SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
+                        SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
 
-                        ((MasterPageI)Master).SetModificacion(HIdHoja.Value);
+                        PDatos.Visible = true;
+
+                        TFecha.Text = Request.QueryString["f"];
+                        if (TFecha.Text.Length == 0)
+                            TFecha.Text = DateTime.Now.ToShortDateString();
+
+                        BAceptar.Enabled = usuario.CanInsert();
+                        BMasSuministros.Enabled = usuario.CanInsert();
+                        BFecha.Enabled = usuario.CanInsert();
+                        TFecha.Focus();
+
+                        Query hoja = new Query("hoja_gastos");
+
+                        hoja += "id";
+                        hoja += "fecha";
+
+                        MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + CConector.GetDate(Convert.ToDateTime(TFecha.Text)) + "'"));
+                        if (readermysql != null && readermysql.Read())
+                        {
+                            ((MasterPageI)Master).Imprimir();
+                            BAceptar.Enabled = usuario.CanUpdate();
+                            BMasSuministros.Enabled = usuario.CanUpdate();
+                            BFecha.Enabled = usuario.CanUpdate();
+                            GSuministros.Columns[0].Visible = usuario.CanUpdate();
+                            GSuministros.Columns[1].Visible = usuario.CanDelete();
+
+                            HIdHoja.Value = readermysql["id"].ToString();
+                            TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
+                            BMasSuministros.Focus();
+
+                            ((MasterPageI)Master).SetModificacion(HIdHoja.Value);
+                        }
                     }
                 }
             }
@@ -102,37 +103,39 @@ public partial class paciente_gastos : System.Web.UI.Page
         if (!IsValid)
             return;
         Query hoja = new Query("hoja_gastos");
-        CConector conector = CConector.GetConector();
-        string szQuery="";
-        string mensaje="";
-
-        hoja["fecha"] = CConector.GetDate(Convert.ToDateTime( TFecha.Text));
-
-        if (HIdHoja.Value.Length == 0)
+        using (CConector conector = new CConector())
         {
-            hoja["paciente"] = CCDetallePaciente.IdPaciente;
+            string szQuery = "";
+            string mensaje = "";
 
-            szQuery = hoja.GetInsert();
-            mensaje = CCDetallePaciente.Nombres + " ingresado";
-            int resultado = conector.QueryMod(szQuery, true);
-            if (resultado == -1)
-                return;
-            HIdHoja.Value = resultado.ToString();
-        }
-        else
-        {
-            szQuery = hoja.GetUpdate("id='" + HIdHoja.Value + "'");
-            mensaje = CCDetallePaciente.Nombres + " editado";
-            if (conector.QueryMod(szQuery) == -1)
-                return;
-        }
-        if (conector.InsertModificacion(HIdHoja.Value) == -1)
-            return;
-        if (!UpdateCambios(conector, SSuministros.GetQuerys()))
-            return;
+            hoja["fecha"] = CConector.GetDate(Convert.ToDateTime(TFecha.Text));
 
-        ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
-        ((MasterPageI)Master).SetResultado(mensaje);
+            if (HIdHoja.Value.Length == 0)
+            {
+                hoja["paciente"] = CCDetallePaciente.IdPaciente;
+
+                szQuery = hoja.GetInsert();
+                mensaje = CCDetallePaciente.Nombres + " ingresado";
+                int resultado = conector.QueryMod(szQuery, true);
+                if (resultado == -1)
+                    return;
+                HIdHoja.Value = resultado.ToString();
+            }
+            else
+            {
+                szQuery = hoja.GetUpdate("id='" + HIdHoja.Value + "'");
+                mensaje = CCDetallePaciente.Nombres + " editado";
+                if (conector.QueryMod(szQuery) == -1)
+                    return;
+            }
+            if (conector.InsertModificacion(HIdHoja.Value) == -1)
+                return;
+            if (!UpdateCambios(conector, SSuministros.GetQuerys()))
+                return;
+
+            ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
+            ((MasterPageI)Master).SetResultado(mensaje);
+        }
     }
     protected void DSuministros_ItemCommand(object sender, DetailsViewCommandEventArgs e)
     {

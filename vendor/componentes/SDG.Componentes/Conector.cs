@@ -80,6 +80,11 @@ public class Conector : IDisposable
 		}
 	}
 
+	public string GetConexionString()
+	{
+		return m_szConexion;
+	}
+
 	public MySqlConnection GetConexion()
 	{
 		return m_pSQLConector;

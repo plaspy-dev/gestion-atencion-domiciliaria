@@ -33,37 +33,38 @@ public partial class administrador_preguntas : System.Web.UI.Page
         if (!IsValid)
             return;
         Query query = new Query("varios");
-        CConector conector = new CConector();
-        string szQuery;
-        string mensaje;
-
-        query["nombre"] = TNombre.Text;
-        query["descripcion"] = TDescripcion.Text;
-        query["parametro1"] = LTipos.SelectedValue;
-
-        if (HId.Value.Length == 0)
+        using (CConector conector = new CConector())
         {
-            query["tipo"] = "16";
-            szQuery = query.GetInsert();
-            mensaje = TNombre.Text + " ingresado";
-        }
-        else
-        {
-            szQuery = query.GetUpdate("id='" + HId.Value + "'");
-            mensaje = TNombre.Text + " editado";
-        }
-        int res = conector.QueryMod(szQuery, true);
-        if (res == -1)
-            return;
-        if (HId.Value.Length == 0)
-            HId.Value = res.ToString();
-        if (conector.InsertModificacion(HId.Value) == -1)
-            return;
+            string szQuery;
+            string mensaje;
 
-        GResultado.DataBind();
-        Procedimientos.RemoveVarios(HId.Value);
+            query["nombre"] = TNombre.Text;
+            query["descripcion"] = TDescripcion.Text;
+            query["parametro1"] = LTipos.SelectedValue;
 
-        ((MasterPageI)Master).SetTitulo(mensaje);
+            if (HId.Value.Length == 0)
+            {
+                query["tipo"] = "16";
+                szQuery = query.GetInsert();
+                mensaje = TNombre.Text + " ingresado";
+            }
+            else
+            {
+                szQuery = query.GetUpdate("id='" + HId.Value + "'");
+                mensaje = TNombre.Text + " editado";
+            }
+            int res = conector.QueryMod(szQuery, true);
+            if (res == -1)
+                return;
+            if (HId.Value.Length == 0)
+                HId.Value = res.ToString();
+            if (conector.InsertModificacion(HId.Value) == -1)
+                return;
+
+            GResultado.DataBind();
+            Procedimientos.RemoveVarios(HId.Value);
+            ((MasterPageI)Master).SetTitulo(mensaje);
+        }
         BCancelar_Click(sender, e);
     }
 

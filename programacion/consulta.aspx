@@ -161,6 +161,7 @@
                         DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" />
                     <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre"/>
                     <asp:BoundField HeaderText="Actividad" DataField="actividad" SortExpression="actividad"/>
+                    <asp:BoundField HeaderText="Sesiones" DataField="prgNumSesion" SortExpression="prgNumSesion" ItemStyle-HorizontalAlign="Right"/>
                     <asp:BoundField HeaderText="Profesional" DataField="perNombre" SortExpression="perNombre"/>
                     <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio"/>
                     <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion"/>
@@ -191,6 +192,7 @@
                                 ,admPersonalHS.perNombre
                                 ,CAST(programacion.actId AS VARCHAR(255))+'_'+ISNULL(CAST(programacion.intensidad AS VARCHAR(255)),'') AS actividad
                                 ,programacion.prgId
+                                ,programacion.prgNumSesion
                                 ,novedad
                                 ,programacion.prgObservaciones
                                 FROM programacion

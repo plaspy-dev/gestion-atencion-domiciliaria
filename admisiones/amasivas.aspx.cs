@@ -42,24 +42,26 @@ public partial class admisiones_amasivas : System.Web.UI.Page
 
     protected void AddPaciente(string idpaciente) {
 
-        CConectorMS conector= new CConectorMS();
-        
-        Paciente actual= Paciente.GetPaciente(idpaciente);
-        string valor = actual.documento + " - " + actual.NombreCompleto;
+        using (CConectorMS conector = new CConectorMS())
+        {
 
-        List<string> pacientes = (List<string>)ViewState["AMasivasPaciente"];
-        pacientes.Add(idpaciente);
+            Paciente actual = Paciente.GetPaciente(idpaciente);
+            string valor = actual.documento + " - " + actual.NombreCompleto;
 
-        ArrayList listadocompleto = new ArrayList();
-        for (int i = 0; i < pacientes.Count; i++ )
-            listadocompleto.Add(Paciente.GetPaciente(pacientes[i]));
+            List<string> pacientes = (List<string>)ViewState["AMasivasPaciente"];
+            pacientes.Add(idpaciente);
 
-        if (TPacientes.Text.Length > 0)
-            TPacientes.Text += ";";
-        TPacientes.Text += idpaciente;
+            ArrayList listadocompleto = new ArrayList();
+            for (int i = 0; i < pacientes.Count; i++)
+                listadocompleto.Add(Paciente.GetPaciente(pacientes[i]));
 
-        GPacientes.DataSource = listadocompleto;
-        GPacientes.DataBind();
+            if (TPacientes.Text.Length > 0)
+                TPacientes.Text += ";";
+            TPacientes.Text += idpaciente;
+
+            GPacientes.DataSource = listadocompleto;
+            GPacientes.DataBind();
+        }
     }
 
     protected void BAgregar_Click(object sender, EventArgs e) {
@@ -109,59 +111,63 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             return;
         }
 
-        CConectorMS conector = new CConectorMS();
-        CConector conectormysql = new CConector();
-        Query query = new Query("phdAutorizacion");
-        conector.StartTransaction();
+        using(CConector conectormysql= new CConector()) 
+        using (CConectorMS conector = new CConectorMS())
+        {
+            Query query = new Query("phdAutorizacion");
+            conector.StartTransaction();
 
-        query["autFecha"] = TFecha.Text;
-        query["autFechaVenc"] = TVencimiento.Text;
-        query["autObservaciones"] = TObservaciones.Text;
-        query["autActivo"] = "1";
-        query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
-        query["segFechaIngreso"] = "GETDATE()";
-        query["segUsuarioConfirma"] = Usuario.GetUsuario().GetLogin();
-        query["segFechaConfirma"] = "GETDATE()";
+            query["autFecha"] = TFecha.Text;
+            query["autFechaVenc"] = TVencimiento.Text;
+            query["autObservaciones"] = TObservaciones.Text;
+            query["autActivo"] = "1";
+            query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
+            query["segFechaIngreso"] = "GETDATE()";
+            query["segUsuarioConfirma"] = Usuario.GetUsuario().GetLogin();
+            query["segFechaConfirma"] = "GETDATE()";
 
-        string[] querys = SActividades.GetQuerys();
+            string[] querys = SActividades.GetQuerys();
 
-        for (int i=0; i<pacientes.Count; i++) {
-
-            DateTime tiempo = Convert.ToDateTime(TFecha.Text);
-            string autorizacion = conector.QueryString(
-                String.Format("SELECT 'AD{0}'+RIGHT('000'+CAST(ISNULL(MAX(CONVERT(int,SUBSTRING(autNumero,9,LEN(autnumero)-8))), 0)+1 AS VARCHAR(3)),3)"
-                        + " FROM phdAutorizacion"
-                        + " WHERE autNumero LIKE 'AD{0}%'", tiempo.ToString("yyMMdd")));
-
-            query["autNumero"] = autorizacion;
-            query["pacId"] = pacientes[i];
-            query["entId"] = Paciente.GetPaciente(pacientes[i]).entidadId;
-
-            int res = conector.QueryMod(query.GetInsert(), true);
-            if (res == -1)
-                return;
-            if (conectormysql.InsertModificacion(res.ToString(), null, "~/admisiones/autorizaciones.aspx") == -1)
-                return;
-
-            string szQuery;
-            if (querys != null)
+            for (int i = 0; i < pacientes.Count; i++)
             {
-                for (int j = 0; j < querys.Length; j++)
+
+                DateTime tiempo = Convert.ToDateTime(TFecha.Text);
+                string autorizacion = conector.QueryString(
+                    String.Format("SELECT 'AD{0}'+RIGHT('000'+CAST(ISNULL(MAX(CONVERT(int,SUBSTRING(autNumero,9,LEN(autnumero)-8))), 0)+1 AS VARCHAR(3)),3)"
+                            + " FROM phdAutorizacion"
+                            + " WHERE autNumero LIKE 'AD{0}%'", tiempo.ToString("yyMMdd")));
+
+                query["autNumero"] = autorizacion;
+                query["pacId"] = pacientes[i];
+                query["entId"] = Paciente.GetPaciente(pacientes[i]).entidadId;
+
+                int res = conector.QueryMod(query.GetInsert(), true);
+                if (res == -1)
+                    return;
+                if (conectormysql.InsertModificacion(res.ToString(), null, "~/admisiones/autorizaciones.aspx") == -1)
+                    return;
+
+                string szQuery;
+                if (querys != null)
                 {
-                    szQuery = querys[j].Replace("@autorizacion", Query.GetValor(autorizacion));
-                    if (conector.QueryMod(szQuery) == -1)
-                        return;
+                    for (int j = 0; j < querys.Length; j++)
+                    {
+                        szQuery = querys[j].Replace("@autorizacion", Query.GetValor(autorizacion));
+                        if (conector.QueryMod(szQuery) == -1)
+                            return;
+                    }
                 }
             }
-        }
-        conector.Commit();
+            conector.Commit();
 
-        for (int i = 0; i < pacientes.Count; i++) {
-            Paciente.RemovePaciente(pacientes[i]);
-            Autorizaciones.RemoveAutorizaciones(pacientes[i]);
+            for (int i = 0; i < pacientes.Count; i++)
+            {
+                Paciente.RemovePaciente(pacientes[i]);
+                Autorizaciones.RemoveAutorizaciones(pacientes[i]);
+            }
+            Session["amasivas_paciente"] = 1;
+            ((MasterPageI)Master).SetResultado(pacientes.Count + " programaciones agregadas.");
         }
-        Session["amasivas_paciente"] = 1;
-        ((MasterPageI)Master).SetResultado(pacientes.Count + " programaciones agregadas.");
     }
 
     protected void GPacientes_RowDeleting(object sender, GridViewDeleteEventArgs e)

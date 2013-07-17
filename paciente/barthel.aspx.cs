@@ -24,74 +24,76 @@ public partial class paciente_barthel : System.Web.UI.Page
             BAceptar.Enabled = false;
             PHistorial.Visible = false;
 
-            CConectorMS conector = CConectorMS.GetConector();
-            CConector conectormy = CConector.GetConector();
-
-            if (Request.QueryString["pid"] != null)
+            using (CConector conectormy = new CConector())
             {
-                CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
-                if (CCDetallePaciente.IdPaciente.Length == 0)
+
+                if (Request.QueryString["pid"] != null)
                 {
-                    Response.Redirect(Request.Url.AbsolutePath);
-                }
-                else
-                {
-                    ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
-
-                    SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
-                    SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
-
-                    PDatos.Visible = true;
-
-
-                    TFuncionario.Enabled = usuario.CanAdmin();
-                    if (!usuario.CanAdmin())
+                    CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
+                    if (CCDetallePaciente.IdPaciente.Length == 0)
                     {
-                        if (usuario["personal"].Length == 0)
-                            BAceptar.Enabled = false;
-                        else
+                        Response.Redirect(Request.Url.AbsolutePath);
+                    }
+                    else
+                    {
+                        ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
+
+                        SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
+                        SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
+
+                        PDatos.Visible = true;
+
+                        using (CConectorMS conector = new CConectorMS())
                         {
-                            TIdFuncionario.Text = usuario["personal"];
-                            TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
+                            TFuncionario.Enabled = usuario.CanAdmin();
+                            if (!usuario.CanAdmin())
+                            {
+                                if (usuario["personal"].Length == 0)
+                                    BAceptar.Enabled = false;
+                                else
+                                {
+                                    TIdFuncionario.Text = usuario["personal"];
+                                    TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
+                                }
+                            }
+
+                            TFecha.Focus();
+                            BAceptar.Enabled = usuario.CanInsert();
+
+                            TFecha.Text = Request.QueryString["f"];
+                            if (TFecha.Text.Length == 0)
+                                TFecha.Text = DateTime.Now.ToShortDateString();
+                            else THora.Focus();
+
+                            Query indice = new Query("indice_barthel");
+
+                            indice += "id";
+                            indice += "fecha";
+                            indice += "medico";
+
+                            MySqlDataReader readermysql = conectormy.Query(indice.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND DATE(fecha)='" + Conector.GetDate(Convert.ToDateTime(TFecha.Text)) + "'"));
+                            if (readermysql != null && readermysql.Read())
+                            {
+                                ((MasterPageI)Master).Imprimir("barthel.html");
+                                BAceptar.Enabled = usuario.CanUpdate();
+
+                                HIdIndice.Value = readermysql["id"].ToString();
+                                TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
+                                THora.Text = CConector.GetHora(readermysql["fecha"]);
+
+                                TIdFuncionario.Text = readermysql["medico"].ToString();
+                                TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
+
+                                TTotal.Text = conectormy.QueryString("SELECT SUM(varios.descripcion) FROM analisis_barthel LEFT JOIN varios ON (varios.id=analisis_barthel.resultado) WHERE analisis_barthel.indice_barthel='" + HIdIndice.Value + "'");
+
+                                ((MasterPageI)Master).SetModificacion(HIdIndice.Value);
+                            }
                         }
+                        GHistorial.DataBind();
+                        LHistorial.Text = GHistorial.Rows.Count + " Índice";
+                        LHistorial.Text += GHistorial.Rows.Count == 1 ? "" : "s";
+                        PHistorial.Visible = GHistorial.Rows.Count > 0;
                     }
-
-                    TFecha.Focus();
-                    BAceptar.Enabled = usuario.CanInsert();
-
-                    TFecha.Text = Request.QueryString["f"];
-                    if (TFecha.Text.Length == 0)
-                        TFecha.Text = DateTime.Now.ToShortDateString();
-                    else THora.Focus();
-
-                    Query indice= new Query("indice_barthel");
-                    
-                    indice+="id";
-                    indice+="fecha";
-                    indice += "medico";
-
-                    MySqlDataReader readermysql = conectormy.Query(indice.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND DATE(fecha)='" + Conector.GetDate(Convert.ToDateTime(TFecha.Text)) + "'"));
-                    if (readermysql != null && readermysql.Read())
-                    {
-                        ((MasterPageI)Master).Imprimir("barthel.html");
-                        BAceptar.Enabled = usuario.CanUpdate();
-
-                        HIdIndice.Value = readermysql["id"].ToString();
-                        TFecha.Text = ((DateTime) readermysql["fecha"]).ToShortDateString();
-                        THora.Text = CConector.GetHora(readermysql["fecha"]);
-                        
-                        TIdFuncionario.Text = readermysql["medico"].ToString();
-                        TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
-
-                        TTotal.Text = conectormy.QueryString("SELECT SUM(varios.descripcion) FROM analisis_barthel LEFT JOIN varios ON (varios.id=analisis_barthel.resultado) WHERE analisis_barthel.indice_barthel='" + HIdIndice.Value + "'");
-
-                        ((MasterPageI)Master).SetModificacion(HIdIndice.Value);
-                    }
-                    
-                    GHistorial.DataBind();
-                    LHistorial.Text = GHistorial.Rows.Count + " Índice";
-                    LHistorial.Text += GHistorial.Rows.Count == 1 ? "" : "s";
-                    PHistorial.Visible = GHistorial.Rows.Count > 0;
                 }
             }
         }
@@ -106,60 +108,65 @@ public partial class paciente_barthel : System.Web.UI.Page
         if (!IsValid)
             return;
         Query indice = new Query("indice_barthel");
-        CConector conector = CConector.GetConector();
-
-        indice["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text)  + " " + THora.Text + ":00";
-        indice["medico"] = TIdFuncionario.Text;
-
-        string szQuery;
-        string mensaje;
-
-        if (HIdIndice.Value.Length == 0)
+        using (CConector conector = new CConector())
         {
-            indice["paciente"] = CCDetallePaciente.IdPaciente;
 
-            szQuery = indice.GetInsert();
-            mensaje = CCDetallePaciente.Nombres + " ingresado";
-            int resultado = conector.QueryMod(szQuery, true);
-            if (resultado == -1)
-                return;
-            HIdIndice.Value = resultado.ToString();
-        }
-        else
-        {
-            szQuery = indice.GetUpdate("id='" + HIdIndice.Value + "'");
-            mensaje = CCDetallePaciente.Nombres + " editado";
-            if (conector.QueryMod(szQuery) == -1)
-                return;
-        }
-        if (conector.InsertModificacion(HIdIndice.Value) == -1)
-            return;
+            indice["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text) + " " + THora.Text + ":00";
+            indice["medico"] = TIdFuncionario.Text;
 
-        for (int i = 0; i < RGrupos.Items.Count; i++)
-        {
-            Query analisis = new Query("analisis_barthel");
+            string szQuery;
+            string mensaje;
 
-            RadioButtonList lista = (RadioButtonList)RGrupos.Items[i].FindControl("RConceptos");
-            HiddenField grupo = (HiddenField)RGrupos.Items[i].FindControl("HIdGrupo");
-            HiddenField idanalisis = (HiddenField)RGrupos.Items[i].FindControl("HIdAnalisis");
+            if (HIdIndice.Value.Length == 0)
+            {
+                indice["paciente"] = CCDetallePaciente.IdPaciente;
 
-            analisis["grupo"] = grupo.Value;
-            
-            string valor= lista.SelectedValue;
-            valor = valor.Substring(valor.IndexOf("#", 0)+1);
-
-            analisis["resultado"] = valor;
-
-            if(idanalisis.Value.Length>0) {
-                conector.QueryMod(analisis.GetUpdate("id='" + idanalisis.Value.ToString() + "'"));
-            } else {
-                analisis["indice_barthel"] = HIdIndice.Value.ToString();
-                conector.QueryMod(analisis.GetInsert());
+                szQuery = indice.GetInsert();
+                mensaje = CCDetallePaciente.Nombres + " ingresado";
+                int resultado = conector.QueryMod(szQuery, true);
+                if (resultado == -1)
+                    return;
+                HIdIndice.Value = resultado.ToString();
             }
+            else
+            {
+                szQuery = indice.GetUpdate("id='" + HIdIndice.Value + "'");
+                mensaje = CCDetallePaciente.Nombres + " editado";
+                if (conector.QueryMod(szQuery) == -1)
+                    return;
+            }
+            if (conector.InsertModificacion(HIdIndice.Value) == -1)
+                return;
+
+            for (int i = 0; i < RGrupos.Items.Count; i++)
+            {
+                Query analisis = new Query("analisis_barthel");
+
+                RadioButtonList lista = (RadioButtonList)RGrupos.Items[i].FindControl("RConceptos");
+                HiddenField grupo = (HiddenField)RGrupos.Items[i].FindControl("HIdGrupo");
+                HiddenField idanalisis = (HiddenField)RGrupos.Items[i].FindControl("HIdAnalisis");
+
+                analisis["grupo"] = grupo.Value;
+
+                string valor = lista.SelectedValue;
+                valor = valor.Substring(valor.IndexOf("#", 0) + 1);
+
+                analisis["resultado"] = valor;
+
+                if (idanalisis.Value.Length > 0)
+                {
+                    conector.QueryMod(analisis.GetUpdate("id='" + idanalisis.Value.ToString() + "'"));
+                }
+                else
+                {
+                    analisis["indice_barthel"] = HIdIndice.Value.ToString();
+                    conector.QueryMod(analisis.GetInsert());
+                }
+            }
+            Usuario.GetUsuario().SetForceURL("", conector);
+            ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
+            ((MasterPageI)Master).SetResultado(mensaje);
         }
-        Usuario.GetUsuario().SetForceURL("", conector);
-        ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
-        ((MasterPageI)Master).SetResultado(mensaje);
     }
     protected void RGrupos_ItemDataBound(object sender, RepeaterItemEventArgs e)
     {
@@ -245,18 +252,19 @@ public partial class paciente_barthel : System.Web.UI.Page
         query["szProfesional"] = "admPersonalHS.perDocumento";
         query["szCargo"] = "admCargo.carDescripcion";
 
-        CConectorMS conectorms = new CConectorMS();
-
-        SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente
-            , "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"
-            + " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"
-            ));
-        if (reader != null)
+        using (CConectorMS conectorms = new CConectorMS())
         {
-            bool l = reader.Read();
-            for (int i = 0; i < reader.FieldCount; i++)
+            SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente
+                , "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"
+                + " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"
+                ));
+            if (reader != null)
             {
-                evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
+                bool l = reader.Read();
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
+                }
             }
         }
     }

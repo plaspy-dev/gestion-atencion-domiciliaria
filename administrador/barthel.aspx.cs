@@ -25,32 +25,37 @@ public partial class administrador_barthel : System.Web.UI.Page
         if (!IsValid)
             return;
         Query query = new Query("varios");
-        CConector conector = CConector.GetConector();
-        string szQuery;
-        string mensaje;
+        using (CConector conector = new CConector())
+        {
+            string szQuery;
+            string mensaje;
 
-        query["nombre"] = TConcepto.Text;
-        query["descripcion"] = TCalificacion.Text;
-        query["parametro1"] = DGrupo.SelectedValue;
-        
-        if(HId.Value.Length==0) {
+            query["nombre"] = TConcepto.Text;
+            query["descripcion"] = TCalificacion.Text;
+            query["parametro1"] = DGrupo.SelectedValue;
 
-            query["tipo"] = "8";
-            szQuery = query.GetInsert();
-            mensaje = TConcepto.Text + " ingresado";
-        } else {
-            szQuery = query.GetUpdate("id='" + HId.Value + "'");
-            mensaje = TConcepto.Text + " editado";
+            if (HId.Value.Length == 0)
+            {
+
+                query["tipo"] = "8";
+                szQuery = query.GetInsert();
+                mensaje = TConcepto.Text + " ingresado";
+            }
+            else
+            {
+                szQuery = query.GetUpdate("id='" + HId.Value + "'");
+                mensaje = TConcepto.Text + " editado";
+            }
+            int res = conector.QueryMod(szQuery, true);
+            if (res == -1)
+                return;
+            if (HId.Value.Length == 0)
+                HId.Value = res.ToString();
+            if (conector.InsertModificacion(HId.Value) == -1)
+                return;
+            Procedimientos.RemoveVarios(HId.Value);
+            ((MasterPageI)Master).SetResultado(mensaje);
         }
-        int res = conector.QueryMod(szQuery, true);
-        if (res == -1)
-            return;
-        if (HId.Value.Length == 0)
-            HId.Value = res.ToString();
-        if (conector.InsertModificacion(HId.Value) == -1)
-            return;
-        Procedimientos.RemoveVarios(HId.Value);
-        ((MasterPageI)Master).SetResultado(mensaje);
     }
 
     protected void BCancelar_Click(object sender, EventArgs e)

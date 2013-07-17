@@ -17,10 +17,7 @@ public class CConectorMS : ConectorMS
     public CConectorMS() : base(ConfigurationManager.ConnectionStrings["connBD"].ConnectionString)
     {
     }
-    static public CConectorMS GetConector()
-    {
-        return new CConectorMS();
-    }
+
     public string GetConnectionString() {
         return m_szConexion;
     }

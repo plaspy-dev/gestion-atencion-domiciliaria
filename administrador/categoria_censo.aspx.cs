@@ -25,53 +25,55 @@ public partial class administrador_categoria_censo : System.Web.UI.Page
         if (!IsValid)
             return;
         Query query = new Query("varios");
-        CConector conector = CConector.GetConector();
-        conector.StartTransaction();
-        string szQuery;
-        string mensaje;
-
-        query["nombre"] = TNombre.Text;
-        query["descripcion"] = TDescripcion.Text;
-
-        if (HId.Value.Length == 0)
+        using (CConector conector = new CConector())
         {
-            query["tipo"] = "33";
-            szQuery = query.GetInsert();
-            mensaje = TNombre.Text + " ingresado";
-        }
-        else
-        {
-            szQuery = query.GetUpdate("id='" + HId.Value + "'");
-            mensaje = TNombre.Text + " editado";
-        }
-        int res = conector.QueryMod(szQuery, true);
-        if (res == -1)
-            return;
-        if (HId.Value.Length == 0)
-            HId.Value = res.ToString();
-        if (conector.InsertModificacion(HId.Value) == -1)
-            return;
+            conector.StartTransaction();
+            string szQuery;
+            string mensaje;
 
-        Procedimientos.RemoveVarios(HId.Value);
+            query["nombre"] = TNombre.Text;
+            query["descripcion"] = TDescripcion.Text;
 
-        if (conector.QueryMod("DELETE FROM categoria_censo WHERE categoria=" + Query.GetValor(HId.Value)) == -1)
-            return;
-
-        query = new Query("categoria_censo");
-        query["categoria"] = HId.Value;
-
-        for (int i = 0; i < CHoras.Items.Count; i++)
-        {
-            if (CHoras.Items[i].Selected)
+            if (HId.Value.Length == 0)
             {
-                query["hora"] = CHoras.Items[i].Value;
-                if (conector.QueryMod(query.GetInsert()) == -1)
-                    return;
+                query["tipo"] = "33";
+                szQuery = query.GetInsert();
+                mensaje = TNombre.Text + " ingresado";
             }
-        }
+            else
+            {
+                szQuery = query.GetUpdate("id='" + HId.Value + "'");
+                mensaje = TNombre.Text + " editado";
+            }
+            int res = conector.QueryMod(szQuery, true);
+            if (res == -1)
+                return;
+            if (HId.Value.Length == 0)
+                HId.Value = res.ToString();
+            if (conector.InsertModificacion(HId.Value) == -1)
+                return;
 
-        conector.Commit();
-        ((MasterPageI)Master).SetResultado(mensaje);
+            Procedimientos.RemoveVarios(HId.Value);
+
+            if (conector.QueryMod("DELETE FROM categoria_censo WHERE categoria=" + Query.GetValor(HId.Value)) == -1)
+                return;
+
+            query = new Query("categoria_censo");
+            query["categoria"] = HId.Value;
+
+            for (int i = 0; i < CHoras.Items.Count; i++)
+            {
+                if (CHoras.Items[i].Selected)
+                {
+                    query["hora"] = CHoras.Items[i].Value;
+                    if (conector.QueryMod(query.GetInsert()) == -1)
+                        return;
+                }
+            }
+
+            conector.Commit();
+            ((MasterPageI)Master).SetResultado(mensaje);
+        }
     }
 
     protected void BCancelar_Click(object sender, EventArgs e)
@@ -85,9 +87,11 @@ public partial class administrador_categoria_censo : System.Web.UI.Page
         TNombre.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[2].Text).Trim();
         TDescripcion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[3].Text).Trim();
 
-        CConector conector = new CConector();
-        string texto = conector.QueryString("SELECT GROUP_CONCAT(hora) FROM categoria_censo WHERE categoria=" + HId.Value); 
-        ViewState["horas"] = texto;
+        using (CConector conector = new CConector())
+        {
+            string texto = conector.QueryString("SELECT GROUP_CONCAT(hora) FROM categoria_censo WHERE categoria=" + HId.Value);
+            ViewState["horas"] = texto;
+        }
 
         CHoras.DataBind();
 

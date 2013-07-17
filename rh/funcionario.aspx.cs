@@ -60,7 +60,7 @@ public partial class rh_funcionario : System.Web.UI.Page
             lnkAgInfoLab.Visible = usuario.CanInsert();
             IEliminar.Visible = false;
 
-            if (Request.QueryString["fid"]!=null && Request.QueryString["fid"].Length>0)
+            if (Request.QueryString["fid"] != null && Request.QueryString["fid"].Length > 0)
             {
                 Query query = new Query("admPersonalHS");
 
@@ -115,103 +115,107 @@ public partial class rh_funcionario : System.Web.UI.Page
                 query += "inicio_descanso";
                 query += "fin_descanso";
 
-                CConectorMS conector = new CConectorMS();
-
-                SqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(Request.QueryString["fid"]) + ""));
-
-                if (reader != null && reader.Read())
+                using (CConectorMS conector = new CConectorMS())
                 {
-                    BAceptar.Enabled = usuario.CanUpdate();
-                    lnkAgInfoLab.Visible = usuario.CanUpdate();
-                    GEmpresas.Columns[4].Visible = usuario.CanDelete();
 
-                    HId.Value = reader["perId"].ToString();
-                    ((MasterPageI)Master).SetModificacion(HId.Value);
+                    SqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(Request.QueryString["fid"]) + ""));
 
-                    TApellidos.Text = reader["perApellidos"].ToString();
-                    TNombres.Text = reader["perNombres"].ToString();
-                    TObservaciones.Text = reader["perObservaciones"].ToString();
-                    TFIngreso.Text = ConectorMS.GetDate(reader["perFechaIngreso"]);
-                    TDocumento.Text = reader["perDocumento"].ToString();
-                    TLExpedicion.Text = reader["perLugarExpedicion"].ToString();
-                    TLMilitar.Text = reader["perNumLibretaMil"].ToString();
-                    TDMilitar.Text = reader["perDistritoMil"].ToString();
-                    TPasadoJudicial.Text = reader["perNumPasadoJudicial"].ToString();
-                    TFPasadoJudicial.Text = ConectorMS.GetDate(reader["perFechaPasadoJudicial"]);
-                    CTarjetaProfesional.Checked = reader["perTarjetaProfesional"].ToString() == "1" ? true : false;
-                    TTarjetaNumero.Text = reader["perNumeroTP"].ToString();
-                    TGrupoSanguineo.Text = reader["perGrupoSanguineo"].ToString();
-                    TRH.Text = reader["perRH"].ToString();
-                    DSexo.SelectedValue = reader["sexoId"].ToString();
-                    TFechaNacimiento.Text = ConectorMS.GetDate(reader["perFechaNac"]);
-                    TDireccion.Text = reader["perDireccion"].ToString();
-                    TBarrio.Text = reader["perBarrio"].ToString();
-                    TTelefono.Text = reader["perTelefono"].ToString();
-                    TTelefono2.Text = reader["perTelefono1"].ToString();
-                    TMovil.Text = reader["perCelular"].ToString();
-                    TEMail.Text = reader["perCorreoElectronico"].ToString();
-                    DEstadoCivil.SelectedValue = reader["estCivilId"].ToString();
-                    THijos.Text = reader["perNumHijos"].ToString();
-                    TConyuge.Text = reader["perNomConyugue"].ToString();
-                    TContacto.Text = reader["perContacto"].ToString();
-                    TTelefonoContacto.Text = reader["perTelContacto"].ToString();
-                    DEPS.SelectedValue = reader["entIdEPS"].ToString();
-                    DFOP.SelectedValue = reader["entIdAFP"].ToString();
-                    DARP.SelectedValue = reader["entIdARP"].ToString();
-                    DLocalidad.SelectedValue = reader["locId"].ToString();
-                    CPazySalvo.Checked = reader["perPazySalvo"].ToString()=="1" ? true : false;
-                    DEstado.SelectedValue = reader["eEstId"].ToString();
-                    DCargo.SelectedValue = reader["carId"].ToString();
-                    TFechaContrato.Text = ConectorMS.GetDate(reader["perFechaContrato"]);
-                    DArea.SelectedValue = reader["areaId"].ToString();
-                    DNivelComplejidad.SelectedValue = reader["nivCompId"].ToString();
-                    DDisponibilidad.SelectedValue = reader["dispId"].ToString();
-                    TCuenta.Text = reader["perNroCuenta"].ToString();
-                    DBanco.SelectedValue = reader["banId"].ToString();
-                    DTerminacion.Text = reader["mteId"].ToString();
-                    TFechaTerminacion.Text = ConectorMS.GetDate(reader["perFechaTermContrato"]);
-                    TParentesco.Text = reader["perParentescoContacto"].ToString();
-                    DLocalidadVivienda.SelectedValue = reader["residencialocId"].ToString();
-                    TInicioDescanso.Text = CConector.GetFromMySQLDate(reader["inicio_descanso"]);
-                    TFinDescanso.Text = CConector.GetFromMySQLDate(reader["fin_descanso"]);
-
-                    if (reader["nombre"].ToString().Length != 0)
+                    if (reader != null && reader.Read())
                     {
-                        IFoto.ImageUrl = "~/archivo/foto.ashx?w=120&i=" + HId.Value;
-                        IFoto.PostBackUrl = "~/archivo/foto.ashx?i=" + HId.Value;
-                        IEliminar.Visible = usuario.CanDelete();
-                    }
+                        BAceptar.Enabled = usuario.CanUpdate();
+                        lnkAgInfoLab.Visible = usuario.CanUpdate();
+                        GEmpresas.Columns[4].Visible = usuario.CanDelete();
 
-                    conector.SelectInDropDown(DTipoContrato, reader["tipContId"], "SELECT tipContDesc FROM admTipoContrato WHERE tipContId='" + reader["tipContId"].ToString() + "'");
-                    conector.SelectInDropDown(DProfesion, reader["profId"], "SELECT profNombre FROM admProfesion WHERE profId='" + reader["profId"].ToString() + "'");
+                        HId.Value = reader["perId"].ToString();
+                        ((MasterPageI)Master).SetModificacion(HId.Value);
 
-                    ArrayList lista = (ArrayList)ViewState["infolaboral"]; // Session[Request.Url.AbsolutePath];
-                    Query empresa= new Query("admInfoLaboral");
+                        TApellidos.Text = reader["perApellidos"].ToString();
+                        TNombres.Text = reader["perNombres"].ToString();
+                        TObservaciones.Text = reader["perObservaciones"].ToString();
+                        TFIngreso.Text = ConectorMS.GetDate(reader["perFechaIngreso"]);
+                        TDocumento.Text = reader["perDocumento"].ToString();
+                        TLExpedicion.Text = reader["perLugarExpedicion"].ToString();
+                        TLMilitar.Text = reader["perNumLibretaMil"].ToString();
+                        TDMilitar.Text = reader["perDistritoMil"].ToString();
+                        TPasadoJudicial.Text = reader["perNumPasadoJudicial"].ToString();
+                        TFPasadoJudicial.Text = ConectorMS.GetDate(reader["perFechaPasadoJudicial"]);
+                        CTarjetaProfesional.Checked = reader["perTarjetaProfesional"].ToString() == "1" ? true : false;
+                        TTarjetaNumero.Text = reader["perNumeroTP"].ToString();
+                        TGrupoSanguineo.Text = reader["perGrupoSanguineo"].ToString();
+                        TRH.Text = reader["perRH"].ToString();
+                        DSexo.SelectedValue = reader["sexoId"].ToString();
+                        TFechaNacimiento.Text = ConectorMS.GetDate(reader["perFechaNac"]);
+                        TDireccion.Text = reader["perDireccion"].ToString();
+                        TBarrio.Text = reader["perBarrio"].ToString();
+                        TTelefono.Text = reader["perTelefono"].ToString();
+                        TTelefono2.Text = reader["perTelefono1"].ToString();
+                        TMovil.Text = reader["perCelular"].ToString();
+                        TEMail.Text = reader["perCorreoElectronico"].ToString();
+                        DEstadoCivil.SelectedValue = reader["estCivilId"].ToString();
+                        THijos.Text = reader["perNumHijos"].ToString();
+                        TConyuge.Text = reader["perNomConyugue"].ToString();
+                        TContacto.Text = reader["perContacto"].ToString();
+                        TTelefonoContacto.Text = reader["perTelContacto"].ToString();
+                        DEPS.SelectedValue = reader["entIdEPS"].ToString();
+                        DFOP.SelectedValue = reader["entIdAFP"].ToString();
+                        DARP.SelectedValue = reader["entIdARP"].ToString();
+                        DLocalidad.SelectedValue = reader["locId"].ToString();
+                        CPazySalvo.Checked = reader["perPazySalvo"].ToString() == "1" ? true : false;
+                        DEstado.SelectedValue = reader["eEstId"].ToString();
+                        DCargo.SelectedValue = reader["carId"].ToString();
+                        TFechaContrato.Text = ConectorMS.GetDate(reader["perFechaContrato"]);
+                        DArea.SelectedValue = reader["areaId"].ToString();
+                        DNivelComplejidad.SelectedValue = reader["nivCompId"].ToString();
+                        DDisponibilidad.SelectedValue = reader["dispId"].ToString();
+                        TCuenta.Text = reader["perNroCuenta"].ToString();
+                        DBanco.SelectedValue = reader["banId"].ToString();
+                        DTerminacion.Text = reader["mteId"].ToString();
+                        TFechaTerminacion.Text = ConectorMS.GetDate(reader["perFechaTermContrato"]);
+                        TParentesco.Text = reader["perParentescoContacto"].ToString();
+                        DLocalidadVivienda.SelectedValue = reader["residencialocId"].ToString();
+                        TInicioDescanso.Text = CConector.GetFromMySQLDate(reader["inicio_descanso"]);
+                        TFinDescanso.Text = CConector.GetFromMySQLDate(reader["fin_descanso"]);
 
-                    empresa+="ilabEmpresa";
-                    empresa+="ilabTelefono";
-                    empresa+="ilabAño";
-                    empresa+="ilabJefeInmediato";
-
-                    reader= conector.Query(empresa.GetSelect("perId = " + HId.Value ));
-                    if(reader!=null) {
-                        while(reader.Read()) {
-
-                            lista.Add(new Empresas(reader["ilabEmpresa"].ToString(),
-                            reader["ilabTelefono"].ToString(),
-                            reader["ilabJefeInmediato"].ToString(),
-                            reader["ilabAño"].ToString()));
+                        if (reader["nombre"].ToString().Length != 0)
+                        {
+                            IFoto.ImageUrl = "~/archivo/foto.ashx?w=120&i=" + HId.Value;
+                            IFoto.PostBackUrl = "~/archivo/foto.ashx?i=" + HId.Value;
+                            IEliminar.Visible = usuario.CanDelete();
                         }
+
+                        conector.SelectInDropDown(DTipoContrato, reader["tipContId"], "SELECT tipContDesc FROM admTipoContrato WHERE tipContId='" + reader["tipContId"].ToString() + "'");
+                        conector.SelectInDropDown(DProfesion, reader["profId"], "SELECT profNombre FROM admProfesion WHERE profId='" + reader["profId"].ToString() + "'");
+
+                        ArrayList lista = (ArrayList)ViewState["infolaboral"]; // Session[Request.Url.AbsolutePath];
+                        Query empresa = new Query("admInfoLaboral");
+
+                        empresa += "ilabEmpresa";
+                        empresa += "ilabTelefono";
+                        empresa += "ilabAño";
+                        empresa += "ilabJefeInmediato";
+
+                        reader = conector.Query(empresa.GetSelect("perId = " + HId.Value));
+                        if (reader != null)
+                        {
+                            while (reader.Read())
+                            {
+
+                                lista.Add(new Empresas(reader["ilabEmpresa"].ToString(),
+                                reader["ilabTelefono"].ToString(),
+                                reader["ilabJefeInmediato"].ToString(),
+                                reader["ilabAño"].ToString()));
+                            }
+                        }
+                        GEmpresas.DataSource = lista;
+                        GEmpresas.DataBind();
+
+
+                        GResultados.AllowPaging = false;
+                        GResultados.DataBind();
+                        LTotal.Text = GResultados.Rows.Count + " Sesiones";
+                        GResultados.AllowPaging = true;
+                        GResultados.DataBind();
                     }
-                    GEmpresas.DataSource = lista;
-                    GEmpresas.DataBind();
-
-
-                    GResultados.AllowPaging = false;
-                    GResultados.DataBind();
-                    LTotal.Text = GResultados.Rows.Count + " Sesiones";
-                    GResultados.AllowPaging = true;
-                    GResultados.DataBind();
                 }
             }
         }
@@ -295,105 +299,114 @@ public partial class rh_funcionario : System.Web.UI.Page
             query["archivo"] = "";
         }
 
-        CConectorMS conectorms = new CConectorMS();
-        // conectorms.StartTransaction();
-
-        if (HId.Value.Length>0) {
-
-            if (conectorms.QueryMod(query.GetUpdate("perId='" + HId.Value + "'")) == -1)
-                return;
-        } else {
-
-            int res= conectorms.QueryMod(query.GetInsert(), true);
-            if (res == -1)
-                return;
-            HId.Value = res.ToString();
-        }
-        CConector conector = new CConector();
-        conector.InsertModificacion(HId.Value);
-
-        if (FFoto.HasFile)
+        using (CConectorMS conectorms = new CConectorMS())
         {
-            Archivos archivo = new Archivos(FFoto.PostedFile, Convert.ToInt32(HId.Value));
-            archivo.SaveFile(new Query("admPersonalHS"));
-        }
-        else if (WebCam.GetFoto() != null) {
-            Archivos archivo = new Archivos(WebCam.GetFoto(), Convert.ToInt32(HId.Value));
-            archivo.SaveFile(new Query("admPersonalHS"));
-        }
+            // conectorms.StartTransaction();
 
-        if(conectorms.QueryMod("DELETE FROM admDocsPersonalHS WHERE perId=" + HId.Value )==-1)
-            return;
-
-        Query documentos = new Query("admDocsPersonalHS");
-        documentos["perId"] = HId.Value;
-
-        for (int i = 0; i < DDocumentos.Items.Count; i++ ) {
-
-            CheckBox check = (CheckBox)DDocumentos.Items[i].FindControl("CDocumentos");
-            if (check.Checked)
+            if (HId.Value.Length > 0)
             {
-                documentos["docId"] = DDocumentos.DataKeys[i].ToString();
-                if (conectorms.QueryMod(documentos.GetInsert()) == -1)
+
+                if (conectorms.QueryMod(query.GetUpdate("perId='" + HId.Value + "'")) == -1)
                     return;
             }
-        }
-
-        for (int i = 0; i < DDocumentosContratista.Items.Count; i++)
-        {
-            CheckBox check = (CheckBox)DDocumentosContratista.Items[i].FindControl("CDocumentos");
-            if (check.Checked)
+            else
             {
-                documentos["docId"] = DDocumentosContratista.DataKeys[i].ToString();
-                if (conectorms.QueryMod(documentos.GetInsert()) == -1)
+
+                int res = conectorms.QueryMod(query.GetInsert(), true);
+                if (res == -1)
                     return;
+                HId.Value = res.ToString();
             }
-        }
+            using(CConector conector= new CConector()) 
+                conector.InsertModificacion(HId.Value);
 
-        if (conectorms.QueryMod("DELETE FROM admPersonalInfoProf WHERE perId=" + HId.Value) == -1)
-            return;
-
-        Query informacion = new Query("admPersonalInfoProf");
-        informacion["perId"] = HId.Value;
-
-        for (int i = 0; i < GInformacionProfesional.Rows.Count; i++ ) {
-
-            CheckBox check = (CheckBox)GInformacionProfesional.Rows[i].FindControl("CEntregado");
-
-            if (check.Checked)
+            if (FFoto.HasFile)
             {
-                informacion["ipId"] = GInformacionProfesional.DataKeys[i].Value.ToString();
-                TextBox text = (TextBox)GInformacionProfesional.Rows[i].FindControl("TAno");
-                informacion["infAño"] = text.Text;
-                text = (TextBox)GInformacionProfesional.Rows[i].FindControl("TInstitucion");
-                informacion["infInstitucion"] = text.Text;
-                text = (TextBox)GInformacionProfesional.Rows[i].FindControl("TActa");
-                informacion["infNroActa"] = text.Text;
-
-                if (conectorms.QueryMod(informacion.GetInsert()) == -1)
-                    return;
+                Archivos archivo = new Archivos(FFoto.PostedFile, Convert.ToInt32(HId.Value));
+                archivo.SaveFile(new Query("admPersonalHS"));
             }
-        }
+            else if (WebCam.GetFoto() != null)
+            {
+                Archivos archivo = new Archivos(WebCam.GetFoto(), Convert.ToInt32(HId.Value));
+                archivo.SaveFile(new Query("admPersonalHS"));
+            }
 
-        if (conectorms.QueryMod("DELETE FROM admInfoLaboral WHERE perId=" + HId.Value) == -1)
-            return;
-
-        Query empresa = new Query("admInfoLaboral");
-        empresa["perId"] = HId.Value;
-
-        for (int i = 0; i < GEmpresas.Rows.Count; i++ ) {
-
-            TextBox text= (TextBox) GEmpresas.Rows[i].FindControl("TEmpresa");
-            empresa["ilabEmpresa"]= text.Text;
-            text = (TextBox)GEmpresas.Rows[i].FindControl("TTelefono");
-            empresa["ilabTelefono"]= text.Text;
-            text = (TextBox)GEmpresas.Rows[i].FindControl("TAno");
-            empresa["ilabAño"]= text.Text;
-            text = (TextBox)GEmpresas.Rows[i].FindControl("TJefe");
-            empresa["ilabJefeInmediato"] = text.Text;
-
-            if (conectorms.QueryMod(empresa.GetInsert()) == -1)
+            if (conectorms.QueryMod("DELETE FROM admDocsPersonalHS WHERE perId=" + HId.Value) == -1)
                 return;
+
+            Query documentos = new Query("admDocsPersonalHS");
+            documentos["perId"] = HId.Value;
+
+            for (int i = 0; i < DDocumentos.Items.Count; i++)
+            {
+
+                CheckBox check = (CheckBox)DDocumentos.Items[i].FindControl("CDocumentos");
+                if (check.Checked)
+                {
+                    documentos["docId"] = DDocumentos.DataKeys[i].ToString();
+                    if (conectorms.QueryMod(documentos.GetInsert()) == -1)
+                        return;
+                }
+            }
+
+            for (int i = 0; i < DDocumentosContratista.Items.Count; i++)
+            {
+                CheckBox check = (CheckBox)DDocumentosContratista.Items[i].FindControl("CDocumentos");
+                if (check.Checked)
+                {
+                    documentos["docId"] = DDocumentosContratista.DataKeys[i].ToString();
+                    if (conectorms.QueryMod(documentos.GetInsert()) == -1)
+                        return;
+                }
+            }
+
+            if (conectorms.QueryMod("DELETE FROM admPersonalInfoProf WHERE perId=" + HId.Value) == -1)
+                return;
+
+            Query informacion = new Query("admPersonalInfoProf");
+            informacion["perId"] = HId.Value;
+
+            for (int i = 0; i < GInformacionProfesional.Rows.Count; i++)
+            {
+
+                CheckBox check = (CheckBox)GInformacionProfesional.Rows[i].FindControl("CEntregado");
+
+                if (check.Checked)
+                {
+                    informacion["ipId"] = GInformacionProfesional.DataKeys[i].Value.ToString();
+                    TextBox text = (TextBox)GInformacionProfesional.Rows[i].FindControl("TAno");
+                    informacion["infAño"] = text.Text;
+                    text = (TextBox)GInformacionProfesional.Rows[i].FindControl("TInstitucion");
+                    informacion["infInstitucion"] = text.Text;
+                    text = (TextBox)GInformacionProfesional.Rows[i].FindControl("TActa");
+                    informacion["infNroActa"] = text.Text;
+
+                    if (conectorms.QueryMod(informacion.GetInsert()) == -1)
+                        return;
+                }
+            }
+
+            if (conectorms.QueryMod("DELETE FROM admInfoLaboral WHERE perId=" + HId.Value) == -1)
+                return;
+
+            Query empresa = new Query("admInfoLaboral");
+            empresa["perId"] = HId.Value;
+
+            for (int i = 0; i < GEmpresas.Rows.Count; i++)
+            {
+
+                TextBox text = (TextBox)GEmpresas.Rows[i].FindControl("TEmpresa");
+                empresa["ilabEmpresa"] = text.Text;
+                text = (TextBox)GEmpresas.Rows[i].FindControl("TTelefono");
+                empresa["ilabTelefono"] = text.Text;
+                text = (TextBox)GEmpresas.Rows[i].FindControl("TAno");
+                empresa["ilabAño"] = text.Text;
+                text = (TextBox)GEmpresas.Rows[i].FindControl("TJefe");
+                empresa["ilabJefeInmediato"] = text.Text;
+
+                if (conectorms.QueryMod(empresa.GetInsert()) == -1)
+                    return;
+            }
         }
 
         // conectorms.Commit();

@@ -22,41 +22,45 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
             GSeguimiento.Columns[1].Visible = usuario.CanDelete();
             BMas.Visible = false;
 
-            if(!string.IsNullOrEmpty(Request.QueryString["bid"])) {
+            if (!string.IsNullOrEmpty(Request.QueryString["bid"]))
+            {
 
                 Query query = new Query("turBitacora");
-                CConectorMS conector = new CConectorMS();
+                using (CConectorMS conector = new CConectorMS())
+                {
 
-                query += "turBitacora.bitId";
-                query += "turBitacora.bitFecha";
-                query += "turBitacora.bitObservaciones";
-                query += "turBitacora.tpaId";
-                query += "turBitacora.NAdministrativa";
-                query += "turBitacora.NServicio";
-                query += "turBitacora.pacId";
+                    query += "turBitacora.bitId";
+                    query += "turBitacora.bitFecha";
+                    query += "turBitacora.bitObservaciones";
+                    query += "turBitacora.tpaId";
+                    query += "turBitacora.NAdministrativa";
+                    query += "turBitacora.NServicio";
+                    query += "turBitacora.pacId";
 
-                SqlDataReader reader = conector.Query(query.GetSelect("bitId=" + Query.GetValor(Request.QueryString["bid"])));
-                if(reader!=null && reader.Read()) {
+                    SqlDataReader reader = conector.Query(query.GetSelect("bitId=" + Query.GetValor(Request.QueryString["bid"])));
+                    if (reader != null && reader.Read())
+                    {
 
-                    HBitacora.Value= reader["bitId"].ToString();
-                    TFecha.Text= CConector.GetFromMySQLDate(reader["bitFecha"]);
-                    TObservaciones.Text = reader["bitObservaciones"].ToString();
-                    DTipo.SelectedValue= reader["tpaId"].ToString();
-                    TPacienteID.Text = reader["pacId"].ToString();
-                    TPaciente.Text = Paciente.GetPaciente(TPacienteID.Text).NombreCompleto;
-                    CConector.SelectInDropDown(DNAdministrativa, reader["NAdministrativa"]);
-                    CConector.SelectInDropDown(DNServicio, reader["NServicio"]);
+                        HBitacora.Value = reader["bitId"].ToString();
+                        TFecha.Text = CConector.GetFromMySQLDate(reader["bitFecha"]);
+                        TObservaciones.Text = reader["bitObservaciones"].ToString();
+                        DTipo.SelectedValue = reader["tpaId"].ToString();
+                        TPacienteID.Text = reader["pacId"].ToString();
+                        TPaciente.Text = Paciente.GetPaciente(TPacienteID.Text).NombreCompleto;
+                        CConector.SelectInDropDown(DNAdministrativa, reader["NAdministrativa"]);
+                        CConector.SelectInDropDown(DNServicio, reader["NServicio"]);
 
-                    CCDetallePaciente.IdPaciente = TPacienteID.Text;
-                    CCDetallePaciente.Visible = TPacienteID.Text.Length > 0;
+                        CCDetallePaciente.IdPaciente = TPacienteID.Text;
+                        CCDetallePaciente.Visible = TPacienteID.Text.Length > 0;
 
-                    BMas.Visible = true;
-                    BMas.Enabled = usuario.CanInsert();
-                    BAceptar.Enabled = usuario.CanUpdate();
+                        BMas.Visible = true;
+                        BMas.Enabled = usuario.CanInsert();
+                        BAceptar.Enabled = usuario.CanUpdate();
+                    }
                 }
+                ((MasterPageI)Master).Excel(GResultados);
+                ((MasterPageI)Master).Imprimir(GResultados);
             }
-            ((MasterPageI)Master).Excel(GResultados);
-            ((MasterPageI)Master).Imprimir(GResultados);
         }
         Utilidades.GetRowsCount(GResultados, LTotal);
     }
@@ -79,34 +83,39 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
         if (!IsValid)
             return;
         Query query = new Query("turBitacora");
-        CConectorMS conector = new CConectorMS();
-
-        conector.StartTransaction();
-
-        query["bitFecha"] = TFecha.Text;
-        query["bitObservaciones"] = TObservaciones.Text;
-        query["tpaId"] = DTipo.SelectedValue;
-        query["NAdministrativa"]= DNAdministrativa.SelectedValue;
-        query["NServicio"]= DNServicio.SelectedValue;
-        query["pacId"] = TPacienteID.Text;
-
-        if (string.IsNullOrEmpty(HBitacora.Value))
+        using (CConectorMS conector = new CConectorMS())
         {
-            query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
-            query["segFechaRegistro"] = "GETDATE()";
 
-            int res = conector.QueryMod(query.GetInsert());
-            if (res == -1)
-                return;
-            HBitacora.Value=res.ToString();
-        } else {
-            if (conector.QueryMod(query.GetUpdate("bitId=" + HBitacora.Value)) == -1)
-                return;
+            conector.StartTransaction();
+
+            query["bitFecha"] = TFecha.Text;
+            query["bitObservaciones"] = TObservaciones.Text;
+            query["tpaId"] = DTipo.SelectedValue;
+            query["NAdministrativa"] = DNAdministrativa.SelectedValue;
+            query["NServicio"] = DNServicio.SelectedValue;
+            query["pacId"] = TPacienteID.Text;
+
+            if (string.IsNullOrEmpty(HBitacora.Value))
+            {
+                query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
+                query["segFechaRegistro"] = "GETDATE()";
+
+                int res = conector.QueryMod(query.GetInsert());
+                if (res == -1)
+                    return;
+                HBitacora.Value = res.ToString();
+            }
+            else
+            {
+                if (conector.QueryMod(query.GetUpdate("bitId=" + HBitacora.Value)) == -1)
+                    return;
+            }
+            using(CConector conectorm= new CConector()) 
+                if (conectorm.InsertModificacion(HBitacora.Value) == -1)
+                    return;
+
+            conector.Commit();
         }
-        if (new CConector().InsertModificacion(HBitacora.Value) == -1)
-            return;
-
-        conector.Commit();
         ((MasterPageI)Master).SetResultado("Bitácora editada.");
     }
     
@@ -128,21 +137,25 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
         if (!IsValid)
             return;
 
-        CConectorMS conector = new CConectorMS();
-        Query query = new Query("bitacora_seguimiento");
-
-        query["bitacora"] = HBitacora.Value;
-        query["fecha"] = TFechaSeguimiento.Text + " " + THoraSeguimiento.Text + ":00";
-        query["area"] = DArea.SelectedValue;
-        query["objeto"] = TObjeto.Text;
-
-        if (GSeguimiento.SelectedIndex==-1)
+        using (CConectorMS conector = new CConectorMS())
         {
-            if (conector.QueryMod(query.GetInsert()) == -1)
-                return;
-        } else {
-            if (conector.QueryMod(query.GetUpdate("id=" + GSeguimiento.DataKeys[GSeguimiento.SelectedIndex].Value.ToString())) == -1)
-                return;
+            Query query = new Query("bitacora_seguimiento");
+
+            query["bitacora"] = HBitacora.Value;
+            query["fecha"] = TFechaSeguimiento.Text + " " + THoraSeguimiento.Text + ":00";
+            query["area"] = DArea.SelectedValue;
+            query["objeto"] = TObjeto.Text;
+
+            if (GSeguimiento.SelectedIndex == -1)
+            {
+                if (conector.QueryMod(query.GetInsert()) == -1)
+                    return;
+            }
+            else
+            {
+                if (conector.QueryMod(query.GetUpdate("id=" + GSeguimiento.DataKeys[GSeguimiento.SelectedIndex].Value.ToString())) == -1)
+                    return;
+            }
         }
 
         GSeguimiento.DataBind();

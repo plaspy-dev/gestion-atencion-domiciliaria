@@ -33,147 +33,165 @@ public partial class cliente_quejas : System.Web.UI.Page
                 query += "perId";
                 query += "clasificacion";
 
-                CConectorMS conector = new CConectorMS();
-                SqlDataReader reader = conector.Query(query.GetSelect("qrId=" + Query.GetValor(Request.QueryString["qid"])));
+                using (CConectorMS conector = new CConectorMS())
+                {
+                    SqlDataReader reader = conector.Query(query.GetSelect("qrId=" + Query.GetValor(Request.QueryString["qid"])));
 
-                if(reader!=null && reader.Read()) {
-
-                    PSeguimiento.Visible= PDatos.Visible = true;
-                    BAceptar.Enabled = usuario.CanUpdate();
-                    HIdQuejas.Value = reader["qrId"].ToString();
-                    try
+                    if (reader != null && reader.Read())
                     {
-                        DateTime fecha = (DateTime)reader["qrFecha"];
-                        TFecha.Text = fecha.ToShortDateString();
-                        THora.Text = fecha.Hour.ToString().PadLeft(2, '0') + ":" + fecha.Minute.ToString().PadLeft(2, '0');
-                    } catch { }
-                    CConector.SelectInDropDown(DTipo, reader["tqrIdTipo"]);
-                    TPLlama.Text = reader["qrPersonaLlama"].ToString();
-                    TParentesco.Text = reader["qrParentesco"].ToString();
-                    TEmail.Text = reader["qrEmail"].ToString();
-                    TTelefono.Text = reader["qrTelefono"].ToString();
-                    TDetalle.Text = reader["qrDetalle"].ToString();
-                    TObservaciones.Text = reader["qrObsHS"].ToString();                    
-                    CCDetallePaciente.IdPaciente = reader["pacId"].ToString();
-                    FuncionarioC.IdFuncionario = reader["perId"].ToString();
-                    CConector.SelectInDropDown(DClasificacion, reader["clasificacion"]);
 
-                    if (CCDetallePaciente.IdPaciente.Length != 0)
+                        PSeguimiento.Visible = PDatos.Visible = true;
+                        BAceptar.Enabled = usuario.CanUpdate();
+                        HIdQuejas.Value = reader["qrId"].ToString();
+                        try
+                        {
+                            DateTime fecha = (DateTime)reader["qrFecha"];
+                            TFecha.Text = fecha.ToShortDateString();
+                            THora.Text = fecha.Hour.ToString().PadLeft(2, '0') + ":" + fecha.Minute.ToString().PadLeft(2, '0');
+                        }
+                        catch { }
+                        CConector.SelectInDropDown(DTipo, reader["tqrIdTipo"]);
+                        TPLlama.Text = reader["qrPersonaLlama"].ToString();
+                        TParentesco.Text = reader["qrParentesco"].ToString();
+                        TEmail.Text = reader["qrEmail"].ToString();
+                        TTelefono.Text = reader["qrTelefono"].ToString();
+                        TDetalle.Text = reader["qrDetalle"].ToString();
+                        TObservaciones.Text = reader["qrObsHS"].ToString();
+                        CCDetallePaciente.IdPaciente = reader["pacId"].ToString();
+                        FuncionarioC.IdFuncionario = reader["perId"].ToString();
+                        CConector.SelectInDropDown(DClasificacion, reader["clasificacion"]);
+
+                        if (CCDetallePaciente.IdPaciente.Length != 0)
+                        {
+                            RPaciente.Checked = true;
+                            SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
+                            SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
+                        }
+                        else
+                        {
+                            CCDetallePaciente.Visible = false;
+                            REmpleado.Checked = true;
+                        }
+
+                        reader = conector.Query("SELECT admPersonalHS.perId AS id,admPersonalHS.pernombre AS nombre FROM serQuejaRecPersonal LEFT JOIN admPersonalHS ON (admPersonalHS.perId=serQuejaRecPersonal.perId) WHERE serQuejaRecPersonal.qrId=" + HIdQuejas.Value + " ORDER BY nombre;");
+                        if (reader != null)
+                        {
+
+                            ArrayList personas = new ArrayList();
+                            ViewState["cliente_quejas"] = personas;
+                            while (reader.Read())
+                            {
+                                personas.Add(new Miscelaneos(reader["id"].ToString(), reader["nombre"].ToString()));
+                            }
+                            GPersonal.DataSource = personas;
+                            GPersonal.DataBind();
+                        }
+                        DTipo_SelectedIndexChanged(sender, e);
+                        if (!PConductaAbusiva.Visible)
+                        {
+                            ((MasterPageI)Master).Imprimir("quejas.html");
+                        }
+                        else
+                        {
+
+                            ((MasterPageI)Master).Imprimir("quejasa.html");
+                            query = new Query("conducta_abusiva");
+
+                            query += "id";
+                            query += "lugar";
+                            query += "circunstancias";
+                            query += "antecedentes";
+                            query += "presentadano";
+                            query += "otro";
+                            query += "fecha";
+                            query += "riesgo";
+
+                            reader = conector.Query(query.GetSelect("queja=" + Query.GetValor(HIdQuejas.Value)));
+                            if (reader != null && reader.Read())
+                            {
+
+                                ViewState["idconducta"] = reader["id"].ToString();
+                                TLugar.Text = reader["lugar"].ToString();
+                                TCircunstanacias.Text = reader["circunstancias"].ToString();
+                                TAntecedentes.Text = reader["antecedentes"].ToString();
+                                CPresentaDano.Checked = reader["presentadano"].ToString() == "1";
+                                TTipoDano.Text = reader["otro"].ToString();
+                                TFechaEvento.Text = CConector.GetFromMySQLDate(reader["fecha"]);
+                                CConector.SelectInDropDown(DTipoRiesgo, reader["riesgo"]);
+
+                                string consecuencia = "";
+                                reader = conector.Query("SELECT consecuencia FROM conducta_abusiva_consecuencias WHERE conducta_abusiva=" + ViewState["idconducta"].ToString());
+                                if (reader != null)
+                                {
+                                    while (reader.Read())
+                                    {
+                                        if (consecuencia.Length > 0)
+                                            consecuencia += ";";
+                                        consecuencia += reader["consecuencia"].ToString();
+                                    }
+                                }
+                                ViewState["consecuencia"] = consecuencia;
+
+                                consecuencia = "";
+                                reader = conector.Query("SELECT medida,fecha FROM conducta_abusiva_medidas WHERE conducta_abusiva=" + ViewState["idconducta"].ToString());
+                                if (reader != null)
+                                {
+                                    while (reader.Read())
+                                    {
+                                        if (consecuencia.Length > 0)
+                                            consecuencia += ";";
+                                        consecuencia += reader["medida"].ToString()
+                                            + ","
+                                            + CConector.GetFromMySQLDate(reader["fecha"])
+                                            ;
+                                    }
+                                }
+                                ViewState["medidas"] = consecuencia;
+                            }
+                        }
+                        ((MasterPageI)Master).SetModificacion(HIdQuejas.Value);
+                    }
+                    else if (Request.QueryString["pid"] != null)
                     {
-                        RPaciente.Checked = true;
-                        SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
-                        SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
-                    } else {
-                        CCDetallePaciente.Visible = false;
-                        REmpleado.Checked = true;
-                    }
-
-                    reader= conector.Query("SELECT admPersonalHS.perId AS id,admPersonalHS.pernombre AS nombre FROM serQuejaRecPersonal LEFT JOIN admPersonalHS ON (admPersonalHS.perId=serQuejaRecPersonal.perId) WHERE serQuejaRecPersonal.qrId=" + HIdQuejas.Value + " ORDER BY nombre;");
-                    if(reader!=null) {
-
-                        ArrayList personas= new ArrayList();
-                        ViewState["cliente_quejas"] = personas;
-                        while(reader.Read()) {
-                            personas.Add(new Miscelaneos(reader["id"].ToString(), reader["nombre"].ToString()));
+                        CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
+                        if (CCDetallePaciente.IdPaciente.Length == 0)
+                        {
+                            Response.Redirect(Request.Url.AbsolutePath);
                         }
-                        GPersonal.DataSource = personas;
-                        GPersonal.DataBind();
+                        else
+                        {
+                            BAceptar.Enabled = usuario.CanInsert();
+
+                            RPaciente.Checked = true;
+                            SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
+                            SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
+
+                            PDatos.Visible = true;
+                        }
+                        TFecha.Focus();
                     }
-                    DTipo_SelectedIndexChanged(sender, e);
-                    if (!PConductaAbusiva.Visible) {
-                        ((MasterPageI)Master).Imprimir("quejas.html");
-                    } else {
+                    else if (Request.QueryString["fid"] != null)
+                    {
 
-                        ((MasterPageI)Master).Imprimir("quejasa.html");
-                        query = new Query("conducta_abusiva");
+                        FuncionarioC.IdFuncionario = Request.QueryString["fid"];
+                        if (FuncionarioC.IdFuncionario.Length == 0)
+                        {
+                            Response.Redirect(Request.Url.AbsolutePath);
+                        }
+                        else
+                        {
 
-                        query += "id";
-                        query += "lugar";
-                        query += "circunstancias";
-                        query += "antecedentes";
-                        query += "presentadano";
-                        query += "otro";
-                        query += "fecha";
-                        query += "riesgo";
-
-                        reader= conector.Query(query.GetSelect("queja=" + Query.GetValor(HIdQuejas.Value)));
-                        if(reader!=null && reader.Read()) {
-
-                            ViewState["idconducta"]= reader["id"].ToString();
-                            TLugar.Text= reader["lugar"].ToString();
-                            TCircunstanacias.Text= reader["circunstancias"].ToString();
-                            TAntecedentes.Text= reader["antecedentes"].ToString();
-                            CPresentaDano.Checked =reader["presentadano"].ToString()=="1";
-                            TTipoDano.Text= reader["otro"].ToString();
-                            TFechaEvento.Text= CConector.GetFromMySQLDate(reader["fecha"]);
-                            CConector.SelectInDropDown(DTipoRiesgo, reader["riesgo"]);
-
-                            string consecuencia="";
-                            reader = conector.Query("SELECT consecuencia FROM conducta_abusiva_consecuencias WHERE conducta_abusiva=" + ViewState["idconducta"].ToString());
-                            if(reader!=null) {
-                                while (reader.Read())
-                                {
-                                    if (consecuencia.Length > 0)
-                                        consecuencia += ";";
-                                    consecuencia += reader["consecuencia"].ToString();
-                                }
-                            }
-                            ViewState["consecuencia"] = consecuencia;
-
-                            consecuencia = "";
-                            reader = conector.Query("SELECT medida,fecha FROM conducta_abusiva_medidas WHERE conducta_abusiva=" + ViewState["idconducta"].ToString());
-                            if (reader != null) {
-                                while (reader.Read())
-                                {
-                                    if (consecuencia.Length > 0)
-                                        consecuencia += ";";
-                                    consecuencia += reader["medida"].ToString()
-                                        + ","
-                                        + CConector.GetFromMySQLDate(reader["fecha"])
-                                        ;
-                                }
-                            }
-                            ViewState["medidas"] = consecuencia;
+                            CCDetallePaciente.Visible = false;
+                            REmpleado.Checked = true;
+                            BAceptar.Enabled = usuario.CanInsert();
+                            PDatos.Visible = true;
                         }
                     }
-                    ((MasterPageI)Master).SetModificacion(HIdQuejas.Value);
                 }
+                if (DTipo.Items.Count == 0)
+                    DTipo.DataBind();
+                DTipo_SelectedIndexChanged(sender, e);
             }
-            else if (Request.QueryString["pid"]!=null)
-            {
-                CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
-                if (CCDetallePaciente.IdPaciente.Length == 0)
-                {
-                    Response.Redirect(Request.Url.AbsolutePath);
-                }
-                else
-                {
-                    BAceptar.Enabled = usuario.CanInsert();
-
-                    RPaciente.Checked = true;
-                    SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
-                    SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
-
-                    PDatos.Visible = true;
-                }
-                TFecha.Focus();
-            } else if(Request.QueryString["fid"]!=null) {
-
-                FuncionarioC.IdFuncionario = Request.QueryString["fid"];
-                if (FuncionarioC.IdFuncionario.Length == 0)
-                {
-                    Response.Redirect(Request.Url.AbsolutePath);
-                } else {
-
-                    CCDetallePaciente.Visible = false;
-                    REmpleado.Checked = true;
-                    BAceptar.Enabled = usuario.CanInsert();
-                    PDatos.Visible = true;
-                }
-            }
-            if (DTipo.Items.Count == 0)
-                DTipo.DataBind();
-            DTipo_SelectedIndexChanged(sender, e);
         }
     }
 
@@ -216,8 +234,9 @@ public partial class cliente_quejas : System.Web.UI.Page
                 if (conector.QueryMod(query.GetUpdate("qrId=" + HIdQuejas.Value)) == -1)
                     return;
             }
-            if (new CConector().InsertModificacion(HIdQuejas.Value) == -1)
-                return;
+            using(CConector conectorm= new CConector()) 
+                if (conectorm.InsertModificacion(HIdQuejas.Value) == -1)
+                    return;
 
             if (PConductaAbusiva.Visible)
             {
