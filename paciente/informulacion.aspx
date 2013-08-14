@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Informe formulación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="informulacion.aspx.cs" Inherits="paciente_informulacion" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<style type="text/css">.GridHeader th {width: auto !important;}</style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">

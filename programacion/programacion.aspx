@@ -47,7 +47,7 @@
             <tr>
                 <td style="text-align: center" colspan="2">
                 <br />
-                    <asp:GridView ID="GProgramacion" runat="server" AllowPaging="True" 
+                    <asp:GridView ID="GProgramacion" runat="server" AllowPaging="True" Width="100%"
                         AutoGenerateColumns="False" DataSourceID="SProgramacion" 
                         EmptyDataText="No se encontraron programaciones" DataKeyNames="prgId" 
                         AllowSorting="true" onrowediting="GProgramacion_RowEditing" 
@@ -76,7 +76,7 @@
                                 <ItemStyle HorizontalAlign="Right" />
                             </asp:BoundField>
                             <asp:BoundField DataField="autorizacion" HeaderText="Autorización" SortExpression="autorizacion"  ItemStyle-Wrap="false"/>
-                            <asp:BoundField DataField="actDescripcion" HeaderText="Actividad" SortExpression="actDescripcion" ItemStyle-Wrap="false"/>
+                            <asp:BoundField DataField="actDescripcion" HeaderText="Actividad" SortExpression="actDescripcion" ItemStyle-Wrap="false" ItemStyle-Width="100%"/>
                             <asp:CheckBoxField DataField="prgActivo" HeaderText="Activo?" />
                             <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                             <asp:BoundField DataField="intensidad" HeaderText="intensidad" SortExpression="intensidad" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />

@@ -106,7 +106,7 @@
                                 <ItemTemplate>
                                     <h3><a href="#"><%# Eval("parent") %></a></h3>
                                     <div class="hide">
-                                    <asp:GridView ID="P" runat="server" AutoGenerateColumns="false" DataKeyNames="pagina">
+                                    <asp:GridView ID="P" runat="server" AutoGenerateColumns="false" DataKeyNames="pagina" Width="100%">
                                         <RowStyle CssClass="GridRow"></RowStyle>
                                         <FooterStyle CssClass="GridFooter"></FooterStyle>
                                         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -114,42 +114,42 @@
                                         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                                         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                                         <Columns>
-                                            <asp:TemplateField HeaderText="Todos">
+                                            <asp:TemplateField HeaderText="Todos" ItemStyle-HorizontalAlign="Right">
                                                 <ItemTemplate>
                                                     <asp:CheckBox ID="t" runat="server" Checked='<%# Bind("todos") %>' />
                                                 </ItemTemplate>
                                             </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Página">
+                                            <asp:TemplateField HeaderText="Página" ItemStyle-Width="100%" ItemStyle-Wrap="false">
                                                 <ItemTemplate>
                                                     <%# Eval("titulo") %>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Administrador">
+                                            <asp:TemplateField HeaderText="Administrador" ItemStyle-HorizontalAlign="Right">
                                                 <ItemTemplate>
                                                     <asp:CheckBox ID="a" runat="server" Checked='<%# Bind("administrador") %>' />
                                                 </ItemTemplate>
                                             </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Eliminar">
+                                            <asp:TemplateField HeaderText="Eliminar" ItemStyle-HorizontalAlign="Right">
                                                 <ItemTemplate>
                                                     <asp:CheckBox ID="e" runat="server" Checked='<%# Bind("eliminar") %>' />
                                                 </ItemTemplate>
                                             </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Editar">
+                                            <asp:TemplateField HeaderText="Editar" ItemStyle-HorizontalAlign="Right">
                                                 <ItemTemplate>
                                                     <asp:CheckBox ID="d" runat="server" Checked='<%# Bind("edicion") %>' />
                                                 </ItemTemplate>
                                             </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Insertar">
+                                            <asp:TemplateField HeaderText="Insertar" ItemStyle-HorizontalAlign="Right">
                                                 <ItemTemplate>
                                                     <asp:CheckBox ID="i" runat="server" Checked='<%# Bind("insercion") %>' />
                                                 </ItemTemplate>
                                             </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Imprimir">
+                                            <asp:TemplateField HeaderText="Imprimir" ItemStyle-HorizontalAlign="Right">
                                                 <ItemTemplate>
                                                     <asp:CheckBox ID="m" runat="server" Checked='<%# Bind("imprimir") %>' />
                                                 </ItemTemplate>
                                             </asp:TemplateField>
-                                            <asp:TemplateField HeaderText="Leer">
+                                            <asp:TemplateField HeaderText="Leer" ItemStyle-HorizontalAlign="Right">
                                                 <ItemTemplate>
                                                     <asp:CheckBox ID="l" runat="server" Checked='<%# Bind("lectura") %>' />
                                                 </ItemTemplate>

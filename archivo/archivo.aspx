@@ -110,7 +110,7 @@
         <asp:UpdatePanel runat="server" ID="UMas" UpdateMode="Conditional"><ContentTemplate>
         <tr>
             <td colspan="2">
-                <asp:GridView ID="GPrestamos" runat="server" AutoGenerateColumns="False" 
+                <asp:GridView ID="GPrestamos" runat="server" AutoGenerateColumns="False"  Width="100%"
                     DataSourceID="SPrestamos" DataKeyNames="id" 
                     onselectedindexchanged="GPrestamos_SelectedIndexChanged">
                 <RowStyle CssClass="GridRow"></RowStyle>
@@ -124,8 +124,8 @@
                         <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                         <asp:BoundField DataField="solicitud" HeaderText="Solicitud" SortExpression="solicitud" DataFormatString="{0:d}" />
                         <asp:BoundField DataField="tipo" HeaderText="Tipo" SortExpression="tipo" />
-                        <asp:BoundField DataField="solicitadopor" HeaderText="Solicitado por" SortExpression="solicitadopor" />
-                        <asp:BoundField DataField="objeto" HeaderText="Objeto" SortExpression="objeto" />
+                        <asp:BoundField DataField="solicitadopor" HeaderText="Solicitado por" SortExpression="solicitadopor" ItemStyle-Wrap="false" />
+                        <asp:BoundField DataField="objeto" HeaderText="Objeto" SortExpression="objeto" ItemStyle-Width="100%" />
                         <asp:BoundField DataField="entrega" HeaderText="Entrega" SortExpression="entrega" DataFormatString="{0:d}" />
                         <asp:BoundField DataField="devolucion" HeaderText="Devolución" SortExpression="devolucion" DataFormatString="{0:d}" />
                     </Columns>
@@ -229,7 +229,7 @@
     <asp:UpdatePanel ID="PResultados" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
     <div id="dImprimir">
-            <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
+            <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados"  Width="100%"
                 AutoGenerateColumns="False" EmptyDataText="No se encontraron archivos" DataKeyNames="arcId"
                 AllowPaging="True" PageSize="50" AllowSorting="True" 
                 OnRowDataBound="GResultados_RowDataBound" 
@@ -245,11 +245,11 @@
                         DataNavigateUrlFields="arcId" SortExpression="fecha"
                         DataNavigateUrlFormatString="~/archivo/archivo.aspx?aid={0}" 
                     ItemStyle-Wrap="false" />
-                    <asp:BoundField HeaderText="Paciente" DataField="pacNombres" SortExpression="pacNombres" />
+                    <asp:BoundField HeaderText="Paciente" DataField="pacNombres" SortExpression="pacNombres" ItemStyle-Wrap="false" />
                     <asp:BoundField HeaderText="Factura" DataField="arcFactura" SortExpression="arcFactura" />
-                    <asp:BoundField HeaderText="A-Z" DataField="arcAZ" SortExpression="arcAZ" />
+                    <asp:BoundField HeaderText="A-Z" DataField="arcAZ" SortExpression="arcAZ" ItemStyle-Wrap="false" />
                     <asp:BoundField HeaderText="Tipo" DataField="tipo" SortExpression="tipo" />
-                    <asp:BoundField HeaderText="Observaciones" DataField="arcObservaciones" SortExpression="arcObservaciones" />
+                    <asp:BoundField HeaderText="Observaciones" DataField="arcObservaciones" SortExpression="arcObservaciones" ItemStyle-Width="100%" />
                 </Columns>
             </asp:GridView>
     <div style="text-align: right;">

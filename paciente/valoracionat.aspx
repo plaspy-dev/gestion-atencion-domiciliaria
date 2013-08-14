@@ -57,7 +57,7 @@
                 <asp:Panel ID="PHistorial" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LHistorial"></asp:Label></a></h3>
                     <div class="hide">
-                        <asp:GridView ID="GHistorial" runat="server" AutoGenerateColumns="False" 
+                        <asp:GridView ID="GHistorial" runat="server" AutoGenerateColumns="False" Width="100%"
                             DataSourceID="SHistorial" EmptyDataText="No se encontraron índices anteriores de este paciente" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -75,7 +75,7 @@
                                 <asp:BoundField DataField="inicio" HeaderText="Inicio" DataFormatString="{0:d}" />
                                 <asp:BoundField DataField="fin" HeaderText="Fin" DataFormatString="{0:d}" />
                                 <asp:BoundField DataField="numero_terapias" HeaderText="Numero de sesiones" ItemStyle-HorizontalAlign="Right" />
-                                <asp:BoundField DataField="observaciones" HeaderText="Observaciones"/>
+                                <asp:BoundField DataField="observaciones" HeaderText="Observaciones" ItemStyle-Width="100%"/>
                             </Columns>
                         </asp:GridView>
                         <asp:SqlDataSource ID="SHistorial" runat="server" 
@@ -134,7 +134,7 @@
             </tr>
             <tr>
                 <td colspan="4">
-                <asp:GridView ID="GOxigeno" runat="server" AutoGenerateColumns="False" DataSourceID="SOxigeno" DataKeyNames="id">
+                <asp:GridView ID="GOxigeno" runat="server" AutoGenerateColumns="False" DataSourceID="SOxigeno" DataKeyNames="id" Width="100%">
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -144,7 +144,7 @@
                     <Columns>
                         <asp:BoundField DataField="grupo" HeaderText="Flujo en lt/min" />
                         <asp:BoundField DataField="nombre" HeaderText="Flujo en lt/min" />
-                        <asp:BoundField DataField="descripcion" HeaderText="Flujo en lt/min" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField DataField="descripcion" HeaderText="Flujo en lt/min" ItemStyle-HorizontalAlign="Center"  ItemStyle-Width="100%"/>
                         <asp:TemplateField HeaderText="FI 02(%)" ItemStyle-HorizontalAlign="Right">
                             <ItemTemplate>
                                 <asp:TextBox runat="server" ID="TValor" Width="40px" Text='<%# Eval("valor") %>'></asp:TextBox>
@@ -180,7 +180,7 @@
             </tr>
             <tr>
                 <td colspan="4">
-                <asp:GridView ID="GFuerza" runat="server" AutoGenerateColumns="False" DataSourceID="SFuerza" DataKeyNames="id">
+                <asp:GridView ID="GFuerza" runat="server" AutoGenerateColumns="False" DataSourceID="SFuerza" DataKeyNames="id" Width="100%">
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -188,7 +188,7 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
-                        <asp:BoundField DataField="nombre" HeaderText="" />
+                        <asp:BoundField DataField="nombre" HeaderText="" ItemStyle-Width="100%" />
                         <asp:TemplateField HeaderText="Fuerza muscular" ItemStyle-HorizontalAlign="Right">
                             <ItemTemplate>
                                 <asp:TextBox runat="server" ID="TPuntaje" Width="40px" Text='<%# Eval("puntuacion") %>' CssClass="entero"></asp:TextBox>

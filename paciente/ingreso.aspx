@@ -45,8 +45,8 @@
             $("#tmujer").remove();
             $("#tfisico").attr("colspan", "4").attr("width", "100%");
         }
-        if (!$.browser.msie || $.browser.version > 8)
-            $("input[name*=TObservaciones]").width("98%");
+        /*if (!$.browser.msie || $.browser.version > 8)
+            $("input[name*=TObservaciones]").width("98%");*/
 
         tinyMCE.init({
             mode: "exact",
@@ -75,7 +75,7 @@
             }
         });
     });
-    $(function() {
+    /*$(function() {
         $(window).resize(function() {
             $("input[name*=TObservaciones]").each(function() {
                 $(this).width($(this).parent().width() - 15);
@@ -84,7 +84,7 @@
                 $(this).width($(this).parent().width() - 15);
             });
         });
-    });
+    });*/
     function rel(text) {
         text = text.replace(/\r/gi, '');
         text = text.replace(/&nbsp;/gi, '');
@@ -141,7 +141,7 @@
             </tr>
             <tr>
                 <td>
-                    Medico que atiende</td>
+                    Médico que atiende</td>
                 <td>
                     <asp:DropDownList ID="DMedico" runat="server" DataSourceID="SMedicos" 
                 DataTextField="perNombre" DataValueField="perId"> </asp:DropDownList>
@@ -197,9 +197,9 @@
                             <asp:CheckBox ID="CPat" runat="server" Checked='<%# Eval("pat").ToString()=="1" ? true : false %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%">
+                    <asp:TemplateField HeaderText="Observaciones" ItemStyle-Width="100%">
                         <ItemTemplate>
-                            <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
+                            <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>' Width="99%"></asp:TextBox>
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -229,9 +229,9 @@
                         </ItemTemplate>
                         <ItemStyle Wrap="false" />
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%">
+                    <asp:TemplateField HeaderText="Observaciones" ItemStyle-Width="100%">
                         <ItemTemplate>
-                            <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
+                            <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>' Width="99%"></asp:TextBox>
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -263,9 +263,9 @@
                                     <asp:RequiredFieldValidator ID="RequiredFieldValidator11" ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Observaciones">
+                            <asp:TemplateField HeaderText="Observaciones" ItemStyle-Width="100%">
                                 <ItemTemplate>
-                                    <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
+                                    <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>' Width="99%"></asp:TextBox>
                                 </ItemTemplate>
                             </asp:TemplateField>
                         </Columns>
@@ -305,9 +305,9 @@
                         <asp:CheckBox ID="CPat" runat="server" Checked='<%# Eval("pat").ToString()=="1" ? true : false %>'/>
                     </ItemTemplate>
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%" ItemStyle-Width="100%">
+                <asp:TemplateField HeaderText="Observaciones" ItemStyle-Width="100%">
                     <ItemTemplate>
-                        <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
+                        <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>' Width="99%"></asp:TextBox>
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>
@@ -327,7 +327,7 @@
             </tr>
             <tr>
                 <td colspan="4">
-                    <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" 
+                    <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" Width="100%"
                         AutoGenerateColumns="False" DataKeyNames="id"
                         onselectedindexchanged="GCDiagnostico_SelectedIndexChanged" >
                         <RowStyle CssClass="GridRow"></RowStyle>
@@ -340,7 +340,7 @@
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                             <asp:BoundField DataField="codigo" HeaderText="Código" />
-                            <asp:BoundField DataField="descripcion" HeaderText="Descripción" />
+                            <asp:BoundField DataField="descripcion" HeaderText="Descripción" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="observaciones" HeaderText="Observaciones" />
                         </Columns>
                         <SelectedRowStyle CssClass="selecteditem" />
@@ -385,21 +385,21 @@
                     Signos vitales</td>
             </tr>
             <tr>
-                <td>TA<asp:RequiredFieldValidator ControlToValidate="TTA" ErrorMessage="Por favor ingrese una tensión arterial." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td>TA</td>
                 <td>
                     <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>mm/Hg</td>
                 <td>
-                    FC<asp:RequiredFieldValidator ControlToValidate="TFC" ErrorMessage="Por favor ingrese una frecuencia cardiaca." ID="RequiredFieldValidator6" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    FC</td>
                 <td>
                     <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>Lat/min</td>
             </tr>
             <tr>
                 <td>
-                    FR<asp:RequiredFieldValidator ControlToValidate="TFR" ErrorMessage="Por favor ingrese una frecuencia respiratoria." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    FR</td>
                 <td>
                     <asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>Min</td>
                 <td>
-                    T<asp:RequiredFieldValidator ControlToValidate="TT" ErrorMessage="Por favor ingrese una temperatura." ID="RequiredFieldValidator8" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    T</td>
                 <td>
                     <asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox>°</td>
             </tr>
@@ -409,7 +409,7 @@
                 <td>
                     <asp:TextBox ID="TPeso" runat="server" CssClass="float"></asp:TextBox>Kg</td>
                 <td>
-                    Saturación<asp:RequiredFieldValidator ControlToValidate="TSaturacion" ErrorMessage="Por favor ingrese una saturación." ID="RequiredFieldValidator10" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    Saturación</td>
                 <td>
                     <asp:TextBox ID="TSaturacion" runat="server" CssClass="float"></asp:TextBox>%</td>
             </tr>

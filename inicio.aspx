@@ -90,7 +90,7 @@
                     <asp:Image runat="server" ID="IL" ImageUrl="~/css/ajax-loader.gif" />
                     <asp:Button runat="server" ID="BA" OnClick="OnClickBA" CssClass="hide" />
                     <asp:LinkButton Visible="false" Text="" runat="server" ID="LA" CommandName='<%# Eval("SelectCommand") %>' CommandArgument='<%# Eval("URL") %>'></asp:LinkButton>
-                    <asp:GridView ID="GAlertas" runat="server" AutoGenerateColumns="False" Visible="false"
+                    <asp:GridView ID="GAlertas" runat="server" AutoGenerateColumns="False" Visible="false" Width="100%"
                         DataSourceID="SAlertas" EmptyDataText="No se encontraron alertas" ShowHeader="false">
                         <RowStyle CssClass="GridRow"></RowStyle>
                         <FooterStyle CssClass="GridFooter"></FooterStyle>

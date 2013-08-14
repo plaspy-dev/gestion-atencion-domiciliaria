@@ -65,7 +65,7 @@
         </tr>
         <tr>
             <td colspan="3">
-                <asp:GridView ID="GEntidades" runat="server" AutoGenerateColumns="False" DataSourceID="SEntidades" 
+                <asp:GridView ID="GEntidades" runat="server" AutoGenerateColumns="False" DataSourceID="SEntidades"  Width="100%"
                     EmptyDataText="No se encontraron entidades" DataKeyNames="id" onrowdatabound="GEntidades_RowDataBound">
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -74,7 +74,7 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
-                        <asp:BoundField HeaderText="Entidad" DataField="nombre" />
+                        <asp:BoundField HeaderText="Entidad" DataField="nombre" ItemStyle-Width="100%" />
                         <asp:TemplateField HeaderText="Costo del servicio">
                             <ItemTemplate>
                                 <asp:TextBox runat="server" CssClass="dinero" ID="TCosto"></asp:TextBox>
@@ -102,7 +102,7 @@
         </tr>
         <tr>
             <td>
-                <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False" 
+                <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False"  Width="100%"
                     DataKeyNames="id,idproc" DataSourceID="SqlDataSource2" 
                     onselectedindexchanged="GResultado_SelectedIndexChanged" 
                     onrowdeleted="GResultado_RowDeleted">
@@ -115,8 +115,8 @@
                 <Columns>
                     <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                     <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                    <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" />
-                    <asp:BoundField DataField="procedimiento" HeaderText="Procedimiento" SortExpression="procedimiento" />
+                    <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" ItemStyle-Wrap="false" />
+                    <asp:BoundField DataField="procedimiento" HeaderText="Procedimiento" SortExpression="procedimiento" ItemStyle-Width="100%" />
                 </Columns>
                 <SelectedRowStyle CssClass="selecteditem" />
             </asp:GridView>

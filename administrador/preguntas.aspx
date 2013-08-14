@@ -63,7 +63,7 @@
       </tr>
       <tr>
         <td>
-            <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False" 
+            <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False"  Width="100%"
                 DataKeyNames="id" DataSourceID="SqlDataSource1" AllowSorting="true"
                 onselectedindexchanged="GResultado_SelectedIndexChanged">
                 <RowStyle CssClass="GridRow"></RowStyle>
@@ -75,7 +75,7 @@
                 <Columns>
                     <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                     <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                    <asp:BoundField DataField="nombre" HeaderText="Pregunta" SortExpression="nombre" />
+                    <asp:BoundField DataField="nombre" HeaderText="Pregunta" SortExpression="nombre" ItemStyle-Width="100%" />
                     <asp:BoundField DataField="descripcion" HeaderText="Descripción" SortExpression="descripcion" />
                 </Columns>
             </asp:GridView>

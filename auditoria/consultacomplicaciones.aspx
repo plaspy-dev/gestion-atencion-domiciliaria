@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Consulta complicaciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="consultacomplicaciones.aspx.cs" Inherits="auditoria_consultacomplicaciones" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<style type="text/css">.ancho { min-width: 400px; }</style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
@@ -36,7 +37,7 @@
     </asp:Panel>
     <br />
     <div id="dImprimir">
-    <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
+    <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados"
         AutoGenerateColumns="False" EmptyDataText="No se encontraron actividades" AllowSorting="True" OnRowDataBound="GResultados_RowDataBound" >
         <RowStyle CssClass="GridRow"></RowStyle>
         <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -49,9 +50,9 @@
             <asp:HyperLinkField DataTextField="paciente" HeaderText="Paciente" DataNavigateUrlFields="id" 
                 DataNavigateUrlFormatString="~/auditoria/eventoa.aspx?eaid={0}" SortExpression="paciente" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Funcionario" DataField="funcionario" SortExpression="funcionario" ItemStyle-Wrap="false" />
-            <asp:BoundField HeaderText="Descripcion" DataField="descripcion" SortExpression="descripcion" />
+            <asp:BoundField HeaderText="Descripcion" DataField="descripcion" SortExpression="descripcion" HeaderStyle-CssClass="ancho" />
             <asp:BoundField HeaderText="Tipo" DataField="tipo" SortExpression="tipo" HtmlEncode="false" ItemStyle-Wrap="false" />
-            <asp:BoundField HeaderText="Observaciones" DataField="observaciones" SortExpression="observaciones"/>
+            <asp:BoundField HeaderText="Observaciones" DataField="observaciones" SortExpression="observaciones" HeaderStyle-CssClass="ancho" />
             <asp:BoundField HeaderText="Consecuencias" DataField="consecuencia" SortExpression="consecuencia" HtmlEncode="false" ItemStyle-Wrap="false" />
         </Columns>
     </asp:GridView>

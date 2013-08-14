@@ -11,6 +11,15 @@
 	-o-transform: rotate(90deg);
 	white-space:nowrap;
 } 
+.tabla 
+{
+    border-collapse: collapse; 
+    border-color: #a6c9e2;
+}
+.tabla td 
+{
+    border: 1px solid #a6c9e2;
+}
 </style>
 <script type="text/javascript">
     $(function() {
@@ -115,7 +124,7 @@
                     <asp:Panel ID="PEncuestas" runat="server">
                         <h3><a href="#"><asp:Label runat="server" ID="LEncuestas"></asp:Label></a></h3>
                         <div class="hide">
-                            <asp:GridView ID="GEncuestas" runat="server" AutoGenerateColumns="False" 
+                            <asp:GridView ID="GEncuestas" runat="server" AutoGenerateColumns="False" Width="100%"
                                 DataKeyNames="id" DataSourceID="SEncuestas" EmptyDataText="No se encontraron encuestas de este usuario" >
                                 <RowStyle CssClass="GridRow"></RowStyle>
                                 <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -130,7 +139,7 @@
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
-                                    <asp:BoundField DataField="calificacion" HeaderText="Calificación" DataFormatString="{0:g}" ItemStyle-HorizontalAlign="Right" />
+                                    <asp:BoundField DataField="calificacion" HeaderText="Calificación" DataFormatString="{0:g}" ItemStyle-HorizontalAlign="Right" ItemStyle-Width="100%" />
                                 </Columns>
                             </asp:GridView>
                             <asp:SqlDataSource ID="SEncuestas" runat="server" 
@@ -164,13 +173,11 @@
                 <td>
                 <asp:Repeater ID="RGrupos" runat="server" DataSourceID="SGrupos">
                     <HeaderTemplate>
-                        <table border=1>
+                        <table class="tabla">
                     </HeaderTemplate>
                     <ItemTemplate>
                         <tr>
                             <td rowspan=<%# Eval("rows") %>><span class="rot-neg-90"><%# Eval("nombre") %><asp:HiddenField runat="server" ID="HId" Value='<%# Eval("id") %>' /></span></td>
-                            <td></td>
-                            <td></td>
                         </tr>
                         <asp:Repeater runat="server" ID="RPreguntas" DataSourceID="SPreguntas">
                             <ItemTemplate>
@@ -197,7 +204,6 @@
                     </ItemTemplate>
                     <FooterTemplate>
                             <tr>
-                                <td></td>
                                 <td align="right" colspan="2"><span id="sres" style="font-weight: bold"></span> <input id="promedio" type="text" readonly="readonly" style="width: 30px;" /></td>
                             </tr>
                         </table>

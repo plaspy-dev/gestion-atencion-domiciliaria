@@ -146,7 +146,7 @@
                 <div id="accordion">
                     <h3><a href="#">Cargos a programar</a></h3>
                     <div class="hide">
-                        <asp:GridView ID="GCargos" runat="server" DataSourceID="SCargos" 
+                        <asp:GridView ID="GCargos" runat="server" DataSourceID="SCargos"  Width="100%"
                             DataKeyNames="id" AutoGenerateColumns="false" ShowHeader="false"
                             AllowSorting="True" onrowdatabound="GCargos_RowDataBound">
                             <RowStyle CssClass="GridRow"></RowStyle>
@@ -170,7 +170,7 @@
                     </div>
                     <h3><a href="#">Permisos especiales</a></h3>
                     <div style="display: none">
-                <asp:GridView ID="GEspeciales" runat="server" DataSourceID="SEspeciales" 
+                <asp:GridView ID="GEspeciales" runat="server" DataSourceID="SEspeciales"  Width="100%"
                     DataKeyNames="perIdPermiso" AutoGenerateColumns="false" ShowHeader="false"
                     AllowSorting="True">
                     <RowStyle CssClass="GridRow"></RowStyle>
@@ -201,7 +201,7 @@
                 </div>
                     <h3><a href="#">Alertas</a></h3>
                     <div style="display: none">                
-                <asp:GridView ID="GAlertas" runat="server" DataSourceID="SAlertas" 
+                <asp:GridView ID="GAlertas" runat="server" DataSourceID="SAlertas"  Width="100%"
                     DataKeyNames="tarId" AutoGenerateColumns="false" ShowHeader="false"
                     AllowSorting="True">
                     <RowStyle CssClass="GridRow"></RowStyle>
@@ -232,7 +232,7 @@
                     </div>
                     <h3><a href="#">Entidades</a></h3>
                     <div style="display: none">                
-                <asp:GridView ID="GEntidades" runat="server" DataSourceID="SEntidades" 
+                <asp:GridView ID="GEntidades" runat="server" DataSourceID="SEntidades"  Width="100%"
                     DataKeyNames="id" AutoGenerateColumns="false" ShowHeader="false"
                     onrowdatabound="GEntidades_RowDataBound"
                     >
@@ -272,7 +272,7 @@
         </tr>
     </table>
     </fieldset>
-    <asp:GridView ID="GUsuarios" runat="server" DataSourceID="SUsuarios" 
+    <asp:GridView ID="GUsuarios" runat="server" DataSourceID="SUsuarios"  Width="100%"
         DataKeyNames="id" AutoGenerateColumns="false" 
         onselectedindexchanged="GUsuarios_SelectedIndexChanged" 
         AllowSorting="True" onrowdeleted="GUsuarios_RowDeleted" >
@@ -285,10 +285,10 @@
         <Columns>
                     <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                     <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                    <asp:BoundField DataField="nombre" HeaderText="Nombres" SortExpression="nombre" />
-                    <asp:BoundField DataField="usuario" HeaderText="Usuario" SortExpression="usuario" />
-                    <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" />
-                    <asp:BoundField DataField="ingreso" HeaderText="Último ingreso" SortExpression="ingreso" />
+                    <asp:BoundField DataField="nombre" HeaderText="Nombres" SortExpression="nombre" ItemStyle-Width="100%" ItemStyle-Wrap="false" />
+                    <asp:BoundField DataField="usuario" HeaderText="Usuario" SortExpression="usuario" ItemStyle-Wrap="false" />
+                    <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" ItemStyle-Wrap="false" />
+                    <asp:BoundField DataField="ingreso" HeaderText="Último ingreso" SortExpression="ingreso" ItemStyle-Wrap="false" />
                     <asp:BoundField DataField="personal" HeaderText="PersonalID" SortExpression="personal" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
         </Columns>
         <SelectedRowStyle CssClass="selecteditem" />

@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Listado PQR" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="listadoquejas.aspx.cs" Inherits="cliente_listadoquejas" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<style type="text/css">.GridHeader th {width: auto !important;}</style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">

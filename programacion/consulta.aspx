@@ -2,6 +2,7 @@
 <%@ Register src="~/programacion/novedad.ascx" tagname="novedad" tagprefix="uc3" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<style type="text/css">.GridHeader th {width: auto !important;}</style>
 <script type="text/javascript">
     $(function() {
         $("#<%= TProcedimiento.ClientID %>").autocomplete({

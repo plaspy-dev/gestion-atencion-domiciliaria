@@ -40,7 +40,7 @@ addFunctionToStart(function() {
                 <asp:Panel ID="PFormulaciones" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LFormulaciones"></asp:Label></a></h3>
                     <div class="hide">
-                        <asp:GridView ID="GFormulaciones" runat="server" AutoGenerateColumns="False" 
+                        <asp:GridView ID="GFormulaciones" runat="server" AutoGenerateColumns="False" Width="100%" 
                             DataSourceID="SFormulaciones" EmptyDataText="No se encontraron Formulaciones de este usuario" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -55,7 +55,7 @@ addFunctionToStart(function() {
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
-                                <asp:BoundField DataField="cantidad" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
+                                <asp:BoundField DataField="cantidad" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" ItemStyle-Width="100%" />
                             </Columns>
                         </asp:GridView>
                         <asp:SqlDataSource ID="SFormulaciones" runat="server" 
@@ -77,7 +77,7 @@ addFunctionToStart(function() {
             </tr>
             <tr>
                 <td colspan="4">
-                    <asp:GridView ID="GFormulacion" runat="server" AutoGenerateColumns="False" DataKeyNames="IdGrid" onselectedindexchanged="GFormulacion_SelectedIndexChanged" onrowdeleting="GFormulacion_RowDeleting" EmptyDataText="No hay medicamentos" >
+                    <asp:GridView ID="GFormulacion" runat="server" AutoGenerateColumns="False" DataKeyNames="IdGrid" onselectedindexchanged="GFormulacion_SelectedIndexChanged" onrowdeleting="GFormulacion_RowDeleting" EmptyDataText="No hay medicamentos" Width="100%" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
                             <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -93,7 +93,7 @@ addFunctionToStart(function() {
                             <asp:BoundField DataField="Tiempo" HeaderText="Tiempo de utilización" />
                             <asp:BoundField DataField="Efecto" HeaderText="Efecto deseado" />
                             <asp:BoundField DataField="Respuesta" HeaderText="Tiempo de respuesta esperado" />
-                            <asp:BoundField DataField="EfectosSecundarios" HeaderText="Efectos secundarios y posibles riesgos" />
+                            <asp:BoundField DataField="EfectosSecundarios" HeaderText="Efectos secundarios y posibles riesgos" ItemStyle-Width="100%" />
                         </Columns>
                     </asp:GridView>
                 </td>

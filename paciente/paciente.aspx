@@ -506,7 +506,7 @@
     <asp:Panel runat="server" ID="PReactivar">
         <h3><a href="#">Programación próxima</a></h3>
         <div>
-            <asp:GridView ID="GProgramacion" runat="server" AutoGenerateColumns="False" DataSourceID="SProgramacion" EmptyDataText="No se encontraron programaciones" onrowdatabound="GProgramacion_RowDataBound">
+            <asp:GridView ID="GProgramacion" runat="server" AutoGenerateColumns="False" DataSourceID="SProgramacion" EmptyDataText="No se encontraron programaciones" onrowdatabound="GProgramacion_RowDataBound" Width="100%">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
                 <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -516,7 +516,7 @@
                 <Columns>
                     <asp:BoundField DataField="prgFechaProg" HeaderText="Fecha" SortExpression="prgFechaProg" DataFormatString="{0:d}" />
                     <asp:BoundField DataField="perNombre" HeaderText="Profesional" SortExpression="perNombre" />
-                    <asp:BoundField DataField="actDescripcion" HeaderText="Actividad" SortExpression="actDescripcion" />
+                    <asp:BoundField DataField="actDescripcion" HeaderText="Actividad" SortExpression="actDescripcion" ItemStyle-Width="100%" />
                     <asp:BoundField DataField="autNumero" HeaderText="Autorización" SortExpression="autNumero" />
                     <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                 </Columns>
@@ -543,7 +543,7 @@
         </div>
         <h3><a href="#">Ver Auditoría de Servicios</a></h3>
         <div>
-            <asp:GridView ID="GAuditoria" runat="server" AutoGenerateColumns="False" DataSourceID="SAuditoria" EmptyDataText="No se encontro auditoría">
+            <asp:GridView ID="GAuditoria" runat="server" AutoGenerateColumns="False" DataSourceID="SAuditoria" EmptyDataText="No se encontro auditoría" Width="100%">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
                 <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -567,7 +567,7 @@
                     <asp:CheckBoxField DataField="pacEnfermeria_24" HeaderText="Enf.24H" SortExpression="pacEnfermeria_24" />
                     <asp:BoundField DataField="cingDescripcion" HeaderText="Causa Ing" SortExpression="cingDescripcion" />
                     <asp:BoundField DataField="cegDescripcion" HeaderText="Causa Egr" SortExpression="cegDescripcion" />
-                    <asp:BoundField DataField="audObs" HeaderText="Obs" SortExpression="audObs" />
+                    <asp:BoundField DataField="audObs" HeaderText="Obs" SortExpression="audObs" ItemStyle-Width="100%" />
                 </Columns>
             </asp:GridView>
                 <asp:SqlDataSource ID="SAuditoria" runat="server" 

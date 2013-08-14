@@ -431,7 +431,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
             if (conector.QueryMod("DELETE FROM evolucion_paciente WHERE id=" + HIdEvolucion.Value) == -1)
                 return;
             conector.Commit();
-            Response.Redirect(Request.Url.ToString());
+            Response.Redirect(Request.Url.AbsolutePath);
         }
     }
 }

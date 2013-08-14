@@ -151,47 +151,46 @@ public partial class cliente_quejas : System.Web.UI.Page
                         }
                         ((MasterPageI)Master).SetModificacion(HIdQuejas.Value);
                     }
-                    else if (Request.QueryString["pid"] != null)
-                    {
-                        CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
-                        if (CCDetallePaciente.IdPaciente.Length == 0)
-                        {
-                            Response.Redirect(Request.Url.AbsolutePath);
-                        }
-                        else
-                        {
-                            BAceptar.Enabled = usuario.CanInsert();
-
-                            RPaciente.Checked = true;
-                            SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
-                            SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
-
-                            PDatos.Visible = true;
-                        }
-                        TFecha.Focus();
-                    }
-                    else if (Request.QueryString["fid"] != null)
-                    {
-
-                        FuncionarioC.IdFuncionario = Request.QueryString["fid"];
-                        if (FuncionarioC.IdFuncionario.Length == 0)
-                        {
-                            Response.Redirect(Request.Url.AbsolutePath);
-                        }
-                        else
-                        {
-
-                            CCDetallePaciente.Visible = false;
-                            REmpleado.Checked = true;
-                            BAceptar.Enabled = usuario.CanInsert();
-                            PDatos.Visible = true;
-                        }
-                    }
                 }
-                if (DTipo.Items.Count == 0)
-                    DTipo.DataBind();
-                DTipo_SelectedIndexChanged(sender, e);
+            } else if (Request.QueryString["pid"] != null)
+            {
+                CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
+                if (CCDetallePaciente.IdPaciente.Length == 0)
+                {
+                    Response.Redirect(Request.Url.AbsolutePath);
+                }
+                else
+                {
+                    BAceptar.Enabled = usuario.CanInsert();
+
+                    RPaciente.Checked = true;
+                    SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
+                    SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
+
+                    PDatos.Visible = true;
+                }
+                TFecha.Focus();
             }
+            else if (Request.QueryString["fid"] != null)
+            {
+
+                FuncionarioC.IdFuncionario = Request.QueryString["fid"];
+                if (FuncionarioC.IdFuncionario.Length == 0)
+                {
+                    Response.Redirect(Request.Url.AbsolutePath);
+                }
+                else
+                {
+
+                    CCDetallePaciente.Visible = false;
+                    REmpleado.Checked = true;
+                    BAceptar.Enabled = usuario.CanInsert();
+                    PDatos.Visible = true;
+                }
+            }
+            if (DTipo.Items.Count == 0)
+                DTipo.DataBind();
+            DTipo_SelectedIndexChanged(sender, e);
         }
     }
 

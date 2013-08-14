@@ -19,6 +19,7 @@
     });
 </script>
 <style type="text/css">
+    .ancho { min-width: 400px; }
     .ui-datepicker-calendar {display: none;}
     .ui-datepicker-close {display: none;}
     .fechaex 
@@ -84,7 +85,7 @@
                 <asp:BoundField HeaderText="Edad" DataField="pacFechaNac" SortExpression="pacFechaNac" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Right" />
                 <asp:BoundField HeaderText="Diagnóstico" DataField="cied10" SortExpression="cied10" ItemStyle-Wrap="false" />
                 <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre" ItemStyle-Wrap="false" />
-                <asp:BoundField HeaderText="Observaciones" DataField="pacObservaciones" SortExpression="pacObservaciones" />
+                <asp:BoundField HeaderText="Observaciones" DataField="pacObservaciones" SortExpression="pacObservaciones" HeaderStyle-CssClass="ancho" />
             </Columns>
             <RowStyle CssClass="GridRow"></RowStyle>
             <FooterStyle CssClass="GridFooter"></FooterStyle>

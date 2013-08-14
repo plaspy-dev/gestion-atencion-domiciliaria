@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Autorizaciones sin programar" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="sinprogramar.aspx.cs" Inherits="programacion_sinprogramar" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<style type="text/css">.GridHeader th {width: auto !important;}</style>
 <script type="text/javascript">
     $(function() {
         $("#<%= TProcedimiento.ClientID %>").autocomplete({

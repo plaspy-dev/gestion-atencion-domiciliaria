@@ -156,8 +156,8 @@
                 <td colspan="4" class="celdaTitulo">Control de líquidos</td>
             </tr>
             <tr>
-                <td colspan="2" class="celdaTitulo">Administrados</td>
-                <td colspan="2" class="celdaTitulo">Eliminados</td>
+                <td colspan="2" class="celdaTitulo" style="width: 50%">Administrados</td>
+                <td colspan="2" class="celdaTitulo" style="width: 50%">Eliminados</td>
             </tr>
             <tr>
                 <td colspan="2">

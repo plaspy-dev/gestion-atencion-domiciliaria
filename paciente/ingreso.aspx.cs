@@ -541,7 +541,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             if (conector.QueryMod("DELETE FROM ingreso_paciente WHERE id=" + HIdIngreso.Value) == -1)
                 return;
             conector.Commit();
-            Response.Redirect(Request.Url.ToString());
+            Response.Redirect(Request.Url.AbsolutePath);
         }
     }
 }

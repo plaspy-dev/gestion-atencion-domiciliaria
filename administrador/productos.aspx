@@ -183,7 +183,7 @@
       </tr>
       <tr>
         <td>
-            <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False" EmptyDataText="No se encontraron productos"
+            <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False" EmptyDataText="No se encontraron productos" Width="100%"
                 DataKeyNames="id" DataSourceID="SResultados" AllowSorting="true"
                 onselectedindexchanged="GResultado_SelectedIndexChanged" AllowPaging="true" PageSize="50" >
                 <RowStyle CssClass="GridRow"></RowStyle>
@@ -195,7 +195,7 @@
                 <Columns>
                     <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                     <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                    <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" />
+                    <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" ItemStyle-Width="100%" />
                     <asp:BoundField DataField="codigo" HeaderText="Código" SortExpression="codigo" />
                     <asp:BoundField DataField="unidad" HeaderText="Unidad" SortExpression="unidad" />
                     <asp:BoundField DataField="empresa" HeaderText="Empresa" SortExpression="empresa" />

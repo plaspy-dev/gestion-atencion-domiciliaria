@@ -75,7 +75,7 @@
         </tr>
         <tr>
             <td>
-                <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False" 
+                <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False"  Width="100%"
                     DataKeyNames="id" DataSourceID="SqlDataSource2" 
                     onselectedindexchanged="GResultado_SelectedIndexChanged">
                     <RowStyle CssClass="GridRow"></RowStyle>
@@ -88,11 +88,9 @@
                     <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                     <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                     <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" />
-                    <asp:BoundField DataField="nombre" HeaderText="Concepto" 
-                        SortExpression="nombre" >
-                        <ItemStyle Width="400px" />
+                    <asp:BoundField DataField="nombre" HeaderText="Concepto"  ItemStyle-Width="100%" SortExpression="nombre" >
                     </asp:BoundField>
-                    <asp:BoundField DataField="calificacion" HeaderText="Calificación" SortExpression="calificacion" />
+                    <asp:BoundField DataField="calificacion" HeaderText="Calificación" SortExpression="calificacion" ItemStyle-HorizontalAlign="Right" />
                 </Columns>
                 <SelectedRowStyle CssClass="selecteditem" />
             </asp:GridView>

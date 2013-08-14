@@ -201,7 +201,6 @@
                 $("#<%= TProcedimientoID.ClientID %>").val("");
             }
         }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
-        addDialog("#<%= PConfirmar.ClientID %>", "#dConfirmar");
     });
 </script>
 </asp:Content>
@@ -293,7 +292,7 @@
                 <asp:Panel ID="PAutorizaciones" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LAutorizaciones"></asp:Label></a></h3>
                     <div class="hide">
-                        <asp:GridView ID="GAutorizaciones" runat="server" AutoGenerateColumns="False" 
+                        <asp:GridView ID="GAutorizaciones" runat="server" AutoGenerateColumns="False"  Width="100%"
                             DataKeyNames="autNumero" DataSourceID="SAutorizaciones" OnRowDataBound="GAutorizaciones_RowDataBound"
                             EmptyDataText="No se encontraron autorizaciones de este usuario" >
                             <RowStyle CssClass="GridRow"></RowStyle>
@@ -311,9 +310,8 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="autNumero" HeaderText="Autorización" />
-                                <asp:BoundField DataField="autFecha" HeaderText="Fecha" 
-                                    DataFormatString="{0:d}" />
-                                <asp:BoundField DataField="detalles" HeaderText="Detalles" />
+                                <asp:BoundField DataField="autFecha" HeaderText="Fecha" DataFormatString="{0:d}" />
+                                <asp:BoundField DataField="detalles" HeaderText="Detalles" ItemStyle-Width="100%" />
                             </Columns>
                         </asp:GridView>
                         <asp:SqlDataSource ID="SAutorizaciones" runat="server" 
@@ -379,7 +377,7 @@
         </tr>
         <tr>
             <td colspan="2">
-            <asp:GridView ID="GPagos" runat="server" AutoGenerateColumns="False" 
+            <asp:GridView ID="GPagos" runat="server" AutoGenerateColumns="False"  Width="100%"
                 DataKeyNames="id" DataSourceID="SPagos" EmptyDataText="No hay pagos" 
                     onselectedindexchanged="GPagos_SelectedIndexChanged" >
                     <RowStyle CssClass="GridRow"></RowStyle>
@@ -391,7 +389,7 @@
                     <Columns>
                         <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                         <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                        <asp:BoundField DataField="recibo" HeaderText="Recibo" />
+                        <asp:BoundField DataField="recibo" HeaderText="Recibo" ItemStyle-Width="100%" />
                         <asp:TemplateField HeaderText="Valor">
                             <ItemTemplate>
                                 <span id="vpagado"><%# Eval("valor", "{0:c}") %></span>
@@ -434,7 +432,7 @@
         </tr>
         <tr>
             <td colspan="4">
-                <asp:GridView ID="GActivades" runat="server" DataSourceID="SActividades" 
+                <asp:GridView ID="GActivades" runat="server" DataSourceID="SActividades"  Width="100%"
                     AutoGenerateColumns="False" DataKeyNames="id" 
                     onselectedindexchanged="GActivades_SelectedIndexChanged" >
                     <RowStyle CssClass="GridRow"></RowStyle>
@@ -447,7 +445,7 @@
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                             <asp:BoundField DataField="proc_id" HeaderText="idMedicamento" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
-                            <asp:BoundField DataField="procedimiento" HeaderText="Actividad" />
+                            <asp:BoundField DataField="procedimiento" HeaderText="Actividad" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="numerosesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="sesionesdia" HeaderText="Ses./día" ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="tint" HeaderText="Intensidad" ItemStyle-HorizontalAlign="Right" />
@@ -530,19 +528,6 @@
         </tr>
         </asp:Panel>
     </table>
-    <asp:Panel runat="server" ID="PConfirmar" Visible="false">
-            <div id="dConfirmar" title="Confirmación" style="display:none;">
-                <table>
-                    <tr><td>Se va a realizar la siguiente programación a:</td></tr>
-                    <tr><td><asp:Label runat="server" ID="LConfirmar"></asp:Label></td></tr>
-                    <tr><td>¿Desea realizar esta programación?</td></tr>
-                    <tr><td align="right"><asp:Button CausesValidation="false" ID="BSi" runat="server" Text="Si" onclick="BSi_Click" />
-                    <asp:Button ID="BNo" runat="server" Text="No" CausesValidation="false" onclick="BNo_Click" />
-                    <asp:Button ID="BCancelarP" runat="server" Text="Cancelar" CausesValidation="false" onclick="BCancelarP_Click" />
-                    </td></tr>
-                </table>
-            </div>
-        </asp:Panel>
     </ContentTemplate>
     </asp:UpdatePanel>
     <asp:Panel runat="server" ID="PSuspender">

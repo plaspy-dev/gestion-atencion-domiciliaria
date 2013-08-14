@@ -194,18 +194,14 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         }
     }
 
-    protected void BSi_Click(object sender, EventArgs e) {
-
-        // guardamos la autorizacion
-        BNo_Click(sender, e);
-    }
-
-    protected void BNo_Click(object sender, EventArgs e) {
+    protected void BAceptar_Click(object sender, EventArgs e)
+    {
+        if (!IsValid)
+            return;
 
         using (CConectorMS conector = new CConectorMS())
         {
             Query query = new Query("phdAutorizacion");
-            conector.StartTransaction();
 
             // realizamos la validaciones
             if (!CGenerar.Checked && TNumero.Text.Trim().Length == 0)
@@ -225,6 +221,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             {
                 if (TRecibo.Text.Length == 0)
                 {
+
                     TRecibo.Focus();
                     LError.Text = "Por favor ingrese un numero de recibo.";
                     return;
@@ -244,9 +241,11 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     return;
                 }
             }
+
             Paciente paciente = Paciente.GetPaciente(HIdPaciente.Value);
             DateTime tiempo = Convert.ToDateTime(TFecha.Text);
-            if (!paciente.IsAlive) {
+            if (!paciente.IsAlive)
+            {
                 if (paciente.FechaDefuncion < tiempo)
                 {
                     TFecha.Focus();
@@ -255,7 +254,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 }
             }
             // empezamos la insercion.
-            
+
             if (CGenerar.Checked)
             {
                 TNumero.Text = conector.QueryString(
@@ -263,6 +262,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                             + " FROM phdAutorizacion"
                             + " WHERE autNumero LIKE 'AD{0}%'", tiempo.ToString("yyMMdd")));
             }
+
+            conector.StartTransaction();
 
             query["autNumero"] = TNumero.Text;
             query["pacId"] = HIdPaciente.Value;
@@ -305,7 +306,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 if (conector.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(HIdAutorizacion.Value))) == -1)
                     return;
             }
-            using(CConector conectorm= new CConector()) 
+            using (CConector conectorm = new CConector())
                 if (conectorm.InsertModificacion(HId.Value) == -1)
                     return;
 
@@ -322,148 +323,6 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
                     if (conector.QueryMod(pago.GetInsert()) == -1)
                         return;
-                }
-            }
-
-            ArrayList profesionales = new ArrayList();
-
-            if (sender == BSi)
-            {
-                DataTable dataTable = SActividades.GetTable();
-                for (int i = 0; i < dataTable.Rows.Count; i++)
-                {
-                    DataRow row = dataTable.Rows[i];
-                    if (row["sqlexists"].ToString().Length == 0)
-                    {
-                        if (Procedimientos.GetAutomatico(row["proc_id"].ToString()))
-                        {
-                            string intensidad = row["idint"].ToString();
-                            if (intensidad == "")
-                            {
-                                intensidad = " IS NULL";
-                            }
-                            else
-                            {
-                                intensidad = "=" + intensidad;
-                            }
-                            string personal = conector.QueryString("SELECT TOP 1 perId FROM programacion WHERE pacId=" + HIdPaciente.Value + " AND actId=" + row["proc_id"].ToString() + " AND intensidad" + intensidad + " ORDER BY prgFechaProg DESC;");
-                            if (personal.Length > 0)
-                            { // se encontro programacion antigua
-
-                                string nombre = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId=" + personal + " AND eEstId=1 AND perCorreoElectronico IS NOT NULL AND perCorreoElectronico!='';");
-                                if (nombre.Length > 0)
-                                { // se encontro el correo
-
-                                    Query programacion = new Query("programacion");
-
-                                    programacion["pacId"] = HIdPaciente.Value;
-                                    programacion["perId"] = personal;
-                                    programacion["prgObservaciones"] = TObservaciones.Text;
-                                    programacion["autNumero"] = TNumero.Text;
-                                    programacion["prgNumSesion"] = "1";
-                                    programacion["prgActivo"] = "1";
-                                    programacion["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
-                                    programacion["segFechaIngreso"] = "GETDATE()";
-                                    programacion["entId"] = Paciente.GetPaciente(HIdPaciente.Value).entidadId;
-
-                                    programacion["actId"] = row["proc_id"].ToString();
-                                    programacion["intensidad"] = row["idint"].ToString();
-                                    string costo = Procedimientos.GetCosto(row["proc_id"].ToString(), Paciente.GetPaciente(HIdPaciente.Value).entidadId).ToString(CultureInfo.InvariantCulture);
-                                    if (costo.Length > 0)
-                                        programacion["costo"] = costo;
-
-                                    int numero = Convert.ToInt32(row["numerosesiones"]);
-                                    int periodicidad = 1;
-                                    DateTime inicio = DateTime.Now;
-                                    int dias = 30;
-                                    for (int total = numero; total > 0; )
-                                    {
-                                        inicio = inicio.AddDays(periodicidad);
-                                        if (numero < 5)
-                                        { // cada semana
-                                            switch (inicio.DayOfWeek)
-                                            {
-                                                case DayOfWeek.Sunday:
-                                                case DayOfWeek.Saturday:
-                                                    continue;
-                                            }
-                                            periodicidad = 7;
-                                        }
-                                        else if (numero < 9)
-                                        { // martes y jueves
-                                            switch (inicio.DayOfWeek)
-                                            {
-                                                case DayOfWeek.Thursday:
-                                                case DayOfWeek.Tuesday:
-                                                    break;
-                                                default:
-                                                    continue;
-                                            }
-                                        }
-                                        else if (numero < 13)
-                                        { // lunes martes  y miercoles
-                                            switch (inicio.DayOfWeek)
-                                            {
-                                                case DayOfWeek.Monday:
-                                                case DayOfWeek.Wednesday:
-                                                case DayOfWeek.Friday:
-                                                    break;
-                                                default:
-                                                    continue;
-                                            }
-                                        }
-                                        else if (numero < 17) // de lunes a jueves
-                                        {
-                                            switch (inicio.DayOfWeek)
-                                            {
-                                                case DayOfWeek.Monday:
-                                                case DayOfWeek.Thursday:
-                                                case DayOfWeek.Wednesday:
-                                                case DayOfWeek.Tuesday:
-                                                case DayOfWeek.Friday:
-                                                    break;
-                                                default:
-                                                    continue;
-                                            }
-                                        }
-                                        else if (numero < 21)
-                                        { // todos los dias habiles
-                                            switch (inicio.DayOfWeek)
-                                            {
-                                                case DayOfWeek.Sunday:
-                                                case DayOfWeek.Saturday:
-                                                    continue;
-                                            }
-                                        }
-                                        else if (total / 2 > dias)
-                                        {
-                                            programacion["prgNumSesion"] = "3";
-                                            total--;
-                                            total--;
-                                        }
-                                        else if (total > dias)
-                                        {
-                                            programacion["prgNumSesion"] = "2";
-                                            total--;
-                                        }
-                                        else
-                                        {
-                                            programacion["prgNumSesion"] = "1";
-                                        }
-
-                                        programacion["prgFechaProg"] = inicio.ToShortDateString();
-                                        if (conector.QueryMod(programacion.GetInsert(), true) == -1)
-                                            return;
-
-                                        total--;
-                                        dias--;
-                                    }
-
-                                    profesionales.Add(new Procedimiento(personal, row["proc_id"].ToString(), row["idint"].ToString(), row["verificacion"].ToString()));
-                                }
-                            }
-                        }
-                    }
                 }
             }
 
@@ -486,305 +345,10 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             conector.Commit();
             Paciente.RemovePaciente(HIdPaciente.Value);
             Autorizaciones.RemoveAutorizaciones(HIdPaciente.Value);
-
-            for (int i = 0; i < profesionales.Count; i++)
-            { // se realizo alguna programacion
-
-                Procedimiento procedimiento = (Procedimiento)profesionales[i];
-                SqlDataReader reader = conector.Query("SELECT perNombre,perCorreoElectronico FROM admPersonalHS WHERE perId=" + procedimiento.profesional + " AND eEstId=1;");
-                if (reader != null && reader.Read())
-                {
-
-                    string nombre = reader["perNombre"].ToString();
-                    string correo = reader["perCorreoElectronico"].ToString();
-                    if (IsValidEmail(correo))
-                    {
-#if DEBUG
-                        correo="demo@example.invalid";
-#endif
-
-                        MailMessage msg = new MailMessage(new MailAddress("demo@example.invalid", "Contratistas OrganizationExample15")
-                                    , new MailAddress(correo, nombre));
-
-                        // msg.Bcc.Add(new MailAddress("demo@example.invalid"));
-                        msg.IsBodyHtml = true;
-                        msg.ReplyTo = new MailAddress("demo@example.invalid");
-
-                        StreamReader archivo = new StreamReader(Server.MapPath("programacion.html"));
-                        msg.Body = archivo.ReadToEnd();
-                        archivo.Close();
-
-                        msg.Body = Utilidades.ReplaceContenido(this.Controls, msg.Body);
-
-                        string programacion = "";
-
-                        programacion = "<table border='1'>\n";
-                        programacion += "<tr>\n";
-                        programacion += "<td><strong>Fecha</strong></td>";
-                        programacion += "<td><strong>Actividad</strong></td>";
-                        programacion += "</tr>\n";
-
-                        string intensidad = "";
-                        if (procedimiento.intensidad.Length == 0)
-                            intensidad = "intensidad IS NULL";
-                        else intensidad = "intensidad=" + procedimiento.intensidad;
-
-                        reader = conector.Query("SELECT prgFechaProg FROM programacion WHERE autNumero=" + Query.GetValor(TNumero.Text) + " AND perId=" + procedimiento.profesional + " AND actId=" + procedimiento.procedimiento + " ORDER BY prgFechaProg;");
-                        if (reader != null)
-                        {
-                            while (reader.Read())
-                            {
-                                DateTime fecha = (DateTime)reader["prgFechaProg"];
-                                intensidad = Procedimientos.GetVarios(procedimiento.intensidad);
-                                if (intensidad.Length > 0)
-                                    intensidad = "-" + intensidad;
-
-                                programacion += "<tr>\n";
-                                programacion += "<td>" + fecha.ToLongDateString() + "</td>";
-                                programacion += "<td>" + Procedimientos.GetProcedimiento(procedimiento.procedimiento) + intensidad + "</td>";
-                                programacion += "</tr>\n";
-                            }
-                        }
-
-                        programacion += "</table>";
-
-                        msg.Subject = "Programación paciente " + paciente.NombreCompleto;
-
-                        msg.Body = msg.Body.Replace("$TPaciente$", paciente.documento);
-                        msg.Body = msg.Body.Replace("$LPaciente$", paciente.NombreCompleto);
-                        msg.Body = msg.Body.Replace("$LAsegurador$", paciente.NombreEntidad);
-                        msg.Body = msg.Body.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
-                        msg.Body = msg.Body.Replace("$LDireccion$", paciente.Direccion);
-                        msg.Body = msg.Body.Replace("$LBarrio$", paciente.Barrio);
-                        msg.Body = msg.Body.Replace("$LTipoPago$", paciente.tipopago);
-                        msg.Body = msg.Body.Replace("$LTelefono$", paciente.Telefono);
-                        msg.Body = msg.Body.Replace("$LFamiliar$", paciente.FamiliarResponsable);
-                        msg.Body = msg.Body.Replace("$LParentesco$", paciente.parentesco);
-                        msg.Body = msg.Body.Replace("$LFechaNacimiento$", paciente.Edad == -1 ? "" : (paciente.Edad + " años"));
-                        msg.Body = msg.Body.Replace("$LSexo$", paciente.sexoId == "1" ? "F" : "M");
-
-                        string cie10 = "";
-                        for (int j = 0; j < paciente.cie10.Count; j++)
-                        {
-                            if (j != 0)
-                                cie10 += "<br/>";
-                            cie10 += Procedimientos.GetCodigoCIE(paciente.cie10[j].ToString());
-                        }
-
-                        msg.Body = msg.Body.Replace("$LCIE10$", cie10);
-
-                        msg.Body = msg.Body.Replace("$GProgramacion$", programacion);
-                        msg.Body = msg.Body.Replace("$servidor$", ConfigurationManager.AppSettings["ServidorNotificacion"] + "notificacion/");
-                        msg.Body = msg.Body.Replace("$Autorizacion$", TNumero.Text);
-                        msg.Body = msg.Body.Replace("$key$", procedimiento.key);
-
-                        // build message contents 
-                        SmtpClient client = new SmtpClient();
-                        client.Send(msg);
-                    }
-                }
-            }
         }
-        
         ((MasterPageI)Master).SetResultado("Número de autorización " + TNumero.Text + " editada.");
     }
-    
-    public bool IsValidEmail(string emailaddress)
-    {
-        try
-        {
-            MailAddress m = new MailAddress(emailaddress);
-            return true;
-        }
-        catch (FormatException)
-        {
-            return false;
-        }
-    }
 
-    protected void BAceptar_Click(object sender, EventArgs e)
-    {
-        if (!IsValid)
-            return;
-
-        using (CConectorMS conector = new CConectorMS())
-        {
-            // realizamos la validaciones
-            if (!CGenerar.Checked && TNumero.Text.Trim().Length == 0)
-            {
-                TNumero.Focus();
-                LError.Text = "Por favor ingrese un número de autorización.";
-                return;
-            }
-            if (HIdPaciente.Value.Length == 0)
-            {
-                TPaciente.Focus();
-                LError.Text = "Por favor ingrese un paciente.";
-                return;
-            }
-            string temp = TAbono.Text.Replace(",", "");
-            if (temp.Length != 0 && Convert.ToDouble(temp) > 0) // verificamos que tenga algun valor
-            {
-                if (TRecibo.Text.Length == 0)
-                {
-
-                    TRecibo.Focus();
-                    LError.Text = "Por favor ingrese un numero de recibo.";
-                    return;
-                }
-            }
-            if (GActivades.Rows.Count == 0)
-            {
-                LError.Text = "Por favor ingrese por lo menos una actividad.";
-                return;
-            }
-            if (HIdAutorizacion.Value.Length == 0 && TNumero.Text.Length > 0)
-            {
-                if (conector.QueryString("SELECT autNumero FROM phdAutorizacion WHERE autNumero='" + TNumero.Text + "'").Length != 0)
-                {
-                    TNumero.Focus();
-                    LError.Text = "Este numero de autorización ya existe.";
-                    return;
-                }
-            }
-
-            LConfirmar.Text = "";
-            ArrayList fechas = new ArrayList();
-            DataTable dataTable = SActividades.GetTable();
-            for (int i = 0; i < dataTable.Rows.Count; i++)
-            {
-                DataRow row = dataTable.Rows[i];
-                if (row["sqlexists"].ToString().Length == 0)
-                {
-                    if (Procedimientos.GetAutomatico(row["proc_id"].ToString()))
-                    {
-
-                        string intensidad = row["idint"].ToString();
-                        if (intensidad == "")
-                        {
-                            intensidad = " IS NULL";
-                        }
-                        else
-                        {
-                            intensidad = "=" + intensidad;
-                        }
-                        string personal = conector.QueryString("SELECT TOP 1 perId FROM programacion WHERE pacId=" + HIdPaciente.Value + " AND actId=" + row["proc_id"].ToString() + " AND intensidad" + intensidad + " ORDER BY prgFechaProg DESC;");
-                        if (personal.Length > 0)
-                        { // se encontro programacion antigua
-
-                            string correo = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId=" + personal + " AND eEstId=1;");
-                            if (correo.Length > 0)
-                            { // se encontro el correo
-                                if (LConfirmar.Text.Length > 0)
-                                    LConfirmar.Text += "<br/>";
-                                LConfirmar.Text += correo + "<br/>";
-#if DEBUG
-                                correo="demo@example.invalid";
-#endif
-                                int numero = Convert.ToInt32(row["numerosesiones"]);
-                                int periodicidad = 1;
-                                DateTime inicio = DateTime.Now;
-                                int dias = 30;
-                                string sessionespordia = "";
-                                for (int total = numero; total > 0; )
-                                {
-                                    inicio = inicio.AddDays(periodicidad);
-                                    if (numero < 5)
-                                    { // cada semana
-                                        switch (inicio.DayOfWeek)
-                                        {
-                                            case DayOfWeek.Sunday:
-                                            case DayOfWeek.Saturday:
-                                                continue;
-                                        }
-                                        periodicidad = 7;
-                                    }
-                                    else if (numero < 9)
-                                    { // martes y jueves
-                                        switch (inicio.DayOfWeek)
-                                        {
-                                            case DayOfWeek.Thursday:
-                                            case DayOfWeek.Tuesday:
-                                                break;
-                                            default:
-                                                continue;
-                                        }
-                                    }
-                                    else if (numero < 13)
-                                    { // lunes martes  y miercoles
-                                        switch (inicio.DayOfWeek)
-                                        {
-                                            case DayOfWeek.Monday:
-                                            case DayOfWeek.Wednesday:
-                                            case DayOfWeek.Friday:
-                                                break;
-                                            default:
-                                                continue;
-                                        }
-                                    }
-                                    else if (numero < 17) // de lunes a jueves
-                                    {
-                                        switch (inicio.DayOfWeek)
-                                        {
-                                            case DayOfWeek.Monday:
-                                            case DayOfWeek.Thursday:
-                                            case DayOfWeek.Wednesday:
-                                            case DayOfWeek.Tuesday:
-                                            case DayOfWeek.Friday:
-                                                break;
-                                            default:
-                                                continue;
-                                        }
-                                    }
-                                    else if (numero < 21)
-                                    { // todos los dias habiles
-                                        switch (inicio.DayOfWeek)
-                                        {
-                                            case DayOfWeek.Sunday:
-                                            case DayOfWeek.Saturday:
-                                                continue;
-                                        }
-                                    }
-                                    if (total != numero)
-                                        LConfirmar.Text += ", ";
-
-                                    if (total / 2 > dias)
-                                    {
-                                        sessionespordia = "(3)";
-                                        total--;
-                                        total--;
-                                    }
-                                    else if (total > dias)
-                                    {
-                                        sessionespordia = "(2)";
-                                        total--;
-                                    }
-                                    else
-                                    {
-                                        sessionespordia = "";
-                                    }
-                                    total--;
-                                    dias--;
-
-                                    LConfirmar.Text += inicio.ToShortDateString() + sessionespordia;
-                                    fechas.Add(inicio.ToShortDateString());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (fechas.Count > 0)
-                PConfirmar.Visible = true;
-            else BNo_Click(sender, e);
-        }
-    }
-
-    protected void BCancelarP_Click(object sender, EventArgs e)
-    {
-        PConfirmar.Visible = false;
-    }
     protected void BCancelar_Click(object sender, EventArgs e)
     {
         Response.Redirect(Request.Url.AbsolutePath);

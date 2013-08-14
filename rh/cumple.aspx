@@ -42,7 +42,7 @@
     </asp:Panel>
     <br />
     <div id="dImprimir">
-    <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
+    <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" Width="100%"
         AutoGenerateColumns="False" EmptyDataText="No se encontraron cumpleañeros" DataKeyNames="id"
         AllowPaging="True" PageSize="50" AllowSorting="True" >
         <RowStyle CssClass="GridRow"></RowStyle>
@@ -54,14 +54,14 @@
         <Columns>
            <asp:HyperLinkField DataTextField="nombres" HeaderText="Nombres" 
                 DataNavigateUrlFields="id" 
-                DataNavigateUrlFormatString="~/rh/Default.aspx?fid={0}" SortExpression="nombres" />
-            <asp:BoundField HeaderText="Cargo" DataField="cargo" SortExpression="cargo"/>
+                DataNavigateUrlFormatString="~/rh/Default.aspx?fid={0}" SortExpression="nombres" ItemStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Cargo" DataField="cargo" SortExpression="cargo" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Fecha Nacimiento" DataField="perFechaNac" SortExpression="perFechaNac" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" />
             <asp:BoundField HeaderText="Correo electrónico" SortExpression="perCorreoElectronico" DataField="perCorreoElectronico" />
             <asp:BoundField HeaderText="Teléfono movil" DataField="celular" SortExpression="celular">
                 <ItemStyle HorizontalAlign="Right" />
             </asp:BoundField>
-            <asp:TemplateField HeaderText="Enviada">
+            <asp:TemplateField HeaderText="Enviada" ItemStyle-HorizontalAlign="Right">
                 <ItemTemplate>
                     <asp:CheckBox runat="server" Enabled="false" ID="CEnviado" Checked='<%# Eval("actual").ToString()==Eval("felicitacion").ToString() %>'  />
                 </ItemTemplate>

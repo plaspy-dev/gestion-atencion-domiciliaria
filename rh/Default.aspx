@@ -130,7 +130,7 @@
     </asp:Panel>
     <br />
     <div id="dImprimir">
-    <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
+    <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" Width="100%"
         AutoGenerateColumns="False" EmptyDataText="No se encontraron recursos humanos" 
         AllowPaging="True" PageSize="50" AllowSorting="True" >
         <RowStyle CssClass="GridRow"></RowStyle>
@@ -147,8 +147,8 @@
             </asp:HyperLinkField>
            <asp:HyperLinkField DataTextField="nombres" HeaderText="Nombres" 
                 DataNavigateUrlFields="id" 
-                DataNavigateUrlFormatString="~/rh/Default.aspx?fid={0}" SortExpression="nombres" />
-            <asp:BoundField HeaderText="Cargo" DataField="cargo" SortExpression="cargo"/>
+                DataNavigateUrlFormatString="~/rh/Default.aspx?fid={0}" SortExpression="nombres" ItemStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Cargo" DataField="cargo" SortExpression="cargo" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Teléfono movil" DataField="celular" 
                 SortExpression="celular">
             <ItemStyle HorizontalAlign="Right" />

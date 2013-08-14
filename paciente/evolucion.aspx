@@ -82,7 +82,7 @@
 
         FullRowSelect("#<%= GEvoluciones.ClientID %>");
 
-        if (!$.browser.msie || $.browser.version > 8)
+        /*if (!$.browser.msie || $.browser.version > 8)
             $("input[name*=TObservaciones]").width("98%");
         $(window).resize(function() {
             $("input[name*=TObservaciones]").each(function() {
@@ -91,7 +91,7 @@
             $("input[name*=TObservaciones]").each(function() {
                 $(this).width($(this).parent().width() - 15);
             });
-        });
+        });*/
 
         tinyMCE.init({
             mode: "exact",
@@ -168,7 +168,7 @@
                 <asp:Panel ID="PEvoluciones" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LEvoluciones"></asp:Label></a></h3>
                     <div class="hide">
-                        <asp:GridView ID="GEvoluciones" runat="server" AutoGenerateColumns="False" 
+                        <asp:GridView ID="GEvoluciones" runat="server" AutoGenerateColumns="False" Width="100%" 
                             DataSourceID="SEvoluciones" 
                             EmptyDataText="No se encontraron evoluciones de este paciente" 
                             onrowdatabound="GEvoluciones_RowDataBound" >
@@ -185,8 +185,8 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
-                                <asp:BoundField DataField="medico" HeaderText="Funcionario" />
-                                <asp:BoundField DataField="motivo" HeaderText="Motivo" />
+                                <asp:BoundField DataField="medico" HeaderText="Funcionario" ItemStyle-Wrap="false" />
+                                <asp:BoundField DataField="motivo" HeaderText="Motivo" ItemStyle-Width="100%" />
                             </Columns>
                         </asp:GridView>
                         <asp:SqlDataSource ID="SEvoluciones" runat="server" 
@@ -228,22 +228,22 @@
             </tr>
             <tr>
                 <td>
-                    TA<asp:RequiredFieldValidator ID="RequiredFieldValidator2" ControlToValidate="TTA" ErrorMessage="Por favor ingrese una TA." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    TA</td>
                 <td>
                     <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>mm/Hg</td>
                 <td>
-                    FC<asp:RequiredFieldValidator ID="RequiredFieldValidator3" ControlToValidate="TFC" ErrorMessage="Por favor ingrese una FC." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    FC</td>
                 <td>
                     <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>Lat/min</td>
             </tr>
             <tr>
                 <td>
-                    FR<asp:RequiredFieldValidator ID="RequiredFieldValidator5" ControlToValidate="TFR" ErrorMessage="Por favor ingrese una FR." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    FR</td>
                 <td>
                     <asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>
                     Min</td>
                 <td>
-                    T<asp:RequiredFieldValidator ID="RequiredFieldValidator6" ControlToValidate="TT" ErrorMessage="Por favor ingrese una T." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                    T</td>
                 <td>
                     <asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox>
                     °</td>
@@ -303,9 +303,9 @@
                         </ItemTemplate>
                         <ItemStyle Wrap="false" />
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%">
+                    <asp:TemplateField HeaderText="Observaciones" ItemStyle-Width="100%">
                         <ItemTemplate>
-                            <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
+                            <asp:TextBox runat="server" ID="TObservaciones" Width="99%" Text='<%# Eval("observaciones") %>'></asp:TextBox>
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -359,9 +359,9 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
                         <asp:CheckBox ID="CPat" runat="server" Checked='<%# Eval("pat").ToString()=="1" ? true : false %>'/>
                     </ItemTemplate>
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Observaciones" HeaderStyle-Width="100%">
+                <asp:TemplateField HeaderText="Observaciones" ItemStyle-Width="100%">
                     <ItemTemplate>
-                        <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>'></asp:TextBox>
+                        <asp:TextBox runat="server" ID="TObservaciones" Text='<%# Eval("observaciones") %>' Width="99%"></asp:TextBox>
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>
@@ -383,7 +383,7 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
                 </tr>
                 <tr>
                     <td colspan="4">
-                        <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" 
+                        <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" Width="100%"
                             AutoGenerateColumns="False" DataKeyNames="id"
                             onselectedindexchanged="GCDiagnostico_SelectedIndexChanged" >
                             <RowStyle CssClass="GridRow"></RowStyle>
@@ -396,7 +396,7 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
                                 <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                                 <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                                 <asp:BoundField DataField="codigo" HeaderText="Código" />
-                                <asp:BoundField DataField="descripcion" HeaderText="Descripción" />
+                                <asp:BoundField DataField="descripcion" HeaderText="Descripción" ItemStyle-Width="100%" />
                             </Columns>
                             <SelectedRowStyle CssClass="selecteditem" />
                         </asp:GridView>

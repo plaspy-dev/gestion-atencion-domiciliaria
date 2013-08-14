@@ -32,7 +32,7 @@
     </asp:Panel>
     <br />
     <div id="dImprimir">
-    <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
+    <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" Width="100%" 
         AutoGenerateColumns="False" EmptyDataText="No se encontraron actividades" AllowSorting="True" OnRowDataBound="GResultados_RowDataBound" >
         <RowStyle CssClass="GridRow"></RowStyle>
         <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -41,7 +41,7 @@
         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         <Columns>
-            <asp:BoundField HeaderText="Actividad" DataField="nombre" SortExpression="i,nombre" ItemStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Actividad" DataField="nombre" SortExpression="i,nombre" ItemStyle-Wrap="false" ItemStyle-Width="100%" />
             <asp:BoundField HeaderText="Sesiones autorizadas" DataField="ses" SortExpression="i,ses" ItemStyle-HorizontalAlign="Right"/>
             <asp:BoundField HeaderText="Sesiones realizadas" DataField="a" SortExpression="i,a" ItemStyle-HorizontalAlign="Right"/>
             <asp:BoundField HeaderText="Sesiones canceladas por novedad" DataField="b" SortExpression="i,b" ItemStyle-HorizontalAlign="Right"/>

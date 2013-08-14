@@ -670,7 +670,7 @@
                          </tr>
                     </table>
                 </fieldset>
-                <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
+                <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" Width="100%"
                     AutoGenerateColumns="False" EmptyDataText="No se encontraron sesiones" 
                     AllowPaging="True" PageSize="20" AllowSorting="True" onrowdatabound="GResultados_RowDataBound">
                     <RowStyle CssClass="GridRow"></RowStyle>
@@ -682,7 +682,7 @@
                     <Columns>
                         <asp:BoundField HeaderText="Fecha" DataField="fecha" SortExpression="fecha" DataFormatString="{0:d}"/>
                         <asp:BoundField HeaderText="Paciente" DataField="nombre" SortExpression="nombre"/>
-                        <asp:BoundField HeaderText="Actividad" DataField="act" SortExpression="act"/>
+                        <asp:BoundField HeaderText="Actividad" DataField="act" SortExpression="act" ItemStyle-Width="100%"/>
                         <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                     </Columns>
                 </asp:GridView>

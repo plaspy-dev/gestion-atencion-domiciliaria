@@ -54,7 +54,7 @@
                 <asp:Panel ID="PEventos" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LEventos"></asp:Label></a></h3>
                     <div class="hide">
-                        <asp:GridView ID="GEventos" runat="server" AutoGenerateColumns="False" 
+                        <asp:GridView ID="GEventos" runat="server" AutoGenerateColumns="False"  Width="100%"
                             DataKeyNames="id" DataSourceID="SEventos" EmptyDataText="No se encontraron eventos de este usuario" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -69,7 +69,7 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" SortExpression="fecha" />
-                                <asp:BoundField DataField="descripcion" HeaderText="Descripción" SortExpression="descripcion" />
+                                <asp:BoundField DataField="descripcion" HeaderText="Descripción" SortExpression="descripcion" ItemStyle-Width="100%" />
                             </Columns>
                         </asp:GridView>
                         <asp:SqlDataSource ID="SEventos" runat="server" 

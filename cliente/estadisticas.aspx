@@ -48,7 +48,7 @@
             <td><div id="chart_div2"></div></td>
         </tr>
         <tr>
-            <td><asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True" DataKeyNames="cal" onselectedindexchanged="GResultados_SelectedIndexChanged" >
+            <td><asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True" DataKeyNames="cal" onselectedindexchanged="GResultados_SelectedIndexChanged" Width="100%" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -56,7 +56,7 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
-                        <asp:TemplateField HeaderText="Concepto" SortExpression="cal">
+                        <asp:TemplateField HeaderText="Concepto" SortExpression="cal" ItemStyle-Wrap="false" ItemStyle-Width="100%">
                             <ItemTemplate>
                                 <asp:LinkButton ID="LConcepto" runat="server" CausesValidation="False" CommandName="Select" Text='<%# Eval("concepto") %>'></asp:LinkButton>
                             </ItemTemplate>
@@ -90,7 +90,7 @@
                 </asp:SqlDataSource>
                 </td>
             <td>
-                <asp:GridView ID="GConceptos" runat="server" DataSourceID="SConceptos" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True" >
+                <asp:GridView ID="GConceptos" runat="server" DataSourceID="SConceptos" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True" Width="100%" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -98,7 +98,7 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
-                        <asp:BoundField HeaderText="Concepto" SortExpression="concepto" DataField="concepto" />
+                        <asp:BoundField HeaderText="Concepto" SortExpression="concepto" DataField="concepto" ItemStyle-Width="100%" />
                         <asp:BoundField HeaderText="Promedio" SortExpression="cal" DataField="cal" DataFormatString="{0:g}" ItemStyle-HorizontalAlign="Right" />
                     </Columns>
                 </asp:GridView>

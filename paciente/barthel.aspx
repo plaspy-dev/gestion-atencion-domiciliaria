@@ -4,6 +4,16 @@
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<style type="text/css">
+.tabla 
+{
+    border-collapse: collapse; 
+}
+.tabla td 
+{
+    border: 1px solid #a6c9e2;
+}
+</style>
 <script type="text/javascript">
     function total() {
         var total = 0;
@@ -97,7 +107,7 @@
                 <asp:Panel ID="PHistorial" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LHistorial"></asp:Label></a></h3>
                     <div class="hide">
-                        <asp:GridView ID="GHistorial" runat="server" AutoGenerateColumns="False" 
+                        <asp:GridView ID="GHistorial" runat="server" AutoGenerateColumns="False"  Width="100%"
                             DataSourceID="SHistorial" EmptyDataText="No se encontraron índices anteriores de este paciente" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -112,7 +122,7 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
-                                <asp:BoundField DataField="diagnostico" HeaderText="Incapacidad funcional" />
+                                <asp:BoundField DataField="diagnostico" HeaderText="Incapacidad funcional" ItemStyle-Width="100%" />
                                 <asp:BoundField DataField="resultado" HeaderText="Puntaje" ItemStyle-HorizontalAlign="Right" />
                             </Columns>
                         </asp:GridView>
@@ -176,13 +186,13 @@
     </fieldset>
     <fieldset>
         <legend>Datos del paciente</legend>
-        <table style="width: 100%;">
+        <table style="width: 100%;" cellspacing=0 cellpadding=0>
             <tr>
                 <td>
                     <asp:Repeater ID="RGrupos" runat="server" DataSourceID="SqlDataSource1" 
                         onitemdatabound="RGrupos_ItemDataBound">
             <HeaderTemplate>
-                <table width="100%" border="1">
+                <table width="100%" class="tabla" cellspacing=0 cellpadding=0>
             </HeaderTemplate>
             <ItemTemplate>
                 <tr>

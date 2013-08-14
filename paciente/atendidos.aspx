@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Pacientes atendidos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="atendidos.aspx.cs" Inherits="paciente_atendidos" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<style type="text/css">.ancho { min-width: 400px; }</style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
@@ -57,7 +58,7 @@
                 <asp:BoundField DataField="paciente"  HeaderText="Diagnostico 1" />
                 <asp:BoundField DataField="paciente"  HeaderText="Diagnostico 2" />
                 <asp:BoundField DataField="paciente"  HeaderText="Diagnostico 3" />
-                <asp:BoundField DataField="analisis" SortExpression="analisis" HeaderText="Análisis clínico" />
+                <asp:BoundField DataField="analisis" SortExpression="analisis" HeaderText="Análisis clínico" HeaderStyle-CssClass="ancho" />
             </Columns>
             <RowStyle CssClass="GridRow"></RowStyle>
             <FooterStyle CssClass="GridFooter"></FooterStyle>

@@ -150,7 +150,7 @@
               <div id="accordion">
                     <h3><a href="#">Cargo</a></h3>
                     <div class="hide">
-                        <asp:GridView ID="GCargos" runat="server" DataSourceID="SCargos" 
+                        <asp:GridView ID="GCargos" runat="server" DataSourceID="SCargos"  Width="100%"
                             DataKeyNames="id" AutoGenerateColumns="false" ShowHeader="false"
                             AllowSorting="True" onrowdatabound="GCargos_RowDataBound">
                             <RowStyle CssClass="GridRow"></RowStyle>
@@ -174,7 +174,7 @@
                     </div>
                     <h3><a href="#">Costos y restricciones</a></h3>
                     <div class="hide">
-                        <asp:GridView ID="GEntidades" runat="server" AutoGenerateColumns="False" DataSourceID="SEntidades" 
+                        <asp:GridView ID="GEntidades" runat="server" AutoGenerateColumns="False" DataSourceID="SEntidades"  Width="100%"
                             EmptyDataText="No se encontraron entidades" DataKeyNames="id" onrowdatabound="GEntidades_RowDataBound">
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -183,7 +183,7 @@
                             <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                             <Columns>
-                                <asp:BoundField HeaderText="Entidad" DataField="nombre" />
+                                <asp:BoundField HeaderText="Entidad" DataField="nombre" ItemStyle-Width="100%" />
                                 <asp:TemplateField HeaderText="Costo del servicio">
                                     <ItemTemplate>
                                         <asp:TextBox runat="server" CssClass="dinero" ID="TCosto"></asp:TextBox>
@@ -220,7 +220,7 @@
       </tr>
       <tr>
         <td>
-            <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False" 
+            <asp:GridView ID="GResultado" runat="server" AutoGenerateColumns="False"  Width="100%"
                 AllowPaging="true" PageSize="50"
                 DataKeyNames="id" DataSourceID="SqlDataSource1" AllowSorting="true"
                 onselectedindexchanged="GResultado_SelectedIndexChanged" >
@@ -234,7 +234,7 @@
                     <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                     <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                     <asp:BoundField DataField="codigo" HeaderText="Código" SortExpression="codigo" />
-                    <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" />
+                    <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" ItemStyle-Width="100%" />
                     <asp:BoundField DataField="principio" HeaderText="Principio activo" SortExpression="principio" />
                     <asp:BoundField DataField="forma" HeaderText="Forma" SortExpression="forma" />
                     <asp:BoundField DataField="concentracion" HeaderText="Concentración" SortExpression="concentracion" />

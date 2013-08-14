@@ -94,7 +94,7 @@
                                     <asp:HiddenField runat="server" ID="Hi2" Value='<%# Eval("i") %>' />
                                     <asp:Image runat="server" ID="IL2" ImageUrl="~/css/ajax-loader.gif" />
                                     <asp:Button runat="server" ID="BA2" OnClick="OnClickBA" CssClass="hide" />
-                                    <asp:GridView runat="server" ID="GR" Visible="false" AutoGenerateColumns="False" DataSourceID="" AllowSorting="true" OnRowDataBound="GResultados_RowDataBound">
+                                    <asp:GridView runat="server" ID="GR" Visible="false" AutoGenerateColumns="False" DataSourceID="" AllowSorting="true" OnRowDataBound="GResultados_RowDataBound" Width="100%">
                                         <RowStyle CssClass="GridRow"></RowStyle>
                                         <FooterStyle CssClass="GridFooter"></FooterStyle>
                                         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -104,7 +104,7 @@
                                         <Columns>
 	                                        <asp:BoundField DataField="prgFechaProg" HeaderText="Fecha" SortExpression="prgFechaProg" DataFormatString="{0:d}" />
 	                                        <asp:BoundField DataField="autNumero" HeaderText="Autorización" SortExpression="autNumero" />
-	                                        <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" ItemStyle-Wrap="false" />
+	                                        <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" ItemStyle-Wrap="false" ItemStyle-Width="100%" />
 	                                        <asp:BoundField DataField="sesiones" HeaderText="Sesiones" SortExpression="sesiones" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
 	                                        <asp:BoundField DataField="costo" HeaderText="Costo" SortExpression="costo" DataFormatString="{0:c}" ItemStyle-Wrap="false" />
                                         </Columns>

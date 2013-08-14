@@ -243,7 +243,7 @@
                 <td align="center">&nbsp;</td>
             </tr>
             <tr>
-                <td align="center"><asp:GridView ID="GCausas" runat="server" DataSourceID="SCausas" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True">
+                <td align="center"><asp:GridView ID="GCausas" runat="server" DataSourceID="SCausas" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True" Width="100%">
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -251,7 +251,7 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
-                        <asp:BoundField HeaderText="CIE10" SortExpression="causa" DataField="causa" ItemStyle-HorizontalAlign="Left" />
+                        <asp:BoundField HeaderText="CIE10" SortExpression="causa" DataField="causa" ItemStyle-HorizontalAlign="Left" ItemStyle-Width="100%" />
                         <asp:BoundField HeaderText="Incidencias" SortExpression="c" DataField="c" ItemStyle-HorizontalAlign="Right" />
                     </Columns>
                 </asp:GridView>

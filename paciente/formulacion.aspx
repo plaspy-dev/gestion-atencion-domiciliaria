@@ -92,7 +92,7 @@
                 <asp:Panel ID="PFormulaciones" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LFormulaciones"></asp:Label></a></h3>
                     <div class="hide">
-                        <asp:GridView ID="GFormulaciones" runat="server" AutoGenerateColumns="False" 
+                        <asp:GridView ID="GFormulaciones" runat="server" AutoGenerateColumns="False"  Width="100%"
                             DataSourceID="SFormulaciones" EmptyDataText="No se encontraron Formulaciones de este usuario" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -108,7 +108,7 @@
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
                                 <asp:BoundField DataField="tipo" HeaderText="Tipo" />
-                                <asp:BoundField DataField="medicamentos" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
+                                <asp:BoundField DataField="medicamentos" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" ItemStyle-Width="100%" />
                             </Columns>
                         </asp:GridView>
                         <asp:SqlDataSource ID="SFormulaciones" runat="server" 
@@ -134,7 +134,7 @@
             </tr>
             <tr>
                 <td colspan="4">
-                    <asp:GridView ID="GFormulacion" runat="server" AutoGenerateColumns="False" DataKeyNames="IdGrid" onselectedindexchanged="GFormulacion_SelectedIndexChanged" onrowdeleting="GFormulacion_RowDeleting" >
+                    <asp:GridView ID="GFormulacion" runat="server" AutoGenerateColumns="False" DataKeyNames="IdGrid" onselectedindexchanged="GFormulacion_SelectedIndexChanged" onrowdeleting="GFormulacion_RowDeleting" Width="100%" >
                                         <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
                             <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -144,7 +144,7 @@
                         <Columns>
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                            <asp:BoundField DataField="Nombre" HeaderText="Nombre del medicamento" />
+                            <asp:BoundField DataField="Nombre" HeaderText="Nombre del medicamento" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="Intensidad" HeaderText="Intensidad" />
                             <asp:BoundField DataField="Formulada" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="Posologia" HeaderText="Posología" />

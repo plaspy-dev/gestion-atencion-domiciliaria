@@ -128,7 +128,7 @@
     
     <br />
     <br />
-    <asp:GridView ID="GRecorrido" runat="server" DataKeyNames="vrcId,conductorId,profesional" DataSourceID="SRecorrido"
+    <asp:GridView ID="GRecorrido" runat="server" DataKeyNames="vrcId,conductorId,profesional" DataSourceID="SRecorrido" Width="100%"
         EmptyDataText="No se ha registrado recorrido del día" 
         AutoGenerateColumns="False" 
         onselectedindexchanged="GRecorrido_SelectedIndexChanged">
@@ -150,7 +150,7 @@
             <ItemStyle HorizontalAlign="Right" /></asp:BoundField>
             <asp:BoundField DataField="vrcHoraSal" HeaderText="Hora Salida" >
             <ItemStyle HorizontalAlign="Right" /></asp:BoundField>
-            <asp:BoundField DataField="vrcObservacion" HeaderText="Observacion" />
+            <asp:BoundField DataField="vrcObservacion" HeaderText="Observacion" ItemStyle-Width="100%" />
         </Columns>
     </asp:GridView>
     <asp:SqlDataSource ID="SRecorrido" runat="server" 

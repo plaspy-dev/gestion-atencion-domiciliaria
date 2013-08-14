@@ -83,7 +83,7 @@
         <tr>
             <td colspan="4">
                 <asp:TextBox runat="server" ID="TPacientes" CssClass="hide"></asp:TextBox>
-                <asp:GridView ID="GPacientes" runat="server" AutoGenerateColumns="False" 
+                <asp:GridView ID="GPacientes" runat="server" AutoGenerateColumns="False"  Width="100%"
                     DataKeyNames="Id" onrowdeleting="GPacientes_RowDeleting" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -93,8 +93,8 @@
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
                         <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                        <asp:BoundField DataField="NombreCompleto" HeaderText="Paciente" />
-                        <asp:BoundField DataField="NombreEntidad" HeaderText="Entidad" />
+                        <asp:BoundField DataField="NombreCompleto" HeaderText="Paciente" ItemStyle-Width="100%" />
+                        <asp:BoundField DataField="NombreEntidad" HeaderText="Entidad" ItemStyle-Wrap="false" />
                     </Columns>
                 </asp:GridView>
             </td>
@@ -136,7 +136,7 @@
         </tr>
         <tr>
             <td colspan="4">
-                <asp:GridView ID="GActivades" runat="server" DataSourceID="SActividades" 
+                <asp:GridView ID="GActivades" runat="server" DataSourceID="SActividades"  Width="100%"
                     AutoGenerateColumns="False" DataKeyNames="id" 
                     onselectedindexchanged="GActivades_SelectedIndexChanged" >
                     <RowStyle CssClass="GridRow"></RowStyle>
@@ -149,7 +149,7 @@
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                             <asp:BoundField DataField="proc_id" HeaderText="idMedicamento" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
-                            <asp:BoundField DataField="procedimiento" HeaderText="Actividad" />
+                            <asp:BoundField DataField="procedimiento" HeaderText="Actividad" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="numerosesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="sesionesdia" HeaderText="Ses./día" ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="tint" HeaderText="Horas" ItemStyle-HorizontalAlign="Right" />

@@ -119,7 +119,7 @@
         <tr>
             <td colspan="2">
                 <asp:HiddenField runat="server" ID="HBitacora" />
-                <asp:GridView ID="GSeguimiento" runat="server" AutoGenerateColumns="False" 
+                <asp:GridView ID="GSeguimiento" runat="server" AutoGenerateColumns="False"  Width="100%"
                     DataSourceID="SSeguimiento" DataKeyNames="id" 
                     onselectedindexchanged="GSeguimiento_SelectedIndexChanged">
                 <RowStyle CssClass="GridRow"></RowStyle>
@@ -132,8 +132,8 @@
 		            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                         <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                         <asp:BoundField DataField="fecha" HeaderText="Fecha" SortExpression="fecha" ItemStyle-Wrap="false" />
-                        <asp:BoundField DataField="tpaDescripcion" HeaderText="Área" SortExpression="tpaDescripcion" />
-                        <asp:BoundField DataField="objeto" HeaderText="Objeto" SortExpression="objeto" />
+                        <asp:BoundField DataField="tpaDescripcion" HeaderText="Área" SortExpression="tpaDescripcion" ItemStyle-Wrap="false" />
+                        <asp:BoundField DataField="objeto" HeaderText="Objeto" SortExpression="objeto" ItemStyle-Width="100%" />
                     </Columns>
                 </asp:GridView>
                 <asp:SqlDataSource ID="SSeguimiento" runat="server" 
@@ -228,7 +228,7 @@
     <asp:UpdatePanel ID="PResultados" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
         <div id="dImprimir">
-            <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
+            <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" Width="100%"
                 AutoGenerateColumns="False" EmptyDataText="No se encontraron bitácoras" DataKeyNames="bitId"
                 AllowPaging="True" PageSize="50" AllowSorting="True" OnRowDataBound="GResultados_RowDataBound" >
                 <RowStyle CssClass="GridRow"></RowStyle>
@@ -247,7 +247,7 @@
                     <asp:BoundField HeaderText="Novedad administrativa" DataField="NAdministrativa" SortExpression="NAdministrativa" />
                     <asp:BoundField HeaderText="Novedad de servicio" DataField="NServicio" SortExpression="NServicio" />
                     <asp:BoundField HeaderText="Paciente" DataField="pacNombres" SortExpression="pacNombres" />
-                    <asp:BoundField HeaderText="Observaciones" DataField="bitObservaciones" SortExpression="bitObservaciones" />
+                    <asp:BoundField HeaderText="Observaciones" DataField="bitObservaciones" SortExpression="bitObservaciones" ItemStyle-Width="100%" />
                 </Columns>
             </asp:GridView>
     <div style="text-align: right;">
