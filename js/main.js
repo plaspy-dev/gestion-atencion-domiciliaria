@@ -17,8 +17,10 @@ function imprimir() {
 function addDialog(szPanel, szDialog, showclosebutton) {
 
     if ($(szDialog + " :submit").length || $(szDialog + " :button").length) {
-
-        $(szDialog).show();
+        
+        if (typeof showclosebutton === "undefined")
+            showclosebutton = false;
+        $(szDialog).show().removeClass("hide");
         g_OpenDialog = szDialog; // guardamos el dialogo abierto para validacion.
         $(szDialog).dialog({
             modal: true,
@@ -72,6 +74,8 @@ function obs() {
         if (typeof this.ejecutar === 'function')
             retorno = this.ejecutar();
         else retorno = eval(this.ejecutar);
+    } else {
+        return true;
     }
     if ((typeof retorno === 'undefined' || retorno) && (typeof Page_IsValid === 'undefined' || Page_IsValid || typeof this.ejecutar === 'undefined')) {
         hiddenButton = this;
@@ -84,27 +88,46 @@ function obs() {
 function inicio() {
 
     // todos los campos hora
-    $(".hora:not(.rhora)").mask("99:99")
-        .timeEntry({ show24Hours: true })
-        .timepicker({ hourText: 'Horas',
-            minuteText: 'Minutos',
-            amPmText: ['AM', 'PM']
-        }).addClass("rhora");
+    $(".hora:not(.rhora)").mask("99:99").timepicker().addClass("rhora");
+
+
+        /*$(".hora").mask("99:99");
+        $(".hora").timeEntry({ show24Hours: true });
+        $(".hora").timepicker({ hourText: 'Horas',
+        minuteText: 'Minutos',
+        amPmText: ['AM', 'PM']
+        });
+        // todos los campos fecha
+        $(".fecha").mask("99/99/9999");*/
+        // $(".fecha").datepicker({ onSelect: function() { } });
+        /*$.datepicker.setDefaults($.datepicker.regional["es"]);
+        $(".fecha").datepicker();
+        $(".fechahora").datetimepicker();
+        $(".hora").timepicker();
+
+        // todos los campos entero
+        $('.entero').autoNumeric('init', { vMin: 0, mDec: 0, aSep: '' });
+
+        // todos los reales
+        $('.float').autoNumeric('init', { vMin: 0, aSep: '', mDec: 8, aPad: false });
+
+        // dinero
+        $('.dinero').autoNumeric('init', { vMin: 0, aSign: '$', aPad: false });*/
+        
         
     // todos los campos fecha
         $(".fecha:not(.rfecha)").mask("99/99/9999").
-        datepicker($.datepicker.regional["es"]).addClass("rfecha");
+        datepicker({ onSelect: function() { } }).addClass("rfecha");
     // $(".fecha").datepicker({ onSelect: function() { } });
-
+    $(".fechahora:not(.rfechahora)").datetimepicker().addClass("rfechahora");
     // todos los campos entero
-    $('.entero:not(.rentero)').numeric({ format: "0", buttons: false, minValue: 0 }).addClass("rentero");
+    $('.entero:not(.rentero)').autoNumeric('init', { vMin: 0, mDec: 0, aSep: '' }).addClass("rentero");
 
     // todos los reales
-    $('.float:not(.rfloat)').numeric({ format: "0.########", buttons: false, minValue: 0 }).addClass("rfloat");
-    // $('.float').numeric({ format: "0.00", buttons: false, minValue: 0 });
+    $('.float:not(.rfloat)').autoNumeric('init', { vMin: 0, aSep: '', mDec: 8, aPad: false }).addClass("rfloat");
     
     // dinero
-    $('.dinero:not(.rdinero)').numeric({ format: "#,000.##", buttons: false, minValue: 0 }).addClass("rdinero");
+    $('.dinero:not(.rdinero)').autoNumeric('init', { vMin: 0, aSign: '$', aPad: false }).addClass("rdinero");
 
     $('img[src*="menubg.jpg"]').hover(function() {
         $(this).attr("src", $(this).attr("src").replace("menubg", "menuover"));
@@ -147,7 +170,9 @@ function inicio() {
             //                    });
             //                });
             //            }
-            $(this).unbind('click').attr("onclick", "").click(obs);
+            $(this)
+            // .unbind('click')
+            .attr("onclick", "").click(obs);
         }
     });
 

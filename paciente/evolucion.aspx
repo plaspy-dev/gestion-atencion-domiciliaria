@@ -162,7 +162,7 @@
         <ContentTemplate>
         <asp:HiddenField ID="HIdEvolucion" runat="server" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
-        <table>
+        <table style="border-collapse: collapse">
             <tr>
                 <td colspan="4">
                 <asp:Panel ID="PEvoluciones" runat="server">
@@ -209,19 +209,45 @@
                 <td colspan="4" class="celdaTitulo">Información de atención básica</td>
             </tr>
             <tr>
-                <td>Fecha</td>
-                <td><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox></td>
-                <td>Hora</td>
-                <td><asp:TextBox ID="THora" runat="server" CssClass="hora"></asp:TextBox></td>
+                <td>Fecha<asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator3" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                <asp:RegularExpressionValidator ID="RegularExpressionValidator1" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha valida" Display="Dynamic" SetFocusOnError="true" ValidationExpression="^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))) (0[0-9]|1\d|2[0-3]):([0-5]\d)$" runat="server" >*</asp:RegularExpressionValidator></td>
+                <td><asp:TextBox runat="server" ID="TFecha" CssClass="fechahora"></asp:TextBox></td>
             </tr>
             <tr>
-                <td>
+                <td nowrap="nowrap">
                     Funcionario que atiende<asp:RequiredFieldValidator ControlToValidate="TIdFuncionario" ErrorMessage="Por favor ingrese un funcionario." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-                <td colspan="3">
+                <td>
                     <asp:TextBox ID="TFuncionario" runat="server" Width="98%"></asp:TextBox>
                     <asp:TextBox ID="TIdFuncionario" runat="server" CssClass="hide"></asp:TextBox>
-                    </td>
+                </td>
+                <td nowrap="nowrap">Nivel de atención<asp:RequiredFieldValidator ControlToValidate="DNivelAtencion" ErrorMessage="Por favor seleccione un nivel de atención." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td><asp:DropDownList ID="DNivelAtencion" runat="server" DataSourceID="SNivelAtencion" 
+                        DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                        <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
+                    </asp:DropDownList>
+                    <asp:SqlDataSource ID="SNivelAtencion" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT id, nombre FROM varios WHERE tipo=37 AND szReservado IS NULL">
+                    </asp:SqlDataSource>
+                </td>
             </tr>
+            <asp:PlaceHolder runat="server" ID="PNivelAtencion" Visible="false">
+            <tr>
+                <td>Área encargada</td>
+                <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SArea" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT CAST(IFNULL(GROUP_CONCAT(medicamentos.id),-1) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
+                </asp:SqlDataSource></td>
+                <td>Seguimiento<asp:RangeValidator ControlToValidate="TFechaSeguimiento" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
+                <td><asp:TextBox runat="server" ID="TFechaSeguimiento" CssClass="fecha"></asp:TextBox></td>
+            </tr>
+            </asp:PlaceHolder>
             <tr>
                 <td colspan="4" class="celdaTitulo">
                     Signos vitales</td>
@@ -233,7 +259,7 @@
                     <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>mm/Hg</td>
                 <td>
                     FC</td>
-                <td>
+                <td nowrap="nowrap">
                     <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>Lat/min</td>
             </tr>
             <tr>
@@ -288,7 +314,7 @@
             </tr>
             <tr>
                 <td colspan="4" width="100%"><asp:GridView ID="GAntecedentes" runat="server" AutoGenerateColumns="False" Width="100%" 
-                DataKeyNames="id, antecedente" DataSourceID="SAntecendentes">
+                DataKeyNames="id, antecedente" DataSourceID="SAntecendentes" EmptyDataText="No se encontraron antecendentes">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
                 <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -336,7 +362,7 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
             <tr>
                 <td colspan="4" width="100%">
                 <asp:GridView ID="GExamenFisico" runat="server" AutoGenerateColumns="False" Width="100%"
-                DataKeyNames="id, examen" DataSourceID="SExamenFisico">
+                DataKeyNames="id, examen" DataSourceID="SExamenFisico" EmptyDataText="No se realizaron examenes físicos">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
                 <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -346,7 +372,8 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
             <Columns>
                 <asp:TemplateField HeaderText="Examen físico">
                     <ItemTemplate>
-                        <%# Eval("nombre").ToString() %><asp:RequiredFieldValidator ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                        <asp:Label runat="server" ID="LNombre" Text='<%# Eval("nombre").ToString() %>'></asp:Label>
+                        <asp:RequiredFieldValidator ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Nor">
@@ -375,6 +402,53 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
                 </SelectParameters>
             </asp:SqlDataSource>
                 </td>
+            </tr>
+            <tr>
+                <td colspan="4" width="100%"><asp:GridView ID="GRiesgos" runat="server" AutoGenerateColumns="False" Width="100%" 
+                DataKeyNames="id,antecedente" DataSourceID="SRiesgos" EmptyDataText="No se encontraron riesgos">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                <Columns>
+                    <asp:TemplateField HeaderText="Riesgo">
+                        <ItemTemplate>
+                            <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator2" ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                        </ItemTemplate>
+                        <ItemStyle Wrap="false" />
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Observaciones" ItemStyle-Width="100%">
+                        <ItemTemplate>
+                            <asp:TextBox runat="server" ID="TObservaciones" Width="99%" Text='<%# Eval("observaciones") %>'></asp:TextBox>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
+            <asp:SqlDataSource ID="SRiesgos" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre
+                                ,evolucion_riesgos.id AS antecedente
+                                ,IFNULL(IFNULL(evolucion_riesgos.estado,antigua.estado),ingreso_riesgos.estado) AS estado
+                                ,IFNULL(IFNULL(evolucion_riesgos.observaciones,antigua.observaciones),ingreso_riesgos.observaciones) AS observaciones
+                                FROM varios 
+                                LEFT JOIN evolucion_riesgos ON (evolucion_riesgos.evolucion_paciente=@idingreso AND evolucion_riesgos.motivo=varios.id) 
+                                LEFT JOIN ingreso_paciente ON (ingreso_paciente.paciente=@paciente)
+                                LEFT JOIN ingreso_riesgos ON (ingreso_riesgos.ingreso_paciente=ingreso_paciente.id AND ingreso_riesgos.motivo=varios.id)
+                                LEFT JOIN (
+SELECT estado,observaciones,evolucion_riesgos.motivo FROM evolucion_paciente LEFT JOIN evolucion_riesgos ON (evolucion_riesgos.evolucion_paciente=evolucion_paciente.id) WHERE
+evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) FROM evolucion_paciente WHERE paciente=@paciente)
+                                ) AS antigua ON (antigua.motivo=varios.id)
+                                WHERE varios.tipo=38 AND varios.szReservado IS NULL
+                                ;" >
+                <SelectParameters>
+                    <asp:ControlParameter ControlID="HIdEvolucion" Name="idingreso" PropertyName="Value" DefaultValue="0" />
+                    <asp:ControlParameter ControlID="CCDetallePaciente" Name="paciente" PropertyName="IdPaciente" />
+                </SelectParameters>
+            </asp:SqlDataSource></td>
             </tr>
             <asp:UpdatePanel runat="server" ID="PCIE10" UpdateMode="Conditional">
             <ContentTemplate>
@@ -426,6 +500,34 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
             <tr>
                 <td colspan="4"><asp:TextBox ID="TAnalisis" runat="server" Height="200px" TextMode="MultiLine" Width="99%"></asp:TextBox>
                 </td>
+            </tr>
+            <tr>
+                <td colspan="4" class="GridHeader">Plan educativo</td>
+            </tr>
+            <tr>
+                <td colspan="4" width="100%" class="tda">
+                <asp:DataList runat="server" ID="RPlanEducativo" RepeatColumns="2" DataKeyField="antecedente" DataSourceID="SPlanEducativo">
+                    <ItemStyle CssClass="GridRow" />
+                    <AlternatingItemStyle CssClass="GridAltRow" />
+                    <ItemTemplate>
+                        <asp:HiddenField runat="server" ID="HId" Value='<%# Eval("id") %>' />
+                        <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
+                    </ItemTemplate>
+                </asp:DataList>
+            <asp:SqlDataSource ID="SPlanEducativo" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre
+                                ,evolucion_plan_educativo.id AS antecedente
+                                ,evolucion_plan_educativo.estado
+                                FROM varios 
+                                LEFT JOIN evolucion_plan_educativo ON (evolucion_plan_educativo.evolucion_paciente=@idingreso AND evolucion_plan_educativo.motivo=varios.id) 
+                                WHERE varios.tipo=39 AND varios.szReservado IS NULL
+                                ;" >
+                <SelectParameters>
+                    <asp:ControlParameter ControlID="HIdEvolucion" Name="idingreso" PropertyName="Value" DefaultValue="0" />
+                </SelectParameters>
+            </asp:SqlDataSource></td>
             </tr>
             <tr>
                 <td colspan="4">Plan de manejo (Tomado de orden médica)</td>

@@ -172,7 +172,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         formulacion += "profesional";
                         formulacion += "autorizacion";
 
-                        MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Conector.GetDate(Convert.ToDateTime(TFecha.Text)) + "' AND tipo='" + DTipo.SelectedValue + "'"));
+                        MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Conector.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "' AND tipo='" + DTipo.SelectedValue + "'"));
                         if (readermysql != null && readermysql.Read())
                         {
                             string ruta = string.Format("formulacion{0}.html", CCDetallePaciente.AsegurdadorID);
@@ -722,10 +722,11 @@ public partial class paciente_formulacion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$cCIE10$", paciente.cie10.Count>0 ? Procedimientos.GetCodigoCIE(paciente.cie10[0].ToString()) : "");
 
         // obtenemos el ID del usuario que lo modifico primero
+        string idmedico = "";
         string url = HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~");
         using (CConector conector = new CConector())
         {
-            string idmedico = conector.QueryString("SELECT usuario.personal FROM modificaciones LEFT JOIN usuario ON (usuario.id=modificaciones.usuario) WHERE modificaciones.id='" + HIdFormulacion.Value + "' AND modificaciones.url='" + url + "' ORDER BY modificaciones.fecha LIMIT 1");
+            idmedico = conector.QueryString("SELECT usuario.personal FROM modificaciones LEFT JOIN usuario ON (usuario.id=modificaciones.usuario) WHERE modificaciones.id='" + HIdFormulacion.Value + "' AND modificaciones.url='" + url + "' ORDER BY modificaciones.fecha LIMIT 1");
 
             using (CConectorMS conectorms = new CConectorMS())
             {
@@ -744,6 +745,11 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     }
                 }
             }
+        }
+
+        using (CConector conector = new CConector())
+        {
+            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(idmedico)));
         }
 
         int total_medicamentos = 5;

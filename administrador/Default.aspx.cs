@@ -58,11 +58,17 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Examen físico", 4, parent);
             Add("Varios", 5, parent);
             Add("Tipo diagnóstico", 20, parent);
+            Add("Nivel de atención", 37, parent);
+            Add("Factores de riesgo", 38, parent);
+            Add("Plan educativo", 39, parent);
             // Add("Varios Inferior (Hoja de ingreso)", 6, parent); // eliminado.
 
             parent = Add("Indice de Barthel");
             Add("Grupos", 7, parent);
             // Add("Indice de Barthel", 8, parent);
+
+            parent = Add("Escala Norton");
+            Add("Grupos", 40, parent);
 
             parent = Add("Hoja de gastos");
             Add("Suministros", 9, parent);
@@ -115,7 +121,7 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Estado productos", 34, parent);
             Add("Grupos", 35, parent);
 
-            // disponible 37
+            // disponible 42
 
 
             if (HTipo.Value.Length == 0)

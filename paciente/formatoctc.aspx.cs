@@ -93,7 +93,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                         formulacion += "fecha";
                         formulacion += "profesional";
 
-                        MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Conector.GetDate(Convert.ToDateTime(TFecha.Text)) + "'"));
+                        MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Conector.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "'"));
                         if (readermysql != null && readermysql.Read())
                         {
                             ((MasterPageI)Master).Imprimir("formatoctc.html");
@@ -377,6 +377,8 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                 evento.Contenido = evento.Contenido.Replace("$hclinica$", myreader["id"].ToString());
                 evento.Contenido = evento.Contenido.Replace("$enfermedad_actual$", myreader["enfermedad_actual"].ToString());
             }
+            
+            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(idmedico)));
         }
 
 

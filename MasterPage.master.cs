@@ -36,8 +36,13 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
         if(!IsPostBack) {
 
-            RAlertas.DataSource = Alertas.GetAlertas();
+            RAlertasReal.DataSource= RAlertas.DataSource = Alertas.GetAlertas();
             RAlertas.DataBind();
+            RAlertasReal.DataBind();
+            LTotalAlertas.Text = RAlertasReal.Items.Count.ToString();
+            lnkAlertas.Visible=
+            LTotalAlertas.Visible = RAlertasReal.Items.Count > 0;
+            lnkAlertas.Text = RAlertasReal.Items.Count==1 ? "Alerta" : "Alertas";
         }
 
         LVersion.Text = Version.GetVersion();
@@ -96,10 +101,15 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         LMensaje.Text = mensaje;
     }
 
-    public void SetResultado(String titulo) {
+    public void SetResultado(String titulo, bool redirect) {
 
         Session["szMensaje"] = titulo;
-        Response.Redirect(Request.Url.AbsolutePath);
+        if(redirect)
+            Response.Redirect(Request.Url.AbsolutePath);
+    }
+    public void SetResultado(String titulo)
+    {
+        SetResultado(titulo, true);
     }
 
     public void SetAuxDiag(String titulo, String texto) {

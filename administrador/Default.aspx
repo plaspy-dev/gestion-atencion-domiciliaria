@@ -49,10 +49,8 @@
           <tr>
             <td>&nbsp;</td>
             <td align="right">
-                <asp:Button ID="BAceptar" runat="server" Text="Aceptar" 
-                    onclick="BAceptar_Click" />
-                <asp:Button ID="BCancelar" runat="server" CausesValidation="False" 
-                    Text="Cancelar" onclick="BCancelar_Click" />
+                <asp:Button ID="BAceptar" runat="server" Text="Aceptar" onclick="BAceptar_Click" />
+                <asp:Button ID="BCancelar" runat="server" CausesValidation="False" Text="Cancelar" onclick="BCancelar_Click" />
               </td>
             <td>
                 <asp:HiddenField ID="HTipo" runat="server" />

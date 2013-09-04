@@ -11,14 +11,16 @@ using SDG.Componentes;
 /// </summary>
 public class Alertas
 {
+    public String Id { get; set; }
     public String Nombre { get; set; }
     public String Numero { get; set; }
     public String URL { get; set; }
     public String SelectCommand { get; set; }
     public String SelectCount { get; set; }
 
-    public Alertas(string nombre, string numero, string url, string select, string selectcount)
+    public Alertas(string id, string nombre, string numero, string url, string select, string selectcount)
     {
+        Id = id;
         Nombre = nombre;
         Numero = numero;
         SelectCommand = select;
@@ -56,7 +58,7 @@ public class Alertas
                             consultacount = Procedimientos.SetCargos(consultacount.Replace("{1}", "{0}"), "admPersonalHS.carId");
                         }
 
-                        alertas.Add(new Alertas(
+                        alertas.Add(new Alertas(alertas.Count.ToString(), 
                                 consultas["nombre"].ToString(),
                                 "0",
                                 consultas["url"].ToString(),

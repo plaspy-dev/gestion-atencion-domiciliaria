@@ -152,8 +152,9 @@ public class Utilidades
 
 	public static string GetGridRowCellHTML(GridView grid, GridViewRow row, int columna)
 	{
-		string text = "";
-		text = ((grid.Columns[columna].ItemStyle.HorizontalAlign == HorizontalAlign.Right) ? (text + "<td align=right>") : ((grid.Columns[columna].ItemStyle.HorizontalAlign != HorizontalAlign.Center) ? (text + "<td>") : (text + "<td align=center>")));
+		string text = "class=c" + columna;
+		string text2 = "";
+		text2 = ((grid.Columns[columna].ItemStyle.HorizontalAlign == HorizontalAlign.Right) ? (text2 + "<td align=right " + text + ">") : ((grid.Columns[columna].ItemStyle.HorizontalAlign != HorizontalAlign.Center) ? (text2 + "<td " + text + ">") : (text2 + "<td align=center " + text + ">")));
 		if (row.Cells[columna].HasControls())
 		{
 			ControlCollection controls = row.Cells[columna].Controls;
@@ -161,38 +162,38 @@ public class Utilidades
 			{
 				if (controls[i] is TextBox)
 				{
-					string text2 = ((TextBox)controls[i]).Text;
-					if (text2.Length == 0)
+					string text3 = ((TextBox)controls[i]).Text;
+					if (text3.Length == 0)
 					{
-						text2 = "&nbsp;";
+						text3 = "&nbsp;";
 					}
-					text += text2;
+					text2 += text3;
 					break;
 				}
 				if (controls[i] is CheckBox)
 				{
-					text = ((!((CheckBox)controls[i]).Checked) ? (text + "_ ") : (text + "X "));
+					text2 = ((!((CheckBox)controls[i]).Checked) ? (text2 + "_ ") : (text2 + "X "));
 					if (((CheckBox)controls[i]).Text.Length > 0)
 					{
-						text += ((CheckBox)controls[i]).Text;
+						text2 += ((CheckBox)controls[i]).Text;
 					}
 					break;
 				}
 				if (controls[i] is LinkButton)
 				{
-					text += ((LinkButton)controls[i]).Text;
+					text2 += ((LinkButton)controls[i]).Text;
 				}
 				else if (controls[i] is HyperLink)
 				{
-					text += ((HyperLink)controls[i]).Text;
+					text2 += ((HyperLink)controls[i]).Text;
 				}
 			}
 		}
 		else
 		{
-			text += row.Cells[columna].Text;
+			text2 += row.Cells[columna].Text;
 		}
-		return text + "</td>";
+		return text2 + "</td>";
 	}
 
 	public static string RenderGrid(GridView grid, string parametrostabla)
@@ -205,13 +206,14 @@ public class Utilidades
 		{
 			return grid.EmptyDataText;
 		}
-		string text = "<table " + parametrostabla + ">";
+		string text = "<table " + parametrostabla + " id='" + grid.ID + "' class='tgrid'>";
 		text += "<tr>";
 		for (int i = 0; i < grid.Columns.Count; i++)
 		{
 			if (grid.Columns[i].Visible)
 			{
-				text = text + "<td bgcolor='#EEEEEE'><b>" + grid.Columns[i].HeaderText + "</b></td>";
+				object obj = text;
+				text = string.Concat(obj, "<th class=h", i, " bgcolor='#EEEEEE'><b>", grid.Columns[i].HeaderText, "</b></th>");
 			}
 		}
 		text += "</tr>";
@@ -235,7 +237,21 @@ public class Utilidades
 			{
 				if (grid.Columns[i].Visible)
 				{
-					text = ((grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Right) ? (text + "<td align=right>") : ((grid.Columns[i].FooterStyle.HorizontalAlign != HorizontalAlign.Center) ? (text + "<td>") : (text + "<td align=center>")));
+					if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Right)
+					{
+						object obj = text;
+						text = string.Concat(obj, "<td align=right class=f", i, ">");
+					}
+					else if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Center)
+					{
+						object obj = text;
+						text = string.Concat(obj, "<td align=center class=f", i, ">");
+					}
+					else
+					{
+						object obj = text;
+						text = string.Concat(obj, "<td class=f", i, ">");
+					}
 					text = text + "<b>" + grid.FooterRow.Cells[i].Text + "</b></td>";
 				}
 			}
@@ -252,10 +268,6 @@ public class Utilidades
 		}
 		for (int i = 0; i < controles.Count; i++)
 		{
-			if (!controles[i].Visible)
-			{
-				continue;
-			}
 			string iD = controles[i].ID;
 			string text = "";
 			if (controles[i].Controls.Count > 0 && controles[i].GetType() != typeof(GridView) && controles[i].GetType() != typeof(CheckBoxList))

@@ -21,6 +21,10 @@ public partial class paciente_barthel : System.Web.UI.Page
         {
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
+            if (!string.IsNullOrEmpty(Request.QueryString["ioe"]))
+                Conector.SelectInDropDown(DIndice, Request.QueryString["ioe"]);
+            DIndice_SelectedIndexChanged(sender, e);
+
             BAceptar.Enabled = false;
             PHistorial.Visible = false;
 
@@ -59,34 +63,42 @@ public partial class paciente_barthel : System.Web.UI.Page
 
                             TFecha.Focus();
                             BAceptar.Enabled = usuario.CanInsert();
+                            if (!string.IsNullOrEmpty(Request.QueryString["f"])) 
+                                TFecha.Text = Conector.GetFromMySQLDate(Conector.GetFromMySQLDate(Request.QueryString["f"]), true);
+                            else TFecha.Text = Conector.GetFromMySQLDate(DateTime.Now, true);
 
-                            TFecha.Text = Request.QueryString["f"];
-                            if (TFecha.Text.Length == 0)
-                                TFecha.Text = DateTime.Now.ToShortDateString();
-                            else THora.Focus();
-
-                            Query indice = new Query("indice_barthel");
-
-                            indice += "id";
-                            indice += "fecha";
-                            indice += "medico";
-
-                            MySqlDataReader readermysql = conectormy.Query(indice.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND DATE(fecha)='" + Conector.GetDate(Convert.ToDateTime(TFecha.Text)) + "'"));
-                            if (readermysql != null && readermysql.Read())
+                            if (!string.IsNullOrEmpty(Request.QueryString["bid"]))
                             {
-                                ((MasterPageI)Master).Imprimir("barthel.html");
-                                BAceptar.Enabled = usuario.CanUpdate();
+                                Query indice = new Query("indice_barthel");
 
-                                HIdIndice.Value = readermysql["id"].ToString();
-                                TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
-                                THora.Text = CConector.GetHora(readermysql["fecha"]);
+                                indice += "id";
+                                indice += "fecha";
+                                indice += "medico";
+                                indice += "tipo";
 
-                                TIdFuncionario.Text = readermysql["medico"].ToString();
-                                TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
+                                MySqlDataReader readermysql = conectormy.Query(indice.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND id=" + Query.GetValor(Request.QueryString["bid"])));
+                                if (readermysql != null && readermysql.Read())
+                                {
+                                    ((MasterPageI)Master).Imprimir("barthel.html");
+                                    BAceptar.Enabled = usuario.CanUpdate();
 
-                                TTotal.Text = conectormy.QueryString("SELECT SUM(varios.descripcion) FROM analisis_barthel LEFT JOIN varios ON (varios.id=analisis_barthel.resultado) WHERE analisis_barthel.indice_barthel='" + HIdIndice.Value + "'");
+                                    HIdIndice.Value = readermysql["id"].ToString();
+                                    TFecha.Text = CConector.GetFromMySQLDate(readermysql["fecha"], true);
+                                    Conector.SelectInDropDown(DIndice, readermysql["tipo"]);
+                                    DIndice_SelectedIndexChanged(sender, e);
 
-                                ((MasterPageI)Master).SetModificacion(HIdIndice.Value);
+                                    TIdFuncionario.Text = readermysql["medico"].ToString();
+                                    TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
+
+                                    TTotal.Text = conectormy.QueryString("SELECT SUM(varios.descripcion) FROM analisis_barthel LEFT JOIN varios ON (varios.id=analisis_barthel.resultado) WHERE analisis_barthel.indice_barthel='" + HIdIndice.Value + "'");
+                                    try
+                                    {
+                                        LResultado.Text = Calificacion.GetDescripcion(Convert.ToInt32(TTotal.Text), DIndice.SelectedValue);
+                                    }
+                                    catch { }
+
+                                    ((MasterPageI)Master).SetModificacion(HIdIndice.Value);
+                                }
                             }
                         }
                         GHistorial.DataBind();
@@ -111,8 +123,9 @@ public partial class paciente_barthel : System.Web.UI.Page
         using (CConector conector = new CConector())
         {
 
-            indice["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text) + " " + THora.Text + ":00";
+            indice["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text, true);
             indice["medico"] = TIdFuncionario.Text;
+            indice["tipo"] = DIndice.SelectedValue;
 
             string szQuery;
             string mensaje;
@@ -163,7 +176,9 @@ public partial class paciente_barthel : System.Web.UI.Page
                     conector.QueryMod(analisis.GetInsert());
                 }
             }
-            Usuario.GetUsuario().SetForceURL("", conector);
+            if(Usuario.GetUsuario().GetForceURL().Length==0 && DIndice.SelectedValue==((int)Calificacion.Escalas.Barthel).ToString())
+                Usuario.GetUsuario().SetForceURL(Usuario.GetUsuario().GetForceURL() + "&ioe=" + ((int)Calificacion.Escalas.Norton).ToString(), conector);
+            else Usuario.GetUsuario().SetForceURL("", conector);
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
             ((MasterPageI)Master).SetResultado(mensaje);
         }
@@ -189,35 +204,27 @@ public partial class paciente_barthel : System.Web.UI.Page
     }
     protected void IIr_Click(object sender, ImageClickEventArgs e)
     {
-        Response.Redirect(Request.Url.AbsolutePath + "?pid=" + CCDetallePaciente.IdPaciente + "&f=" + string.Format("{0:d}", Convert.ToDateTime(((ImageButton)sender).CommandArgument)));
+        Response.Redirect(Request.Url.AbsolutePath + "?pid=" + CCDetallePaciente.IdPaciente + "&bid=" + ((ImageButton)sender).CommandArgument);
     }
 
-    protected void BFecha_Click(object sender, EventArgs e)
+    protected void GHistorial_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        Response.Redirect(Request.Url.AbsolutePath + "?pid=" + CCDetallePaciente.IdPaciente + "&f=" + TFecha.Text);
+        if (e.Row.RowIndex != -1)
+        {
+            int descripcion= Utilidades.GetGridColumnIndex(GHistorial, "Descripción");
+            int calificacion= Utilidades.GetGridColumnIndex(GHistorial, "Puntuación");
+            try
+            {
+                e.Row.Cells[descripcion].Text = Calificacion.GetDescripcion(Convert.ToInt32(e.Row.Cells[calificacion].Text), e.Row.Cells[descripcion].Text);
+            } catch { }
+        }
     }
+
     protected void OnImprimir(object sender, EventArgs e)
     {
         PrintEventArgs evento = (PrintEventArgs)e;
 
-        string incapacidad="";
-        try
-        {
-            int puntaje = Convert.ToInt32(TTotal.Text);
-            if (puntaje < 45)
-                incapacidad = "Severa";
-            else if (puntaje < 60)
-                incapacidad = "Grave";
-            else if (puntaje < 80)
-                incapacidad = "Moderada";
-            else if (puntaje < 100)
-                incapacidad = "Ligera";
-        } catch {
-
-        }
-        evento.Contenido = evento.Contenido.Replace("$szPuntaje$", incapacidad);
-
-        string repeater = "<table width=100% border=1>";
+        string repeater = "<table width=100% border=1 cellspacing=0>";
         RGrupos.DataBind();
 
         for (int i = 0; i < RGrupos.Items.Count; i++)
@@ -251,7 +258,9 @@ public partial class paciente_barthel : System.Web.UI.Page
         query["szMedico"] = "admPersonalHS.perDocumento";
         query["szProfesional"] = "admPersonalHS.perDocumento";
         query["szCargo"] = "admCargo.carDescripcion";
+        query["perId"]="admPersonalHS.perId";
 
+        string idmedico = "";
         using (CConectorMS conectorms = new CConectorMS())
         {
             SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente
@@ -261,11 +270,24 @@ public partial class paciente_barthel : System.Web.UI.Page
             if (reader != null)
             {
                 bool l = reader.Read();
+                if(l)
+                    idmedico = reader["perId"].ToString();
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
                     evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
                 }
             }
         }
+
+        using (CConector conector = new CConector())
+        {
+            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(idmedico)));
+        }
+    }
+
+    protected void DIndice_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        LIncapacidad.Text = DIndice.SelectedValue=="8" ? "La incapacidad se valora como " : "Riesgo de padecer úlceras por presión ";
+        ScriptManager.RegisterClientScriptBlock(LIncapacidad, typeof(string), "escala", Calificacion.GetArrayMessages(DIndice.SelectedValue), true);
     }
 }

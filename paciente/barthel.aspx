@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Índice de Barthel" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="barthel.aspx.cs" Inherits="paciente_barthel" %>
+﻿<%@ Page Title="Índice y escalas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="barthel.aspx.cs" Inherits="paciente_barthel" %>
 <%@ Import Namespace="System.Data" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
@@ -15,6 +15,7 @@
 }
 </style>
 <script type="text/javascript">
+    var escala = null;
     function total() {
         var total = 0;
         $("input:radio").each(function(i) {
@@ -22,19 +23,15 @@
                 total += parseInt($(this).val());
             }
         });
-        $("#ctl00_cph_TTotal").val(total);
-        $("#severa").css("font-weight", "");
-        $("#grave").css("font-weight", "");
-        $("#moderada").css("font-weight", "");
-        $("#ligera").css("font-weight", "");
-        if (total < 45)
-            $("#severa").css("font-weight", "bold");
-        else if (total < 60)
-            $("#grave").css("font-weight", "bold");
-        else if (total < 80)
-            $("#moderada").css("font-weight", "bold");
-        else // if (total < 100)
-            $("#ligera").css("font-weight", "bold");
+        $("#<%= TTotal.ClientID %>").val(total);
+        $("#<%= LResultado.ClientID %>").html();
+        
+        for(var i=0; i<escala.length; i++) {
+            if (total < escala[i][0]) {
+                $("#<%= LResultado.ClientID %>").html(escala[i][1]);
+                break;
+            }
+        }
     }
 
     addFunctionToStart(function() {
@@ -79,9 +76,6 @@
         $("input:radio").change(total);
         total();
 
-        $("#<%= TFecha.ClientID %>").datepicker({
-            onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#<%=BFecha.ClientID %>").click(); }
-        });
         $("#<%= PHistorial.ClientID %>").accordion({
             autoHeight: false,
             collapsible: true,
@@ -107,7 +101,7 @@
                 <asp:Panel ID="PHistorial" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LHistorial"></asp:Label></a></h3>
                     <div class="hide">
-                        <asp:GridView ID="GHistorial" runat="server" AutoGenerateColumns="False"  Width="100%"
+                        <asp:GridView ID="GHistorial" runat="server" AutoGenerateColumns="False"  Width="100%" OnRowDataBound="GHistorial_RowDataBound"
                             DataSourceID="SHistorial" EmptyDataText="No se encontraron índices anteriores de este paciente" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -118,24 +112,21 @@
                             <Columns>
                                 <asp:TemplateField>
                                     <ItemTemplate>
-                                        <asp:ImageButton CommandArgument='<%# Eval("fecha") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
+                                        <asp:ImageButton CommandArgument='<%# Eval("id") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
-                                <asp:BoundField DataField="diagnostico" HeaderText="Incapacidad funcional" ItemStyle-Width="100%" />
-                                <asp:BoundField DataField="resultado" HeaderText="Puntaje" ItemStyle-HorizontalAlign="Right" />
+                                <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:dd/MM/yyyy HH:mm}" ItemStyle-Wrap="false" />
+                                <asp:BoundField DataField="tipo" HeaderText="Tipo" ItemStyle-Wrap="false" />
+                                <asp:BoundField DataField="resultado" HeaderText="Puntuación" ItemStyle-HorizontalAlign="Right" />
+                                <asp:BoundField DataField="idtipo" HeaderText="Descripción" ItemStyle-Width="100%" />
                             </Columns>
                         </asp:GridView>
                         <asp:SqlDataSource ID="SHistorial" runat="server" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT indice_barthel.fecha,SUM(varios.descripcion) AS resultado
-                                        ,CASE 
-                                        WHEN SUM(varios.descripcion)<45 THEN 'Severa' 
-                                        WHEN SUM(varios.descripcion)<60 THEN 'Grave' 
-                                        WHEN SUM(varios.descripcion)<80 THEN 'Moderada' 
-                                        WHEN SUM(varios.descripcion)<100 THEN 'Ligera' 
-                                        ELSE '' END AS diagnostico 
+                            SelectCommand="SELECT indice_barthel.id,indice_barthel.fecha,SUM(varios.descripcion) AS resultado
+                                        ,indice_barthel.tipo AS idtipo
+                                        ,IF(indice_barthel.tipo=8, 'Índice de Barthel', 'Escala Norton') AS tipo
                                         FROM indice_barthel
                                         LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id)
                                         LEFT JOIN varios ON (varios.id=analisis_barthel.resultado)
@@ -152,27 +143,24 @@
             </td>
             </tr>
             <tr>
-                <td>
-                    Fecha
-                    <asp:HiddenField ID="HIdIndice" runat="server" />
-                </td>
-                <td>
-                    <asp:TextBox ID="TFecha" runat="server" CssClass="fecha"></asp:TextBox><asp:Button ID="BFecha" CssClass="hide" runat="server" Text="..." onclick="BFecha_Click" />
-                </td>
-                <td>
-                    <asp:RangeValidator ID="RangeValidator1" runat="server" MaximumValue="12/12/2100" MinimumValue="12/12/1900" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Type="Date"></asp:RangeValidator></td>
-                    <asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                <td>Índice o escala</td>
+                <td><asp:DropDownList runat="server" ID="DIndice" AutoPostBack="true" 
+                        onselectedindexchanged="DIndice_SelectedIndexChanged">
+                    <asp:ListItem Text="Índice de Barthel" Value="8"></asp:ListItem>
+                    <asp:ListItem Text="Escala Norton" Value="41"></asp:ListItem>
+                </asp:DropDownList></td>
+                <td></td>
             </tr>
             <tr>
                 <td>
-                    Hora mas larga
+                    Fecha<asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                    <asp:RegularExpressionValidator ID="RegularExpressionValidator1" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha valida" Display="Dynamic" SetFocusOnError="true" ValidationExpression="^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))) (0[0-9]|1\d|2[0-3]):([0-5]\d)$" runat="server" >*</asp:RegularExpressionValidator>
+                    <asp:HiddenField ID="HIdIndice" runat="server" />
                 </td>
                 <td>
-                    <asp:TextBox ID="THora" runat="server" CssClass="hora"></asp:TextBox>
-                    <asp:RequiredFieldValidator ControlToValidate="THora" ErrorMessage="Por favor ingrese una Hora." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                    <asp:TextBox ID="TFecha" runat="server" CssClass="fechahora"></asp:TextBox>
                 </td>
-                <td>
-                    &nbsp;</td>
+                <td></td>
             </tr>
             <tr>
                 <td>Funcionario que atiende</td>
@@ -186,7 +174,7 @@
     </fieldset>
     <fieldset>
         <legend>Datos del paciente</legend>
-        <table style="width: 100%;" cellspacing=0 cellpadding=0>
+        <table style="width: 100%; border-collapse: collapse;" cellspacing=0 cellpadding=0>
             <tr>
                 <td>
                     <asp:Repeater ID="RGrupos" runat="server" DataSourceID="SqlDataSource1" 
@@ -207,12 +195,13 @@
                         <asp:SqlDataSource ID="SqlDataSource1" runat="server" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                            SelectCommand="SELECT CONVERT(CONCAT(varios.descripcion, '#',varios.id),CHAR) AS id,varios.nombre AS nombre FROM varios WHERE varios.tipo=8 AND varios.parametro1=@grupo AND varios.szReservado IS NULL" >
+                            SelectCommand="SELECT CONVERT(CONCAT(varios.descripcion, '#',varios.id),CHAR) AS id,varios.nombre AS nombre FROM varios WHERE varios.tipo=@tipo AND varios.parametro1=@grupo AND varios.szReservado IS NULL" >
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="HIdGrupo" DefaultValue="0" PropertyName="Value" Name="grupo" />
+                                <asp:ControlParameter ControlID="DIndice" PropertyName="SelectedValue" Name="tipo" />
                             </SelectParameters>
                         </asp:SqlDataSource>
-                        <asp:RadioButtonList ID="RConceptos" runat="server" DataSourceID="SqlDataSource1" DataTextField="nombre" DataValueField="id">
+                        <asp:RadioButtonList ID="RConceptos" runat="server" DataSourceID="SqlDataSource1" DataTextField="nombre" DataValueField="id" Width="100%">
                         </asp:RadioButtonList>
                         <asp:RequiredFieldValidator ControlToValidate="RConceptos" ErrorMessage="Por favor selecione un valor." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true"></asp:RequiredFieldValidator>
                       </td>
@@ -225,9 +214,10 @@
         <asp:SqlDataSource ID="SqlDataSource1" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT varios.id AS id,varios.nombre AS grupo,analisis_barthel.id AS idanalisis,analisis_barthel.resultado AS resultado FROM varios LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=@indice AND analisis_barthel.grupo=varios.id) WHERE varios.tipo=7 AND varios.szReservado IS NULL" >
+                SelectCommand="SELECT varios.id AS id,varios.nombre AS grupo,analisis_barthel.id AS idanalisis,analisis_barthel.resultado AS resultado FROM varios LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=@indice AND analisis_barthel.grupo=varios.id) WHERE varios.tipo=@tipo-1 AND varios.szReservado IS NULL" >
                 <SelectParameters>
                     <asp:ControlParameter ControlID="HIdIndice" DefaultValue="0" PropertyName="Value" Name="indice" />
+                    <asp:ControlParameter ControlID="DIndice" PropertyName="SelectedValue" Name="tipo" />
                 </SelectParameters>
             </asp:SqlDataSource>
                 </td>
@@ -237,24 +227,18 @@
                     <table style="width:100%;">
                         <tr>
                             <td>
-                                La incapacidad funcional se valora como: <span id='severa'>Severa &lt; 45 puntos</span>, <span id='grave'>Grave 45-59 Puntos</span>, 
-                                <span id='moderada'>Moderada 60-80</span>, <span id='ligera'>Ligera 80-100</span>.</td>
-                            <td>
-                                Puntuación</td>
-                            <td>
-                                <asp:TextBox ID="TTotal" runat="server" ReadOnly="True" CssClass="izquierdo"></asp:TextBox>
+                                <asp:Label runat="server" ID="LIncapacidad"></asp:Label>
+                                <asp:Label runat="server" ID="LResultado" Font-Bold="true"></asp:Label>
+                                </td>
+                            <td align="right" nowrap="nowrap">
+                                Puntuación
+                                <asp:TextBox ID="TTotal" runat="server" ReadOnly="True" CssClass="izquierdo" Width="30px"></asp:TextBox>
                             </td>
                         </tr>
                         <tr>
-                            <td>
-                                &nbsp;</td>
-                            <td>
-                                &nbsp;</td>
-                            <td>
-                                <asp:Button ID="BAceptar" runat="server" onclick="BAceptar_Click" 
-                                    Text="Aceptar" />
-                                <asp:Button ID="BCancelar" runat="server" CausesValidation="False" 
-                                    onclick="BCancelar_Click" Text="Cancelar" />
+                            <td colspan="2" align="right">
+                                <asp:Button ID="BAceptar" runat="server" onclick="BAceptar_Click" Text="Aceptar" />
+                                <asp:Button ID="BCancelar" runat="server" CausesValidation="False" onclick="BCancelar_Click" Text="Cancelar" />
                             </td>
                         </tr>
                     </table>

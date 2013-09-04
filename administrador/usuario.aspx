@@ -81,12 +81,8 @@
                 <asp:TextBox ID="TIdPersonal" runat="server" CssClass="hide"></asp:TextBox>
             </td>
             <td>
-                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" 
-                    ControlToValidate="TNombres" Display="Dynamic" 
-                    ErrorMessage="Por favor ingrese un nombre." SetFocusOnError="True"></asp:RequiredFieldValidator>
-                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" 
-                    ControlToValidate="TIdPersonal" Display="Dynamic" 
-                    ErrorMessage="Por favor ingrese un nombre." SetFocusOnError="True"></asp:RequiredFieldValidator>
+                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="TNombres" Display="Dynamic" ErrorMessage="Por favor ingrese un nombre." SetFocusOnError="True"></asp:RequiredFieldValidator>
+                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ControlToValidate="TIdPersonal" Display="Dynamic" ErrorMessage="Por favor ingrese un nombre." SetFocusOnError="True"></asp:RequiredFieldValidator>
             </td>
         </tr>
         <tr>
@@ -124,9 +120,7 @@
                 <asp:TextBox ID="TContrasena" TextMode="Password" runat="server"></asp:TextBox>
             </td>
             <td>
-                <asp:RequiredFieldValidator ID="RContrasena" runat="server" 
-                    ControlToValidate="TContrasena" Display="Dynamic" 
-                    ErrorMessage="Por favor ingrese una contraseña." SetFocusOnError="True"></asp:RequiredFieldValidator>
+                <asp:RequiredFieldValidator ID="RContrasena" runat="server" ControlToValidate="TContrasena" Display="Dynamic" ErrorMessage="Por favor ingrese una contraseña." SetFocusOnError="True"></asp:RequiredFieldValidator>
             </td>
         </tr>
         <tr>
@@ -136,10 +130,18 @@
                 <asp:TextBox ID="TConfirmar" TextMode="Password" runat="server"></asp:TextBox>
             </td>
             <td>
-                <asp:CompareValidator ID="CompareValidator1" runat="server" 
-                    ControlToCompare="TContrasena" ControlToValidate="TConfirmar" Display="Dynamic" 
-                    ErrorMessage="Las contraseñas no coinciden." SetFocusOnError="True"></asp:CompareValidator>
+                <asp:CompareValidator ID="CompareValidator1" runat="server" ControlToCompare="TContrasena" ControlToValidate="TConfirmar" Display="Dynamic" ErrorMessage="Las contraseñas no coinciden." SetFocusOnError="True"></asp:CompareValidator>
             </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><asp:Image runat="server" ID="IFirma" Visible="false" /></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Firma</td>
+            <td><asp:FileUpload runat="server" ID="FFirma" /></td>
+            <td><asp:RegularExpressionValidator ID="RegularExpressionValidator1" SetFocusOnError="true" ValidationExpression="^.+\.((jpg)|(JPG)|(jpeg)|(JPEG))$" Display="Dynamic" ControlToValidate="FFirma" runat="server" ErrorMessage="Por favor seleccione un archivo de imagen JPG.">*</asp:RegularExpressionValidator></td>
         </tr>
         <tr>
             <td colspan="3">

@@ -88,7 +88,7 @@ public partial class paciente_epicrisis : System.Web.UI.Page
             string szQuery;
             string mensaje;
 
-            epicrisis["fecha"] = CConector.GetDate(Convert.ToDateTime(TFecha.Text));
+            epicrisis["fecha"] = CConector.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text));
             epicrisis["valoracion_inicial"] = TValoracionInicial.Text;
             epicrisis["valoracion_final"] = TValoracionFinal.Text;
             epicrisis["intervencion_propuesta"] = TIntervencionPropuesta.Text;

@@ -1,7 +1,8 @@
-﻿<%@ Page Title="Indice de Barthel" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="barthel.aspx.cs" Inherits="administrador_barthel" %>
+﻿<%@ Page Title="Índices o escalas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="barthel.aspx.cs" Inherits="administrador_barthel" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<script type="text/javascript">
+
+    <script type="text/javascript">
     $(function() {
         $('.entero').numeric({ format: "0", buttons: false, minValue: 0, emptyValue: '-' });
     });
@@ -14,6 +15,15 @@
             <td>
                 <table style="width: 100%;">
         <tr>
+            <td>Índice o escala</td>
+            <td><asp:DropDownList runat="server" ID="DIndice" AutoPostBack="true" 
+                    onselectedindexchanged="DIndice_SelectedIndexChanged">
+                <asp:ListItem Text="Índice de Barthel" Value="8"></asp:ListItem>
+                <asp:ListItem Text="Escala Norton" Value="41"></asp:ListItem>
+            </asp:DropDownList></td>
+            <td></td>
+        </tr>
+        <tr>
             <td>
                 Grupo</td>
             <td>
@@ -25,7 +35,10 @@
             <asp:SqlDataSource ID="SGrupo" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=7 AND szReservado IS NULL">
+                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=@indice-1 AND szReservado IS NULL">
+                <SelectParameters>
+                    <asp:ControlParameter ControlID="DIndice" PropertyName="SelectedValue" Name="indice" />
+                </SelectParameters>
             </asp:SqlDataSource>
                 <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" 
                     ControlToValidate="DGrupo" Display="Dynamic" 
@@ -87,7 +100,7 @@
                 <Columns>
                     <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                     <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                    <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" />
+                    <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" ItemStyle-Wrap="false" />
                     <asp:BoundField DataField="nombre" HeaderText="Concepto"  ItemStyle-Width="100%" SortExpression="nombre" >
                     </asp:BoundField>
                     <asp:BoundField DataField="calificacion" HeaderText="Calificación" SortExpression="calificacion" ItemStyle-HorizontalAlign="Right" />
@@ -97,8 +110,11 @@
             <asp:SqlDataSource ID="SqlDataSource2" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,varios.descripcion AS calificacion,grupo.nombre AS grupo FROM varios LEFT JOIN varios AS grupo ON (grupo.id=varios.parametro1) WHERE varios.tipo=8 AND varios.szReservado IS NULL ORDER BY grupo" 
+                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,varios.descripcion AS calificacion,grupo.nombre AS grupo FROM varios LEFT JOIN varios AS grupo ON (grupo.id=varios.parametro1) WHERE varios.tipo=@indice AND varios.szReservado IS NULL ORDER BY grupo" 
                 DeleteCommand="UPDATE varios SET szReservado=-1 WHERE id=@id" >
+                <SelectParameters>
+                    <asp:ControlParameter ControlID="DIndice" PropertyName="SelectedValue" Name="indice" />
+                </SelectParameters>
             </asp:SqlDataSource></td>
         </tr>
         <tr>

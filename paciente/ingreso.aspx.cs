@@ -36,7 +36,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
                     SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
 
-                    TFecha.Text = DateTime.Now.ToShortDateString();
+                    TFecha.Text = Conector.GetFromMySQLDate(DateTime.Now, true);
                     PDatos.Visible = true;
                     PMujer.Visible = CCDetallePaciente.Sexo != "M";
 
@@ -59,7 +59,6 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
                     qIngreso += "id";
                     qIngreso += "medico";
-                    qIngreso += "hora";
                     qIngreso += "motivo";
                     qIngreso += "segun";
                     qIngreso += "enfermedad_actual";
@@ -74,6 +73,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     qIngreso += "tipo_diagnostico";
                     qIngreso += "conducta";
                     qIngreso += "fecha";
+                    qIngreso += "nivel_atencion";
+                    qIngreso += "area_atencion";
+                    qIngreso += "seguimiento";
+
                     using (CConectorMS conector = new CConectorMS())
                     {
                         using (CConector conectormysql = new CConector())
@@ -81,6 +84,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                             MySqlDataReader readermysql = conectormysql.Query(qIngreso.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
                             if (readermysql != null && readermysql.Read())
                             {
+                                PNivelAtencion.Visible = true;
                                 BAceptar.Enabled = usuario.CanUpdate();
                                 BMasCDiagnostico.Enabled = usuario.CanUpdate();
                                 ((MasterPageI)Master).Imprimir("ingreso.html");
@@ -90,7 +94,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
                                 HIdIngreso.Value = readermysql["id"].ToString();
                                 conector.SelectInDropDown(DMedico, readermysql["medico"], "SELECT perNombre FROM admPersonalHS WHERE perId={0}");
-                                THora.Text = readermysql["hora"].ToString();
+
                                 TMotivo.Text = readermysql["motivo"].ToString();
                                 DMotivo.SelectedValue = readermysql["segun"].ToString();
                                 TEnfermedadActual.Text = readermysql["enfermedad_actual"].ToString();
@@ -103,9 +107,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
                                 TAnalisis.Text = readermysql["analisis"].ToString();
                                 TGlucometria.Text = readermysql["glucometria"].ToString();
                                 conector.SelectInDropDown(DTipoDiagnostico, readermysql["tipo_diagnostico"]);
-                                if (readermysql["fecha"] != DBNull.Value)
-                                    TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
-                                else TFecha.Text = "";
+                                conector.SelectInDropDown(DNivelAtencion, readermysql["nivel_atencion"]);
+                                conector.SelectInDropDown(DArea, readermysql["area_atencion"]);
+                                TFechaSeguimiento.Text = Conector.GetFromMySQLDate(readermysql["seguimiento"]);
+                                TFecha.Text = Conector.GetFromMySQLDate(readermysql["fecha"], true);
                                 TConductaInicial.Text = readermysql["conducta"].ToString();
                                 if (TConductaInicial.Text.Length == 0)
                                 {
@@ -154,7 +159,6 @@ public partial class paciente_ingreso : System.Web.UI.Page
             Query qIngreso = new Query("ingreso_paciente");
 
             qIngreso["medico"] = DMedico.SelectedValue;
-            qIngreso["hora"] = THora.Text;
             qIngreso["motivo"] = TMotivo.Text;
             qIngreso["segun"] = DMotivo.SelectedValue;
             qIngreso["enfermedad_actual"] = TEnfermedadActual.Text;
@@ -163,12 +167,16 @@ public partial class paciente_ingreso : System.Web.UI.Page
             qIngreso["fr"] = TFR.Text;
             qIngreso["t"] = TT.Text;
             qIngreso["peso"] = TPeso.Text;
-            qIngreso["fecha"] = CConector.GetDate(Convert.ToDateTime(TFecha.Text));
+            qIngreso["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text, true);
             qIngreso["saturacion"] = TSaturacion.Text;
             qIngreso["analisis"] = TAnalisis.Text;
             qIngreso["glucometria"] = TGlucometria.Text;
             qIngreso["tipo_diagnostico"] = DTipoDiagnostico.SelectedValue;
             qIngreso["asegurador"] = CCDetallePaciente.AsegurdadorID;
+            qIngreso["nivel_atencion"] = DNivelAtencion.SelectedValue;
+            qIngreso["area_atencion"] = DArea.SelectedValue;
+            qIngreso["seguimiento"] = Conector.GetMySQLDateFormat(TFechaSeguimiento.Text);
+
             qIngreso["conducta"] =
                 (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TConductaInicial.Text != ViewState["procedimientos"].ToString())
                 ? TConductaInicial.Text
@@ -221,6 +229,27 @@ public partial class paciente_ingreso : System.Web.UI.Page
                 conector.QueryMod(id);
             }
 
+
+            for (int i = 0; i < GRiesgos.Rows.Count; i++)
+            {
+                Query riesgos = new Query("ingreso_riesgos");
+                string id = GRiesgos.DataKeys[i].Values[1].ToString();
+
+                riesgos["estado"] = ((CheckBox)GRiesgos.Rows[i].Cells[0].FindControl("CSi")).Checked ? "1" : "";
+                riesgos["observaciones"] = ((TextBox)GRiesgos.Rows[i].Cells[1].FindControl("TObservaciones")).Text;
+                if (id.Length > 0)
+                {
+                    id = riesgos.GetUpdate("id='" + id + "'");
+                }
+                else
+                {
+                    riesgos["ingreso_paciente"] = HIdIngreso.Value;
+                    riesgos["motivo"] = GRiesgos.DataKeys[i].Values[0].ToString();
+                    id = riesgos.GetInsert();
+                }
+                conector.QueryMod(id);
+            }
+
             for (int i = 0; i < GRevision.Rows.Count; i++)
             {
                 Query antecendentes = new Query("revision_ingreso");
@@ -261,6 +290,25 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     antecendentes["ingreso_paciente"] = HIdIngreso.Value;
                     antecendentes["motivo"] = GExamenFisico.DataKeys[i].Values[0].ToString();
                     id = antecendentes.GetInsert();
+                }
+                conector.QueryMod(id);
+            }
+
+            for (int i = 0; i < RPlanEducativo.Items.Count; i++)
+            {
+                Query riesgos = new Query("ingreso_plan_educativo");
+                string id = RPlanEducativo.DataKeys[i].ToString();
+
+                riesgos["estado"] = ((CheckBox)RPlanEducativo.Items[i].FindControl("CSi")).Checked ? "1" : "";
+                if (id.Length > 0)
+                {
+                    id = riesgos.GetUpdate("id='" + id + "'");
+                }
+                else
+                {
+                    riesgos["ingreso_paciente"] = HIdIngreso.Value;
+                    riesgos["motivo"] = ((HiddenField)RPlanEducativo.Items[i].FindControl("HId")).Value;
+                    id = riesgos.GetInsert();
                 }
                 conector.QueryMod(id);
             }
@@ -330,7 +378,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
             if (ingreso && (CCDetallePaciente.Edad == -1 || CCDetallePaciente.Edad > 14))
-                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente, conector);
+                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + Conector.GetMySQLDateFormat(TFecha.Text, true), conector);
             ((MasterPageI)Master).SetResultado(mensaje);
         }
         // Session["szMensaje"] = mensaje;
@@ -485,6 +533,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
         PrintEventArgs evento = (PrintEventArgs)e;
         // aqui modificamos el evento.Contenido
         evento.Contenido = evento.Contenido.Replace("$szAntecedentes$", Utilidades.RenderGrid(GAntecedentes, "border=0 cellspacing=0"));
+        evento.Contenido = evento.Contenido.Replace("$szRiesgos$", Utilidades.RenderGrid(GRiesgos, "border=0 cellspacing=0"));
         evento.Contenido = evento.Contenido.Replace("$szRevision$", Utilidades.RenderGrid(GRevision, "border=0 cellspacing=0"));
         evento.Contenido = evento.Contenido.Replace("$szExamenFisico$", Utilidades.RenderGrid(GExamenFisico, "border=0 cellspacing=0"));
         if (PMujer.Visible)
@@ -493,6 +542,9 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
         evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + TConductaInicial.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
+
+        evento.Contenido = evento.Contenido.Replace("$szBarthel$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Barthel));
+        evento.Contenido = evento.Contenido.Replace("$szNorton$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Norton));
 
         Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
         evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
@@ -519,6 +571,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
                 }
             }
+        }
+        using (CConector conector = new CConector())
+        {
+            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(DMedico.SelectedValue)));
         }
         // limpiamos el inactivo de los pacientes
         evento.Contenido = evento.Contenido.Replace(" (Inactivo)", "");

@@ -7,21 +7,24 @@
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
     <table>
         <tr>
-            <td>Desde</td>
-            <td>Hasta</td>
+            <td>Desde
+                <asp:RequiredFieldValidator ControlToValidate="TDesde" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator>
+                <asp:RangeValidator ControlToValidate="TDesde" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
+            <td>Hasta
+                <asp:RequiredFieldValidator ControlToValidate="THasta" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator>
+                <asp:RangeValidator ControlToValidate="THasta" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
             <td>Entidad</td>
+            <td>Nivel de atención</td>
+            <td>Área encargada</td>
+            <td>Estado</td>
             <td>&nbsp;</td>
         </tr>
         <tr>
             <td>
                 <asp:TextBox runat="server" ID="TDesde" CssClass="fecha" ></asp:TextBox>
-                <asp:RequiredFieldValidator ControlToValidate="TDesde" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator>
-                <asp:RangeValidator ControlToValidate="TDesde" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator>
                 </td>
             <td>
                 <asp:TextBox runat="server" ID="THasta" CssClass="fecha"></asp:TextBox>
-                <asp:RequiredFieldValidator ControlToValidate="THasta" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator>
-                <asp:RangeValidator ControlToValidate="THasta" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator>
             </td>
             <td>
                 <asp:DropDownList ID="DAsegurador" runat="server" 
@@ -33,6 +36,34 @@
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
                     SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
+            <td><asp:DropDownList ID="DNivelAtencion" runat="server" DataSourceID="SNivelAtencion" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SNivelAtencion" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=37 AND szReservado IS NULL">
+                </asp:SqlDataSource>
+            </td>
+            <td>
+                <asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SArea" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT CAST(IFNULL(GROUP_CONCAT(medicamentos.id),-1) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
+                </asp:SqlDataSource>
+            </td>
+            <td>
+                <asp:DropDownList ID="DEstado" runat="server">
+                    <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+                    <asp:ListItem Text="Con seguimiento" Value="1"></asp:ListItem>
+                    <asp:ListItem Text="Sin seguimiento" Value="2"></asp:ListItem>
+                </asp:DropDownList>
+            </td>
             <td>
                 <asp:Button ID="BBuscar" runat="server" Text="Buscar" onclick="BBuscar_Click" />
             </td>
@@ -82,6 +113,12 @@
                                 WHERE 
                                 ingreso_paciente.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                                 AND (@asegurador=0 OR @asegurador=ingreso_paciente.asegurador)
+                                AND (@nivel_atencion=0 OR @nivel_atencion=ingreso_paciente.nivel_atencion)
+                                AND (@area=0 OR @area=ingreso_paciente.area_atencion)
+                                AND (@estado=0 
+                                        OR (@estado=1 AND ingreso_paciente.seguimiento IS NOT NULL)
+                                        OR (@estado=2 AND ingreso_paciente.seguimiento IS NULL)
+                                    )
                                 GROUP BY ingreso_paciente.id
                             ) UNION (
                             SELECT 
@@ -96,6 +133,12 @@
                                 WHERE 
                                 evolucion_paciente.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                                 AND (@asegurador=0 OR @asegurador=evolucion_paciente.asegurador)
+                                AND (@nivel_atencion=0 OR @nivel_atencion=evolucion_paciente.nivel_atencion)
+                                AND (@area=0 OR @area=evolucion_paciente.area_atencion)
+                                AND (@estado=0 
+                                        OR (@estado=1 AND evolucion_paciente.seguimiento IS NOT NULL)
+                                        OR (@estado=2 AND evolucion_paciente.seguimiento IS NULL)
+                                    )
                                 GROUP BY evolucion_paciente.id
                             ) ORDER BY fecha;
                             ">
@@ -103,6 +146,9 @@
                 <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
                 <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />
                 <asp:ControlParameter ControlID="DAsegurador" Name="asegurador" PropertyName="SelectedValue" />
+                <asp:ControlParameter ControlID="DNivelAtencion" Name="nivel_atencion" PropertyName="SelectedValue" />
+                <asp:ControlParameter ControlID="DArea" Name="area" PropertyName="SelectedValue" />
+                <asp:ControlParameter ControlID="DEstado" Name="estado" PropertyName="SelectedValue" />
             </SelectParameters>
         </asp:SqlDataSource>
         <div style="text-align: right;">

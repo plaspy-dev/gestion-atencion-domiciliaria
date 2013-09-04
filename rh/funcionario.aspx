@@ -93,7 +93,7 @@
                 <li><a href="#tabs5">Sesiones programadas</a></li>
             </ul>
             <div id="tabs1" class="hide">
-                <table class="style1">
+                <table>
                     <tr>
                         <td>
                             Apellidos</td>
@@ -484,7 +484,7 @@
                             <td colspan="2">
                             <fieldset>
                                 <legend>Documentos Entregados a Atención Domiciliaria</legend>
-                                <table class="style1">
+                                <table>
                                     <tr>
                                         <td>
                                             <asp:DataList ID="DDocumentos" runat="server" RepeatColumns="2" DataSourceID="SDocumentos"
@@ -514,7 +514,7 @@
                             <td colspan="2" style="vertical-align:top;">
                                 <fieldset>
                                 <legend>Documentos Entregados al Contratista</legend>
-                                <table class="style1">
+                                <table>
                                     <tr>
                                         <td>
                                             <asp:DataList ID="DDocumentosContratista" runat="server" RepeatColumns="2" DataSourceID="SDocumentosContratista"
@@ -545,7 +545,7 @@
                     </table>
             </div>
             <div id="tabs3"  class="hide">
-                <table class="style1">
+                <table>
                     <tr>
                         <td>
                             <asp:Label ID="Label1" runat="server" Text="Profesión:"></asp:Label>
@@ -608,7 +608,7 @@
                 </table>
             </div>
             <div id="tabs4" class="hide">
-            <table class="style1">
+            <table>
                     <tr>
                         <td>
                             <asp:UpdatePanel ID="UpdatePanel1" runat="server">

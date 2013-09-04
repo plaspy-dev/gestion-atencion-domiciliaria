@@ -12,6 +12,9 @@ public partial class administrador_barthel : System.Web.UI.Page
     {
         DGrupo.Focus();
         if(!IsPostBack) {
+
+            if (!string.IsNullOrEmpty(Request.QueryString["ioe"]))
+                Conector.SelectInDropDown(DIndice, Request.QueryString["ioe"]);
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanInsert();
@@ -36,8 +39,7 @@ public partial class administrador_barthel : System.Web.UI.Page
 
             if (HId.Value.Length == 0)
             {
-
-                query["tipo"] = "8";
+                query["tipo"] = DIndice.SelectedValue;
                 szQuery = query.GetInsert();
                 mensaje = TConcepto.Text + " ingresado";
             }
@@ -54,7 +56,8 @@ public partial class administrador_barthel : System.Web.UI.Page
             if (conector.InsertModificacion(HId.Value) == -1)
                 return;
             Procedimientos.RemoveVarios(HId.Value);
-            ((MasterPageI)Master).SetResultado(mensaje);
+            ((MasterPageI)Master).SetResultado(mensaje, false);
+            Response.Redirect(Request.Url.AbsolutePath + "?ioe=" + DIndice.SelectedValue);
         }
     }
 
@@ -62,6 +65,7 @@ public partial class administrador_barthel : System.Web.UI.Page
     {
         Response.Redirect(Request.Url.AbsolutePath);
     }
+
     protected void GResultado_SelectedIndexChanged(object sender, EventArgs e)
     {
         HId.Value= GResultado.SelectedDataKey.Value.ToString();
@@ -70,5 +74,9 @@ public partial class administrador_barthel : System.Web.UI.Page
         TCalificacion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[4].Text);
 
         ((MasterPageI)Master).SetModificacion(HId.Value);
+    }
+    protected void DIndice_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        Response.Redirect(Request.Url.AbsolutePath + "?ioe=" + DIndice.SelectedValue);
     }
 }

@@ -41,6 +41,8 @@ public partial class administrador_usuario : System.Web.UI.Page
         }
         GCargos.DataBind();
         GEntidades.DataBind();
+        IFirma.Visible = true;
+        IFirma.ImageUrl = "~/archivo/firma.ashx?ui=" + HId.Value;
         
         ((MasterPageI)Master).SetModificacion(HId.Value);
     }
@@ -219,6 +221,14 @@ public partial class administrador_usuario : System.Web.UI.Page
                     }
                 }
 
+                if (FFirma.HasFile)
+                {
+                    string archivo = ConfigurationManager.AppSettings["pathFiles"] + "firmas\\";
+                    System.IO.Directory.CreateDirectory(archivo);
+                    archivo += HId.Value + ".jpg";
+                    FFirma.SaveAs(archivo);
+                }
+
                 ((MasterPageI)Master).SetResultado(mensaje);
             }
         }
@@ -227,6 +237,7 @@ public partial class administrador_usuario : System.Web.UI.Page
     {
         Response.Redirect(Request.Url.AbsolutePath);
     }
+
     protected void BMigrar_Click(object sender, EventArgs e)
     {
         using(CConector conectorMySQL= new CConector()) 
