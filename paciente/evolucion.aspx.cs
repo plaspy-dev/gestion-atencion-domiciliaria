@@ -23,6 +23,19 @@ public partial class paciente_evolucion : System.Web.UI.Page
             BMasCDiagnostico.Enabled = false;
             PEvoluciones.Visible = false;
 
+            if (!string.IsNullOrEmpty(Request.QueryString["aid"])) {
+
+                if (Request.QueryString["aid"][0] == 'i') {
+                    Response.Redirect("~/paciente/ingreso.aspx?aid=" + Request.QueryString["aid"].Substring(1));
+                }
+                using (CConector conector = new CConector()) {
+                    Response.Redirect(Request.Url.AbsolutePath + "?evolid=" + Request.QueryString["aid"] 
+                        + "&pid=" 
+                        + conector.QueryString("SELECT paciente FROM evolucion_paciente WHERE id=" + Query.GetValor(Request.QueryString["aid"]))
+                        );
+                }
+            }
+
             if (Request.QueryString["pid"] != null)
             {
                 CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
@@ -339,7 +352,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
             Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
             if (nuevaevolucion && (CCDetallePaciente.Edad == -1 || CCDetallePaciente.Edad > 14))
-                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + Conector.GetMySQLDateFormat(TFecha.Text, true), conector);
+                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Conector.GetMySQLDateFormat(TFecha.Text, true)), conector);
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
             ((MasterPageI)Master).SetResultado(mensaje);
         }
@@ -425,7 +438,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
             if (text.Text.Length != 0) {
                 if (resultado.Length > 0)
                     resultado += ", ";
-                resultado += string.Format("{0} ({1}) {2}", check.Text, check.Checked ? "X" : "_", text.Text);
+                resultado += string.Format("<b>{0}: </b> {2}", check.Text, check.Checked ? "X" : "_", text.Text);
             }
         }
         if (resultado.Length == 0)
@@ -457,11 +470,28 @@ public partial class paciente_evolucion : System.Web.UI.Page
                 }
                 if (check.Length == 0)
                     check = "_";
-                resultado += string.Format("{0} ({1}) {2}.", nombre.Text, check, text.Text);
+                resultado += string.Format("<b>{0}</b> ({1}) {2}.", nombre.Text, check, text.Text);
             }
         }
         if (resultado=="")
             resultado = grid.EmptyDataText;
+        return resultado;
+    }
+
+    protected string ImprimirPlanEducativo() {
+        
+        string resultado = "";
+        for (int i = 0; i < RPlanEducativo.Items.Count; i++) {
+            CheckBox check= (CheckBox)RPlanEducativo.Items[i].FindControl("CSi");
+            if (check.Checked)
+            {
+                if (resultado.Length > 0)
+                    resultado += ", ";
+                resultado += check.Text;
+            }
+        }
+        if (resultado.Length == 0)
+            resultado = "No se encontro plan educativo.";
         return resultado;
     }
 
@@ -472,6 +502,8 @@ public partial class paciente_evolucion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szAntecedentes$", ImprimirGridTipo1(GAntecedentes));
         evento.Contenido = evento.Contenido.Replace("$szRiesgos$", ImprimirGridTipo1(GRiesgos));
         evento.Contenido = evento.Contenido.Replace("$szExamenFisico$", ImprimirGridTipo2(GExamenFisico));
+        evento.Contenido = evento.Contenido.Replace("$szPlanEducativo$", ImprimirPlanEducativo());
+        
 
         evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + TPlanManejo.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());

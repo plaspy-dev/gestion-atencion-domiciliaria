@@ -70,8 +70,8 @@ public partial class administrador_copagos : System.Web.UI.Page
             Query query = new Query("varios");
 
             query["nombre"] = TPorcentaje.Text;
-            query["descripcion"] = TServicio.Text.Replace(",", "");
-            query["szReservado"] = TTotal.Text.Replace(",", "");
+            query["descripcion"] = TServicio.Text.Replace(",", "").Replace("$", "");
+            query["szReservado"] = TTotal.Text.Replace(",", "").Replace("$", "");
 
             if (HId.Value.Length == 0)
             {

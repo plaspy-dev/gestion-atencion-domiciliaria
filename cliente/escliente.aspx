@@ -53,7 +53,7 @@
             return color;
         }
 
-        $("#promedio").numeric({ format: "0.##", buttons: false });
+        $("#promedio").autoNumeric({ vMin: 0, aSep: '', mDec: 2, aPad: false });
 
 
         jQuery.fn.ForceNumericOnly =
@@ -74,7 +74,6 @@
                     });
                 });
             };
-        // .numeric({ format: "0", buttons: false, minValue: 0, maxValue: 5 })
         $(".cal").css("text-align", "left").ForceNumericOnly().change(function() {
 
             if ($(this).val() == "-") {
@@ -94,7 +93,7 @@
                 cuenta++;
             });
             total = total / cuenta;
-            $("#promedio").numeric('value', total);
+            $("#promedio").autoNumeric('set', total);
             $("#<%= HCalificacion.ClientID %>").val($("#promedio").val());
             if (total > 0 && total < 0.6)
                 total = 1;

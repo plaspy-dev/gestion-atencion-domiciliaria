@@ -165,7 +165,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         using (CConectorMS conector = new CConectorMS())
         {
 
-            string temp = TAbono.Text.Replace(",", "");
+            string temp = TAbono.Text.Replace(",", "").Replace("$", "");
             if (temp.Length != 0 && Convert.ToDouble(temp) > 0) // verificamos que tenga algun valor
             {
                 Query pago = new Query("pago_autorizacion");
@@ -269,7 +269,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             query["pacId"] = HIdPaciente.Value;
             query["autFecha"] = TFecha.Text;
             query["autFechaVenc"] = TVencimiento.Text;
-            query["total"] = TValor.Text.Replace(",", "");
+            query["total"] = TValor.Text.Replace(",", "").Replace("$", "");
             query["autObservaciones"] = TObservaciones.Text;
             query["entId"] = HIdEntidad.Value;
             query["autActivo"] = "1";

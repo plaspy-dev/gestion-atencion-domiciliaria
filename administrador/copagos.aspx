@@ -37,7 +37,7 @@
                         <td>
                             Valor tope máximo a cobrar por servicio año</td>
                         <td align="right">
-                            $<asp:TextBox ID="TServicio" CssClass="dinero" Width="60" runat="server"></asp:TextBox>&nbsp;&nbsp;
+                            <asp:TextBox ID="TServicio" CssClass="dinero" Width="60" runat="server"></asp:TextBox>&nbsp;&nbsp;
                         </td>
                         <td>
                             <asp:RequiredFieldValidator ControlToValidate="TServicio" ErrorMessage="Por favor ingrese un valor máximo por servicio." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
@@ -46,7 +46,7 @@
                         <td>
                             Valor tope máximo a cobrar por año</td>
                         <td align="right">
-                            $<asp:TextBox ID="TTotal" CssClass="dinero" Width="60" runat="server"></asp:TextBox>&nbsp;&nbsp;
+                            <asp:TextBox ID="TTotal" CssClass="dinero" Width="60" runat="server"></asp:TextBox>&nbsp;&nbsp;
                         </td>
                         <td>
                             <asp:RequiredFieldValidator ControlToValidate="TTotal" ErrorMessage="Por favor ingrese un valor máximo total." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>

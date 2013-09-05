@@ -145,8 +145,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                 if (costo.Text.Length > 0 || maxima.Text.Length > 0)
                 {
                     valores["entidad"] = GEntidades.DataKeys[i].Value.ToString();
-                    valores["costo"] = costo.Text.Replace(",", "");
-                    valores["maxima"] = maxima.Text.Replace(",", "");
+                    valores["costo"] = costo.Text.Replace(",", "").Replace("$", "");
+                    valores["maxima"] = maxima.Text.Replace(",", "").Replace("$", "");
                     if (conector.QueryMod(valores.GetInsert()) == -1)
                         return;
                     if (conectorms.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(costo.Text.Replace(",", ""))

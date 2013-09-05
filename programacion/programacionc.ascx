@@ -5,11 +5,7 @@
         $("#<%= TFechaFinal.ClientID %>").val($(elemento).val());
     }
     addFunctionToStart(function() {
-        $("#<%= TFecha.ClientID %>").change(function() { copyfecha(this) }).datepicker({
-            onClose: function(dateText, inst) {
-                copyfecha(this);
-            }
-        });
+        $("#<%= TFecha.ClientID %>").datepicker('option','altField', "#<%= TFechaFinal.ClientID %>");
         if ($("#<%= HId.ClientID %>").val() != "")
             $("#<%= CRecurrente.ClientID %>").hide().next().hide();
 

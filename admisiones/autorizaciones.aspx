@@ -42,9 +42,11 @@
     }
 
     function Calcular() {
-
-        total = $("#<%= TValor.ClientID %>").numeric('value');
-        var abono = $("#<%= TAbono.ClientID %>").numeric('value');
+    
+        try {
+            total = $("#<%= TValor.ClientID %>").autoNumeric('get');
+        }  catch (ex) {return;}
+        var abono = $("#<%= TAbono.ClientID %>").autoNumeric('get');
 
         $("#vpagado").each(function() {
             temp = parseFloat($(this).text().replace(/\./g, "").replace(/\$/g, "").replace(/,/g, "."));
@@ -60,7 +62,7 @@
         
         $("#<%= TValor.ClientID %>").change(function() {
 
-            var total = $(this).numeric('value');
+            var total = $(this).autoNumeric('get');
             $("#vpagado").each(function() {
                 temp = parseFloat($(this).text().replace(/\./g, "").replace(/\$/g, "").replace(/,/g, "."));
                 if (isNaN(temp))
@@ -68,7 +70,7 @@
                 total -= temp;
             });
             $("#<%= TAbono.ClientID %>").val(total);
-            $("#<%= TAbono.ClientID %>").numeric('value', total);
+            $("#<%= TAbono.ClientID %>").autoNumeric('set', total);
             Calcular();
         });
         $("#<%= TAbono.ClientID %>").change(Calcular);

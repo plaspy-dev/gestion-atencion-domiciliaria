@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
@@ -28,7 +29,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         if(usuario.GetForceURL().Length!=0) {
 
             CURLs url = new CURLs(usuario.GetForceURL().ToLower(), "", "");
-            if (HttpContext.Current.Request.Url.ToString().ToLower().IndexOf(url.FullURL) == -1)
+            if (HttpContext.Current.Request.Url.ToString().ToLower().IndexOf(HttpUtility.UrlDecode(url.FullURL).Replace(" ","+")) == -1)
             {// es la misma
                 Response.Redirect(usuario.GetForceURL());
                 return;
@@ -40,7 +41,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             RAlertas.DataBind();
             RAlertasReal.DataBind();
             LTotalAlertas.Text = RAlertasReal.Items.Count.ToString();
-            lnkAlertas.Visible=
+            PTotalAlerta.Visible= lnkAlertas.Visible =
             LTotalAlertas.Visible = RAlertasReal.Items.Count > 0;
             lnkAlertas.Text = RAlertasReal.Items.Count==1 ? "Alerta" : "Alertas";
         }
@@ -355,9 +356,35 @@ public partial class MasterPageI : System.Web.UI.MasterPage
     protected void OnAlerta_Click(object sender, EventArgs e)
     {
         LinkButton link= (LinkButton)sender;
-        SAlertas.SelectCommand = link.CommandName;
+        List<Alertas> resultado = (from x in Alertas.GetAlertas()
+            where x.Id == link.CssClass.Replace("ac","") select x).ToList();
+        if(resultado.Count==0)
+            return;
+        Alertas info= resultado.First();
+        dAlertas.Attributes["title"] = info.Nombre;
+        SAlertas.SelectCommand = info.SelectCommand;
+        SAlertas.ConnectionString = ConfigurationManager.ConnectionStrings[info.MySQLDB ? "MySQLConnectionString" : "connBD"].ConnectionString;
+        SAlertas.ProviderName = ConfigurationManager.ConnectionStrings[info.MySQLDB ? "MySQLConnectionString" : "connBD"].ProviderName;
         GAlertas.DataBind();
-        ((HyperLinkField)GAlertas.Columns[0]).DataNavigateUrlFormatString = link.CommandArgument;
+        ((HyperLinkField)GAlertas.Columns[0]).DataNavigateUrlFormatString = info.URL;
         PAlertas.Visible = true;
+
+        ScriptManager.RegisterClientScriptBlock(PAlertas, typeof(string), "alerta", "addDialog('#" + PAlertas.ClientID + "', '#" + dAlertas.ClientID +"', true);", true);
+    }
+
+    protected void GAlertas_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowIndex != -1)
+        {
+            HyperLink link = (HyperLink)e.Row.Cells[0].Controls[0];
+            int inicio=link.Text.IndexOf("$InPac$");
+            if (inicio != -1) {
+                int final = link.Text.IndexOf("$FinPac$");
+                if (final != -1) {
+                    string idPaciente= link.Text.Substring(inicio + 7, final - inicio-7);
+                    link.Text = link.Text.Replace(string.Format("$InPac${0}$FinPac$", idPaciente), Paciente.GetPaciente(idPaciente).NombreCompleto);
+                }
+            }
+        }
     }
 }

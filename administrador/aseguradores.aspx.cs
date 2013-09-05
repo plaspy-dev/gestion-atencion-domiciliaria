@@ -38,8 +38,8 @@ public partial class administrador_aseguradores : System.Web.UI.Page
             query["entARP"] = CARP.Checked ? "1" : "0";
             query["entAFP"] = CAFP.Checked ? "1" : "0";
             query["entPrgNoAut"] = CProgramar.Checked ? "1" : "0";
-            query["maximo_mensual"] = TMaximoMensual.Text.Replace(",", "");
-            query["maximo_paciente"] = TMaximoPaciente.Text.Replace(",", "");
+            query["maximo_mensual"] = TMaximoMensual.Text.Replace(",", "").Replace("$", "");
+            query["maximo_paciente"] = TMaximoPaciente.Text.Replace(",", "").Replace("$", "");
 
             if (id.Length == 0)
             {

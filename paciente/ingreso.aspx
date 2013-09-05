@@ -179,7 +179,7 @@
                 <asp:SqlDataSource ID="SArea" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="SELECT CAST(IFNULL(GROUP_CONCAT(medicamentos.id),-1) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
+                    SelectCommand="SELECT id,nombre FROM varios WHERE varios.tipo=22 AND varios.szReservado IS NULL;">
                 </asp:SqlDataSource></td>
                 <td>Seguimiento<asp:RangeValidator ControlToValidate="TFechaSeguimiento" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
                 <td><asp:TextBox runat="server" ID="TFechaSeguimiento" CssClass="fecha"></asp:TextBox></td>
@@ -191,10 +191,7 @@
             </tr>
             <tr>
                 <td>Enfermedad actual<asp:RequiredFieldValidator ControlToValidate="TEnfermedadActual" ErrorMessage="Por favor ingrese una enfermedad." ID="RequiredFieldValidator3" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-                <td colspan="3">
-                    <asp:TextBox ID="TEnfermedadActual" runat="server" Height="120px" 
-                        TextMode="MultiLine" Width="99%">
-                        </asp:TextBox></td>
+                <td colspan="3"><asp:TextBox ID="TEnfermedadActual" runat="server" Height="120px" TextMode="MultiLine" Width="99%"></asp:TextBox></td>
             </tr>
             <tr>
                 <td colspan="2" valign="top" width="50%">
@@ -209,7 +206,8 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Revisión sistemas">
                         <ItemTemplate>
-                            <%# Eval("nombre").ToString() %><asp:RequiredFieldValidator ID="RequiredFieldValidator9" ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                            <asp:Label runat="server" ID="LNombre" Text='<%# Eval("nombre").ToString() %>'></asp:Label>
+                            <asp:RequiredFieldValidator ID="RequiredFieldValidator9" ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Nor">
@@ -316,7 +314,7 @@
             <Columns>
                 <asp:TemplateField HeaderText="Examen físico">
                     <ItemTemplate>
-                        <%# Eval("nombre").ToString() %>
+                        <asp:Label runat="server" ID="LNombre" Text='<%# Eval("nombre").ToString() %>'></asp:Label>
                         <asp:RequiredFieldValidator ID="RequiredFieldValidator11" ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                     </ItemTemplate>
                 </asp:TemplateField>

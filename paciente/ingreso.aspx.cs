@@ -23,7 +23,18 @@ public partial class paciente_ingreso : System.Web.UI.Page
             BAceptar.Enabled = false;
             BMasCDiagnostico.Enabled = false;
 
-            if (Request.QueryString["pid"] != null)
+            if (!string.IsNullOrEmpty(Request.QueryString["aid"]))
+            {
+                using (CConector conector = new CConector())
+                {
+                    Response.Redirect(Request.Url.AbsolutePath + "?inid=" + Request.QueryString["aid"]
+                        + "&pid="
+                        + conector.QueryString("SELECT paciente FROM ingreso_paciente WHERE id=" + Query.GetValor(Request.QueryString["aid"]))
+                        );
+                }
+            }
+
+            if (!string.IsNullOrEmpty(Request.QueryString["pid"]))
             {
                 CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
                 if (CCDetallePaciente.IdPaciente.Length == 0)
@@ -378,7 +389,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
             if (ingreso && (CCDetallePaciente.Edad == -1 || CCDetallePaciente.Edad > 14))
-                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + Conector.GetMySQLDateFormat(TFecha.Text, true), conector);
+                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Conector.GetMySQLDateFormat(TFecha.Text, true)), conector);
             ((MasterPageI)Master).SetResultado(mensaje);
         }
         // Session["szMensaje"] = mensaje;
@@ -528,16 +539,88 @@ public partial class paciente_ingreso : System.Web.UI.Page
         return resultado;
     }
 
+    protected static string ImprimirGridTipo1(GridView grid)
+    {
+
+        string resultado = "";
+        for (int i = 0; i < grid.Rows.Count; i++)
+        {
+            CheckBox check = (CheckBox)grid.Rows[i].FindControl("CSi");
+            TextBox text = (TextBox)grid.Rows[i].FindControl("TObservaciones");
+            if (text.Text.Length != 0)
+            {
+                if (resultado.Length > 0)
+                    resultado += ", ";
+                resultado += string.Format("<b>{0}: </b> {2}", check.Text, check.Checked ? "X" : "_", text.Text);
+            }
+        }
+        if (resultado.Length == 0)
+            resultado = grid.EmptyDataText;
+        return resultado;
+    }
+
+    protected static string ImprimirGridTipo2(GridView grid)
+    {
+        string resultado = "";
+        for (int i = 0; i < grid.Rows.Count; i++)
+        {
+            Label nombre = (Label)grid.Rows[i].FindControl("LNombre");
+            CheckBox nor = (CheckBox)grid.Rows[i].FindControl("CNor");
+            CheckBox pat = (CheckBox)grid.Rows[i].FindControl("CPat");
+            TextBox text = (TextBox)grid.Rows[i].FindControl("TObservaciones");
+            if (text.Text.Length != 0)
+            {
+                if (resultado.Length > 0)
+                    resultado += "<br/>";
+                string check = "";
+                if (nor.Checked)
+                    check = "Nor";
+                if (pat.Checked)
+                {
+                    if (check.Length > 0)
+                        check += ",";
+                    check += "Pat";
+                }
+                if (check.Length == 0)
+                    check = "_";
+                resultado += string.Format("<b>{0}</b> ({1}) {2}.", nombre.Text, check, text.Text);
+            }
+        }
+        if (resultado == "")
+            resultado = grid.EmptyDataText;
+        return resultado;
+    }
+
+    protected string ImprimirPlanEducativo()
+    {
+
+        string resultado = "";
+        for (int i = 0; i < RPlanEducativo.Items.Count; i++)
+        {
+            CheckBox check = (CheckBox)RPlanEducativo.Items[i].FindControl("CSi");
+            if (check.Checked)
+            {
+                if (resultado.Length > 0)
+                    resultado += ", ";
+                resultado += check.Text;
+            }
+        }
+        if (resultado.Length == 0)
+            resultado = "No se encontro plan educativo.";
+        return resultado;
+    }
+
     protected void OnImprimir(object sender, EventArgs e)
     {
         PrintEventArgs evento = (PrintEventArgs)e;
         // aqui modificamos el evento.Contenido
-        evento.Contenido = evento.Contenido.Replace("$szAntecedentes$", Utilidades.RenderGrid(GAntecedentes, "border=0 cellspacing=0"));
-        evento.Contenido = evento.Contenido.Replace("$szRiesgos$", Utilidades.RenderGrid(GRiesgos, "border=0 cellspacing=0"));
-        evento.Contenido = evento.Contenido.Replace("$szRevision$", Utilidades.RenderGrid(GRevision, "border=0 cellspacing=0"));
-        evento.Contenido = evento.Contenido.Replace("$szExamenFisico$", Utilidades.RenderGrid(GExamenFisico, "border=0 cellspacing=0"));
+        evento.Contenido = evento.Contenido.Replace("$szAntecedentes$", ImprimirGridTipo1(GAntecedentes));
+        evento.Contenido = evento.Contenido.Replace("$szRiesgos$", ImprimirGridTipo1(GRiesgos));
+        evento.Contenido = evento.Contenido.Replace("$szRevision$", ImprimirGridTipo2(GRevision));
+        evento.Contenido = evento.Contenido.Replace("$szExamenFisico$", ImprimirGridTipo2(GExamenFisico));
+        evento.Contenido = evento.Contenido.Replace("$szPlanEducativo$", ImprimirPlanEducativo());
         if (PMujer.Visible)
-            evento.Contenido = evento.Contenido.Replace("$szGinecologico$",Utilidades.RenderGrid(GGinecologico, "border=0 cellspacing=0"));
+            evento.Contenido = evento.Contenido.Replace("$szGinecologico$", "<strong>Examen ginecológico</strong>: " + ImprimirGridTipo1(GGinecologico));
         else evento.Contenido = evento.Contenido.Replace("$szGinecologico$", "");
 
         evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + TConductaInicial.Text.Replace("\n", "</li><li>") + "</li></ol>");
