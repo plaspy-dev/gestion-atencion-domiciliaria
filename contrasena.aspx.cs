@@ -1,0 +1,64 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Configuration;
+using SDG.Componentes;
+using MySql.Data.MySqlClient;
+
+public partial class contrasena : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if(!IsPostBack) {
+            if (!string.IsNullOrEmpty(Usuario.GetInstance().GetForceURL()))
+                Title = "Su contraseña ha caducado";
+        }
+    }
+    protected void m_BCambiar_Click(object sender, EventArgs e)
+    {
+        if (!IsValid)
+            return;
+
+        using (CConectorMS conectorms = new CConectorMS())
+        using (CConector conector = new CConector())
+        {
+            Usuario usuario = Usuario.GetUsuario();
+            Query query = new Query("usuario");
+
+            String id = conector.QueryString("SELECT id FROM usuario WHERE id='" + usuario.GetID() + "' AND contrasena=PASSWORD(" + Query.GetValor(m_EActual.Text) + ")");
+            if (id.Length == 0)
+            {
+
+                m_EActual.Focus();
+                LMensaje.Text = "Contraseña actual incorrecta.";
+                System.Threading.Thread.Sleep(3000);
+            }
+            else
+            {
+                query.AddCampo("contrasena", "PASSWORD(" + Query.GetValor(m_EConfirmar.Text) + ")", false);
+                if (conector.QueryMod(query.GetUpdate("id=" + usuario.GetID())) == -1)
+                {
+                    LMensaje.Text = conector.GetLastError();
+                }
+                else
+                {
+                    if (conectorms.QueryMod("UPDATE seg_Usuarios SET usClave=" + Query.GetValor(Crypt.EncriptarDES(m_EConfirmar.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4"))) + " WHERE usIdUsuario=" + Query.GetValor(usuario.GetLogin())) == -1)
+                    {
+                        LMensaje.Text = conectorms.GetLastError();
+                        return;
+                    }
+                    usuario.SetForceURL("", conector);
+                    Usuario.Validate(usuario.GetLogin(), Crypt.EncriptarDES(m_EConfirmar.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4")));
+                    LMensaje.Text = "Contraseña cambiada exitosamente.";
+                }
+            }
+        }
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("~/inicio.aspx");
+    }
+}

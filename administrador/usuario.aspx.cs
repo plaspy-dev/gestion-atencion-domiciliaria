@@ -33,6 +33,8 @@ public partial class administrador_usuario : System.Web.UI.Page
         TNombres.Text = HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[2].Text);
         TUsuario.Text = HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[3].Text);
         TIdPersonal.Text= HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[6].Text).Trim();
+        CCumpleanos.Checked = ((CheckBox)GUsuarios.SelectedRow.FindControl("C")).Checked;
+        CForceChange.Checked = false;
         HUsuario.Value = TUsuario.Text;
         using (CConector conector = new CConector())
         {
@@ -63,6 +65,9 @@ public partial class administrador_usuario : System.Web.UI.Page
             query["usuario"] = TUsuario.Text;
             query["grupo"] = DGrupos.SelectedValue;
             query["personal"] = TIdPersonal.Text;
+            query["cumpleanos"] = CCumpleanos.Checked ? "1" : "";
+            if (CForceChange.Checked)
+                query["forceurl"] = "~/contrasena.aspx";
 
             // agregamos los cargos que puede programar el usuario
             for (int i = 0; i < GCargos.Rows.Count; i++)

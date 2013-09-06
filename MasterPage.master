@@ -46,26 +46,6 @@
                 });
             }).click(function() { return false; });
 
-            $("#ctl00_lnkCambioClave").click(function() {
-                $("#contrasena").dialog(
-                    {
-                        modal: true,
-                        autoOpen: true,
-                        width: 'auto',
-                        open: function(event, ui) { setTimeout("$('#contrasena :input:first').focus();", 100); },
-                        buttons: {
-                            "Aceptar": function() {
-                                $("#ctl00_BAceptar").click();
-                            },
-                            "Cancelar": function() {
-                                $(this).dialog("close");
-                            }
-                        }
-                    });
-                $("#ctl00_BAceptar").hide();
-                $("#contrasena").parent().appendTo(jQuery("#aspnetForm"));
-                return false;
-            });
             var imp = $("#<%= lnkImp.ClientID %>");
             if (imp.attr("r") == "1") {
                 imp.attr("href", window.location + "&p=1").attr("target", "_blank");
@@ -132,12 +112,12 @@
                       <param name="FlashVars" value="url=<%=ResolveUrl("~/inicio.aspx")%>" />
                       <!-- La siguiente etiqueta object es para navegadores distintos de IE. Ocúltela a IE mediante IECC. -->
                       <!--[if !IE]>-->
-                      <object type="application/x-shockwave-flash" data="<%=ResolveUrl("~/inicio.aspx")%>images/logo.swf" width="172" height="55">
+                      <object type="application/x-shockwave-flash" data="<%=ResolveUrl("~/")%>images/logo.swf" width="172" height="55">
                         <!--<![endif]-->
                         <param name="quality" value="high" />
                         <param name="wmode" value="opaque" />
                         <param name="swfversion" value="6.0.65.0" />
-                        <param name="FlashVars" value="url=<%=ResolveUrl("~/")%>" />
+                        <param name="FlashVars" value="url=<%=ResolveUrl("~/inicio.aspx")%>" />
                         <!-- El navegador muestra el siguiente contenido alternativo para usuarios con Flash Player 6.0 o versiones anteriores. -->
                         <asp:ImageButton ID="ILogo" runat="server" ImageUrl="~/images/tema/logop.jpg" Width="150" Height="55" CausesValidation="False" PostBackUrl="~/inicio.aspx"/>
                         <!--[if !IE]>-->
@@ -185,7 +165,7 @@
                 <asp:LinkButton ID="lnkGuardar" runat="server" CssClass="menuArriba" Visible="False" ValidationGroup="Guardar">Guardar</asp:LinkButton>
                 <asp:LinkButton ID="lnkExcel" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" onclick="lnkExcel_Click">Excel</asp:LinkButton>
                 <asp:LinkButton ID="lnkPDF" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" onclick="lnkPDF_Click">PDF</asp:LinkButton>
-                <asp:LinkButton ID="lnkCambioClave" runat="server" CssClass="menuArriba" CausesValidation="False" PostBackUrl="">Contraseña</asp:LinkButton>
+                <asp:LinkButton ID="lnkCambioClave" runat="server" CssClass="menuArriba" CausesValidation="False" PostBackUrl="~/contrasena.aspx">Contraseña</asp:LinkButton>
                 <asp:LinkButton ID="lnkSalir" runat="server" CssClass="menuArriba" CausesValidation="False" PostBackUrl="~/Default.aspx?end=1">Salir</asp:LinkButton>
                 </td>
                 <td class="fhr"></td>
@@ -280,49 +260,6 @@
             </div>
         </ContentTemplate>
     </asp:UpdatePanel>
-    <div id="contrasena" title="Cambiar contraseña" style="display: none;">
-        <table>
-            <tr>
-                <td align="left">
-                    Actual
-                </td>
-                <td align="left">
-                    <asp:TextBox ID="TActual" TextMode="Password" runat="server"></asp:TextBox>
-                </td>
-                <td align="left">
-                    <asp:Button ID="BAceptar" runat="server" Text="Aceptar" 
-                        ValidationGroup="contrasena" onclick="BAceptar_Click" />
-                </td>
-            </tr>
-            <tr>
-                <td align="left">
-                    Nueva
-                </td>
-                <td align="left">
-                    <asp:TextBox ID="TNueva" TextMode="Password" runat="server"></asp:TextBox>
-                </td>
-                <td align="left">
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" 
-                        ControlToValidate="TNueva" ErrorMessage="Por favor ingrese una contraseña." 
-                        Display="Dynamic" SetFocusOnError="true" ValidationGroup="contrasena"></asp:RequiredFieldValidator>
-                </td>
-            </tr>
-            <tr>
-                <td align="left">
-                    Confirmar
-                </td>
-                <td align="left">
-                    <asp:TextBox ID="TConfirmar" TextMode="Password" runat="server"></asp:TextBox>
-                </td>
-                <td align="left">
-                    <asp:CompareValidator ID="CompareValidator1" runat="server" 
-                        ControlToValidate="TNueva" ControlToCompare="TConfirmar" 
-                        ErrorMessage="Las nuevas contraseñas no coinciden." Display="Dynamic" 
-                        SetFocusOnError="true" ValidationGroup="contrasena"></asp:CompareValidator>
-                </td>
-            </tr>
-        </table>
-    </div>
     <asp:UpdatePanel ID="UMensaje" runat="server" UpdateMode="Always">
         <ContentTemplate>
             <div id="dialog-message" title="Error" class="hide">

@@ -114,6 +114,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                 query += "nombre";
                 query += "inicio_descanso";
                 query += "fin_descanso";
+                query += "verificacionTitulos";
 
                 using (CConectorMS conector = new CConectorMS())
                 {
@@ -139,7 +140,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                         TDMilitar.Text = reader["perDistritoMil"].ToString();
                         TPasadoJudicial.Text = reader["perNumPasadoJudicial"].ToString();
                         TFPasadoJudicial.Text = ConectorMS.GetDate(reader["perFechaPasadoJudicial"]);
-                        CTarjetaProfesional.Checked = reader["perTarjetaProfesional"].ToString() == "1" ? true : false;
+                        CTarjetaProfesional.Checked = reader["perTarjetaProfesional"].ToString() == "True" ? true : false;
                         TTarjetaNumero.Text = reader["perNumeroTP"].ToString();
                         TGrupoSanguineo.Text = reader["perGrupoSanguineo"].ToString();
                         TRH.Text = reader["perRH"].ToString();
@@ -160,7 +161,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                         DFOP.SelectedValue = reader["entIdAFP"].ToString();
                         DARP.SelectedValue = reader["entIdARP"].ToString();
                         DLocalidad.SelectedValue = reader["locId"].ToString();
-                        CPazySalvo.Checked = reader["perPazySalvo"].ToString() == "1" ? true : false;
+                        CPazySalvo.Checked = reader["perPazySalvo"].ToString() == "True" ? true : false;
                         DEstado.SelectedValue = reader["eEstId"].ToString();
                         DCargo.SelectedValue = reader["carId"].ToString();
                         TFechaContrato.Text = ConectorMS.GetDate(reader["perFechaContrato"]);
@@ -175,6 +176,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                         DLocalidadVivienda.SelectedValue = reader["residencialocId"].ToString();
                         TInicioDescanso.Text = CConector.GetFromMySQLDate(reader["inicio_descanso"]);
                         TFinDescanso.Text = CConector.GetFromMySQLDate(reader["fin_descanso"]);
+                        TVerificacionTitulos.Text = Conector.GetFromMySQLDate(reader["verificacionTitulos"]);
 
                         if (reader["nombre"].ToString().Length != 0)
                         {
@@ -282,6 +284,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["profId"] = DProfesion.SelectedValue;
         query["perParentescoContacto"] = TParentesco.Text;
         query["residencialocId"] = DLocalidadVivienda.SelectedValue;
+        query["verificacionTitulos"] = TVerificacionTitulos.Text;
 
         if (DEstado.SelectedItem.Text == "VACACIONES" || DEstado.SelectedItem.Text == "LICENCIA TEMPORAL")
         {

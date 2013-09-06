@@ -55,7 +55,12 @@
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SConductor" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT perId id,perNombre nombre FROM dbo.admPersonalHS where eEstId=1 and (carId=20 OR carId=36) order by 2">
+                    SelectCommand="SELECT perId id,perNombre nombre 
+                            FROM admPersonalHS 
+                            LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)
+                            WHERE admPersonalHS.eEstId=1 
+                            AND admCargo.carDescripcion like '%conductor%'
+                            ORDER BY nombre;">
                 </asp:SqlDataSource>
             </td>
         </tr>

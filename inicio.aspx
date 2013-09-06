@@ -89,8 +89,8 @@
                 <ContentTemplate>
                     <asp:Image runat="server" ID="IL" ImageUrl="~/css/ajax-loader.gif" />
                     <asp:Button runat="server" ID="BA" OnClick="OnClickBA" CssClass="hide" />
-                    <asp:LinkButton Visible="false" Text="" runat="server" ID="LA" CommandName='<%# Eval("SelectCommand") %>' CommandArgument='<%# Eval("URL") %>'></asp:LinkButton>
-                    <asp:GridView ID="GAlertas" runat="server" AutoGenerateColumns="False" Visible="false" Width="100%"
+                    <asp:LinkButton Visible="false" Text="" runat="server" ID="LA" CommandArgument='<%# Eval("Id") %>'></asp:LinkButton>
+                    <asp:GridView ID="GAlertas" runat="server" AutoGenerateColumns="False" Visible="false" Width="100%"  OnRowDataBound="GAlertas_RowDataBound"
                         DataSourceID="SAlertas" EmptyDataText="No se encontraron alertas" ShowHeader="false">
                         <RowStyle CssClass="GridRow"></RowStyle>
                         <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -99,12 +99,11 @@
                         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
-                            <asp:HyperLinkField DataTextField="nombre" HeaderText="Nombre" DataNavigateUrlFields="id" ItemStyle-HorizontalAlign="Left"
-                                DataNavigateUrlFormatString='~/' SortExpression="nombre" ItemStyle-Wrap="false" />
+                            <asp:HyperLinkField DataTextField="nombre" HeaderText="Nombre" DataNavigateUrlFields="id" ItemStyle-HorizontalAlign="Left" DataNavigateUrlFormatString='~/' SortExpression="nombre" ItemStyle-Wrap="false" />
                         </Columns>
                     </asp:GridView>
                     <asp:SqlDataSource ID="SAlertas" runat="server" 
-                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                        ConnectionString="" 
                         SelectCommand="">
                     </asp:SqlDataSource>
                 </ContentTemplate>

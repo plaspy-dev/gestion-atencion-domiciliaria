@@ -13,6 +13,7 @@ public partial class inicio : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
+            RCumpleanos.Visible = Usuario.GetInstance()["cumpleanos"] == "1";
             RAlertas.DataSource = Alertas.GetAlertas();
             RAlertas.DataBind();
         }
@@ -43,12 +44,40 @@ public partial class inicio : System.Web.UI.Page
 
         SqlDataSource SAlertas = (SqlDataSource)GetControl(parent, "SAlertas");
 
-        SAlertas.SelectCommand = link.CommandName;
+        List<Alertas> resultado = (from x in Alertas.GetAlertas()
+                                   where x.Id == link.CommandArgument
+                                   select x).ToList();
+        if (resultado.Count == 0)
+            return;
+        Alertas info = resultado.First();
+
+
+        SAlertas.SelectCommand = info.SelectCommand;
+        SAlertas.ConnectionString = ConfigurationManager.ConnectionStrings[info.MySQLDB ? "MySQLConnectionString" : "connBD"].ConnectionString;
+        SAlertas.ProviderName = ConfigurationManager.ConnectionStrings[info.MySQLDB ? "MySQLConnectionString" : "connBD"].ProviderName;
 
         GridView GAlertas = (GridView)GetControl(parent, "GAlertas");
 
         ((HyperLinkField)GAlertas.Columns[0]).DataNavigateUrlFormatString = link.CommandArgument;
         GAlertas.DataBind();
         GAlertas.Visible = true;
+    }
+
+    protected void GAlertas_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowIndex != -1)
+        {
+            HyperLink link = (HyperLink)e.Row.Cells[0].Controls[0];
+            int inicio = link.Text.IndexOf("$InPac$");
+            if (inicio != -1)
+            {
+                int final = link.Text.IndexOf("$FinPac$");
+                if (final != -1)
+                {
+                    string idPaciente = link.Text.Substring(inicio + 7, final - inicio - 7);
+                    link.Text = link.Text.Replace(string.Format("$InPac${0}$FinPac$", idPaciente), Paciente.GetPaciente(idPaciente).NombreCompleto);
+                }
+            }
+        }
     }
 }

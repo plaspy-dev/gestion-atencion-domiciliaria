@@ -160,14 +160,14 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td nowrap="nowrap">
                             Pasado Judicial Num.
                         </td>
                         <td>
                             <asp:TextBox ID="TPasadoJudicial" runat="server"></asp:TextBox>
                         </td>
                         <td>
-                            Fec. Pasado Judicial</td>
+                            Pasado Judicial</td>
                         <td>
                             <asp:TextBox ID="TFPasadoJudicial" runat="server" CssClass="fecha"></asp:TextBox>
                         </td>
@@ -310,7 +310,7 @@
                         <td>
                             <asp:TextBox runat="server" ID="TContacto"></asp:TextBox>
                         </td>
-                        <td>
+                        <td nowrap="nowrap">
                             Tel Persona Contacto
                         </td>
                         <td colspan="2">
@@ -435,7 +435,7 @@
                             SelectCommand="SELECT areaId id,areaDesc nombre FROM dbo.admArea ORDER BY 2">
                         </asp:SqlDataSource>
                         </td></tr>
-                    <tr><td>Nivel complejidad</td><td>
+                    <tr><td nowrap="nowrap">Nivel complejidad</td><td>
                         <asp:DropDownList ID="DNivelComplejidad" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SNivelComplejidad" DataTextField="nombre" DataValueField="id">
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
@@ -468,7 +468,7 @@
                             SelectCommand="SELECT banId id,banDesc nombre FROM dbo.admBanco ORDER BY 2">
                         </asp:SqlDataSource>
                         </td></tr>
-                    <tr><td>Motivo Term. Contrato</td><td>
+                    <tr><td nowrap="nowrap">Motivo Term. Contrato</td><td>
                         <asp:DropDownList ID="DTerminacion" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="STerminacion" DataTextField="nombre" DataValueField="id">
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
@@ -477,7 +477,7 @@
                             ConnectionString="<%$ ConnectionStrings:connBD %>" 
                             SelectCommand="select mteId id,mteDescripcion nombre from admMotivoTerminacion ORDER BY 2">
                         </asp:SqlDataSource>
-                        </td><td>Fec Term. Contrato</td><td>
+                        </td><td nowrap="nowrap">Terminación contrato</td><td>
                         <asp:TextBox runat="server" ID="TFechaTerminacion" CssClass="fecha"></asp:TextBox>
                         </td></tr>
                         <tr>
@@ -544,19 +544,23 @@
                         </tr>
                     </table>
             </div>
-            <div id="tabs3"  class="hide">
+            <div id="tabs3" class="hide">
                 <table>
                     <tr>
-                        <td>
-                            <asp:Label ID="Label1" runat="server" Text="Profesión:"></asp:Label>
-                            <asp:DropDownList ID="DProfesion" runat="server" AppendDataBoundItems="true" 
+                        <td width=1>Profesión</td>
+                        <td width=1><asp:DropDownList ID="DProfesion" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SProfesion" DataTextField="nombre" DataValueField="id">
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SProfesion" runat="server" 
                                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
                                 SelectCommand="SELECT profId id, profNombre nombre FROM admProfesion ORDER BY 2">
-                            </asp:SqlDataSource>
+                            </asp:SqlDataSource></td>
+                        <td width=1 nowrap="nowrap">Verificación de títulos<asp:RangeValidator ControlToValidate="TVerificacionTitulos" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator7" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
+                        <td><asp:TextBox runat="server" ID="TVerificacionTitulos" CssClass="fecha"></asp:TextBox></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
                             <asp:GridView ID="GInformacionProfesional" runat="server" AutoGenerateColumns="False" DataSourceID="SInformacionProfesional"
                                 DataKeyNames="ipId">
                                 <Columns>

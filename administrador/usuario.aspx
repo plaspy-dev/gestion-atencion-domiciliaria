@@ -82,7 +82,6 @@
             </td>
             <td>
                 <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="TNombres" Display="Dynamic" ErrorMessage="Por favor ingrese un nombre." SetFocusOnError="True"></asp:RequiredFieldValidator>
-                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ControlToValidate="TIdPersonal" Display="Dynamic" ErrorMessage="Por favor ingrese un nombre." SetFocusOnError="True"></asp:RequiredFieldValidator>
             </td>
         </tr>
         <tr>
@@ -112,6 +111,14 @@
             </td>
             <td>
                 &nbsp;</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><asp:CheckBox runat="server" ID="CCumpleanos" Text="Informar cumpleaños" Checked="true" /></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="2"><asp:CheckBox runat="server" ID="CForceChange" Text="El usuario debe cambiar la contraseña en el próximo inicio de sesión" Checked="true" /></td>
         </tr>
         <tr>
             <td>
@@ -292,13 +299,23 @@
                     <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" ItemStyle-Wrap="false" />
                     <asp:BoundField DataField="ingreso" HeaderText="Último ingreso" SortExpression="ingreso" ItemStyle-Wrap="false" />
                     <asp:BoundField DataField="personal" HeaderText="PersonalID" SortExpression="personal" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
+                    <asp:TemplateField HeaderText="Cumpleaños" SortExpression="cumpleanos" ItemStyle-HorizontalAlign="Right">
+                        <ItemTemplate>
+                            <asp:CheckBox ID="C" runat="server" Checked='<%# Eval("cumpleanos").ToString()=="1" %>' Enabled="false" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
         </Columns>
         <SelectedRowStyle CssClass="selecteditem" />
     </asp:GridView>
     <asp:SqlDataSource ID="SUsuarios" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT usuario.id AS id,usuario.nombre AS nombre,usuario.usuario AS usuario,IFNULL(grupo.nombre,'Administrador') AS grupo,usuario.ingreso AS ingreso,usuario.personal FROM usuario LEFT JOIN grupo ON (usuario.grupo=grupo.id) WHERE usuario.estado IS NULL OR usuario.estado!=-1 ORDER BY usuario.nombre" 
+                SelectCommand="SELECT usuario.id AS id,usuario.nombre AS nombre,usuario.usuario AS usuario,IFNULL(grupo.nombre,'Administrador') AS grupo,usuario.ingreso AS ingreso,usuario.personal 
+                        ,usuario.cumpleanos
+                        FROM usuario 
+                        LEFT JOIN grupo ON (usuario.grupo=grupo.id) 
+                        WHERE usuario.estado IS NULL OR usuario.estado!=-1 
+                        ORDER BY usuario.nombre" 
                  DeleteCommand="UPDATE usuario SET estado=-1 WHERE id=@id">
     </asp:SqlDataSource>
 </asp:Content>

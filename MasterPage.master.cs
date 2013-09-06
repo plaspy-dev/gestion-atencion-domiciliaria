@@ -118,25 +118,6 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         titulo_aux.Attributes["title"] = titulo;
         LAuxDiag.Text = texto;
     }
-    protected void BAceptar_Click(object sender, EventArgs e)
-    {
-        using(CConector conector= new CConector()) 
-        using (CConectorMS conectorms = new CConectorMS())
-        {
-            CUsuario usuario = (CUsuario)Usuario.GetUsuario();
-            string id = conector.QueryString("SELECT id FROM usuario WHERE id='" + usuario.GetID() + "' AND (estado IS NULL OR estado!=-1) AND contrasena=PASSWORD(" + Query.GetValor(TActual.Text) + ")");
-            if (id.Length == 0)
-            {
-                SetMensaje("Contraseña actual equivocada");
-                return;
-            }
-            if (conector.QueryMod("UPDATE usuario SET contrasena=PASSWORD(" + Query.GetValor(TNueva.Text) + ") WHERE id='" + usuario.GetID() + "'") == -1)
-                return;
-            if (conectorms.QueryMod("UPDATE seg_Usuarios SET usClave=" + Query.GetValor(Crypt.EncriptarDES(TNueva.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4"))) + " WHERE usIdUsuario=" + Query.GetValor(usuario.GetLogin())) == -1)
-                return;
-            lblTitulo.Text = "Contraseña cambiada correctamente.";
-        }
-    }
 
     public LinkButton GetExcelLink()
     {
@@ -217,9 +198,11 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         else if (ViewState["printfile"] != null)
         {
             PrintEventArgs evento = new PrintEventArgs();
-            StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString()));
-            evento.Contenido = reader.ReadToEnd();
-            reader.Close();
+            using (StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString())))
+            {
+                evento.Contenido = reader.ReadToEnd();
+                reader.Close();
+            }
 
             if (_ImprimirClicked != null)
             {
@@ -256,9 +239,11 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         else if (ViewState["printfile"] != null)
         {
 
-            StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString()));
-            evento.Contenido = reader.ReadToEnd();
-            reader.Close();
+            using (StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString())))
+            {
+                evento.Contenido = reader.ReadToEnd();
+                reader.Close();
+            }
 
             if (_ImprimirClicked != null)
             {
@@ -307,9 +292,11 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
         Response.AddHeader("content-disposition", "attachment;filename=" + HttpUtility.UrlEncode(Page.Title) + ".pdf");
 
-        StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString()));
-        evento.Contenido = reader.ReadToEnd();
-        reader.Close();
+        using (StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString())))
+        {
+            evento.Contenido = reader.ReadToEnd();
+            reader.Close();
+        }
 
         int pos= evento.Contenido.IndexOf("<head>");
         if(pos!=-1) {
