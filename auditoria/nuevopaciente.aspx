@@ -16,6 +16,39 @@
                 $(this).datepicker('setDate', new Date(year, month, 1));
             }
         });
+
+        $("#<%= TProcedimiento.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetMedicamentos",
+                    data: "{ 'q': '" + request.term + "', 't': '173' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.value, label: item.item
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
+                $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
+                return false;
+            },
+            search: function(event, ui) {
+                $("#<%= TProcedimientoID.ClientID %>").val("");
+                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
+            }
+        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
     });
 </script>
 <style type="text/css">
@@ -34,12 +67,13 @@
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
     <table>
         <tr>
-            <td>
-                Mes</td>
-            <td>
-                Entidad</td>
-            <td>
-                &nbsp;</td>
+            <td>Mes</td>
+            <td>Entidad</td>
+            <td>Actividad o CUPS</td>
+            <td>Área</td>
+            <td>Horas</td>
+            <td>Categoría</td>
+            <td>&nbsp;</td>
         </tr>
         <tr>
             <td>
@@ -58,6 +92,41 @@
                     ConnectionString="<%$ ConnectionStrings:connBD %>" 
                     SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
+            <td>
+            <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>
+            </td>
+            <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SArea" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT CAST(IFNULL(GROUP_CONCAT(medicamentos.id),-1) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
+                </asp:SqlDataSource>
+            </td>
+            <td>
+            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" 
+                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+            </asp:DropDownList>
+            <asp:SqlDataSource ID="SIntensidad" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND szReservado IS NULL ORDER BY nombre">
+            </asp:SqlDataSource>
+            </td>
+            <td>
+            <asp:DropDownList ID="DCategoria" runat="server" DataSourceID="SCategoria" 
+                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                <asp:ListItem Text="(Todas)" Value="0"></asp:ListItem>
+            </asp:DropDownList>
+            <asp:SqlDataSource ID="SCategoria" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT CAST(GROUP_CONCAT(categoria_censo.hora) AS CHAR) AS id, nombre FROM varios LEFT JOIN categoria_censo ON (categoria_censo.categoria=varios.id) WHERE tipo=33 AND szReservado IS NULL GROUP BY varios.id ORDER BY nombre;">
+            </asp:SqlDataSource>
+            </td>
             <td>
                 <asp:Button ID="BBuscar" runat="server" Text="Buscar" onclick="BBuscar_Click" />
             </td>
@@ -86,6 +155,7 @@
                 <asp:BoundField HeaderText="Diagnóstico" DataField="cied10" SortExpression="cied10" ItemStyle-Wrap="false" />
                 <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre" ItemStyle-Wrap="false" />
                 <asp:BoundField HeaderText="Observaciones" DataField="pacObservaciones" SortExpression="pacObservaciones" HeaderStyle-CssClass="ancho" />
+                <asp:BoundField HeaderText="Actividades (Autorizadas)" DataField="detalles" SortExpression="detalles" ItemStyle-Wrap="false"/>
             </Columns>
             <RowStyle CssClass="GridRow"></RowStyle>
             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -101,18 +171,41 @@
                                 ,phdPaciente.pacFecIngPrograma
                                 ,phdPaciente.pacObservaciones
                                 ,admEntidad.entNombre
+                                ,detalles
                                 FROM phdPaciente
                                 LEFT JOIN  admEntidad ON (admEntidad.entId=phdPaciente.entId)
+                                CROSS APPLY
+                                (
+                                    SELECT ISNULL(phdActividad.actDescripcion,'%%'+ CAST(phdDetalleAutorizacion.actId AS VARCHAR(9))) 
+                                        + ISNULL(' [$$' + CAST(phdDetalleAutorizacion.intensidad AS VARCHAR(9)) + ']','')
+                                        + ' (' + CAST(ISNULL(phdDetalleAutorizacion.autNumSesiones,0) AS VARCHAR(9))
+                                        + '),_ '
+                                    FROM phdAutorizacion
+							        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero = phdAutorizacion.autNumero)
+                                    LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
+                                    WHERE 
+                                    phdAutorizacion.pacId=phdPaciente.pacId 
+                                    AND DATEPART(month,phdAutorizacion.autfecha)=@mes
+                                    AND DATEPART(year,phdAutorizacion.autfecha)=@ano
+							        AND ('@area'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId IN (@area)))
+							        AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId=@procedimiento))
+							        AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
+							        AND ('@categoria'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.intensidad IN (@categoria)))
+                                    FOR XML PATH('')
+                                ) pre_trimmed (detalles)
                                 WHERE 
                                 DATEPART(month,phdPaciente.pacFecIngPrograma)=@mes
                                 AND DATEPART(year,phdPaciente.pacFecIngPrograma)=@ano
                                 AND (@entidad=0 OR phdPaciente.entId=@entidad)
+                                AND detalles IS NOT NULL
                                 ORDER BY phdPaciente.pacFecIngPrograma
                                 ">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TMes" Name="mes" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TAno" Name="ano" PropertyName="Text" />
                     <asp:ControlParameter ControlID="DAsegurador" Name="entidad" PropertyName="SelectedValue" />
+                    <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
+                    <asp:ControlParameter ControlID="DIntensidad" PropertyName="SelectedValue" Name="intensidad" />
                  </SelectParameters>
     </asp:SqlDataSource>        
         <div style="text-align: right;">

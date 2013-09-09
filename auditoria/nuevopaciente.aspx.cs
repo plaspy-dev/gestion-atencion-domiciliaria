@@ -9,6 +9,9 @@ public partial class auditoria_nuevopaciente : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        SResultados.SelectCommand = SResultados.SelectCommand.Replace("@area", DArea.SelectedValue);
+        SResultados.SelectCommand = SResultados.SelectCommand.Replace("@categoria", DCategoria.SelectedValue);
+
         if(!IsPostBack) {
             DateTime tiempo= DateTime.Now;
             TDesde.Text = tiempo.Month + "/" + tiempo.Year;
@@ -34,6 +37,10 @@ public partial class auditoria_nuevopaciente : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
+            e.Row.Cells[7].Text = Procedimientos.ReplaceVarios(
+                                    Procedimientos.ReplaceProcedimientos(e.Row.Cells[7].Text))
+                                    .Replace(",_", "<br/>");
+
             string texto = "";
             try
             {
