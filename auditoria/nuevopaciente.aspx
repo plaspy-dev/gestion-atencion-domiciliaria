@@ -16,39 +16,6 @@
                 $(this).datepicker('setDate', new Date(year, month, 1));
             }
         });
-
-        $("#<%= TProcedimiento.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetMedicamentos",
-                    data: "{ 'q': '" + request.term + "', 't': '173' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
-                $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TProcedimientoID.ClientID %>").val("");
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
-            }
-        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
     });
 </script>
 <style type="text/css">

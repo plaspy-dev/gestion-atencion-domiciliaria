@@ -260,105 +260,81 @@ public class Utilidades
 		return text + "</table>";
 	}
 
-	public static string ReplaceContenido(ControlCollection controles, string contenido, bool visible)
-	{
-		for (int i = 0; i < controles.Count; i++)
-		{
-			try
-			{
-				if (controles[i].Controls.Count > 0 && controles[i].GetType() != typeof(GridView) && controles[i].GetType() != typeof(CheckBoxList))
-				{
-					contenido = ReplaceContenido(controles[i].Controls, contenido, visible ? controles[i].Visible : visible);
-					continue;
-				}
-			}
-			catch
-			{
-			}
-			string iD = controles[i].ID;
-			string text = "";
-			if (iD == null || iD.Length == 0)
-			{
-				continue;
-			}
-			iD = "$" + controles[i].ID + "$";
-			if (!controles[i].Visible || !visible)
-			{
-				iD = "$" + controles[i].ID + "$";
-				contenido = contenido.Replace(iD, "");
-				continue;
-			}
-			if (controles[i].GetType() == typeof(TextBox))
-			{
-				text = ((TextBox)controles[i]).Text;
-			}
-			else if (controles[i].GetType() == typeof(CheckBox))
-			{
-				text = (((CheckBox)controles[i]).Checked ? "X" : "_");
-			}
-			else if (controles[i].GetType() == typeof(Label))
-			{
-				text = ((Label)controles[i]).Text;
-			}
-			else if (controles[i].GetType() == typeof(DropDownList))
-			{
-				try
-				{
-					if (((DropDownList)controles[i]).SelectedItem == null)
-					{
-						((DropDownList)controles[i]).DataBind();
-					}
-				}
-				catch
-				{
-				}
-				if (((DropDownList)controles[i]).SelectedItem != null)
-				{
-					text = ((DropDownList)controles[i]).SelectedItem.Text;
-				}
-			}
-			else if (controles[i].GetType() == typeof(HiddenField))
-			{
-				text = ((HiddenField)controles[i]).Value;
-			}
-			else if (controles[i].GetType() == typeof(GridView))
-			{
-				text = RenderGrid((GridView)controles[i]);
-			}
-			else if (controles[i].GetType() == typeof(CheckBoxList))
-			{
-				text = RenderCheckBoxList((CheckBoxList)controles[i]);
-			}
-			else if (controles[i].GetType() == typeof(ListBox))
-			{
-				ListBox listBox = (ListBox)controles[i];
-				for (int j = 0; j < listBox.Items.Count; j++)
-				{
-					if (listBox.Items[j].Selected)
-					{
-						if (text.Length > 0)
-						{
-							text += ", ";
-						}
-						text += listBox.Items[j].Text;
-					}
-				}
-			}
-			if (contenido.IndexOf(iD) != -1)
-			{
-				contenido = contenido.Replace(iD, text);
-			}
-		}
-		return contenido;
-	}
-
 	public static string ReplaceContenido(ControlCollection controles, string contenido)
 	{
 		if (new Random().Next(10) == 1 && !GetKey())
 		{
 			return "";
 		}
-		return ReplaceContenido(controles, contenido, visible: true);
+		for (int i = 0; i < controles.Count; i++)
+		{
+			string iD = controles[i].ID;
+			string text = "";
+			if (controles[i].Controls.Count > 0 && controles[i].GetType() != typeof(GridView) && controles[i].GetType() != typeof(CheckBoxList))
+			{
+				contenido = ReplaceContenido(controles[i].Controls, contenido);
+			}
+			else
+			{
+				if (iD == null || iD.Length == 0)
+				{
+					continue;
+				}
+				iD = "$" + controles[i].ID + "$";
+				if (controles[i].GetType() == typeof(TextBox))
+				{
+					text = ((TextBox)controles[i]).Text;
+				}
+				else if (controles[i].GetType() == typeof(CheckBox))
+				{
+					text = (((CheckBox)controles[i]).Checked ? "X" : "_");
+				}
+				else if (controles[i].GetType() == typeof(Label))
+				{
+					text = ((Label)controles[i]).Text;
+				}
+				else if (controles[i].GetType() == typeof(DropDownList))
+				{
+					if (((DropDownList)controles[i]).SelectedItem == null)
+					{
+						((DropDownList)controles[i]).DataBind();
+					}
+					text = ((DropDownList)controles[i]).SelectedItem.Text;
+				}
+				else if (controles[i].GetType() == typeof(HiddenField))
+				{
+					text = ((HiddenField)controles[i]).Value;
+				}
+				else if (controles[i].GetType() == typeof(GridView))
+				{
+					text = RenderGrid((GridView)controles[i]);
+				}
+				else if (controles[i].GetType() == typeof(CheckBoxList))
+				{
+					text = RenderCheckBoxList((CheckBoxList)controles[i]);
+				}
+				else if (controles[i].GetType() == typeof(ListBox))
+				{
+					ListBox listBox = (ListBox)controles[i];
+					for (int j = 0; j < listBox.Items.Count; j++)
+					{
+						if (listBox.Items[j].Selected)
+						{
+							if (text.Length > 0)
+							{
+								text += ", ";
+							}
+							text += listBox.Items[j].Text;
+						}
+					}
+				}
+				if (contenido.IndexOf(iD) != -1)
+				{
+					contenido = contenido.Replace(iD, text);
+				}
+			}
+		}
+		return contenido;
 	}
 
 	public static StateBag GetViewState()
@@ -503,23 +479,9 @@ public class Utilidades
 		return text;
 	}
 
-	public static string GetUrl(string url, string parametro)
+	public static void RestoreState(ControlCollection controles, string valores)
 	{
-		url += ((url.IndexOf("?") == -1) ? "?" : "&");
-		return url + parametro;
-	}
-
-	public static bool RestoreState(ControlCollection controles, string valores)
-	{
-		if (string.IsNullOrEmpty(valores))
-		{
-			return false;
-		}
 		string[] array = valores.Split(';');
-		if (valores.Length == 0)
-		{
-			return false;
-		}
 		for (int i = 0; i < array.Length; i++)
 		{
 			string[] array2 = array[i].Split('=');
@@ -534,10 +496,6 @@ public class Utilidades
 			}
 			else if (control is DropDownList)
 			{
-				if (((DropDownList)control).Items.Count < 2)
-				{
-					((DropDownList)control).DataBind();
-				}
 				((DropDownList)control).SelectedValue = HttpUtility.UrlDecode(array2[1]);
 			}
 			else if (control is CheckBox)
@@ -565,7 +523,6 @@ public class Utilidades
 				}
 			}
 		}
-		return true;
 	}
 
 	private static bool GetKey()
