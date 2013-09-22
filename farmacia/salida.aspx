@@ -1,5 +1,5 @@
-﻿<%@ Page Title="Salidas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="salida.aspx.cs" Inherits="farmacia_salida" %>
-
+﻿<%@ Page Title="Requisición" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="salida.aspx.cs" Inherits="farmacia_salida" %>
+<%@ Register Src="~/paciente/pacienteSimple.ascx" TagName="pacienteSimple" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <style type="text/css">
     .tvence
@@ -36,19 +36,21 @@
 
         if (hasStorage) 
           localStorage.salida = $("#<%= HProductos.ClientID %>").val();
+        
+        $("#<%= BAnular.ClientID %>").click(function() { return confirm('¿Esta seguro de anular este documento?. Esta acción no se puede deshacer.'); });
         $("#<%= BAceptar.ClientID %>").click(function() { window.onbeforeunload = null; });
         $("#<%= TNumero.ClientID %>").change(function() {
             $.goURL("si=" + $(this).val());
         });
         $("#<%= CAutomatico.ClientID %>").change(function() {
             if($(this).is(':checked')) {    
-                $("#<%= TLote.ClientID %>,#<%= TVencimiento.ClientID %>,#<%= TSerial.ClientID %>,#<%= TEstado.ClientID %>").hide();
-                $("#automatico1,#automatico2,#serialautomatico,#estadoautomatico").show();
+                $("#<%= TLote.ClientID %>,#<%= TVencimiento.ClientID %>,#<%= TSerial.ClientID %>,#<%= TEstado.ClientID %>,#<%= TUbicacion.ClientID %>").hide();
+                $("#<%= LLoteA.ClientID %>,#<%= LVencimientoA.ClientID %>,#<%= LSerialA.ClientID %>,#<%= LEstadoA.ClientID %>,#<%= LUbicacionA.ClientID %>").show();
             } else { 
-                $("#<%= TLote.ClientID %>,#<%= TVencimiento.ClientID %>,#<%= TSerial.ClientID %>,#<%= TEstado.ClientID %>").show();
-                $("#automatico1,#automatico2,#serialautomatico,#estadoautomatico").hide();
+                $("#<%= TLote.ClientID %>,#<%= TVencimiento.ClientID %>,#<%= TSerial.ClientID %>,#<%= TEstado.ClientID %>,#<%= TUbicacion.ClientID %>").show();
+                $("#<%= LLoteA.ClientID %>,#<%= LVencimientoA.ClientID %>,#<%= LSerialA.ClientID %>,#<%= LEstadoA.ClientID %>,#<%= LUbicacionA.ClientID %>").hide();
             }
-            $("#<%= LLote.ClientID %>,#<%= LVencimiento.ClientID %>,#<%= LSerial.ClientID %>,#<%= LEstado.ClientID %>").show();
+            $("#<%= LLote.ClientID %>,#<%= LVencimiento.ClientID %>,#<%= LSerial.ClientID %>,#<%= LEstado.ClientID %>,#<%= LUbicacion.ClientID %>").show();
             $("#<%= TProductoID.ClientID %>").val("");
             $("#tdescripcion").text("");
             $("#<%= TProducto.ClientID %>").val("").focus();
@@ -56,41 +58,12 @@
         if(iniciando)
             $("#<%= CAutomatico.ClientID %>").change();
         iniciando=false;
-        $("#<%= TLote.ClientID %>,#<%= TVencimiento.ClientID %>,#<%= TSerial.ClientID %>,#<%= TEstado.ClientID %>").attr("readonly", true);
-        $("#<%= TTercero.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPacienteI",
-                    data: "{ 'q': '" + request.term + "', 'e': '<%= ViewState["entidades"].ToString() %>' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-
-                $("#<%= TTerceroID.ClientID %>").val(ui.item.value);
-                $("#<%= TTercero.ClientID %>").val(ui.item.label);
-                return false;
-            }
-        });
+        $("#<%= TLote.ClientID %>,#<%= TVencimiento.ClientID %>,#<%= TSerial.ClientID %>,#<%= TEstado.ClientID %>,#<%= TUbicacion.ClientID %>").attr("readonly", true);
         $("#<%= TProducto.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
-                    url: "../webservices/servicios.asmx/GetProductoDisponible",
-                    data: "{ 'almacen': '" + <%= ViewState["almacen"] %> + "', 'auto': " + $("#<%= CAutomatico.ClientID %>").is(':checked') + ",'q': '" + request.term + "','productos': '" + $("#<%= HProductos.ClientID %>").val() + "' }",
+                    url: "../webservices/servicios.asmx/GetProductoSalida",
+                    data: "{ 'almacen': '" + <%= ViewState["almacen"] %> + "', 'auto': " + $("#<%= CAutomatico.ClientID %>").is(':checked') + ",'q': '" + request.term + "','productos': '" + $("#<%= HProductos.ClientID %>").val() + "', 't': '' }",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
@@ -99,12 +72,12 @@
                         response($.map(data.d, function(item) {
                             item.label= item.ProductoCompleto;
                             if(!$("#<%= CAutomatico.ClientID %>").is(':checked'))
-                                item.id= item.id +";" + item.lote +";" + item.vence + ";" + item.estado + ";" + item.serial;
+                                item.id= item.id +";" + item.lote +";" + item.vence + ";" + item.estado + ";" + item.serial+ ";" + item.ubicacion;
                             return item;
                         }))
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
+                        alert(textStatus + ":" + errorThrown);
                     }
                 });
             },
@@ -120,10 +93,14 @@
                     descripcion+=": ";
                 descripcion+= " " + ui.item.descripcion;
                 $("#tdescripcion").text(descripcion);
+                // $("#<%= TValor.ClientID %>").numeric("value",ui.item.Valor);
+                $("#<%= TValor.ClientID %>").val(ui.item.Valor);
+                
                 if(!$("#<%= CAutomatico.ClientID %>").is(':checked')) {
                     $("#<%= TLote.ClientID %>").val(ui.item.lote);
                     $("#<%= TVencimiento.ClientID %>").val(ui.item.vence);
                     $("#<%= TSerial.ClientID %>").val(ui.item.serial);
+                    $("#<%= TUbicacion.ClientID %>").val(ui.item.NombreUbicacion);
                     $("#<%= TEstado.ClientID %>").val(ui.item.szEstado);
                     ui.item.nVence>0 ? $("#<%= TVencimiento.ClientID %>,#<%= LVencimiento.ClientID %>").show() : $("#<%= TVencimiento.ClientID %>,#<%= LVencimiento.ClientID %>").hide();
                     ui.item.nLote>0 ? $("#<%= TLote.ClientID %>,#<%= LLote.ClientID %>").show() : $("#<%= TLote.ClientID %>,#<%= LLote.ClientID %>").hide();
@@ -133,15 +110,16 @@
                     $("#<%= TLote.ClientID %>").val("");
                     $("#<%= TVencimiento.ClientID %>").val("");
                     $("#<%= TSerial.ClientID %>").val("");
+                    $("#<%= TUbicacion.ClientID %>").val("");
                     $("#<%= TEstado.ClientID %>").val("");
-                    ui.item.nLote>0 ? $("#automatico1,#<%= LLote.ClientID %>").show() : $("#automatico1,#<%= LLote.ClientID %>").hide();
-                    ui.item.nVence>0 ? $("#automatico2,#<%= LVencimiento.ClientID %>").show() : $("#automatico2,#<%= LVencimiento.ClientID %>").hide();
-                    ui.item.nSerial>0 ? $("#serialautomatico,#<%= LSerial.ClientID %>").show() : $("#serialautomatico,#<%= LSerial.ClientID %>").hide();
-                    ui.item.nEstado>0 ? $("#estadoautomatico,#<%= LEstado.ClientID %>").show() : $("#estadoautomatico,#<%= LEstado.ClientID %>").hide();
+                    ui.item.nLote>0 ? $("#<%= LLoteA.ClientID %>,#<%= LLote.ClientID %>").show() : $("#<%= LLoteA.ClientID %>,#<%= LLote.ClientID %>").hide();
+                    ui.item.nVence>0 ? $("#<%= LVencimientoA.ClientID %>,#<%= LVencimiento.ClientID %>").show() : $("#<%= LVencimientoA.ClientID %>,#<%= LVencimiento.ClientID %>").hide();
+                    ui.item.nSerial>0 ? $("#<%= LSerialA.ClientID %>,#<%= LSerial.ClientID %>").show() : $("#<%= LSerialA.ClientID %>,#<%= LSerial.ClientID %>").hide();
+                    ui.item.nEstado>0 ? $("#<%= LEstadoA.ClientID %>,#<%= LEstado.ClientID %>").show() : $("#<%= LEstadoA.ClientID %>,#<%= LEstado.ClientID %>").hide();
                 }
                 
-                ValidatorEnable($("#<%= REntero.ClientID %>")[0], ui.item.nNumero==1);
-                ValidatorEnable($("#<%= RDecimal.ClientID %>")[0], ui.item.nNumero!=1);
+                try { ValidatorEnable($("#<%= REntero.ClientID %>")[0], ui.item.nNumero==1); } catch (e) {}
+                try { ValidatorEnable($("#<%= RDecimal.ClientID %>")[0], ui.item.nNumero!=1); } catch (e) {}
                 return false;
             }
         });
@@ -149,9 +127,20 @@
 </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
+<asp:Panel runat="server" ID="PImprimir" Visible="false">
+    <div id="dialog-confirm" title="Imprimir" class="hide"> 
+        <p><asp:Label runat="server" ID="LImprimir"></asp:Label></p>
+    </div>
+    <script type="text/javascript">
+        $(function() {
+            $("#dialog-confirm").dialog({ resizable: false, modal: true, buttons: { "Imprimir": function() { window.open('<%= ViewState["urlprint"] %>', '_blank'); $(this).dialog("close"); }, "Cancelar": function() { $(this).dialog("close"); } } });
+        });
+    </script>
+</asp:Panel>
 <asp:UpdatePanel runat="server" ID="UProducto" UpdateMode="Conditional">
     <ContentTemplate>
-<asp:HiddenField runat="server" ID="HId" />
+    <asp:Panel runat="server" ID="PAnulado" Visible="false" CssClass="anulado"><asp:Label runat="server" ID="LAnulado"></asp:Label></asp:Panel>
+    <asp:HiddenField runat="server" ID="HId" />
     <table class="tablecollapse">
         <tr>
             <td colspan="5" align="right"><asp:HyperLink runat="server" ID="HEntrada"></asp:HyperLink></td>
@@ -159,26 +148,33 @@
         <tr>
             <td>Número</td>
             <td><asp:TextBox runat="server" ID="TNumero" CssClass="likenumero"></asp:TextBox></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
             <td>Fecha<asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese un fecha." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             <asp:RangeValidator ControlToValidate="TFecha" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
             <td><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox>
             </td>
+            <td><asp:Label runat="server" ID="LEntrega" Text="Entrega"></asp:Label><asp:RangeValidator ControlToValidate="TEntrega" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="REntrega" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
+            <td><asp:TextBox runat="server" ID="TEntrega" CssClass="fecha"></asp:TextBox>
             <td></td>
         </tr>
         <tr>
-            <td>Paciente<asp:RequiredFieldValidator ControlToValidate="TTerceroID" ErrorMessage="Por favor ingrese un paciente." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-            <td colspan="3"><asp:TextBox runat="server" ID="TTercero" Width="98%"></asp:TextBox><asp:TextBox runat="server" ID="TTerceroID" CssClass="hide"></asp:TextBox></td>
-        </tr>
-        <tr>
-            <td colspan="2">Documento equivalente</td>
+            <td colspan="2">Documento equivalente<asp:RequiredFieldValidator ControlToValidate="TDocumento" ErrorMessage="Por favor ingrese un documento." ID="RDocumento" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td colspan="2"><asp:TextBox runat="server" ID="TDocumento" Width="98%"></asp:TextBox>
             </td>
+        </tr>
+        <tr>
+            <td>Paciente<asp:RequiredFieldValidator ID="RPaciente" ControlToValidate="UCPaciente$TPacienteID" runat="server" ErrorMessage="Por favor ingrese un paciente" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td colspan="3"><uc1:pacienteSimple runat="server" ID="UCPaciente" /></td>
         </tr>
         <tr>
             <td colspan="5" class="tdb">&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="5" class="GridHeader"><asp:HiddenField runat="server" ID="HProductos" EnableViewState="false" />Productos</td>
+            <td colspan="5" class="GridHeader"><asp:HiddenField runat="server" ID="HProductos" EnableViewState="false" /><asp:HiddenField runat="server" ID="HUsado" />Productos</td>
         </tr>
         <tr>
             <td colspan="5" class="tdl tdr"><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label></td>
@@ -186,20 +182,20 @@
         <tr>
             <td class="tdl"><asp:CheckBox runat="server" ID="CAutomatico" Text="Automático" Checked="true" /></td>
             <td align="right"><asp:Label runat="server" ID="LLote" Text="Lote: "></asp:Label></td>
-            <td><asp:TextBox ID="TLote" runat="server" CssClass="tlote hide"></asp:TextBox><span id="automatico1">Automático</span></td>
+            <td><asp:TextBox ID="TLote" runat="server" CssClass="tlote hide"></asp:TextBox><asp:Label runat="server" ID="LLoteA" Text="Automático"></asp:Label></td>
             <td align="right"><asp:Label runat="server" ID="LVencimiento" Text="Vence: "></asp:Label></td>
-            <td class="tdr"><asp:TextBox ID="TVencimiento" runat="server" CssClass="tvence hide"></asp:TextBox><span id="automatico2">Automático</span>
+            <td class="tdr"><asp:TextBox ID="TVencimiento" runat="server" CssClass="tvence hide"></asp:TextBox><asp:Label runat="server" ID="LVencimientoA" Text="Automático"></asp:Label>
             </td>
         </tr>
         <tr>
-            <td class="tdl">&nbsp;</td>
+            <td class="tdl" nowrap=nowrap><asp:Label runat="server" ID="LUbicacion" Text="Ubicación: "></asp:Label><asp:TextBox runat="server" ID="TUbicacion" CssClass="tlote hide"></asp:TextBox><asp:Label runat="server" ID="LUbicacionA" Text="Automática"></asp:Label></td>
             <td align="right"><asp:Label runat="server" ID="LSerial" Text="Serial:"></asp:Label></td>
-            <td><asp:TextBox runat="server" ID="TSerial" CssClass="tlote hide"></asp:TextBox><span id="serialautomatico">Automático</span></td>
+            <td><asp:TextBox runat="server" ID="TSerial" CssClass="tlote hide"></asp:TextBox><asp:Label runat="server" ID="LSerialA" Text="Automático"></asp:Label></td>
             <td align="right"><asp:Label runat="server" ID="LEstado" Text="Estado:"></asp:Label></td>
-            <td class="tdr"><asp:TextBox ID="TEstado" runat="server" CssClass="tlote hide"></asp:TextBox><span id="estadoautomatico">Automático</span></td>
+            <td class="tdr"><asp:TextBox ID="TEstado" runat="server" CssClass="tlote hide"></asp:TextBox><asp:Label runat="server" ID="LEstadoA" Text="Automático"></asp:Label></td>
         </tr>
         <tr class="GridAltRow">
-            <td class="tdl"></td>
+            <td class="tdl"><span id="smax"></span></td>
             <td colspan="4" class="tdr" id="tdescripcion"></td>
         </tr>
         <tr class="GridAltRow">
@@ -211,18 +207,22 @@
                 <asp:RegularExpressionValidator ValidationExpression="[0-9]+" ID="REntero" runat="server" ValidationGroup="producto" ErrorMessage="Por favor ingrese un numero entero." ControlToValidate="TCantidad" Display="Dynamic" SetFocusOnError="True">*</asp:RegularExpressionValidator>
                 <asp:RegularExpressionValidator ValidationExpression="[0-9]*[.]?[0-9]+" ID="RDecimal" runat="server" ValidationGroup="producto" ErrorMessage="Por favor ingrese un numero decimal." ControlToValidate="TCantidad" Display="Dynamic" SetFocusOnError="True">*</asp:RegularExpressionValidator></td>
             <td><asp:TextBox ID="TCantidad" runat="server" CssClass="float"></asp:TextBox></td>
-            <td colspan="2"><span id="smax"></span></td>
+            <td><asp:Label runat="server" ID="LValor" Text="Precio U."></asp:Label>
+            <asp:RequiredFieldValidator ControlToValidate="TValor" ValidationGroup="producto" ErrorMessage="Por favor ingrese un precio unitario." ID="RValor" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+            <asp:RegularExpressionValidator ValidationExpression="^[$][+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]+)?$" ID="RValorF" runat="server" ValidationGroup="producto" ErrorMessage="Por favor ingrese un numero decimal." ControlToValidate="TValor" Display="Dynamic" SetFocusOnError="True">*</asp:RegularExpressionValidator>
+            </td>
+            <td><asp:TextBox runat="server" ID="TValor" CssClass="dinero"></asp:TextBox></td>
             <td class="tdr">
                 <asp:Button ID="BAgregar" runat="server" Text="Agregar" ValidationGroup="producto" onclick="BAgregar_Click" />
                 <asp:Button ID="BActualizar" runat="server" Text="Actualizar" CssClass="hide" CausesValidation="false" onclick="BActualizar_Click" />
             </td>
         </tr>
         <tr>
-            <td colspan="5" align="center" class="tdl tdb tdr">
+            <td colspan="5" class="tdl tdb tdr">
                 <asp:GridView ID="GProductos" runat="server" AutoGenerateColumns="False" 
-                    DataKeyNames="id,producto,ubicacion,estado" DataSourceID="SProductos" 
-                    onselectedindexchanged="GProductos_SelectedIndexChanged" 
-                    EmptyDataText="No hay productos" onrowdeleted="GProductos_RowDeleted" >
+                    DataKeyNames="IdGrid,id,ubicacion,estado" 
+                    onselectedindexchanged="GProductos_SelectedIndexChanged" ShowFooter="true"
+                    EmptyDataText="No hay productos" onrowdeleting="GProductos_RowDeleting" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -232,34 +232,18 @@
                     <Columns>
                         <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                         <asp:BoundField DataField="codigo" HeaderText="Código" SortExpression="codigo" ItemStyle-HorizontalAlign="Right" />
-                        <asp:BoundField DataField="nombre" HeaderText="Producto" SortExpression="nombre" ItemStyle-HorizontalAlign="Left" />
-                        <asp:BoundField DataField="cantidad" HeaderText="Cantidad" SortExpression="cantidad" DataFormatString="{0:F2}" ItemStyle-HorizontalAlign="Right" />
-                        <asp:BoundField DataField="unidad" HeaderText="Un." SortExpression="unidad" ItemStyle-HorizontalAlign="Left" />
+                        <asp:BoundField DataField="nombre" HeaderText="Producto" SortExpression="nombre" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" />
+                        <asp:BoundField DataField="cantidad" HeaderText="Cantidad" SortExpression="cantidad" DataFormatString="{0:F2}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
+                        <asp:BoundField DataField="Valor" HeaderText="Precio U." SortExpression="Valor" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" />
+                        <asp:BoundField DataField="ValorTotal" HeaderText="Precio T." SortExpression="ValorTotal" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
+                        <asp:BoundField DataField="unidad" HeaderText="Un." SortExpression="unidad" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" />
                         <asp:BoundField DataField="lote" HeaderText="Lote" SortExpression="lote" />
                         <asp:BoundField DataField="vence" HeaderText="Vence" SortExpression="vence" DataFormatString="{0:d}" />
-                        <asp:BoundField DataField="szSerial" HeaderText="Serial" SortExpression="szSerial" />
-                        <asp:BoundField DataField="nubicacion" HeaderText="Ubicación" SortExpression="nubicacion" />
+                        <asp:BoundField DataField="serial" HeaderText="Serial" SortExpression="serial" />
+                        <asp:BoundField DataField="NombreUbicacion" HeaderText="Ubicación" SortExpression="NombreUbicacion" />
                         <asp:BoundField DataField="szEstado" HeaderText="Estado" SortExpression="szEstado" />
                     </Columns>
                 </asp:GridView>
-                <sdg:customdatasource ID="SProductos" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                    SelectCommand="SELECT salida_items{0}.id,salida_items{0}.producto,salida_items{0}.cantidad,salida_items{0}.lote
-                            ,IF(salida_items{0}.vence='0000-00-00',NULL,salida_items{0}.vence) AS vence
-                            ,producto.nombre,producto.unidad,producto.codigo,salida_items{0}.ubicacion,IFNULL(ubicacion.nombre,'(Ninguna)') AS nubicacion
-                            ,salida_items{0}.szSerial,salida_items{0}.estado,estado.nombre AS szEstado
-                            FROM salida_items{0}
-                            LEFT JOIN producto ON (producto.id=salida_items{0}.producto)
-                            LEFT JOIN ubicacion ON (ubicacion.id=salida_items{0}.ubicacion)
-                            LEFT JOIN varios AS estado ON (estado.id=salida_items{0}.estado)
-                            WHERE salida_items{0}.salida=@salida;" 
-                    InsertCommand="INSERT INTO salida_items{0} (salida,producto,cantidad,lote,vence,ingreso,ubicacion,szSerial,estado) VALUES (@rsalida, @producto,@cantidad,@lote,@vence,SYSDATE(),@ubicacion,@szSerial,@estado)"
-                    UpdateCommand="UPDATE salida_items{0} SET producto=@producto,cantidad=@cantidad,lote=@lote,vence=@vence,ubicacion=@ubicacion,szSerial=@szSerial,estado=@estado WHERE id=@id"
-                    DeleteCommand="DELETE FROM salida_items{0} WHERE id=@id" >
-                    <SelectParameters>
-                        <asp:ControlParameter ControlID="TNumero" Name="salida" PropertyName="Text" />
-                    </SelectParameters>
-                </sdg:customdatasource>
             </td>
         </tr>
         <tr>
@@ -273,7 +257,8 @@
             <td colspan="5"><asp:ValidationSummary runat="server" ID="ValidationSumary1" /><asp:ValidationSummary ValidationGroup="producto" runat="server" ID="ValidationSummary2" /></td>
         </tr>
         <tr>
-            <td colspan="5" align="right">
+            <td><asp:Button runat="server" ID="BAnular" Text="Anular" Visible="false" onclick="BAceptar_Click"/></td>
+            <td colspan="4" align="right">
                 <asp:Button runat="server" ID="BAceptar" Text="Aceptar" onclick="BAceptar_Click" />
                 <asp:Button runat="server" ID="BCancelar" Text="Cancelar" CausesValidation="false" onclick="BCancelar_Click" />
             </td>
@@ -282,4 +267,3 @@
 </ContentTemplate>
 </asp:UpdatePanel>
 </asp:Content>
-

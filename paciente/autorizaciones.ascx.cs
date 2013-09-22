@@ -13,7 +13,7 @@ public partial class paciente_autorizaciones : System.Web.UI.UserControl
     protected void Page_Load(object sender, EventArgs e)
     {
         if(!IsPostBack) {
-
+            Page.ClientScript.RegisterClientScriptInclude("jsaut", ResolveClientUrl("~/paciente/autorizaciones.ascx.js"));
         }
     }
 

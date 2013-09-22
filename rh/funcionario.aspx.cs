@@ -410,6 +410,8 @@ public partial class rh_funcionario : System.Web.UI.Page
                 if (conectorms.QueryMod(empresa.GetInsert()) == -1)
                     return;
             }
+
+            Funcionario.RemoveFuncionario(HId.Value);
         }
 
         // conectorms.Commit();

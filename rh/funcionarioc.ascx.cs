@@ -12,20 +12,10 @@ public partial class rh_funcionarioc : System.Web.UI.UserControl
     public string IdFuncionario
     {
         set {
-
-            using (CConectorMS conector = new CConectorMS())
-            {
-                SqlDataReader reader = conector.Query("SELECT perId,perNombre,perDocumento FROM admPersonalHS WHERE perId=" + Query.GetValor(value));
-                HIdFuncionario.Value = "";
-                TFuncionario.Text = "";
-                if (reader != null && reader.Read())
-                {
-
-                    HIdFuncionario.Value = reader["perId"].ToString();
-                    LNombre.Text = reader["perNombre"].ToString();
-                    TFuncionario.Text = reader["perDocumento"].ToString();
-                }
-            }
+            Funcionario info = Funcionario.GetFuncionario(value);
+            HIdFuncionario.Value = info.Id;
+            LNombre.Text = info.Nombres;
+            TFuncionario.Text = info.Documento;
         }
         get { return HIdFuncionario.Value; }
     }

@@ -32,3 +32,4 @@
     });
 </script>
 Paciente: <asp:TextBox runat="server" ID="TPaciente"></asp:TextBox><asp:Label runat="server" Font-Bold="true" ID="LPaciente"></asp:Label>
+<asp:RequiredFieldValidator ControlToValidate="TPaciente" runat="server" ValidationGroup="selpac">*</asp:RequiredFieldValidator>

@@ -9,17 +9,19 @@ using SDG.Componentes;
 public partial class farmacia_informes : System.Web.UI.Page
 {
     public static int m_nAlmacen = 1;
+    public int m_nPaciente = -1;
 
     protected void Page_Load(object sender, EventArgs e)
     {
         SUbicacion.SelectCommand = String.Format(SUbicacion.SelectCommand, m_nAlmacen, m_nAlmacen);
         SResultados1.SelectCommand = String.Format(SResultados1.SelectCommand, m_nAlmacen, m_nAlmacen);
-        SResultados2.SelectCommand = String.Format(SResultados2.SelectCommand, m_nAlmacen, m_nAlmacen);
         SResultados3.SelectCommand = String.Format(SResultados3.SelectCommand, m_nAlmacen, m_nAlmacen);
-        SResultados4.SelectCommand = String.Format(SResultados4.SelectCommand, m_nAlmacen, m_nAlmacen);
+        SResultados2.SelectCommand = String.Format(SResultados2.SelectCommand, m_nAlmacen, m_nAlmacen);
 
         if (!IsPostBack)
         {
+            CUsuario usuario = (CUsuario)CUsuario.GetUsuario();
+            ViewState["entidades"] = usuario["entidades"];
             THasta.Text = DateTime.Now.ToShortDateString();
             TDesde.Text = DateTime.Now.AddDays(-30).ToShortDateString();
             BBuscar_Click(sender, e);
@@ -31,32 +33,29 @@ public partial class farmacia_informes : System.Web.UI.Page
         switch (DVer.SelectedValue)
         {
             case "1":
-                GResultados.Columns[2].Visible = true;
+                GResultados.Columns[2].Visible = false;
                 GResultados.Columns[3].Visible = true;
                 GResultados.Columns[4].Visible = true;
-                GResultados.Columns[2].HeaderText = "Desde";
+                GResultados.Columns[5].Visible = false;
                 break;
             case "2":
-                GResultados.Columns[2].Visible = true;
+                GResultados.Columns[2].Visible = false;
                 GResultados.Columns[3].Visible = true;
-                GResultados.Columns[4].Visible = false;
-                GResultados.Columns[2].HeaderText = "Hacia";
+                GResultados.Columns[4].Visible = true;
+                GResultados.Columns[5].Visible = true;
                 break;
             case "3":
                 GResultados.Columns[2].Visible = false;
                 GResultados.Columns[3].Visible = true;
-                GResultados.Columns[4].Visible = true;
-                break;
-            case "4":
-                GResultados.Columns[2].Visible = false;
-                GResultados.Columns[3].Visible = false;
                 GResultados.Columns[4].Visible = false;
+                GResultados.Columns[5].Visible = true;
                 break;
         }
 
         if (Utilidades.GetRowsCount(GResultados, LTotal) > 0)
         {
-
+            ((MasterPageI)Master).Imprimir(GResultados);
+            ((MasterPageI)Master).Excel(GResultados);
         }
     }
     protected void GResultados_SelectedIndexChanged(object sender, EventArgs e)
@@ -67,6 +66,10 @@ public partial class farmacia_informes : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
+            if (m_nPaciente == -1)
+                m_nPaciente = Utilidades.GetGridColumnIndex(GResultados, "Paciente");
+            e.Row.Cells[m_nPaciente].Text= Paciente.GetPaciente(HttpUtility.HtmlDecode(e.Row.Cells[m_nPaciente].Text).Trim()).DocumentoYNombres;
+
             string url = "";
             switch (DVer.SelectedValue)
             {
@@ -74,13 +77,10 @@ public partial class farmacia_informes : System.Web.UI.Page
                     url = "~/farmacia/entrada.aspx?ei=";
                     break;
                 case "2":
-                    url = "~/farmacia/traslado.aspx?ti=";
+                    url = "~/farmacia/ordendecompra.aspx?oci=";
                     break;
                 case "3":
                     url = "~/farmacia/salida.aspx?si=";
-                    break;
-                case "4":
-                    url = "~/farmacia/transformaciones.aspx?tri=";
                     break;
             }
             url += DataBinder.Eval(e.Row.DataItem, "id").ToString();

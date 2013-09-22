@@ -75,6 +75,9 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             if(Request.QueryString["p"]=="1" && Usuario.GetUsuario().CanPrint()) {
                 // nos preparamos para redireccionar
                 lnkImp_Click(sender, e);
+            } else if (Request.QueryString["pdf"] == "1" && Usuario.GetUsuario().CanPrint()) {
+                // nos preparamos para redireccionar
+                lnkPDF_Click(sender, e);
             }
         }
         /*// actualizamos la contraseña
@@ -169,12 +172,33 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         return lnkGuardar;
     }
 
-    public void Imprimir(string archivo)
-    {
+    public void Imprimir(string archivo, bool savestate) {
+        
         lnkPDF.Visible = lnkExcel.Visible = lnkImp.Visible = Usuario.GetUsuario().CanPrint();
         lnkImp.OnClientClick = "";
         lnkImp.Attributes["r"] = "1";
         ViewState["printfile"] = archivo;
+
+        if (savestate)
+        {
+            lnkPDF.PostBackUrl += "&ss=" + HttpUtility.UrlEncode(Crypt.EncriptarDES(Utilidades.SaveState(cph.Controls), System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_2")));
+            lnkImp.PostBackUrl += "&ss=" + HttpUtility.UrlEncode(Crypt.EncriptarDES(Utilidades.SaveState(cph.Controls), System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_2")));
+        }
+    }
+    
+    public void Imprimir(string archivo)
+    {
+        Imprimir(archivo, false);
+    }
+
+    public void RestoreState()
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(Request.QueryString["ss"]))
+                Utilidades.RestoreState(cph.Controls, Crypt.DesencriptarDES(Request.QueryString["ss"], System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_2")));
+        }
+        catch { }
     }
 
     protected void lnkImp_Click(object sender, EventArgs e) {

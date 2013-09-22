@@ -41,8 +41,16 @@ public class Paciente
                 " " + sApellido +
                 " " + pNombre +
                 " " + sNombre;
-        return Nombres;
+        return Nombres.Trim();
     } }
+    public string DocumentoYNombres { 
+        get {
+            string resultado= documento + " - " + NombreCompleto;
+            if (estado == "2")
+                resultado = "Inactivo - " + resultado;
+            return resultado==" - " ? "" : resultado;
+        }
+    }
     public int Edad {
         get {
             if (string.IsNullOrEmpty(FechaNac))

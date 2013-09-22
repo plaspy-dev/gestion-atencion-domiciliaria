@@ -216,7 +216,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 LError.Text = "Por favor ingrese un paciente.";
                 return;
             }
-            string temp = TAbono.Text.Replace(",", "");
+            string temp = TAbono.Text.Replace(",", "").Replace("$", "");
             if (temp.Length != 0 && Convert.ToDouble(temp) > 0) // verificamos que tenga algun valor
             {
                 if (TRecibo.Text.Length == 0)
@@ -312,7 +312,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
             if (GPagos.Rows.Count == 0)
             {
-                temp = TAbono.Text.Replace(",", "");
+                temp = TAbono.Text.Replace(",", "").Replace("$", "");
                 if (temp.Length != 0 && Convert.ToDouble(temp) > 0) // verificamos que tenga algun valor
                 {
                     Query pago = new Query("pago_autorizacion");
@@ -430,7 +430,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
     protected void GPagos_SelectedIndexChanged(object sender, EventArgs e)
     {
         TRecibo.Text= HttpUtility.HtmlDecode(GPagos.SelectedRow.Cells[2].Text);
-        TAbono.Text = HttpUtility.HtmlDecode(GPagos.SelectedRow.Cells[3].Text);
+        TAbono.Text = HttpUtility.HtmlDecode(GPagos.SelectedRow.Cells[3].Text.Replace(",", "").Replace("$", ""));
         BAgregar.Text = "Editar";
     }
     protected void IIr_Click(object sender, ImageClickEventArgs e)

@@ -11,6 +11,15 @@ public class Autorizaciones
         public string Actividad { get; set; }
         public int Cantidad { get; set; }
         public string Intensidad { get; set; }
+        public string NombreCorto {
+            get
+            {
+                return NombreCompleto.Replace("ATENCION [VISITA] DOMICILIARIA", "AT...RIA")
+                    .Replace("ATENCION", "AT..N")
+                    .Replace("DOMICILIARIA", "DO..A")
+                    .Replace("VISITA", "VI..A");
+            }
+        }
         public string NombreCompleto { get {
             string nombre=Actividad;
             if (Intensidad.Length > 0)

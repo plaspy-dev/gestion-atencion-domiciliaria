@@ -1,0 +1,443 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Configuration;
+using System.IO;
+using System.Web;
+using System.Net.Mail;
+using System.Globalization;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using SDG.Componentes;
+using MySql.Data.MySqlClient;
+
+public partial class farmacia_ordendecompra : System.Web.UI.Page
+{
+    public static int m_nAlmacen = 1;
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
+
+        if (!IsPostBack)
+        {
+            CUsuario usuario = (CUsuario)CUsuario.GetUsuario();
+
+            CConfiguracion configuracion = CConfiguracion.GetConfiguracion();
+
+            // costo
+            Utilidades.GetGridColumn(GProductos, "Costo U.").Visible =
+            Utilidades.GetGridColumn(GProductos, "Costo T.").Visible =
+            RCostoF.Visible = RCosto.Visible =
+            TCosto.Visible = LCosto.Visible = configuracion.nCosto != 0;
+
+            // tercero
+            RDocumento.Visible = configuracion.bDocumentoEntrada;
+
+            RTerceroID.Visible = configuracion.bTerceroEntrada && !configuracion.bCrearTerceroEntradas;
+            TEMail.ReadOnly = TDireccion.ReadOnly = TTercero.ReadOnly = TTelefono.ReadOnly = !configuracion.bCrearTerceroEntradas;
+            RNombre.Visible = RIdentificacion.Visible = configuracion.bCrearTerceroEntradas && configuracion.bTerceroEntrada;
+            RDireccion.Visible = RTelefono.Visible = configuracion.bDatosComplementariosTerceroEntrada;
+
+            if (Session["orden_compra_clean"] != null)
+            {
+                ViewState["clean"] = true;
+                Session["orden_compra_clean"] = null;
+            }
+            else ViewState["clean"] = false;
+
+            if (Session["lordencompra"] != null)
+            {
+
+                ViewState["urlprint"] = Request.Url.AbsolutePath + "?oci=" + Session["lordencompra"].ToString() + "&p=1";
+                LImprimir.Text = "Orden de compra " + Session["lordencompra"].ToString() + " Editada.<br/>¿Desea imprimirla?";
+                PImprimir.Visible = true;
+                Session["lordencompra"] = null;
+            }
+
+            if (!string.IsNullOrEmpty(Request.QueryString["oci"]))
+            {
+                using (CConector conector = new CConector())
+                {
+
+                    Query query = new Query("orden_compra" + m_nAlmacen);
+
+                    query += "id";
+                    query += "observaciones";
+                    query += "fecha";
+                    query += "documento";
+                    query += "tercero";
+                    query += "estado";
+                    query += "paciente";
+
+                    MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["oci"])));
+                    if (reader != null && reader.Read())
+                    {
+                        HId.Value = TNumero.Text = reader["id"].ToString();
+                        ((MasterPageI)Master).SetModificacion(HId.Value);
+                        ((MasterPageI)Master).Imprimir("ordencompra.html");
+                        TObservaciones.Text = reader["observaciones"].ToString();
+                        TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
+                        TDocumento.Text = reader["documento"].ToString();
+                        PAnulado.Visible = reader["estado"].ToString() != "";
+                        UCPaciente.IdPaciente= reader["paciente"].ToString();
+
+                        Tercero tercero = new Tercero(reader["tercero"].ToString());
+                        TTerceroID.Text = tercero.Id;
+                        TTercero.Text = tercero.Documento;
+                        TNombre.Text = tercero.Nombre;
+                        TTelefono.Text = tercero.Telefono;
+                        TDireccion.Text = tercero.Direccion;
+                        TEMail.Text = tercero.Email;
+
+                        ProductoUsado productoUsado = ProductoUsado.DesSerialize(HUsado.Value);
+
+                        query = new Query("orden_compra_items" + m_nAlmacen);
+
+                        query += "id";
+                        query += "producto";
+                        query += "cantidad";
+                        query += "ingreso";
+                        query += "costo";
+
+                        reader = conector.Query(query.GetSelect("orden_compra=" + HId.Value));
+                        if (reader != null)
+                        {
+                            while (reader.Read())
+                            {
+                                Producto info = new Producto(reader["producto"].ToString());
+
+                                info.IdTabla = reader["id"].ToString();
+                                info.cantidad = Convert.ToDecimal(reader["cantidad"]);
+                                info.Ingreso = reader["ingreso"].ToString();
+                                info.Costo = Convert.ToDecimal(reader["costo"]);
+
+                                productoUsado.AddProducto(info);
+                            }
+                        }
+
+                        GProductos.DataSource = productoUsado.GetProductosUsados();
+                        HUsado.Value = productoUsado.SerializeBinary();
+                        GProductos.DataBind();
+                        if (GProductos.FooterRow != null)
+                        {
+                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+                        }
+
+                        TProducto.Focus();
+                        BAgregar.Enabled = string.IsNullOrEmpty((string)ViewState["TrasladoId"]);
+                        GProductos.Columns[0].Visible = usuario.CanDelete();
+                        BAceptar.Enabled = usuario.CanUpdate();
+                        BAnular.Visible = usuario.CanAdmin();
+                        if (PAnulado.Visible)
+                        {
+                            LAnulado.Text = "Anulada";
+                            GProductos.Columns[0].Visible =
+                            BAnular.Enabled = BAceptar.Enabled = false;
+                        }
+                        return;
+                    }
+                }
+            }
+            BAceptar.Enabled = usuario.CanInsert();
+            using (CConector conector = new CConector())
+                TNumero.Text = conector.QueryString("SELECT IF(MAX(id),MAX(id)+1,1) FROM orden_compra" + m_nAlmacen);
+            TFecha.Text = DateTime.Now.ToShortDateString();
+            TNumero.Focus();
+        }
+    }
+
+    protected void GProductos_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+        ProductoUsado productoUsado = ProductoUsado.DesSerialize(HUsado.Value);
+        Producto producto = productoUsado.GetProducto(Convert.ToInt32(GProductos.SelectedDataKey[0]));
+
+        TProducto.Text = producto.nombre;
+        TCantidad.Text = producto.cantidad.ToString(CultureInfo.InvariantCulture);
+        TProductoID.Text = producto.id;
+        TCosto.Text = producto.Costo.ToString(CultureInfo.InvariantCulture);
+    }
+
+    protected void BAgregar_Click(object sender, EventArgs e)
+    {
+        Producto producto = new Producto(TProductoID.Text);
+
+        REntero.Enabled = producto.nNumero == 1;
+        RDecimal.Enabled = producto.nNumero != 1;
+
+        Page.Validate("producto");
+        if (!Page.IsValid)
+            return;
+
+        producto.cantidad = Convert.ToDecimal(TCantidad.Text, CultureInfo.InvariantCulture);
+        try
+        {
+            producto.Costo = Decimal.Parse(TCosto.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture);
+        }
+        catch { }
+
+        ProductoUsado productousadoNuevo = new ProductoUsado(HProductos.Value);
+        ProductoUsado productoUsado = ProductoUsado.DesSerialize(HUsado.Value);
+
+        if (GProductos.SelectedIndex == -1)
+        {
+            productoUsado.AddProducto(producto);
+        }
+        else
+        {
+            // revisar la edicion
+            Producto info = productoUsado.GetProducto(Convert.ToInt32(GProductos.DataKeys[GProductos.SelectedIndex].Values[0]));
+
+            productousadoNuevo.DeleteProducto(info.id, info.cantidad, info.lote, info.vence
+                , info.ubicacion, info.estado, info.serial);
+
+            productoUsado.UpdateProducto(info.IdGrid, producto);
+        }
+
+        GProductos.SelectedIndex = -1;
+        GProductos.DataSource = productoUsado.GetProductosUsados();
+        GProductos.DataBind();
+
+        REntero.Enabled = true;
+        RDecimal.Enabled = true;
+
+        TCosto.Text = TProducto.Text = TProductoID.Text = TCantidad.Text = "";
+        TProducto.Focus();
+
+        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+
+        productousadoNuevo.GetProductosUsados().Add(producto);
+        HProductos.Value = productousadoNuevo.Serialize();
+        HUsado.Value = productoUsado.SerializeBinary();
+
+        ScriptManager.RegisterStartupScript(TProducto, typeof(String), "pregunta", "window.onbeforeunload = function() { return '¿Ha realizado cambios, esta seguro de abandonar la pagina?'; };", true);
+    }
+
+    protected void BAceptar_Click(object sender, EventArgs e)
+    {
+        if (!IsValid)
+            return;
+
+        if (GProductos.Rows.Count == 0)
+        {
+            LMensaje.Text = "Por favor ingrese por lo menos un producto";
+            return;
+        }
+
+        Query query = new Query("orden_compra" + m_nAlmacen);
+        using (CConector conector = new CConector())
+        {
+            bool nueva = false;
+            // agregamos el tercero
+            string terceroid = TTerceroID.Text;
+
+            if (TNombre.Text.Length > 0 && TTercero.Text.Length > 0)
+            {
+                Query tercero = new Query("tercero");
+
+                tercero["tipo"] = "2";
+                tercero["nombre"] = TNombre.Text;
+                tercero["identificacion"] = TTercero.Text;
+                tercero["telefono"] = TTelefono.Text;
+                tercero["direccion"] = TDireccion.Text;
+                tercero["email"] = TEMail.Text;
+
+                if (terceroid.Length > 0)
+                {
+                    if (conector.QueryMod(tercero.GetUpdate("id=" + Query.GetValor(terceroid))) == -1)
+                        return;
+                }
+                else
+                {
+                    int res = conector.QueryMod(tercero.GetInsert());
+                    if (res == -1)
+                        return;
+                    terceroid = res.ToString();
+                }
+                Tercero.RemoveTercero(terceroid);
+            }
+
+            query["observaciones"] = TObservaciones.Text;
+            query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
+            query["documento"] = TDocumento.Text;
+            query["paciente"] = UCPaciente.IdPaciente;
+            query["tercero"] = terceroid;
+            if (sender == BAnular)
+                query["estado"] = "-1";
+
+            conector.StartTransaction();
+
+            bool existe = HId.Value.Length > 0;
+
+            if (HId.Value.Length == 0)
+            {
+                nueva = true;
+                int res = conector.QueryMod(query.GetInsert(), true);
+                if (res == -1)
+                {
+                    LMensaje.Text = conector.GetLastError();
+                    return;
+                }
+                HId.Value = res.ToString();
+            }
+            else
+            {
+                if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(HId.Value))) == -1)
+                {
+                    LMensaje.Text = conector.GetLastError();
+                    return;
+                }
+            }
+
+            if (conector.InsertModificacion(HId.Value) == -1)
+            {
+                LMensaje.Text = conector.GetLastError();
+                return;
+            }
+
+            // actualizamos las ubicaciones de todos
+            ProductoUsado productoUsado = ProductoUsado.DesSerialize(HUsado.Value);
+
+            // eliminamos todos los productos
+            List<Producto> productos = productoUsado.GetProductoEliminado();
+            for (int i = 0; i < productos.Count; i++)
+            {
+                if (conector.QueryMod(string.Format("DELETE FROM orden_compra{0} WHERE id={1}", m_nAlmacen, productos[i].IdTabla)) == -1)
+                    return;
+            }
+            // agregamos los nuevos
+            productos = productoUsado.GetProductosUsados();
+            for (int i = 0; i < productos.Count; i++)
+            {
+                productoUsado.UpdateProductoIngreso(productos[i].IdGrid, sender != BAnular && TFecha.Text.Length > 0);
+
+                query = productos[i].GetQuery("orden_compra_items" + m_nAlmacen, false);
+
+                if (string.IsNullOrEmpty(productos[i].IdTabla))
+                {
+                    query["orden_compra"] = HId.Value;
+                    if (conector.QueryMod(query.GetInsert()) == -1)
+                        return;
+                }
+                else if (productos[i].pProductoAntiguo != null)
+                { // fue actualizado
+                    if (conector.QueryMod(query.GetUpdate("id=" + productos[i].IdTabla)) == -1)
+                        return;
+                }
+                if (!productos[i].UpdateCosto(conector, TTerceroID.Text))
+                    return;
+            }
+
+            conector.Commit();
+            Session["orden_compra_clean"] = 1;
+
+            try
+            {
+                Tercero tecero = new Tercero(TTerceroID.Text);
+
+                MailMessage mail = new MailMessage();
+                mail.To.Add(tecero.Email);
+                // mail.Bcc.Add();
+
+                mail.Subject = nueva ? "Nueva " : "Actualizada ";
+                mail.Subject += "orden de compra No. " + HId.Value;
+                mail.IsBodyHtml = true;
+                mail.Priority = MailPriority.Normal;
+
+                string Contenido = "";
+                using (StreamReader reader = new StreamReader(Server.MapPath("ordencompracorreo.html")))
+                {
+                    Contenido = reader.ReadToEnd();
+                    reader.Close();
+                }
+
+                Contenido = Utilidades.ReplaceContenido(Page.Controls, Contenido)
+                    .Replace("$szVinculo$", string.Format("{0}{1}?oci={2}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value))
+                    .Replace("../imgs/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/imgs/")))
+                    .Replace("../css/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/css/")));
+                mail.Body = Contenido;
+
+                SmtpClient client = new SmtpClient();
+                client.EnableSsl = client.Port == 587 || client.Port == 465;
+                client.Send(mail);
+            }
+            catch (Exception ex)
+            {
+                ((MasterPageI)Master).SetResultado(ex.Message);
+                return;
+            }
+
+            // Alertas.RemoveAlertas(m_nAlmacen);
+
+            Session["lordencompra"] = HId.Value;
+
+            ((MasterPageI)Master).SetResultado("Orden de compra " + HId.Value + " editada.");
+        }
+    }
+    protected void BCancelar_Click(object sender, EventArgs e)
+    {
+        Session["orden_compra_clean"] = 1;
+        Response.Redirect(Request.Url.AbsolutePath);
+    }
+    protected void BActualizar_Click(object sender, EventArgs e)
+    {
+        ProductoUsado productousadoNuevo = new ProductoUsado(HProductos.Value);
+        HProductos.Value = "";
+        List<Producto> productos = productousadoNuevo.GetProductosUsados();
+        for (int i = 0; i < productos.Count; i++)
+        {
+            Producto producto = productos[i];
+            TProductoID.Text = producto.id;
+            TCantidad.Text = producto.cantidad.ToString(CultureInfo.InvariantCulture);
+            TProducto.Text = producto.NombreCompleto;
+            TCosto.Text = producto.Costo.ToString(CultureInfo.InvariantCulture);
+            BAgregar_Click(sender, e);
+        }
+    }
+    protected void GProductos_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        // en la tabla definitiva
+        ProductoUsado productoUsado = ProductoUsado.DesSerialize(HUsado.Value);
+        Producto producto = productoUsado.GetProducto(Convert.ToInt32(GProductos.DataKeys[e.RowIndex].Values[0]));
+        if (producto == null)
+        {
+            e.Cancel = true;
+            return;
+        }
+
+        // ahora en los temporales
+        ProductoUsado productousadoNuevo = new ProductoUsado(HProductos.Value);
+        productousadoNuevo.DeleteProducto(producto.id, producto.cantidad, producto.lote, producto.vence, producto.ubicacion, producto.estado, producto.serial);
+        HProductos.Value = productousadoNuevo.Serialize();
+
+
+        productoUsado.DeleteProducto(producto.IdGrid);
+        GProductos.DataSource = productoUsado.GetProductosUsados();
+        GProductos.DataBind();
+        HUsado.Value = productoUsado.SerializeBinary();
+        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+
+        e.Cancel = true;
+    }
+    protected void OnImprimir(object sender, EventArgs e)
+    {
+        GProductos.Columns[0].Visible =false;
+        PAnulado.Visible = true;
+    }
+    protected void TTerceroID_TextChanged(object sender, EventArgs e)
+    {
+        Tercero tercero = new Tercero(TTerceroID.Text);
+        TTercero.Text = tercero.Documento;
+        TNombre.Text = tercero.Nombre;
+        TTelefono.Text = tercero.Telefono;
+        TDireccion.Text = tercero.Direccion;
+        TEMail.Text = tercero.Email;
+    }
+}

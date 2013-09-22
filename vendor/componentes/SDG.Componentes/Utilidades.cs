@@ -152,7 +152,7 @@ public class Utilidades
 
 	public static string GetGridRowCellHTML(GridView grid, GridViewRow row, int columna)
 	{
-		string text = "class=c" + columna;
+		string text = "class='c" + columna + "'";
 		string text2 = "";
 		text2 = ((grid.Columns[columna].ItemStyle.HorizontalAlign == HorizontalAlign.Right) ? (text2 + "<td align=right " + text + ">") : ((grid.Columns[columna].ItemStyle.HorizontalAlign != HorizontalAlign.Center) ? (text2 + "<td " + text + ">") : (text2 + "<td align=center " + text + ">")));
 		if (row.Cells[columna].HasControls())
@@ -213,7 +213,7 @@ public class Utilidades
 			if (grid.Columns[i].Visible)
 			{
 				object obj = text;
-				text = string.Concat(obj, "<th class=h", i, " bgcolor='#EEEEEE'><b>", grid.Columns[i].HeaderText, "</b></th>");
+				text = string.Concat(obj, "<th class='h", i, "' bgcolor='#EEEEEE'><b>", grid.Columns[i].HeaderText, "</b></th>");
 			}
 		}
 		text += "</tr>";
@@ -240,17 +240,17 @@ public class Utilidades
 					if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Right)
 					{
 						object obj = text;
-						text = string.Concat(obj, "<td align=right class=f", i, ">");
+						text = string.Concat(obj, "<td align=right class='f", i, "'>");
 					}
 					else if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Center)
 					{
 						object obj = text;
-						text = string.Concat(obj, "<td align=center class=f", i, ">");
+						text = string.Concat(obj, "<td align=center class='f", i, "'>");
 					}
 					else
 					{
 						object obj = text;
-						text = string.Concat(obj, "<td class=f", i, ">");
+						text = string.Concat(obj, "<td class='f", i, "'>");
 					}
 					text = text + "<b>" + grid.FooterRow.Cells[i].Text + "</b></td>";
 				}
@@ -260,27 +260,39 @@ public class Utilidades
 		return text + "</table>";
 	}
 
-	public static string ReplaceContenido(ControlCollection controles, string contenido)
+	public static string ReplaceContenido(ControlCollection controles, string contenido, bool visible)
 	{
-		if (new Random().Next(10) == 1 && !GetKey())
-		{
-			return "";
-		}
 		for (int i = 0; i < controles.Count; i++)
 		{
+			try
+			{
+				if (controles[i].Controls.Count > 0 && controles[i].GetType() != typeof(GridView) && controles[i].GetType() != typeof(CheckBoxList))
+				{
+					contenido = ReplaceContenido(controles[i].Controls, contenido, visible ? controles[i].Visible : visible);
+					continue;
+				}
+			}
+			catch
+			{
+			}
 			string iD = controles[i].ID;
 			string text = "";
-			if (controles[i].Controls.Count > 0 && controles[i].GetType() != typeof(GridView) && controles[i].GetType() != typeof(CheckBoxList))
+			if (iD == null || iD.Length == 0)
 			{
-				contenido = ReplaceContenido(controles[i].Controls, contenido);
+				continue;
+			}
+			iD = "$" + controles[i].ID + "$";
+			if (!controles[i].Visible || !visible)
+			{
+				iD = "$" + controles[i].ID + "$";
+				contenido = contenido.Replace(iD, "");
 			}
 			else
 			{
-				if (iD == null || iD.Length == 0)
+				if (contenido.IndexOf(iD) == -1)
 				{
 					continue;
 				}
-				iD = "$" + controles[i].ID + "$";
 				if (controles[i].GetType() == typeof(TextBox))
 				{
 					text = ((TextBox)controles[i]).Text;
@@ -295,11 +307,20 @@ public class Utilidades
 				}
 				else if (controles[i].GetType() == typeof(DropDownList))
 				{
-					if (((DropDownList)controles[i]).SelectedItem == null)
+					try
 					{
-						((DropDownList)controles[i]).DataBind();
+						if (((DropDownList)controles[i]).SelectedItem == null)
+						{
+							((DropDownList)controles[i]).DataBind();
+						}
 					}
-					text = ((DropDownList)controles[i]).SelectedItem.Text;
+					catch
+					{
+					}
+					if (((DropDownList)controles[i]).SelectedItem != null)
+					{
+						text = ((DropDownList)controles[i]).SelectedItem.Text;
+					}
 				}
 				else if (controles[i].GetType() == typeof(HiddenField))
 				{
@@ -335,6 +356,15 @@ public class Utilidades
 			}
 		}
 		return contenido;
+	}
+
+	public static string ReplaceContenido(ControlCollection controles, string contenido)
+	{
+		if (new Random().Next(10) == 1 && !GetKey())
+		{
+			return "";
+		}
+		return ReplaceContenido(controles, contenido, visible: true);
 	}
 
 	public static StateBag GetViewState()
@@ -479,9 +509,23 @@ public class Utilidades
 		return text;
 	}
 
-	public static void RestoreState(ControlCollection controles, string valores)
+	public static string GetUrl(string url, string parametro)
 	{
+		url += ((url.IndexOf("?") == -1) ? "?" : "&");
+		return url + parametro;
+	}
+
+	public static bool RestoreState(ControlCollection controles, string valores)
+	{
+		if (string.IsNullOrEmpty(valores))
+		{
+			return false;
+		}
 		string[] array = valores.Split(';');
+		if (valores.Length == 0)
+		{
+			return false;
+		}
 		for (int i = 0; i < array.Length; i++)
 		{
 			string[] array2 = array[i].Split('=');
@@ -496,6 +540,10 @@ public class Utilidades
 			}
 			else if (control is DropDownList)
 			{
+				if (((DropDownList)control).Items.Count < 2)
+				{
+					((DropDownList)control).DataBind();
+				}
 				((DropDownList)control).SelectedValue = HttpUtility.UrlDecode(array2[1]);
 			}
 			else if (control is CheckBox)
@@ -523,6 +571,7 @@ public class Utilidades
 				}
 			}
 		}
+		return true;
 	}
 
 	private static bool GetKey()

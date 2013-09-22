@@ -19,6 +19,11 @@ public class CUsuario : Usuario
     {
     }
 
+    public string GetDatabase() {
+
+        return "hs";
+    }
+
     public bool CheckEntidad(string entidad)
     {
         if (!string.IsNullOrEmpty(this["entidades"]))
