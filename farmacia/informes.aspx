@@ -84,9 +84,7 @@
             <td>Proveedor</td>
             <td>Producto</td>
             <td>Paciente</td>
-            <td>Ubicación</td>
             <td>Grupo</td>
-            <td>Estado</td>
             <td><asp:CheckBox runat="server" ID="CAlmacen" Text="Ver almacén" CssClass="hide" /></td>
         </tr>
         <tr>
@@ -115,18 +113,6 @@
             <td>
                 <asp:TextBox runat="server" ID="TPaciente"></asp:TextBox><asp:TextBox runat="server" ID="TPacienteID" CssClass="hide"></asp:TextBox>
             </td>
-            <td>
-                <asp:DropDownList ID="DUbicacion" runat="server" AppendDataBoundItems="true" CssClass="anchomax"
-                       DataSourceID="SUbicacion" DataTextField="nombre" DataValueField="id">
-                       <asp:ListItem Text="(Todas)" Value="-1"></asp:ListItem>
-                       <asp:ListItem Text="(Ninguna)" Value="0"></asp:ListItem>
-                </asp:DropDownList>
-                <asp:SqlDataSource ID="SUbicacion" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="SELECT id, nombre FROM ubicacion WHERE almacen={0} AND estado IS NULL ORDER BY nombre">
-                </asp:SqlDataSource>
-            </td>
             <td><asp:DropDownList ID="DGrupo" runat="server" AppendDataBoundItems="true" CssClass="anchomax" 
                     DataSourceID="SGrupo" DataTextField="nombre" DataValueField="id">
                     <asp:ListItem Text="(Todos)" Value="-1"></asp:ListItem>
@@ -136,18 +122,6 @@
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT id, nombre FROM varios WHERE tipo=35 AND estado IS NULL ORDER BY nombre">
-                </asp:SqlDataSource>
-                </td>
-                <td>
-                <asp:DropDownList ID="DEstado" runat="server" AppendDataBoundItems="true" CssClass="anchomax" 
-                        DataSourceID="SEstado" DataTextField="nombre" DataValueField="id">
-                        <asp:ListItem Text="(Todos)" Value="-1"></asp:ListItem>
-                        <asp:ListItem Text="(Ninguno)" Value="0"></asp:ListItem>
-                </asp:DropDownList>
-                <asp:SqlDataSource ID="SEstado" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=34 AND estado IS NULL ORDER BY nombre">
                 </asp:SqlDataSource>
                 </td>
             <td>
@@ -170,10 +144,9 @@
             <asp:BoundField HeaderText="Número" DataField="id" SortExpression="id" ItemStyle-HorizontalAlign="Right" />
             <asp:BoundField HeaderText="Fecha" DataField="fecha" SortExpression="fecha" DataFormatString="{0:d}" />
             <asp:BoundField HeaderText="Desde/Hacia" DataField="desde" SortExpression="desde" />
-            <asp:BoundField HeaderText="Documento" DataField="documento" SortExpression="documento" />
             <asp:BoundField HeaderText="Proveedor" DataField="nombre" SortExpression="nombre" />
             <asp:BoundField HeaderText="Paciente" DataField="paciente" SortExpression="paciente" />
-            <asp:BoundField HeaderText="Total productos" DataField="productos" SortExpression="productos" ItemStyle-HorizontalAlign="Right" />
+            <asp:BoundField HeaderText="Productos" DataField="producto" SortExpression="producto" />
             <asp:BoundField HeaderText="Cantidad" DataField="total" SortExpression="total" ItemStyle-HorizontalAlign="Right" />
         </Columns>
     </asp:GridView>
@@ -183,25 +156,21 @@
     <asp:SqlDataSource ID="SResultados1" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT entrada{0}.id,entrada{0}.fecha,almacen.nombre AS desde,entrada{0}.documento,tercero.nombre AS nombre
-                            ,COUNT(*) AS productos, SUM(entrada_items{0}.cantidad) AS total,NULL AS paciente
+                SelectCommand="SELECT entrada{0}.id,entrada{0}.fecha,almacen.nombre AS desde,tercero.nombre AS nombre
+                            ,medicamentos.nombre AS producto, entrada_items{0}.cantidad AS total,NULL AS paciente
                             FROM entrada{0}
                             LEFT JOIN tercero ON (tercero.id=entrada{0}.tercero)
                             LEFT JOIN almacen ON (almacen.id=entrada{0}.desde)
                             LEFT JOIN entrada_items{0} ON (entrada{0}.id=entrada_items{0}.entrada)
-                            LEFT JOIN producto ON (producto.id=entrada_items{0}.producto)
+                            LEFT JOIN medicamentos ON (medicamentos.id=entrada_items{0}.producto)
                         WHERE 
                         (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=entrada{0}.fecha)
                         AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=entrada{0}.fecha)
                         AND (@tercero=0 OR entrada{0}.tercero=@tercero)
-                        AND (@ubicacion=-1 OR entrada_items{0}.ubicacion=@ubicacion)
-                        AND (@estado=-1 OR entrada_items{0}.estado=@estado)
-                        AND (@grupo=-1 OR producto.grupo=@grupo OR (@grupo=0 AND producto IS NULL))
-                        AND (@nombre='_' OR producto.codigo LIKE CONCAT('%', @nombre, '%')
-                            OR producto.nombre LIKE CONCAT('%', @nombre, '%')
-                            OR producto.empresa LIKE CONCAT('%', @nombre, '%')
-                            OR producto.descripcion LIKE CONCAT('%', @nombre, '%'))
-                        GROUP BY entrada{0}.id
+                        AND (@grupo=-1 OR medicamentos.grupo=@grupo OR (@grupo=0 AND producto IS NULL))
+                        AND (@nombre='_' OR medicamentos.codigo LIKE CONCAT('%', @nombre, '%')
+                            OR medicamentos.nombre LIKE CONCAT('%', @nombre, '%')
+                            OR medicamentos.forma LIKE CONCAT('%', @nombre, '%'))
                         ORDER BY id
                         ">
                  <SelectParameters>
@@ -209,32 +178,26 @@
                     <asp:ControlParameter ControlID="THasta" PropertyName="Text" Name="hasta" DefaultValue=" " />
                     <asp:ControlParameter ControlID="TTerceroID" PropertyName="Text" Name="tercero" DefaultValue="0" />
                     <asp:ControlParameter ControlID="TNombre" PropertyName="Text" Name="nombre" DefaultValue="_" />
-                    <asp:ControlParameter ControlID="DUbicacion" PropertyName="SelectedValue" Name="ubicacion" />
                     <asp:ControlParameter ControlID="DGrupo" PropertyName="SelectedValue" Name="grupo" />
-                    <asp:ControlParameter ControlID="DEstado" PropertyName="SelectedValue" Name="estado" />
                     <asp:ControlParameter ControlID="TPacienteID" PropertyName="Text" Name="paciente" DefaultValue="0" />
                  </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SResultados3" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT salida{0}.id,salida{0}.fecha,NULL AS desde,salida{0}.documento,NULL AS nombre
-                            ,COUNT(*) AS productos, SUM(salida_items{0}.cantidad) AS total,salida{0}.paciente
+                SelectCommand="SELECT salida{0}.id,salida{0}.fecha,NULL AS desde,NULL AS nombre
+                            ,medicamentos.nombre AS producto, salida_items{0}.cantidad AS total,salida{0}.paciente
                             FROM salida{0}
                             LEFT JOIN salida_items{0} ON (salida{0}.id=salida_items{0}.salida)
-                            LEFT JOIN producto ON (producto.id=salida_items{0}.producto)
+                            LEFT JOIN medicamentos ON (medicamentos.id=salida_items{0}.producto)
                         WHERE 
                         (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=salida{0}.fecha)
                         AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=salida{0}.fecha)
                         AND (@paciente=0 OR salida{0}.paciente=@paciente)
-                        AND (@ubicacion=-1 OR salida_items{0}.ubicacion=@ubicacion)
-                        AND (@estado=-1 OR salida_items{0}.estado=@estado)
-                        AND (@grupo=-1 OR producto.grupo=@grupo OR (@grupo=0 AND producto IS NULL))
-                        AND (@nombre='_' OR producto.codigo LIKE CONCAT('%', @nombre, '%')
-                            OR producto.nombre LIKE CONCAT('%', @nombre, '%')
-                            OR producto.empresa LIKE CONCAT('%', @nombre, '%')
-                            OR producto.descripcion LIKE CONCAT('%', @nombre, '%'))
-                        GROUP BY salida{0}.id
+                        AND (@grupo=-1 OR medicamentos.grupo=@grupo OR (@grupo=0 AND producto IS NULL))
+                        AND (@nombre='_' OR medicamentos.codigo LIKE CONCAT('%', @nombre, '%')
+                            OR medicamentos.nombre LIKE CONCAT('%', @nombre, '%')
+                            OR medicamentos.forma LIKE CONCAT('%', @nombre, '%'))
                         ORDER BY id
                         ">
                  <SelectParameters>
@@ -242,32 +205,28 @@
                     <asp:ControlParameter ControlID="THasta" PropertyName="Text" Name="hasta" DefaultValue=" " />
                     <asp:ControlParameter ControlID="TTerceroID" PropertyName="Text" Name="tercero" DefaultValue="0" />
                     <asp:ControlParameter ControlID="TNombre" PropertyName="Text" Name="nombre" DefaultValue="_" />
-                    <asp:ControlParameter ControlID="DUbicacion" PropertyName="SelectedValue" Name="ubicacion" />
                     <asp:ControlParameter ControlID="DGrupo" PropertyName="SelectedValue" Name="grupo" />
-                    <asp:ControlParameter ControlID="DEstado" PropertyName="SelectedValue" Name="estado" />
                     <asp:ControlParameter ControlID="TPacienteID" PropertyName="Text" Name="paciente" DefaultValue="0" />
                  </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SResultados2" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT orden_compra{0}.id,orden_compra{0}.fecha,NULL AS desde,orden_compra{0}.documento,tercero.nombre AS nombre
-                            ,COUNT(*) AS productos, SUM(orden_compra_items{0}.cantidad) AS total,orden_compra{0}.paciente
+                SelectCommand="SELECT orden_compra{0}.id,orden_compra{0}.fecha,NULL AS desde,tercero.nombre AS nombre
+                            ,medicamentos.nombre AS producto, orden_compra_items{0}.cantidad AS total,orden_compra{0}.paciente
                             FROM orden_compra{0}
                             LEFT JOIN tercero ON (tercero.id=orden_compra{0}.tercero)
                             LEFT JOIN orden_compra_items{0} ON (orden_compra{0}.id=orden_compra_items{0}.orden_compra)
-                            LEFT JOIN producto ON (producto.id=orden_compra_items{0}.producto)
+                            LEFT JOIN medicamentos ON (medicamentos.id=orden_compra_items{0}.producto)
                         WHERE 
                         (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=orden_compra{0}.fecha)
                         AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=orden_compra{0}.fecha)
                         AND (@tercero=0 OR orden_compra{0}.tercero=@tercero)
                         AND (@paciente=0 OR orden_compra{0}.paciente=@paciente)
-                        AND (@grupo=-1 OR producto.grupo=@grupo OR (@grupo=0 AND producto IS NULL))
-                        AND (@nombre='_' OR producto.codigo LIKE CONCAT('%', @nombre, '%')
-                            OR producto.nombre LIKE CONCAT('%', @nombre, '%')
-                            OR producto.empresa LIKE CONCAT('%', @nombre, '%')
-                            OR producto.descripcion LIKE CONCAT('%', @nombre, '%'))
-                        GROUP BY orden_compra{0}.id
+                        AND (@grupo=-1 OR medicamentos.grupo=@grupo OR (@grupo=0 AND producto IS NULL))
+                        AND (@nombre='_' OR medicamentos.codigo LIKE CONCAT('%', @nombre, '%')
+                            OR medicamentos.nombre LIKE CONCAT('%', @nombre, '%')
+                            OR medicamentos.forma LIKE CONCAT('%', @nombre, '%'))
                         ORDER BY id
                         ">
                  <SelectParameters>
@@ -275,9 +234,7 @@
                     <asp:ControlParameter ControlID="THasta" PropertyName="Text" Name="hasta" DefaultValue=" " />
                     <asp:ControlParameter ControlID="TTerceroID" PropertyName="Text" Name="tercero" DefaultValue="0" />
                     <asp:ControlParameter ControlID="TNombre" PropertyName="Text" Name="nombre" DefaultValue="_" />
-                    <asp:ControlParameter ControlID="DUbicacion" PropertyName="SelectedValue" Name="ubicacion" />
                     <asp:ControlParameter ControlID="DGrupo" PropertyName="SelectedValue" Name="grupo" />
-                    <asp:ControlParameter ControlID="DEstado" PropertyName="SelectedValue" Name="estado" />
                     <asp:ControlParameter ControlID="TPacienteID" PropertyName="Text" Name="paciente" DefaultValue="0" />
                  </SelectParameters>
     </asp:SqlDataSource>

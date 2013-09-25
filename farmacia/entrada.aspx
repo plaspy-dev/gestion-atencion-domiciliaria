@@ -207,10 +207,6 @@
             <td>&nbsp;</td>
         </tr>
         <tr>
-            <td colspan="2">Documento equivalente<asp:RequiredFieldValidator ControlToValidate="TDocumento" ErrorMessage="Por favor ingrese un documento." ID="RDocumento" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-            <td colspan="2"><asp:TextBox runat="server" ID="TDocumento" Width="98%"></asp:TextBox></td>
-        </tr>
-        <tr>
             <td colspan="5" class="GridHeader">Proveedor</td>
         </tr>
         <tr>
@@ -278,18 +274,15 @@
             <td class="tdr"><asp:TextBox ID="TVencimiento" runat="server" CssClass="fecha"></asp:TextBox></td>
         </tr>
         <tr class="GridAltRow">
-            <td class="tdl">
-                &nbsp;</td>
+            <td class="tdl"></td>
             <td><asp:Label runat="server" ID="LSerial" Text="Serial"></asp:Label><asp:RequiredFieldValidator ControlToValidate="TSerial" ValidationGroup="producto" ErrorMessage="Por favor ingrese un serial." ID="RSerial" runat="server" Display="Dynamic">*</asp:RequiredFieldValidator></td>
             <td><asp:Label runat="server" ID="LUbicacion" Text="Ubicación"></asp:Label><asp:RequiredFieldValidator InitialValue="-1" ControlToValidate="TUbicacionID" ValidationGroup="producto" ErrorMessage="Por favor ingrese una ubicacion valida." ID="RUbicacionO" runat="server" Display="Dynamic">*</asp:RequiredFieldValidator>
             <asp:RequiredFieldValidator InitialValue="0" ControlToValidate="TUbicacionID" ValidationGroup="producto" ErrorMessage="Por favor ingrese una ubicacion." ID="RUbicacion" runat="server" Display="Dynamic">*</asp:RequiredFieldValidator></td>
             <td><asp:Label runat="server" ID="LEstado" Text="Estado"></asp:Label><asp:RequiredFieldValidator InitialValue="0" ControlToValidate="DEstado" ValidationGroup="producto" ErrorMessage="Por favor seleccione un estado." ID="REstado" runat="server" Display="Dynamic">*</asp:RequiredFieldValidator></td>
-            <td class="tdr">
-                &nbsp;</td>
+            <td class="tdr"></td>
         </tr>
         <tr>
-            <td class="tdl">
-                &nbsp;</td>
+            <td class="tdl"></td>
             <td><asp:TextBox CssClass="tlote" runat="server" ID="TSerial"></asp:TextBox></td>
             <td>
                 <asp:TextBox runat="server" ID="TUbicacion" CssClass="tlote tubicacion"></asp:TextBox>
@@ -305,8 +298,7 @@
                     SelectCommand="SELECT id, nombre FROM varios WHERE tipo=34 AND estado IS NULL ORDER BY nombre">
                 </asp:SqlDataSource>
             </td>
-            <td class="tdr">
-                &nbsp;</td>
+            <td class="tdr"></td>
         </tr>
         <tr>
             <td class="tdl"></td>

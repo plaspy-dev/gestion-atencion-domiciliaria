@@ -13,7 +13,6 @@ public partial class farmacia_informes : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        SUbicacion.SelectCommand = String.Format(SUbicacion.SelectCommand, m_nAlmacen, m_nAlmacen);
         SResultados1.SelectCommand = String.Format(SResultados1.SelectCommand, m_nAlmacen, m_nAlmacen);
         SResultados3.SelectCommand = String.Format(SResultados3.SelectCommand, m_nAlmacen, m_nAlmacen);
         SResultados2.SelectCommand = String.Format(SResultados2.SelectCommand, m_nAlmacen, m_nAlmacen);

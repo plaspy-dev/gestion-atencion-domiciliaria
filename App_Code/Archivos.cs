@@ -96,7 +96,7 @@ public class Archivos
     public void ShowFile(HttpResponse Response) {
 
         Response.Clear();
-        Response.AddHeader("Content-Disposition", "attachment;filename=" + Nombre);
+        Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(Nombre).Replace("+", "%20"));
         Response.ContentType = Tipo;
         Response.BinaryWrite(Contenido);
         Response.End();

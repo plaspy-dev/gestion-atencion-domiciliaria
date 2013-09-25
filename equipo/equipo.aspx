@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Equipo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="equipo.aspx.cs" Inherits="equipo_equipo" %>
+﻿<%@ Page Title="Dotación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="equipo.aspx.cs" Inherits="equipo_equipo" %>
 <%@ Register src="~/equipo/prestamo.ascx" tagname="prestamo" tagprefix="uc1" %>
 <%@ Register src="~/equipo/devolucion.ascx" tagname="devolucion" tagprefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
@@ -8,6 +8,10 @@
     <tr>
         <td>Nombre<asp:RequiredFieldValidator ControlToValidate="TNombre" ErrorMessage="Por favor ingrese un nombre." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
         <td><asp:TextBox runat="server" ID="TNombre"></asp:TextBox></td>
+    </tr>
+    <tr>
+        <td>Código</td>
+        <td><asp:TextBox runat="server" ID="TCodigo"></asp:TextBox></td>
     </tr>
     <tr>
         <td>Marca<asp:RequiredFieldValidator ControlToValidate="TMarca" ErrorMessage="Por favor ingrese una marca." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
@@ -37,7 +41,7 @@
         <td>Estado</td>
         <td><asp:DropDownList runat="server" ID="DEstado" Enabled="false">
                 <asp:ListItem Text="Disponible" Value="1"></asp:ListItem>
-                <asp:ListItem Text="Prestado" Value="2"></asp:ListItem>
+                <asp:ListItem Text="Asignado" Value="2"></asp:ListItem>
                 <asp:ListItem Text="En baja" Value="0"></asp:ListItem>
             </asp:DropDownList></td>
     </tr>

@@ -32,6 +32,7 @@ public partial class equipo_equipo : System.Web.UI.Page
                     query += "proximo_mantenimiento";
                     query += "estado";
                     query += "observaciones";
+                    query += "codigo";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["eid"])));
                     if (reader != null && reader.Read())
@@ -47,6 +48,7 @@ public partial class equipo_equipo : System.Web.UI.Page
                         TPlaca.Text = reader["placa"].ToString();
                         TModelo.Text = reader["modelo"].ToString();
                         TMarca.Text = reader["marca"].ToString();
+                        TCodigo.Text = reader["codigo"].ToString();
                         TUltimoMantenimiento.Text = Conector.GetFromMySQLDate(reader["ultimo_mantenimiento"]);
                         TProximoMantenimiento.Text = Conector.GetFromMySQLDate(reader["proximo_mantenimiento"]);
                         TObservaciones.Text = reader["observaciones"].ToString();
@@ -113,6 +115,7 @@ public partial class equipo_equipo : System.Web.UI.Page
             query["ultimo_mantenimiento"]= Conector.GetMySQLDateFormat(TUltimoMantenimiento.Text);
             query["proximo_mantenimiento"]= Conector.GetMySQLDateFormat(TProximoMantenimiento.Text);
             query["observaciones"]= TObservaciones.Text;
+            query["codigo"] = TCodigo.Text;
 
             if (string.IsNullOrEmpty(id))
             {

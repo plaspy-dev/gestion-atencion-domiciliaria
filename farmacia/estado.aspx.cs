@@ -48,7 +48,7 @@ public partial class farmacia_estado : System.Web.UI.Page
 
                 TVence.Text = DateTime.Now.ToShortDateString();
             }
-            else if (!string.IsNullOrEmpty(Request.QueryString["pvid"]))
+            /*else if (!string.IsNullOrEmpty(Request.QueryString["pvid"]))
             {
                 Producto info = Producto.GetProducto(Request.QueryString["pvid"]);
                 TProductoID.Text = info.id;
@@ -64,7 +64,7 @@ public partial class farmacia_estado : System.Web.UI.Page
                     catch { }
                 }
                 CDetallado.Checked = true;
-            }
+            }*/
             else if (!string.IsNullOrEmpty(Request.QueryString["gpid"]))
             {
 
@@ -76,9 +76,6 @@ public partial class farmacia_estado : System.Web.UI.Page
             // ((MasterPageI)Master).InitAlmacen();
             ((MasterPageI)Master).RestoreState();
         }
-
-        Utilidades.GetGridColumn(GResultados, "Ubicación").Visible = CConfiguracion.GetConfiguracion().nUbicacion != 0;
-        Utilidades.GetGridColumn(GResultados, "Estado").Visible = CConfiguracion.GetConfiguracion().bEstado;
 
         SKardex.SelectCommand = String.Format(SKardex.SelectCommand, m_nAlmacen.ToString());
 
@@ -99,9 +96,6 @@ public partial class farmacia_estado : System.Web.UI.Page
 
             // ubicacion
             TUbicacion.Visible = TUbicacionID.Visible = LUbicacion.Visible = configuracion.nUbicacion != 0;
-
-            // estado
-            DEstado.Visible = configuracion.bEstado;
 
             if (!string.IsNullOrEmpty(Request.QueryString["pid"]))
             { // Kardex
@@ -205,186 +199,13 @@ public partial class farmacia_estado : System.Web.UI.Page
     {
 
         ViewState["producto"] = null;
-        PUbicacion.Visible = false;
         GResultados.SelectedIndex = -1;
-    }
-
-    protected void BAceptar_Click(object sender, EventArgs e)
-    {
-        if (!IsValid)
-            return;
-
-        string[] detalle = DProductoUbicaciones.SelectedValue.Split(';');
-
-        Producto producto = new Producto(detalle[0]);
-        producto.vence = detalle[1];
-        producto.lote = detalle[2];
-        producto.ubicacion = Convert.ToInt32(detalle[3]);
-        producto.serial = detalle[5];
-        producto.estado = Convert.ToInt32(detalle[6]);
-        producto.bIngreso = true;
-
-        producto.cantidad = Convert.ToDecimal(TCantidad.Text, CultureInfo.InvariantCulture);
-
-        using (CConector conector = new CConector())
-        {
-            conector.StartTransaction();
-
-            if (!producto.DeleteProductoFromEstado(conector, m_nAlmacen.ToString()))
-                return;
-
-            producto.ubicacion = TNUbicacionID.Text.Length == 0 ? 0 : Convert.ToInt32(TNUbicacionID.Text);
-            producto.GetCostoPromedio(m_nAlmacen.ToString());
-
-            if (!producto.AddProductoFromEstado(conector, m_nAlmacen.ToString()))
-                return;
-
-            conector.Commit();
-            ViewState["producto"] = null;
-            PUbicacion.Visible = false;
-            GResultados.SelectedIndex = -1;
-            GResultados.DataBind();
-        }
     }
 
     protected void GResultados_SelectedIndexChanged(object sender, EventArgs e)
     {
-        ViewState["producto"] = ((HyperLink)GResultados.SelectedRow.Cells[Utilidades.GetGridColumnIndex(GResultados, "Producto")].Controls[0]).Text;
-
-        DProductoUbicaciones.Items.Clear();
-        ArrayList productos;
-
-        ProductoUsado productousado = new ProductoUsado();
-
-        productos = productousado.GetProductos(GResultados.DataKeys[GResultados.SelectedIndex].Values[0].ToString()
-            , -1, m_nAlmacen.ToString());
-
-        if (productos != null)
-        {
-
-            for (int i = 0; i < productos.Count; i++)
-            {
-                Producto producto = (Producto)productos[i];
-                string nombre = "";
-                if (!string.IsNullOrEmpty(producto.vence))
-                    nombre += producto.vence + " - ";
-                nombre += producto.lote;
-                if (!string.IsNullOrEmpty(producto.vence))
-                    nombre += " - " + producto.serial;
-                nombre += " [" + producto.szEstado + "]";
-                nombre += " " + producto.NombreUbicacion;
-                string value = producto.id + ";" + producto.vence + ";" + producto.lote + ";" + producto.ubicacion + ";" + producto.cantidad.ToString(CultureInfo.InvariantCulture) + ";" + producto.serial + ";" + producto.estado;
-
-                ListItem item = new ListItem(nombre, value);
-
-                if (producto.lote == GResultados.SelectedDataKey.Values["lote"].ToString()
-                    && producto.vence == CConector.GetDateFormat(GResultados.SelectedDataKey.Values["vence"].ToString())
-                    && producto.NombreUbicacion == GResultados.SelectedDataKey.Values["ubicacion"].ToString()
-                    && producto.szEstado == GResultados.SelectedDataKey.Values["estado"].ToString()
-                    )
-                {
-                    item.Selected = true;
-                }
-                DProductoUbicaciones.Items.Add(item);
-            }
-
-            PUbicacion.Visible = true;
-        }
     }
-    protected void GResultados_RowCommand(object sender, GridViewCommandEventArgs e)
-    {
-        if (e.CommandName == "Estado")
-        {
-            GridViewRow gvr = (GridViewRow)(((LinkButton)e.CommandSource).NamingContainer);
-            GResultados.SelectedIndex = gvr.RowIndex;
-
-            ViewState["producto"] = ((HyperLink)GResultados.SelectedRow.Cells[Utilidades.GetGridColumnIndex(GResultados, "Producto")].Controls[0]).Text;
-            DProductoEstado.Items.Clear();
-            ArrayList productos;
-
-            ProductoUsado productousado = new ProductoUsado();
-
-            productos = productousado.GetProductos(GResultados.DataKeys[GResultados.SelectedIndex].Values[0].ToString()
-                , -1, m_nAlmacen.ToString());
-
-            if (productos != null)
-            {
-                for (int i = 0; i < productos.Count; i++)
-                {
-
-                    Producto producto = (Producto)productos[i];
-                    string nombre = "";
-                    if (!string.IsNullOrEmpty(producto.vence))
-                        nombre += producto.vence + " - ";
-                    nombre += producto.lote;
-                    if (!string.IsNullOrEmpty(producto.vence))
-                        nombre += " - " + producto.serial;
-                    nombre += " [" + producto.szEstado + "]";
-                    nombre += " " + producto.NombreUbicacion;
-
-                    string value = producto.id + ";" + producto.vence + ";" + producto.lote + ";" + producto.estado + ";" + producto.cantidad.ToString(CultureInfo.InvariantCulture) + ";" + producto.serial + ";" + producto.ubicacion;
-
-                    ListItem item = new ListItem(nombre, value);
-
-                    if (producto.lote == GResultados.SelectedDataKey.Values["lote"].ToString()
-                        && producto.vence == CConector.GetDateFormat(GResultados.SelectedDataKey.Values["vence"].ToString())
-                        && producto.NombreUbicacion == GResultados.SelectedDataKey.Values["ubicacion"].ToString()
-                        && producto.szEstado == GResultados.SelectedDataKey.Values["estado"].ToString()
-                        )
-                    {
-                        item.Selected = true;
-                    }
-                    DProductoEstado.Items.Add(item);
-                }
-
-                PEstado.Visible = true;
-            }
-        }
-    }
-    protected void BCancelarEstado_Click(object sender, EventArgs e)
-    {
-        ViewState["producto"] = null;
-        PEstado.Visible = false;
-        GResultados.SelectedIndex = -1;
-    }
-
-    protected void BAceptarEstado_Click(object sender, EventArgs e)
-    {
-        if (!IsValid)
-            return;
-
-        string[] detalle = DProductoEstado.SelectedValue.Split(';');
-
-        Producto producto = new Producto(detalle[0]);
-        producto.vence = detalle[1];
-        producto.lote = detalle[2];
-        producto.ubicacion = Convert.ToInt32(detalle[6]);
-        producto.serial = detalle[5];
-        producto.estado = Convert.ToInt32(detalle[3]);
-        producto.bIngreso = true;
-
-        producto.cantidad = Convert.ToDecimal(TEstadoCantidad.Text, CultureInfo.InvariantCulture);
-
-        using (CConector conector = new CConector())
-        {
-            conector.StartTransaction();
-
-            if (!producto.DeleteProductoFromEstado(conector, m_nAlmacen.ToString()))
-                return;
-
-            producto.estado = Convert.ToInt32(DNuevoEstado.SelectedValue);
-            producto.GetCostoPromedio(m_nAlmacen.ToString());
-
-            if (!producto.AddProductoFromEstado(conector, m_nAlmacen.ToString()))
-                return;
-
-            conector.Commit();
-            PEstado.Visible = false;
-            ViewState["producto"] = null;
-            GResultados.SelectedIndex = -1;
-            GResultados.DataBind();
-        }
-    }
+    
     protected void BActualizar_Click(object sender, EventArgs e)
     {
         try

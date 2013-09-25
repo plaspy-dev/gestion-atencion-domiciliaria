@@ -463,14 +463,14 @@ public class servicios : System.Web.Services.WebService
         using (CConector conector = new CConector())
         {
 
-            string query = "SELECT id FROM producto WHERE estado IS NULL";
+            string query = "SELECT id FROM medicamentos WHERE estado IS NULL AND tipo IN (172,265,269) ";
             string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
             for (int i = 0; i < split.Length; i++)
             {
                 if (split[i].Length > 0)
                 { // verificamos que no este vacio
-                    query += String.Format(" AND (codigo LIKE '%{0}%' OR descripcion LIKE '%{0}%' OR nombre LIKE '%{0}%' OR empresa LIKE '%{0}%') ", split[i]);
+                    query += String.Format(" AND (codigo LIKE '%{0}%' OR forma LIKE '%{0}%' OR nombre LIKE '%{0}%') ", split[i]);
                 }
             }
             query += " ORDER BY nombre LIMIT 20;";
@@ -498,8 +498,8 @@ public class servicios : System.Web.Services.WebService
 
             string query;
             if (auto)
-                query = String.Format("SELECT estado{0}.producto,SUM(estado{0}.cantidad) AS cantidad FROM estado{0} LEFT JOIN producto ON (producto.id=estado{0}.producto) LEFT JOIN varios ON (varios.id=estado{0}.estado) WHERE estado{0}.cantidad>0 AND varios.parametro1 IS NULL ", almacen);
-            else query = String.Format("SELECT estado{0}.producto,SUM(estado{0}.cantidad) AS cantidad,estado{0}.lote,IF(estado{0}.vence='0000-00-00',NULL,estado{0}.vence) AS vence,estado{0}.estado,estado{0}.szSerial,estado{0}.ubicacion FROM estado{0} LEFT JOIN producto ON (producto.id=estado{0}.producto) LEFT JOIN varios ON (varios.id=estado{0}.estado) LEFT JOIN ubicacion ON (ubicacion.id=estado{0}.ubicacion) WHERE estado{0}.cantidad>0 AND varios.parametro1 IS NULL ", almacen);
+                query = String.Format("SELECT estado{0}.producto,SUM(estado{0}.cantidad) AS cantidad FROM estado{0} LEFT JOIN medicamentos ON (medicamentos.id=estado{0}.producto) LEFT JOIN varios ON (varios.id=estado{0}.estado) WHERE estado{0}.cantidad>0 AND varios.parametro1 IS NULL ", almacen);
+            else query = String.Format("SELECT estado{0}.producto,SUM(estado{0}.cantidad) AS cantidad,estado{0}.lote,IF(estado{0}.vence='0000-00-00',NULL,estado{0}.vence) AS vence,estado{0}.estado,estado{0}.szSerial,estado{0}.ubicacion FROM estado{0} LEFT JOIN medicamentos ON (medicamentos.id=estado{0}.producto) LEFT JOIN varios ON (varios.id=estado{0}.estado) LEFT JOIN ubicacion ON (ubicacion.id=estado{0}.ubicacion) WHERE estado{0}.cantidad>0 AND varios.parametro1 IS NULL ", almacen);
 
             string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
@@ -509,14 +509,14 @@ public class servicios : System.Web.Services.WebService
                 { // verificamos que no este vacio
                     query += " AND ";
                     if (auto)
-                        query += String.Format(" (producto.codigo LIKE '%{0}%' OR producto.descripcion LIKE '%{0}%' OR producto.nombre LIKE '%{0}%' OR producto.empresa LIKE '%{0}%') ", split[i]);
-                    else query += String.Format(" (codigo LIKE '%{0}%' OR producto.descripcion LIKE '%{0}%' OR producto.nombre LIKE '%{0}%' OR producto.empresa LIKE '%{0}%' OR ubicacion.nombre LIKE '%{0}%' OR estado{1}.lote LIKE '%{0}%' OR estado{1}.vence LIKE '%{0}%' OR estado{1}.szSerial LIKE '%{0}%' OR varios.nombre LIKE '%{0}%') ", split[i], almacen);
+                        query += String.Format(" (medicamentos.codigo LIKE '%{0}%' OR medicamentos.forma LIKE '%{0}%' OR medicamentos.nombre LIKE '%{0}%') ", split[i]);
+                    else query += String.Format(" (codigo LIKE '%{0}%' OR medicamentos.forma LIKE '%{0}%' OR medicamentos.nombre LIKE '%{0}%' OR ubicacion.nombre LIKE '%{0}%' OR estado{1}.lote LIKE '%{0}%' OR estado{1}.vence LIKE '%{0}%' OR estado{1}.szSerial LIKE '%{0}%' OR varios.nombre LIKE '%{0}%') ", split[i], almacen);
                 }
             }
             if (auto)
                 query += String.Format(" GROUP BY estado{0}.producto", almacen);
             else query += String.Format(" GROUP BY estado{0}.producto,estado{0}.lote,estado{0}.vence,estado{0}.estado,estado{0}.szSerial,estado{0}.ubicacion", almacen);
-            query += " ORDER BY producto.nombre LIMIT 20;";
+            query += " ORDER BY medicamentos.nombre LIMIT 20;";
             MySqlDataReader reader = conector.Query(query);
             if (reader != null)
             {
@@ -560,8 +560,8 @@ public class servicios : System.Web.Services.WebService
 
             string query;
             if (auto)
-                query = String.Format("SELECT estado{0}.producto,SUM(estado{0}.cantidad) AS cantidad FROM estado{0} LEFT JOIN producto ON (producto.id=estado{0}.producto) WHERE estado{0}.cantidad>0 ", almacen);
-            else query = String.Format("SELECT estado{0}.producto,SUM(estado{0}.cantidad) AS cantidad,estado{0}.lote,IF(estado{0}.vence='0000-00-00',NULL,estado{0}.vence) AS vence,estado{0}.estado,estado{0}.szSerial FROM estado{0} LEFT JOIN producto ON (producto.id=estado{0}.producto) WHERE estado{0}.cantidad>0 ", almacen);
+                query = String.Format("SELECT estado{0}.producto,SUM(estado{0}.cantidad) AS cantidad FROM estado{0} LEFT JOIN medicamentos ON (medicamentos.id=estado{0}.producto) WHERE estado{0}.cantidad>0 ", almacen);
+            else query = String.Format("SELECT estado{0}.producto,SUM(estado{0}.cantidad) AS cantidad,estado{0}.lote,IF(estado{0}.vence='0000-00-00',NULL,estado{0}.vence) AS vence,estado{0}.estado,estado{0}.szSerial FROM estado{0} LEFT JOIN medicamentos ON (medicamentos.id=estado{0}.producto) WHERE estado{0}.cantidad>0 ", almacen);
 
             string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
@@ -570,13 +570,13 @@ public class servicios : System.Web.Services.WebService
                 if (split[i].Length > 0)
                 { // verificamos que no este vacio
                     query += " AND ";
-                    query += String.Format(" (codigo LIKE '%{0}%' OR descripcion LIKE '%{0}%' OR producto.nombre LIKE '%{0}%' OR producto.empresa LIKE '%{0}%') ", split[i]);
+                    query += String.Format(" (codigo LIKE '%{0}%' OR forma LIKE '%{0}%' OR medicamentos.nombre LIKE '%{0}%') ", split[i]);
                 }
             }
             if (auto)
                 query += String.Format(" GROUP BY estado{0}.producto", almacen);
             else query += String.Format(" GROUP BY estado{0}.producto,estado{0}.lote,estado{0}.vence,estado{0}.estado,estado{0}.szSerial", almacen);
-            query += " ORDER BY producto.nombre LIMIT 10;";
+            query += " ORDER BY medicamentos.nombre LIMIT 10;";
             MySqlDataReader reader = conector.Query(query);
             if (reader != null)
             {

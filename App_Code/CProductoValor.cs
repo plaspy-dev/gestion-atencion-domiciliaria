@@ -64,7 +64,7 @@ public class CProductoValor
                 valor = 0;
                 try
                 {
-                    valor = Convert.ToDecimal(conector.QueryString(string.Format("SELECT valor FROM producto WHERE id={0}", id)));
+                    valor = Convert.ToDecimal(conector.QueryString(string.Format("SELECT valor FROM medicamentos WHERE id={0}", id)));
                 }
                 catch { }
                 Save();
@@ -75,7 +75,7 @@ public class CProductoValor
                 valor_temp = 0;
                 try
                 {
-                    valor_temp = Convert.ToDecimal(conector.QueryString(string.Format("SELECT valor_temporal FROM producto WHERE id={0}", id)));
+                    valor_temp = Convert.ToDecimal(conector.QueryString(string.Format("SELECT valor_temporal FROM medicamentos WHERE id={0}", id)));
                 }
                 catch { }
                 Save();
@@ -150,7 +150,7 @@ public class CProductoValor
                 costo = 0;
                 try
                 {
-                    costo = Convert.ToDecimal(conector.QueryString(string.Format("SELECT costo FROM producto WHERE id={0}", id)));
+                    costo = Convert.ToDecimal(conector.QueryString(string.Format("SELECT costo FROM medicamentos WHERE id={0}", id)));
                 }
                 catch { }
                 Save();

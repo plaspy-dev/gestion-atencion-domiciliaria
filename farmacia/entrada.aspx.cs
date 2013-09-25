@@ -53,7 +53,7 @@ public partial class farmacia_entrada : System.Web.UI.Page
             REstado.Visible = DEstado.Visible = LEstado.Visible = configuracion.bEstado;
 
             // tercero
-            RDocumento.Visible = configuracion.bDocumentoEntrada;
+            RIdentificacion.Visible = configuracion.bDocumentoEntrada;
 
             RTerceroID.Visible = configuracion.bTerceroEntrada && !configuracion.bCrearTerceroEntradas;
             TEMail.ReadOnly = TDireccion.ReadOnly = TTercero.ReadOnly = TTelefono.ReadOnly = !configuracion.bCrearTerceroEntradas;
@@ -90,7 +90,6 @@ public partial class farmacia_entrada : System.Web.UI.Page
                     query += "observaciones";
                     query += "fecha";
                     query += "desde";
-                    query += "documento";
                     query += "tercero";
                     query += "estado";
 
@@ -103,7 +102,6 @@ public partial class farmacia_entrada : System.Web.UI.Page
                         ((MasterPageI)Master).Imprimir("entrada.html");
                         TObservaciones.Text = reader["observaciones"].ToString();
                         TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
-                        TDocumento.Text = reader["documento"].ToString();
                         PAnulado.Visible = reader["estado"].ToString() != "";
 
                         Tercero tercero = new Tercero(reader["tercero"].ToString());
@@ -340,7 +338,6 @@ public partial class farmacia_entrada : System.Web.UI.Page
 
             query["observaciones"] = TObservaciones.Text;
             query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
-            query["documento"] = TDocumento.Text;
             query["tercero"] = terceroid;
             if (sender == BAnular)
                 query["estado"] = "-1";

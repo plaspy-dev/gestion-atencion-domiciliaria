@@ -147,14 +147,14 @@ public class Utilidades
 
 	public static string RenderGrid(GridView grid)
 	{
-		return RenderGrid(grid, "border=1 width=100% cellspacing=0");
+		return RenderGrid(grid, "width=100%");
 	}
 
 	public static string GetGridRowCellHTML(GridView grid, GridViewRow row, int columna)
 	{
 		string text = "class='c" + columna + "'";
 		string text2 = "";
-		text2 = ((grid.Columns[columna].ItemStyle.HorizontalAlign == HorizontalAlign.Right) ? (text2 + "<td align=right " + text + ">") : ((grid.Columns[columna].ItemStyle.HorizontalAlign != HorizontalAlign.Center) ? (text2 + "<td " + text + ">") : (text2 + "<td align=center " + text + ">")));
+		text2 = ((grid.Columns[columna].ItemStyle.HorizontalAlign == HorizontalAlign.Right) ? (text2 + "<td align=right " + text + " style='text-align: right'>") : ((grid.Columns[columna].ItemStyle.HorizontalAlign != HorizontalAlign.Center) ? (text2 + "<td " + text + ">") : (text2 + "<td align=center " + text + " style='text-align: center'>")));
 		if (row.Cells[columna].HasControls())
 		{
 			ControlCollection controls = row.Cells[columna].Controls;
@@ -207,7 +207,7 @@ public class Utilidades
 			return grid.EmptyDataText;
 		}
 		string text = "<table " + parametrostabla + " id='" + grid.ID + "' class='tgrid'>";
-		text += "<tr>";
+		text += "<tr class='gh'>";
 		for (int i = 0; i < grid.Columns.Count; i++)
 		{
 			if (grid.Columns[i].Visible)
@@ -217,10 +217,12 @@ public class Utilidades
 			}
 		}
 		text += "</tr>";
+		bool flag = true;
 		for (int i = 0; i < grid.Rows.Count; i++)
 		{
 			GridViewRow gridViewRow = grid.Rows[i];
-			text += "<tr>";
+			flag = !flag;
+			text += (flag ? "<tr class='ga'>" : "<tr class='gr'>");
 			for (int j = 0; j < gridViewRow.Cells.Count; j++)
 			{
 				if (grid.Columns[j].Visible)
@@ -232,7 +234,7 @@ public class Utilidades
 		}
 		if (grid.ShowFooter && grid.FooterRow != null)
 		{
-			text += "<tr>";
+			text += "<tr class='gf'>";
 			for (int i = 0; i < grid.Columns.Count; i++)
 			{
 				if (grid.Columns[i].Visible)
@@ -240,12 +242,12 @@ public class Utilidades
 					if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Right)
 					{
 						object obj = text;
-						text = string.Concat(obj, "<td align=right class='f", i, "'>");
+						text = string.Concat(obj, "<td align=right class='f", i, "' style='text-align: right'>");
 					}
 					else if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Center)
 					{
 						object obj = text;
-						text = string.Concat(obj, "<td align=center class='f", i, "'>");
+						text = string.Concat(obj, "<td align=center class='f", i, "' style='text-align: center'>");
 					}
 					else
 					{
@@ -405,7 +407,7 @@ public class Utilidades
 			view.DataBind();
 		}
 		Response.Clear();
-		Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(titulo + ".xls"));
+		Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(titulo + ".xls").Replace("+", "%20"));
 		Response.ContentType = "application/vnd.ms-excel";
 		Response.ContentEncoding = Encoding.GetEncoding("ISO-8859-1");
 		Response.Write("<html>");

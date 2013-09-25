@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Estado equipos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="informe.aspx.cs" Inherits="equipo_informe" %>
+﻿<%@ Page Title="Inventario mantenimiento" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="informe.aspx.cs" Inherits="equipo_informe" %>
 <%@ Register src="~/equipo/prestamo.ascx" tagname="prestamo" tagprefix="uc1" %>
 <%@ Register src="~/equipo/devolucion.ascx" tagname="devolucion" tagprefix="uc1" %>
 
@@ -12,7 +12,7 @@
             <td><asp:DropDownList runat="server" ID="DEstado">
                 <asp:ListItem Text="Disponible" Value="1"></asp:ListItem>
                 <asp:ListItem Text="Todos" Value="-1"></asp:ListItem>
-                <asp:ListItem Text="Prestado" Value="2"></asp:ListItem>
+                <asp:ListItem Text="Asignado" Value="2"></asp:ListItem>
                 <asp:ListItem Text="En baja" Value="0"></asp:ListItem>
             </asp:DropDownList></td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Actualizar" onclick="BBuscar_Click" /></td>
@@ -24,6 +24,7 @@
     EmptyDataText="No se encontraron equipos" AllowPaging="True" PageSize="50" AllowSorting="True" >
     <Columns>
         <asp:HyperLinkField HeaderText="Nombre" SortExpression="nombre" DataTextField="nombre" DataNavigateUrlFields="id" DataNavigateUrlFormatString="~/equipo/equipo.aspx?eid={0}" Target="_blank" />
+        <asp:HyperLinkField HeaderText="Código" SortExpression="codigo" DataTextField="codigo" DataNavigateUrlFields="id" DataNavigateUrlFormatString="~/equipo/equipo.aspx?eid={0}" Target="_blank" />
         <asp:BoundField HeaderText="Marca" DataField="marca" SortExpression="marca" />
         <asp:BoundField HeaderText="Modelo" DataField="modelo" SortExpression="modelo" />
         <asp:BoundField HeaderText="Placa" DataField="placa" SortExpression="placa" />
@@ -42,7 +43,7 @@
         <asp:BoundField HeaderText="Estado" DataField="estado" SortExpression="estado" />
         <asp:TemplateField HeaderText="Acción">
             <ItemTemplate>
-                <asp:LinkButton OnClick="LAccion_Clicked" Visible='<%# Eval("estado").ToString()!="En baja" %>' runat="server" Text='<%# Eval("estado").ToString()=="Prestado" ? "Devolver" : "Asignar" %>' CommandName='<%# Eval("id") %>' CommandArgument='<%# Eval("prestamo") %>'></asp:LinkButton>
+                <asp:LinkButton OnClick="LAccion_Clicked" Visible='<%# Eval("estado").ToString()!="En baja" %>' runat="server" Text='<%# Eval("estado").ToString()=="Asignado" ? "Devolver" : "Asignar" %>' CommandName='<%# Eval("id") %>' CommandArgument='<%# Eval("prestamo") %>'></asp:LinkButton>
             </ItemTemplate>
         </asp:TemplateField>
     </Columns>
@@ -63,9 +64,9 @@
     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
     SelectCommand="SELECT 
             equipo.id,equipo.nombre,equipo.serial,equipo.placa,equipo.marca,equipo.modelo,equipo.ultimo_mantenimiento,equipo.proximo_mantenimiento,equipo.observaciones
-            ,CASE equipo.estado WHEN 1 THEN 'Disponible' WHEN 0 THEN 'En baja' WHEN 2 THEN 'Prestado' ELSE '' END AS estado
+            ,CASE equipo.estado WHEN 1 THEN 'Disponible' WHEN 0 THEN 'En baja' WHEN 2 THEN 'Asignado' ELSE '' END AS estado
             ,equipo_prestamo.paciente,equipo_prestamo.fecha,equipo_prestamo.estimado,equipo_prestamo.id AS prestamo
-            ,equipo_prestamo.funcionario
+            ,equipo_prestamo.funcionario,equipo.codigo
             FROM equipo
             LEFT JOIN equipo_prestamo ON (equipo_prestamo.equipo=equipo.id AND equipo_prestamo.devolucion IS NULL)
             WHERE 

@@ -55,7 +55,7 @@ public class foto : IHttpHandler, IReadOnlySessionState {
             }
 
             context.Response.Clear();
-            context.Response.AddHeader("Content-Disposition", "attachment;filename=" + archivo.Nombre);
+            context.Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(archivo.Nombre).Replace("+","%20"));
             context.Response.ContentType = "image/jpeg";
             img.Save(context.Response.OutputStream, ImageFormat.Jpeg);
             img.Dispose();

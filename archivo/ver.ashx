@@ -29,7 +29,7 @@ public class ver : IHttpHandler, IReadOnlySessionState {
                 return;
 
             context.Response.Clear();
-            context.Response.AddHeader("Content-Disposition", "attachment;filename=" + info.Nombre);
+            context.Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(info.Nombre).Replace("+", "%20"));
             context.Response.ContentType = info.Tipo;
             context.Response.BinaryWrite(info.Contenido);
         }

@@ -210,6 +210,8 @@ public class Producto
             if (!string.IsNullOrEmpty(codigo))
                 completo = codigo + " - ";
             completo += nombre;
+            if (!string.IsNullOrEmpty(unidad))
+                completo += " (" + unidad+ ")";
             return completo;
         }
     }
@@ -230,7 +232,9 @@ public class Producto
             if(estado!=0) 
                 completo += " [" + szEstado +"]";
             if (ubicacion != 0)
-                completo += " {" + NombreUbicacion +"}";
+                completo += " {" + NombreUbicacion + "}";
+            if (!string.IsNullOrEmpty(unidad))
+                completo += " (" + unidad + ")";
             return completo.Trim();
         }
     }
@@ -245,63 +249,40 @@ public class Producto
         Producto producto = (Producto)HttpRuntime.Cache[((CUsuario)Usuario.GetUsuario()).GetDatabase() + "p" + id];
         if(producto==null) {
             producto = new Producto();
-            Query query = new Query("producto");
+            Query query = new Query("medicamentos");
             using (CConector conector = new CConector())
             {
-
                 query += "nombre";
-                query += "descripcion";
+                query += "forma";
                 query += "codigo";
-                query += "unidad";
-                query += "vence";
+                query += "concentracion";
+
+                /*query += "vence";
                 query += "lote";
                 query += "serial";
                 query += "empresa";
                 query += "entero";
                 query += "nEstado";
                 query += "diasvencimiento";
-                query += "formatolote";
+                query += "formatolote";*/
 
                 MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(id)));
                 if (reader != null && reader.Read())
                 {
                     producto.id = id;
                     producto.nombre = reader["nombre"].ToString();
-                    producto.descripcion = reader["descripcion"].ToString();
+                    producto.descripcion = reader["forma"].ToString();
                     producto.codigo = reader["codigo"].ToString();
-                    producto.unidad = reader["unidad"].ToString();
-                    try
-                    {
-                        producto.nVence = Convert.ToInt32(reader["vence"]);
-                    }
-                    catch { producto.nVence = 0; }
-                    try
-                    {
-                        producto.nLote = Convert.ToInt32(reader["lote"]);
-                    }
-                    catch { producto.nLote = 0; }
-                    try
-                    {
-                        producto.nSerial = Convert.ToInt32(reader["serial"]);
-                    }
-                    catch { producto.nSerial = 0; }
-                    try
-                    {
-                        producto.nNumero = Convert.ToInt32(reader["entero"]);
-                    }
-                    catch { producto.nNumero = 0; }
-                    try
-                    {
-                        producto.nEstado = Convert.ToInt32(reader["nEstado"]);
-                    }
-                    catch { producto.nEstado = 0; }
-                    try
-                    {
-                        producto.DiasV = Convert.ToInt32(reader["diasvencimiento"]);
-                    }
-                    catch { producto.DiasV = 0; }
-                    producto.Empresa = reader["empresa"].ToString();
-                    producto.FormatoLote = reader["formatolote"].ToString();
+                    producto.unidad = reader["concentracion"].ToString();
+                    producto.nVence= CConfiguracion.GetConfiguracion().nProductoVence;
+                    producto.nLote = CConfiguracion.GetConfiguracion().nProductoLote;
+                    producto.nSerial = 0;
+                    producto.nNumero = CConfiguracion.GetConfiguracion().nCantidad;
+                    producto.nEstado = 0;
+                    producto.DiasV=0;
+                    // producto.Empresa = reader["empresa"].ToString();
+                    producto.FormatoLote = "";
+                    producto.Empresa = "";
                 }
             }
             HttpRuntime.Cache[((CUsuario)Usuario.GetUsuario()).GetDatabase() + "p" + id]= producto;
@@ -547,7 +528,7 @@ public class Producto
         if (info.GetCosto() != Costo)
         {
             // actualizamos el costo del producto
-            string query = string.Format("UPDATE producto SET costo={1} WHERE id={0};"
+            string query = string.Format("UPDATE medicamentos SET costo={1} WHERE id={0};"
                     , id, Costo.ToString(CultureInfo.InvariantCulture));
             if (conector.QueryMod(query) == -1)
                 return false;
@@ -574,7 +555,7 @@ public class Producto
         if(info.GetValorTemp()!=Valor) {
 
             // actualizamos el costo del producto
-            string query = string.Format("UPDATE producto SET valor_temporal={1} WHERE id={0};"
+            string query = string.Format("UPDATE medicamentos SET valor_temporal={1} WHERE id={0};"
                     , id, Valor.ToString(CultureInfo.InvariantCulture));
             if (conector.QueryMod(query) == -1)
                 return false;
@@ -667,7 +648,7 @@ public class Producto
         if (conector.QueryMod(query) == -1)
             return false;
 
-        // insertamos el producto en el estado global
+        // insertamos el medicamentos en el estado global
         query = string.Format("INSERT IGNORE INTO estado_global (producto,estado,cantidad,modificacion) VALUES ({1},{2},{0},SYSDATE());"
             , cantidad.ToString(CultureInfo.InvariantCulture), id, estado);
         if (conector.QueryMod(query) == -1)

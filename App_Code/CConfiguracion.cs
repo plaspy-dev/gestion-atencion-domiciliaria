@@ -19,15 +19,15 @@ public class CConfiguracion
     public int nValor = 2;
     public int nValorTipo = 0;
     public int nCantidad=0;
-    public int nUbicacion = 2;
+    public int nUbicacion = 0;
     public int nDiasVencimiento = 5;
     public int nSeleccionProducto = 0;
 
     // 
     public bool bVencimiento = true;
     public bool bLote = true;
-    public bool bSerial = true;
-    public bool bEstado = true;
+    public bool bSerial = false;
+    public bool bEstado = false;
 
     // configuracion productos
     public int nProductoLote = 2;

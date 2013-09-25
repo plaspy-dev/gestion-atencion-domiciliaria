@@ -277,7 +277,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
 
             Response.Clear();
-            Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(Page.Title) + ".xls");
+            Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(Page.Title).Replace("+", "%20") + ".xls");
             Response.ContentType = "application/vnd.ms-excel";
             Response.ContentEncoding = System.Text.Encoding.GetEncoding("utf-8");
             Response.Write(evento.Contenido);
@@ -314,7 +314,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         Response.Clear();
         Response.ContentType = "application/pdf";
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
-        Response.AddHeader("content-disposition", "attachment;filename=" + HttpUtility.UrlEncode(Page.Title) + ".pdf");
+        Response.AddHeader("content-disposition", "attachment;filename=" + HttpUtility.UrlEncode(Page.Title).Replace("+","%20") + ".pdf");
 
         using (StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString())))
         {
@@ -349,18 +349,20 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
         document.Open();
 
-        // HTMLWorker htmlparser = new HTMLWorker(document);
-
-        /*IDictionary<string, object> providers = new Dictionary<string, object>();
-        providers.Add(HTMLWorker.FONT_PROVIDER, new DefaultFontProvider("Arial"));
-        htmlparser.SetProviders(providers);*/
-
-        StringReader sr = new StringReader(evento.Contenido);
-        // htmlparser.Parse(sr);
-
-        XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, sr);
+        using (StreamReader cssReader = new StreamReader(Server.MapPath("~/css/pdf.css")))
+        {
+            using (MemoryStream stream = new MemoryStream()) {
+                using (StreamWriter swriter = new StreamWriter(stream))
+                {
+                    swriter.Write(evento.Contenido);
+                    swriter.Flush();
+                    stream.Position = 0;
+                    XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, stream, cssReader.BaseStream);
+                }
+            }
+            cssReader.Close();
+        }
         document.Close();
-
         Response.End();
     }
 

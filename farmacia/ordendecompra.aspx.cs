@@ -32,7 +32,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
             TCosto.Visible = LCosto.Visible = configuracion.nCosto != 0;
 
             // tercero
-            RDocumento.Visible = configuracion.bDocumentoEntrada;
+            RIdentificacion.Visible = configuracion.bDocumentoEntrada;
 
             RTerceroID.Visible = configuracion.bTerceroEntrada && !configuracion.bCrearTerceroEntradas;
             TEMail.ReadOnly = TDireccion.ReadOnly = TTercero.ReadOnly = TTelefono.ReadOnly = !configuracion.bCrearTerceroEntradas;
@@ -65,10 +65,10 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                     query += "id";
                     query += "observaciones";
                     query += "fecha";
-                    query += "documento";
                     query += "tercero";
                     query += "estado";
                     query += "paciente";
+                    query += "prioridad";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["oci"])));
                     if (reader != null && reader.Read())
@@ -78,9 +78,11 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                         ((MasterPageI)Master).Imprimir("ordencompra.html");
                         TObservaciones.Text = reader["observaciones"].ToString();
                         TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
-                        TDocumento.Text = reader["documento"].ToString();
                         PAnulado.Visible = reader["estado"].ToString() != "";
+                        CPrioridad.Checked = reader["prioridad"].ToString()=="1";
                         UCPaciente.IdPaciente= reader["paciente"].ToString();
+                        ROrganizationExample15.Checked = string.IsNullOrEmpty(UCPaciente.IdPaciente);
+                        RPaciente.Checked = !ROrganizationExample15.Checked;
 
                         Tercero tercero = new Tercero(reader["tercero"].ToString());
                         TTerceroID.Text = tercero.Id;
@@ -264,9 +266,9 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
 
             query["observaciones"] = TObservaciones.Text;
             query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
-            query["documento"] = TDocumento.Text;
-            query["paciente"] = UCPaciente.IdPaciente;
+            query["paciente"] = RPaciente.Checked ? UCPaciente.IdPaciente : "";
             query["tercero"] = terceroid;
+            query["prioridad"] = CPrioridad.Checked ? "1" : "";
             if (sender == BAnular)
                 query["estado"] = "-1";
 
@@ -356,6 +358,16 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                     reader.Close();
                 }
 
+                if (ROrganizationExample15.Checked)
+                    Contenido = Contenido.Replace("$TPaciente$", "OrganizationExample15");
+
+                Paciente paciente = Paciente.GetPaciente(UCPaciente.IdPaciente);
+
+                Contenido = Contenido.Replace("$szDireccion$", paciente.Direccion)
+                    .Replace("$szTelefono$", paciente.Telefono)
+                    .Replace("$szAsegurador$", paciente.NombreEntidad)
+                    .Replace("$szPrioridad$", CPrioridad.Checked ? "Prioritaria" : "Normal");
+
                 Contenido = Utilidades.ReplaceContenido(Page.Controls, Contenido)
                     .Replace("$szVinculo$", string.Format("{0}{1}?oci={2}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value))
                     .Replace("../imgs/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/imgs/")))
@@ -428,9 +440,23 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
     }
     protected void OnImprimir(object sender, EventArgs e)
     {
+        PrintEventArgs print = (PrintEventArgs)e;
+
+        if (ROrganizationExample15.Checked)
+            print.Contenido = print.Contenido.Replace("$TPaciente$", "OrganizationExample15");
+
+        Paciente paciente = Paciente.GetPaciente(UCPaciente.IdPaciente);
+
+        print.Contenido = print.Contenido.Replace("$szDireccion$", paciente.Direccion)
+            .Replace("$TPaciente$", paciente.DocumentoYNombres.Replace("Inactivo - ", ""))
+            .Replace("$szTelefono$", paciente.Telefono)
+            .Replace("$szAsegurador$", paciente.NombreEntidad)
+            .Replace("$szPrioridad$", CPrioridad.Checked ? "Prioritaria" : "Normal");
+
         GProductos.Columns[0].Visible =false;
         PAnulado.Visible = true;
     }
+
     protected void TTerceroID_TextChanged(object sender, EventArgs e)
     {
         Tercero tercero = new Tercero(TTerceroID.Text);

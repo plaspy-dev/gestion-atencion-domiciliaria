@@ -101,7 +101,6 @@ public partial class farmacia_salida : System.Web.UI.Page
                         TObservaciones.Text = reader["observaciones"].ToString();
                         TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
                         TEntrega.Text = CConector.GetFromMySQLDate(reader["entrega"]);
-                        TDocumento.Text = reader["documento"].ToString();
                         PAnulado.Visible = reader["estado"].ToString() != "";
 
                         UCPaciente.IdPaciente= reader["paciente"].ToString();
@@ -299,7 +298,6 @@ public partial class farmacia_salida : System.Web.UI.Page
             query["observaciones"] = TObservaciones.Text;
             query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
             query["entrega"] = CConector.GetMySQLDateFormat(configuracion.bManejarEntrega ? TEntrega.Text : TFecha.Text);
-            query["documento"] = TDocumento.Text;
             query["paciente"] = UCPaciente.IdPaciente;
             if (sender == BAnular)
                 query["estado"] = "-1";
