@@ -24,7 +24,7 @@ addFunctionToStart(function() {
 <ContentTemplate>
     <asp:HiddenField ID="HIdFormulacion" runat="server" />
     <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
-    <table>
+    <table style="border-collapse: collapse">
             <tr>
                 <td>Fecha</td>
                 <td><asp:TextBox ID="TFecha" runat="server" CssClass="fecha"></asp:TextBox>
@@ -76,8 +76,135 @@ addFunctionToStart(function() {
                 </td>
             </tr>
             <tr>
+                <td colspan="4" class="celdaTitulo">Alternativas POS utilizadas</td>
+            </tr>
+            <tr>
                 <td colspan="4">
-                    <asp:GridView ID="GFormulacion" runat="server" AutoGenerateColumns="False" DataKeyNames="IdGrid" onselectedindexchanged="GFormulacion_SelectedIndexChanged" onrowdeleting="GFormulacion_RowDeleting" EmptyDataText="No hay medicamentos" Width="100%" >
+                    <asp:GridView ID="GPOS" runat="server" AutoGenerateColumns="False" DataKeyNames="IdGrid" 
+                        onselectedindexchanged="GPOS_SelectedIndexChanged" onrowdeleting="GPOS_RowDeleting" 
+                        EmptyDataText="No se encontraron alternativas POS" Width="100%" >
+                            <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                            <SelectedRowStyle CssClass="selecteditem" />
+                        <Columns>
+                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:BoundField DataField="Nombre" HeaderText="Principio activo" ItemStyle-Width="100%" />
+                            <asp:BoundField DataField="Posologia" HeaderText="Posología" />
+                            <asp:BoundField DataField="Dosis" HeaderText="Dosis/Día" />
+                            <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="Tiempo" HeaderText="Tiempo/Meses" />
+                        </Columns>
+                    </asp:GridView>
+                    <asp:HiddenField runat="server" ID="HPOS" />
+                </td>
+            </tr>
+            <tr>
+                <td class="tdl">Principio activo<asp:RequiredFieldValidator ValidationGroup="pos" ControlToValidate="TPrincipio" ErrorMessage="Por favor ingrese un principio." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td><asp:TextBox runat="server" ID="TPrincipio"></asp:TextBox></td>
+                <td>Posología</td>
+                <td class="tdr"><asp:TextBox runat="server" ID="TPosologia"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td class="tdl">Dosis/Día</td>
+                <td><asp:TextBox runat="server" ID="TDosis"></asp:TextBox></td>
+                <td>Cantidad</td>
+                <td class="tdr"><asp:TextBox runat="server" ID="TCantidadPOS" CssClass="float"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td class="tdl tdb">Tiempo/Meses</td>
+                <td class="tdb"><asp:TextBox runat="server" ID="TTiempoPOS"></asp:TextBox></td>
+                <td colspan="2" class="tdr tdb" align="right">
+                    <asp:Button runat="server" ID="BAgregarPOS" Text="+" ValidationGroup="pos" OnClick="BAgregarPOS_Click" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">Respuesta clinica y paraclinica alcanzada con medicamentos, procedimientos y/o insumos pos utilizados</td>
+            </tr>
+            <tr>
+                <td colspan="4"><asp:TextBox runat="server" ID="TRespuestaClinica" Width="99%" TextMode="MultiLine"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td colspan="4">Si no se utilizaron alternativas pos, indique si hay indicacion expresa o contraindicacion expresa para la utilizacion de opciones pos:</td>
+            </tr>
+            <tr>
+                <td colspan="4"><asp:TextBox runat="server" ID="TContraindicacion" Width="99%" TextMode="MultiLine"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td colspan="4" class="celdaTitulo">Medicamento no POS</td>
+            </tr>
+            <tr>
+                <td colspan="4" class="tdr tdl">
+                    <asp:GridView ID="GMedicamentos" runat="server" AutoGenerateColumns="False" DataKeyNames="IdGrid" 
+                    onselectedindexchanged="GMedicamentos_SelectedIndexChanged" onrowdeleting="GMedicamentos_RowDeleting" 
+                    EmptyDataText="No hay medicamentos no POS" Width="100%" >
+                            <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                            <SelectedRowStyle CssClass="selecteditem" />
+                        <Columns>
+                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:BoundField DataField="Nombre" HeaderText="Principio activo" ItemStyle-Width="100%" />
+                            <asp:BoundField DataField="Posologia" HeaderText="Posología" />
+                            <asp:BoundField DataField="Dosis" HeaderText="Dosis/Día" />
+                            <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="Tiempo" HeaderText="Tiempo/Meses" />
+                            <asp:BoundField DataField="Efecto" HeaderText="Efecto deseado" />
+                            <asp:BoundField DataField="Respuesta" HeaderText="Tiempo de respuesta esperado" />
+                            <asp:BoundField DataField="EfectosSecundarios" HeaderText="Efectos secundarios y posibles riesgos" ItemStyle-Width="100%" />
+                        </Columns>
+                    </asp:GridView>
+                    <asp:HiddenField runat="server" ID="HMedicamentos" />
+                </td>
+            </tr>
+            <tr>
+                <td class="tdl">Principio activo<asp:RequiredFieldValidator ValidationGroup="nopos" ControlToValidate="TPrincipioNoPOS" ErrorMessage="Por favor ingrese un principio." ID="RequiredFieldValidator8" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td><asp:TextBox runat="server" ID="TPrincipioNoPOS"></asp:TextBox></td>
+                <td>Posología</td>
+                <td class="tdr"><asp:TextBox runat="server" ID="TPosologiaNoPOS"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td class="tdl">Dosis/Día</td>
+                <td><asp:TextBox runat="server" ID="TDosisNoPOS"></asp:TextBox></td>
+                <td>Cantidad</td>
+                <td class="tdr"><asp:TextBox runat="server" ID="TCantidadNoPOS" CssClass="float"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td class="tdl">Tiempo/Meses</td>
+                <td><asp:TextBox runat="server" ID="TTiempoNoPOS"></asp:TextBox></td>
+                <td colspan="2" class="tdr" align="right"></td>
+            </tr>
+            <tr>
+                <td class="tdl">Efecto deseado<asp:RequiredFieldValidator ID="RequiredFieldValidator9" ControlToValidate="TEfectoNoPOS" ErrorMessage="Por favor ingrese un efecto." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="nopos">*</asp:RequiredFieldValidator></td>
+                <td colspan="3" class="tdr"><asp:TextBox runat="server" ID="TEfectoNoPOS" Width="99%"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td class="tdl">Tiempo de respuesta esperado<asp:RequiredFieldValidator ID="RequiredFieldValidator10" ControlToValidate="TRespuestaNoPOS" ErrorMessage="Por favor ingrese una respuesta." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="nopos">*</asp:RequiredFieldValidator></td>
+                <td colspan="3" class="tdr"><asp:TextBox runat="server" ID="TRespuestaNoPOS" Width="99%"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td class="tdl">Efectos secundarios y posibles riesgos<asp:RequiredFieldValidator ID="RequiredFieldValidator11" ControlToValidate="TEfectosSecundariosNoPOS" ErrorMessage="Por favor ingrese un efecto." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="nopos">*</asp:RequiredFieldValidator></td>
+                <td colspan="3" class="tdr"><asp:TextBox runat="server" ID="TEfectosSecundariosNoPOS" Width="99%"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td colspan="4" class="tdb tdl tdr" align="right"><asp:Button runat="server" ID="BMedicamentos" Text="+" ValidationGroup="nopos" OnClick="BMedicamentos_Click" /></td>
+            </tr>
+            <tr>
+                <td colspan="4" class="celdaTitulo">Servicio o insumo no POS</td>
+            </tr>
+            <tr>
+                <td colspan="4" class="tdr tdl">
+                    <asp:GridView ID="GFormulacion" runat="server" AutoGenerateColumns="False" DataKeyNames="IdGrid" 
+                    onselectedindexchanged="GFormulacion_SelectedIndexChanged" onrowdeleting="GFormulacion_RowDeleting" 
+                    EmptyDataText="No hay servicios o insumos no POS" Width="100%" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
                             <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -99,43 +226,47 @@ addFunctionToStart(function() {
                 </td>
             </tr>
             <tr>
-                <td colspan="4"><asp:Label runat="server" ID="LMensajeMedicamento" ForeColor="Red"></asp:Label></td>
+                <td colspan="4" class="tdr tdl"><asp:Label runat="server" ID="LMensajeMedicamento" ForeColor="Red"></asp:Label></td>
             </tr>
             <tr>
-                <td>
+                <td class="tdl">
                     Nombre
                     <asp:RequiredFieldValidator ControlToValidate="TNombre" ErrorMessage="Por favor ingrese un nombre." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="medicamento">*</asp:RequiredFieldValidator>
                 </td>
-                <td colspan="3">
+                <td colspan="3" class="tdr">
                     <asp:TextBox ID="TNombre" runat="server" Width="99%"></asp:TextBox>
                 </td>
             </tr>
             <tr>
-                <td>Cantidad<asp:RequiredFieldValidator ID="RequiredFieldValidator1" ControlToValidate="TCantidad" ErrorMessage="Por favor ingrese una cantidad." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="medicamento">*</asp:RequiredFieldValidator></td>
+                <td class="tdl">Cantidad<asp:RequiredFieldValidator ID="RequiredFieldValidator1" ControlToValidate="TCantidad" ErrorMessage="Por favor ingrese una cantidad." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="medicamento">*</asp:RequiredFieldValidator></td>
                 <td><asp:TextBox runat="server" ID="TCantidad" CssClass="float"></asp:TextBox></td>
                 <td>Tiempo de utilización<asp:RequiredFieldValidator ID="RequiredFieldValidator3" ControlToValidate="TTiempo" ErrorMessage="Por favor ingrese un tiempo." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="medicamento">*</asp:RequiredFieldValidator></td>
-                <td><asp:TextBox runat="server" ID="TTiempo"></asp:TextBox></td>
+                <td class="tdr"><asp:TextBox runat="server" ID="TTiempo"></asp:TextBox></td>
             </tr>
             <tr>
-                <td>Efecto deseado<asp:RequiredFieldValidator ID="RequiredFieldValidator4" ControlToValidate="TEfecto" ErrorMessage="Por favor ingrese un efecto." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="medicamento">*</asp:RequiredFieldValidator></td>
-                <td colspan="3"><asp:TextBox runat="server" ID="TEfecto" Width="99%"></asp:TextBox></td>
+                <td class="tdl">Efecto deseado<asp:RequiredFieldValidator ID="RequiredFieldValidator4" ControlToValidate="TEfecto" ErrorMessage="Por favor ingrese un efecto." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="medicamento">*</asp:RequiredFieldValidator></td>
+                <td colspan="3" class="tdr"><asp:TextBox runat="server" ID="TEfecto" Width="99%"></asp:TextBox></td>
             </tr>
             <tr>
-                <td>Tiempo de respuesta esperado<asp:RequiredFieldValidator ID="RequiredFieldValidator5" ControlToValidate="TRespuesta" ErrorMessage="Por favor ingrese una respuesta." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="medicamento">*</asp:RequiredFieldValidator></td>
-                <td colspan="3"><asp:TextBox runat="server" ID="TRespuesta" Width="99%"></asp:TextBox></td>
+                <td class="tdl">Tiempo de respuesta esperado<asp:RequiredFieldValidator ID="RequiredFieldValidator5" ControlToValidate="TRespuesta" ErrorMessage="Por favor ingrese una respuesta." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="medicamento">*</asp:RequiredFieldValidator></td>
+                <td colspan="3" class="tdr"><asp:TextBox runat="server" ID="TRespuesta" Width="99%"></asp:TextBox></td>
             </tr>
             <tr>
-                <td>Efectos secundarios y posibles riesgos<asp:RequiredFieldValidator ID="RequiredFieldValidator6" ControlToValidate="TEfectosSecundarios" ErrorMessage="Por favor ingrese un efecto." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="medicamento">*</asp:RequiredFieldValidator></td>
-                <td colspan="3"><asp:TextBox runat="server" ID="TEfectosSecundarios" Width="99%"></asp:TextBox></td>
+                <td class="tdl">Efectos secundarios y posibles riesgos<asp:RequiredFieldValidator ID="RequiredFieldValidator6" ControlToValidate="TEfectosSecundarios" ErrorMessage="Por favor ingrese un efecto." runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="medicamento">*</asp:RequiredFieldValidator></td>
+                <td colspan="3" class="tdr"><asp:TextBox runat="server" ID="TEfectosSecundarios" Width="99%"></asp:TextBox></td>
             </tr>
             <tr>
-                <td colspan="4" align="right">
-                                <asp:ValidationSummary runat="server" ID="ValidationSummary1" ShowMessageBox="true" ValidationGroup="medicamento" />
-                                <asp:HiddenField runat="server" ID="HFormulacion" EnableViewState="false" />
-                                <asp:Button ID="BMasFormulacion" ValidationGroup="medicamento" runat="server" onclick="BMasFormulacion_Click" Text="+" />
-                                </td>
+                <td colspan="4" class="tdl tdr"><asp:ValidationSummary runat="server" ID="ValidationSummary1" ValidationGroup="medicamento" /></td>
             </tr>
-            
+            <tr>
+                <td colspan="4" align="right" class="tdr tdl tdb">
+                    <asp:HiddenField runat="server" ID="HFormulacion" EnableViewState="false" />
+                    <asp:Button ID="BMasFormulacion" ValidationGroup="medicamento" runat="server" onclick="BMasFormulacion_Click" Text="+" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">&nbsp;</td>
+            </tr>
             <tr>
                 <td align="right" colspan="4">
                 <asp:Button ID="BAceptar" runat="server" Text="Aceptar" onclick="BAceptar_Click" /><asp:Button ID="BCancelar" CausesValidation="false" runat="server" Text="Cancelar" onclick="BCancelar_Click" />

@@ -30,6 +30,9 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     Response.Redirect(Request.Url.AbsolutePath + "?inid=" + Request.QueryString["aid"]
                         + "&pid="
                         + conector.QueryString("SELECT paciente FROM ingreso_paciente WHERE id=" + Query.GetValor(Request.QueryString["aid"]))
+                        + "&pdf="
+                        + Request.QueryString["pdf"]
+                        + "&npdf=" + Request.QueryString["npdf"]
                         );
                 }
             }
@@ -46,6 +49,9 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
                     SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
                     SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
+
+                    if (Request.QueryString["npdf"] == "1")
+                        Title = CCDetallePaciente.Documento + " - " + CCDetallePaciente.Nombres.Replace("(Inactivo)", "");
 
                     TFecha.Text = Conector.GetFromMySQLDate(DateTime.Now, true);
                     PDatos.Visible = true;
@@ -96,6 +102,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                             if (readermysql != null && readermysql.Read())
                             {
                                 PNivelAtencion.Visible = true;
+                                BActualizar.Visible = usuario.CanInsert();
                                 BAceptar.Enabled = usuario.CanUpdate();
                                 BMasCDiagnostico.Enabled = usuario.CanUpdate();
                                 ((MasterPageI)Master).Imprimir("ingreso.html");
@@ -158,6 +165,26 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     }
                 }
             }
+        }
+    }
+
+    protected void BActualizar_Click(object sender, EventArgs e)
+    {
+
+        using (CConector conector = new CConector())
+        {
+            Query qIngreso = new Query("ingreso_paciente");
+
+            qIngreso["area_atencion"] = DArea.SelectedValue;
+            qIngreso["seguimiento"] = Conector.GetMySQLDateFormat(TFechaSeguimiento.Text);
+
+            string szQuery = qIngreso.GetUpdate("id='" + HIdIngreso.Value + "'");
+            string mensaje = CCDetallePaciente.Nombres + " editado";
+            if (conector.QueryMod(szQuery) == -1)
+                return;
+
+            ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
+            ((MasterPageI)Master).SetResultado(mensaje);
         }
     }
 
@@ -627,7 +654,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
         evento.Contenido = evento.Contenido.Replace("$szBarthel$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Barthel));
-        evento.Contenido = evento.Contenido.Replace("$szNorton$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Norton));
+        evento.Contenido = evento.Contenido.Replace("$szBraden$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Braden));
 
         Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
         evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));

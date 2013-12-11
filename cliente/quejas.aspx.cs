@@ -547,7 +547,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                 if (reader != null && reader.Read())
                 {
 
-                    ViewState["sqrId"] = GSeguimiento.DataKeys[e.NewEditIndex].Values[1];
+                    ViewState["sqrId"] = GSeguimiento.DataKeys[e.NewEditIndex].Values[1].ToString();
                     TSDetalles.Text = reader["sqrDetalles"].ToString();
                     TAcciones.Text = reader["sqrPendiente"].ToString();
                     CCerrar.Checked = reader["sqrCerrar"].ToString() == "True";

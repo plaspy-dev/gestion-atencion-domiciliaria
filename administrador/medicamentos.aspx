@@ -172,7 +172,40 @@
                                 SelectCommand="SELECT carId id,carDescripcion nombre FROM dbo.admCargo ORDER BY 2;">
                         </asp:SqlDataSource>
                     </div>
-                    <h3><a href="#">Costos y restricciones</a></h3>
+                    <h3><a href="#">Costos por proveedor</a></h3>
+                    <div class="hide">
+                        <asp:GridView ID="GProveedor" runat="server" AutoGenerateColumns="False" Width="100%"
+                            DataKeyNames="id" DataSourceID="SProveedor" AllowPaging="true" AllowSorting="true"
+                            onselectedindexchanged="GResultado_SelectedIndexChanged" >
+                            <RowStyle CssClass="GridRow"></RowStyle>
+                            <FooterStyle CssClass="GridFooter"></FooterStyle>
+                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                            <Columns>
+                                <asp:BoundField DataField="identificacion" HeaderText="Identificación" SortExpression="identificacion" />
+                                <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" ItemStyle-Width="100%" />
+                                <asp:TemplateField HeaderText="Costo">
+                                    <ItemTemplate>
+                                        <asp:TextBox runat="server" CssClass="dinero" ID="TCosto" Text='<%# Eval("costo")==DBNull.Value ? "" : Convert.ToDecimal(Eval("costo")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>'></asp:TextBox>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
+                        <asp:SqlDataSource ID="SProveedor" runat="server" 
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            SelectCommand="SELECT id, nombre, identificacion, costo_proveedor.costo
+                                    FROM tercero 
+                                    LEFT JOIN costo_proveedor ON (costo_proveedor.producto=@producto AND costo_proveedor.proveedor=tercero.id)
+                                    WHERE estado IS NULL ORDER BY nombre;">
+                                    <SelectParameters>
+                                        <asp:Parameter Name="producto" DefaultValue="0" />
+                                    </SelectParameters>
+                        </asp:SqlDataSource>
+                    </div>
+                    <h3><a href="#">Precios y restricciones</a></h3>
                     <div class="hide">
                         <asp:GridView ID="GEntidades" runat="server" AutoGenerateColumns="False" DataSourceID="SEntidades"  Width="100%"
                             EmptyDataText="No se encontraron entidades" DataKeyNames="id" onrowdatabound="GEntidades_RowDataBound">
@@ -184,7 +217,7 @@
                             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                             <Columns>
                                 <asp:BoundField HeaderText="Entidad" DataField="nombre" ItemStyle-Width="100%" />
-                                <asp:TemplateField HeaderText="Costo del servicio">
+                                <asp:TemplateField HeaderText="Precio del servicio">
                                     <ItemTemplate>
                                         <asp:TextBox runat="server" CssClass="dinero" ID="TCosto"></asp:TextBox>
                                     </ItemTemplate>

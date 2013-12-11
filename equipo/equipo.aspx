@@ -42,7 +42,7 @@
         <td><asp:DropDownList runat="server" ID="DEstado" Enabled="false">
                 <asp:ListItem Text="Disponible" Value="1"></asp:ListItem>
                 <asp:ListItem Text="Asignado" Value="2"></asp:ListItem>
-                <asp:ListItem Text="En baja" Value="0"></asp:ListItem>
+                <asp:ListItem Text="Liquidado" Value="0"></asp:ListItem>
             </asp:DropDownList></td>
     </tr>
     <tr>

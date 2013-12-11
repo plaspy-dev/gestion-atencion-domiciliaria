@@ -170,6 +170,7 @@
                 return false;
             }
         });
+        $("#<%= TCosto.ClientID %>").attr("readonly", true);
         $("#<%= TNumero.ClientID %>").change(function() {
             $.goURL("ei=" + $(this).val());
         });

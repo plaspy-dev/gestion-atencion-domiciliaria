@@ -55,7 +55,7 @@
     <asp:SqlDataSource ID="SResultados" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:connBD %>" 
                 SelectCommand="SELECT phdPaciente.pacDocumento, phdPaciente.pacNombres, phdPaciente.pacId
-                            ,phdEgresos.egrFecha,phdEgresos.segFechaIngreso
+                            ,phdEgresos.egrFecha,MAX(phdEgresos.segFechaIngreso) AS segFechaIngreso
                             ,admEntidad.entNombre
                             FROM phdEgresos
                             LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdEgresos.pacId)
@@ -63,6 +63,7 @@
                             WHERE phdEgresos.cegId=1
                             AND phdEgresos.egrFecha BETWEEN @desde AND @hasta
                             AND (@entidad=0 OR @entidad=phdPaciente.entId)
+                            GROUP BY phdPaciente.pacId,pacDocumento,pacNombres,entNombre,egrFecha
                             ORDER BY phdEgresos.egrFecha">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />

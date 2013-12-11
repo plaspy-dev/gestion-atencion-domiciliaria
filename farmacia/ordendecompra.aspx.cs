@@ -10,6 +10,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
+using System.Text.RegularExpressions;
 
 public partial class farmacia_ordendecompra : System.Web.UI.Page
 {
@@ -48,18 +49,28 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
 
             if (Session["lordencompra"] != null)
             {
-
                 ViewState["urlprint"] = Request.Url.AbsolutePath + "?oci=" + Session["lordencompra"].ToString() + "&p=1";
                 LImprimir.Text = "Orden de compra " + Session["lordencompra"].ToString() + " Editada.<br/>¿Desea imprimirla?";
                 PImprimir.Visible = true;
                 Session["lordencompra"] = null;
             }
-
-            if (!string.IsNullOrEmpty(Request.QueryString["oci"]))
+            string id=null;
+            if (!string.IsNullOrEmpty(Request.QueryString["k"]))
+            {
+                id = Crypt.DesencriptarDES(Request.QueryString["k"].Replace(" ", "+"), System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY"));
+                if (string.IsNullOrEmpty(id))
+                    throw new HttpException(404, "Page not found");
+            }
+            if (string.IsNullOrEmpty(id))
+            {
+                if (usuario.GetPermisos(Request.Url.AbsolutePath) == 2) // es un usuario de solo impresion
+                    throw new HttpException(404, "Page not found");
+                id = Request.QueryString["oci"];
+            }
+            if (!string.IsNullOrEmpty(id))
             {
                 using (CConector conector = new CConector())
                 {
-
                     Query query = new Query("orden_compra" + m_nAlmacen);
 
                     query += "id";
@@ -69,10 +80,13 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                     query += "estado";
                     query += "paciente";
                     query += "prioridad";
+                    query += "revisado";
+                    query += "creado";
 
-                    MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["oci"])));
+                    MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(id)));
                     if (reader != null && reader.Read())
                     {
+                        PRevisado.Visible = true;
                         HId.Value = TNumero.Text = reader["id"].ToString();
                         ((MasterPageI)Master).SetModificacion(HId.Value);
                         ((MasterPageI)Master).Imprimir("ordencompra.html");
@@ -83,6 +97,8 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                         UCPaciente.IdPaciente= reader["paciente"].ToString();
                         ROrganizationExample15.Checked = string.IsNullOrEmpty(UCPaciente.IdPaciente);
                         RPaciente.Checked = !ROrganizationExample15.Checked;
+                        LRevisado.Text = reader["revisado"].ToString();
+                        LCreado.Text = reader["creado"].ToString();
 
                         Tercero tercero = new Tercero(reader["tercero"].ToString());
                         TTerceroID.Text = tercero.Id;
@@ -220,6 +236,23 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         ScriptManager.RegisterStartupScript(TProducto, typeof(String), "pregunta", "window.onbeforeunload = function() { return '¿Ha realizado cambios, esta seguro de abandonar la pagina?'; };", true);
     }
 
+    public static bool IsValidEmail(string strIn)
+    {
+        if (String.IsNullOrEmpty(strIn))
+            return false;
+
+        // Return true if strIn is in valid e-mail format. 
+        try
+        {
+            return Regex.IsMatch(strIn,
+                  @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
+                  @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9]{2,24}))$",
+                  RegexOptions.IgnoreCase);
+        } catch {
+            return false;
+        }
+    }
+
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         if (!IsValid)
@@ -279,6 +312,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
             if (HId.Value.Length == 0)
             {
                 nueva = true;
+                query["creado"] = "SYSDATE()";
                 int res = conector.QueryMod(query.GetInsert(), true);
                 if (res == -1)
                 {
@@ -343,7 +377,9 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                 Tercero tecero = new Tercero(TTerceroID.Text);
 
                 MailMessage mail = new MailMessage();
-                mail.To.Add(tecero.Email);
+                mail.From = new MailAddress("demo@example.invalid", "Compras OrganizationExample15");
+                if (IsValidEmail(tecero.Email)) // no le enviamos correo al proveedor
+                    mail.To.Add(tecero.Email);
                 // mail.Bcc.Add();
 
                 mail.Subject = nueva ? "Nueva " : "Actualizada ";
@@ -364,18 +400,29 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                 Paciente paciente = Paciente.GetPaciente(UCPaciente.IdPaciente);
 
                 Contenido = Contenido.Replace("$szDireccion$", paciente.Direccion)
+                    .Replace("$TPaciente$", paciente.DocumentoYNombres.Replace("Inactivo - ", ""))
                     .Replace("$szTelefono$", paciente.Telefono)
                     .Replace("$szAsegurador$", paciente.NombreEntidad)
-                    .Replace("$szPrioridad$", CPrioridad.Checked ? "Prioritaria" : "Normal");
+                    .Replace("$szPrioridad$", CPrioridad.Checked ? "Prioritaria" : "Normal")
+                    .Replace("$szIniciales$", new Tercero(TTerceroID.Text).Nombre.Substring(0, 2))
+                    .Replace("$szNumero$", TNumero.Text.PadLeft(3, '0'))
+                    ;
 
                 Contenido = Utilidades.ReplaceContenido(Page.Controls, Contenido)
-                    .Replace("$szVinculo$", string.Format("{0}{1}?oci={2}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value))
                     .Replace("../imgs/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/imgs/")))
                     .Replace("../css/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/css/")));
-                mail.Body = Contenido;
+
+                mail.Body = Contenido.Replace("$szVinculo$", string.Format("{0}{1}?k={3}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value, HttpUtility.UrlEncode(Crypt.EncriptarDES(HId.Value, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY")))));
 
                 SmtpClient client = new SmtpClient();
                 client.EnableSsl = client.Port == 587 || client.Port == 465;
+                if(IsValidEmail(tecero.Email)) // no le enviamos correo al proveedor
+                    client.Send(mail);
+
+                // esta es la copia del correo
+                mail.To.Clear();
+                mail.To.Add(ConfigurationManager.AppSettings["ordenesdecompra:copia"]);
+                mail.Body = Contenido.Replace("$szVinculo$", string.Format("{0}{1}?oci={2}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value));
                 client.Send(mail);
             }
             catch (Exception ex)
@@ -386,11 +433,13 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
 
             // Alertas.RemoveAlertas(m_nAlmacen);
 
-            Session["lordencompra"] = HId.Value;
+            // esto es para la impresion.
+            // Session["lordencompra"] = HId.Value;
 
             ((MasterPageI)Master).SetResultado("Orden de compra " + HId.Value + " editada.");
         }
     }
+
     protected void BCancelar_Click(object sender, EventArgs e)
     {
         Session["orden_compra_clean"] = 1;
@@ -440,21 +489,40 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
     }
     protected void OnImprimir(object sender, EventArgs e)
     {
-        PrintEventArgs print = (PrintEventArgs)e;
+        // guardamos la impresion
+        using (CConector conector = new CConector())
+        {
 
-        if (ROrganizationExample15.Checked)
-            print.Contenido = print.Contenido.Replace("$TPaciente$", "OrganizationExample15");
+            conector.QueryMod(Conector.GetModificacion(Usuario.GetInstance().GetID(), HId.Value, null, "impresiones"));
+            if (!string.IsNullOrEmpty(Request.QueryString["k"]) && LRevisado.Text.Length == 0)
+            {
+                Query query = new Query("orden_compra" + m_nAlmacen);
+                query["revisado"] = "SYSDATE()";
+                if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(HId.Value))) == -1)
+                {
+                    return;
+                }
+            }
 
-        Paciente paciente = Paciente.GetPaciente(UCPaciente.IdPaciente);
+            PrintEventArgs print = (PrintEventArgs)e;
 
-        print.Contenido = print.Contenido.Replace("$szDireccion$", paciente.Direccion)
-            .Replace("$TPaciente$", paciente.DocumentoYNombres.Replace("Inactivo - ", ""))
-            .Replace("$szTelefono$", paciente.Telefono)
-            .Replace("$szAsegurador$", paciente.NombreEntidad)
-            .Replace("$szPrioridad$", CPrioridad.Checked ? "Prioritaria" : "Normal");
+            if (ROrganizationExample15.Checked)
+                print.Contenido = print.Contenido.Replace("$TPaciente$", "OrganizationExample15");
 
-        GProductos.Columns[0].Visible =false;
-        PAnulado.Visible = true;
+            Paciente paciente = Paciente.GetPaciente(UCPaciente.IdPaciente);
+
+            print.Contenido = print.Contenido.Replace("$szDireccion$", paciente.Direccion)
+                .Replace("$TPaciente$", paciente.DocumentoYNombres.Replace("Inactivo - ", ""))
+                .Replace("$szTelefono$", paciente.Telefono)
+                .Replace("$szAsegurador$", paciente.NombreEntidad)
+                .Replace("$szPrioridad$", CPrioridad.Checked ? "Prioritaria" : "Normal")
+                .Replace("$szIniciales$", new Tercero(TTerceroID.Text).Nombre.Substring(0, 2))
+                .Replace("$szNumero$", TNumero.Text.PadLeft(3, '0'))
+                ;
+
+            GProductos.Columns[0].Visible = false;
+            PAnulado.Visible = true;
+        }
     }
 
     protected void TTerceroID_TextChanged(object sender, EventArgs e)

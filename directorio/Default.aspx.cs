@@ -42,8 +42,8 @@ public partial class directorio_Default : System.Web.UI.Page
             CConector.SelectInDropDown(DDisponibilidad, CConector.GetCookie("directorio_disponibilidad"));
         }
         CUsuario usuario = (CUsuario) Usuario.GetUsuario();
-        GResultados.Columns[3].Visible = !usuario.CanUpdate();
-        GResultados.Columns[4].Visible = usuario.CanUpdate();
+        Utilidades.GetGridColumn(GResultados, "Disponibilidad").Visible= !usuario.CanUpdate();
+        Utilidades.GetGridColumn(GResultados, "Disponibilidad ").Visible= usuario.CanUpdate();
 
         GResultados.AllowPaging = false;
         GResultados.DataBind();

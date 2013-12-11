@@ -65,9 +65,29 @@ public partial class modificaciones : System.Web.UI.UserControl
                     LModificadoPor.Text = reader["usuario"].ToString();
                     LFechaModificacion.Text = reader["fecha"].ToString();
                 }
+                PMasModificaciones.Visible = lista.Count != 0;
                 GModificaciones.DataSource = lista;
                 GModificaciones.DataBind();
             }
+
+
+            query = new Query("impresiones");
+
+            query["usuario"] = "usuario.nombre";
+            query["fecha"] = "impresiones.fecha";
+            reader = conector.Query(query.GetSelect("impresiones.id='" + IdModificacion + "' AND impresiones.url='" + url + "' ORDER BY impresiones.fecha", "LEFT JOIN usuario ON (usuario.id=impresiones.usuario)"));
+            if (reader != null)
+            {
+                ArrayList lista = new ArrayList();
+                while (reader.Read())
+                {
+                    lista.Add(new Mods(reader["usuario"].ToString(), reader["fecha"].ToString()));
+                }
+                PImpresion.Visible = lista.Count != 0;
+                GImpresiones.DataSource = lista;
+                GImpresiones.DataBind();
+            }
+
         }
     }
 

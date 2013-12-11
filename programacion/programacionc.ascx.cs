@@ -315,7 +315,8 @@ public partial class phd_programacionc : System.Web.UI.UserControl
     {
         PConfirmar.Visible = false;
     }
-    protected void DAutorizacion_SelectedIndexChanged(object sender, EventArgs e)
+
+    public void DAutorizacion_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (DAutorizacion.SelectedIndex != -1)
         {

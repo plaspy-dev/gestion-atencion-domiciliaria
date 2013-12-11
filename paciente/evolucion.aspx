@@ -247,6 +247,12 @@
                 <td>Seguimiento<asp:RangeValidator ControlToValidate="TFechaSeguimiento" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
                 <td><asp:TextBox runat="server" ID="TFechaSeguimiento" CssClass="fecha"></asp:TextBox></td>
             </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><asp:Button runat="server" ID="BActualizar" Text="Actualizar" CausesValidation="false" OnClick="BActualizar_Click" /></td>
+            </tr>
             </asp:PlaceHolder>
             <tr>
                 <td colspan="4" class="celdaTitulo">

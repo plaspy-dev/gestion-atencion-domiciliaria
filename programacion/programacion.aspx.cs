@@ -87,6 +87,7 @@ public partial class programacion_programacion : System.Web.UI.Page
     }
     protected void LNuevo_Click(object sender, EventArgs e)
     {
+        UCProgramacion.DAutorizacion_SelectedIndexChanged(null, null);
         UCProgramacion.Visible = true;
     }
 

@@ -11,10 +11,10 @@ public class Calificacion
 {
     public enum Escalas {
         Barthel=8,
-        Norton = 41
+        Braden = 41
     }
     public static Calificacion[] IndiceBarthel = { new Calificacion(45, "Severa"), new Calificacion(60, "Grave"), new Calificacion(80, "Moderada"), new Calificacion(101, "Ligera") };
-    public static Calificacion[] EscalaNorton = { new Calificacion(10, "Muy alto"), new Calificacion(13, "Alto"), new Calificacion(15, "Medio"), new Calificacion(50, "Mínimo") };
+    public static Calificacion[] EscalaBraden = { new Calificacion(13, "Alto riesgo"), new Calificacion(15, "Riesgo moderado"), new Calificacion(17, "Bajo riesgo"), new Calificacion(50, "Sin riesgo") };
 
     public int maximo { get; set; }
     public string mensaje { get; set; }
@@ -26,7 +26,7 @@ public class Calificacion
 
     static public String GetDescripcion(int calificacion, String tipo)
     {
-        Calificacion[] escala = tipo == "8" ? IndiceBarthel : EscalaNorton;
+        Calificacion[] escala = tipo == "8" ? IndiceBarthel : EscalaBraden;
         for (int i = 0; i < escala.Length; i++)
         {
             if (calificacion < escala[i].maximo)
@@ -38,7 +38,7 @@ public class Calificacion
     public static String GetArrayMessages(String tipo)
     {
         string script = "escala=[";
-        Calificacion[] escala = tipo == "8" ? IndiceBarthel : EscalaNorton;
+        Calificacion[] escala = tipo == "8" ? IndiceBarthel : EscalaBraden;
         for (int i = 0; i < escala.Length; i++)
         {
             if (i > 0)

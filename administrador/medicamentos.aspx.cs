@@ -66,6 +66,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                         ViewState["entidades"] = conector.QueryString("SELECT GROUP_CONCAT(entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
 
                         BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
+                        SProveedor.SelectParameters["producto"].DefaultValue = HId.Value;
 
                         ((MasterPageI)Master).SetModificacion(HId.Value);
                     }
@@ -79,6 +80,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         using(CConector conector= new CConector()) 
         using (CConectorMS conectorms = new CConectorMS())
         {
+
+            conector.StartTransaction();
 
             string szQuery;
             string mensaje;
@@ -131,6 +134,25 @@ public partial class administrador_medicamentos : System.Web.UI.Page
             }
 
             // agregamos los cargos que puede programar el usuario
+            if (conector.QueryMod("DELETE FROM costo_proveedor WHERE producto=" + HId.Value) == -1)
+                return;
+            Query costos = new Query("costo_proveedor");
+            costos["producto"] = HId.Value;
+            
+            for (int i = 0; i < GProveedor.Rows.Count; i++) {
+
+                TextBox costo = (TextBox)GProveedor.Rows[i].FindControl("TCosto");
+                if (costo.Text.Length != 0) {
+
+                    costos["proveedor"] = GProveedor.DataKeys[i].Values["id"].ToString();
+                    costos["costo"] = costo.Text.Replace("$", "").Replace(",", "");
+
+                    if (conector.QueryMod(costos.GetInsert()) == -1)
+                        return;
+                }
+            }
+
+            // agregamos los cargos que puede programar el usuario
             if (conector.QueryMod("DELETE FROM medicamento_valor WHERE medicamento=" + HId.Value) == -1)
                 return;
 
@@ -164,6 +186,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
 
             GResultado.DataBind();
 
+            Producto.RemoveProducto(HId.Value);
+            conector.Commit();
             ((MasterPageI)Master).SetTitulo(mensaje);
             BCancelar_Click(sender, e);
         }

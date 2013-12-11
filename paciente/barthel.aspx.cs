@@ -177,7 +177,7 @@ public partial class paciente_barthel : System.Web.UI.Page
                 }
             }
             if(Usuario.GetUsuario().GetForceURL().Length!=0 && DIndice.SelectedValue==((int)Calificacion.Escalas.Barthel).ToString())
-                Usuario.GetUsuario().SetForceURL(Usuario.GetUsuario().GetForceURL() + "&ioe=" + ((int)Calificacion.Escalas.Norton).ToString(), conector);
+                Usuario.GetUsuario().SetForceURL(Usuario.GetUsuario().GetForceURL() + "&ioe=" + ((int)Calificacion.Escalas.Braden).ToString(), conector);
             else Usuario.GetUsuario().SetForceURL("", conector);
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
             ((MasterPageI)Master).SetResultado(mensaje);

@@ -463,7 +463,7 @@ public class servicios : System.Web.Services.WebService
         using (CConector conector = new CConector())
         {
 
-            string query = "SELECT id FROM medicamentos WHERE estado IS NULL AND tipo IN (172,265,269) ";
+            string query = "SELECT id FROM medicamentos WHERE estado IS NULL AND tipo IN (172,265,264) ";
             string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
             for (int i = 0; i < split.Length; i++)

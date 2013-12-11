@@ -26,12 +26,20 @@ public partial class paciente_evolucion : System.Web.UI.Page
             if (!string.IsNullOrEmpty(Request.QueryString["aid"])) {
 
                 if (Request.QueryString["aid"][0] == 'i') {
-                    Response.Redirect("~/paciente/ingreso.aspx?aid=" + Request.QueryString["aid"].Substring(1));
+                    Response.Redirect("~/paciente/ingreso.aspx?aid=" 
+                        + Request.QueryString["aid"].Substring(1)
+                        + "&pdf="
+                        + Request.QueryString["pdf"]
+                        + "&npdf=" + Request.QueryString["npdf"]
+                        );
                 }
                 using (CConector conector = new CConector()) {
                     Response.Redirect(Request.Url.AbsolutePath + "?evolid=" + Request.QueryString["aid"] 
                         + "&pid=" 
                         + conector.QueryString("SELECT paciente FROM evolucion_paciente WHERE id=" + Query.GetValor(Request.QueryString["aid"]))
+                        + "&pdf=" 
+                        + Request.QueryString["pdf"]
+                        + "&npdf=" + Request.QueryString["npdf"]
                         );
                 }
             }
@@ -49,6 +57,9 @@ public partial class paciente_evolucion : System.Web.UI.Page
                     SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
                     SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
                     TFecha.Text = Conector.GetFromMySQLDate(DateTime.Now, true);
+
+                    if (Request.QueryString["npdf"] == "1")
+                        Title = CCDetallePaciente.Documento + " - " + CCDetallePaciente.Nombres.Replace("(Inactivo)", "");
 
                     PDatos.Visible = true;
 
@@ -103,6 +114,8 @@ public partial class paciente_evolucion : System.Web.UI.Page
                         if (readermysql != null && readermysql.Read())
                         {
                             PNivelAtencion.Visible = true;
+                            BActualizar.Visible = usuario.CanInsert();
+
                             BAceptar.Enabled = usuario.CanUpdate();
                             BMasCDiagnostico.Enabled = usuario.CanUpdate();
                             ((MasterPageI)Master).Imprimir("evolucion.html");
@@ -169,6 +182,25 @@ public partial class paciente_evolucion : System.Web.UI.Page
                     PEvoluciones.Visible = GEvoluciones.Rows.Count > 0;
                 }
             }
+        }
+    }
+
+    protected void BActualizar_Click(object sender, EventArgs e) {
+
+        using (CConector conector = new CConector())
+        {
+            Query qIngreso = new Query("evolucion_paciente");
+
+            qIngreso["area_atencion"] = DArea.SelectedValue;
+            qIngreso["seguimiento"] = Conector.GetMySQLDateFormat(TFechaSeguimiento.Text);
+
+            string szQuery = qIngreso.GetUpdate("id='" + HIdEvolucion.Value + "'");
+            string mensaje = CCDetallePaciente.Nombres + " editado";
+            if (conector.QueryMod(szQuery) == -1)
+                return;
+
+            ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
+            ((MasterPageI)Master).SetResultado(mensaje);
         }
     }
 
@@ -509,7 +541,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
         evento.Contenido = evento.Contenido.Replace("$szBarthel$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Barthel));
-        evento.Contenido = evento.Contenido.Replace("$szNorton$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Norton));
+        evento.Contenido = evento.Contenido.Replace("$szBraden$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Braden));
 
         using (CConectorMS conectorms = new CConectorMS())
         {

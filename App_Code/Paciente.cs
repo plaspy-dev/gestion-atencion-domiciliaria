@@ -43,6 +43,11 @@ public class Paciente
                 " " + sNombre;
         return Nombres.Trim();
     } }
+    public string tipoDocNombre { get {
+        using (CConectorMS conector = new CConectorMS()) {
+            return conector.QueryString(string.Format("SELECT tdocDescripcion FROM phdTipoDocumento WHERE tdocId='{0}';", tipodoc));
+        }
+    } }
     public string DocumentoYNombres { 
         get {
             string resultado= documento + " - " + NombreCompleto;

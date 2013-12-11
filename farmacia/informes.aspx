@@ -220,6 +220,7 @@
                             LEFT JOIN medicamentos ON (medicamentos.id=orden_compra_items{0}.producto)
                         WHERE 
                         (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=orden_compra{0}.fecha)
+                        AND orden_compra{0}.estado IS NULL
                         AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=orden_compra{0}.fecha)
                         AND (@tercero=0 OR orden_compra{0}.tercero=@tercero)
                         AND (@paciente=0 OR orden_compra{0}.paciente=@paciente)

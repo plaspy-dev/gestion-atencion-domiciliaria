@@ -23,6 +23,8 @@ public partial class paciente_formatoctc : System.Web.UI.Page
         public string Efecto { get; set; }
         public string Respuesta { get; set; }
         public string EfectosSecundarios { get; set; }
+        public string Dosis { get; set; }
+        public string Posologia { get; set; }
 
         public Medicamento(int idgrid)
         {
@@ -67,6 +69,9 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                 }
                 else
                 {
+                    GFormulacion.DataBind();
+                    GPOS.DataBind();
+                    GMedicamentos.DataBind();
                     ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
 
                     BAceptar.Enabled = usuario.CanInsert();
@@ -92,6 +97,8 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                         formulacion += "id";
                         formulacion += "fecha";
                         formulacion += "profesional";
+                        formulacion += "respuesta";
+                        formulacion += "contraindicacion";
 
                         MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Conector.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "'"));
                         if (readermysql != null && readermysql.Read())
@@ -107,8 +114,42 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                             HIdFormulacion.Value = readermysql["id"].ToString();
                             TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
                             ViewState["profesional"] = readermysql["profesional"].ToString();
+                            TContraindicacion.Text = readermysql["contraindicacion"].ToString();
+                            TRespuestaClinica.Text = readermysql["respuesta"].ToString();
+
+                            List<Medicamento> listadopos = new List<Medicamento>();
+
+                            Query qpos = new Query("formato_ctc_pos_items");
+
+                            qpos += "id";
+                            qpos += "principio";
+                            qpos += "posologia";
+                            qpos += "dosis";
+                            qpos += "cantidad";
+                            qpos += "tiempo";
+
+                            readermysql = conectormy.Query(qpos.GetSelect("formato_ctc=" + HIdFormulacion.Value));
+                            if (readermysql != null)
+                            {
+                                while (readermysql.Read())
+                                {
+                                    Medicamento info = new Medicamento(listadopos.Count);
+                                    info.Id = readermysql["id"].ToString();
+                                    info.Cantidad = Convert.ToDouble(readermysql["cantidad"]);
+                                    info.Nombre = readermysql["principio"].ToString();
+                                    info.Posologia = readermysql["posologia"].ToString();
+                                    info.Dosis = readermysql["dosis"].ToString();
+                                    info.Tiempo = readermysql["tiempo"].ToString();
+                                    listadopos.Add(info);
+                                }
+                            }
+
+                            HPOS.Value = Serializar.SerializeBinary(listadopos);
+                            GPOS.DataSource = listadopos;
+                            GPOS.DataBind();
 
                             List<Medicamento> medicamentos = new List<Medicamento>();
+                            List<Medicamento> medicamentosNoPos = new List<Medicamento>();
 
                             Query qmedicamentos = new Query("formato_ctc_items");
 
@@ -119,13 +160,17 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                             qmedicamentos += "efecto";
                             qmedicamentos += "respuesta";
                             qmedicamentos += "efecto_secundario";
+                            qmedicamentos += "tipo";
+                            qmedicamentos += "posologia";
+                            qmedicamentos += "dosis";
 
                             readermysql = conectormy.Query(qmedicamentos.GetSelect("formato_ctc=" + HIdFormulacion.Value));
                             if (readermysql != null)
                             {
                                 while (readermysql.Read())
                                 {
-                                    Medicamento info = new Medicamento(medicamentos.Count);
+                                    Medicamento info = new Medicamento(readermysql["tipo"].ToString()=="1" ? medicamentosNoPos.Count : medicamentos.Count);
+
                                     info.Id = readermysql["id"].ToString();
                                     info.Cantidad = Convert.ToDouble(readermysql["cantidad"]);
                                     info.Nombre = readermysql["nombre"].ToString();
@@ -133,13 +178,21 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                                     info.Efecto = readermysql["efecto"].ToString();
                                     info.Respuesta = readermysql["respuesta"].ToString();
                                     info.EfectosSecundarios = readermysql["efecto_secundario"].ToString();
-                                    medicamentos.Add(info);
+                                    info.Posologia = readermysql["posologia"].ToString();
+                                    info.Dosis = readermysql["dosis"].ToString();
+                                    if (readermysql["tipo"].ToString() == "1")
+                                        medicamentosNoPos.Add(info);
+                                    else medicamentos.Add(info);
                                 }
                             }
 
                             HFormulacion.Value = Serializar.SerializeBinary(medicamentos);
                             GFormulacion.DataSource = medicamentos;
                             GFormulacion.DataBind();
+
+                            HMedicamentos.Value = Serializar.SerializeBinary(medicamentosNoPos);
+                            GMedicamentos.DataSource = medicamentosNoPos;
+                            GMedicamentos.DataBind();
 
                             ((MasterPageI)Master).SetModificacion(HIdFormulacion.Value);
                         }
@@ -160,6 +213,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
             }
         }
     }
+
     protected void BCancelar_Click(object sender, EventArgs e)
     {
         Response.Redirect(Request.Url.AbsolutePath);
@@ -225,7 +279,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
         CUsuario usuario = (CUsuario)CUsuario.GetInstance();
         Query formulacion = new Query("formato_ctc");
 
-        if (!usuario.CanDelete() && GFormulacion.Rows.Count == 0)
+        if (!usuario.CanDelete() && (GFormulacion.Rows.Count == 0 || GMedicamentos.Rows.Count==0))
         {
             LMensajeMedicamento.Text = "Por favor ingrese por lo menos un medicamento.";
             return;
@@ -246,6 +300,8 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                 formulacion["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
                 formulacion["profesional"] = usuario["personal"];
                 formulacion["asegurador"] = CCDetallePaciente.AsegurdadorID;
+                formulacion["respuesta"] = TRespuestaClinica.Text;
+                formulacion["contraindicacion"] = TContraindicacion.Text;
 
                 if (HIdFormulacion.Value.Length == 0)
                 {
@@ -268,13 +324,37 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                 if (conector.InsertModificacion(HIdFormulacion.Value) == -1)
                     return;
 
+                Query qpos = new Query("formato_ctc_pos_items");
+
+                List<Medicamento> listadopos = Serializar.DesSerializeBinary<List<Medicamento>>(HPOS.Value);
+                for (int i = 0; i < listadopos.Count; i++)
+                {
+                    Medicamento info = listadopos[i];
+
+                    qpos["principio"] = info.Nombre;
+                    qpos["cantidad"] = info.Cantidad.ToString(CultureInfo.InvariantCulture);
+                    qpos["posologia"] = info.Posologia;
+                    qpos["dosis"] = info.Dosis;
+                    qpos["tiempo"] = info.Tiempo;
+
+                    if (string.IsNullOrEmpty(info.Id))
+                    {
+                        qpos["formato_ctc"] = HIdFormulacion.Value;
+                        if (conector.QueryMod(qpos.GetInsert()) == -1)
+                            return;
+                    }
+                    else
+                    {
+                        if (conector.QueryMod(qpos.GetUpdate("id=" + info.Id)) == -1)
+                            return;
+                    }
+                }
+
                 Query medicamento = new Query("formato_ctc_items");
 
                 List<Medicamento> medicamentos = Serializar.DesSerializeBinary<List<Medicamento>>(HFormulacion.Value);
                 for (int i = 0; i < medicamentos.Count; i++)
                 {
-
-
                     Medicamento info = medicamentos[i];
 
                     medicamento["nombre"] = info.Nombre;
@@ -297,6 +377,36 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                     }
                 }
 
+                medicamento = new Query("formato_ctc_items");
+
+                List<Medicamento> listadonopos = Serializar.DesSerializeBinary<List<Medicamento>>(HMedicamentos.Value);
+                for (int i = 0; i < listadonopos.Count; i++)
+                {
+                    Medicamento info = listadonopos[i];
+
+                    medicamento["nombre"] = info.Nombre;
+                    medicamento["cantidad"] = info.Cantidad.ToString(CultureInfo.InvariantCulture);
+                    medicamento["posologia"] = info.Posologia;
+                    medicamento["dosis"] = info.Dosis;
+                    medicamento["tiempo"] = info.Tiempo;
+                    medicamento["efecto"] = info.Efecto;
+                    medicamento["respuesta"] = info.Respuesta;
+                    medicamento["efecto_secundario"] = info.EfectosSecundarios;
+
+                    if (string.IsNullOrEmpty(info.Id))
+                    {
+                        medicamento["tipo"] = "1";
+                        medicamento["formato_ctc"] = HIdFormulacion.Value;
+                        if (conector.QueryMod(medicamento.GetInsert()) == -1)
+                            return;
+                    }
+                    else
+                    {
+                        if (conector.QueryMod(medicamento.GetUpdate("id=" + info.Id)) == -1)
+                            return;
+                    }
+                }
+
                 conector.Commit();
                 conectorMS.Commit();
             }
@@ -304,6 +414,116 @@ public partial class paciente_formatoctc : System.Web.UI.Page
 
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
         ((MasterPageI)Master).SetResultado(mensaje);
+    }
+
+    protected void GMedicamentos_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+
+        e.Cancel = true;
+        List<Medicamento> listadonopos = Serializar.DesSerializeBinary<List<Medicamento>>(HMedicamentos.Value);
+        List<Medicamento> resultado = (from t in listadonopos
+                                       where t.IdGrid.ToString() == GMedicamentos.DataKeys[e.RowIndex].Value.ToString()
+                                       select t).ToList();
+        if (resultado.Count != 0)
+        {
+            Medicamento info = resultado.First();
+            if (!string.IsNullOrEmpty(info.Id))
+            {
+                using (CConector conector = new CConector())
+                {
+                    if (conector.QueryMod("DELETE FROM formato_ctc_items WHERE id=" + Query.GetValor(info.Id)) == -1)
+                    {
+                        LMensajeMedicamento.Text = conector.GetLastError();
+                        return;
+                    }
+                }
+            }
+
+            listadonopos.Remove(info);
+            for (int i = 0; i < listadonopos.Count; i++)
+                listadonopos[i].IdGrid = i;
+
+            HMedicamentos.Value = Serializar.SerializeBinary(listadonopos);
+            GMedicamentos.SelectedIndex = -1;
+            GMedicamentos.DataSource = listadonopos;
+            GMedicamentos.DataBind();
+        }
+    }
+
+
+    protected void GPOS_RowDeleting(object sender, GridViewDeleteEventArgs e) {
+
+        e.Cancel = true;
+        List<Medicamento> listadopos = Serializar.DesSerializeBinary<List<Medicamento>>(HPOS.Value);
+        List<Medicamento> resultado = (from t in listadopos
+                                       where t.IdGrid.ToString() == GPOS.DataKeys[e.RowIndex].Value.ToString()
+                                       select t).ToList();
+        if (resultado.Count != 0)
+        {
+            Medicamento info = resultado.First();
+            if (!string.IsNullOrEmpty(info.Id))
+            {
+                using (CConector conector = new CConector())
+                {
+                    if (conector.QueryMod("DELETE FROM formato_ctc_pos_items WHERE id=" + Query.GetValor(info.Id)) == -1)
+                    {
+                        LMensajeMedicamento.Text = conector.GetLastError();
+                        return;
+                    }
+                }
+            }
+
+            listadopos.Remove(info);
+            for (int i = 0; i < listadopos.Count; i++)
+                listadopos[i].IdGrid = i;
+
+            HPOS.Value = Serializar.SerializeBinary(listadopos);
+            GPOS.SelectedIndex = -1;
+            GPOS.DataSource = listadopos;
+            GPOS.DataBind();
+        }
+    }
+
+    protected void GMedicamentos_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+        List<Medicamento> listadonopos = Serializar.DesSerializeBinary<List<Medicamento>>(HMedicamentos.Value);
+        List<Medicamento> resultado = (from info in listadonopos
+                                       where info.IdGrid.ToString() == GMedicamentos.SelectedDataKey.Value.ToString()
+                                       select info).ToList();
+
+        if (resultado.Count != 0)
+        {
+            Medicamento info = resultado.First();
+
+            TPrincipioNoPOS.Text = info.Nombre;
+            TCantidadNoPOS.Text = info.Cantidad.ToString(CultureInfo.InvariantCulture);
+            TPosologiaNoPOS.Text = info.Posologia;
+            TDosisNoPOS.Text = info.Dosis;
+            TTiempoNoPOS.Text = info.Tiempo;
+            TEfectoNoPOS.Text= info.Efecto;
+            TRespuestaNoPOS.Text= info.Respuesta;
+            TEfectosSecundariosNoPOS.Text= info.EfectosSecundarios;
+        }
+    }
+
+    protected void GPOS_SelectedIndexChanged(object sender, EventArgs e) {
+
+        List<Medicamento> listadopos = Serializar.DesSerializeBinary<List<Medicamento>>(HPOS.Value);
+        List<Medicamento> resultado = (from info in listadopos
+                                       where info.IdGrid.ToString() == GPOS.SelectedDataKey.Value.ToString()
+                                       select info).ToList();
+
+        if (resultado.Count != 0)
+        {
+            Medicamento info = resultado.First();
+
+            TPrincipio.Text= info.Nombre;
+            TCantidadPOS.Text = info.Cantidad.ToString(CultureInfo.InvariantCulture);
+            TPosologia.Text= info.Posologia;
+            TDosis.Text= info.Dosis;
+            TTiempoPOS.Text= info.Tiempo;
+        }
     }
 
     protected void GFormulacion_SelectedIndexChanged(object sender, EventArgs e)
@@ -336,9 +556,20 @@ public partial class paciente_formatoctc : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
         evento.Contenido = evento.Contenido.Replace("$Apellidos$", paciente.pApellido + " " + paciente.sApellido);
         evento.Contenido = evento.Contenido.Replace("$Nombres$", paciente.pNombre+ " " + paciente.sNombre);
+        evento.Contenido = evento.Contenido.Replace("$szTipoDocumento$", paciente.tipoDocNombre);
 
         evento.Contenido = evento.Contenido.Replace("$contributivo$", paciente.tipopago=="POS" ? "X" : "_");
         evento.Contenido = evento.Contenido.Replace("$subsidiado$", paciente.tipopago == "POS" ? "_" : "X");
+
+        string szPos = "";
+        for (int i = 0; i<GPOS.Rows.Count; i++) {
+            szPos += (i+1) + ". ";
+            for (int j = 2; j < GPOS.Columns.Count; j++) {
+                szPos += GPOS.Columns[j].HeaderText + ": <b>" + GPOS.Rows[i].Cells[j].Text + "</b>&nbsp;&nbsp;&nbsp;";
+            }
+            szPos += "<br/>";
+        }
+        evento.Contenido = evento.Contenido.Replace("$szPOS$", szPos);
 
         string []fecha= TFecha.Text.Split('/');
         evento.Contenido = evento.Contenido.Replace("$dia$", fecha[0]);
@@ -382,28 +613,70 @@ public partial class paciente_formatoctc : System.Web.UI.Page
         }
 
 
-        int pos = evento.Contenido.IndexOf("<div");
-        int posf = evento.Contenido.IndexOf("</div>");
+        int pos = evento.Contenido.IndexOf("<page");
+        int posf = evento.Contenido.IndexOf("</page>");
+        string contenidoreal = evento.Contenido.Substring(pos, posf - pos + 7);
+        bool primero = true;
 
-        string contenidoreal = evento.Contenido.Substring(pos, posf - pos + 6);
+        // agregamos los medicamentos no pos
+        for (int i = 0; i < GMedicamentos.Rows.Count; i++)
+        {
+            string contenido = primero ? evento.Contenido : contenidoreal;
+            szPos = "";
+            for (int j = 2; j < GMedicamentos.Columns.Count-3; j++)
+            {
+                szPos += GMedicamentos.Columns[j].HeaderText + ": <b>" + GMedicamentos.Rows[i].Cells[j].Text + "</b>&nbsp;&nbsp;&nbsp;";
+            }
+            contenido = contenido.Replace("$szNoPOS$", szPos)
+                .Replace("$Efecto$", GMedicamentos.Rows[i].Cells[Utilidades.GetGridColumnIndex(GMedicamentos, "Efecto deseado")].Text)
+                .Replace("$Respuesta$", GMedicamentos.Rows[i].Cells[Utilidades.GetGridColumnIndex(GMedicamentos, "Tiempo de respuesta esperado")].Text)
+                .Replace("$EfectosSecundarios$", GMedicamentos.Rows[i].Cells[Utilidades.GetGridColumnIndex(GMedicamentos, "Efectos secundarios y posibles riesgos")].Text)
+
+                .Replace("$Nombre$", "")
+                .Replace("$Cantidad$", "")
+                .Replace("$Tiempo$", "");
+                
+            if (primero)
+            {
+                evento.Contenido = contenido;
+                posf = evento.Contenido.IndexOf("</page>");
+            } 
+            else
+            {
+                evento.Contenido = evento.Contenido.Insert(posf + 7, contenido);
+            }
+            primero = false;
+        }
+
+        // agregamos los servicios no pos
 
         List<Medicamento> medicamentos = Serializar.DesSerializeBinary<List<Medicamento>>(HFormulacion.Value);
         for (int i = medicamentos.Count-1; i >= 0; i--)
         {
-            string contenido = i==0 ? evento.Contenido : contenidoreal;
+            string contenido = primero ? evento.Contenido : contenidoreal;
 
-            contenido = contenido.Replace("$Nombre$", medicamentos[i].Nombre);
-            contenido = contenido.Replace("$Cantidad$", medicamentos[i].Cantidad.ToString());
-            contenido = contenido.Replace("$Tiempo$", medicamentos[i].Tiempo);
-            contenido = contenido.Replace("$Efecto$", medicamentos[i].Efecto);
-            contenido = contenido.Replace("$Respuesta$", medicamentos[i].Respuesta);
-            contenido = contenido.Replace("$EfectosSecundarios$", medicamentos[i].EfectosSecundarios);
+            contenido = contenido.Replace("$Nombre$", medicamentos[i].Nombre)
+                .Replace("$Cantidad$", medicamentos[i].Cantidad.ToString())
+                .Replace("$Tiempo$", medicamentos[i].Tiempo)
+                .Replace("$Efecto$", medicamentos[i].Efecto)
+                .Replace("$Respuesta$", medicamentos[i].Respuesta)
+                .Replace("$EfectosSecundarios$", medicamentos[i].EfectosSecundarios)
+                
+                .Replace("$szNoPOS$", "");
 
-            if (i == 0)
+            if (primero)
+            {
                 evento.Contenido = contenido;
+                posf = evento.Contenido.IndexOf("</page>");
+            } 
             else
-                evento.Contenido = evento.Contenido.Insert(posf + 6, contenido);
+            {
+                evento.Contenido = evento.Contenido.Insert(posf + 7, contenido);
+            }
+            primero = false;
         }
+
+        evento.Contenido = evento.Contenido.Replace("<page", "<div").Replace("</page", "</div");
     }
 
     protected void BFormula_Click(object sender, EventArgs e)
@@ -413,6 +686,29 @@ public partial class paciente_formatoctc : System.Web.UI.Page
             string id = conector.QueryString("SELECT id FROM formato_ctc WHERE paciente=" + CCDetallePaciente.IdPaciente + " ORDER BY fecha DESC LIMIT 1;");
             if (id.Length != 0)
             {
+                Query qpos = new Query("formato_ctc_pos_items");
+
+                qpos += "principio";
+                qpos += "posologia";
+                qpos += "dosis";
+                qpos += "cantidad";
+                qpos += "tiempo";
+
+                MySqlDataReader reader = conector.Query(qpos.GetSelect("formato_ctc=" + HIdFormulacion.Value));
+                if (reader != null)
+                {
+                    while (reader.Read())
+                    {
+                        TPosologia.Text = reader["posologia"].ToString();
+                        TPrincipio.Text = reader["principio"].ToString();
+                        TCantidadPOS.Text = Convert.ToDouble(reader["cantidad"]).ToString(CultureInfo.InvariantCulture);
+                        TDosis.Text = reader["dosis"].ToString();
+                        TTiempoPOS.Text= reader["tiempo"].ToString();
+
+                        BAgregarPOS_Click(sender, e);
+                    }
+                }
+
                 Query medicamento = new Query("formato_ctc_items");
 
                 medicamento += "nombre";
@@ -421,20 +717,37 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                 medicamento += "efecto";
                 medicamento += "respuesta";
                 medicamento += "efecto_secundario";
+                medicamento += "tipo";
+                medicamento += "posologia";
+                medicamento += "dosis";
 
-                MySqlDataReader reader = conector.Query(medicamento.GetSelect("formato_ctc=" + id));
+                reader = conector.Query(medicamento.GetSelect("formato_ctc=" + id));
                 if (reader != null)
                 {
                     while (reader.Read())
                     {
-                        TNombre.Text = reader["nombre"].ToString();
-                        TCantidad.Text = Convert.ToDouble(reader["cantidad"]).ToString(CultureInfo.InvariantCulture);
-                        TTiempo.Text = reader["tiempo"].ToString();
-                        TEfecto.Text = reader["efecto"].ToString();
-                        TRespuesta.Text = reader["respuesta"].ToString();
-                        TEfectosSecundarios.Text = reader["efecto_secundario"].ToString();
+                        if (reader["tipo"].ToString() == "1")
+                        {
+                            TPrincipioNoPOS.Text = reader["nombre"].ToString();
+                            TPosologiaNoPOS.Text = reader["posologia"].ToString();
+                            TDosisNoPOS.Text = reader["dosis"].ToString();
+                            TCantidadNoPOS.Text = Convert.ToDouble(reader["cantidad"]).ToString(CultureInfo.InvariantCulture);
+                            TTiempoNoPOS.Text = reader["tiempo"].ToString();
+                            TEfecto.Text= reader["efecto"].ToString();
+                            TRespuesta.Text= reader["respuesta"].ToString();
+                            TEfectosSecundarios.Text= reader["efecto_secundario"].ToString();
 
-                        BMasFormulacion_Click(sender, e);
+                            BMedicamentos_Click(sender, e);
+                        } else {
+                            TNombre.Text = reader["nombre"].ToString();
+                            TCantidad.Text = Convert.ToDouble(reader["cantidad"]).ToString(CultureInfo.InvariantCulture);
+                            TTiempo.Text = reader["tiempo"].ToString();
+                            TEfecto.Text = reader["efecto"].ToString();
+                            TRespuesta.Text = reader["respuesta"].ToString();
+                            TEfectosSecundarios.Text = reader["efecto_secundario"].ToString();
+
+                            BMasFormulacion_Click(sender, e);
+                        }
                     }
                 }
             }
@@ -480,5 +793,91 @@ public partial class paciente_formatoctc : System.Web.UI.Page
 
             BAceptar.OnClientClick = GFormulacion.Rows.Count == 0 ? "confirm('¿Está seguro de guardar la orden sin medicamentos o procedimientos?')" : "";
         }
+    }
+
+    protected void BMedicamentos_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!IsValid)
+                return;
+        }
+        catch { }
+
+        List<Medicamento> listadonopos = Serializar.DesSerializeBinary<List<Medicamento>>(HMedicamentos.Value);
+
+        Medicamento info = null;
+        if (GMedicamentos.SelectedIndex != -1)
+        {
+            List<Medicamento> resultado = (from t in listadonopos
+                                           where t.IdGrid.ToString() == GMedicamentos.SelectedDataKey.Value.ToString()
+                                           select t).ToList();
+            if (resultado.Count != 0)
+                info = resultado.First();
+        }
+        if (info == null)
+        {
+            info = new Medicamento(listadonopos.Count);
+            listadonopos.Add(info);
+        }
+
+        info.Nombre = TPrincipioNoPOS.Text;
+        info.Cantidad = Convert.ToDouble(TCantidadNoPOS.Text, CultureInfo.InvariantCulture);
+        info.Posologia = TPosologiaNoPOS.Text;
+        info.Dosis = TDosisNoPOS.Text;
+        info.Tiempo = TTiempoNoPOS.Text;
+        info.Efecto = TEfectoNoPOS.Text;
+        info.Respuesta = TRespuestaNoPOS.Text;
+        info.EfectosSecundarios = TEfectosSecundariosNoPOS.Text;
+
+        HMedicamentos.Value = Serializar.SerializeBinary(listadonopos);
+        GMedicamentos.SelectedIndex = -1;
+        GMedicamentos.DataSource = listadonopos;
+        GMedicamentos.DataBind();
+
+        TEfectoNoPOS.Text= TRespuestaNoPOS.Text= TEfectosSecundariosNoPOS.Text= 
+        TPrincipioNoPOS.Text = TCantidadNoPOS.Text = TPosologiaNoPOS.Text = TDosisNoPOS.Text = TTiempoNoPOS.Text = "";
+        TPrincipioNoPOS.Focus();
+    }
+
+    protected void BAgregarPOS_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!IsValid)
+                return;
+        }
+        catch { }
+
+        List<Medicamento> listadopos = Serializar.DesSerializeBinary<List<Medicamento>>(HPOS.Value);
+
+        Medicamento info = null;
+        if (GPOS.SelectedIndex != -1)
+        {
+            List<Medicamento> resultado = (from t in listadopos
+                                           where t.IdGrid.ToString() == GPOS.SelectedDataKey.Value.ToString()
+                                           select t).ToList();
+            if (resultado.Count != 0)
+                info = resultado.First();
+        }
+        if (info == null)
+        {
+            info = new Medicamento(listadopos.Count);
+            listadopos.Add(info);
+        }
+
+        info.Nombre = TPrincipio.Text;
+        info.Cantidad = Convert.ToDouble(TCantidadPOS.Text, CultureInfo.InvariantCulture);
+        info.Posologia = TPosologia.Text;
+        info.Dosis = TDosis.Text;
+        info.Tiempo = TTiempoPOS.Text;
+
+        HPOS.Value = Serializar.SerializeBinary(listadopos);
+        GPOS.SelectedIndex = -1;
+        GPOS.DataSource = listadopos;
+        GPOS.DataBind();
+
+        TPrincipio.Text= TCantidadPOS.Text= TPosologia.Text= TDosis.Text= TTiempoPOS.Text="";
+        TPrincipio.Focus();
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -623,5 +624,17 @@ public class Utilidades
 #else
 		return true;
 #endif
+	}
+
+	public static string TryConverToDoubleInvariantCulture(object valor)
+	{
+		try
+		{
+			return Convert.ToDouble(valor).ToString(CultureInfo.InvariantCulture);
+		}
+		catch
+		{
+		}
+		return "";
 	}
 }

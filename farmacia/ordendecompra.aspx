@@ -156,6 +156,7 @@
                 return false;
             }
         });
+        $("#<%= TCosto.ClientID %>").attr("readonly", true);
         $("#<%= TNumero.ClientID %>").change(function() {
             $.goURL("oci=" + $(this).val());
         });
@@ -192,6 +193,14 @@
             </td>
             <td>&nbsp;</td>
         </tr>
+        <asp:PlaceHolder runat="server" ID="PRevisado" Visible="false">
+            <tr>
+                <td>Creado</td>
+                <td nowrap="nowrap"><asp:Label runat="server" ID="LCreado"></asp:Label></td>
+                <td>Revisado</td>
+                <td nowrap="nowrap"><asp:Label runat="server" ID="LRevisado"></asp:Label></td>
+            </tr>
+        </asp:PlaceHolder>
         <tr>
             <td nowrap="nowrap"><asp:RadioButton runat="server" ID="ROrganizationExample15" Text="OrganizationExample15" /></td>
             <td></td>

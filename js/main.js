@@ -271,6 +271,9 @@ $.fn.sortSelect = function() {
     return this.empty().append(op).val(sel);
 }
 
+function $inicio(funcion) {
+    funcionesInicio.push(funcion);
+}
 function addFunctionToStart(funcion) {
     funcionesInicio.push(funcion);
 }

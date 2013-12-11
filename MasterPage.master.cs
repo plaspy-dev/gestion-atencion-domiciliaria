@@ -363,6 +363,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             cssReader.Close();
         }
         document.Close();
+        Directory.SetCurrentDirectory(Server.MapPath("~/"));
         Response.End();
     }
 

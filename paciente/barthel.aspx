@@ -126,7 +126,7 @@
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             SelectCommand="SELECT indice_barthel.id,indice_barthel.fecha,SUM(varios.descripcion) AS resultado
                                         ,indice_barthel.tipo AS idtipo
-                                        ,IF(indice_barthel.tipo=8, 'Índice de Barthel', 'Escala Norton') AS tipo
+                                        ,IF(indice_barthel.tipo=8, 'Índice de Barthel', 'Escala Braden') AS tipo
                                         FROM indice_barthel
                                         LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id)
                                         LEFT JOIN varios ON (varios.id=analisis_barthel.resultado)
@@ -147,7 +147,7 @@
                 <td><asp:DropDownList runat="server" ID="DIndice" AutoPostBack="true" 
                         onselectedindexchanged="DIndice_SelectedIndexChanged">
                     <asp:ListItem Text="Índice de Barthel" Value="8"></asp:ListItem>
-                    <asp:ListItem Text="Escala Norton" Value="41"></asp:ListItem>
+                    <asp:ListItem Text="Escala Braden" Value="41"></asp:ListItem>
                 </asp:DropDownList></td>
                 <td></td>
             </tr>

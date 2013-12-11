@@ -52,7 +52,7 @@
             <td>
                 Disponibilidad</td>
             <td>
-                &nbsp;</td>
+                Complejidad</td>
             <td>
                 &nbsp;</td>
             <td>
@@ -62,7 +62,7 @@
         </tr>
         <tr>
             <td>
-                <asp:DropDownList ID="DEStado" runat="server" AppendDataBoundItems="true" 
+                <asp:DropDownList ID="DEStado" runat="server" AppendDataBoundItems="true" CssClass="anchomaxcombo"
                     AutoPostBack="True" DataSourceID="SEstado" DataTextField="nombre" 
                     DataValueField="id">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
@@ -76,7 +76,7 @@
                 <asp:TextBox ID="TNombres" runat="server"></asp:TextBox>
             </td>
             <td>
-                <asp:DropDownList ID="DArea" runat="server" AppendDataBoundItems="true" AutoPostBack="true" 
+                <asp:DropDownList ID="DArea" runat="server" AppendDataBoundItems="true" AutoPostBack="true" CssClass="anchomaxcombo" 
                         DataSourceID="SArea" DataTextField="nombre" DataValueField="id">
                         <asp:ListItem Text="(Todas)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
@@ -86,7 +86,7 @@
                 </asp:SqlDataSource>
             </td>
             <td>
-                <asp:DropDownList ID="DCargo" runat="server" AppendDataBoundItems="true" 
+                <asp:DropDownList ID="DCargo" runat="server" AppendDataBoundItems="true" CssClass="anchomaxcombo"
                     AutoPostBack="True" DataSourceID="SCargo" DataTextField="nombre" 
                     DataValueField="id">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
@@ -98,7 +98,7 @@
             </td>
             <td>
                 <asp:DropDownList ID="DDisponibilidad" runat="server" 
-                    AppendDataBoundItems="true" AutoPostBack="True" DataSourceID="SDisponibilidad" 
+                    AppendDataBoundItems="true" AutoPostBack="True" DataSourceID="SDisponibilidad" CssClass="anchomaxcombo" 
                     DataTextField="nombre" DataValueField="id">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
@@ -108,11 +108,18 @@
                 </asp:SqlDataSource>
             </td>
             <td>
+                <asp:DropDownList ID="DNivelComplejidad" runat="server" AppendDataBoundItems="true" DataSourceID="SNivelComplejidad" DataTextField="nombre" DataValueField="id" CssClass="anchomaxcombo">
+                        <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SNivelComplejidad" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                    SelectCommand="SELECT nivCompId id,nivCompDesc nombre FROM dbo.admNivelComplejidad ORDER BY 2">
+                </asp:SqlDataSource>
+            </td>
+            <td>
                 <asp:Button ID="BBuscar" runat="server" Text="Buscar" />
             </td>
             <td>
-                </td>
-                <td>
                 </td>
                 <td>
                 </td>
@@ -141,7 +148,7 @@
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
                 <asp:BoundField HeaderText="Disponibilidad" DataField="dispDescripcion" SortExpression="dispDescripcion"><ItemStyle Wrap="False" /></asp:BoundField>
-                <asp:TemplateField HeaderText="Disponibilidad" InsertVisible="False" SortExpression="dispDescripcion">
+                <asp:TemplateField HeaderText="Disponibilidad " InsertVisible="False" SortExpression="dispDescripcion">
                     <ItemTemplate>
                         <asp:LinkButton ID="LDisponibilidad" runat="server" CausesValidation="False" CommandName="Select" Text='<%# Bind("dispDescripcion") %>'></asp:LinkButton>
                     </ItemTemplate>
@@ -159,6 +166,7 @@
                 <asp:BoundField HeaderText="Barrio" DataField="perBarrio" SortExpression="perBarrio">
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
+                <asp:BoundField HeaderText="Nivel complejidad" DataField="nivCompDesc" SortExpression="nivCompDesc" ItemStyle-Wrap="false" />
                 <asp:BoundField HeaderText="L. Trabajo" DataField="loctrabajo" SortExpression="loctrabajo">
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
@@ -199,12 +207,14 @@
 					,futuro.prgFechaProg AS fecha
 					,ISNULL(phdPacientef.pacNombres,'') + CASE WHEN manana.actId IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END AS nombre
 					,ISNULL(phdPaciente.pacNombres,'')  + CASE WHEN ayer.perId IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END AS nombrehoy
+					,admNivelComplejidad.nivCompDesc
                     FROM admPersonalHS per 
                     LEFT JOIN admCargo on per.carId = admCargo.carId 
                     LEFT JOIN admDisponibilidad on admDisponibilidad.dispId = per.dispId 
                     LEFT JOIN admEstadoEstancia ON (admEstadoEstancia.eEstId=per.eEstId)
                     LEFT JOIN admLocalidad AS loctrabajo ON (loctrabajo.locId=per.locId)
                     LEFT JOIN admLocalidad AS locresidencia ON (locresidencia.locId=per.residencialocId)
+                    LEFT JOIN admNivelComplejidad ON (admNivelComplejidad.nivCompId=per.nivCompId)
 					LEFT JOIN (SELECT perId,MIN(actId) AS actId FROM programacion WHERE programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()-1)) AND actId IN (10001,10009,10012,10013,10015) GROUP BY perId) AS ayer ON (ayer.perId=per.perId)
 					LEFT JOIN (SELECT perId,MIN(actId) AS actId FROM programacion WHERE programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()+1)) AND actId IN (10001,10009,10012,10013,10015) GROUP BY perId) AS manana ON (manana.perId=per.perId)
 					LEFT JOIN (SELECT perId,MIN(pacId) AS pacId FROM programacion WHERE programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE())) GROUP BY perId) AS hoy ON (hoy.perId=per.perId)
@@ -216,6 +226,7 @@
                     AND (@id!=0 OR @estado=0 OR per.eEstId=@estado) 
                     {0}
                     AND (@id!=0 OR @cargo=0 or per.carId=@cargo) 
+                    AND (@id!=0 OR @complejidad=0 OR per.nivCompId=@complejidad)
                     AND (@id!=0 OR @disponibilidad=0 OR per.dispId=@disponibilidad)
                     AND (@id!=0 OR @area=0 OR @area=per.areaId)
                     AND (@id!=0 OR @nombres=' ' OR per.perNombre LIKE '%' + @nombres + '%' )
@@ -225,6 +236,7 @@
                         <asp:ControlParameter ControlID="DCargo" PropertyName="SelectedValue" Name="cargo" />
                         <asp:ControlParameter ControlID="DDisponibilidad" PropertyName="SelectedValue" Name="disponibilidad" />
                         <asp:ControlParameter ControlID="DArea" PropertyName="SelectedValue" Name="area" />
+                        <asp:ControlParameter ControlID="DNivelComplejidad" PropertyName="SelectedValue" Name="complejidad" />
                         <asp:ControlParameter ControlID="TNombres" Name="nombres" PropertyName="Text" DefaultValue=" " />
                         <asp:SessionParameter SessionField="directorioid" Name="id" DefaultValue="0" />
                      </SelectParameters>

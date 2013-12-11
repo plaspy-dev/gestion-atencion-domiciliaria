@@ -45,9 +45,8 @@ public partial class administrador_grupos : System.Web.UI.Page
                 CURLs url = (CURLs)menu[i];
                 /*if (url.m_bNativo)
                 {*/
-                if (url.Parent.Length==0) {
+                if (url.Parent=="__no__" || url.Parent.Length == 0)
                     continue;
-                }
                 Parents padre=null;
                 for (int j = 0; j < parents.Count; j++ ) {
                     if(((Parents) parents[j]).parent==url.Parent) {
@@ -137,8 +136,8 @@ public partial class administrador_grupos : System.Web.UI.Page
                         per += 1;
                     if (per == 0) // lo omitimos
                         continue;
-                    if (per > 0 && (per & 1) != 1)
-                        per += 1;
+                    /*if (per > 0 && (per & 1) != 1)
+                        per += 1;*/
                     permisos["permiso"] = per.ToString();
 
                     if (conector.QueryMod(permisos.GetInsert()) == -1)
@@ -231,26 +230,24 @@ public partial class administrador_grupos : System.Web.UI.Page
             CURLs url = (CURLs)menu[i];
             /*if (url.m_bNativo)
             {*/
-            if (url.Parent.Length == 0)
-            {
+            if (url.Parent == "__no__" || url.Parent.Length == 0)
                 continue;
+            Parents padre = null;
+            for (int j = 0; j < parents.Count; j++)
+            {
+                if (((Parents)parents[j]).parent == url.Parent)
+                {
+                    padre = (Parents)parents[j];
+                    break;
+                }
             }
-                Parents padre = null;
-                for (int j = 0; j < parents.Count; j++)
-                {
-                    if (((Parents)parents[j]).parent == url.Parent)
-                    {
-                        padre = (Parents)parents[j];
-                        break;
-                    }
-                }
-                if (padre == null)
-                {
-                    padre = new Parents(url.Parent);
-                    parents.Add(padre);
-                }
-                if (url.URL != "~")
-                    padre.permisos.Add(new Permisos(url.Titulo, url.URL, LGrupos.SelectedValue == "0" ? 63 : 0));
+            if (padre == null)
+            {
+                padre = new Parents(url.Parent);
+                parents.Add(padre);
+            }
+            if (url.URL != "~")
+                padre.permisos.Add(new Permisos(url.Titulo, url.URL, LGrupos.SelectedValue == "0" ? 63 : 0));
             // }
         }
 

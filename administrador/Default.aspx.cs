@@ -67,7 +67,7 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Grupos", 7, parent);
             // Add("Indice de Barthel", 8, parent);
 
-            parent = Add("Escala Norton");
+            parent = Add("Escala Braden");
             Add("Grupos", 40, parent);
 
             parent = Add("Hoja de gastos");
@@ -121,7 +121,43 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Estado productos", 34, parent);
             Add("Grupos", 35, parent);
 
-            // disponible 42
+            parent = Add("Valoración de heridas");
+            Add("Color del estoma", 42, parent);
+            Add("Estoma a nivel de la piel", 43, parent);
+            Add("Complicaciones", 44, parent);
+            Add("Estado de la piel", 45, parent);
+            Add("Tipo dispositivo", 46, parent);
+            Add("Funcional dispositivo", 47, parent);
+            Add("Escala de dolor", 48, parent);
+            Add("Localización", 49, parent);
+            Add("Localización 2", 70, parent);
+            Add("Localización 3", 71, parent);
+            Add("Mi", 72, parent);
+            Add("Pies", 73, parent);
+            Add("Etiología", 50, parent);
+            Add("Lugar de origen", 51, parent);
+            Add("Tejido profundo sospechoso", 52, parent);
+            Add("Clasificación", 53, parent);
+            Add("Porcentaje de tejido", 54, parent);
+            Add("Seleccione", 55, parent);
+            Add("Exudado", 56, parent);
+            Add("Tipo exudado", 57, parent);
+            Add("Piel Circundante", 58, parent);
+            Add("Bordes de la herida", 59, parent);
+            Add("Olor", 60, parent);
+            Add("Signos y sintomas", 61, parent);
+            Add("Componente educativo", 62, parent);
+            Add("Definición exudado", 68, parent);
+            Add("Varios", 69, parent);
+
+            parent = Add("Evolución manejo de heridas");
+            Add("Piel perilesional", 63, parent);
+            Add("Signos de infección", 64, parent);
+            Add("Tipo cambios locales de herida", 65, parent);
+            Add("Indicaciones terapeuticas", 66, parent);
+            Add("Componente educativo", 67, parent);
+
+            // disponible 72
 
 
             if (HTipo.Value.Length == 0)
