@@ -9,7 +9,16 @@ using SDG.Componentes;
 [ValidationPropertyAttribute("IdFuncionario")]
 public partial class rh_funcionarioSimple : System.Web.UI.UserControl
 {
-    public string IdPaciente
+    public bool ReadOnly {
+        set {
+            TFuncionario.ReadOnly = value;
+            TFuncionarioID.ReadOnly = value;
+        }
+        get {
+            return TFuncionario.ReadOnly;
+        }
+    }
+    public string IdFuncionario
     {
         set
         {

@@ -7,6 +7,7 @@ using System.Web;
 
 namespace SDG.Componentes;
 
+[Serializable]
 public class Query
 {
 	private static bool bGetKey = false;
@@ -81,6 +82,12 @@ public class Query
 		{
 			dQuoted[campo] = false;
 		}
+	}
+
+	public void RemoveCampo(string campo)
+	{
+		dQuoted.Remove(campo);
+		dCampos.Remove(campo);
 	}
 
 	public void Clean()

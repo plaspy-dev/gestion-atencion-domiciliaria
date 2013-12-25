@@ -17,7 +17,11 @@ public class Utilidades
 	public static string GetURLFullPath(Page page, string archivo)
 	{
 		string text = page.Request.Url.Host;
-		if (page.Request.Url.Port != 80)
+		if (!page.Request.IsSecureConnection && page.Request.Url.Port != 80)
+		{
+			text = text + ":" + page.Request.Url.Port;
+		}
+		else if (page.Request.IsSecureConnection && page.Request.Url.Port != 443)
 		{
 			text = text + ":" + page.Request.Url.Port;
 		}
@@ -153,9 +157,20 @@ public class Utilidades
 
 	public static string GetGridRowCellHTML(GridView grid, GridViewRow row, int columna)
 	{
-		string text = "class='c" + columna + "'";
-		string text2 = "";
-		text2 = ((grid.Columns[columna].ItemStyle.HorizontalAlign == HorizontalAlign.Right) ? (text2 + "<td align=right " + text + " style='text-align: right'>") : ((grid.Columns[columna].ItemStyle.HorizontalAlign != HorizontalAlign.Center) ? (text2 + "<td " + text + ">") : (text2 + "<td align=center " + text + " style='text-align: center'>")));
+		string arg = "class='c" + columna + "'";
+		StringBuilder stringBuilder = new StringBuilder();
+		if (grid.Columns[columna].ItemStyle.HorizontalAlign == HorizontalAlign.Right)
+		{
+			stringBuilder.AppendFormat("<td align=right {0} style='text-align: right'>", arg);
+		}
+		else if (grid.Columns[columna].ItemStyle.HorizontalAlign == HorizontalAlign.Center)
+		{
+			stringBuilder.AppendFormat("<td align=center {0} style='text-align: center'>", arg);
+		}
+		else
+		{
+			stringBuilder.AppendFormat("<td {0}>", arg);
+		}
 		if (row.Cells[columna].HasControls())
 		{
 			ControlCollection controls = row.Cells[columna].Controls;
@@ -163,38 +178,46 @@ public class Utilidades
 			{
 				if (controls[i] is TextBox)
 				{
-					string text3 = ((TextBox)controls[i]).Text;
-					if (text3.Length == 0)
+					string text = ((TextBox)controls[i]).Text;
+					if (text.Length == 0)
 					{
-						text3 = "&nbsp;";
+						text = "&nbsp;";
 					}
-					text2 += text3;
+					stringBuilder.Append(text);
 					break;
 				}
 				if (controls[i] is CheckBox)
 				{
-					text2 = ((!((CheckBox)controls[i]).Checked) ? (text2 + "_ ") : (text2 + "X "));
+					if (((CheckBox)controls[i]).Checked)
+					{
+						stringBuilder.Append("X ");
+					}
+					else
+					{
+						stringBuilder.Append("_ ");
+					}
 					if (((CheckBox)controls[i]).Text.Length > 0)
 					{
-						text2 += ((CheckBox)controls[i]).Text;
+						stringBuilder.Append(((CheckBox)controls[i]).Text);
 					}
 					break;
 				}
 				if (controls[i] is LinkButton)
 				{
-					text2 += ((LinkButton)controls[i]).Text;
+					stringBuilder.Append(((LinkButton)controls[i]).Text);
 				}
 				else if (controls[i] is HyperLink)
 				{
-					text2 += ((HyperLink)controls[i]).Text;
+					stringBuilder.Append(((HyperLink)controls[i]).Text);
 				}
 			}
 		}
 		else
 		{
-			text2 += row.Cells[columna].Text;
+			stringBuilder.Append(row.Cells[columna].Text);
 		}
-		return text2 + "</td>";
+		stringBuilder.Append("</td>");
+		return stringBuilder.ToString();
 	}
 
 	public static string RenderGrid(GridView grid, string parametrostabla)
@@ -207,60 +230,58 @@ public class Utilidades
 		{
 			return grid.EmptyDataText;
 		}
-		string text = "<table " + parametrostabla + " id='" + grid.ID + "' class='tgrid'>";
-		text += "<tr class='gh'>";
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.AppendFormat("<table {0} id='{1}' class='tgrid'>", parametrostabla, grid.ID);
+		stringBuilder.Append("<tr class='gh'>");
 		for (int i = 0; i < grid.Columns.Count; i++)
 		{
 			if (grid.Columns[i].Visible)
 			{
-				object obj = text;
-				text = string.Concat(obj, "<th class='h", i, "' bgcolor='#EEEEEE'><b>", grid.Columns[i].HeaderText, "</b></th>");
+				stringBuilder.AppendFormat("<th class='h{0}' bgcolor='#EEEEEE'><b>{1}</b></th>", i, grid.Columns[i].HeaderText);
 			}
 		}
-		text += "</tr>";
+		stringBuilder.Append("</tr>");
 		bool flag = true;
 		for (int i = 0; i < grid.Rows.Count; i++)
 		{
 			GridViewRow gridViewRow = grid.Rows[i];
 			flag = !flag;
-			text += (flag ? "<tr class='ga'>" : "<tr class='gr'>");
+			stringBuilder.Append(flag ? "<tr class='ga'>" : "<tr class='gr'>");
 			for (int j = 0; j < gridViewRow.Cells.Count; j++)
 			{
 				if (grid.Columns[j].Visible)
 				{
-					text += GetGridRowCellHTML(grid, gridViewRow, j);
+					stringBuilder.Append(GetGridRowCellHTML(grid, gridViewRow, j));
 				}
 			}
-			text += "</tr>";
+			stringBuilder.Append("</tr>");
 		}
 		if (grid.ShowFooter && grid.FooterRow != null)
 		{
-			text += "<tr class='gf'>";
+			stringBuilder.Append("<tr class='gf'>");
 			for (int i = 0; i < grid.Columns.Count; i++)
 			{
 				if (grid.Columns[i].Visible)
 				{
 					if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Right)
 					{
-						object obj = text;
-						text = string.Concat(obj, "<td align=right class='f", i, "' style='text-align: right'>");
+						stringBuilder.AppendFormat("<td align=right class='f{0}' style='text-align: right'>", i);
 					}
 					else if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Center)
 					{
-						object obj = text;
-						text = string.Concat(obj, "<td align=center class='f", i, "' style='text-align: center'>");
+						stringBuilder.AppendFormat("<td align=center class='f{0}' style='text-align: center'>", i);
 					}
 					else
 					{
-						object obj = text;
-						text = string.Concat(obj, "<td class='f", i, "'>");
+						stringBuilder.AppendFormat("<td class='f{0}'>", i);
 					}
-					text = text + "<b>" + grid.FooterRow.Cells[i].Text + "</b></td>";
+					stringBuilder.AppendFormat("<b>{0}</b></td>", grid.FooterRow.Cells[i].Text);
 				}
 			}
-			text += "</tr>";
+			stringBuilder.Append("</tr>");
 		}
-		return text + "</table>";
+		stringBuilder.Append("</table>");
+		return stringBuilder.ToString();
 	}
 
 	public static string ReplaceContenido(ControlCollection controles, string contenido, bool visible)
@@ -350,6 +371,14 @@ public class Utilidades
 							}
 							text += listBox.Items[j].Text;
 						}
+					}
+				}
+				else if (controles[i].GetType() == typeof(RadioButtonList))
+				{
+					RadioButtonList radioButtonList = (RadioButtonList)controles[i];
+					if (radioButtonList.SelectedItem != null)
+					{
+						text = HttpUtility.HtmlEncode(radioButtonList.SelectedItem.Text);
 					}
 				}
 				if (contenido.IndexOf(iD) != -1)

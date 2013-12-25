@@ -17,7 +17,7 @@ public partial class equipo_prestamo : System.Web.UI.UserControl
         TFecha.Text = "";
         TEstimado.Text = "";
         UCPaciente.IdPaciente = "";
-        UCFuncionario.IdPaciente = "";
+        UCFuncionario.IdFuncionario = "";
         TFamiliar.Text = "";
         TObservaciones.Text = "";
         CPagare.Checked = false;
@@ -29,7 +29,7 @@ public partial class equipo_prestamo : System.Web.UI.UserControl
             TFecha.Text = Conector.GetFromMySQLDate(info.Fecha);
             TEstimado.Text = Conector.GetFromMySQLDate(info.Estimado);
             UCPaciente.IdPaciente = info.IdPaciente;
-            UCFuncionario.IdPaciente = info.IdFuncionario;
+            UCFuncionario.IdFuncionario = info.IdFuncionario;
             TFamiliar.Text = info.Familiar;
             TObservaciones.Text = info.Observaciones;
             CPagare.Checked = info.Pagare;
@@ -47,7 +47,7 @@ public partial class equipo_prestamo : System.Web.UI.UserControl
             TFecha.Text = "";
             TEstimado.Text = "";
             UCPaciente.IdPaciente = "";
-            UCFuncionario.IdPaciente = "";
+            UCFuncionario.IdFuncionario = "";
             TFamiliar.Text = "";
             TObservaciones.Text = "";
             CPagare.Checked = false;
@@ -78,7 +78,7 @@ public partial class equipo_prestamo : System.Web.UI.UserControl
                         TFecha.Text = Conector.GetFromMySQLDate(reader["fecha"]);
                         TEstimado.Text = Conector.GetFromMySQLDate(reader["estimado"]);
                         UCPaciente.IdPaciente = reader["paciente"].ToString();
-                        UCFuncionario.IdPaciente = reader["funcionario"].ToString();
+                        UCFuncionario.IdFuncionario = reader["funcionario"].ToString();
                         TFamiliar.Text = reader["familiar"].ToString();
                         TObservaciones.Text = reader["observaciones"].ToString();
                         CPagare.Checked = reader["pagare"].ToString() == "1";
@@ -107,7 +107,7 @@ public partial class equipo_prestamo : System.Web.UI.UserControl
             info.Estimado = null;
         else info.Estimado = Convert.ToDateTime(TEstimado.Text);
         info.IdPaciente= UCPaciente.IdPaciente;
-        info.IdFuncionario= UCFuncionario.IdPaciente;
+        info.IdFuncionario = UCFuncionario.IdFuncionario;
         info.Familiar= TFamiliar.Text;
         info.Observaciones = TObservaciones.Text;
         info.Pagare = CPagare.Checked;
@@ -122,7 +122,7 @@ public partial class equipo_prestamo : System.Web.UI.UserControl
         query["fecha"] = Conector.GetMySQLDateFormat(TFecha.Text);
         query["estimado"] = Conector.GetMySQLDateFormat(TEstimado.Text);
         query["paciente"] = UCPaciente.IdPaciente;
-        query["funcionario"] = UCFuncionario.IdPaciente;
+        query["funcionario"] = UCFuncionario.IdFuncionario;
         query["familiar"] = TFamiliar.Text;
         query["observaciones"] = TObservaciones.Text;
         query["pagare"] = CPagare.Checked ? "1" : "";

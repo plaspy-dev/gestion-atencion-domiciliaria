@@ -64,6 +64,7 @@ public class Conector : IDisposable
 			{
 				m_pSQLReader.Close();
 			}
+			m_pSQLReader = null;
 		}
 		catch
 		{
@@ -74,6 +75,7 @@ public class Conector : IDisposable
 			{
 				m_pSQLConector.Close();
 			}
+			m_pSQLConector = null;
 		}
 		catch
 		{
@@ -208,8 +210,11 @@ public class Conector : IDisposable
 			m_szLastError = ex.Message;
 			ShowError(m_szLastError + "\nEn la consulta:\n" + query);
 		}
-		catch
+		catch (Exception ex2)
 		{
+			num = -1;
+			m_szLastError = ex2.Message;
+			ShowError(m_szLastError + "\nEn la consulta:\n" + query);
 		}
 		if (identity && num != -1)
 		{

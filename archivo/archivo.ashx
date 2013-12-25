@@ -24,12 +24,15 @@ public class archivo : IHttpHandler {
         string tipo = context.Request.QueryString["t"];
         if (tipo == "v")
             tipo = "valoracion";
+        else if (tipo == "e")
+            tipo = "evolucion";
         string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo);
-        if(context.Request.QueryString["d"]=="True")
+        if (context.Request.QueryString["d"] == "True")
+        {
             archivo = Path.Combine(archivo, "temp");
-        if(string.IsNullOrEmpty(context.Request.QueryString["i"]))
             archivo = Path.Combine(archivo, context.Request.QueryString["p"]);
-        else archivo = Path.Combine(archivo, context.Request.QueryString["i"]);
+        } else archivo = Path.Combine(archivo, context.Request.QueryString["i"]);
+        archivo = Path.Combine(archivo, context.Request.QueryString["hi"]);
         archivo = Path.Combine(archivo, context.Request.QueryString["n"]);
         
         if (File.Exists(archivo))
