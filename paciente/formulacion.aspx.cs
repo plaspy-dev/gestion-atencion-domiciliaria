@@ -172,7 +172,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         formulacion += "profesional";
                         formulacion += "autorizacion";
 
-                        MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Conector.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "' AND tipo='" + DTipo.SelectedValue + "'"));
+                        MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Query.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "' AND tipo='" + DTipo.SelectedValue + "'"));
                         if (readermysql != null && readermysql.Read())
                         {
                             string ruta = string.Format("formulacion{0}.html", CCDetallePaciente.AsegurdadorID);
@@ -292,7 +292,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         + " ORDER BY formulacion.fecha DESC"
                         + " LIMIT 1"
                         , Query.GetValor(CCDetallePaciente.IdPaciente)
-                        , Query.GetValor(Conector.GetMySQLDateFormat(TFecha.Text))
+                        , Query.GetValor(Query.GetMySQLDateFormat(TFecha.Text))
                         , Query.GetValor(TMedicamentoID.Text)
                         , Query.GetValor(DIntensidad.SelectedValue)
                         ));
@@ -439,7 +439,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 + " AND medicamento_formulacion.medicamento={2}"
                 + " LIMIT 1"
                 , Query.GetValor(CCDetallePaciente.IdPaciente)
-                , Query.GetValor(Conector.GetMySQLDateFormat(TFecha.Text))
+                , Query.GetValor(Query.GetMySQLDateFormat(TFecha.Text))
                 , Query.GetValor(TMedicamentoID.Text)
                 ));
             if (ultimareceta.Length > 0)
@@ -499,7 +499,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
                 DateTime fecha = Convert.ToDateTime(TFecha.Text);
 
-                formulacion["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
+                formulacion["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
                 formulacion["tipo"] = DTipo.SelectedValue;
                 formulacion["profesional"] = usuario["personal"];
                 formulacion["asegurador"] = CCDetallePaciente.AsegurdadorID;
@@ -652,7 +652,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             TTiempo.Text = info.Tiempo;
             TVia.Text = info.Via;
             TMedicamentoID_TextChanged(sender, e);
-            CConector.SelectInDropDown(DIntensidad, info.IdIntensidad);
+            Utilidades.SelectInDropDown(DIntensidad, info.IdIntensidad);
         }
     }
 

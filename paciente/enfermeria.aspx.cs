@@ -69,7 +69,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
                         hoja += "diagnostico";
                         hoja += "dieta";
 
-                        MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + CConector.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "'"));
+                        MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Query.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "'"));
                         if (readermysql != null && readermysql.Read())
                         {
                             HIdHoja.Value = readermysql["id"].ToString();
@@ -140,7 +140,7 @@ public partial class paciente_enfermeria : System.Web.UI.Page
         using (CConector conector = new CConector())
         {
 
-            hoja["fecha"] = CConector.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text));
+            hoja["fecha"] = Query.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text));
             hoja["dieta"] = DDieta.Text;
 
             string szQuery;

@@ -91,7 +91,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                         ((MasterPageI)Master).SetModificacion(HId.Value);
                         ((MasterPageI)Master).Imprimir("ordencompra.html");
                         TObservaciones.Text = reader["observaciones"].ToString();
-                        TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
+                        TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
                         PAnulado.Visible = reader["estado"].ToString() != "";
                         CPrioridad.Checked = reader["prioridad"].ToString()=="1";
                         UCPaciente.IdPaciente= reader["paciente"].ToString();
@@ -298,7 +298,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
             }
 
             query["observaciones"] = TObservaciones.Text;
-            query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
+            query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             query["paciente"] = RPaciente.Checked ? UCPaciente.IdPaciente : "";
             query["tercero"] = terceroid;
             query["prioridad"] = CPrioridad.Checked ? "1" : "";

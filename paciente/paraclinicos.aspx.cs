@@ -63,8 +63,8 @@ public partial class paciente_paraclinicos : System.Web.UI.Page
                         {
                             ViewState["id"] = readermysql["id"].ToString();
                             TAnalisis.Text = readermysql["analisis"].ToString();
-                            TFecha.Text = Conector.GetFromMySQLDate(readermysql["fecha"]);
-                            Conector.SelectInDropDown(DMedico, readermysql["medico"]);
+                            TFecha.Text = Query.GetFromMySQLDate(readermysql["fecha"]);
+                            Utilidades.SelectInDropDown(DMedico, readermysql["medico"]);
                             TPlanManejo.Text = readermysql["plan_manejo"].ToString();
                             
                             if (TPlanManejo.Text.Length == 0)
@@ -115,8 +115,8 @@ public partial class paciente_paraclinicos : System.Web.UI.Page
             conector.StartTransaction();
             string id=(string)ViewState["id"];
             Query query = new Query("paraclinico");
-            
-            query["fecha"]= Conector.GetMySQLDateFormat(TFecha.Text);
+
+            query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             query["medico"]= DMedico.SelectedValue;
             query["analisis"]= TAnalisis.Text;
             query["paciente"] = CCDetallePaciente.IdPaciente;

@@ -57,7 +57,7 @@ public partial class paciente_gastos : System.Web.UI.Page
                         hoja += "id";
                         hoja += "fecha";
 
-                        MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + CConector.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "'"));
+                        MySqlDataReader readermysql = conectormy.Query(hoja.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Query.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "'"));
                         if (readermysql != null && readermysql.Read())
                         {
                             ((MasterPageI)Master).Imprimir();
@@ -108,7 +108,7 @@ public partial class paciente_gastos : System.Web.UI.Page
             string szQuery = "";
             string mensaje = "";
 
-            hoja["fecha"] = CConector.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text));
+            hoja["fecha"] = Query.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text));
 
             if (HIdHoja.Value.Length == 0)
             {

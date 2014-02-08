@@ -13,7 +13,12 @@
     width: 75px;
     text-align: right;
 }
+.eliminado 
+{
+    text-decoration: line-through;
+}
 </style>
+<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tiny_mce.js"></script>
 <script type="text/javascript">
     $inicio(function() {
 
@@ -64,6 +69,70 @@
             active: false
         });
         FullRowSelect("#<%= GHistorial.ClientID %>");
+        
+        
+        
+        
+        function rel(text) {
+            text = text.replace(/\r/gi, '');
+            text = text.replace(/&nbsp;/gi, '');
+            while (text[0] == '\n') {
+                text = text.substring(1);
+            }
+            text = text.split('\n');
+            var szfinal = "";
+            for (x = 0; x < text.length; x++) {
+                text[x] = text[x].trim();
+                if (text[x].match(/[\S]/g) != null) {
+                    if (szfinal.length)
+                        szfinal += "\n";
+                    szfinal += text[x];
+                }
+            }
+            // text = text.join('\n').replace(/\n{2,}/g, '\n');
+            return szfinal;
+        }
+
+        function lim() {
+            var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
+            $("#<%= TPlanManejo.ClientID %>").val(limpio);
+            var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
+            editor.setContent(completa);
+        }
+    
+        function blurevent(ed) {
+            tinyMCE.dom.Event.add(ed.getWin(), "blur", function(e) {
+                tinyMCE.triggerSave();
+                lim();
+            });
+        }
+    
+        tinyMCE.init({
+            mode: "exact",
+            elements: "elm1",
+            theme: "advanced",
+            readonly: <%= TPlanManejo.ReadOnly ? "true" : "false" %>,
+            theme_advanced_buttons1: "",
+            theme_advanced_buttons2: "",
+            theme_advanced_buttons3: "",
+            valid_elements: "ol,li,p,br",
+            setup: function(ed) {
+                editor = ed;
+                ed.onSubmit.add(function(ed, e) {
+                    lim();
+                });
+                ed.onInit.add(function(ed) {
+                    var completa = $("#<%= TPlanManejo.ClientID %>").val();
+                    completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
+                    editor.setContent(completa);
+                    blurevent(ed);
+                    $("#elm1").remove();
+                });
+            },
+            paste_preprocess: function(pl, o) {
+                o.content = o.content.replace(/<\S[^><]*>/g, "");
+            }
+        });
     });
 </script>
 </asp:Content>
@@ -412,8 +481,8 @@
                             <asp:DataList RepeatColumns="3" runat="server" ID="DFotos" 
                                 DataKeyField="Archivo" ondeletecommand="DFotos_DeleteCommand" >
                                 <ItemTemplate>
-                                    <a href="<%# string.Format("../archivo/archivo.ashx?t=e&p={0}&i={1}&n={2}&d={3}&a=1&hi={4}", CCDetallePaciente.IdPaciente,ViewState["id"],Eval("Archivo"), Eval("Temporal"), Eval("Id")) %>">
-                                    <img border=0 src="<%# string.Format("../archivo/archivo.ashx?t=e&p={0}&i={1}&n={2}&hi={4}&d={3}&w=150&h=150", CCDetallePaciente.IdPaciente,ViewState["id"],Eval("Archivo"), Eval("Temporal"), Eval("Id")) %>" />
+                                    <a href="<%# string.Format("../archivo/imagen.ashx?t=e&p={0}&i={1}&n={2}&d={3}&a=1&hi={4}", CCDetallePaciente.IdPaciente,ViewState["id"],Eval("Archivo"), Eval("Temporal"), Eval("Id")) %>">
+                                    <img border=0 src="<%# string.Format("../archivo/imagen.ashx?t=e&p={0}&i={1}&n={2}&hi={4}&d={3}&w=150&h=150", CCDetallePaciente.IdPaciente,ViewState["id"],Eval("Archivo"), Eval("Temporal"), Eval("Id")) %>" />
                                     </a>
                                     <br />
                                     <%# Eval("Archivo") %>
@@ -451,14 +520,10 @@
             <tr>
                 <td colspan="4" class="celdaSubTitulo tdr tdl">Plan de manejo</td>
             </tr>
-            <tr>
-                <td class="tdl">Procedimiento</td>
-                <td colspan="3" class="tdr"><asp:TextBox runat="server" ID="TProcedimiento" Width="99%"></asp:TextBox></td>
-            </tr>
-            <tr>
-                <td class="tdl">Insumos, dispositivos utilizados</td>
-                <td colspan="3" class="tdr"><asp:TextBox runat="server" ID="TInsumos" Width="99%"></asp:TextBox></td>
-            </tr>
+            <td class="tdl" valign="top">Manejo</td>
+                <td colspan="3"><asp:TextBox ID="TPlanManejo" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>
+                <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
+            </td>
             <tr>
                 <td colspan="4" class="celdaTitulo">Indicaciones terapeuticas</td>
             </tr>

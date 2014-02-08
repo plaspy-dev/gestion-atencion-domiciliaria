@@ -532,7 +532,7 @@ public class servicios : System.Web.Services.WebService
                     else
                     {
                         info.lote = reader["lote"].ToString();
-                        info.vence = CConector.GetFromMySQLDate(reader["vence"]);
+                        info.vence = Query.GetFromMySQLDate(reader["vence"]);
                         info.serial = reader["szSerial"].ToString();
                         info.estado = Convert.ToInt32(reader["estado"]);
                         info.ubicacion = Convert.ToInt32(reader["ubicacion"]);
@@ -592,7 +592,7 @@ public class servicios : System.Web.Services.WebService
                     else
                     {
                         info.lote = reader["lote"].ToString();
-                        info.vence = CConector.GetFromMySQLDate(reader["vence"]);
+                        info.vence = Query.GetFromMySQLDate(reader["vence"]);
                         info.serial = reader["szSerial"].ToString();
                         info.estado = Convert.ToInt32(reader["estado"]);
                         cantidad -= productousado.GetProductoUsado(info.id, info.lote, info.vence);

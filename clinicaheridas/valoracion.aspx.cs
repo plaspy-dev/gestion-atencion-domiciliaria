@@ -25,6 +25,14 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
             UCFuncionario.ReadOnly = !usuario.CanAdmin();
             BAceptar.Enabled = false;
 
+            if (!string.IsNullOrEmpty(Request.QueryString["hveid"]))
+            {
+                using (CConector conector = new CConector())
+                    Response.Redirect(string.Format("~/clinicaheridas/valoracion.aspx?pid={0}"
+                        , conector.QueryString("SELECT paciente FROM valoracion_herida WHERE id=" + Query.GetValor(Request.QueryString["hveid"]))
+                        ));
+            }
+
             if (!string.IsNullOrEmpty(Request.QueryString["pid"]))
             {
                 CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
@@ -41,7 +49,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                     SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
                     SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
 
-                    TFecha.Text = Conector.GetFromMySQLDate(DateTime.Now, true);
+                    TFecha.Text = Query.GetFromMySQLDate(DateTime.Now, true);
                     PDatos.Visible = true;
 
                     using (CConector conector = new CConector()) {
@@ -95,7 +103,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                                 SEducativo.SelectParameters["valoracion"].DefaultValue =
                                 reader["id"].ToString();
 
-                            TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
+                            TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
                             UCFuncionario.IdFuncionario = reader["funcionario"].ToString();
                             TTA.Text = reader["ta"].ToString();
                             TFC.Text = reader["fc"].ToString();
@@ -104,17 +112,17 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                             try { RPDistales.DataBind(); RPDistales.SelectedValue = reader["pulsosdistales"].ToString(); } catch { }
                             try { RTipo.DataBind(); RTipo.SelectedValue = reader["ostomias"].ToString(); } catch { }
                             TUbicacion.Text = reader["ubicacion"].ToString();
-                            CConector.SelectInDropDown(DColor, reader["color"]);
-                            CConector.SelectInDropDown(DEstoma,reader["estoma"]);
-                            CConector.SelectInDropDown(DComplicacion,reader["complicaciones"]);
-                            CConector.SelectInDropDown(DEstadoPiel,reader["estado_piel"]);
-                            CConector.SelectInDropDown(DTipoDispositivo,reader["tipo_dispositivo"]);
-                            CConector.SelectInDropDown(DFuncional,reader["funcional"]);
+                            Utilidades.SelectInDropDown(DColor, reader["color"]);
+                            Utilidades.SelectInDropDown(DEstoma, reader["estoma"]);
+                            Utilidades.SelectInDropDown(DComplicacion, reader["complicaciones"]);
+                            Utilidades.SelectInDropDown(DEstadoPiel, reader["estado_piel"]);
+                            Utilidades.SelectInDropDown(DTipoDispositivo, reader["tipo_dispositivo"]);
+                            Utilidades.SelectInDropDown(DFuncional, reader["funcional"]);
                             TFuncionalDescripcion.Text = reader["funcional_descripcion"].ToString();
-                            CConector.SelectInDropDown(DEscalaDolor,reader["dolor"]);                            
+                            Utilidades.SelectInDropDown(DEscalaDolor, reader["dolor"]);                            
                             TTiempoEvolucion.Text = reader["tiempo_evolucion_ulcera"].ToString();
-                            CConector.SelectInDropDown(DLugarOrigen,reader["lugar_origen_ulcera"]);
-                            CConector.SelectInDropDown(DTejidoSospechoso,reader["tejido_profundo"]);
+                            Utilidades.SelectInDropDown(DLugarOrigen, reader["lugar_origen_ulcera"]);
+                            Utilidades.SelectInDropDown(DTejidoSospechoso, reader["tejido_profundo"]);
                             LTipo.Text = DEtiologia.SelectedItem.Text;
                             LClasificacion.Text = "";// DDefina.SelectedItem.Text;
                             COstomias.Checked = reader["costomias"].ToString() == "1";
@@ -232,7 +240,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
             string id= (string)ViewState["id"];
             Query query = new Query("valoracion_herida");
 
-            query["fecha"] = Conector.GetMySQLDateFormat(TFecha.Text);
+            query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             query["funcionario"] = UCFuncionario.IdFuncionario;
             query["ta"] = TTA.Text;
             query["fc"] = TFC.Text.Replace(" Lat/min", "");
@@ -270,6 +278,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
             if(string.IsNullOrEmpty(id)) {
 
                 query["paciente"] = CCDetallePaciente.IdPaciente;
+                query["asegurador"] = CCDetallePaciente.AsegurdadorID;
 
                 int res= conector.QueryMod(query.GetInsert(), true);
                 if (res == -1) {
@@ -413,7 +422,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
             }
             
             if (string.IsNullOrEmpty((string)ViewState["id"]) && (CCDetallePaciente.Edad == -1 || CCDetallePaciente.Edad > 14))
-                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Conector.GetMySQLDateFormat(TFecha.Text, true)), conector);
+                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
 
             conector.Commit();
 
@@ -775,15 +784,15 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         
         ViewState["idherida"] = info.Id;
 
-        CConector.SelectInDropDown(DLocalizacion, info.query["localizacion"]);
+        Utilidades.SelectInDropDown(DLocalizacion, info.query["localizacion"]);
         try { RLocalizacion2.SelectedValue = info.query["localizacion2"]; } catch { }
         try { RLocalizacion3.SelectedValue = info.query["localizacion3"]; } catch { }
         try { RMI.SelectedValue = info.query["mi"]; } catch { }
         try { RPies.SelectedValue = info.query["pies"]; } catch { }
         TUbicacionEspecifica.Text = info.query["ubicacion_especifica"];
-        CConector.SelectInDropDown(DEtiologia, info.query["etiologia"]);
+        Utilidades.SelectInDropDown(DEtiologia, info.query["etiologia"]);
         TOtroEtiologia.Text = info.query["etiologia_otro"];
-        CConector.SelectInDropDown(DClasificacion, info.query["clasificacion"]);
+        Utilidades.SelectInDropDown(DClasificacion, info.query["clasificacion"]);
         TFactoresRiesgo.Text = info.query["factores_riesgo"];
         TLongitud.Text = info.query["longitud"];
         TAnchura.Text = info.query["anchura"];
@@ -803,17 +812,17 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         THiperGranulacion.Text = info.query["hipergranulacion"];
         TLimpio.Text = info.query["limpio"];
         TNecrosis.Text = info.query["necrosis"];
-        CConector.SelectInDropDown(DSeleccione, info.query["seleccion_tejido"]);
-        CConector.SelectInDropDown(DExudado, info.query["exudado"]);
-        CConector.SelectInDropDown(DTipoExudado, info.query["tipo_exudado"]);
-        CConector.SelectInDropDown(DPielCircundante, info.query["piel_circundante"]);
-        CConector.SelectInDropDown(DBordesHerida, info.query["bordes_herida"]);
-        CConector.SelectInDropDown(DOlor, info.query["olor"]);
+        Utilidades.SelectInDropDown(DSeleccione, info.query["seleccion_tejido"]);
+        Utilidades.SelectInDropDown(DExudado, info.query["exudado"]);
+        Utilidades.SelectInDropDown(DTipoExudado, info.query["tipo_exudado"]);
+        Utilidades.SelectInDropDown(DPielCircundante, info.query["piel_circundante"]);
+        Utilidades.SelectInDropDown(DBordesHerida, info.query["bordes_herida"]);
+        Utilidades.SelectInDropDown(DOlor, info.query["olor"]);
         TOlorDescripcion.Text = info.query["olor_descripcion"];
-        CConector.SelectInDropDown(DSignosSintomas, info.query["signos_sintomas"]);
+        Utilidades.SelectInDropDown(DSignosSintomas, info.query["signos_sintomas"]);
         TComplicaciones.Text = info.query["exudado_complicacion"];
         CComplicaciones.Checked = TComplicaciones.Text.Length > 0;
-        Conector.SelectInDropDown(DDefina, info.query["exudado_definicion"]);
+        Utilidades.SelectInDropDown(DDefina, info.query["exudado_definicion"]);
 
         BAgregar.Enabled = Usuario.GetInstance().CanUpdate();
         BAgregar.Text = "Editar";
@@ -875,7 +884,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                 resultado += "<td>";
                 resultado += string.Format("<img border=0 src='{5}{6}?t=v&p={0}&i={1}&n={2}&hi={4}&d={3}&w=150&h=150'/>",
                                     CCDetallePaciente.IdPaciente, ViewState["id"], fotos[j].Archivo, fotos[j].Temporal, fotos[j].Id
-                                    , ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/archivo/archivo.ashx"));
+                                    , ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/archivo/imagen.ashx"));
                 resultado += "</td>";
             }
             resultado += "</tr>";

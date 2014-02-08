@@ -52,7 +52,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                         TAclaracion.Text = reader["aclaracion"].ToString();
                         CAutomatica.Checked = reader["automatica"].ToString() == "1";
                         CImprimirHoja.Checked = reader["hoja_sola"].ToString() == "1";
-                        CConector.SelectInDropDown(DGrupo, reader["grupo"]);
+                        Utilidades.SelectInDropDown(DGrupo, reader["grupo"]);
 
                         ListItem item = LTipos.Items.FindByValue(reader["tipo"].ToString());
                         if (item != null)

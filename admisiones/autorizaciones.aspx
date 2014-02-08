@@ -217,10 +217,10 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td width=1>
                 Número<asp:HiddenField runat="server" ID="HIdAutorizacion" /><asp:HiddenField runat="server" ID="HId" />
             </td>
-            <td>
+            <td width=1>
                 <asp:TextBox ID="TNumero" runat="server"></asp:TextBox>
             </td>
             <td colspan="2">
@@ -248,40 +248,40 @@
                 <asp:Label ID="LInactivo" Text="Inactivo - " Font-Bold="true" runat="server" Visible="false"></asp:Label><asp:Label ID="LNombrePaciente" runat="server"></asp:Label>
             </td>
         </tr>
-        <asp:Panel runat="server" ID="PDatos" Visible="false">
+        <asp:PlaceHolder runat="server" ID="PDatos" Visible="false">
         <tr>
             <td colspan="4">
                 <asp:Panel runat="server" ID="PPaciente">
-                    <table width="100%" border="1" cellpadding=0 cellspacing=0>
+                    <table width="100%" style="border-collapse: collapse">
                         <tr>
-                            <td><b>Entidad</b></td>
-                            <td><b>Afiliación</b></td>
-                            <td align="right">
+                            <td class=tda><b>Entidad</b></td>
+                            <td class=tda><b>Afiliación</b></td>
+                            <td align="right" class=tda>
                                 <b>Porcentaje del servicio</b></td>
-                            <td align="right">
+                            <td align="right" class=tda>
                                 <b>Máximo por servicio</b></td>
-                            <td align="right">
+                            <td align="right" class=tda>
                                 <b>Máximo por año</b></td>
-                            <td align="right">
+                            <td align="right" class=tda>
                                 <b>Acumulado año</b></td>
                         </tr>
                         <tr>
-                            <td>
+                            <td class=tda nowrap="nowrap">
                                 <asp:Label ID="LEntidad" runat="server"></asp:Label>
                             </td>
-                            <td>
+                            <td class=tda>
                                 <asp:Label ID="LCategoria" runat="server"></asp:Label>
                             </td>
-                            <td align="right">
+                            <td align="right" class=tda>
                                 <asp:Label ID="LPorcentaje" runat="server"></asp:Label>
                             </td>
-                            <td align="right">
+                            <td align="right" class=tda>
                                 <asp:Label ID="LMaximoServicio" runat="server"></asp:Label>
                             </td>
-                            <td align="right">
+                            <td align="right" class=tda>
                                 <asp:Label ID="LMaximoano" runat="server"></asp:Label>
                             </td>
-                            <td align="right">
+                            <td align="right" class=tda>
                                 <asp:Label runat="server" ID="LAcumulado"></asp:Label>
                             </td>
                         </tr>
@@ -311,7 +311,7 @@
                                             onclick="IIr_Click"/>
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                <asp:BoundField DataField="autNumero" HeaderText="Autorización" />
+                                <asp:BoundField DataField="autNumero" HeaderText="Autorización" ItemStyle-Wrap="false" />
                                 <asp:BoundField DataField="autFecha" HeaderText="Fecha" DataFormatString="{0:d}" />
                                 <asp:BoundField DataField="detalles" HeaderText="Detalles" ItemStyle-Width="100%" />
                             </Columns>
@@ -528,7 +528,7 @@
                     CausesValidation="false" onclick="BCancelar_Click" />
             </td>
         </tr>
-        </asp:Panel>
+        </asp:PlaceHolder>
     </table>
     </ContentTemplate>
     </asp:UpdatePanel>

@@ -101,7 +101,7 @@ public partial class farmacia_entrada : System.Web.UI.Page
                         ((MasterPageI)Master).SetModificacion(HId.Value);
                         ((MasterPageI)Master).Imprimir("entrada.html");
                         TObservaciones.Text = reader["observaciones"].ToString();
-                        TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
+                        TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
                         PAnulado.Visible = reader["estado"].ToString() != "";
 
                         Tercero tercero = new Tercero(reader["tercero"].ToString());
@@ -142,7 +142,7 @@ public partial class farmacia_entrada : System.Web.UI.Page
                                 info.cantidad = Convert.ToDecimal(reader["cantidad"]);
                                 info.lote = reader["lote"].ToString();
                                 info.vence = "";
-                                try { info.vence = CConector.GetFromMySQLDate(reader["vence"]); }
+                                try { info.vence = Query.GetFromMySQLDate(reader["vence"]); }
                                 catch { }
                                 info.ubicacion = Convert.ToInt32(reader["ubicacion"]);
                                 info.serial = reader["szSerial"].ToString();
@@ -337,7 +337,7 @@ public partial class farmacia_entrada : System.Web.UI.Page
             }
 
             query["observaciones"] = TObservaciones.Text;
-            query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
+            query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             query["tercero"] = terceroid;
             if (sender == BAnular)
                 query["estado"] = "-1";
@@ -377,7 +377,7 @@ public partial class farmacia_entrada : System.Web.UI.Page
             if (almacendesde.Length > 0 && trasladoId.Length > 0)
             {
                 if (conector.QueryMod(string.Format("UPDATE traslado{0} SET llegada={1} WHERE id={2}"
-                    , almacendesde, Query.GetValor(CConector.GetMySQLDateFormat(TFecha.Text)), trasladoId)) == -1)
+                    , almacendesde, Query.GetValor(Query.GetMySQLDateFormat(TFecha.Text)), trasladoId)) == -1)
                     return;
                 if (sender == BAnular)
                 { // anulamos el traslado

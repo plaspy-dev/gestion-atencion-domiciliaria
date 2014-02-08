@@ -36,7 +36,7 @@ public partial class cliente_escliente : System.Web.UI.Page
                         PDatos.Visible = true;
 
                         HIdEncuesta.Value = reader["id"].ToString();
-                        TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
+                        TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
 
                         ((MasterPageI)Master).SetModificacion(HIdEncuesta.Value);
                     }
@@ -75,7 +75,7 @@ public partial class cliente_escliente : System.Web.UI.Page
         using (CConector conector = new CConector())
         {
 
-            query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
+            query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             query["calificacion"] = HCalificacion.Value;
 
             if (HIdEncuesta.Value.Length == 0)

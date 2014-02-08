@@ -76,8 +76,8 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                                     SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
                                 }
 
-                                TInicio.Text = CConector.GetFromMySQLDate(readermysql["inicio"]);
-                                TFin.Text = CConector.GetFromMySQLDate(readermysql["fin"]);
+                                TInicio.Text = Query.GetFromMySQLDate(readermysql["inicio"]);
+                                TFin.Text = Query.GetFromMySQLDate(readermysql["fin"]);
                                 DTipo.SelectedValue = readermysql["tipo"].ToString();
                                 TNumeroTerapias.Text = readermysql["numero_terapias"].ToString();
                                 TObservaciones.Text = readermysql["observaciones"].ToString();
@@ -168,8 +168,8 @@ public partial class paciente_valoracionat : System.Web.UI.Page
         {
             Query valoracion = new Query("valoracionat");
 
-            valoracion["inicio"] = CConector.GetMySQLDateFormat(TInicio.Text);
-            valoracion["fin"] = CConector.GetMySQLDateFormat(TFin.Text);
+            valoracion["inicio"] = Query.GetMySQLDateFormat(TInicio.Text);
+            valoracion["fin"] = Query.GetMySQLDateFormat(TFin.Text);
             valoracion["tipo"] = DTipo.SelectedValue;
             valoracion["numero_terapias"] = TNumeroTerapias.Text;
             valoracion["observaciones"] = TObservaciones.Text;

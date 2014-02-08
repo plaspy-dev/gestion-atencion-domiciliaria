@@ -174,9 +174,9 @@ public partial class rh_funcionario : System.Web.UI.Page
                         TFechaTerminacion.Text = ConectorMS.GetDate(reader["perFechaTermContrato"]);
                         TParentesco.Text = reader["perParentescoContacto"].ToString();
                         DLocalidadVivienda.SelectedValue = reader["residencialocId"].ToString();
-                        TInicioDescanso.Text = CConector.GetFromMySQLDate(reader["inicio_descanso"]);
-                        TFinDescanso.Text = CConector.GetFromMySQLDate(reader["fin_descanso"]);
-                        TVerificacionTitulos.Text = Conector.GetFromMySQLDate(reader["verificacionTitulos"]);
+                        TInicioDescanso.Text = Query.GetFromMySQLDate(reader["inicio_descanso"]);
+                        TFinDescanso.Text = Query.GetFromMySQLDate(reader["fin_descanso"]);
+                        TVerificacionTitulos.Text = Query.GetFromMySQLDate(reader["verificacionTitulos"]);
 
                         if (reader["nombre"].ToString().Length != 0)
                         {

@@ -42,13 +42,13 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
                     {
 
                         HBitacora.Value = reader["bitId"].ToString();
-                        TFecha.Text = CConector.GetFromMySQLDate(reader["bitFecha"]);
+                        TFecha.Text = Query.GetFromMySQLDate(reader["bitFecha"]);
                         TObservaciones.Text = reader["bitObservaciones"].ToString();
                         DTipo.SelectedValue = reader["tpaId"].ToString();
                         TPacienteID.Text = reader["pacId"].ToString();
                         TPaciente.Text = Paciente.GetPaciente(TPacienteID.Text).NombreCompleto;
-                        CConector.SelectInDropDown(DNAdministrativa, reader["NAdministrativa"]);
-                        CConector.SelectInDropDown(DNServicio, reader["NServicio"]);
+                        Utilidades.SelectInDropDown(DNAdministrativa, reader["NAdministrativa"]);
+                        Utilidades.SelectInDropDown(DNServicio, reader["NServicio"]);
 
                         CCDetallePaciente.IdPaciente = TPacienteID.Text;
                         CCDetallePaciente.Visible = TPacienteID.Text.Length > 0;

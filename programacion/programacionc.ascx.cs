@@ -52,9 +52,9 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                         TObservaciones.Text = reader["prgObservaciones"].ToString();
                         TSesiones.Text = reader["prgNumSesion"].ToString();
                         TProfesionalID.Text = reader["perId"].ToString();
-                        conector.SelectInDropDown(DAutorizacion, reader["autNumero"], "SELECT '" + reader["autNumero"].ToString() + "'");
+                        Utilidades.SelectInDropDown(DAutorizacion, reader["autNumero"], reader["autNumero"].ToString());
 
-                        conector.SelectInDropDown(DActividad, reader["actId"]);
+                        Utilidades.SelectInDropDown(DActividad, reader["actId"]);
                         ListItem item = DActividad.Items.FindByValue(reader["actId"].ToString());
                         if (item != null)
                         {

@@ -325,7 +325,8 @@ public class Producto
 
     public Decimal GetValor(string cliente, int almacen)
     {
-        Valor = CProductoValor.GetProducto(id).GetValor(cliente, almacen);
+        Valor = GetCostoPromedio(almacen.ToString());
+        // Valor = CProductoValor.GetProducto(id).GetValor(cliente, almacen);
         return Valor;
     }
 
@@ -413,7 +414,7 @@ public class Producto
 
     public bool GetAcumulado(string almacen, ref decimal saldo)
     {
-        return GetAcumulado(almacen, CConector.GetMySQLDateFormat(Ingreso, true), ref saldo);
+        return GetAcumulado(almacen, Query.GetMySQLDateFormat(Ingreso, true), ref saldo);
     }
 
     public bool GetAcumulado(string almacen, string desde_conhora, ref decimal saldo) {
@@ -583,7 +584,7 @@ public class Producto
         if (serial.Length == 0)
             szSerial = "''";
         else szSerial = Query.GetValor(serial);
-        string szVencimiento = Conector.GetMySQLDateFormat(vence);
+        string szVencimiento = Query.GetMySQLDateFormat(vence);
         if (szVencimiento.Length == 0)
             szVencimiento = "0000-00-00";
 
@@ -626,7 +627,7 @@ public class Producto
         if (serial.Length == 0)
             szSerial = "''";
         else szSerial = Query.GetValor(serial);
-        string szVencimiento = Conector.GetMySQLDateFormat(vence);
+        string szVencimiento = Query.GetMySQLDateFormat(vence);
         if (szVencimiento.Length == 0)
             szVencimiento = "0000-00-00";
 
@@ -689,7 +690,7 @@ public class Producto
             if (serial.Length == 0)
                 szSerial = "''";
             else szSerial = Query.GetValor(serial);
-            string szVencimiento = Conector.GetMySQLDateFormat(vence);
+            string szVencimiento = Query.GetMySQLDateFormat(vence);
             if (szVencimiento.Length == 0)
                 szVencimiento = "0000-00-00";
 

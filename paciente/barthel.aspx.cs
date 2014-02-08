@@ -22,7 +22,7 @@ public partial class paciente_barthel : System.Web.UI.Page
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
             if (!string.IsNullOrEmpty(Request.QueryString["ioe"]))
-                Conector.SelectInDropDown(DIndice, Request.QueryString["ioe"]);
+                Utilidades.SelectInDropDown(DIndice, Request.QueryString["ioe"]);
             DIndice_SelectedIndexChanged(sender, e);
 
             BAceptar.Enabled = false;
@@ -63,9 +63,9 @@ public partial class paciente_barthel : System.Web.UI.Page
 
                             TFecha.Focus();
                             BAceptar.Enabled = usuario.CanInsert();
-                            if (!string.IsNullOrEmpty(Request.QueryString["f"])) 
-                                TFecha.Text = Conector.GetFromMySQLDate(Conector.GetFromMySQLDate(Request.QueryString["f"]), true);
-                            else TFecha.Text = Conector.GetFromMySQLDate(DateTime.Now, true);
+                            if (!string.IsNullOrEmpty(Request.QueryString["f"]))
+                                TFecha.Text = Query.GetFromMySQLDate(Query.GetFromMySQLDate(Request.QueryString["f"]), true);
+                            else TFecha.Text = Query.GetFromMySQLDate(DateTime.Now, true);
 
                             if (!string.IsNullOrEmpty(Request.QueryString["bid"]))
                             {
@@ -83,8 +83,8 @@ public partial class paciente_barthel : System.Web.UI.Page
                                     BAceptar.Enabled = usuario.CanUpdate();
 
                                     HIdIndice.Value = readermysql["id"].ToString();
-                                    TFecha.Text = CConector.GetFromMySQLDate(readermysql["fecha"], true);
-                                    Conector.SelectInDropDown(DIndice, readermysql["tipo"]);
+                                    TFecha.Text = Query.GetFromMySQLDate(readermysql["fecha"], true);
+                                    Utilidades.SelectInDropDown(DIndice, readermysql["tipo"]);
                                     DIndice_SelectedIndexChanged(sender, e);
 
                                     TIdFuncionario.Text = readermysql["medico"].ToString();
@@ -123,7 +123,7 @@ public partial class paciente_barthel : System.Web.UI.Page
         using (CConector conector = new CConector())
         {
 
-            indice["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text, true);
+            indice["fecha"] = Query.GetMySQLDateFormat(TFecha.Text, true);
             indice["medico"] = TIdFuncionario.Text;
             indice["tipo"] = DIndice.SelectedValue;
 

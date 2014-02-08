@@ -68,7 +68,7 @@
                 <asp:RequiredFieldValidator ControlToValidate="TFin" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <asp:RangeValidator ControlToValidate="TFin" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator>
             </td>
-            <td><asp:DropDownList ID="DAsegurador" runat="server" 
+            <td><asp:DropDownList ID="DAsegurador" runat="server"  CssClass="anchomaxcombo"
                                 DataSourceID="SAsegurador" DataTextField="nombre" 
                                 DataValueField="id" AppendDataBoundItems="true">
                                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
@@ -80,7 +80,7 @@
             <td>
             <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>
             </td>
-            <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" 
+            <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" CssClass="anchomaxcombo" 
                     DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
@@ -91,7 +91,7 @@
                 </asp:SqlDataSource>
             </td>
             <td>
-            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" 
+            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" CssClass="anchomaxcombo"
                 DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
             </asp:DropDownList>
@@ -102,7 +102,7 @@
             </asp:SqlDataSource>
             </td>
             <td>
-            <asp:DropDownList ID="DCategoria" runat="server" DataSourceID="SCategoria" 
+            <asp:DropDownList ID="DCategoria" runat="server" DataSourceID="SCategoria" CssClass="anchomaxcombo"
                 DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                 <asp:ListItem Text="(Todas)" Value="0"></asp:ListItem>
             </asp:DropDownList>

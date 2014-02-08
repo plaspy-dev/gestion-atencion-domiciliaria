@@ -391,7 +391,7 @@ public class Procedimientos
         query["intensidad"]= "varios.nombre";
         
         MySqlDataReader reader= conector.Query(query.GetSelect("formulacion.paciente=" +Query.GetValor(idpaciente) 
-                            + " AND formulacion.fecha=" + Query.GetValor(CConector.GetMySQLDateFormat(fecha))
+                            + " AND formulacion.fecha=" + Query.GetValor(Query.GetMySQLDateFormat(fecha))
                             + " AND medicamento_formulacion.id IS NOT NULL"
                             , "LEFT JOIN medicamento_formulacion ON (formulacion.id=medicamento_formulacion.formulacion)"
                             + " LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)"
@@ -432,8 +432,8 @@ public class Procedimientos
         query += "formato_ctc_items.respuesta";
         query += "formato_ctc_items.efecto_secundario";
 
-        reader = conector.Query(query.GetSelect("formato_ctc.paciente=" + Query.GetValor(idpaciente) 
-            + " AND formato_ctc.fecha=" + Query.GetValor(CConector.GetMySQLDateFormat(fecha))
+        reader = conector.Query(query.GetSelect("formato_ctc.paciente=" + Query.GetValor(idpaciente)
+            + " AND formato_ctc.fecha=" + Query.GetValor(Query.GetMySQLDateFormat(fecha))
             + " AND formato_ctc_items.id IS NOT NULL"
             , "LEFT JOIN formato_ctc_items ON (formato_ctc.id=formato_ctc_items.formato_ctc)"));
         if (reader != null)

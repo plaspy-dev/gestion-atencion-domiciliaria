@@ -33,7 +33,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 {
 
                     TDocumento.Text = Request.QueryString["doc"];
-                    conector.SelectInDropDown(DDocumento, Request.QueryString["tdoc"]);
+                    Utilidades.SelectInDropDown(DDocumento, Request.QueryString["tdoc"]);
 
                     string id = conector.QueryString("SELECT pacId FROM phdPaciente WHERE pacDocumento=" + Query.GetValor(TDocumento.Text) + " AND tdocId=" + Query.GetValor(DDocumento.SelectedValue));
                     if (id.Length != 0)
@@ -115,14 +115,14 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         UCAutorizaciones.Value = HId.Value = reader["pacId"].ToString();
                         ((MasterPageI)Master).SetModificacion(HId.Value);
 
-                        conector.SelectInDropDown(DDocumento, reader["tdocId"]);
+                        Utilidades.SelectInDropDown(DDocumento, reader["tdocId"]);
                         TDocumento.Text = reader["pacDocumento"].ToString();
                         TPApellido.Text = reader["pacPApellido"].ToString();
                         TObservaciones.Text = reader["pacObservaciones"].ToString();
                         TSApellido.Text = reader["pacSApellido"].ToString();
                         TPNombre.Text = reader["pacPNombre"].ToString();
                         TSNombre.Text = reader["pacSNombre"].ToString();
-                        conector.SelectInDropDown(DSexo, reader["sexoId"]);
+                        Utilidades.SelectInDropDown(DSexo, reader["sexoId"]);
                         TNacimiento.Text = ConectorMS.GetDate(reader["pacFechaNac"]);
                         TDireccion.Text = reader["pacDireccion"].ToString();
                         TBarrio.Text = reader["pacBarrio"].ToString();
@@ -143,7 +143,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         conector.SelectInDropDown(DMedico, reader["megId"], "SELECT megNombre FROM phdMegas WHERE megId={0}");
                         TFechaIngresoAsegurador.Text = ConectorMS.GetDate(reader["pacFecIngAsegurador"]);
                         TGrado.Text = reader["pacGrado"].ToString();
-                        conector.SelectInDropDown(DTipoAfiliado, reader["pacTipoAfiliado"]);
+                        Utilidades.SelectInDropDown(DTipoAfiliado, reader["pacTipoAfiliado"]);
                         conector.SelectInDropDown(DTipoEvento, reader["tipECod"], "SELECT tipEDescripcion FROM phdTipoEvento WHERE tipECod={0}");
                         TFechaIngreso.Text = ConectorMS.GetDate(reader["pacFecIngPrograma"]);
                         conector.SelectInDropDown(DEstado, reader["estId"], "SELECT estDesc FROM phdEstado WHERE estId={0}");
@@ -153,7 +153,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         TCIE2.Text = reader["cieCodDx_1"].ToString();
                         TCIE3.Text = reader["cieCodDx_2"].ToString();
                         CDiabetico.Checked = reader["diabetico"].ToString() == "1";
-                        conector.SelectInDropDown(DCategoria, reader["categoria"]);
+                        Utilidades.SelectInDropDown(DCategoria, reader["categoria"]);
 
                         if (reader["nombre"].ToString().Length != 0)
                         {

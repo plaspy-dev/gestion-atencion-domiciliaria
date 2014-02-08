@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
+using System.ServiceModel;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -379,7 +380,7 @@ public class ConectorMS : IDisposable
 			string text;
 			if (HttpContext.Current == null)
 			{
-				text = Path.GetFileName(Assembly.GetEntryAssembly().Location);
+				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
 			}
 			else
 			{

@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.ServiceModel;
 using System.Web;
 
 namespace SDG.Componentes;
@@ -115,7 +116,7 @@ public class Logs
 	{
 		try
 		{
-			string text = ((HttpContext.Current != null) ? HttpContext.Current.Request.Url.Segments[1].Replace("/", "") : Path.GetFileName(Assembly.GetEntryAssembly().Location));
+			string text = ((HttpContext.Current != null) ? HttpContext.Current.Request.Url.Segments[1].Replace("/", "") : ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.ToString() : Path.GetFileName(Assembly.GetEntryAssembly().Location)));
 			EventLog.WriteEntry("Application", text + ": " + logs);
 		}
 		catch

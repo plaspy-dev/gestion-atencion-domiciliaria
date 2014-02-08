@@ -23,7 +23,7 @@ public partial class equipo_devolucion : System.Web.UI.UserControl
     public void Show()
     {
         if(TFecha.Text.Length==0)
-            TFecha.Text = Conector.GetFromMySQLDate(DateTime.Now);
+            TFecha.Text = Query.GetFromMySQLDate(DateTime.Now);
         PDevolucion.Visible = true;
         ScriptManager.RegisterStartupScript(PDevolucion, typeof(String), "devolucionDlg", "addDialog('#" + PDevolucion.ClientID + "', '#dDevolucion');", true);
     }

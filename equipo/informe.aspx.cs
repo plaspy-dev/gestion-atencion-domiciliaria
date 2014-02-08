@@ -70,7 +70,7 @@ public partial class equipo_informe : System.Web.UI.Page
             conector.StartTransaction();
             Query query = new Query("equipo_prestamo");
 
-            query["devolucion"] = Conector.GetMySQLDateFormat(UCDevolucion.Fecha);
+            query["devolucion"] = Query.GetMySQLDateFormat(UCDevolucion.Fecha);
 
             if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(ViewState["Prestamo"].ToString()))) == -1)
                 return;

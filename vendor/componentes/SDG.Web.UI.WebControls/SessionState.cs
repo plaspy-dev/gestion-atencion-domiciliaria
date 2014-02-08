@@ -57,7 +57,7 @@ internal class SessionState
 		}
 		if (valor is DateTime)
 		{
-			return GetValor(Conector.GetMySQLDateFormat((DateTime)valor, horas: true));
+			return GetValor(Query.GetMySQLDateFormat((DateTime)valor, horas: true));
 		}
 		return GetValor(valor.ToString());
 	}

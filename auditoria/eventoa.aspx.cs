@@ -42,7 +42,7 @@ public partial class auditoria_eventoa : System.Web.UI.Page
                         SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
                         SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
 
-                        TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
+                        TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
                         TDescripcion.Text = reader["descripcion"].ToString();
                         TOConsecuencia.Text = reader["otro"].ToString();
                         TProfesionalID.Text = reader["funcionario"].ToString();
@@ -87,7 +87,7 @@ public partial class auditoria_eventoa : System.Web.UI.Page
         {
 
             query["paciente"] = CCDetallePaciente.IdPaciente;
-            query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
+            query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             query["descripcion"] = TDescripcion.Text;
             query["otro"] = TOConsecuencia.Text;
             query["funcionario"] = TProfesionalID.Text;

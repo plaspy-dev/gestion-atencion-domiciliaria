@@ -56,7 +56,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
                     ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
                     SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
                     SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
-                    TFecha.Text = Conector.GetFromMySQLDate(DateTime.Now, true);
+                    TFecha.Text = Query.GetFromMySQLDate(DateTime.Now, true);
 
                     if (Request.QueryString["npdf"] == "1")
                         Title = CCDetallePaciente.Documento + " - " + CCDetallePaciente.Nombres.Replace("(Inactivo)", "");
@@ -136,11 +136,11 @@ public partial class paciente_evolucion : System.Web.UI.Page
                             TGlucometria.Text = readermysql["glucometria"].ToString();
                             TAnalisis.Text = readermysql["analisis"].ToString();
                             TPeso.Text = readermysql["peso"].ToString();
-                            TFecha.Text = Conector.GetFromMySQLDate(readermysql["fecha"], true);
+                            TFecha.Text = Query.GetFromMySQLDate(readermysql["fecha"], true);
                             TPlanManejo.Text = readermysql["plan_manejo"].ToString();
-                            Conector.SelectInDropDown(DNivelAtencion, readermysql["nivel_atencion"]);
-                            conector.SelectInDropDown(DArea, readermysql["area_atencion"]);
-                            TFechaSeguimiento.Text = Conector.GetFromMySQLDate(readermysql["seguimiento"]);
+                            Utilidades.SelectInDropDown(DNivelAtencion, readermysql["nivel_atencion"]);
+                            Utilidades.SelectInDropDown(DArea, readermysql["area_atencion"]);
+                            TFechaSeguimiento.Text = Query.GetFromMySQLDate(readermysql["seguimiento"]);
 
                             TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
 
@@ -192,7 +192,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
             Query qIngreso = new Query("evolucion_paciente");
 
             qIngreso["area_atencion"] = DArea.SelectedValue;
-            qIngreso["seguimiento"] = Conector.GetMySQLDateFormat(TFechaSeguimiento.Text);
+            qIngreso["seguimiento"] = Query.GetMySQLDateFormat(TFechaSeguimiento.Text);
 
             string szQuery = qIngreso.GetUpdate("id='" + HIdEvolucion.Value + "'");
             string mensaje = CCDetallePaciente.Nombres + " editado";
@@ -221,13 +221,13 @@ public partial class paciente_evolucion : System.Web.UI.Page
             qIngreso["t"] = TT.Text;
             qIngreso["peso"] = TPeso.Text;
             qIngreso["analisis"] = TAnalisis.Text;
-            qIngreso["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text, true);
+            qIngreso["fecha"] = Query.GetMySQLDateFormat(TFecha.Text, true);
             qIngreso["saturacion"] = TSaturacion.Text;
             qIngreso["glucometria"] = TGlucometria.Text;
             qIngreso["asegurador"] = CCDetallePaciente.AsegurdadorID;
             qIngreso["nivel_atencion"] = DNivelAtencion.SelectedValue;
             qIngreso["area_atencion"] = DArea.SelectedValue;
-            qIngreso["seguimiento"] = Conector.GetMySQLDateFormat(TFechaSeguimiento.Text);
+            qIngreso["seguimiento"] = Query.GetMySQLDateFormat(TFechaSeguimiento.Text);
 
             qIngreso["plan_manejo"] =
                 (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TPlanManejo.Text != ViewState["procedimientos"].ToString())
@@ -384,7 +384,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
             Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
             if (nuevaevolucion && (CCDetallePaciente.Edad == -1 || CCDetallePaciente.Edad > 14))
-                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Conector.GetMySQLDateFormat(TFecha.Text, true)), conector);
+                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
             ((MasterPageI)Master).SetResultado(mensaje);
         }

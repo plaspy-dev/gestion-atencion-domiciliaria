@@ -764,8 +764,8 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                             <asp:DataList RepeatColumns="3" runat="server" ID="DFotos" 
                                 DataKeyField="Archivo" ondeletecommand="DFotos_DeleteCommand" >
                                 <ItemTemplate>
-                                    <a href="<%# string.Format("../archivo/archivo.ashx?t=v&p={0}&i={1}&n={2}&d={3}&a=1&hi={4}", CCDetallePaciente.IdPaciente,ViewState["id"],Eval("Archivo"), Eval("Temporal"), Eval("Id")) %>">
-                                    <img border=0 src="<%# string.Format("../archivo/archivo.ashx?t=v&p={0}&i={1}&n={2}&hi={4}&d={3}&w=150&h=150", CCDetallePaciente.IdPaciente,ViewState["id"],Eval("Archivo"), Eval("Temporal"), Eval("Id")) %>" />
+                                    <a href="<%# string.Format("../archivo/imagen.ashx?t=v&p={0}&i={1}&n={2}&d={3}&a=1&hi={4}", CCDetallePaciente.IdPaciente,ViewState["id"],Eval("Archivo"), Eval("Temporal"), Eval("Id")) %>">
+                                    <img border=0 src="<%# string.Format("../archivo/imagen.ashx?t=v&p={0}&i={1}&n={2}&hi={4}&d={3}&w=150&h=150", CCDetallePaciente.IdPaciente,ViewState["id"],Eval("Archivo"), Eval("Temporal"), Eval("Id")) %>" />
                                     </a>
                                     <br />
                                     <%# Eval("Archivo") %>

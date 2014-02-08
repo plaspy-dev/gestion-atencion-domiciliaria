@@ -284,6 +284,16 @@
                     producto=@producto
                     AND DATE(ingreso) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                 ) UNION ALL (
+                    SELECT 6 AS tipo,devolucion{0}.fecha,devolucion_items{0}.cantidad AS entrada,NULL AS salida,NULL AS saldo,devolucion{0}.id AS concepto 
+                    ,devolucion_items{0}.ingreso
+                    ,devolucion_items{0}.costo AS costo
+                    ,devolucion_items{0}.costo*devolucion_items{0}.cantidad AS costot
+                    ,NULL AS valor
+                    FROM devolucion_items{0}
+                    LEFT JOIN devolucion{0} ON (devolucion{0}.id=devolucion_items{0}.devolucion)
+                    WHERE producto=@producto
+                    AND DATE(ingreso) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                ) UNION ALL (
                     SELECT -1 AS tipo, NULL AS fecha, NULL AS cantidad, NULL AS salida, NULL AS saldo, NULL AS concepto
                     ,'0000-00-00 00:00:00' AS ingreso
                     ,NULL AS costo

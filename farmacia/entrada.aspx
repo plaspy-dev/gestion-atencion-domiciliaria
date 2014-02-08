@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="Entrada" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="entrada.aspx.cs" Inherits="farmacia_entrada" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <style type="text/css">
+<style type="text/css">
     .tlote {width: 100px;}
     .tubicacion {}
 </style>

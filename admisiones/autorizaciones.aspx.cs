@@ -104,7 +104,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
                             if (reader["autFechaSuspension"].ToString().Length == 0)
                                 LEstado.Text = "Anulada";
-                            else LEstado.Text = "Suspendida hasta el " + CConector.GetFromMySQLDate(reader["autFechaSuspension"]);
+                            else LEstado.Text = "Suspendida hasta el " + Query.GetFromMySQLDate(reader["autFechaSuspension"]);
                         }
                         else
                         {
@@ -407,7 +407,11 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 }
             }
             if (paciente.TipoAfiliacion != "")
-                LCategoria.Text += "/" + (paciente.TipoAfiliacion == "1" ? "Cotizante" : "Beneficiario");
+            {
+                if (LCategoria.Text.Length > 0)
+                    LCategoria.Text += "/";
+                LCategoria.Text += (paciente.TipoAfiliacion == "1" ? "Cotizante" : "Beneficiario");
+            }
 
             TFecha.Focus();
             GAutorizaciones.DataBind();
@@ -577,7 +581,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
         TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
         TProcedimientoID.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim();
-        CConector.SelectInDropDown(DIntensidad, HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
+        Utilidades.SelectInDropDown(DIntensidad, HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
         
 
         BProcedimiento.Text = "Editar";

@@ -49,10 +49,10 @@ public partial class equipo_equipo : System.Web.UI.Page
                         TModelo.Text = reader["modelo"].ToString();
                         TMarca.Text = reader["marca"].ToString();
                         TCodigo.Text = reader["codigo"].ToString();
-                        TUltimoMantenimiento.Text = Conector.GetFromMySQLDate(reader["ultimo_mantenimiento"]);
-                        TProximoMantenimiento.Text = Conector.GetFromMySQLDate(reader["proximo_mantenimiento"]);
+                        TUltimoMantenimiento.Text = Query.GetFromMySQLDate(reader["ultimo_mantenimiento"]);
+                        TProximoMantenimiento.Text = Query.GetFromMySQLDate(reader["proximo_mantenimiento"]);
                         TObservaciones.Text = reader["observaciones"].ToString();
-                        Conector.SelectInDropDown(DEstado, reader["estado"]);
+                        Utilidades.SelectInDropDown(DEstado, reader["estado"]);
 
                         PPrestamo.Visible = true;
                         BPrestamo.Text = DEstado.SelectedValue == "1" ? "Asignar" : "Devolver";
@@ -112,8 +112,8 @@ public partial class equipo_equipo : System.Web.UI.Page
             query["placa"] =TPlaca.Text;
             query["modelo"] = TModelo.Text;
             query["marca"]= TMarca.Text;
-            query["ultimo_mantenimiento"]= Conector.GetMySQLDateFormat(TUltimoMantenimiento.Text);
-            query["proximo_mantenimiento"]= Conector.GetMySQLDateFormat(TProximoMantenimiento.Text);
+            query["ultimo_mantenimiento"] = Query.GetMySQLDateFormat(TUltimoMantenimiento.Text);
+            query["proximo_mantenimiento"] = Query.GetMySQLDateFormat(TProximoMantenimiento.Text);
             query["observaciones"]= TObservaciones.Text;
             query["codigo"] = TCodigo.Text;
 
@@ -141,15 +141,15 @@ public partial class equipo_equipo : System.Web.UI.Page
                     query = new Query("equipo_prestamo");
                     if (lista[i].Visible)
                     {
-                        query["fecha"] = Conector.GetMySQLDateFormat(lista[i].Fecha);
-                        query["estimado"] = lista[i].Estimado==null ? "" : Conector.GetMySQLDateFormat(lista[i].Estimado.Value);
+                        query["fecha"] = Query.GetMySQLDateFormat(lista[i].Fecha);
+                        query["estimado"] = lista[i].Estimado == null ? "" : Query.GetMySQLDateFormat(lista[i].Estimado.Value);
                         query["paciente"] = lista[i].IdPaciente;
                         query["funcionario"] = lista[i].IdFuncionario;
                         query["familiar"] = lista[i].Familiar;
                         query["observaciones"] = lista[i].Observaciones;
                         query["pagare"] = lista[i].Pagare ? "1" : "";
                         if (lista[i].Devolucion == null)
-                            query["devolucion"] = Conector.GetMySQLDateFormat(UCDevolucion.Fecha);
+                            query["devolucion"] = Query.GetMySQLDateFormat(UCDevolucion.Fecha);
 
                         if (string.IsNullOrEmpty(lista[i].IdPrestamo))
                         {

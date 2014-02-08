@@ -26,8 +26,8 @@ public partial class equipo_prestamo : System.Web.UI.UserControl
         if (info != null) { 
 
             ViewState["idPrestamo"] = info.IdPrestamo;
-            TFecha.Text = Conector.GetFromMySQLDate(info.Fecha);
-            TEstimado.Text = Conector.GetFromMySQLDate(info.Estimado);
+            TFecha.Text = Query.GetFromMySQLDate(info.Fecha);
+            TEstimado.Text = Query.GetFromMySQLDate(info.Estimado);
             UCPaciente.IdPaciente = info.IdPaciente;
             UCFuncionario.IdFuncionario = info.IdFuncionario;
             TFamiliar.Text = info.Familiar;
@@ -74,9 +74,9 @@ public partial class equipo_prestamo : System.Web.UI.UserControl
                     if (reader != null && reader.Read())
                     {
                         ViewState["idPrestamo"] = id;
-                        
-                        TFecha.Text = Conector.GetFromMySQLDate(reader["fecha"]);
-                        TEstimado.Text = Conector.GetFromMySQLDate(reader["estimado"]);
+
+                        TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
+                        TEstimado.Text = Query.GetFromMySQLDate(reader["estimado"]);
                         UCPaciente.IdPaciente = reader["paciente"].ToString();
                         UCFuncionario.IdFuncionario = reader["funcionario"].ToString();
                         TFamiliar.Text = reader["familiar"].ToString();
@@ -119,8 +119,8 @@ public partial class equipo_prestamo : System.Web.UI.UserControl
     {
         Query query = new Query("equipo_prestamo");
 
-        query["fecha"] = Conector.GetMySQLDateFormat(TFecha.Text);
-        query["estimado"] = Conector.GetMySQLDateFormat(TEstimado.Text);
+        query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
+        query["estimado"] = Query.GetMySQLDateFormat(TEstimado.Text);
         query["paciente"] = UCPaciente.IdPaciente;
         query["funcionario"] = UCFuncionario.IdFuncionario;
         query["familiar"] = TFamiliar.Text;

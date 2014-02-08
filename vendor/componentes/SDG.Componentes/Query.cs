@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.ServiceModel;
 using System.Web;
+using MySql.Data.Types;
 
 namespace SDG.Componentes;
 
@@ -17,6 +20,8 @@ public class Query
 	protected Dictionary<string, string> dCampos;
 
 	protected Dictionary<string, bool> dQuoted;
+
+	public int Count => dCampos.Count;
 
 	public string this[string campo]
 	{
@@ -241,6 +246,73 @@ public class Query
 		return text;
 	}
 
+	public static string GetMySQLDateFormat(DateTime fecha)
+	{
+		return GetMySQLDateFormat(fecha, horas: false);
+	}
+
+	public static string GetMySQLDateFormat(DateTime fecha, bool horas)
+	{
+		bool flag = 0 == 0;
+		string text = fecha.ToString("yyyy-MM-dd");
+		if (horas)
+		{
+			text += fecha.ToString(" HH:mm:ss");
+		}
+		return text;
+	}
+
+	public static string GetMySQLDateFormat(string text)
+	{
+		return GetMySQLDateFormat(text, horas: false);
+	}
+
+	public static string GetMySQLDateFormat(string text, bool horas)
+	{
+		try
+		{
+			return GetMySQLDateFormat(Convert.ToDateTime(text), horas);
+		}
+		catch
+		{
+		}
+		return "";
+	}
+
+	public static DateTime GetFromMySQLDate(string fecha)
+	{
+		try
+		{
+			return DateTime.ParseExact(fecha, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+		}
+		catch
+		{
+		}
+		return DateTime.MinValue;
+	}
+
+	public static string GetFromMySQLDate(object fecha, bool horas)
+	{
+		try
+		{
+			DateTime dateTime = ((typeof(MySqlDateTime) != fecha.GetType()) ? ((DateTime)fecha) : ((MySqlDateTime)fecha).GetDateTime());
+			if (horas)
+			{
+				return dateTime.ToShortDateString() + " " + dateTime.Hour.ToString("00") + ":" + dateTime.Minute.ToString("00");
+			}
+			return dateTime.ToShortDateString();
+		}
+		catch
+		{
+		}
+		return "";
+	}
+
+	public static string GetFromMySQLDate(object fecha)
+	{
+		return GetFromMySQLDate(fecha, horas: false);
+	}
+
 	private static bool GetKey()
 	{
 #if ENABLE_LICENSE_CHECK
@@ -256,7 +328,7 @@ public class Query
 			string text;
 			if (HttpContext.Current == null)
 			{
-				text = Path.GetFileName(Assembly.GetEntryAssembly().Location);
+				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
 			}
 			else
 			{

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
+using System.ServiceModel;
 using System.Web;
 using System.Web.UI.WebControls;
 
@@ -10,6 +11,16 @@ namespace SDG.Componentes;
 
 public class Usuario
 {
+	public enum Permisos
+	{
+		Read = 1,
+		Print = 2,
+		Insert = 4,
+		Update = 8,
+		Delete = 0x10,
+		Admin = 0x20
+	}
+
 	private static bool bHeaderCache = false;
 
 	private static bool bGetKey = false;
@@ -193,7 +204,7 @@ public class Usuario
 		{
 			return true;
 		}
-		return (GetPermisos(HttpContext.Current.Request.Url.AbsolutePath) & 0x20) == 32;
+		return (GetPermisos(HttpContext.Current.Request.Url.AbsolutePath) & 2) == 32;
 	}
 
 	public virtual bool CanAccess()
@@ -294,7 +305,7 @@ public class Usuario
 				HttpContext.Current.Response.End();
 			}
 		}
-		else if (!usuario.CanAccess())
+		else if (redirect && !usuario.CanAccess())
 		{
 			usuario.Redirect();
 		}
@@ -345,7 +356,7 @@ public class Usuario
 			string text;
 			if (HttpContext.Current == null)
 			{
-				text = Path.GetFileName(Assembly.GetEntryAssembly().Location);
+				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
 			}
 			else
 			{

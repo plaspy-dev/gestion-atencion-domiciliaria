@@ -50,7 +50,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                             THora.Text = fecha.Hour.ToString().PadLeft(2, '0') + ":" + fecha.Minute.ToString().PadLeft(2, '0');
                         }
                         catch { }
-                        CConector.SelectInDropDown(DTipo, reader["tqrIdTipo"]);
+                        Utilidades.SelectInDropDown(DTipo, reader["tqrIdTipo"]);
                         TPLlama.Text = reader["qrPersonaLlama"].ToString();
                         TParentesco.Text = reader["qrParentesco"].ToString();
                         TEmail.Text = reader["qrEmail"].ToString();
@@ -59,7 +59,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                         TObservaciones.Text = reader["qrObsHS"].ToString();
                         CCDetallePaciente.IdPaciente = reader["pacId"].ToString();
                         FuncionarioC.IdFuncionario = reader["perId"].ToString();
-                        CConector.SelectInDropDown(DClasificacion, reader["clasificacion"]);
+                        Utilidades.SelectInDropDown(DClasificacion, reader["clasificacion"]);
 
                         if (CCDetallePaciente.IdPaciente.Length != 0)
                         {
@@ -116,8 +116,8 @@ public partial class cliente_quejas : System.Web.UI.Page
                                 TAntecedentes.Text = reader["antecedentes"].ToString();
                                 CPresentaDano.Checked = reader["presentadano"].ToString() == "1";
                                 TTipoDano.Text = reader["otro"].ToString();
-                                TFechaEvento.Text = CConector.GetFromMySQLDate(reader["fecha"]);
-                                CConector.SelectInDropDown(DTipoRiesgo, reader["riesgo"]);
+                                TFechaEvento.Text = Query.GetFromMySQLDate(reader["fecha"]);
+                                Utilidades.SelectInDropDown(DTipoRiesgo, reader["riesgo"]);
 
                                 string consecuencia = "";
                                 reader = conector.Query("SELECT consecuencia FROM conducta_abusiva_consecuencias WHERE conducta_abusiva=" + ViewState["idconducta"].ToString());
@@ -142,7 +142,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                                             consecuencia += ";";
                                         consecuencia += reader["medida"].ToString()
                                             + ","
-                                            + CConector.GetFromMySQLDate(reader["fecha"])
+                                            + Query.GetFromMySQLDate(reader["fecha"])
                                             ;
                                     }
                                 }

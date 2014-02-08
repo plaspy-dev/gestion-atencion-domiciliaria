@@ -1,4 +1,4 @@
-﻿<%@ WebHandler Language="C#" Class="archivo" %>
+﻿<%@ WebHandler Language="C#" Class="imagen" %>
 
 using System;
 using System.Web;
@@ -8,16 +8,16 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Globalization;
 
-public class archivo : IHttpHandler {
-    
-    public void ProcessRequest (HttpContext context) {
+public class imagen : IHttpHandler {
 
-        if (string.IsNullOrEmpty(context.Request.QueryString["p"]) 
+    public void ProcessRequest(HttpContext context)
+    {
+        if (string.IsNullOrEmpty(context.Request.QueryString["p"])
             || string.IsNullOrEmpty(context.Request.QueryString["t"]))
             throw new HttpException(404, "Page not found");
-        
+
         context.Response.ContentType = "image/jpeg";
-        if(string.IsNullOrEmpty(context.Request.QueryString["a"]))
+        if (string.IsNullOrEmpty(context.Request.QueryString["a"]))
             context.Response.AddHeader("Content-Disposition", "inline;filename=" + context.Request.QueryString["n"]);
         else context.Response.AddHeader("Content-Disposition", "attachment;filename=" + context.Request.QueryString["n"]);
 
@@ -31,10 +31,21 @@ public class archivo : IHttpHandler {
         {
             archivo = Path.Combine(archivo, "temp");
             archivo = Path.Combine(archivo, context.Request.QueryString["p"]);
-        } else archivo = Path.Combine(archivo, context.Request.QueryString["i"]);
+        }
+        else archivo = Path.Combine(archivo, context.Request.QueryString["i"]);
         archivo = Path.Combine(archivo, context.Request.QueryString["hi"]);
-        archivo = Path.Combine(archivo, context.Request.QueryString["n"]);
-        
+        if (!string.IsNullOrEmpty(context.Request.QueryString["x"])) {
+            int posicion= Convert.ToInt32(context.Request.QueryString["x"]);
+            foreach (string file in Directory.GetFiles(archivo)) {
+                posicion--;
+                if (posicion == 0)
+                {
+                    archivo = file;
+                    break;
+                }
+            }
+        } else archivo = Path.Combine(archivo, context.Request.QueryString["n"]);
+
         if (File.Exists(archivo))
         {
             DateTime modificacion = File.GetLastWriteTimeUtc(archivo);
@@ -54,7 +65,7 @@ public class archivo : IHttpHandler {
             context.Response.Cache.SetCacheability(HttpCacheability.Public);
             context.Response.Cache.SetLastModified(modificacion);
             context.Response.Flush();
-            
+
             if (!string.IsNullOrEmpty(context.Request.QueryString["h"]) || !string.IsNullOrEmpty(context.Request.QueryString["w"]))
             {
                 using (Image img = Image.FromFile(archivo))
@@ -79,12 +90,14 @@ public class archivo : IHttpHandler {
                     {
                         tamano.Width = tamano.Height * img.Size.Width / img.Size.Height;
                     }
-                    using(Bitmap bmp= new Bitmap(img, tamano))
+                    using (Bitmap bmp = new Bitmap(img, tamano))
                         bmp.Save(context.Response.OutputStream, ImageFormat.Jpeg);
                 }
-            } else {
+            }
+            else
+            {
                 context.Response.WriteFile(archivo);
-            }            
+            }
         }
         else
         {
@@ -102,11 +115,12 @@ public class archivo : IHttpHandler {
             }
         }
     }
- 
-    public bool IsReusable {
-        get {
+
+    public bool IsReusable
+    {
+        get
+        {
             return false;
         }
     }
-
 }

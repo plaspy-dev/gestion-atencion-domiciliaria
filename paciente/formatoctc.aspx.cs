@@ -100,7 +100,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                         formulacion += "respuesta";
                         formulacion += "contraindicacion";
 
-                        MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Conector.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "'"));
+                        MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Query.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "'"));
                         if (readermysql != null && readermysql.Read())
                         {
                             ((MasterPageI)Master).Imprimir("formatoctc.html");
@@ -297,7 +297,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
 
                 DateTime fecha = Convert.ToDateTime(TFecha.Text);
 
-                formulacion["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
+                formulacion["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
                 formulacion["profesional"] = usuario["personal"];
                 formulacion["asegurador"] = CCDetallePaciente.AsegurdadorID;
                 formulacion["respuesta"] = TRespuestaClinica.Text;

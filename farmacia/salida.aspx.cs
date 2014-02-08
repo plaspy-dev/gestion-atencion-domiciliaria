@@ -31,6 +31,7 @@ public partial class farmacia_salida : System.Web.UI.Page
             TValor.Visible = LValor.Visible = configuracion.nValor != 0;
 
             TValor.ReadOnly = configuracion.nValorTipo == 1;
+            TValor.ReadOnly = !usuario.CanAdmin();
 
             // fecha de entrega
             LEntrega.Visible = REntrega.Visible =
@@ -99,8 +100,8 @@ public partial class farmacia_salida : System.Web.UI.Page
                         ((MasterPageI)Master).Imprimir("salida.html");
                         ((MasterPageI)Master).SetModificacion(HId.Value);
                         TObservaciones.Text = reader["observaciones"].ToString();
-                        TFecha.Text = CConector.GetFromMySQLDate(reader["fecha"]);
-                        TEntrega.Text = CConector.GetFromMySQLDate(reader["entrega"]);
+                        TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
+                        TEntrega.Text = Query.GetFromMySQLDate(reader["entrega"]);
                         PAnulado.Visible = reader["estado"].ToString() != "";
 
                         UCPaciente.IdPaciente= reader["paciente"].ToString();
@@ -131,7 +132,7 @@ public partial class farmacia_salida : System.Web.UI.Page
                                 info.cantidad = Convert.ToDecimal(reader["cantidad"]);
                                 info.lote = reader["lote"].ToString();
                                 info.vence = "";
-                                try { info.vence = CConector.GetFromMySQLDate(reader["vence"]); }
+                                try { info.vence = Query.GetFromMySQLDate(reader["vence"]); }
                                 catch { }
                                 info.ubicacion = Convert.ToInt32(reader["ubicacion"]);
                                 info.serial = reader["szSerial"].ToString();
@@ -231,7 +232,7 @@ public partial class farmacia_salida : System.Web.UI.Page
             producto = (Producto)productos[i];
             try
             {
-                producto.Valor = Decimal.Parse(TValor.Text, NumberStyles.Currency, CultureInfo.InvariantCulture);
+                producto.Valor = Decimal.Parse(TValor.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture);
             }
             catch { }
             productoUsado.AddProducto(producto);
@@ -296,8 +297,8 @@ public partial class farmacia_salida : System.Web.UI.Page
         using (CConector conector = new CConector())
         {
             query["observaciones"] = TObservaciones.Text;
-            query["fecha"] = CConector.GetMySQLDateFormat(TFecha.Text);
-            query["entrega"] = CConector.GetMySQLDateFormat(configuracion.bManejarEntrega ? TEntrega.Text : TFecha.Text);
+            query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
+            query["entrega"] = Query.GetMySQLDateFormat(configuracion.bManejarEntrega ? TEntrega.Text : TFecha.Text);
             query["paciente"] = UCPaciente.IdPaciente;
             if (sender == BAnular)
                 query["estado"] = "-1";

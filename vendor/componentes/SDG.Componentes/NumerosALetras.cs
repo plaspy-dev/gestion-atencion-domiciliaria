@@ -2,6 +2,7 @@ using System;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
+using System.ServiceModel;
 using System.Web;
 
 namespace SDG.Componentes;
@@ -129,7 +130,7 @@ public class NumerosALetras
 			string text;
 			if (HttpContext.Current == null)
 			{
-				text = Path.GetFileName(Assembly.GetEntryAssembly().Location);
+				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
 			}
 			else
 			{

@@ -324,7 +324,7 @@ public class ProductoUsado
                     try { vence = reader["vence"]; }
                     catch { }
 
-                    dCantidad -= GetProductoUsado(producto, lote, CConector.GetFromMySQLDate(vence), ubicacion, estado);
+                    dCantidad -= GetProductoUsado(producto, lote, Query.GetFromMySQLDate(vence), ubicacion, estado);
                     if (dCantidad == 0)
                         continue;
                     if (dCantidad > cantidad)
@@ -394,13 +394,13 @@ public class ProductoUsado
                     try { vence = reader["vence"]; }
                     catch { }
 
-                    dCantidad -= GetProductoUsado(producto, reader["lote"].ToString(), CConector.GetFromMySQLDate(vence), ubicacion, estado);
+                    dCantidad -= GetProductoUsado(producto, reader["lote"].ToString(), Query.GetFromMySQLDate(vence), ubicacion, estado);
                     if (dCantidad <= 0)
                         continue;
                     if (dCantidad > cantidad)
                         dCantidad = cantidad;
 
-                    Producto info = new Producto(producto, dCantidad, reader["lote"].ToString(), CConector.GetFromMySQLDate(vence), ubicacion, reader["szSerial"].ToString(), estado);
+                    Producto info = new Producto(producto, dCantidad, reader["lote"].ToString(), Query.GetFromMySQLDate(vence), ubicacion, reader["szSerial"].ToString(), estado);
                     productos.Add(info);
 
                     cantidad -= dCantidad;

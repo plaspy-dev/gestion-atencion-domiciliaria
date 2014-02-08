@@ -94,7 +94,7 @@
                 descripcion+= " " + ui.item.descripcion;
                 $("#tdescripcion").text(descripcion);
                 // $("#<%= TValor.ClientID %>").numeric("value",ui.item.Valor);
-                $("#<%= TValor.ClientID %>").val(ui.item.Valor);
+                $("#<%= TValor.ClientID %>").autoNumeric('set', ui.item.Valor);
                 
                 if(!$("#<%= CAutomatico.ClientID %>").is(':checked')) {
                     $("#<%= TLote.ClientID %>").val(ui.item.lote);
@@ -158,7 +158,7 @@
             <td><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox>
             </td>
             <td><asp:Label runat="server" ID="LEntrega" Text="Entrega"></asp:Label><asp:RangeValidator ControlToValidate="TEntrega" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="REntrega" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
-            <td><asp:TextBox runat="server" ID="TEntrega" CssClass="fecha"></asp:TextBox>
+            <td><asp:TextBox runat="server" ID="TEntrega" CssClass="fecha"></asp:TextBox></td>
             <td></td>
         </tr>
         <tr>

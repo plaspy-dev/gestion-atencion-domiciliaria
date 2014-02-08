@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.ServiceModel;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -52,6 +53,16 @@ public class Utilidades
 			}
 		}
 		return -1;
+	}
+
+	public static TableCell GetGridCell(GridView grid, string columna, int fila)
+	{
+		return grid.Rows[fila].Cells[GetGridColumnIndex(grid, columna)];
+	}
+
+	public static string GetGridCellText(GridView grid, string columna, int fila)
+	{
+		return HttpUtility.HtmlDecode(grid.Rows[fila].Cells[GetGridColumnIndex(grid, columna)].Text).Trim();
 	}
 
 	public static int GetRowsCount(GridView grid, Label label)
@@ -621,7 +632,7 @@ public class Utilidades
 			string text;
 			if (HttpContext.Current == null)
 			{
-				text = Path.GetFileName(Assembly.GetEntryAssembly().Location);
+				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
 			}
 			else
 			{
@@ -665,5 +676,37 @@ public class Utilidades
 		{
 		}
 		return "";
+	}
+
+	public static bool SelectInDropDown(DropDownList lista, object valor)
+	{
+		return SelectInDropDown(lista, valor, null);
+	}
+
+	public static bool SelectInDropDown(DropDownList lista, object valor, string texto)
+	{
+		bool result = true;
+		try
+		{
+			if (lista.Items.Count < 2)
+			{
+				lista.DataBind();
+			}
+			lista.SelectedIndex = -1;
+			ListItem listItem = lista.Items.FindByValue(valor.ToString());
+			if (listItem == null && texto != null)
+			{
+				listItem = new ListItem(texto, valor.ToString());
+				lista.Items.Add(listItem);
+			}
+			if (listItem != null)
+			{
+				listItem.Selected = true;
+			}
+		}
+		catch
+		{
+		}
+		return result;
 	}
 }

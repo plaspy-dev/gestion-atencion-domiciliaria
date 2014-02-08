@@ -168,6 +168,7 @@ public partial class farmacia_estado : System.Web.UI.Page
             String id = e.Row.Cells[1].Text;
             e.Row.Cells[1].Text = "";
             HyperLink link = new HyperLink();
+            link.Target = "_blank";
             switch (DataBinder.Eval(e.Row.DataItem, "tipo").ToString())
             {
                 case "1":
@@ -186,6 +187,10 @@ public partial class farmacia_estado : System.Web.UI.Page
                 case "5":
                     link.Text = "Transformación No. " + id;
                     link.NavigateUrl = "~/farmacia/transformaciones.aspx?tri=" + id;
+                    break;
+                case "6":
+                    link.Text = "Devolución No. " + id;
+                    link.NavigateUrl = "~/farmacia/devolucion.aspx?di=" + id;
                     break;
                 case "-1":
                     e.Row.Cells[0].Text = TDesde.Text;
@@ -242,7 +247,7 @@ public partial class farmacia_estado : System.Web.UI.Page
 
         Decimal saldoa = 0, costosaldoa = 0;
 
-        if (new Producto(Request.QueryString["pid"]).GetAcumulado(m_nAlmacen.ToString(), CConector.GetMySQLDateFormat(TDesde.Text)
+        if (new Producto(Request.QueryString["pid"]).GetAcumulado(m_nAlmacen.ToString(), Query.GetMySQLDateFormat(TDesde.Text)
             , ref costosaldoa, ref saldoa, ref costop))
         {
             int index = GKardex.Rows.Count - 1;

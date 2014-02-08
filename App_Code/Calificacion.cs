@@ -62,7 +62,7 @@ public class Calificacion
                         + " AND DATE(indice_barthel.fecha)={1}"
                         + " AND indice_barthel.tipo={2}"
                         + " GROUP BY indice_barthel.id"
-                        + " LIMIT 1;", idPaciente, Query.GetValor(Conector.GetMySQLDateFormat(fecha)), (int)tipo)
+                        + " LIMIT 1;", idPaciente, Query.GetValor(Query.GetMySQLDateFormat(fecha)), (int)tipo)
                         );
             return resultado;
         }

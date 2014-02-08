@@ -36,10 +36,10 @@ public partial class directorio_Default : System.Web.UI.Page
                 DEStado.DataBind();
                 DEStado.SelectedValue = "1";
             }
-            CConector.SelectInDropDown(DArea, CConector.GetCookie("directorio_area"));
-            CConector.SelectInDropDown(DEStado, (CConector.GetCookie("directorio_estado") == "" || CConector.GetCookie("directorio_estado") == "0") ? "1" : CConector.GetCookie("directorio_estado"));
-            CConector.SelectInDropDown(DCargo, CConector.GetCookie("directorio_cargo"));
-            CConector.SelectInDropDown(DDisponibilidad, CConector.GetCookie("directorio_disponibilidad"));
+            Utilidades.SelectInDropDown(DArea, CConector.GetCookie("directorio_area"));
+            Utilidades.SelectInDropDown(DEStado, (CConector.GetCookie("directorio_estado") == "" || CConector.GetCookie("directorio_estado") == "0") ? "1" : CConector.GetCookie("directorio_estado"));
+            Utilidades.SelectInDropDown(DCargo, CConector.GetCookie("directorio_cargo"));
+            Utilidades.SelectInDropDown(DDisponibilidad, CConector.GetCookie("directorio_disponibilidad"));
         }
         CUsuario usuario = (CUsuario) Usuario.GetUsuario();
         Utilidades.GetGridColumn(GResultados, "Disponibilidad").Visible= !usuario.CanUpdate();

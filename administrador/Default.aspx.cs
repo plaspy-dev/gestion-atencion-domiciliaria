@@ -157,7 +157,10 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Indicaciones terapeuticas", 66, parent);
             Add("Componente educativo", 67, parent);
 
-            // disponible 72
+            parent = Add("Facturación");
+            Add("Causal devolución", 72, parent);
+            Add("Causal glosa", 73, parent);
+            // disponible 74
 
 
             if (HTipo.Value.Length == 0)

@@ -14,7 +14,7 @@ public partial class administrador_barthel : System.Web.UI.Page
         if(!IsPostBack) {
 
             if (!string.IsNullOrEmpty(Request.QueryString["ioe"]))
-                Conector.SelectInDropDown(DIndice, Request.QueryString["ioe"]);
+                Utilidades.SelectInDropDown(DIndice, Request.QueryString["ioe"]);
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
             BAceptar.Enabled = usuario.CanInsert();

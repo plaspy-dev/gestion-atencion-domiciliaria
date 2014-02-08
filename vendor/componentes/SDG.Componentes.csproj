@@ -14,8 +14,13 @@
     <LangVersion>12.0</LangVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup />
-  <ItemGroup />
+  <PropertyGroup>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="SDG.Componentes.DateTimeValidator.js" />
+    <EmbeddedResource Include="SDG.Componentes.DateTimeValidator.js" LogicalName="SDG.Componentes.DateTimeValidator.js" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web" />
     <Reference Include="System.Design" />
@@ -23,6 +28,7 @@
     <Reference Include="MySql.Data">
       <HintPath>../references/MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
