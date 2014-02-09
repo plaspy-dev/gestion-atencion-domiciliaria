@@ -181,8 +181,15 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
         if (savestate)
         {
-            lnkPDF.PostBackUrl += "&ss=" + HttpUtility.UrlEncode(Crypt.EncriptarDES(Utilidades.SaveState(cph.Controls), System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_2")));
-            lnkImp.PostBackUrl += "&ss=" + HttpUtility.UrlEncode(Crypt.EncriptarDES(Utilidades.SaveState(cph.Controls), System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_2")));
+            string estado=HttpUtility.UrlEncode(Crypt.EncriptarDES(Utilidades.SaveState(cph.Controls), System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_2")));
+            lnkImp.Attributes["s"] = estado;
+            lnkPDF.PostBackUrl = Request.Url.ToString();
+            if (Request.Url.Query.Length == 0)
+                lnkPDF.PostBackUrl += "?";
+            else lnkPDF.PostBackUrl += "&";
+            lnkImp.PostBackUrl = lnkPDF.PostBackUrl;
+            lnkPDF.PostBackUrl += "ss=" + estado;
+            lnkImp.PostBackUrl += "ss=" + estado;
         }
     }
     
@@ -191,14 +198,14 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         Imprimir(archivo, false);
     }
 
-    public void RestoreState()
+    public bool RestoreState()
     {
         try
         {
             if (!string.IsNullOrEmpty(Request.QueryString["ss"]))
-                Utilidades.RestoreState(cph.Controls, Crypt.DesencriptarDES(Request.QueryString["ss"], System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_2")));
-        }
-        catch { }
+                return Utilidades.RestoreState(cph.Controls, Crypt.DesencriptarDES(Request.QueryString["ss"], System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_2")));
+        } catch { }
+        return false;
     }
 
     protected void lnkImp_Click(object sender, EventArgs e) {

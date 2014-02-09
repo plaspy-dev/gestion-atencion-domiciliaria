@@ -48,7 +48,15 @@
 
             var imp = $("#<%= lnkImp.ClientID %>");
             if (imp.attr("r") == "1") {
-                imp.attr("href", window.location + "&p=1").attr("target", "_blank");
+            String().indexOf
+                var url = window.location;
+                if (window.location.href.indexOf('?') == -1)
+                    url += "?";
+                else url += "&";
+                url+="p=1";
+                if (typeof(imp.attr("s"))=="string" && imp.attr("s") != "")
+                    url += "&ss=" + imp.attr("s");
+                imp.attr("href", url).attr("target", "_blank");
             }
             // setInterval("$('#renewSession').attr('src', '" + $('#renewSession').attr('src') + "?par=' + Math.random())", 180000);
 
