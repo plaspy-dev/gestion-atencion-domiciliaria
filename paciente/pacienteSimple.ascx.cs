@@ -22,6 +22,13 @@ public partial class paciente_pacienteSimple : System.Web.UI.UserControl
         get { return TPacienteID.Text; }
     }
 
+    public string IdAsegurador {
+
+        get {
+            return Paciente.GetPaciente(TPacienteID.Text).entidadId;
+        }
+    }
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!Page.ClientScript.IsClientScriptIncludeRegistered("pacienteSimple"))

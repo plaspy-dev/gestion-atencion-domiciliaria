@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Gastos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="gastos.aspx.cs" Inherits="farmacia_gastos" %>
+﻿<%@ Page Title="Informe de gastos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="gastos.aspx.cs" Inherits="farmacia_gastos" %>
 <%@ Register Src="~/paciente/pacienteSimple.ascx" TagName="pacienteSimple" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
@@ -33,8 +33,16 @@
         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         <Columns>
-            <asp:BoundField HeaderText="Productos" DataField="producto" SortExpression="producto" FooterStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
+            <asp:TemplateField HeaderText="Productos" FooterText="Total" SortExpression="producto" ItemStyle-Wrap="false">
+                <ItemTemplate>
+                    <asp:HyperLink runat="server" ID="H" Text='<%# Eval("producto") %>' Target="_blank" NavigateUrl='<%# string.Format("~/farmacia/informes.aspx?f={0}&d={1}&m={2}&p={3}&r=1"
+                        , HttpUtility.UrlEncode(TDesde.Text), HttpUtility.UrlEncode(THasta.Text), Eval("id"), UCPaciente.IdPaciente) %>'></asp:HyperLink>
+                </ItemTemplate>
+            </asp:TemplateField>
             <asp:BoundField HeaderText="Cantidad" DataField="total" SortExpression="total" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
+            <asp:BoundField HeaderText="Costo" DataField="costo" SortExpression="costo" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" DataFormatString="{0:C0}" />
+            <asp:BoundField HeaderText="Precio" DataField="valor" SortExpression="valor" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" DataFormatString="{0:C0}" />
+            <asp:BoundField HeaderText="Utilidad" DataField="utilidad" SortExpression="utilidad" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" DataFormatString="{0:C0}" />
         </Columns>
     </asp:GridView>
     <div style="text-align: right;">
@@ -43,10 +51,12 @@
     <asp:SqlDataSource ID="SResultados" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id,consulta,producto,fecha,SUM(total) AS total FROM (
+                SelectCommand="SELECT id,consulta,producto,fecha,SUM(total) AS total,SUM(costo) AS costo,SUM(valor) AS valor,SUM(valor)-SUM(costo) AS utilidad FROM (
                     (
-                        SELECT 2 AS consulta, salida{0}.id,salida{0}.fecha
+                        SELECT 2 AS consulta, salida_items{0}.producto AS id,salida{0}.fecha
                             ,medicamentos.nombre AS producto, salida_items{0}.cantidad AS total
+                            ,salida_items{0}.cantidad*salida_items{0}.costo AS costo
+                            ,salida_items{0}.cantidad*salida_items{0}.valor AS valor
                             FROM salida{0}
                             LEFT JOIN salida_items{0} ON (salida{0}.id=salida_items{0}.salida)
                             LEFT JOIN medicamentos ON (medicamentos.id=salida_items{0}.producto)
@@ -56,8 +66,10 @@
                         AND (@paciente=0 OR salida{0}.paciente=@paciente)
                         ORDER BY id
                    ) UNION ALL (
-                        SELECT 3 AS consulta, orden_compra{0}.id,orden_compra{0}.fecha
+                        SELECT 3 AS consulta, orden_compra_items{0}.producto AS id,orden_compra{0}.fecha
                             ,medicamentos.nombre AS producto, orden_compra_items{0}.cantidad AS total
+                            ,orden_compra_items{0}.cantidad*orden_compra_items{0}.costo AS costo
+                            ,orden_compra_items{0}.cantidad*orden_compra_items{0}.valor AS valor
                             FROM orden_compra{0}
                             LEFT JOIN orden_compra_items{0} ON (orden_compra{0}.id=orden_compra_items{0}.orden_compra)
                             LEFT JOIN medicamentos ON (medicamentos.id=orden_compra_items{0}.producto)
@@ -68,8 +80,10 @@
                         AND (@paciente=0 OR orden_compra{0}.paciente=@paciente)
                         ORDER BY id
                    ) UNION ALL (
-                        SELECT 4 AS consulta, devolucion{0}.id,devolucion{0}.fecha
+                        SELECT 4 AS consulta, devolucion_items{0}.producto AS id,devolucion{0}.fecha
                             ,medicamentos.nombre AS producto, -devolucion_items{0}.cantidad AS total
+                            ,-devolucion_items{0}.cantidad*devolucion_items{0}.costo AS costo
+                            ,-devolucion_items{0}.cantidad*devolucion_items{0}.valor AS valor
                             FROM devolucion{0}
                             LEFT JOIN devolucion_items{0} ON (devolucion{0}.id=devolucion_items{0}.devolucion)
                             LEFT JOIN medicamentos ON (medicamentos.id=devolucion_items{0}.producto)
@@ -79,12 +93,12 @@
                         AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=devolucion{0}.fecha)
                         AND (@paciente=0 OR devolucion{0}.paciente=@paciente)
                         ORDER BY id
-                   )) AS t GROUP BY producto ORDER BY producto
+                   )) AS t GROUP BY id ORDER BY producto
                         ">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TDesde" PropertyName="Text" Name="desde" DefaultValue=" " />
                     <asp:ControlParameter ControlID="THasta" PropertyName="Text" Name="hasta" DefaultValue=" " />
-                    <asp:ControlParameter ControlID="UCPaciente$TPacienteID" PropertyName="Text" Name="paciente" DefaultValue="0" />
+                    <asp:ControlParameter ControlID="UCPaciente" PropertyName="IdPaciente" Name="paciente" DefaultValue="0" />
                  </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

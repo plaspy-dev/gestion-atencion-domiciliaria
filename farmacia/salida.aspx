@@ -63,7 +63,7 @@
             source: function(request, response) {
                 $.ajax({
                     url: "../webservices/servicios.asmx/GetProductoSalida",
-                    data: "{ 'almacen': '" + <%= ViewState["almacen"] %> + "', 'auto': " + $("#<%= CAutomatico.ClientID %>").is(':checked') + ",'q': '" + request.term + "','productos': '" + $("#<%= HProductos.ClientID %>").val() + "', 't': '' }",
+                    data: "{ 'almacen': '" + <%= ViewState["almacen"] %> + "', 'auto': " + $("#<%= CAutomatico.ClientID %>").is(':checked') + ",'q': '" + request.term + "','productos': '" + $("#<%= HProductos.ClientID %>").val() + "', 't': '" + $("#<%= UCPaciente.ClientID %>_TPacienteID").val() + "' }",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
@@ -206,7 +206,7 @@
             <asp:RequiredFieldValidator ControlToValidate="TValor" ValidationGroup="producto" ErrorMessage="Por favor ingrese un precio unitario." ID="RValor" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             <asp:RegularExpressionValidator ValidationExpression="^[$][+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]+)?$" ID="RValorF" runat="server" ValidationGroup="producto" ErrorMessage="Por favor ingrese un numero decimal." ControlToValidate="TValor" Display="Dynamic" SetFocusOnError="True">*</asp:RegularExpressionValidator>
             </td>
-            <td><asp:TextBox runat="server" ID="TValor" CssClass="dinero"></asp:TextBox></td>
+            <td><asp:TextBox runat="server" EnableViewState="false" ID="TValor" CssClass="dinero"></asp:TextBox></td>
             <td class="tdr">
                 <asp:Button ID="BAgregar" runat="server" Text="Agregar" ValidationGroup="producto" onclick="BAgregar_Click" />
                 <asp:Button ID="BActualizar" runat="server" Text="Actualizar" CssClass="hide" CausesValidation="false" onclick="BActualizar_Click" />
@@ -229,8 +229,8 @@
                         <asp:BoundField DataField="codigo" HeaderText="Código" SortExpression="codigo" ItemStyle-HorizontalAlign="Right" />
                         <asp:BoundField DataField="nombre" HeaderText="Producto" SortExpression="nombre" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" />
                         <asp:BoundField DataField="cantidad" HeaderText="Cantidad" SortExpression="cantidad" DataFormatString="{0:F2}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
-                        <asp:BoundField DataField="Valor" HeaderText="Precio U." SortExpression="Valor" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" />
-                        <asp:BoundField DataField="ValorTotal" HeaderText="Precio T." SortExpression="ValorTotal" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
+                        <asp:BoundField DataField="Valor" HeaderText="Precio U." SortExpression="Valor" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" HeaderStyle-Wrap="false" />
+                        <asp:BoundField DataField="ValorTotal" HeaderText="Precio T." SortExpression="ValorTotal" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" HeaderStyle-Wrap="false" />
                         <asp:BoundField DataField="unidad" HeaderText="Un." SortExpression="unidad" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" />
                         <asp:BoundField DataField="lote" HeaderText="Lote" SortExpression="lote" />
                         <asp:BoundField DataField="vence" HeaderText="Vence" SortExpression="vence" DataFormatString="{0:d}" />

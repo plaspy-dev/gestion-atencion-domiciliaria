@@ -44,7 +44,7 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                     SqlDataReader reader = conector.Query(query.GetSelect("autNumero=" + Query.GetValor(Request.QueryString["aut"])));
                     if (reader != null && reader.Read())
                     {
-
+                        PAutorizacion.Visible = true;
                         GPagos.Visible = true;
                         BAceptar.Enabled = usuario.CanUpdate();
 
@@ -92,13 +92,8 @@ public partial class facturacion_facturacion : System.Web.UI.Page
 
                             query += "autorizacion";
                             query += "factura";
-                            query += "fecha";
-                            query += "radicacion";
-                            query += "vencimiento";
-                            query += "segunda_radicacion";
-                            query += "pago";
-                            query += "devolucion";
                             query += "glosa_conciliacion";
+                            query += "segunda_factura";
 
                             MySqlDataReader readermy = conectormy.Query(query.GetSelect("autorizacion=" + Query.GetValor(Request.QueryString["aut"])));
                             if (readermy != null && readermy.Read()) {
@@ -106,19 +101,87 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                                 BAceptar.Enabled = Usuario.GetInstance().CanUpdate();
                                 ViewState["autorizacion"] = readermy["autorizacion"].ToString();
                                 TFactura.Text = readermy["factura"].ToString();
-                                TFFactura.Text = Query.GetFromMySQLDate(readermy["fecha"]);
-                                TRadicacion.Text = Query.GetFromMySQLDate(readermy["radicacion"]);
-                                TVencimientoF.Text = Query.GetFromMySQLDate(readermy["vencimiento"]);
-                                TSegundaR.Text = Query.GetFromMySQLDate(readermy["segunda_radicacion"]);
-                                TPago.Text = Query.GetFromMySQLDate(readermy["pago"]);
-                                TDevolucion.Text = Query.GetFromMySQLDate(readermy["devolucion"]);
+                                TFactura2.Text = readermy["segunda_factura"].ToString();
                                 TConciliacion.Text = Query.GetFromMySQLDate(readermy["glosa_conciliacion"]);
+                                TFactura_TextChanged(sender, e);
+                                TFactura2_TextChanged(sender, e);
+                                BD_OnClicked(sender, e);
                             }
                         }
                     }
                 }
             }
+        }
+    }
 
+    protected void BD_OnClicked(object sender, EventArgs e)
+    {
+        PDevolucion.Visible = TDevolucion.Text.Length > 0;
+    }
+
+    protected void TFactura_TextChanged(object sender, EventArgs e) {
+
+        ViewState["factura"] = null;
+        TVencimientoF.Text= 
+            TPago.Text= 
+            TRadicacion.Text=
+            TFFactura.Text = "";
+        
+        if (TFactura.Text.Length == 0)
+            return;
+
+        using (CConector conector = new CConector()) {
+
+            Query query = new Query("factura");
+
+            query += "fecha";
+            query += "radicacion";
+            query += "vencimiento";
+            query += "pago";
+            query += "devolucion";
+
+            MySqlDataReader reader= conector.Query(query.GetSelect("factura=" + Query.GetValor(TFactura.Text)));
+            if (reader != null && reader.Read()) {
+
+                ViewState["factura"] = TFactura.Text;
+                TFFactura.Text = Query.GetFromMySQLDate(reader["fecha"]);
+                TRadicacion.Text = Query.GetFromMySQLDate(reader["radicacion"]);
+                TPago.Text = Query.GetFromMySQLDate(reader["pago"]);
+                TVencimientoF.Text = Query.GetFromMySQLDate(reader["vencimiento"]);
+                TDevolucion.Text = Query.GetFromMySQLDate(reader["devolucion"]);
+            }
+        }
+    }
+
+    protected void TFactura2_TextChanged(object sender, EventArgs e)
+    {
+        ViewState["factura2"] = null;
+        TVencimientoF2.Text =
+            TPago2.Text =
+            TRadicacion2.Text =
+            TFFactura2.Text = "";
+
+        if (TFactura2.Text.Length == 0)
+            return;
+
+        using (CConector conector = new CConector())
+        {
+            Query query = new Query("factura");
+
+            query += "fecha";
+            query += "radicacion";
+            query += "vencimiento";
+            query += "pago";
+
+            MySqlDataReader reader = conector.Query(query.GetSelect("factura=" + Query.GetValor(TFactura2.Text)));
+            if (reader != null && reader.Read())
+            {
+                ViewState["factura2"] = TFactura2.Text;
+                TFFactura2.Text = Query.GetFromMySQLDate(reader["fecha"]);
+                TRadicacion2.Text = Query.GetFromMySQLDate(reader["radicacion"]);
+                TPago2.Text = Query.GetFromMySQLDate(reader["pago"]);
+                TVencimientoF2.Text = Query.GetFromMySQLDate(reader["vencimiento"]);
+            }
         }
     }
     
@@ -137,15 +200,11 @@ public partial class facturacion_facturacion : System.Web.UI.Page
             Query query = new Query("facturacion_autorizacion");
             
             query["factura"]= TFactura.Text;
-            query["fecha"]= Query.GetMySQLDateFormat(TFFactura.Text);
-            query["radicacion"]= Query.GetMySQLDateFormat(TRadicacion.Text);
-            query["vencimiento"]= Query.GetMySQLDateFormat(TVencimientoF.Text);
-            query["segunda_radicacion"]= Query.GetMySQLDateFormat(TSegundaR.Text);
-            query["pago"]= Query.GetMySQLDateFormat(TPago.Text);
-            query["devolucion"]= Query.GetMySQLDateFormat(TDevolucion.Text);
+            query["segunda_factura"] = PDevolucion.Visible ? "" : TFactura2.Text;
             query["glosa_conciliacion"]= Query.GetMySQLDateFormat(TConciliacion.Text);
             query["entidad"] = Paciente.GetPaciente(HIdPaciente.Value).entidadId;
             query["paciente"] = HIdPaciente.Value;
+            query["segunda_factura"]= TFactura2.Text;
 
             if (string.IsNullOrEmpty(id))
             {
@@ -161,6 +220,48 @@ public partial class facturacion_facturacion : System.Web.UI.Page
             }
             if (conector.InsertModificacion(HId.Value) == -1)
                 return;
+
+            // insertamos la factura
+            query = new Query("factura");
+
+            query["fecha"] = Query.GetMySQLDateFormat(TFFactura.Text);
+            query["radicacion"] = Query.GetMySQLDateFormat(TRadicacion.Text);
+            query["vencimiento"] = Query.GetMySQLDateFormat(TVencimientoF.Text);
+            query["pago"] = Query.GetMySQLDateFormat(TPago.Text);
+            query["devolucion"] = Query.GetMySQLDateFormat(TDevolucion.Text);
+
+            if (string.IsNullOrEmpty((string)ViewState["factura"]))
+            {
+                query["factura"] = TFactura.Text;
+                if (conector.QueryMod(query.GetInsert()) == -1)
+                    return;
+            } else { 
+                if(conector.QueryMod(query.GetUpdate("factura=" + Query.GetValor(TFFactura.Text)))==-1)
+                    return;
+            }
+
+            if (PDevolucion.Visible && TFactura2.Text.Length>0)
+            {
+                query = new Query("factura");
+
+                query["fecha"] = Query.GetMySQLDateFormat(TFFactura2.Text);
+                query["radicacion"] = Query.GetMySQLDateFormat(TRadicacion2.Text);
+                query["vencimiento"] = Query.GetMySQLDateFormat(TVencimientoF2.Text);
+                query["pago"] = Query.GetMySQLDateFormat(TPago2.Text);
+
+                if (string.IsNullOrEmpty((string)ViewState["factura2"]))
+                {
+                    query["factura"] = TFactura2.Text;
+                    if (conector.QueryMod(query.GetInsert()) == -1)
+                        return;
+                }
+                else
+                {
+                    if (conector.QueryMod(query.GetUpdate("factura=" + Query.GetValor(TFFactura2.Text))) == -1)
+                        return;
+                }
+            }
+
 
             query = new Query("facturacion_autorizacion_servicio");
 
@@ -198,21 +299,25 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                 }
             }
 
-            query = new Query("facturacion_autorizacion_devolucion");
+            query = new Query("factura_devolucion");
 
-            if (conector.QueryMod(query.GetDelete("autorizacion=" + Query.GetValor(HIdAutorizacion.Value))) == -1)
+            if (conector.QueryMod(query.GetDelete("factura=" + Query.GetValor(TFactura.Text))) == -1)
                 return;
-            query["autorizacion"] = HIdAutorizacion.Value;
 
-            foreach (GridViewRow row in GDevolucion.Rows)
+            if (PDevolucion.Visible)
             {
-                if (((CheckBox)row.FindControl("CC")).Checked)
-                {
-                    query["causal"] = GDevolucion.DataKeys[row.RowIndex].Value.ToString();
-                    query["valor"] = ((TextBox)row.FindControl("TV")).Text.Replace("$", "").Replace(",", "");
+                query["factura"] = TFactura.Text;
 
-                    if (conector.QueryMod(query.GetInsert()) == -1)
-                        return;
+                foreach (GridViewRow row in GDevolucion.Rows)
+                {
+                    if (((CheckBox)row.FindControl("CC")).Checked)
+                    {
+                        query["causal"] = GDevolucion.DataKeys[row.RowIndex].Value.ToString();
+                        query["valor"] = ((TextBox)row.FindControl("TV")).Text.Replace("$", "").Replace(",", "");
+
+                        if (conector.QueryMod(query.GetInsert()) == -1)
+                            return;
+                    }
                 }
             }
 

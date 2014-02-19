@@ -107,8 +107,8 @@
         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         <Columns>
             <asp:HyperLinkField HeaderText="Autorización" SortExpression="autorizacion" DataTextField="autorizacion" DataNavigateUrlFields="autorizacion" Target="_blank" DataNavigateUrlFormatString="~/facturacion/facturacion.aspx?aut={0}" />
-            <asp:HyperLinkField HeaderText="Factura" SortExpression="factura" DataTextField="factura" DataNavigateUrlFields="factura" Target="_blank" DataNavigateUrlFormatString="~/facturacion/facturacion.aspx?aut={0}" />
-            <asp:HyperLinkField HeaderText="Fecha" SortExpression="fecha" DataTextField="fecha" DataNavigateUrlFields="fecha" Target="_blank" DataNavigateUrlFormatString="~/facturacion/facturacion.aspx?aut={0}" DataTextFormatString="{0:d}" />
+            <asp:HyperLinkField HeaderText="Factura" SortExpression="factura" DataTextField="factura" DataNavigateUrlFields="autorizacion" Target="_blank" DataNavigateUrlFormatString="~/facturacion/facturacion.aspx?aut={0}" />
+            <asp:HyperLinkField HeaderText="Fecha" SortExpression="fecha" DataTextField="fecha" DataNavigateUrlFields="autorizacion" Target="_blank" DataNavigateUrlFormatString="~/facturacion/facturacion.aspx?aut={0}" DataTextFormatString="{0:d}" />
             <asp:BoundField HeaderText="Radicación" SortExpression="radicacion" DataField="radicacion" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Valor facturado" SortExpression="facturado" DataField="facturado" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
             <asp:BoundField HeaderText="Glosa" SortExpression="glosa" DataField="glosa" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
@@ -131,31 +131,42 @@
                 SelectCommand="SELECT 
                             facturacion_autorizacion.autorizacion
                             ,facturacion_autorizacion.factura
-                            ,facturacion_autorizacion.fecha
-                            ,facturacion_autorizacion.radicacion
-                            ,SUM(facturacion_autorizacion_servicio.valor) AS facturado
+                            ,factura.fecha
+                            ,factura.radicacion
+                            ,servicios.valor AS facturado
                             ,SUM(facturacion_autorizacion_glosa.valor) AS glosa
                             ,SUM(facturacion_autorizacion_glosa.valor_aceptado) AS glosa_aceptada
                             ,SUM(facturacion_autorizacion_glosa.valor_soportado) AS glosa_soportado
-                            ,SUM(facturacion_autorizacion_servicio.autorizado-facturacion_autorizacion_servicio.cantidad) AS nofacturado
+                            ,servicios.autorizado-servicios.cantidad AS nofacturado
                             ,IF(SUM(facturacion_autorizacion_glosa.valor)>0 AND facturacion_autorizacion.glosa_conciliacion IS NULL, 'Si', 'No') AS glosa_seg
-                            ,GROUP_CONCAT(CONCAT(glosa.nombre,' ( $',CAST(FORMAT(facturacion_autorizacion_glosa.valor,0) AS CHAR),')') SEPARATOR '<br />') AS causal_glosa
-                            ,GROUP_CONCAT(CONCAT(devolucion.nombre,' ( $',CAST(FORMAT(facturacion_autorizacion_devolucion.valor,0) AS CHAR),')') SEPARATOR '<br />') AS causal_devolucion
-                            ,SUM(facturacion_autorizacion_devolucion.valor) AS devolucion
+                            ,GROUP_CONCAT(CONCAT(glosa.nombre,' ($',CAST(FORMAT(facturacion_autorizacion_glosa.valor,0) AS CHAR),')') SEPARATOR '<br />') AS causal_glosa
+                            ,devolucion.nombre AS causal_devolucion
+                            ,devolucion.valor AS devolucion
                             FROM facturacion_autorizacion
-                            LEFT JOIN facturacion_autorizacion_servicio ON (facturacion_autorizacion.autorizacion=facturacion_autorizacion_servicio.autorizacion)
+                            LEFT JOIN factura ON (facturacion_autorizacion.factura=factura.factura)
+                            LEFT JOIN (SELECT autorizacion,SUM(valor) AS valor,SUM(cantidad) AS cantidad,SUM(autorizado) AS autorizado 
+                                        FROM facturacion_autorizacion_servicio 
+                                        GROUP BY autorizacion) AS servicios 
+                                            ON (servicios.autorizacion=facturacion_autorizacion.autorizacion)
                             LEFT JOIN facturacion_autorizacion_glosa ON (facturacion_autorizacion.autorizacion=facturacion_autorizacion_glosa.autorizacion)
-                            LEFT JOIN facturacion_autorizacion_devolucion ON (facturacion_autorizacion.autorizacion=facturacion_autorizacion_devolucion.autorizacion)
+                            LEFT JOIN (
+                                SELECT factura_devolucion.factura,SUM(factura_devolucion.valor) AS valor,GROUP_CONCAT(CONCAT(devolucion.nombre,' ($',CAST(FORMAT(factura_devolucion.valor,0) AS CHAR),')') SEPARATOR '<br />') AS nombre 
+                                    FROM factura_devolucion 
+                                    LEFT JOIN varios AS devolucion ON (factura_devolucion.causal=devolucion.id)
+                                    GROUP BY factura
+                            ) AS devolucion ON (devolucion.factura=facturacion_autorizacion.factura)
+                            -- factura_devolucion ON (facturacion_autorizacion.factura=factura_devolucion.factura)
                             LEFT JOIN varios AS glosa ON (facturacion_autorizacion_glosa.causal=glosa.id)
-                            LEFT JOIN varios AS devolucion ON (facturacion_autorizacion_devolucion.causal=devolucion.id)
                             WHERE 
                             fecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                             AND (@asegurador=0 OR facturacion_autorizacion.entidad=@asegurador)
-                            AND (@procedimiento=0 OR facturacion_autorizacion_servicio.procedimiento=@procedimiento)
-                            AND (@intensidad=0 OR facturacion_autorizacion_servicio.intensidad=@intensidad)
-                            AND ('@area'='0' OR facturacion_autorizacion_servicio.procedimiento IN (@area))
+                            AND EXISTS (SELECT 1 FROM facturacion_autorizacion_servicio WHERE facturacion_autorizacion.autorizacion=facturacion_autorizacion_servicio.autorizacion 
+                                    AND (@procedimiento=0 OR facturacion_autorizacion_servicio.procedimiento=@procedimiento)
+                                    AND (@intensidad=0 OR facturacion_autorizacion_servicio.intensidad=@intensidad)
+                                    AND ('@area'='0' OR facturacion_autorizacion_servicio.procedimiento IN (@area))
+                            )
                             GROUP BY facturacion_autorizacion.autorizacion
-                            ORDER BY facturacion_autorizacion.fecha
+                            ORDER BY factura.fecha
                             ">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />

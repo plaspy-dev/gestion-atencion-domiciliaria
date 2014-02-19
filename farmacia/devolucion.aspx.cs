@@ -395,6 +395,7 @@ public partial class farmacia_devolucion : System.Web.UI.Page
 
                 if (string.IsNullOrEmpty(productos[i].IdTabla))
                 {
+                    query["valor"] = productos[i].GetValor(UCPaciente.IdAsegurador, m_nAlmacen).ToString(CultureInfo.InvariantCulture);
                     query["devolucion"] = HId.Value;
                     if (conector.QueryMod(query.GetInsert()) == -1)
                         return;

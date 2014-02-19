@@ -30,8 +30,8 @@ public class CustomDataSource : DataSourceControl
 
 	protected CustomDataSourceView _view;
 
-	[DefaultValue("")]
 	[Category("ParentDataSource")]
+	[DefaultValue("")]
 	public string ParentDataSource
 	{
 		get
@@ -72,8 +72,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("DeleteCommand")]
+	[DefaultValue("")]
 	public string DeleteCommand
 	{
 		get
@@ -142,10 +142,10 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue(null)]
 	[Category("Data")]
 	[MergableProperty(false)]
 	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
+	[DefaultValue(null)]
 	[PersistenceMode(PersistenceMode.InnerProperty)]
 	public ParameterCollection SelectParameters => View.SelectParameters;
 
@@ -156,11 +156,11 @@ public class CustomDataSource : DataSourceControl
 	[PersistenceMode(PersistenceMode.InnerProperty)]
 	public ParameterCollection InsertParameters => View.InsertParameters;
 
-	[DefaultValue(null)]
-	[PersistenceMode(PersistenceMode.InnerProperty)]
 	[Category("Data")]
 	[MergableProperty(false)]
 	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
+	[PersistenceMode(PersistenceMode.InnerProperty)]
+	[DefaultValue(null)]
 	public ParameterCollection UpdateParameters => View.UpdateParameters;
 
 	protected CustomDataSourceView View

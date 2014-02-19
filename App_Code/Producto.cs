@@ -325,8 +325,7 @@ public class Producto
 
     public Decimal GetValor(string cliente, int almacen)
     {
-        Valor = GetCostoPromedio(almacen.ToString());
-        // Valor = CProductoValor.GetProducto(id).GetValor(cliente, almacen);
+        Valor = CProductoValor.GetProducto(id).GetValor(cliente, almacen);
         return Valor;
     }
 

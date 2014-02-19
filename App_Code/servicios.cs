@@ -541,7 +541,7 @@ public class servicios : System.Web.Services.WebService
                     if (cantidad > 0.0000001m)
                     {
                         info.cantidad = cantidad;
-                        info.GetValor(t, Convert.ToInt32(almacen));
+                        info.GetValor(Paciente.GetPaciente(t).entidadId, Convert.ToInt32(almacen));
                         lista.Add(info);
                     }
                 }

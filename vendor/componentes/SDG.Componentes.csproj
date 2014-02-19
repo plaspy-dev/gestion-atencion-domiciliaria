@@ -29,7 +29,7 @@
       <HintPath>../references/MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Xml" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
 </Project>

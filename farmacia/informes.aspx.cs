@@ -16,6 +16,8 @@ public partial class farmacia_informes : System.Web.UI.Page
     {
         string consultas = "0";
         foreach (ListItem item in DVer.Items) {
+            if (!string.IsNullOrEmpty(Request.QueryString["r"]))
+                item.Selected = true;
             if (item.Selected) {
                 consultas += "," + item.Value;
             }
@@ -27,8 +29,23 @@ public partial class farmacia_informes : System.Web.UI.Page
             CUsuario usuario = (CUsuario)CUsuario.GetUsuario();
             // para el filtro por usuarios.
             ViewState["entidades"] = usuario["entidades"];
-            THasta.Text = DateTime.Now.ToShortDateString();
-            TDesde.Text = DateTime.Now.AddDays(-30).ToShortDateString();
+            if (string.IsNullOrEmpty(Request.QueryString["t"]))
+                THasta.Text = DateTime.Now.ToShortDateString();
+            else THasta.Text = Request.QueryString["t"];
+            if (string.IsNullOrEmpty(Request.QueryString["t"]))
+                TDesde.Text = DateTime.Now.AddDays(-30).ToShortDateString();
+            else TDesde.Text = Request.QueryString["f"];
+            if (!string.IsNullOrEmpty(Request.QueryString["p"]))
+            {
+                TPacienteID.Text = Request.QueryString["p"];
+                TPaciente.Text = Paciente.GetPaciente(TPacienteID.Text).DocumentoYNombres;
+            }
+            if (!string.IsNullOrEmpty(Request.QueryString["m"]))
+                TNombre.Text = Producto.GetProducto(Request.QueryString["m"]).nombre;
+            if (!string.IsNullOrEmpty(Request.QueryString["r"]))
+            {
+                BBuscar_Click(sender, e);
+            }
         }
     }
 
@@ -36,6 +53,11 @@ public partial class farmacia_informes : System.Web.UI.Page
     {
         int col = Utilidades.GetGridColumnIndex(GResultados, columna);
         GResultados.FooterRow.Cells[col].Text = rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : Convert.ToInt32(x.Cells[col].Text)).ToString();
+    }
+    protected void TotalizarDinero(List<GridViewRow> rows, string columna)
+    {
+        int col = Utilidades.GetGridColumnIndex(GResultados, columna);
+        GResultados.FooterRow.Cells[col].Text = string.Format("{0:C0}", rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : Convert.ToDecimal(x.Cells[col].Text.Replace("$", ""))));
     }
     protected void ContarDistinct(List<GridViewRow> rows, string columna, string control) {
         int col = Utilidades.GetGridColumnIndex(GResultados, columna);
@@ -58,6 +80,9 @@ public partial class farmacia_informes : System.Web.UI.Page
             ((MasterPageI)Master).Excel(GResultados);
             List<GridViewRow> rows=GResultados.Rows.Cast<GridViewRow>().ToList();
             Totalizar(rows, "Cantidad");
+            TotalizarDinero(rows, "Costo");
+            TotalizarDinero(rows, "Precio");
+            TotalizarDinero(rows, "Utilidad");
             ContarDistinct(rows, "Tipo", "l0");
             ContarDistinct(rows, "Número", "l1");
             ContarDistinct(rows, "Fecha", "l2");

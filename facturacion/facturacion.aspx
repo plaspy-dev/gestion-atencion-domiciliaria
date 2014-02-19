@@ -65,6 +65,11 @@ addFunctionToStart(function() {
             collapsible: true,
             active: false
         });
+        $("#<%= TDevolucion.ClientID %>").datepicker({ onSelect: function() {
+            $("#<%= BD.ClientID %>").click();
+        } }).change(function() {
+            $("#<%= BD.ClientID %>").click();
+        });
 
         FullRowSelect("#<%= GAutorizaciones.ClientID %>");
     });
@@ -190,6 +195,7 @@ addFunctionToStart(function() {
                 </asp:Panel>
             </td>
         </tr>
+        <asp:PlaceHolder runat="server" ID="PAutorizacion" Visible="false">
         <tr>
             <td>
                 Fecha</td>
@@ -302,7 +308,7 @@ addFunctionToStart(function() {
         <tr>
             <td class="tdl">Numero de factura<asp:RequiredFieldValidator ControlToValidate="TFactura" ErrorMessage="Por favor ingrese una factura." ID="RequiredFieldValidator4" 
 	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-            <td><asp:TextBox runat="server" ID="TFactura" CssClass="entero"></asp:TextBox></td>
+            <td><asp:TextBox runat="server" ID="TFactura" CssClass="entero" AutoPostBack="true" OnTextChanged="TFactura_TextChanged"></asp:TextBox></td>
             <td>Fecha<asp:RequiredFieldValidator ControlToValidate="TFFactura" ErrorMessage="Por favor ingrese una fecha de facturación." ID="RequiredFieldValidator1" 
 	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td class="tdr"><asp:TextBox runat="server" ID="TFFactura" CssClass="fecha"></asp:TextBox></td>
@@ -314,11 +320,14 @@ addFunctionToStart(function() {
             <td class="tdr"><asp:TextBox runat="server" ID="TVencimientoF" CssClass="fecha"></asp:TextBox></td>
         </tr>
         <tr>
-            <td class="tdl">Segunda radicación</td>
-            <td><asp:TextBox runat="server" ID="TSegundaR" CssClass="fecha"></asp:TextBox></td>
-            <td>Pago</td>
-            <td class="tdr"><asp:TextBox runat="server" ID="TPago" CssClass="fecha"></asp:TextBox></td>
+            <td class="tdl">Pago</td>
+            <td><asp:TextBox runat="server" ID="TPago" CssClass="fecha"></asp:TextBox></td>
+            <td>Devolución</td>
+            <td class="tdr"><asp:TextBox runat="server" ID="TDevolucion" CssClass="fecha rfecha"></asp:TextBox>
+            <asp:Button runat="server" ID="BD" CssClass="hide" OnClick="BD_OnClicked" CausesValidation="false" />
+            </td>
         </tr>
+        <asp:PlaceHolder runat="server" ID="PDevolucion" Visible="false">
         <tr>
             <td colspan="4" class="celdaTitulo">Devolución</td>
         </tr>
@@ -348,25 +357,41 @@ addFunctionToStart(function() {
                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                         ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                         SelectCommand="SELECT varios.id, varios.nombre 
-                            ,facturacion_autorizacion_devolucion.causal
-                            ,facturacion_autorizacion_devolucion.valor
+                            ,factura_devolucion.causal
+                            ,factura_devolucion.valor
                             FROM varios 
-                            LEFT JOIN facturacion_autorizacion_devolucion ON (facturacion_autorizacion_devolucion.autorizacion=@autorizacion AND facturacion_autorizacion_devolucion.causal=varios.id)
+                            LEFT JOIN factura_devolucion ON (factura_devolucion.factura=@factura AND factura_devolucion.causal=varios.id)
                             WHERE 
-                            varios.tipo=72 AND varios.szReservado IS NULL 
+                            varios.tipo=74 AND varios.szReservado IS NULL 
                             ORDER BY varios.nombre">
                           <SelectParameters>
-                            <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="-1" />
+                            <asp:ControlParameter ControlID="TFactura" PropertyName="Text" Name="factura" DefaultValue="-1" />
                           </SelectParameters>
                     </asp:SqlDataSource>
             </td>
         </tr>
         <tr>
-            <td class="tdl"></td>
-            <td></td>
-            <td>Fecha</td>
-            <td class="tdr" align="right"><asp:TextBox runat="server" ID="TDevolucion" CssClass="fecha"></asp:TextBox></td>
+            <td colspan="4" class="celdaTitulo">Segunda factura</td>
         </tr>
+        <tr>
+            <td class="tdl">Numero de factura</td>
+            <td><asp:TextBox runat="server" ID="TFactura2" CssClass="entero" AutoPostBack="true" OnTextChanged="TFactura2_TextChanged"></asp:TextBox></td>
+            <td>Fecha</td>
+            <td class="tdr"><asp:TextBox runat="server" ID="TFFactura2" CssClass="fecha"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td class="tdl">Radicación</td>
+            <td><asp:TextBox runat="server" ID="TRadicacion2" CssClass="fecha"></asp:TextBox></td>
+            <td>Vencimiento</td>
+            <td class="tdr"><asp:TextBox runat="server" ID="TVencimientoF2" CssClass="fecha"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td class="tdl">Pago</td>
+            <td><asp:TextBox runat="server" ID="TPago2" CssClass="fecha"></asp:TextBox></td>
+            <td></td>
+            <td class="tdr"></td>
+        </tr>
+        </asp:PlaceHolder>
         <tr>
             <td colspan="4" class="celdaTitulo">Glosa</td>
         </tr>
@@ -392,12 +417,12 @@ addFunctionToStart(function() {
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Aceptado">
                             <ItemTemplate>
-                                <asp:TextBox runat="server" ID="TA" CssClass="dinero" Text='<%# Eval("valor").ToString()=="" ? "" : Convert.ToDecimal(Eval("valor_aceptado")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>'></asp:TextBox>
+                                <asp:TextBox runat="server" ID="TA" CssClass="dinero" Text='<%# Eval("valor_aceptado").ToString()=="" ? "" : Convert.ToDecimal(Eval("valor_aceptado")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>'></asp:TextBox>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Soportado">
                             <ItemTemplate>
-                                <asp:TextBox runat="server" ID="TS" CssClass="dinero" Text='<%# Eval("valor").ToString()=="" ? "" : Convert.ToDecimal(Eval("valor_soportado")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>'></asp:TextBox>
+                                <asp:TextBox runat="server" ID="TS" CssClass="dinero" Text='<%# Eval("valor_soportado").ToString()=="" ? "" : Convert.ToDecimal(Eval("valor_soportado")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>'></asp:TextBox>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
@@ -413,7 +438,7 @@ addFunctionToStart(function() {
                             FROM varios 
                             LEFT JOIN facturacion_autorizacion_glosa ON (facturacion_autorizacion_glosa.autorizacion=@autorizacion AND facturacion_autorizacion_glosa.causal=varios.id)
                             WHERE 
-                            varios.tipo=73 AND varios.szReservado IS NULL 
+                            varios.tipo=75 AND varios.szReservado IS NULL 
                             ORDER BY varios.nombre">
                           <SelectParameters>
                             <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="-1" />
@@ -439,6 +464,7 @@ addFunctionToStart(function() {
                 <asp:Button ID="BAceptar" runat="server" Text="Aceptar" onclick="BAceptar_Click" /> <asp:Button ID="BCancelar" runat="server" Text="Cancelar" CausesValidation="false" onclick="BCancelar_Click" />
             </td>
         </tr>
+        </asp:PlaceHolder>
         </asp:PlaceHolder>
     </table>
     </ContentTemplate>

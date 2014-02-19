@@ -378,13 +378,9 @@ public partial class farmacia_salida : System.Web.UI.Page
                 query = productos[i].GetQuery("salida_items" + m_nAlmacen.ToString());
 
                 // recalculamos los precios para los que tienen lista de precios cerradas.
-                if (configuracion.nValorTipo == 1)
-                    productos[i].GetValor("", Convert.ToInt32(m_nAlmacen.ToString()));
-
-                query["valor"] = productos[i].Valor.ToString(CultureInfo.InvariantCulture);
-
                 if (string.IsNullOrEmpty(productos[i].IdTabla))
                 {
+                    query["valor"] = productos[i].GetValor(UCPaciente.IdAsegurador, m_nAlmacen).ToString(CultureInfo.InvariantCulture);
                     query["salida"] = HId.Value;
                     if (conector.QueryMod(query.GetInsert()) == -1)
                         return;

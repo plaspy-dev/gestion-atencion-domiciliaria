@@ -62,8 +62,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                         }
                         LTipos_SelectedIndexChanged(sender, e);
                         ViewState["cargos"] = conector.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + HId.Value);
-                        ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(IFNULL(costo,0),';',IFNULL(maxima,0))) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
-                        ViewState["entidades"] = conector.QueryString("SELECT GROUP_CONCAT(entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value + " ORDER BY medicamento");
+                        ViewState["costos"] = conector.QueryString("SELECT GROUP_CONCAT(CONCAT(IFNULL(costo,0),';',IFNULL(maxima,0)) ORDER BY entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value);
+                        ViewState["entidades"] = conector.QueryString("SELECT GROUP_CONCAT(entidad ORDER BY entidad) FROM medicamento_valor WHERE medicamento=" + HId.Value);
 
                         BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
                         SProveedor.SelectParameters["producto"].DefaultValue = HId.Value;

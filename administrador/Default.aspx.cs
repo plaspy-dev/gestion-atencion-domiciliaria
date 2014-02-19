@@ -158,9 +158,9 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Componente educativo", 67, parent);
 
             parent = Add("Facturación");
-            Add("Causal devolución", 72, parent);
-            Add("Causal glosa", 73, parent);
-            // disponible 74
+            Add("Causal devolución", 74, parent);
+            Add("Causal glosa", 75, parent);
+            // disponible 76
 
 
             if (HTipo.Value.Length == 0)

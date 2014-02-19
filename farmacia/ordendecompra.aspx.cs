@@ -196,6 +196,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
             producto.Costo = Decimal.Parse(TCosto.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture);
         }
         catch { }
+        producto.GetValor(UCPaciente.IdPaciente,m_nAlmacen);
 
         ProductoUsado productousadoNuevo = new ProductoUsado(HProductos.Value);
         ProductoUsado productoUsado = ProductoUsado.DesSerialize(HUsado.Value);
@@ -356,6 +357,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
 
                 if (string.IsNullOrEmpty(productos[i].IdTabla))
                 {
+                    query["valor"] = productos[i].GetValor(UCPaciente.IdAsegurador, m_nAlmacen).ToString(CultureInfo.InvariantCulture);
                     query["orden_compra"] = HId.Value;
                     if (conector.QueryMod(query.GetInsert()) == -1)
                         return;

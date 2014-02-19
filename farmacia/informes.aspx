@@ -158,6 +158,9 @@
             <asp:BoundField HeaderText="Paciente" DataField="paciente" SortExpression="paciente" FooterStyle-HorizontalAlign="Right" />
             <asp:BoundField HeaderText="Productos" DataField="producto" SortExpression="producto" FooterStyle-HorizontalAlign="Right" />
             <asp:BoundField HeaderText="Cantidad" DataField="total" SortExpression="total" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
+            <asp:BoundField HeaderText="Costo" DataField="costo" SortExpression="costo" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" DataFormatString="{0:C0}" />
+            <asp:BoundField HeaderText="Precio" DataField="valor" SortExpression="valor" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" DataFormatString="{0:C0}" />
+            <asp:BoundField HeaderText="Utilidad" DataField="utilidad" SortExpression="utilidad" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" DataFormatString="{0:C0}" />
         </Columns>
     </asp:GridView>
     <div style="text-align: right;">
@@ -169,6 +172,9 @@
                 SelectCommand="
                     (SELECT 1 AS consulta, entrada{0}.id,entrada{0}.fecha,tercero.nombre AS nombre
                             ,medicamentos.nombre AS producto, -entrada_items{0}.cantidad AS total,NULL AS paciente
+                            ,entrada_items{0}.cantidad*entrada_items{0}.costo AS costo
+                            ,NULL AS valor
+                            ,entrada_items{0}.cantidad*entrada_items{0}.costo AS utilidad
                             FROM entrada{0}
                             LEFT JOIN tercero ON (tercero.id=entrada{0}.tercero)
                             LEFT JOIN entrada_items{0} ON (entrada{0}.id=entrada_items{0}.entrada)
@@ -187,6 +193,9 @@
                    ) UNION ALL (
                         SELECT 3 AS consulta, salida{0}.id,salida{0}.fecha,NULL AS nombre
                             ,medicamentos.nombre AS producto, salida_items{0}.cantidad AS total,salida{0}.paciente
+                            ,salida_items{0}.cantidad*salida_items{0}.costo AS costo
+                            ,salida_items{0}.cantidad*salida_items{0}.valor AS valor
+                            ,salida_items{0}.cantidad*salida_items{0}.valor-salida_items{0}.cantidad*salida_items{0}.costo AS utilidad
                             FROM salida{0}
                             LEFT JOIN salida_items{0} ON (salida{0}.id=salida_items{0}.salida)
                             LEFT JOIN medicamentos ON (medicamentos.id=salida_items{0}.producto)
@@ -203,6 +212,9 @@
                    ) UNION ALL (
                         SELECT 2 AS consulta,orden_compra{0}.id,orden_compra{0}.fecha,tercero.nombre AS nombre
                             ,medicamentos.nombre AS producto, orden_compra_items{0}.cantidad AS total,orden_compra{0}.paciente
+                            ,orden_compra_items{0}.cantidad*orden_compra_items{0}.costo AS costo
+                            ,orden_compra_items{0}.cantidad*orden_compra_items{0}.valor AS valor
+                            ,orden_compra_items{0}.cantidad*orden_compra_items{0}.valor-orden_compra_items{0}.cantidad*orden_compra_items{0}.costo AS utilidad
                             FROM orden_compra{0}
                             LEFT JOIN tercero ON (tercero.id=orden_compra{0}.tercero)
                             LEFT JOIN orden_compra_items{0} ON (orden_compra{0}.id=orden_compra_items{0}.orden_compra)
@@ -222,6 +234,9 @@
                    ) UNION ALL (
                         SELECT 4 AS consulta,devolucion{0}.id,devolucion{0}.fecha,NULL AS nombre
                             ,medicamentos.nombre AS producto, -devolucion_items{0}.cantidad AS total,devolucion{0}.paciente
+                            ,devolucion_items{0}.cantidad*devolucion_items{0}.costo AS costo
+                            ,devolucion_items{0}.cantidad*devolucion_items{0}.valor AS valor
+                            ,devolucion_items{0}.cantidad*devolucion_items{0}.valor-devolucion_items{0}.cantidad*devolucion_items{0}.costo AS utilidad
                             FROM devolucion{0}
                             LEFT JOIN devolucion_items{0} ON (devolucion{0}.id=devolucion_items{0}.devolucion)
                             LEFT JOIN medicamentos ON (medicamentos.id=devolucion_items{0}.producto)

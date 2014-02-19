@@ -93,7 +93,7 @@ public class CProductoValor
                 try
                 {
                     Decimal dValor = 0;
-                    dValor = Convert.ToDecimal(conector.QueryString(string.Format("SELECT valor FROM valor_cliente WHERE producto={1} AND cliente={0}", cliente, id)));
+                    dValor = Convert.ToDecimal(conector.QueryString(string.Format("SELECT costo FROM medicamento_valor WHERE medicamento={1} AND entidad={0}", cliente, id)));
                     pValorCliente[Convert.ToInt32(cliente)] = dValor;
                     Save();
                     if (dValor > 0)
