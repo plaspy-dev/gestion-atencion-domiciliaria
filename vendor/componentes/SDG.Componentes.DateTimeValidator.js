@@ -1,6 +1,8 @@
 ﻿function getDate(fecha) {
     var reggie = new RegExp('(\\d{2})/(\\d{2})/(\\d{4})', 'g');
     var dateArray = reggie.exec(fecha);
+    if (dateArray == null)
+        return null;
     return new Date(
         (+dateArray[3]),
         (+dateArray[2]) - 1, /*Careful, month starts at 0!*/
@@ -27,6 +29,10 @@ function getDateTime(fecha) {
 function onValidate_DateTime(sender, args) {
     args.IsValid = false;
     var fecha = getDateTime(args.Value);
+    if (fecha == null) {
+        args.IsValid = true; // esta en blanco la fecha
+        return;
+    }
     if (sender.maximunValue) {
         var maximo = getDateTime(sender.maximunValue);
         if (fecha > maximo) {

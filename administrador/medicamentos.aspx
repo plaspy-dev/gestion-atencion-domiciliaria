@@ -131,6 +131,10 @@
                   &nbsp;</td>
           </tr>
           <tr>
+            <td>Precio regulado</td>
+            <td><asp:TextBox runat="server" ID="TPrecioRegulado" CssClass="dinero"></asp:TextBox></td>
+          </tr>
+          <tr>
             <td>&nbsp;</td>
             <td><asp:CheckBox ID="CImprimirHoja" runat="server" Text="Imprimir en una sola hoja" /></td>
             <td>&nbsp;</td>

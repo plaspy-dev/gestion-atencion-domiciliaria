@@ -40,6 +40,7 @@ public class Producto
     public Decimal Valor { set; get; }
     public int DiasV { set; get; }
     public string FormatoLote { set; get; }
+    public Decimal? PrecioRegulado { set; get; }
 
     [XmlIgnore]
     public bool bIngreso = false;
@@ -256,6 +257,7 @@ public class Producto
                 query += "forma";
                 query += "codigo";
                 query += "concentracion";
+                query+="precio_regulado";
 
                 /*query += "vence";
                 query += "lote";
@@ -274,6 +276,7 @@ public class Producto
                     producto.descripcion = reader["forma"].ToString();
                     producto.codigo = reader["codigo"].ToString();
                     producto.unidad = reader["concentracion"].ToString();
+                    try { producto.PrecioRegulado = Convert.ToDecimal(reader["precio_regulado"]); } catch { }
                     producto.nVence= CConfiguracion.GetConfiguracion().nProductoVence;
                     producto.nLote = CConfiguracion.GetConfiguracion().nProductoLote;
                     producto.nSerial = 0;
@@ -353,6 +356,7 @@ public class Producto
         Costo = producto.Costo;
         DiasV = producto.DiasV;
         FormatoLote = producto.FormatoLote;
+        PrecioRegulado = producto.PrecioRegulado;
 
         ubicacion = 0;
         estado = 0;
@@ -718,6 +722,7 @@ public class Producto
         producto.Ingreso = Ingreso;
         producto.Costo = Costo;
         producto.Valor = Valor;
+        producto.PrecioRegulado = PrecioRegulado;
 
         return producto;
     }

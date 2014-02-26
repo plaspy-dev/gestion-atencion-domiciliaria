@@ -43,18 +43,23 @@ public partial class phd_programacionc : System.Web.UI.UserControl
 
                 using (CConectorMS conector = new CConectorMS())
                 {
-
                     SqlDataReader reader = conector.Query(query.GetSelect("prgId=" + HId.Value));
                     if (reader != null && reader.Read())
                     {
                         CRecurrente.Checked = false;
                         TFechaFinal.Text = TFecha.Text = reader["prgFechaProg"].ToString();
-                        TObservaciones.Text = reader["prgObservaciones"].ToString();
                         TSesiones.Text = reader["prgNumSesion"].ToString();
                         TProfesionalID.Text = reader["perId"].ToString();
+                        DAutorizacion.DataBind();
                         Utilidades.SelectInDropDown(DAutorizacion, reader["autNumero"], reader["autNumero"].ToString());
+                        DAutorizacion_SelectedIndexChanged(null, null);
 
-                        Utilidades.SelectInDropDown(DActividad, reader["actId"]);
+                        string procedimiento= Procedimientos.GetProcedimiento(reader["actId"].ToString().Split('_')[0]);
+                        if(!string.IsNullOrEmpty(reader["intensidad"].ToString()))
+                            procedimiento += " [" + Procedimientos.GetVarios(reader["intensidad"].ToString()) + "]";
+
+                        DActividad.DataBind();
+                        Utilidades.SelectInDropDown(DActividad, reader["actId"].ToString(), procedimiento);
                         ListItem item = DActividad.Items.FindByValue(reader["actId"].ToString());
                         if (item != null)
                         {
@@ -68,10 +73,9 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                                 }
                             }
                         }
+                        TObservaciones.Text = reader["prgObservaciones"].ToString();
                         TProfesional.Text = conector.QueryString("SELECT perNombre FROM dbo.admPersonalHS where perId='" + reader["perId"].ToString() + "'");
                         ViewState["maximo"] = TSesiones.Text;
-
-                        DAutorizacion_SelectedIndexChanged(null, null);
                     }
                 }
             }

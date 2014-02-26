@@ -25,8 +25,8 @@ public partial class farmacia_salida : System.Web.UI.Page
             ViewState["entidades"] = usuario["entidades"];
             CConfiguracion configuracion = CConfiguracion.GetConfiguracion();
 
-            Utilidades.GetGridColumn(GProductos, "Precio U.").Visible =
-            Utilidades.GetGridColumn(GProductos, "Precio T.").Visible =
+            Utilidades.GetGridColumn(GProductos, "Costo U.").Visible =
+            Utilidades.GetGridColumn(GProductos, "Costo T.").Visible =
             RValorF.Visible = RValor.Visible =
             TValor.Visible = LValor.Visible = configuracion.nValor != 0;
 
@@ -139,11 +139,8 @@ public partial class farmacia_salida : System.Web.UI.Page
                                 info.estado = Convert.ToInt32(reader["estado"]);
                                 info.Ingreso = reader["ingreso"].ToString();
                                 info.Costo = Convert.ToDecimal(reader["costo"]);
-                                try
-                                {
-                                    info.Valor = Convert.ToDecimal(reader["valor"]);
-                                }
-                                catch { }
+                                try { info.Valor = Convert.ToDecimal(reader["valor"]); } catch { }
+                                try { info.Costo = Convert.ToDecimal(reader["costo"]); } catch { }
 
                                 productoUsado.AddProducto(info);
                             }
@@ -153,7 +150,7 @@ public partial class farmacia_salida : System.Web.UI.Page
                         HUsado.Value = productoUsado.SerializeBinary();
                         GProductos.DataBind();
 
-                        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Precio T.")].Text = string.Format("{0:C}", productoUsado.GetValorTotal());
+                        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
                         GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
                         GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
 
@@ -232,7 +229,7 @@ public partial class farmacia_salida : System.Web.UI.Page
             producto = (Producto)productos[i];
             try
             {
-                producto.Valor = Decimal.Parse(TValor.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture);
+                producto.Costo = Decimal.Parse(TValor.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture);
             }
             catch { }
             productoUsado.AddProducto(producto);
@@ -262,7 +259,7 @@ public partial class farmacia_salida : System.Web.UI.Page
         REntero.Enabled = true;
         RDecimal.Enabled = true;
 
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Precio T.")].Text = string.Format("{0:C}", productoUsado.GetValorTotal());
+        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
         GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
         GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
 
@@ -434,7 +431,7 @@ public partial class farmacia_salida : System.Web.UI.Page
             TUbicacion.Text = producto.NombreUbicacion;
             TEstado.Text = producto.szEstado;
             TSerial.Text = producto.serial;
-            TValor.Text = producto.Valor.ToString(CultureInfo.InvariantCulture);
+            TValor.Text = producto.Costo.ToString(CultureInfo.InvariantCulture);
             BAgregar_Click(sender, e);
         }
         CAutomatico.Checked = automatico;
@@ -462,7 +459,7 @@ public partial class farmacia_salida : System.Web.UI.Page
         GProductos.DataBind();
         HUsado.Value = productoUsado.SerializeBinary();
 
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Precio T.")].Text = string.Format("{0:C}", productoUsado.GetValorTotal());
+        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
         GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
         GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
 

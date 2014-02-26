@@ -8,7 +8,7 @@
     var editor = null;
     addFunctionToStart(function() {
         editor = null;
-        $("#ctl00_cph_TTA").mask("999/99");
+        $("#ctl00_cph_TTA").mask("999/999");
         $("#<%= TFuncionario.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({

@@ -11,7 +11,7 @@
 
 
         editor = null;
-        $("#<%= TTA.ClientID %>").mask("999/99");
+        $("#<%= TTA.ClientID %>").mask("999/999");
         $("#<%= TCIE10.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({

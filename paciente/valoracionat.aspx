@@ -38,7 +38,7 @@
         });
         FullRowSelect("#<%= GHistorial.ClientID %>");
         
-        $("#<%= TTA.ClientID %>").mask("999/99");
+        $("#<%= TTA.ClientID %>").mask("999/999");
         joinTableRows(joinTableRows($("#<%= GOxigeno.ClientID %> tr"), 1), 0);
         joinTableCells($("#<%= GOxigeno.ClientID %> tr:eq(0) th"));
         $("#<%= GFuerza.ClientID %> tbody tr:eq(0)").before("<tr class=GridHeader><th colspan=2></th><th colspan=2>Derecha</th><th colspan=2>Izquierda</th><th>Grados</th></tr>");

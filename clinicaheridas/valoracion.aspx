@@ -248,7 +248,6 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                         <asp:TemplateField HeaderText="Antecedentes">
                             <ItemTemplate>
                                 <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator11" ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                             </ItemTemplate>
                             <ItemStyle Wrap="false" />
                         </asp:TemplateField>
@@ -286,7 +285,6 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                         <asp:TemplateField HeaderText="Riesgo">
                             <ItemTemplate>
                                 <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                             </ItemTemplate>
                             <ItemStyle Wrap="false" />
                         </asp:TemplateField>

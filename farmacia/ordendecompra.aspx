@@ -150,6 +150,9 @@
                     $("#sunidad").text("(" + ui.item.unidad + ")");
                 else $("#sunidad").text("");
                 $("#<%= TCosto.ClientID %>").autoNumeric('set', ui.item.Costo);
+                $("#tRegulado").toggle(ui.item.PrecioRegulado!=null);
+                if(ui.item.PrecioRegulado!=null)
+                    $("#sRegulado").text(currencyFormatted(ui.item.PrecioRegulado));
 
                 try { ValidatorEnable($("#<%= REntero.ClientID %>")[0], ui.item.nNumero==1); } catch (e) {}
                 try { ValidatorEnable($("#<%= RDecimal.ClientID %>")[0], ui.item.nNumero!=1); } catch (e) {}
@@ -243,6 +246,10 @@
         </tr>
         <tr>
             <td colspan="5" class="GridHeader"><asp:HiddenField runat="server" ID="HProductos" EnableViewState="false" /><asp:HiddenField runat="server" ID="HUsado" />Productos</td>
+        </tr>
+        <tr class="GridAltRow hide" id="tRegulado">
+            <td class="tdl"></td>
+            <td colspan="4" class="tdr">Precio regulado <span id="sRegulado">$1.500</span></td>
         </tr>
         <tr>
             <td class="tdl"></td>

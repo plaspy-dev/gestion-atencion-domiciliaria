@@ -542,6 +542,7 @@ public class servicios : System.Web.Services.WebService
                     {
                         info.cantidad = cantidad;
                         info.GetValor(Paciente.GetPaciente(t).entidadId, Convert.ToInt32(almacen));
+                        info.Costo = info.GetCostoPromedio(almacen);
                         lista.Add(info);
                     }
                 }

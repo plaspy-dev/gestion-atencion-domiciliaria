@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Globalization;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
 
@@ -38,7 +39,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                 using (CConector conector = new CConector())
                 {
 
-                    MySqlDataReader reader = conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica,hoja_sola FROM medicamentos WHERE id=" + Query.GetValor(Request.QueryString["imp"].Trim()));
+                    MySqlDataReader reader = conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica,hoja_sola,precio_regulado FROM medicamentos WHERE id=" + Query.GetValor(Request.QueryString["imp"].Trim()));
 
                     if (reader != null && reader.Read())
                     {
@@ -51,6 +52,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                         TConcentracion.Text = reader["concentracion"].ToString();
                         TAclaracion.Text = reader["aclaracion"].ToString();
                         CAutomatica.Checked = reader["automatica"].ToString() == "1";
+                        try { TPrecioRegulado.Text = Convert.ToDecimal(reader["precio_regulado"]).ToString(CultureInfo.InvariantCulture); } catch { }
                         CImprimirHoja.Checked = reader["hoja_sola"].ToString() == "1";
                         Utilidades.SelectInDropDown(DGrupo, reader["grupo"]);
 
@@ -95,6 +97,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
             query["grupo"] = DGrupo.SelectedValue;
             query["automatica"] = CAutomatica.Checked ? "1" : "";
             query["hoja_sola"] = CImprimirHoja.Checked ? "1" : "";
+            query["precio_regulado"] = TPrecioRegulado.Text.Replace(",", "").Replace("$", "");
 
             if (HId.Value.Length == 0)
             {
@@ -207,6 +210,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TConcentracion.Text = "";
         TAclaracion.Text = "";
         DGrupo.SelectedValue = "";
+        TPrecioRegulado.Text = "";
         CImprimirHoja.Checked = false;
         GCargos.DataBind();
         GEntidades.DataBind();
