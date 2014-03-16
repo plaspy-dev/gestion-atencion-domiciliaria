@@ -42,7 +42,7 @@ public partial class admisiones_amasivas : System.Web.UI.Page
 
     protected void AddPaciente(string idpaciente) {
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
             Paciente actual = Paciente.GetPaciente(idpaciente);
@@ -111,20 +111,19 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             return;
         }
 
-        using(CConector conectormysql= new CConector()) 
-        using (CConectorMS conector = new CConectorMS())
+        using(CConector conector= new CConector()) 
         {
-            Query query = new Query("phdAutorizacion");
+            Query query = new Query("autorizacion");
             conector.StartTransaction();
 
-            query["autFecha"] = TFecha.Text;
-            query["autFechaVenc"] = TVencimiento.Text;
+            query["autFecha"] = Query.GetMySQLDateFormat(TFecha.Text);
+            query["autFechaVenc"] = Query.GetMySQLDateFormat(TVencimiento.Text);
             query["autObservaciones"] = TObservaciones.Text;
             query["autActivo"] = "1";
             query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
-            query["segFechaIngreso"] = "GETDATE()";
+            query["segFechaIngreso"] = "SYSDATE()";
             query["segUsuarioConfirma"] = Usuario.GetUsuario().GetLogin();
-            query["segFechaConfirma"] = "GETDATE()";
+            query["segFechaConfirma"] = "SYSDATE()";
 
             string[] querys = SActividades.GetQuerys();
 
@@ -133,8 +132,8 @@ public partial class admisiones_amasivas : System.Web.UI.Page
 
                 DateTime tiempo = Convert.ToDateTime(TFecha.Text);
                 string autorizacion = conector.QueryString(
-                    String.Format("SELECT 'AD{0}'+RIGHT('000'+CAST(ISNULL(MAX(CONVERT(int,SUBSTRING(autNumero,9,LEN(autnumero)-8))), 0)+1 AS VARCHAR(3)),3)"
-                            + " FROM phdAutorizacion"
+                    String.Format("SELECT CONCAT('AD{0}',LPAD(IFNULL(MAX(REPLACE(autNumero,'AD{0}','')), 0)+1, 3, '0'))"
+                            + " FROM autorizacion"
                             + " WHERE autNumero LIKE 'AD{0}%'", tiempo.ToString("yyMMdd")));
 
                 query["autNumero"] = autorizacion;
@@ -144,7 +143,7 @@ public partial class admisiones_amasivas : System.Web.UI.Page
                 int res = conector.QueryMod(query.GetInsert(), true);
                 if (res == -1)
                     return;
-                if (conectormysql.InsertModificacion(res.ToString(), null, "~/admisiones/autorizaciones.aspx") == -1)
+                if (conector.InsertModificacion(res.ToString(), null, "~/admisiones/autorizaciones.aspx") == -1)
                     return;
 
                 string szQuery;
@@ -157,6 +156,7 @@ public partial class admisiones_amasivas : System.Web.UI.Page
                             return;
                     }
                 }
+                Autorizaciones.UpdateSesiones(conector, autorizacion);
             }
             conector.Commit();
 

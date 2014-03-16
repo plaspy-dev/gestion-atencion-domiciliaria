@@ -929,14 +929,14 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
         }
         evento.Contenido = evento.Contenido.Replace("$szFotos$", ImprimirFotos());
 
-        using (CConectorMS conectorms = new CConectorMS())
+        using (CConector conector = new CConector())
         {
-            Query query = new Query("admPersonalHS");
+            Query query = new Query("recurso_humano");
 
-            query["szProfesional"] = "admPersonalHS.perDocumento";
-            query["szCargo"] = "admCargo.carDescripcion";
+            query["szProfesional"] = "recurso_humano.perDocumento";
+            query["szCargo"] = "cargo.carDescripcion";
 
-            SqlDataReader reader = conectorms.Query(query.GetSelect("perId=" + Query.GetValor(UCFuncionario.IdFuncionario), " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"));
+            MySqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(UCFuncionario.IdFuncionario), " LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)"));
             if (reader != null)
             {
                 bool l = reader.Read();
@@ -945,9 +945,6 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
                     evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
                 }
             }
-        }
-        using (CConector conector = new CConector())
-        {
             evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(UCFuncionario.IdFuncionario)));
         }
         // limpiamos el inactivo de los pacientes

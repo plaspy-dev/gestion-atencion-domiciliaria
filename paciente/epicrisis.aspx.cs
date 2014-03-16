@@ -132,15 +132,15 @@ public partial class paciente_epicrisis : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
         evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
 
-        Query query = new Query("phdPaciente");
+        Query query = new Query("paciente");
 
-        query["szProfesional"] = "admPersonalHS.perDocumento";
-        query["szMedico"] = "admPersonalHS.perNombre";
+        query["szProfesional"] = "recurso_humano.perDocumento";
+        query["szMedico"] = "recurso_humano.perNombre";
 
-        using (CConectorMS conectorms = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
-            SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"));
+            MySqlDataReader reader = conector.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente, "LEFT JOIN recurso_humano ON (recurso_humano.perId=paciente.megId)"));
             if (reader != null)
             {
                 bool l = reader.Read();

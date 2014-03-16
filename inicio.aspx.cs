@@ -53,8 +53,8 @@ public partial class inicio : System.Web.UI.Page
 
 
         SAlertas.SelectCommand = info.SelectCommand;
-        SAlertas.ConnectionString = ConfigurationManager.ConnectionStrings[info.MySQLDB ? "MySQLConnectionString" : "connBD"].ConnectionString;
-        SAlertas.ProviderName = ConfigurationManager.ConnectionStrings[info.MySQLDB ? "MySQLConnectionString" : "connBD"].ProviderName;
+        SAlertas.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnectionString"].ConnectionString;
+        SAlertas.ProviderName = ConfigurationManager.ConnectionStrings["MySQLConnectionString"].ProviderName;
 
         GridView GAlertas = (GridView)GetControl(parent, "GAlertas");
 

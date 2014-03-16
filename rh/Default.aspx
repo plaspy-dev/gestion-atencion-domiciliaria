@@ -67,30 +67,32 @@
             <td>
                 Estado</td>
             <td>
-                <asp:DropDownList ID="DEStado" runat="server" AppendDataBoundItems="true" 
+                <asp:DropDownList ID="DEStado" runat="server" AppendDataBoundItems="true" CssClass="anchomaxcombo"
                     DataSourceID="SEstado" DataTextField="nombre" DataValueField="id">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SEstado" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT eEstId AS id,eEstDesc AS nombre FROM admEstadoEstancia">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT eEstId AS id,eEstDesc AS nombre FROM funcionario_estados">
                 </asp:SqlDataSource>
             </td>
             <td>
-                Nombre o apellido</td>
+                Nombres</td>
             <td>
                 <asp:TextBox ID="TNombres" runat="server"></asp:TextBox>
             </td>
             <td>
                 Cargo</td>
             <td>
-                <asp:DropDownList ID="DCargo" runat="server" AppendDataBoundItems="true" 
+                <asp:DropDownList ID="DCargo" runat="server" AppendDataBoundItems="true"  CssClass="anchomaxcombo"
                     DataSourceID="SCargo" DataTextField="nombre" DataValueField="id">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SCargo" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT carId AS id,carDescripcion AS nombre FROM admCargo ORDER BY nombre">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT carId AS id,carDescripcion AS nombre FROM cargo ORDER BY nombre">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -113,13 +115,14 @@
                 <asp:CheckBox ID="CRetiro" runat="server" Text="Retiro" />
             </td>
             <td>
-                <asp:DropDownList ID="DRetiro" runat="server" AppendDataBoundItems="true" 
+                <asp:DropDownList ID="DRetiro" runat="server" AppendDataBoundItems="true" CssClass="anchomaxcombo" 
                     DataSourceID="SRetiro" DataTextField="nombre" DataValueField="id">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SRetiro" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT mteId AS id,mteDescripcion AS nombre from admMotivoTerminacion">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT mteId AS id,mteDescripcion AS nombre from motivo_retiro">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -170,21 +173,22 @@
     </div>
     </div>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT per.perId AS id,per.perDocumento AS documento, per.perNombre AS nombres,  per.perFechaContrato AS fechacontrato,  
-                per.perFechaTermContrato,admCargo.carDescripcion AS cargo,admMotivoTerminacion.mteDescripcion AS retiro,admEstadoEstancia.eEstDesc AS estado,
+                per.perFechaTermContrato,cargo.carDescripcion AS cargo,motivo_retiro.mteDescripcion AS retiro,funcionario_estados.eEstDesc AS estado,
                 per.perCelular AS celular
-                FROM dbo.admPersonalHS per  
-                LEFT JOIN admCargo on per.carId = admCargo.carId    
-                LEFT JOIN admDisponibilidad on admDisponibilidad.dispId = per.dispId    
-                LEFT JOIN admMotivoTerminacion ON (admMotivoTerminacion.mteId=per.mteId)  
-                LEFT JOIN admEstadoEstancia ON (admEstadoEstancia.eEstId=per.eEstId) 
+                FROM recurso_humano per  
+                LEFT JOIN cargo on per.carId = cargo.carId    
+                LEFT JOIN disponibilidad on disponibilidad.dispId = per.dispId    
+                LEFT JOIN motivo_retiro ON (motivo_retiro.mteId=per.mteId)  
+                LEFT JOIN funcionario_estados ON (funcionario_estados.eEstId=per.eEstId) 
                 WHERE (@estado=0 OR per.eEstId=@estado)  AND(@cargo=0 or per.carId=@cargo)   
                 and (
-                (@fretiro=1 AND (@inicio=' ' OR perFechaTermContrato>=@inicio) and (@fin=' ' or perFechaTermContrato<=@fin)) OR
-                (@fretiro=0 AND (@inicio=' ' OR per.perFechaContrato>=@inicio) and (@fin=' ' or per.perFechaContrato<=@fin))
+                (@fretiro=1 AND (@inicio=' ' OR perFechaTermContrato>=STR_TO_DATE(@inicio, '%d/%m/%Y')) and (@fin=' ' or perFechaTermContrato<=STR_TO_DATE(@fin, '%d/%m/%Y'))) OR
+                (@fretiro=0 AND (@inicio=' ' OR per.perFechaContrato>=STR_TO_DATE(@inicio, '%d/%m/%Y')) and (@fin=' ' or per.perFechaContrato<=STR_TO_DATE(@fin, '%d/%m/%Y')))
                 )
-                AND (@nombres=' ' OR per.perNombre LIKE '%' + @nombres + '%' )
+                AND (@nombres=' ' OR per.perNombre LIKE CONCAT('%', @nombres, '%'))
                 AND (@retiro=0 or per.mteId=@retiro)  ORDER BY per.perFechaContrato DESC">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DEStado" PropertyName="SelectedValue" Name="estado" />

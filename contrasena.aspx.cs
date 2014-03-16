@@ -22,7 +22,6 @@ public partial class contrasena : System.Web.UI.Page
         if (!IsValid)
             return;
 
-        using (CConectorMS conectorms = new CConectorMS())
         using (CConector conector = new CConector())
         {
             Usuario usuario = Usuario.GetUsuario();
@@ -45,11 +44,6 @@ public partial class contrasena : System.Web.UI.Page
                 }
                 else
                 {
-                    if (conectorms.QueryMod("UPDATE seg_Usuarios SET usClave=" + Query.GetValor(Crypt.EncriptarDES(m_EConfirmar.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4"))) + " WHERE usIdUsuario=" + Query.GetValor(usuario.GetLogin())) == -1)
-                    {
-                        LMensaje.Text = conectorms.GetLastError();
-                        return;
-                    }
                     usuario.SetForceURL("", conector);
                     Usuario.Validate(usuario.GetLogin(), Crypt.EncriptarDES(m_EConfirmar.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4")));
                     LMensaje.Text = "Contraseña cambiada exitosamente.";

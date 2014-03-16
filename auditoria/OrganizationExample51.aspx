@@ -65,29 +65,30 @@
             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         </asp:GridView>
     <asp:SqlDataSource ID="SOrganizationExample51" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="SELECT phdPaciente.pacNombres,phdPaciente.pacFechaNac,phdPaciente.pacDocumento
-    ,CASE phdPaciente.entId WHEN 8 THEN 'MP' ELSE 'EPS' END AS tipo
-    ,ISNULL(phdPaciente.cieCodDx,'')+ ',' + ISNULL(phdPaciente.cieCodDx_1,'') + ','+ ISNULL(phdPaciente.cieCodDx_2,'') AS cied10
-    ,phdPaciente.pacFecIngPrograma
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT paciente.pacNombres,paciente.pacFechaNac,paciente.pacDocumento
+    ,CASE paciente.entId WHEN 8 THEN 'MP' ELSE 'EPS' END AS tipo
+    ,IFNULL(paciente.cieCodDx,'')+ ',' + IFNULL(paciente.cieCodDx_1,'') + ','+ IFNULL(paciente.cieCodDx_2,'') AS cied10
+    ,paciente.pacFecIngPrograma
 	,SUM(enfermeria.autNumSesiones) AS enfermeria
 	,SUM(tfisica.autNumSesiones) AS tfisica
 	,SUM(trespiratoria.autNumSesiones) AS trespiratoria
 	,SUM(tocupacional.autNumSesiones) AS tocupacional
 	,SUM(tlenguaje.autNumSesiones) AS tlenguaje
 	,SUM(vmedica.autNumSesiones) AS vmedica
-    ,phdPaciente.pacObservaciones
-    FROM phdPaciente
-    LEFT JOIN phdAutorizacion ON (phdAutorizacion.pacId=phdPaciente.pacId)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5024,5025,10004,10005,10006,10007,10008,10009,10010,10011,10012,10015,10016,10022) GROUP BY autNumero) AS enfermeria ON (enfermeria.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5029,10023) GROUP BY autNumero) AS tfisica ON (tfisica.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5030,10024,10035) GROUP BY autNumero) AS trespiratoria ON (trespiratoria.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5031,10025) GROUP BY autNumero) AS tocupacional ON (tocupacional.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5028,10026) GROUP BY autNumero) AS tlenguaje ON (tlenguaje.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5021,5022,5033,10013,10029,10030,10031,10032,10033,10034) GROUP BY autNumero) AS vmedica ON (vmedica.autNumero=phdAutorizacion.autNumero)
-    WHERE phdPaciente.entId IN (7,8)
-    AND phdAutorizacion.AutFecha BETWEEN @inicio AND @fin
-	GROUP BY phdPaciente.pacNombres,phdPaciente.pacFechaNac,phdPaciente.pacDocumento,phdPaciente.entId,phdPaciente.pacFecIngPrograma,phdPaciente.cieCodDx,phdPaciente.cieCodDx_1,phdPaciente.cieCodDx_2,phdPaciente.pacObservaciones">
+    ,paciente.pacObservaciones
+    FROM paciente
+    LEFT JOIN autorizacion ON (autorizacion.pacId=paciente.pacId)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5024,5025,10004,10005,10006,10007,10008,10009,10010,10011,10012,10015,10016,10022) GROUP BY autNumero) AS enfermeria ON (enfermeria.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5029,10023) GROUP BY autNumero) AS tfisica ON (tfisica.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5030,10024,10035) GROUP BY autNumero) AS trespiratoria ON (trespiratoria.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5031,10025) GROUP BY autNumero) AS tocupacional ON (tocupacional.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5028,10026) GROUP BY autNumero) AS tlenguaje ON (tlenguaje.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5021,5022,5033,10013,10029,10030,10031,10032,10033,10034) GROUP BY autNumero) AS vmedica ON (vmedica.autNumero=autorizacion.autNumero)
+    WHERE paciente.entId IN (7,8)
+    AND autorizacion.AutFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+	GROUP BY paciente.pacNombres,paciente.pacFechaNac,paciente.pacDocumento,paciente.entId,paciente.pacFecIngPrograma,paciente.cieCodDx,paciente.cieCodDx_1,paciente.cieCodDx_2,paciente.pacObservaciones">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TDesde" Name="inicio" PropertyName="Text" />
                     <asp:ControlParameter ControlID="THasta" Name="fin" PropertyName="Text" />
@@ -147,33 +148,34 @@
             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         </asp:GridView>
     <asp:SqlDataSource ID="SColmedica" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT 
 	'Cundinamarca' AS REGIONAL
 	,'Bogotá' AS CIUDAD
 	,'OrganizationExample15' AS 'IPS DOMICILIARIA'
-	,CASE phdPaciente.entId WHEN 4 THEN 'EPS' WHEN 25 THEN 'MEDICINA PREPAGADA' ELSE 'CRUCE' END AS PRODUCTO
-	,CASE phdPaciente.pdirId WHEN 2 THEN 'SI' ELSE 'NO' END AS 'TUTELA'
-	,phdTipoEvento.tipEDescripcion AS PROGRAMA
-	,CASE phdPaciente.tipECod WHEN 2 THEN phdPaciente.pacFecIngPrograma ELSE NULL END AS 'FECHA INGRESO DE AL PROGRAMA CRONICO'
-	,phdPaciente.pacNombres AS 'NOMBRE DEL PACIENTE'
-	,phdTipoDocumento.tdocDescripcion AS 'TIPO ID'
-	,phdPaciente.pacDocumento AS 'IDENTIFICACION'
-	,phdPaciente.pacFechaNac AS 'EDAD'
-	,phdPaciente.pacDireccion AS 'DIRECCION'
-	,phdPaciente.pacTelefono AS 'TELEFONO'
-	,phdCIE10.cirDescripcion AS 'DIAGNOSTICO PRINCIPAL'
-	,phdPaciente.cieCodDx AS 'CODIGO DE DX CIE-10'
-	,phdCIE102.cirDescripcion AS 'DIAGNOSTICO SECUNDARIO'
-	,phdCIE103.cirDescripcion AS 'OTROS DIAGNOSTICOS'
-	,CASE WHEN phdPaciente.estId=2 THEN 
-	(SELECT TOP 1 egrFecha FROM phdEgresos WHERE pacId=phdPaciente.pacId ORDER BY egrFecha DESC) 
+	,CASE paciente.entId WHEN 4 THEN 'EPS' WHEN 25 THEN 'MEDICINA PREPAGADA' ELSE 'CRUCE' END AS PRODUCTO
+	,CASE paciente.pdirId WHEN 2 THEN 'SI' ELSE 'NO' END AS 'TUTELA'
+	,tipo_evento.tipEDescripcion AS PROGRAMA
+	,CASE paciente.tipECod WHEN 2 THEN paciente.pacFecIngPrograma ELSE NULL END AS 'FECHA INGRESO DE AL PROGRAMA CRONICO'
+	,paciente.pacNombres AS 'NOMBRE DEL PACIENTE'
+	,tipo_documento.tdocDescripcion AS 'TIPO ID'
+	,paciente.pacDocumento AS 'IDENTIFICACION'
+	,paciente.pacFechaNac AS 'EDAD'
+	,paciente.pacDireccion AS 'DIRECCION'
+	,paciente.pacTelefono AS 'TELEFONO'
+	,cie10.cirDescripcion AS 'DIAGNOSTICO PRINCIPAL'
+	,paciente.cieCodDx AS 'CODIGO DE DX CIE-10'
+	,cie102.cirDescripcion AS 'DIAGNOSTICO SECUNDARIO'
+	,cie103.cirDescripcion AS 'OTROS DIAGNOSTICOS'
+	,CASE WHEN paciente.estId=2 THEN 
+	(SELECT egrFecha FROM paciente_egreso WHERE pacId=paciente.pacId ORDER BY egrFecha DESC LIMIT 1) 
 	ELSE NULL END AS 'FECHA DE EGRESO DEL PROGRAMA'
-	,CASE WHEN phdPaciente.estId=2 THEN 
-	(SELECT TOP 1 phdCausaEgreso.cegDescripcion FROM phdEgresos LEFT JOIN phdCausaEgreso ON (phdCausaEgreso.cegId=phdEgresos.cegId) WHERE pacId=phdPaciente.pacId ORDER BY egrFecha DESC) 
+	,CASE WHEN paciente.estId=2 THEN 
+	(SELECT causa_egreso.cegDescripcion FROM paciente_egreso LEFT JOIN causa_egreso ON (causa_egreso.cegId=paciente_egreso.cegId) WHERE pacId=paciente.pacId ORDER BY egrFecha DESC LIMIT 1) 
 	ELSE NULL END AS 'CAUSA EGRESO DEL PROGRAMA'
-	-- ,phdEgresos.egrFecha  AS 'FECHA DE EGRESO DEL PROGRAMA'
-	-- ,phdCausaEgreso.cegDescripcion AS 'CAUSA EGRESO DEL PROGRAMA'
+	-- ,paciente_egreso.egrFecha  AS 'FECHA DE EGRESO DEL PROGRAMA'
+	-- ,causa_egreso.cegDescripcion AS 'CAUSA EGRESO DEL PROGRAMA'
 	,'' AS 'OBSERVACIONES DEL PRESTADOR'
 	,SUM(medicog.autNumSesiones) AS 'CONSULTA MEDICA GENERAL'
 	,SUM(medicoe.autNumSesiones) AS 'CONSULTA MEDICA ESPECIALIZADA'
@@ -194,56 +196,56 @@
 	,SUM(tsocial.autNumSesiones)  AS 'CONSULTA TRABAJO SOCIAL'
 	,SUM(laboratorio.autNumSesiones) AS 'TOMA DE EXAMENES DE LABORATORIO'
 	,NULL AS 'PROCESAMIENTO EXAMENES DE LABORATORIO'
-    FROM phdPaciente
-    LEFT JOIN phdAutorizacion ON (phdAutorizacion.pacId=phdPaciente.pacId)
-	LEFT JOIN phdTipoDocumento ON (phdTipoDocumento.tdocId=phdPaciente.tdocId)
-	LEFT JOIN phdCIE10 ON (phdCIE10.cieCodDx=phdPaciente.cieCodDx)
-	LEFT JOIN phdCIE10 AS phdCIE102 ON (phdCIE102.cieCodDx=phdPaciente.cieCodDx_1)
-	LEFT JOIN phdCIE10 AS phdCIE103 ON (phdCIE103.cieCodDx=phdPaciente.cieCodDx_2)
-	-- LEFT JOIN phdEgresos ON (phdPaciente.estId=2 AND phdEgresos.pacId=phdPaciente.pacId)
-	-- LEFT JOIN phdCausaEgreso ON (phdCausaEgreso.cegId=phdEgresos.cegId)
-	LEFT JOIN phdTipoEvento ON (phdTipoEvento.tipECod=phdPaciente.tipECod)
-	-- LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5021,10013,10029) GROUP BY autNumero) AS medicog ON (medicog.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5022,10032,10033,10034) GROUP BY autNumero) AS medicoe ON (medicoe.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10015,10022) OR (actId=5024 AND intensidad IN (204,219,220)) GROUP BY autNumero) AS enfermeriap ON (enfermeriap.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10002,10003) OR (actId=5024 AND intensidad IN (197,201,203,213,214,216)) GROUP BY autNumero) AS enfermeriapuntual ON (enfermeriapuntual.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10017) OR (actId=5024 AND intensidad IN (198,198,199,200)) GROUP BY autNumero) AS curaciones ON (curaciones.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10009,10010,10011,10012) OR (actId=5024 AND intensidad IN (192,193)) GROUP BY autNumero) AS enfermeria368h ON (enfermeria368h.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10001,10004,10005,10006,10007) OR (actId=5024 AND intensidad IN (194,195)) GROUP BY autNumero) AS enfermeria12 ON (enfermeria12.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10008) OR (actId=5024 AND intensidad IN (196)) GROUP BY autNumero) AS enfermeria24 ON (enfermeria24.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10024) GROUP BY autNumero) AS trespiratoria ON (trespiratoria.autNumero=phdAutorizacion.autNumero)
-	-- LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN () GROUP BY autNumero) AS oxigenoterapia ON (oxigenoterapia.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5030,10018,10027,10035) OR (actId=5024 AND intensidad IN (217)) GROUP BY autNumero) AS oximetrias ON (oximetrias.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5029,10023) GROUP BY autNumero) AS tfisica ON (tfisica.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5031,10025,10026) GROUP BY autNumero) AS tocupacional ON (tocupacional.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5028) OR (actId=5024 AND intensidad IN (218)) GROUP BY autNumero) AS fonoaudiologia ON (fonoaudiologia.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5025,10019) GROUP BY autNumero) AS nutricion ON (nutricion.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5026,10030) GROUP BY autNumero) AS sicologia ON (sicologia.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (5027,10031) GROUP BY autNumero) AS tsocial ON (tsocial.autNumero=phdAutorizacion.autNumero)
-	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN (10028) OR (actId=5024 AND intensidad IN (205)) GROUP BY autNumero) AS laboratorio ON (laboratorio.autNumero=phdAutorizacion.autNumero)
-	-- LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM phdDetalleAutorizacion WHERE actId IN () GROUP BY autNumero) AS prolaboratorio ON (prolaboratorio.autNumero=phdAutorizacion.autNumero)
-    WHERE phdPaciente.entId IN (4,25,62) -- aliansalud, colmedica mp, cruce
-    AND phdAutorizacion.AutFecha BETWEEN @inicio AND @fin
+    FROM paciente
+    LEFT JOIN autorizacion ON (autorizacion.pacId=paciente.pacId)
+	LEFT JOIN tipo_documento ON (tipo_documento.tdocId=paciente.tdocId)
+	LEFT JOIN cie10 ON (cie10.cieCodDx=paciente.cieCodDx)
+	LEFT JOIN cie10 AS cie102 ON (cie102.cieCodDx=paciente.cieCodDx_1)
+	LEFT JOIN cie10 AS cie103 ON (cie103.cieCodDx=paciente.cieCodDx_2)
+	-- LEFT JOIN paciente_egreso ON (paciente.estId=2 AND paciente_egreso.pacId=paciente.pacId)
+	-- LEFT JOIN causa_egreso ON (causa_egreso.cegId=paciente_egreso.cegId)
+	LEFT JOIN tipo_evento ON (tipo_evento.tipECod=paciente.tipECod)
+	-- LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5021,10013,10029) GROUP BY autNumero) AS medicog ON (medicog.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5022,10032,10033,10034) GROUP BY autNumero) AS medicoe ON (medicoe.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (10015,10022) OR (actId=5024 AND intensidad IN (204,219,220)) GROUP BY autNumero) AS enfermeriap ON (enfermeriap.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (10002,10003) OR (actId=5024 AND intensidad IN (197,201,203,213,214,216)) GROUP BY autNumero) AS enfermeriapuntual ON (enfermeriapuntual.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (10017) OR (actId=5024 AND intensidad IN (198,198,199,200)) GROUP BY autNumero) AS curaciones ON (curaciones.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (10009,10010,10011,10012) OR (actId=5024 AND intensidad IN (192,193)) GROUP BY autNumero) AS enfermeria368h ON (enfermeria368h.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (10001,10004,10005,10006,10007) OR (actId=5024 AND intensidad IN (194,195)) GROUP BY autNumero) AS enfermeria12 ON (enfermeria12.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (10008) OR (actId=5024 AND intensidad IN (196)) GROUP BY autNumero) AS enfermeria24 ON (enfermeria24.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (10024) GROUP BY autNumero) AS trespiratoria ON (trespiratoria.autNumero=autorizacion.autNumero)
+	-- LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN () GROUP BY autNumero) AS oxigenoterapia ON (oxigenoterapia.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5030,10018,10027,10035) OR (actId=5024 AND intensidad IN (217)) GROUP BY autNumero) AS oximetrias ON (oximetrias.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5029,10023) GROUP BY autNumero) AS tfisica ON (tfisica.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5031,10025,10026) GROUP BY autNumero) AS tocupacional ON (tocupacional.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5028) OR (actId=5024 AND intensidad IN (218)) GROUP BY autNumero) AS fonoaudiologia ON (fonoaudiologia.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5025,10019) GROUP BY autNumero) AS nutricion ON (nutricion.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5026,10030) GROUP BY autNumero) AS sicologia ON (sicologia.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5027,10031) GROUP BY autNumero) AS tsocial ON (tsocial.autNumero=autorizacion.autNumero)
+	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (10028) OR (actId=5024 AND intensidad IN (205)) GROUP BY autNumero) AS laboratorio ON (laboratorio.autNumero=autorizacion.autNumero)
+	-- LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN () GROUP BY autNumero) AS prolaboratorio ON (prolaboratorio.autNumero=autorizacion.autNumero)
+    WHERE paciente.entId IN (4,25,62) -- aliansalud, colmedica mp, cruce
+    AND autorizacion.AutFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
 	GROUP BY 
-	phdTipoDocumento.tdocDescripcion
-	,phdPaciente.pdirId
-	,phdPaciente.tipECod
-	,phdTipoEvento.tipEDescripcion
-	,phdPaciente.entId
-	,phdPaciente.pacDocumento
-	,phdPaciente.pacFechaNac
-	,phdPaciente.pacDireccion
-	,phdPaciente.pacTelefono
-	,phdCIE10.cirDescripcion
-	,phdPaciente.cieCodDx
-	,phdCIE102.cirDescripcion
-	,phdCIE103.cirDescripcion
-	,phdPaciente.pacId
-	,phdPaciente.estId
-	-- ,phdEgresos.egrFecha
-	-- ,phdCausaEgreso.cegDescripcion
-	,phdPaciente.pacNombres,phdPaciente.pacFechaNac,phdPaciente.pacDocumento,phdPaciente.entId,phdPaciente.pacFecIngPrograma,phdPaciente.cieCodDx,phdPaciente.cieCodDx_1,phdPaciente.cieCodDx_2;
+	tipo_documento.tdocDescripcion
+	,paciente.pdirId
+	,paciente.tipECod
+	,tipo_evento.tipEDescripcion
+	,paciente.entId
+	,paciente.pacDocumento
+	,paciente.pacFechaNac
+	,paciente.pacDireccion
+	,paciente.pacTelefono
+	,cie10.cirDescripcion
+	,paciente.cieCodDx
+	,cie102.cirDescripcion
+	,cie103.cirDescripcion
+	,paciente.pacId
+	,paciente.estId
+	-- ,paciente_egreso.egrFecha
+	-- ,causa_egreso.cegDescripcion
+	,paciente.pacNombres,paciente.pacFechaNac,paciente.pacDocumento,paciente.entId,paciente.pacFecIngPrograma,paciente.cieCodDx,paciente.cieCodDx_1,paciente.cieCodDx_2;
 ">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TDesde" Name="inicio" PropertyName="Text" />

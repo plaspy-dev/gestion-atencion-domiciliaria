@@ -154,8 +154,7 @@ public partial class paciente_paraclinicos : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            using (CConectorMS conector = new CConectorMS())
-                e.Row.Cells[2].Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + e.Row.Cells[2].Text + "'");
+            e.Row.Cells[2].Text = Funcionario.GetFuncionario(e.Row.Cells[2].Text).Nombres;
         }
     }
 
@@ -167,19 +166,19 @@ public partial class paciente_paraclinicos : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + TPlanManejo.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
-        using (CConectorMS conectorms = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
             Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
             evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
             evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
 
-            Query query = new Query("admPersonalHS");
+            Query query = new Query("recurso_humano");
 
-            query["szProfesional"] = "admPersonalHS.perDocumento";
-            query["szCargo"] = "admCargo.carDescripcion";
+            query["szProfesional"] = "recurso_humano.perDocumento";
+            query["szCargo"] = "cargo.carDescripcion";
 
-            SqlDataReader reader = conectorms.Query(query.GetSelect("perId=" + Query.GetValor(DMedico.SelectedValue), " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"));
+            MySqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(DMedico.SelectedValue), " LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)"));
             if (reader != null)
             {
                 bool l = reader.Read();

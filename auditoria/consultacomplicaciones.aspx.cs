@@ -27,8 +27,7 @@ public partial class auditoria_consultacomplicaciones : System.Web.UI.Page
         if (e.Row.RowIndex != -1)
         {
             ((HyperLink)e.Row.Cells[1].Controls[0]).Text = Paciente.GetPaciente(((HyperLink)e.Row.Cells[1].Controls[0]).Text).NombreCompleto;
-            using(CConectorMS conector = new CConectorMS()) 
-                e.Row.Cells[2].Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId=" + Query.GetValor(e.Row.Cells[2].Text));
+            e.Row.Cells[2].Text = Funcionario.GetFuncionario(e.Row.Cells[2].Text).Nombres;
         }
     }
 }

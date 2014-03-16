@@ -8,17 +8,17 @@ using System.Data.SqlClient;
 using System.Text;
 using System.IO;
 using SDG.Componentes;
+using MySql.Data.MySqlClient;
+using System.Configuration;
 
 public partial class seguimiento_paciente : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        Session["foto_tabla"] = "phdPaciente";
-        Session["foto_id"] = "pacId";
-
         if(!IsPostBack) {
 
             PReactivar.Visible = false;
+            TFechaIngreso.Text = DateTime.Now.ToShortDateString();
             if (!string.IsNullOrEmpty(Request.QueryString["ip"]))
             {
                 Response.Redirect(Request.Url.AbsolutePath + "?pid=" + Crypt.DesencriptarDES(Request.QueryString["ip"]));
@@ -28,14 +28,12 @@ public partial class seguimiento_paciente : System.Web.UI.Page
             TDocumento.Focus();
             if (!string.IsNullOrEmpty(Request.QueryString["doc"]) && !string.IsNullOrEmpty(Request.QueryString["tdoc"]))
             {
-
-                using (CConectorMS conector = new CConectorMS())
+                using (CConector conector = new CConector())
                 {
-
                     TDocumento.Text = Request.QueryString["doc"];
                     Utilidades.SelectInDropDown(DDocumento, Request.QueryString["tdoc"]);
 
-                    string id = conector.QueryString("SELECT pacId FROM phdPaciente WHERE pacDocumento=" + Query.GetValor(TDocumento.Text) + " AND tdocId=" + Query.GetValor(DDocumento.SelectedValue));
+                    string id = conector.QueryString("SELECT pacId FROM paciente WHERE pacDocumento=" + Query.GetValor(TDocumento.Text) + " AND tdocId=" + Query.GetValor(DDocumento.SelectedValue));
                     if (id.Length != 0)
                     {
                         Response.Redirect(Request.Url.AbsolutePath + "?pid=" + id);
@@ -53,7 +51,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
             if (!string.IsNullOrEmpty(Request.QueryString["pid"]))
             {
-                Query query = new Query("phdPaciente");
+                Query query = new Query("paciente");
 
                 query += "pacId";
                 query += "tdocId";
@@ -94,13 +92,12 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 query += "cieCodDx_1";
                 query += "cieCodDx_2";
                 query += "categoria";
-                query += "nombre";
                 query += "diabetico";
 
-                using (CConectorMS conector = new CConectorMS())
+                using (CConector conector = new CConector())
                 {
 
-                    SqlDataReader reader = conector.Query(query.GetSelect("pacId=" + Query.GetValor(Request.QueryString["pid"]) + ""));
+                    MySqlDataReader reader = conector.Query(query.GetSelect("pacId=" + Query.GetValor(Request.QueryString["pid"]) + ""));
 
                     if (reader != null && reader.Read())
                     {
@@ -123,7 +120,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         TPNombre.Text = reader["pacPNombre"].ToString();
                         TSNombre.Text = reader["pacSNombre"].ToString();
                         Utilidades.SelectInDropDown(DSexo, reader["sexoId"]);
-                        TNacimiento.Text = ConectorMS.GetDate(reader["pacFechaNac"]);
+                        TNacimiento.Text = Query.GetFromMySQLDate(reader["pacFechaNac"]);
                         TDireccion.Text = reader["pacDireccion"].ToString();
                         TBarrio.Text = reader["pacBarrio"].ToString();
                         TTelefono.Text = reader["pacTelefono"].ToString();
@@ -131,22 +128,22 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         TMovil.Text = reader["pacCelular"].ToString();
                         TEMail.Text = reader["pacCorreo"].ToString();
                         TLlegada.Text = reader["pacEspecLlegada"].ToString();
-                        conector.SelectInDropDown(DLocalidad, reader["locId"], "SELECT locDescripcion FROM admLocalidad WHERE locId={0}");
+                        conector.SelectInDropDown(DLocalidad, reader["locId"], "SELECT locDescripcion FROM localidad WHERE locId={0}");
                         TEstrato.Text = reader["pacEstrato"].ToString();
                         TFResponsable.Text = reader["pacFamilarResponsable"].ToString();
                         TParentesco.Text = reader["pacParentesco"].ToString();
-                        conector.SelectInDropDown(DPago, reader["pdirId"], "SELECT pdirDescripcion FROM phdPagoDirecto WHERE pdirId={0}");
+                        conector.SelectInDropDown(DPago, reader["pdirId"], "SELECT pdirDescripcion FROM paciente_tipo_pago WHERE pdirId={0}");
                         TCarnet.Text = reader["pacCarne"].ToString();
                         TZona.Text = reader["pacZona"].ToString();
                         CSuministros.Checked = reader["pacEntregaSuministros"].ToString() == "1" ? true : false;
-                        conector.SelectInDropDown(DAsegurador, reader["entId"], "SELECT entNombre FROM admEntidad WHERE entId={0}");
-                        conector.SelectInDropDown(DMedico, reader["megId"], "SELECT megNombre FROM phdMegas WHERE megId={0}");
-                        TFechaIngresoAsegurador.Text = ConectorMS.GetDate(reader["pacFecIngAsegurador"]);
+                        conector.SelectInDropDown(DAsegurador, reader["entId"], "SELECT entNombre FROM asegurador WHERE entId={0}");
+                        conector.SelectInDropDown(DMedico, reader["megId"], "SELECT perNombre FROM recurso_humano WHERE perId={0}");
+                        TFechaIngresoAsegurador.Text = Query.GetFromMySQLDate(reader["pacFecIngAsegurador"]);
                         TGrado.Text = reader["pacGrado"].ToString();
                         Utilidades.SelectInDropDown(DTipoAfiliado, reader["pacTipoAfiliado"]);
                         conector.SelectInDropDown(DTipoEvento, reader["tipECod"], "SELECT tipEDescripcion FROM phdTipoEvento WHERE tipECod={0}");
-                        TFechaIngreso.Text = ConectorMS.GetDate(reader["pacFecIngPrograma"]);
-                        conector.SelectInDropDown(DEstado, reader["estId"], "SELECT estDesc FROM phdEstado WHERE estId={0}");
+                        TFechaIngreso.Text = Query.GetFromMySQLDate(reader["pacFecIngPrograma"]);
+                        conector.SelectInDropDown(DEstado, reader["estId"], "SELECT estDesc FROM paciente_estado WHERE estId={0}");
                         TNumeroETB.Text = reader["pacNumeroETB"].ToString();
                         TIntensidadTerapias.Text = reader["pacIntensidadTerapias"].ToString();
                         TCIE1.Text = reader["cieCodDx"].ToString();
@@ -155,13 +152,9 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         CDiabetico.Checked = reader["diabetico"].ToString() == "1";
                         Utilidades.SelectInDropDown(DCategoria, reader["categoria"]);
 
-                        if (reader["nombre"].ToString().Length != 0)
-                        {
-
-                            IFoto.ImageUrl = "~/archivo/foto.ashx?w=120&i=" + HId.Value;
-                            IFoto.PostBackUrl = "~/archivo/foto.ashx?i=" + HId.Value;
-                            IEliminar.Visible = usuario.CanDelete();
-                        }
+                        IFoto.ImageUrl = "~/archivo/imagen.ashx?w=120&t=p&n=" + HId.Value + ".jpg";
+                        IFoto.PostBackUrl = "~/archivo/imagen.ashx?t=p&n=" + HId.Value + ".jpg";
+                        IEliminar.Visible = usuario.CanDelete();
 
                         TCIE1.Text = Procedimientos.GetCodigoCIE(TCIE1.Text);
                         TCIE2.Text = Procedimientos.GetCodigoCIE(TCIE2.Text);
@@ -171,15 +164,15 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
                         if (DEstado.SelectedValue == "1")
                         {
-                            SMotivo.SelectCommand = "SELECT cegId id,cegDescripcion nombre FROM dbo.phdCausaEgreso WHERE cegId!=1 ORDER BY 2;";
+                            SMotivo.SelectCommand = "SELECT cegId id,cegDescripcion nombre FROM causa_egreso WHERE cegId!=1 ORDER BY 2;";
                             LReactivar.Text = "Inactivar";
                             BRetiro.Text = "Inactivar";
                         }
 
-                        reader = conector.Query("SELECT TOP 1 egrFecha,egrObs,expedidoHS FROM phdEgresos WHERE pacId=" + HId.Value + " AND cegId=1 ORDER BY egrFecha DESC;");
+                        reader = conector.Query("SELECT egrFecha,egrObs,expedidoHS FROM paciente_egreso WHERE pacId=" + HId.Value + " AND cegId=1 ORDER BY egrFecha DESC LIMIT 1;");
                         if (reader != null && reader.Read())
                         {
-                            TFechaDefuncion.Text = CConectorMS.GetDate(reader["egrFEcha"]);
+                            TFechaDefuncion.Text = Query.GetFromMySQLDate(reader["egrFEcha"]);
                             TObservacionesDefuncion.Text = reader["egrObs"].ToString();
                             CExpedidaOrganizationExample15.Checked = reader["expedidoHS"].ToString() == "1";
                             BAceptarDefuncion.Enabled = usuario.CanUpdate();
@@ -216,11 +209,20 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         return texto;
     }
 
+    public string JoinNames(string[] nombres) {
+        string resultado = "";
+        foreach (string nombre in nombres) {
+            resultado += " " + nombre.Trim();
+            resultado.Trim();
+        }
+        return resultado;
+    }
+
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         if (!IsValid)
             return;
-        Query query = new Query("phdPaciente");
+        Query query = new Query("paciente");
 
         query["tdocId"] = DDocumento.SelectedValue;
         query["pacDocumento"] = GetCleanDoc(TDocumento.Text);
@@ -230,7 +232,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         query["pacPNombre"] = TPNombre.Text;
         query["pacSNombre"] = TSNombre.Text;
         query["sexoId"] = DSexo.SelectedValue;
-        query["pacFechaNac"] = TNacimiento.Text;
+        query["pacFechaNac"] = Query.GetMySQLDateFormat(TNacimiento.Text);
         query["pacDireccion"] = TDireccion.Text;
         query["pacBarrio"] = TBarrio.Text;
         query["pacTelefono"] = TTelefono.Text;
@@ -248,11 +250,11 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         query["pacEntregaSuministros"] = CSuministros.Checked ? "1" : "0";
         query["entId"] = DAsegurador.SelectedValue;
         query["megId"] = DMedico.SelectedValue;
-        query["pacFecIngAsegurador"] = TFechaIngresoAsegurador.Text;
+        query["pacFecIngAsegurador"] = Query.GetMySQLDateFormat(TFechaIngresoAsegurador.Text);
         query["pacGrado"] = TGrado.Text;
         query["pacTipoAfiliado"] = DTipoAfiliado.SelectedValue;
         query["tipECod"] = DTipoEvento.Text;
-        query["pacFecIngPrograma"] = TFechaIngreso.Text;
+        query["pacFecIngPrograma"] = Query.GetMySQLDateFormat(TFechaIngreso.Text);
         query["estId"] = DEstado.SelectedValue;
         query["pacNumeroETB"] = TNumeroETB.Text;
         query["pacIntensidadTerapias"] = TIntensidadTerapias.Text;
@@ -262,24 +264,19 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         query["categoria"] = DCategoria.SelectedValue;
         query["diabetico"] = CDiabetico.Checked ? "1" : "";
         query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
-        if (HId.Value.Length!=0 && IFoto.PostBackUrl.Length == 0)
-        {
-            query["nombre"] = "";
-            query["tipo"] = "";
-            query["archivo"] = "";
-        }
+        query["pacNombres"] = JoinNames(new string[] {TPApellido.Text, TSApellido.Text, TPNombre.Text, TSNombre.Text });
 
-        using (CConectorMS conectorms = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
             if (HId.Value.Length > 0)
             {
-                if (conectorms.QueryMod(query.GetUpdate("pacId='" + HId.Value + "'")) == -1)
+                if (conector.QueryMod(query.GetUpdate("pacId='" + HId.Value + "'")) == -1)
                     return;
             }
             else
             {
-                string id = conectorms.QueryString("SELECT pacId FROM phdPaciente WHERE tdocId=" + DDocumento.SelectedValue + " AND pacDocumento='" + GetCleanDoc(TDocumento.Text) + "'");
+                string id = conector.QueryString("SELECT pacId FROM paciente WHERE tdocId=" + DDocumento.SelectedValue + " AND pacDocumento='" + GetCleanDoc(TDocumento.Text) + "'");
                 if (id.Length > 0)
                 {
 
@@ -287,16 +284,22 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                     return;
                 }
 
-                int res = conectorms.QueryMod(query.GetInsert(), true);
+                int res = conector.QueryMod(query.GetInsert(), true);
                 if (res == -1)
                     return;
                 HId.Value = res.ToString();
             }
+
+            Directory.CreateDirectory(Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "paciente"));
+            string foto = Path.Combine(Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "paciente"), HId.Value + ".jpg");
+            if (IFoto.PostBackUrl.Length == 0)
+            {
+                File.Delete(foto);
+            }
             if (FFoto.HasFile)
             {
-
-                Archivos archivo = new Archivos(FFoto.PostedFile, Convert.ToInt32(HId.Value));
-                archivo.SaveFile(new Query("phdPaciente"));
+                File.Delete(foto);
+                FFoto.SaveAs(foto);
             }
         }
 
@@ -316,47 +319,48 @@ public partial class seguimiento_paciente : System.Web.UI.Page
     
     protected void BRetiro_Click(object sender, EventArgs e)
     {
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
+            conector.StartTransaction();
             if (LReactivar.Text == "Reactivar")
             {
                 // reingreso paciente
-                if (conector.QueryMod("UPDATE dbo.phdPaciente set estId=1 WHERE pacId=" + HId.Value) == -1)
+                if (conector.QueryMod("UPDATE paciente set estId=1 WHERE pacId=" + HId.Value) == -1)
                     return;
-                if (conector.QueryMod("INSERT INTO dbo.phdReingresos(pacId,cingId,rinFecha,rinObs,segUsuarioIngreso) VALUES(" + HId.Value + "," + DMotivo.SelectedValue + ",'" + TFechaRetiro.Text + "','" + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "')") == -1)
+                if (conector.QueryMod("INSERT INTO paciente_reingreso(pacId,cingId,rinFecha,rinObs,segUsuarioIngreso) VALUES(" + HId.Value + "," + DMotivo.SelectedValue + ",'" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "','" + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "')") == -1)
                     return;
-                if (conector.QueryMod("insert into dbo.phdAuditServicios(pacId,audIngreso,audUsuario,audFecha,audObs,segFechaIngreso) values(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + TFechaRetiro.Text + "','" + TObservacionesRetiro.Text + "',getdate())") == -1)
+                if (conector.QueryMod("insert into paciente_auditoria_servicios(pacId,audIngreso,audUsuario,audFecha,audObs,segFechaIngreso) values(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "','" + TObservacionesRetiro.Text + "',SYSDATE())") == -1)
                     return;
-                if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr WHERE pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0 and pr.prgId=phdNovedad.prgId)") == -1)
+                if (conector.QueryMod("DELETE programacion_novedad WHERE EXISTS(SELECT 1 FROM programacion pr WHERE pacId=" + HId.Value + " and prgFechaProg>='" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=0 and pr.prgId=programacion_novedad.prgId)") == -1)
                     return;
-                if (conector.QueryMod("UPDATE programacion set prgActivo=1 where pacId=" + HId.Value + " and prgFechaProg>='" + TFechaRetiro.Text + "' and prgActivo=0") == -1)
+                if (conector.QueryMod("UPDATE programacion set prgActivo=1 where pacId=" + HId.Value + " and prgFechaProg>='" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=0") == -1)
                     return;
-                if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=1 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaRetiro.Text + "' and autActivo=0") == -1)
+                if (conector.QueryMod("UPDATE autorizacion set autActivo=1 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and autActivo=0") == -1)
                     return;
             }
             else
             { // retiro paciente
-                if (conector.QueryMod("UPDATE dbo.phdPaciente set estId=2,pacCuraciones = 0,pacAdmPuntual = 0,pacTerapiaFisica = 0,pacTerapiaResp = 0,pacTerapiaOcup = 0,pacTerapiaLenguaje = 0,pacValNutricional = 0,pacValMedica = 0,pacEnfermeria_12 = 0,pacEnfermeria_24 = 0,pacEntregaSuministros = 0 WHERE pacId=" + HId.Value) == -1)
+                if (conector.QueryMod("UPDATE paciente set estId=2,pacCuraciones = 0,pacAdmPuntual = 0,pacTerapiaFisica = 0,pacTerapiaResp = 0,pacTerapiaOcup = 0,pacTerapiaLenguaje = 0,pacValNutricional = 0,pacValMedica = 0,pacEnfermeria_12 = 0,pacEnfermeria_24 = 0,pacEntregaSuministros = 0 WHERE pacId=" + HId.Value) == -1)
                     return;
-                if (conector.QueryMod("INSERT INTO dbo.phdEgresos(pacId,cegId,egrObs,egrFecha,segUsuarioIngreso) VALUES(" + HId.Value + "," + DMotivo.SelectedValue + ",'" + TObservacionesRetiro.Text + "','" + TFechaRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "')") == -1)
+                if (conector.QueryMod("INSERT INTO paciente_egreso(pacId,cegId,egrObs,egrFecha,segUsuarioIngreso) VALUES(" + HId.Value + "," + DMotivo.SelectedValue + ",'" + TObservacionesRetiro.Text + "','" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "','" + Usuario.GetUsuario().GetLogin() + "')") == -1)
                     return;
-                if (conector.QueryMod("INSERT INTO dbo.phdAuditServicios(pacId,audEgreso,audUsuario,audFecha,cegId,audObs,segFechaIngreso) VALUES(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + TFechaRetiro.Text + "'," + DMotivo.SelectedValue + ",'" + TObservacionesRetiro.Text + "',getdate())") == -1)
+                if (conector.QueryMod("INSERT INTO paciente_auditoria_servicios(pacId,audEgreso,audUsuario,audFecha,cegId,audObs,segFechaIngreso) VALUES(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "'," + DMotivo.SelectedValue + ",'" + TObservacionesRetiro.Text + "',SYSDATE())") == -1)
                     return;
-                string cnoId = conector.QueryString("SELECT cnoId FROM phdCausaEgreso WHERE cegId=" + DMotivo.SelectedValue);
+                string cnoId = conector.QueryString("SELECT cnoId FROM causa_egreso WHERE cegId=" + DMotivo.SelectedValue);
                 if (cnoId.Length == 0)
                     cnoId = "NULL";
-                if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1 and pr.prgId=phdNovedad.prgId)") == -1)
+                if (conector.QueryMod("DELETE programacion_novedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=1 and pr.prgId=programacion_novedad.prgId)") == -1)
                     return;
-                if (conector.QueryMod("INSERT INTO phdNovedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "',getdate() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
+                if (conector.QueryMod("INSERT INTO programacion_novedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "',SYSDATE() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=1") == -1)
                     return;
-                if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaRetiro.Text + "' and prgActivo=1") == -1)
+                if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=1") == -1)
                     return;
-                if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaRetiro.Text + "' and autActivo=1") == -1)
+                if (conector.QueryMod("UPDATE autorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and autActivo=1") == -1)
                     return;
             }
+            conector.InsertModificacion(HId.Value);
+            conector.Commit();
         }
-        using(CConector conectormysql = new CConector())
-            conectormysql.InsertModificacion(HId.Value);
         
         Paciente.RemovePaciente(HId.Value);
         ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Editado.");
@@ -390,25 +394,24 @@ public partial class seguimiento_paciente : System.Web.UI.Page
     protected void BAceptarDefuncion_Click(object sender, EventArgs e)
     {
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
-
-            if (conector.QueryMod("UPDATE dbo.phdPaciente set estId=2,pacCuraciones = 0,pacAdmPuntual = 0,pacTerapiaFisica = 0,pacTerapiaResp = 0,pacTerapiaOcup = 0,pacTerapiaLenguaje = 0,pacValNutricional = 0,pacValMedica = 0,pacEnfermeria_12 = 0,pacEnfermeria_24 = 0,pacEntregaSuministros = 0 WHERE pacId=" + HId.Value) == -1)
+            if (conector.QueryMod("UPDATE paciente set estId=2,pacCuraciones = 0,pacAdmPuntual = 0,pacTerapiaFisica = 0,pacTerapiaResp = 0,pacTerapiaOcup = 0,pacTerapiaLenguaje = 0,pacValNutricional = 0,pacValMedica = 0,pacEnfermeria_12 = 0,pacEnfermeria_24 = 0,pacEntregaSuministros = 0 WHERE pacId=" + HId.Value) == -1)
                 return;
-            if (conector.QueryMod("INSERT INTO dbo.phdEgresos(pacId,cegId,egrObs,egrFecha,segUsuarioIngreso,expedidoHS) VALUES(" + HId.Value + "," + 1 + ",'" + TObservacionesDefuncion.Text + "','" + TFechaDefuncion.Text + "','" + Usuario.GetUsuario().GetLogin() + "'," + (CExpedidaOrganizationExample15.Checked ? "1" : "0") + ")") == -1)
+            if (conector.QueryMod("INSERT INTO paciente_egreso(pacId,cegId,egrObs,egrFecha,segUsuarioIngreso,expedidoHS) VALUES(" + HId.Value + "," + 1 + ",'" + TObservacionesDefuncion.Text + "','" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "','" + Usuario.GetUsuario().GetLogin() + "'," + (CExpedidaOrganizationExample15.Checked ? "1" : "0") + ")") == -1)
                 return;
-            if (conector.QueryMod("INSERT INTO dbo.phdAuditServicios(pacId,audEgreso,audUsuario,audFecha,cegId,audObs,segFechaIngreso) VALUES(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + TFechaDefuncion.Text + "'," + 1 + ",'" + TObservacionesDefuncion.Text + "',getdate())") == -1)
+            if (conector.QueryMod("INSERT INTO paciente_auditoria_servicios(pacId,audEgreso,audUsuario,audFecha,cegId,audObs,segFechaIngreso) VALUES(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "'," + 1 + ",'" + TObservacionesDefuncion.Text + "',SYSDATE())") == -1)
                 return;
-            string cnoId = conector.QueryString("SELECT cnoId FROM phdCausaEgreso WHERE cegId=" + 1);
+            string cnoId = conector.QueryString("SELECT cnoId FROM causa_egreso WHERE cegId=" + 1);
             if (cnoId.Length == 0)
                 cnoId = "NULL";
-            if (conector.QueryMod("DELETE phdNovedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1 and pr.prgId=phdNovedad.prgId)") == -1)
+            if (conector.QueryMod("DELETE programacion_novedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "' and prgActivo=1 and pr.prgId=programacion_novedad.prgId)") == -1)
                 return;
-            if (conector.QueryMod("INSERT INTO phdNovedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesDefuncion.Text + "','" + Usuario.GetUsuario().GetLogin() + "',getdate() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1") == -1)
+            if (conector.QueryMod("INSERT INTO programacion_novedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesDefuncion.Text + "','" + Usuario.GetUsuario().GetLogin() + "',SYSDATE() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "' and prgActivo=1") == -1)
                 return;
-            if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + TFechaDefuncion.Text + "' and prgActivo=1") == -1)
+            if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "' and prgActivo=1") == -1)
                 return;
-            if (conector.QueryMod("UPDATE phdAutorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + TFechaDefuncion.Text + "' and autActivo=1") == -1)
+            if (conector.QueryMod("UPDATE autorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "' and autActivo=1") == -1)
                 return;
         }
 

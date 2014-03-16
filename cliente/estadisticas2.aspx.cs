@@ -37,10 +37,10 @@ public partial class cliente_estadisticas2 : System.Web.UI.Page
         if (consulta.Length==0)
             return;
 
-        consulta = consulta.Replace("COUNT(*)", "serQuejasReclamos.qrId,qrFecha,qrDetalle,qrObsHS,pacNombres");
-        consulta = consulta.Replace("WHERE", "LEFT JOIN phdPaciente ON (phdPaciente.pacId=serQuejasReclamos.pacId) WHERE");
-        consulta= consulta.Replace("@desde", Query.GetValor(TDesde.Text));
-        consulta = consulta.Replace("@hasta", Query.GetValor(THasta.Text));
+        consulta = consulta.Replace("COUNT(*)", "queja_reclamo.qrId,qrFecha,qrDetalle,qrObsHS,pacNombres");
+        consulta = consulta.Replace("WHERE", "LEFT JOIN paciente ON (paciente.pacId=queja_reclamo.pacId) WHERE");
+        /*consulta= consulta.Replace("@desde", Query.GetValor(TDesde.Text));
+        consulta = consulta.Replace("@hasta", Query.GetValor(THasta.Text));*/
 
         int pos = consulta.IndexOf("(");
         if(pos!=-1) {

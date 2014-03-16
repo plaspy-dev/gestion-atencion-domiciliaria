@@ -36,8 +36,9 @@
                         <asp:ListItem Text="(Todas)" Value="0"></asp:ListItem>
                     </asp:DropDownList>
                     <asp:SqlDataSource ID="SProgramaciones" runat="server" 
-                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                        SelectCommand="SELECT programacion.actId AS id,phdActividad.actDescripcion AS nombre FROM programacion LEFT JOIN phdActividad ON (phdActividad.actId=programacion.actId) WHERE programacion.pacId=@paciente {0} GROUP BY programacion.actId,phdActividad.actDescripcion">
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT programacion.actId AS id,medicamentos.nombre AS nombre FROM programacion LEFT JOIN medicamentos ON (medicamentos.id=programacion.actId) WHERE programacion.pacId=@paciente {0} GROUP BY programacion.actId,medicamentos.nombre">
                         <SelectParameters>
                             <asp:ControlParameter ControlID="CCDetallePaciente" Name="paciente" PropertyName="IdPaciente" />
                         </SelectParameters>
@@ -76,21 +77,22 @@
                                 <ItemStyle HorizontalAlign="Right" />
                             </asp:BoundField>
                             <asp:BoundField DataField="autorizacion" HeaderText="Autorización" SortExpression="autorizacion"  ItemStyle-Wrap="false"/>
-                            <asp:BoundField DataField="actDescripcion" HeaderText="Actividad" SortExpression="actDescripcion" ItemStyle-Wrap="false" ItemStyle-Width="100%"/>
+                            <asp:BoundField DataField="actividad" HeaderText="Actividad" SortExpression="actividad" ItemStyle-Wrap="false" ItemStyle-Width="100%"/>
                             <asp:CheckBoxField DataField="prgActivo" HeaderText="Activo?" />
                             <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                             <asp:BoundField DataField="intensidad" HeaderText="intensidad" SortExpression="intensidad" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                         </Columns>
                     </asp:GridView>
                     <asp:SqlDataSource ID="SProgramacion" runat="server" 
-                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                        SelectCommand="SELECT prgId,prgFechaProg,perNombre,prgNumSesion,actDescripcion,prgActivo,phdDetalleAutorizacion.intensidad
-                                    ,programacion.autNumero + '[' + CONVERT(VARCHAR, ISNULL(phdDetalleAutorizacion.autNumSesiones,0)) + ']' AS autorizacion
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT prgId,prgFechaProg,perNombre,prgNumSesion,medicamentos.nombre AS actividad,prgActivo,autorizacion_detalle.intensidad
+                                    ,CONCAT(programacion.autNumero,'[',IFNULL(autorizacion_detalle.autNumSesiones,0), ']') AS autorizacion
                                     , programacion.actId
                                     FROM programacion 
-                                    LEFT JOIN admPersonalHS ON (admPersonalHS.perId=programacion.perId) 
-                                    LEFT JOIN phdActividad ON (phdActividad.actId=programacion.actId) 
-                                    LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=programacion.autNumero AND phdDetalleAutorizacion.actId=programacion.actId AND phdDetalleAutorizacion.intensidad=programacion.intensidad)
+                                    LEFT JOIN recurso_humano ON (recurso_humano.perId=programacion.perId) 
+                                    LEFT JOIN medicamentos ON (medicamentos.id=programacion.actId) 
+                                    LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=programacion.autNumero AND autorizacion_detalle.actId=programacion.actId AND autorizacion_detalle.intensidad=programacion.intensidad)
                                     WHERE pacId=@paciente AND (@actividad=0 OR programacion.actId=@actividad) {0}
                                     ORDER BY prgFechaProg DESC"
                                     DeleteCommand="DELETE programacion where prgId=@prgId"

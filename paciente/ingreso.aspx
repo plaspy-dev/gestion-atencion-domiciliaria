@@ -154,8 +154,9 @@
                     <asp:DropDownList ID="DMedico" runat="server" DataSourceID="SMedicos" 
                 DataTextField="perNombre" DataValueField="perId"> </asp:DropDownList>
             <asp:SqlDataSource ID="SMedicos" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="SELECT perId,perNombre FROM admPersonalHS WHERE eEstId=1 and carId=6 ORDER BY perNombre">
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT perId,perNombre FROM recurso_humano WHERE eEstId=1 and carId=6 ORDER BY perNombre">
             </asp:SqlDataSource></td>
                 <td nowrap=nowrap>Nivel de atención<asp:RequiredFieldValidator ControlToValidate="DNivelAtencion" ErrorMessage="Por favor seleccione un nivel de atención." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:DropDownList ID="DNivelAtencion" runat="server" DataSourceID="SNivelAtencion" 

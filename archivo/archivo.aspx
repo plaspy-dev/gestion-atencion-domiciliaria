@@ -123,7 +123,7 @@
 		            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                         <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                         <asp:BoundField DataField="solicitud" HeaderText="Solicitud" SortExpression="solicitud" DataFormatString="{0:d}" />
-                        <asp:BoundField DataField="tipo" HeaderText="Tipo" SortExpression="tipo" />
+                        <asp:BoundField DataField="tipo" HeaderText="Tipo" SortExpression="tipo" ItemStyle-Wrap="false" />
                         <asp:BoundField DataField="solicitadopor" HeaderText="Solicitado por" SortExpression="solicitadopor" ItemStyle-Wrap="false" />
                         <asp:BoundField DataField="objeto" HeaderText="Objeto" SortExpression="objeto" ItemStyle-Width="100%" />
                         <asp:BoundField DataField="entrega" HeaderText="Entrega" SortExpression="entrega" DataFormatString="{0:d}" />
@@ -131,7 +131,8 @@
                     </Columns>
                 </asp:GridView>
                 <asp:SqlDataSource ID="SPrestamos" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     DeleteCommand="DELETE FROM prestamo_archivo WHERE id=@id"
                     SelectCommand="SELECT id,tipo,solicitadopor,solicitud,entrega,devolucion,objeto 
                                 FROM prestamo_archivo
@@ -248,7 +249,7 @@
                     <asp:BoundField HeaderText="Paciente" DataField="pacNombres" SortExpression="pacNombres" ItemStyle-Wrap="false" />
                     <asp:BoundField HeaderText="Factura" DataField="arcFactura" SortExpression="arcFactura" />
                     <asp:BoundField HeaderText="A-Z" DataField="arcAZ" SortExpression="arcAZ" ItemStyle-Wrap="false" />
-                    <asp:BoundField HeaderText="Tipo" DataField="tipo" SortExpression="tipo" />
+                    <asp:BoundField HeaderText="Tipo" DataField="tipo" SortExpression="tipo" ItemStyle-Wrap="false" />
                     <asp:BoundField HeaderText="Observaciones" DataField="arcObservaciones" SortExpression="arcObservaciones" ItemStyle-Width="100%" />
                 </Columns>
             </asp:GridView>
@@ -261,22 +262,23 @@
     </Triggers>
     </asp:UpdatePanel>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-        ConnectionString="<%$ ConnectionStrings:connBD %>" 
-        SelectCommand="SELECT arcArchivoGestion.arcId
-                    ,phdPaciente.pacNombres
-                    ,REPLACE(STR(CAST(arcArchivoGestion.arcMes AS varchar), 2), SPACE(1), '0') + '/' + CAST(arcArchivoGestion.arcAnio AS varchar) AS fecha
-                    ,arcArchivoGestion.arcFactura
-                    ,arcArchivoGestion.arcAZ
-                    ,arcArchivoGestion.arcObservaciones
-                    ,arcArchivoGestion.tipo
-                    FROM arcArchivoGestion
-                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=arcArchivoGestion.pacId)
+        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+        SelectCommand="SELECT paciente_archivo.arcId
+                    ,paciente.pacNombres
+                    ,CONCAT(LPAD(paciente_archivo.arcMes,2,'0'),'/', paciente_archivo.arcAnio) AS fecha
+                    ,paciente_archivo.arcFactura
+                    ,paciente_archivo.arcAZ
+                    ,paciente_archivo.arcObservaciones
+                    ,paciente_archivo.tipo
+                    FROM paciente_archivo
+                    LEFT JOIN paciente ON (paciente.pacId=paciente_archivo.pacId)
                     WHERE 
-                    (@fecha='0' OR REPLACE(STR(CAST(arcArchivoGestion.arcMes AS varchar), 2), SPACE(1), '0') + '/' + CAST(arcArchivoGestion.arcAnio AS varchar)=@fecha)
-                    AND (@az='_' OR arcArchivoGestion.arcAZ LIKE '%' + @az + '%')
-                    AND (@factura='_' OR arcArchivoGestion.arcFactura LIKE '%' + @factura + '%')
-                    AND (@tipo=-1 OR arcArchivoGestion.tipo=@tipo)
-                    AND (@paciente=0 OR arcArchivoGestion.pacId=@paciente)
+                    (@fecha='0' OR CONCAT(LPAD(paciente_archivo.arcMes,2,'0'),'/', paciente_archivo.arcAnio)=@fecha)
+                    AND (@az='_' OR paciente_archivo.arcAZ LIKE CONCAT('%',@az,'%'))
+                    AND (@factura='_' OR paciente_archivo.arcFactura LIKE CONCAT('%',@factura,'%'))
+                    AND (@tipo=-1 OR paciente_archivo.tipo=@tipo)
+                    AND (@paciente=0 OR paciente_archivo.pacId=@paciente)
                     ">
           <SelectParameters>
             <asp:ControlParameter ControlID="TFecha" PropertyName="Text" Name="fecha" DefaultValue="0" />

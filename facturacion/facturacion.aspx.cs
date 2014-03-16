@@ -23,11 +23,11 @@ public partial class facturacion_facturacion : System.Web.UI.Page
 
             CUsuario usuario = (CUsuario)Usuario.GetUsuario();
             ViewState["entidades"] = usuario["entidades"];
-            using (CConectorMS conector = new CConectorMS())
+            using (CConector conector = new CConector())
             {
                 if (Request.QueryString["aut"] != null)
                 {
-                    Query query = new Query("phdAutorizacion");
+                    Query query = new Query("autorizacion");
 
                     query += "autNumero";
                     query += "pacId";
@@ -41,7 +41,7 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                     query += "id";
                     query += "formulacion";
 
-                    SqlDataReader reader = conector.Query(query.GetSelect("autNumero=" + Query.GetValor(Request.QueryString["aut"])));
+                    MySqlDataReader reader = conector.Query(query.GetSelect("autNumero=" + Query.GetValor(Request.QueryString["aut"])));
                     if (reader != null && reader.Read())
                     {
                         PAutorizacion.Visible = true;
@@ -87,26 +87,24 @@ public partial class facturacion_facturacion : System.Web.UI.Page
 
                         BAceptar.Enabled = Usuario.GetInstance().CanInsert();
 
-                        using(CConector conectormy= new CConector()) {
-                            query = new Query("facturacion_autorizacion");
+                        query = new Query("facturacion_autorizacion");
 
-                            query += "autorizacion";
-                            query += "factura";
-                            query += "glosa_conciliacion";
-                            query += "segunda_factura";
+                        query += "autorizacion";
+                        query += "factura";
+                        query += "glosa_conciliacion";
+                        query += "segunda_factura";
 
-                            MySqlDataReader readermy = conectormy.Query(query.GetSelect("autorizacion=" + Query.GetValor(Request.QueryString["aut"])));
-                            if (readermy != null && readermy.Read()) {
+                        MySqlDataReader readermy = conector.Query(query.GetSelect("autorizacion=" + Query.GetValor(Request.QueryString["aut"])));
+                        if (readermy != null && readermy.Read()) {
 
-                                BAceptar.Enabled = Usuario.GetInstance().CanUpdate();
-                                ViewState["autorizacion"] = readermy["autorizacion"].ToString();
-                                TFactura.Text = readermy["factura"].ToString();
-                                TFactura2.Text = readermy["segunda_factura"].ToString();
-                                TConciliacion.Text = Query.GetFromMySQLDate(readermy["glosa_conciliacion"]);
-                                TFactura_TextChanged(sender, e);
-                                TFactura2_TextChanged(sender, e);
-                                BD_OnClicked(sender, e);
-                            }
+                            BAceptar.Enabled = Usuario.GetInstance().CanUpdate();
+                            ViewState["autorizacion"] = readermy["autorizacion"].ToString();
+                            TFactura.Text = readermy["factura"].ToString();
+                            TFactura2.Text = readermy["segunda_factura"].ToString();
+                            TConciliacion.Text = Query.GetFromMySQLDate(readermy["glosa_conciliacion"]);
+                            TFactura_TextChanged(sender, e);
+                            TFactura2_TextChanged(sender, e);
+                            BD_OnClicked(sender, e);
                         }
                     }
                 }
@@ -396,9 +394,9 @@ public partial class facturacion_facturacion : System.Web.UI.Page
             LAutorizaciones.Text += GAutorizaciones.Rows.Count == 1 ? "ón" : "ones";
             PAutorizaciones.Visible = GAutorizaciones.Rows.Count > 0;
 
-            using (CConectorMS conector = new CConectorMS())
+            using (CConector conector = new CConector())
             {
-                string valor = conector.QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(phdAutorizacion.autFecha)=YEAR(GETDATE())");
+                string valor = conector.QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN autorizacion ON (autorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(autorizacion.autFecha)=YEAR(SYSDATE())");
                 if (valor == "")
                     valor = "0";
                 maximo -= Convert.ToDouble(valor, culture.NumberFormat);
@@ -443,7 +441,7 @@ public partial class facturacion_facturacion : System.Web.UI.Page
 
     protected void GAutorizaciones_RowDataBound(object sender, GridViewRowEventArgs e)
     {
-        if (e.Row.RowIndex != -1)
+        /*if (e.Row.RowIndex != -1)
         {
 
             int pos = e.Row.Cells[3].Text.IndexOf("%%");
@@ -461,6 +459,6 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                 pos = e.Row.Cells[3].Text.IndexOf("%%");
             }
             e.Row.Cells[3].Text = e.Row.Cells[3].Text.Replace(",", "<br/>");
-        }
+        }*/
     }
 }

@@ -68,8 +68,9 @@
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SEstado" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT eEstId AS id,eEstDesc AS nombre FROM admEstadoEstancia">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT eEstId AS id,eEstDesc AS nombre FROM funcionario_estados">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -81,8 +82,9 @@
                         <asp:ListItem Text="(Todas)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SArea" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT areaId id,areaDesc nombre FROM dbo.admArea ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT areaId id,areaDesc nombre FROM area ORDER BY 2">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -92,8 +94,9 @@
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SCargo" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT carId AS id,carDescripcion AS nombre FROM admCargo WHERE 1=1 {0} ORDER BY carDescripcion">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT carId AS id,carDescripcion AS nombre FROM cargo WHERE 1=1 {0} ORDER BY carDescripcion">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -103,8 +106,9 @@
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SDisponibilidad" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT dispId AS id,dispDescripcion AS nombre FROM admdisponibilidad ORDER BY dispDescripcion">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT dispId AS id,dispDescripcion AS nombre FROM disponibilidad ORDER BY dispDescripcion">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -112,8 +116,9 @@
                         <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SNivelComplejidad" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT nivCompId id,nivCompDesc nombre FROM dbo.admNivelComplejidad ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT nivCompId id,nivCompDesc nombre FROM nivel_complejidad ORDER BY 2">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -197,30 +202,31 @@
         </div>
         </div>
         <asp:SqlDataSource ID="SResultados" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT per.perId AS id
 					,per.perDocumento AS documento, per.perNombre AS nombres,
-                    admCargo.carDescripcion AS cargo,admEstadoEstancia.eEstDesc AS estado,per.perCelular AS celular,
-                    per.perDireccion, per.perBarrio, admDisponibilidad.dispDescripcion
+                    cargo.carDescripcion AS cargo,funcionario_estados.eEstDesc AS estado,per.perCelular AS celular,
+                    per.perDireccion, per.perBarrio, disponibilidad.dispDescripcion
                     ,loctrabajo.locDescripcion AS loctrabajo,locresidencia.locDescripcion AS locresidencia
-                    ,ISNULL(per.perTelefono, '') + ' '+ ISNULL(per.perTelefono1, '') AS telefono,per.perCorreoElectronico
+                    ,CONCAT(IFNULL(per.perTelefono, ''), ' ', IFNULL(per.perTelefono1, '')) AS telefono,per.perCorreoElectronico
 					,futuro.prgFechaProg AS fecha
-					,ISNULL(phdPacientef.pacNombres,'') + CASE WHEN manana.actId IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END AS nombre
-					,ISNULL(phdPaciente.pacNombres,'')  + CASE WHEN ayer.perId IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END AS nombrehoy
-					,admNivelComplejidad.nivCompDesc
-                    FROM admPersonalHS per 
-                    LEFT JOIN admCargo on per.carId = admCargo.carId 
-                    LEFT JOIN admDisponibilidad on admDisponibilidad.dispId = per.dispId 
-                    LEFT JOIN admEstadoEstancia ON (admEstadoEstancia.eEstId=per.eEstId)
-                    LEFT JOIN admLocalidad AS loctrabajo ON (loctrabajo.locId=per.locId)
-                    LEFT JOIN admLocalidad AS locresidencia ON (locresidencia.locId=per.residencialocId)
-                    LEFT JOIN admNivelComplejidad ON (admNivelComplejidad.nivCompId=per.nivCompId)
-					LEFT JOIN (SELECT perId,MIN(actId) AS actId FROM programacion WHERE programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()-1)) AND actId IN (10001,10009,10012,10013,10015) GROUP BY perId) AS ayer ON (ayer.perId=per.perId)
-					LEFT JOIN (SELECT perId,MIN(actId) AS actId FROM programacion WHERE programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()+1)) AND actId IN (10001,10009,10012,10013,10015) GROUP BY perId) AS manana ON (manana.perId=per.perId)
-					LEFT JOIN (SELECT perId,MIN(pacId) AS pacId FROM programacion WHERE programacion.prgFechaProg=DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE())) GROUP BY perId) AS hoy ON (hoy.perId=per.perId)
-					LEFT JOIN (SELECT perId,MIN(prgFechaProg) AS prgFechaProg,MIN(pacId) AS pacId FROM programacion WHERE programacion.prgFechaProg>GETDATE() GROUP BY perId) AS futuro ON (futuro.perId=per.perId)
-					LEFT JOIN phdPaciente ON (hoy.pacId=phdPaciente.pacId)
-					LEFT JOIN phdPaciente AS phdPacientef ON (hoy.pacId=phdPacientef.pacId)
+					,CONCAT(IFNULL(pacientef.pacNombres,''),CASE WHEN manana.actId IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END) AS nombre
+					,CONCAT(IFNULL(paciente.pacNombres,''), CASE WHEN ayer.perId IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END) AS nombrehoy
+					,nivel_complejidad.nivCompDesc
+                    FROM recurso_humano per 
+                    LEFT JOIN cargo on per.carId = cargo.carId 
+                    LEFT JOIN disponibilidad on disponibilidad.dispId = per.dispId 
+                    LEFT JOIN funcionario_estados ON (funcionario_estados.eEstId=per.eEstId)
+                    LEFT JOIN localidad AS loctrabajo ON (loctrabajo.locId=per.locId)
+                    LEFT JOIN localidad AS locresidencia ON (locresidencia.locId=per.residencialocId)
+                    LEFT JOIN nivel_complejidad ON (nivel_complejidad.nivCompId=per.nivCompId)
+                    LEFT JOIN (SELECT perId,actId FROM programacion WHERE DATE(programacion.prgFechaProg)=DATE(SYSDATE()-INTERVAL 1 DAY) AND actId IN (10001,10009,10012,10013,10015)) AS ayer ON (ayer.perId=per.perId)
+					LEFT JOIN (SELECT perId,actId FROM programacion WHERE DATE(programacion.prgFechaProg)=DATE(SYSDATE()+INTERVAL 1 DAY) AND actId IN (10001,10009,10012,10013,10015)) AS manana ON (manana.perId=per.perId)
+					LEFT JOIN (SELECT perId,pacId AS pacId FROM programacion WHERE DATE(programacion.prgFechaProg)=DATE(SYSDATE())) AS hoy ON (hoy.perId=per.perId)
+					LEFT JOIN (SELECT perId,prgFechaProg,pacId AS pacId FROM programacion WHERE programacion.prgFechaProg>SYSDATE()) AS futuro ON (futuro.perId=per.perId)
+					LEFT JOIN paciente ON (hoy.pacId=paciente.pacId)
+					LEFT JOIN paciente AS pacientef ON (hoy.pacId=pacientef.pacId)
                     WHERE 
                     (@id=0 OR @id=per.perId)
                     AND (@id!=0 OR @estado=0 OR per.eEstId=@estado) 
@@ -229,7 +235,8 @@
                     AND (@id!=0 OR @complejidad=0 OR per.nivCompId=@complejidad)
                     AND (@id!=0 OR @disponibilidad=0 OR per.dispId=@disponibilidad)
                     AND (@id!=0 OR @area=0 OR @area=per.areaId)
-                    AND (@id!=0 OR @nombres=' ' OR per.perNombre LIKE '%' + @nombres + '%' )
+                    AND (@id!=0 OR @nombres=' ' OR per.perNombre LIKE CONCAT('%',@nombres,'%') )
+                    GROUP BY per.perId
                     ORDER BY per.perNombre">
                      <SelectParameters>
                         <asp:ControlParameter ControlID="DEStado" PropertyName="SelectedValue" Name="estado" />
@@ -255,8 +262,9 @@
                                 DataTextField="nombre" DataValueField="id">
                                 </asp:DropDownList>
                             <asp:SqlDataSource ID="SDisponibilidadD" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT dispId AS id,dispDescripcion AS nombre FROM admdisponibilidad">
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT dispId AS id,dispDescripcion AS nombre FROM disponibilidad">
                             </asp:SqlDataSource>
                         </EditItemTemplate>
                     </asp:TemplateField>
@@ -265,9 +273,10 @@
                 </Fields>
             </asp:DetailsView>
             </div>
-            <asp:SqlDataSource ID="SDDisponibilidad" runat="server" ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                            SelectCommand="SELECT perId,dispId,perNombre FROM admPersonalHS WHERE perId=@id"
-                            UpdateCommand="UPDATE admPersonalHS SET dispId=@dispId WHERE perId=@id"
+            <asp:SqlDataSource ID="SDDisponibilidad" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            SelectCommand="SELECT perId,dispId,perNombre FROM recurso_humano WHERE perId=@id"
+                            UpdateCommand="UPDATE recurso_humano SET dispId=@dispId WHERE perId=@id"
                             >
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="GResultados" DefaultValue="-1" PropertyName="SelectedValue" Name="id" />

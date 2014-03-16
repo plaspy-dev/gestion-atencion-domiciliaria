@@ -83,8 +83,9 @@
                     </Columns>
                 </asp:GridView>
                 <asp:SqlDataSource ID="SEntidades" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource>
             </td>
         </tr>

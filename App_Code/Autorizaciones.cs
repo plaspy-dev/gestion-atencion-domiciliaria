@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using SDG.Componentes;
 using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 
 public class Autorizaciones
 {
@@ -45,18 +46,18 @@ public class Autorizaciones
         if(autorizaciones==null) {
 
             autorizaciones = new List<Autorizaciones>();
-            using(CConectorMS conector = new CConectorMS()) {
-                Query query = new Query("phdAutorizacion");
+            using(CConector conector = new CConector()) {
+                Query query = new Query("autorizacion");
                 
                 query += "autNumero";
                 query += "autFecha";
                 query += "autFechaVenc";
 
-                SqlDataReader reader= conector.Query(query.GetSelect("autActivo=1 AND GETDATE()<=ISNULL(autFechaVenc,autFecha+30) AND pacId=" + Query.GetValor(idpaciente) + " ORDER BY autFecha DESC"));
+                MySqlDataReader reader = conector.Query(query.GetSelect("autActivo=1 AND SYSDATE()<=IFNULL(autFechaVenc,autFecha+30) AND pacId=" + Query.GetValor(idpaciente) + " ORDER BY autFecha DESC"));
                 if(reader!=null) {
-                    using (CConectorMS conector2 = new CConectorMS())
+                    using (CConector conector2 = new CConector())
                     {
-                        Query detalle = new Query("phdDetalleAutorizacion");
+                        Query detalle = new Query("autorizacion_detalle");
                         
                         detalle += "actId";
                         detalle += "autNumSesiones";
@@ -71,7 +72,7 @@ public class Autorizaciones
                                 info.vencimiento = info.fecha.AddDays(30);
                             else info.vencimiento = (DateTime)reader["autFechaVenc"];
 
-                            SqlDataReader reader2= conector2.Query(detalle.GetSelect("autNumero=" + Query.GetValor(info.Autorizacion)));
+                            MySqlDataReader reader2= conector2.Query(detalle.GetSelect("autNumero=" + Query.GetValor(info.Autorizacion)));
                             if(reader2!=null) {
                                 while(reader2.Read()) {
 
@@ -96,5 +97,18 @@ public class Autorizaciones
 
     public static void RemoveAutorizaciones(string idpaciente) {
         HttpRuntime.Cache.Remove("au" + idpaciente);
+    }
+
+    public static bool UpdateSesiones(CConector conector, string autorizacion) {
+        string query= string.Format("UPDATE autorizacion_detalle SET sesiones_programadas=(SELECT SUM(programacion.prgNumSesion)"
+                            + " FROM programacion"
+                            + " WHERE"
+                            + " programacion.autNumero=autorizacion_detalle.autNumero AND programacion.actId=autorizacion_detalle.actId "
+                            //+ " AND programacion.prgActivo=1 "
+                            + " AND (programacion.intensidad=autorizacion_detalle.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL)))"
+                            + " WHERE autNumero={0}", Query.GetValor(autorizacion));
+        if (conector.QueryMod(query) == -1)
+            return false;
+        return true;
     }
 }

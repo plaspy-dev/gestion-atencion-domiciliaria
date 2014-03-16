@@ -84,10 +84,8 @@ public partial class paciente_formatoctc : System.Web.UI.Page
 
                     PDatos.Visible = true;
 
-                    using (CConectorMS conector = new CConectorMS())
-                    using (CConector conectormy = new CConector())
+                    using (CConector conector = new CConector())
                     {
-
                         TFecha.Text = Request.QueryString["f"];
                         if (TFecha.Text.Length == 0)
                             TFecha.Text = DateTime.Now.ToShortDateString();
@@ -100,7 +98,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                         formulacion += "respuesta";
                         formulacion += "contraindicacion";
 
-                        MySqlDataReader readermysql = conectormy.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Query.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "'"));
+                        MySqlDataReader readermysql = conector.Query(formulacion.GetSelect("paciente=" + CCDetallePaciente.IdPaciente + " AND fecha='" + Query.GetMySQLDateFormat(Convert.ToDateTime(TFecha.Text)) + "'"));
                         if (readermysql != null && readermysql.Read())
                         {
                             ((MasterPageI)Master).Imprimir("formatoctc.html");
@@ -128,7 +126,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                             qpos += "cantidad";
                             qpos += "tiempo";
 
-                            readermysql = conectormy.Query(qpos.GetSelect("formato_ctc=" + HIdFormulacion.Value));
+                            readermysql = conector.Query(qpos.GetSelect("formato_ctc=" + HIdFormulacion.Value));
                             if (readermysql != null)
                             {
                                 while (readermysql.Read())
@@ -164,7 +162,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                             qmedicamentos += "posologia";
                             qmedicamentos += "dosis";
 
-                            readermysql = conectormy.Query(qmedicamentos.GetSelect("formato_ctc=" + HIdFormulacion.Value));
+                            readermysql = conector.Query(qmedicamentos.GetSelect("formato_ctc=" + HIdFormulacion.Value));
                             if (readermysql != null)
                             {
                                 while (readermysql.Read())
@@ -198,7 +196,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                         }
                         else
                         {
-                            BFormula.Visible = conectormy.QueryString("SELECT id FROM formato_ctc WHERE paciente=" + CCDetallePaciente.IdPaciente + " LIMIT 1;").Length != 0;
+                            BFormula.Visible = conector.QueryString("SELECT id FROM formato_ctc WHERE paciente=" + CCDetallePaciente.IdPaciente + " LIMIT 1;").Length != 0;
                         }
 
                         BAceptar.OnClientClick = GFormulacion.Rows.Count == 0 ? "confirm('¿Está seguro de guardar la orden sin medicamentos o procedimientos?')" : "";
@@ -290,126 +288,122 @@ public partial class paciente_formatoctc : System.Web.UI.Page
 
         using (CConector conector = new CConector())
         {
-            using (CConectorMS conectorMS = new CConectorMS())
+            
+            conector.StartTransaction();
+
+            DateTime fecha = Convert.ToDateTime(TFecha.Text);
+
+            formulacion["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
+            formulacion["profesional"] = usuario["personal"];
+            formulacion["asegurador"] = CCDetallePaciente.AsegurdadorID;
+            formulacion["respuesta"] = TRespuestaClinica.Text;
+            formulacion["contraindicacion"] = TContraindicacion.Text;
+
+            if (HIdFormulacion.Value.Length == 0)
             {
-                conector.StartTransaction();
-                conectorMS.StartTransaction();
+                formulacion["paciente"] = CCDetallePaciente.IdPaciente;
 
-                DateTime fecha = Convert.ToDateTime(TFecha.Text);
+                szQuery = formulacion.GetInsert();
+                mensaje = CCDetallePaciente.Nombres + " ingresado";
+                int resultado = conector.QueryMod(szQuery, true);
+                if (resultado == -1)
+                    return;
+                HIdFormulacion.Value = resultado.ToString();
+            }
+            else
+            {
+                szQuery = formulacion.GetUpdate("id='" + HIdFormulacion.Value + "'");
+                mensaje = CCDetallePaciente.Nombres + " editado";
+                if (conector.QueryMod(szQuery) == -1)
+                    return;
+            }
+            if (conector.InsertModificacion(HIdFormulacion.Value) == -1)
+                return;
 
-                formulacion["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
-                formulacion["profesional"] = usuario["personal"];
-                formulacion["asegurador"] = CCDetallePaciente.AsegurdadorID;
-                formulacion["respuesta"] = TRespuestaClinica.Text;
-                formulacion["contraindicacion"] = TContraindicacion.Text;
+            Query qpos = new Query("formato_ctc_pos_items");
 
-                if (HIdFormulacion.Value.Length == 0)
+            List<Medicamento> listadopos = Serializar.DesSerializeBinary<List<Medicamento>>(HPOS.Value);
+            for (int i = 0; i < listadopos.Count; i++)
+            {
+                Medicamento info = listadopos[i];
+
+                qpos["principio"] = info.Nombre;
+                qpos["cantidad"] = info.Cantidad.ToString(CultureInfo.InvariantCulture);
+                qpos["posologia"] = info.Posologia;
+                qpos["dosis"] = info.Dosis;
+                qpos["tiempo"] = info.Tiempo;
+
+                if (string.IsNullOrEmpty(info.Id))
                 {
-                    formulacion["paciente"] = CCDetallePaciente.IdPaciente;
-
-                    szQuery = formulacion.GetInsert();
-                    mensaje = CCDetallePaciente.Nombres + " ingresado";
-                    int resultado = conector.QueryMod(szQuery, true);
-                    if (resultado == -1)
+                    qpos["formato_ctc"] = HIdFormulacion.Value;
+                    if (conector.QueryMod(qpos.GetInsert()) == -1)
                         return;
-                    HIdFormulacion.Value = resultado.ToString();
                 }
                 else
                 {
-                    szQuery = formulacion.GetUpdate("id='" + HIdFormulacion.Value + "'");
-                    mensaje = CCDetallePaciente.Nombres + " editado";
-                    if (conector.QueryMod(szQuery) == -1)
+                    if (conector.QueryMod(qpos.GetUpdate("id=" + info.Id)) == -1)
                         return;
                 }
-                if (conector.InsertModificacion(HIdFormulacion.Value) == -1)
-                    return;
-
-                Query qpos = new Query("formato_ctc_pos_items");
-
-                List<Medicamento> listadopos = Serializar.DesSerializeBinary<List<Medicamento>>(HPOS.Value);
-                for (int i = 0; i < listadopos.Count; i++)
-                {
-                    Medicamento info = listadopos[i];
-
-                    qpos["principio"] = info.Nombre;
-                    qpos["cantidad"] = info.Cantidad.ToString(CultureInfo.InvariantCulture);
-                    qpos["posologia"] = info.Posologia;
-                    qpos["dosis"] = info.Dosis;
-                    qpos["tiempo"] = info.Tiempo;
-
-                    if (string.IsNullOrEmpty(info.Id))
-                    {
-                        qpos["formato_ctc"] = HIdFormulacion.Value;
-                        if (conector.QueryMod(qpos.GetInsert()) == -1)
-                            return;
-                    }
-                    else
-                    {
-                        if (conector.QueryMod(qpos.GetUpdate("id=" + info.Id)) == -1)
-                            return;
-                    }
-                }
-
-                Query medicamento = new Query("formato_ctc_items");
-
-                List<Medicamento> medicamentos = Serializar.DesSerializeBinary<List<Medicamento>>(HFormulacion.Value);
-                for (int i = 0; i < medicamentos.Count; i++)
-                {
-                    Medicamento info = medicamentos[i];
-
-                    medicamento["nombre"] = info.Nombre;
-                    medicamento["cantidad"] = info.Cantidad.ToString(CultureInfo.InvariantCulture);
-                    medicamento["tiempo"] = info.Tiempo;
-                    medicamento["efecto"] = info.Efecto;
-                    medicamento["respuesta"] = info.Respuesta;
-                    medicamento["efecto_secundario"] = info.EfectosSecundarios;
-
-                    if (string.IsNullOrEmpty(info.Id))
-                    {
-                        medicamento["formato_ctc"] = HIdFormulacion.Value;
-                        if (conector.QueryMod(medicamento.GetInsert()) == -1)
-                            return;
-                    }
-                    else
-                    {
-                        if (conector.QueryMod(medicamento.GetUpdate("id=" + info.Id)) == -1)
-                            return;
-                    }
-                }
-
-                medicamento = new Query("formato_ctc_items");
-
-                List<Medicamento> listadonopos = Serializar.DesSerializeBinary<List<Medicamento>>(HMedicamentos.Value);
-                for (int i = 0; i < listadonopos.Count; i++)
-                {
-                    Medicamento info = listadonopos[i];
-
-                    medicamento["nombre"] = info.Nombre;
-                    medicamento["cantidad"] = info.Cantidad.ToString(CultureInfo.InvariantCulture);
-                    medicamento["posologia"] = info.Posologia;
-                    medicamento["dosis"] = info.Dosis;
-                    medicamento["tiempo"] = info.Tiempo;
-                    medicamento["efecto"] = info.Efecto;
-                    medicamento["respuesta"] = info.Respuesta;
-                    medicamento["efecto_secundario"] = info.EfectosSecundarios;
-
-                    if (string.IsNullOrEmpty(info.Id))
-                    {
-                        medicamento["tipo"] = "1";
-                        medicamento["formato_ctc"] = HIdFormulacion.Value;
-                        if (conector.QueryMod(medicamento.GetInsert()) == -1)
-                            return;
-                    }
-                    else
-                    {
-                        if (conector.QueryMod(medicamento.GetUpdate("id=" + info.Id)) == -1)
-                            return;
-                    }
-                }
-
-                conector.Commit();
-                conectorMS.Commit();
             }
+
+            Query medicamento = new Query("formato_ctc_items");
+
+            List<Medicamento> medicamentos = Serializar.DesSerializeBinary<List<Medicamento>>(HFormulacion.Value);
+            for (int i = 0; i < medicamentos.Count; i++)
+            {
+                Medicamento info = medicamentos[i];
+
+                medicamento["nombre"] = info.Nombre;
+                medicamento["cantidad"] = info.Cantidad.ToString(CultureInfo.InvariantCulture);
+                medicamento["tiempo"] = info.Tiempo;
+                medicamento["efecto"] = info.Efecto;
+                medicamento["respuesta"] = info.Respuesta;
+                medicamento["efecto_secundario"] = info.EfectosSecundarios;
+
+                if (string.IsNullOrEmpty(info.Id))
+                {
+                    medicamento["formato_ctc"] = HIdFormulacion.Value;
+                    if (conector.QueryMod(medicamento.GetInsert()) == -1)
+                        return;
+                }
+                else
+                {
+                    if (conector.QueryMod(medicamento.GetUpdate("id=" + info.Id)) == -1)
+                        return;
+                }
+            }
+
+            medicamento = new Query("formato_ctc_items");
+
+            List<Medicamento> listadonopos = Serializar.DesSerializeBinary<List<Medicamento>>(HMedicamentos.Value);
+            for (int i = 0; i < listadonopos.Count; i++)
+            {
+                Medicamento info = listadonopos[i];
+
+                medicamento["nombre"] = info.Nombre;
+                medicamento["cantidad"] = info.Cantidad.ToString(CultureInfo.InvariantCulture);
+                medicamento["posologia"] = info.Posologia;
+                medicamento["dosis"] = info.Dosis;
+                medicamento["tiempo"] = info.Tiempo;
+                medicamento["efecto"] = info.Efecto;
+                medicamento["respuesta"] = info.Respuesta;
+                medicamento["efecto_secundario"] = info.EfectosSecundarios;
+
+                if (string.IsNullOrEmpty(info.Id))
+                {
+                    medicamento["tipo"] = "1";
+                    medicamento["formato_ctc"] = HIdFormulacion.Value;
+                    if (conector.QueryMod(medicamento.GetInsert()) == -1)
+                        return;
+                }
+                else
+                {
+                    if (conector.QueryMod(medicamento.GetUpdate("id=" + info.Id)) == -1)
+                        return;
+                }
+            }
+
+            conector.Commit();
         }
 
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
@@ -577,17 +571,16 @@ public partial class paciente_formatoctc : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$ano$", fecha[2]);
 
         using(CConector conector=new CConector())
-        using (CConectorMS conectorms = new CConectorMS())
         {
             string url = HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~");
             string idmedico = conector.QueryString("SELECT usuario.personal FROM modificaciones LEFT JOIN usuario ON (usuario.id=modificaciones.usuario) WHERE modificaciones.id='" + HIdFormulacion.Value + "' AND modificaciones.url='" + url + "' ORDER BY modificaciones.fecha LIMIT 1");
-            Query query = new Query("admPersonalHS");
+            Query query = new Query("recurso_humano");
 
-            query["szProfesional"] = "admPersonalHS.perDocumento";
-            query["szMedico"] = "admPersonalHS.perNombre";
-            query["szCargo"] = "admCargo.carDescripcion";
+            query["szProfesional"] = "recurso_humano.perDocumento";
+            query["szMedico"] = "recurso_humano.perNombre";
+            query["szCargo"] = "cargo.carDescripcion";
 
-            SqlDataReader reader = conectorms.Query(query.GetSelect("perId=" + Query.GetValor(idmedico), " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"));
+            MySqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(idmedico), " LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)"));
             if (reader != null)
             {
                 bool l = reader.Read();

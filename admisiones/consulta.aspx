@@ -65,8 +65,9 @@
                                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SAsegurador" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
             <td>
             <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>
@@ -119,51 +120,46 @@
             <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio"/>
             <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion"/>
             <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre"/>
-            <asp:BoundField HeaderText="Actividades (Autorizadas-Programadas-Diarias)" DataField="detalles" SortExpression="detalles" ItemStyle-Wrap="false"/>
+            <asp:BoundField HeaderText="Actividades (Autorizadas-Programadas-Diarias)" DataField="detalles" SortExpression="detalles" ItemStyle-Wrap="false" HtmlEncode="false"/>
             <asp:BoundField HeaderText="Grupo" DataField="grupo" SortExpression="grupo"/>
             <asp:BoundField HeaderText="Observaciones" DataField="autObservaciones" SortExpression="autObservaciones"/>
         </Columns>
     </asp:GridView>
     </div>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="SELECT phdAutorizacion.autNumero,phdAutorizacion.autFecha,phdAutorizacion.autFechaVenc,phdAutorizacion.autObservaciones
-                            ,phdPaciente.pacDocumento,phdPaciente.pacNombres,phdPaciente.pacBarrio,phdPaciente.pacDireccion,phdPaciente.pacId
-                            ,admEntidad.entNombre
-                            ,ISNULL(grupo.grupo,'Grupo 5') AS grupo
-                            ,detalles
-                            ,(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero) AS programadas
-                            FROM phdAutorizacion
-                            LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
-                            LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-                            LEFT JOIN (SELECT phdDetalleAutorizacion.autNumero,CASE WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<17 THEN 'Grupo 1' 
-                                            WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<49 THEN 'Grupo 2'
-                                            WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<75 THEN 'Grupo 3'
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT autorizacion.autNumero,autorizacion.autFecha,autorizacion.autFechaVenc,autorizacion.autObservaciones
+                            ,paciente.pacDocumento,paciente.pacNombres,paciente.pacBarrio,paciente.pacDireccion,paciente.pacId
+                            ,asegurador.entNombre
+                            ,IFNULL(grupo.grupo,'Grupo 5') AS grupo
+                            ,detalles.detalle AS detalles
+                            ,(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero) AS programadas
+                            FROM autorizacion
+                            LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
+                            LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+                            LEFT JOIN (SELECT autorizacion_detalle.autNumero,CASE WHEN SUM(autorizacion_detalle.autNumSesiones)<17 THEN 'Grupo 1' 
+                                            WHEN SUM(autorizacion_detalle.autNumSesiones)<49 THEN 'Grupo 2'
+                                            WHEN SUM(autorizacion_detalle.autNumSesiones)<75 THEN 'Grupo 3'
                                             ELSE 'Grupo 4' END AS grupo
-                                            FROM phdDetalleAutorizacion 
+                                            FROM autorizacion_detalle 
                                             WHERE 
-                                            phdDetalleAutorizacion.actId IN (5028,5029,5030,5031)
-                                            GROUP BY phdDetalleAutorizacion.autNumero) AS grupo ON (grupo.autNumero=phdAutorizacion.autNumero)
-                            CROSS APPLY
-                            (
-                                SELECT ISNULL(phdActividad.actDescripcion,'%%'+ CAST(phdDetalleAutorizacion.actId AS VARCHAR(9))) 
-                                    + ISNULL(' [$$' + CAST(phdDetalleAutorizacion.intensidad AS VARCHAR(9)) + ']','')
-                                    + ' (' + CAST(ISNULL(phdDetalleAutorizacion.autNumSesiones,0) AS VARCHAR(9))
-                                    + '-' + CAST((SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)) ) AS VARCHAR(9)) 
-                                    + '-' + CAST(ISNULL(phdDetalleAutorizacion.autSesionesDia,0) AS VARCHAR(9)) 
-                                    + '),_ '
-                                FROM phdDetalleAutorizacion
-                                LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
-                                WHERE phdDetalleAutorizacion.autNumero = phdAutorizacion.autNumero
-                                FOR XML PATH('')
-                            ) pre_trimmed (detalles)
-                            WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                            AND phdAutorizacion.autActivo=1
-                            AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
-                            AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId=@procedimiento))
-                            AND ('@area'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE  phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND  phdDetalleAutorizacion.actId IN (@area)))
+                                            autorizacion_detalle.actId IN (5028,5029,5030,5031)
+                                            GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
+                            LEFT JOIN (
+                                        	SELECT autorizacion_detalle.autNumero
+														 ,GROUP_CONCAT(CONCAT(medicamentos.nombre, ' (', IFNULL(autorizacion_detalle.autNumSesiones,0),'-',IFNULL(autorizacion_detalle.autSesionesDia,0),')') SEPARATOR '<br/>') AS detalle
+                                            FROM autorizacion_detalle
+	                                        LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
+	                                        GROUP BY autorizacion_detalle.autNumero
+									) AS detalles ON (detalles.autNumero = autorizacion.autNumero)
+                            WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                            AND autorizacion.autActivo=1
+                            AND (@asegurador=0 OR paciente.entId=@asegurador)
+                            AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE  autorizacion_detalle.autNumero=autorizacion.autNumero AND  autorizacion_detalle.actId=@procedimiento))
+                            AND ('@area'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE  autorizacion_detalle.autNumero=autorizacion.autNumero AND  autorizacion_detalle.actId IN (@area)))
                             AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
-                            ORDER BY phdAutorizacion.autFecha">
+                            ORDER BY autorizacion.autFecha">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
@@ -188,83 +184,84 @@
     </asp:GridView>
     </div>
     <asp:SqlDataSource ID="SResumen" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="( 
-                        SELECT '-3' AS nombre,COUNT(DISTINCT phdAutorizacion.autNumero) AS des
-                                                    FROM phdAutorizacion
-                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
-                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
-							                        LEFT JOIN (SELECT phdDetalleAutorizacion.autNumero,CASE WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<17 THEN 'Grupo 1' 
-                                                        WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<49 THEN 'Grupo 2'
-                                                        WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<75 THEN 'Grupo 3'
+                        SELECT '-3' AS nombre,COUNT(DISTINCT autorizacion.autNumero) AS des
+                                                    FROM autorizacion
+                                                    LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
+                                                    LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+							                        LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+							                        LEFT JOIN (SELECT autorizacion_detalle.autNumero,CASE WHEN SUM(autorizacion_detalle.autNumSesiones)<17 THEN 'Grupo 1' 
+                                                        WHEN SUM(autorizacion_detalle.autNumSesiones)<49 THEN 'Grupo 2'
+                                                        WHEN SUM(autorizacion_detalle.autNumSesiones)<75 THEN 'Grupo 3'
                                                         ELSE 'Grupo 4' END AS grupo
-                                                        FROM phdDetalleAutorizacion 
+                                                        FROM autorizacion_detalle 
                                                         WHERE 
-                                                        phdDetalleAutorizacion.actId IN (5028,5029,5030,5031)
-                                                        GROUP BY phdDetalleAutorizacion.autNumero) AS grupo ON (grupo.autNumero=phdAutorizacion.autNumero)
-                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
-                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
-                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
+                                                        autorizacion_detalle.actId IN (5028,5029,5030,5031)
+                                                        GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
+                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    AND (@asegurador=0 OR paciente.entId=@asegurador)
+                                                    AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                                                    AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
                                                     AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
                         ) UNION ( 
-                        SELECT '-1',COUNT(DISTINCT phdPaciente.pacNombres)
-                                                    FROM phdAutorizacion
-                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
-                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
-							                        LEFT JOIN (SELECT phdDetalleAutorizacion.autNumero,CASE WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<17 THEN 'Grupo 1' 
-                                                        WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<49 THEN 'Grupo 2'
-                                                        WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<75 THEN 'Grupo 3'
+                        SELECT '-1',COUNT(DISTINCT paciente.pacNombres)
+                                                    FROM autorizacion
+                                                    LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
+                                                    LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+							                        LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+							                        LEFT JOIN (SELECT autorizacion_detalle.autNumero,CASE WHEN SUM(autorizacion_detalle.autNumSesiones)<17 THEN 'Grupo 1' 
+                                                        WHEN SUM(autorizacion_detalle.autNumSesiones)<49 THEN 'Grupo 2'
+                                                        WHEN SUM(autorizacion_detalle.autNumSesiones)<75 THEN 'Grupo 3'
                                                         ELSE 'Grupo 4' END AS grupo
-                                                        FROM phdDetalleAutorizacion 
+                                                        FROM autorizacion_detalle 
                                                         WHERE 
-                                                        phdDetalleAutorizacion.actId IN (5028,5029,5030,5031)
-                                                        GROUP BY phdDetalleAutorizacion.autNumero) AS grupo ON (grupo.autNumero=phdAutorizacion.autNumero)
-                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
-                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
-                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
+                                                        autorizacion_detalle.actId IN (5028,5029,5030,5031)
+                                                        GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
+                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    AND (@asegurador=0 OR paciente.entId=@asegurador)
+                                                    AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                                                    AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
                                                     AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
                         ) UNION (
-                        SELECT phdDetalleAutorizacion.actId,SUM(autNumSesiones)
-                                                    FROM phdAutorizacion
-                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
-                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
-							                        LEFT JOIN (SELECT phdDetalleAutorizacion.autNumero,CASE WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<17 THEN 'Grupo 1' 
-                                                        WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<49 THEN 'Grupo 2'
-                                                        WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<75 THEN 'Grupo 3'
+                        SELECT autorizacion_detalle.actId,SUM(autNumSesiones)
+                                                    FROM autorizacion
+                                                    LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
+                                                    LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+							                        LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+							                        LEFT JOIN (SELECT autorizacion_detalle.autNumero,CASE WHEN SUM(autorizacion_detalle.autNumSesiones)<17 THEN 'Grupo 1' 
+                                                        WHEN SUM(autorizacion_detalle.autNumSesiones)<49 THEN 'Grupo 2'
+                                                        WHEN SUM(autorizacion_detalle.autNumSesiones)<75 THEN 'Grupo 3'
                                                         ELSE 'Grupo 4' END AS grupo
-                                                        FROM phdDetalleAutorizacion 
+                                                        FROM autorizacion_detalle 
                                                         WHERE 
-                                                        phdDetalleAutorizacion.actId IN (5028,5029,5030,5031)
-                                                        GROUP BY phdDetalleAutorizacion.autNumero) AS grupo ON (grupo.autNumero=phdAutorizacion.autNumero)
-                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
-                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
-                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
+                                                        autorizacion_detalle.actId IN (5028,5029,5030,5031)
+                                                        GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
+                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    AND (@asegurador=0 OR paciente.entId=@asegurador)
+                                                    AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                                                    AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
                                                     AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
-							                        GROUP BY phdDetalleAutorizacion.actId
+							                        GROUP BY autorizacion_detalle.actId
                         )UNION (
-                        SELECT 5000000,SUM(phdDetalleAutorizacion.autNumSesiones)
-                                                    FROM phdAutorizacion
-                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
-                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
-							                        LEFT JOIN (SELECT phdDetalleAutorizacion.autNumero,CASE WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<17 THEN 'Grupo 1' 
-                                                        WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<49 THEN 'Grupo 2'
-                                                        WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<75 THEN 'Grupo 3'
+                        SELECT 5000000,SUM(autorizacion_detalle.autNumSesiones)
+                                                    FROM autorizacion
+                                                    LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
+                                                    LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+							                        LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+							                        LEFT JOIN (SELECT autorizacion_detalle.autNumero,CASE WHEN SUM(autorizacion_detalle.autNumSesiones)<17 THEN 'Grupo 1' 
+                                                        WHEN SUM(autorizacion_detalle.autNumSesiones)<49 THEN 'Grupo 2'
+                                                        WHEN SUM(autorizacion_detalle.autNumSesiones)<75 THEN 'Grupo 3'
                                                         ELSE 'Grupo 4' END AS grupo
-                                                        FROM phdDetalleAutorizacion 
+                                                        FROM autorizacion_detalle 
                                                         WHERE 
-                                                        phdDetalleAutorizacion.actId IN (5028,5029,5030,5031)
-                                                        GROUP BY phdDetalleAutorizacion.autNumero) AS grupo ON (grupo.autNumero=phdAutorizacion.autNumero)
-                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
-                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
-                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
+                                                        autorizacion_detalle.actId IN (5028,5029,5030,5031)
+                                                        GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
+                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    AND (@asegurador=0 OR paciente.entId=@asegurador)
+                                                    AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                                                    AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
                                                     AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
                         ) ORDER BY nombre
                         ">

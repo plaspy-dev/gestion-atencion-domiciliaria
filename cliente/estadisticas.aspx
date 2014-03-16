@@ -48,7 +48,7 @@
             <td><div id="chart_div2"></div></td>
         </tr>
         <tr>
-            <td><asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True" DataKeyNames="cal" onselectedindexchanged="GResultados_SelectedIndexChanged" Width="100%" >
+            <td valign="top"><asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True" DataKeyNames="cal" onselectedindexchanged="GResultados_SelectedIndexChanged" Width="100%" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -58,7 +58,7 @@
                     <Columns>
                         <asp:TemplateField HeaderText="Concepto" SortExpression="cal" ItemStyle-Wrap="false" ItemStyle-Width="100%">
                             <ItemTemplate>
-                                <asp:LinkButton ID="LConcepto" runat="server" CausesValidation="False" CommandName="Select" Text='<%# Eval("concepto") %>'></asp:LinkButton>
+                                <asp:LinkButton ID="LC" runat="server" CausesValidation="False" CommandName="Select" Text='<%# Eval("concepto") %>'></asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField HeaderText="Encuestas" SortExpression="numero" DataField="numero" ItemStyle-HorizontalAlign="Right" />
@@ -89,7 +89,7 @@
                              </SelectParameters>
                 </asp:SqlDataSource>
                 </td>
-            <td>
+            <td valign="top">
                 <asp:GridView ID="GConceptos" runat="server" DataSourceID="SConceptos" AutoGenerateColumns="False" AllowPaging="True" PageSize="50" AllowSorting="True" Width="100%" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -133,7 +133,7 @@
         <asp:GridView ID="GDetalle" runat="server" DataSourceID="SDetalle" 
             AutoGenerateColumns="False" EmptyDataText="No se encontraron pacientes" 
             AllowPaging="True" PageSize="50" AllowSorting="True" 
-                onrowdatabound="GDetalle_RowDataBound">
+                onrowdatabound="GDetalle_RowDataBound" Width="100%">
             <RowStyle CssClass="GridRow"></RowStyle>
             <FooterStyle CssClass="GridFooter"></FooterStyle>
             <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -141,7 +141,7 @@
             <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
             <Columns>
-                <asp:TemplateField HeaderText="Paciente" SortExpression="paciente">
+                <asp:TemplateField HeaderText="Paciente" SortExpression="paciente" ItemStyle-Width="100%">
                     <ItemTemplate>
                         <asp:LinkButton ID="LPaciente" runat="server" CausesValidation="False" PostBackUrl='<%# Eval("id", "~/cliente/escliente.aspx?eid={0}") %>' Text='<%# Eval("paciente") %>'></asp:LinkButton>
                     </ItemTemplate>

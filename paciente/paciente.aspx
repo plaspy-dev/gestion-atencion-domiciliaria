@@ -100,7 +100,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <div id="imprimir">
     <asp:ValidationSummary ID="ValidationSummary1" runat="server" DisplayMode="List" />
-    <table cellpadding="0" cellspacing="0" border="1">
+    <table style="border-collapse: collapse;">
         <tr>
             <td colspan="4" style="text-align: center" class="celdaTitulo" >
                 <asp:Label ID="Label32" runat="server" SkinID="lblsubTitulo" 
@@ -113,7 +113,7 @@
             </td>
         </tr>
         <tr>
-            <td rowspan="4">
+            <td rowspan="4" class="tdl">
                 <asp:ImageButton runat="server" ID="IFoto" CausesValidation="false" />
                 <br />
                 <asp:FileUpload runat="server" ID="FFoto" Width="100px" />
@@ -129,8 +129,9 @@
                                 DataValueField="tdocId">
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SDocumento" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT [tdocId], [tdocDescripcion] FROM [phdTipoDocumento]">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT tdocId, tdocDescripcion FROM tipo_documento">
                 </asp:SqlDataSource>
                 <br />
                 <br />
@@ -138,66 +139,50 @@
                 <asp:TextBox runat="server" ID="TDocumento"></asp:TextBox>
                 <asp:RequiredFieldValidator ControlToValidate="TDocumento" ErrorMessage="Por favor ingrese un documento." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             </td>
-            <td >
-                Primer Apellido
-            </td>
-            <td>
+            <td>Primer Apellido</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TPApellido"></asp:TextBox>
                 <asp:RequiredFieldValidator ControlToValidate="TPApellido" ErrorMessage="Por favor ingrese un apellido." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             </td>
-            <td rowspan="28" valign="top" class="style5">
+            <td rowspan="28" valign="top" class="tda">
                 <uc1:autorizaciones ID="UCAutorizaciones" runat="server" />
                 <br />
                 <br />
                 <hr />
                 Observaciones Adicionales
                 <br />
-                <asp:TextBox runat="server" ID="TObservaciones" TextMode="MultiLine" Width="171px" Height="172px"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TObservaciones" TextMode="MultiLine" Width="98%" Height="172px"></asp:TextBox>
             </td>
          </tr>
         <tr>
-            <td>
-                Segundo Apellido
-            </td>
-            <td>
+            <td>Segundo Apellido</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TSApellido" Width="280px"></asp:TextBox>
             </td>
         </tr>
         <tr>
-            <td>
-                Primer Nombre
-            </td>
-            <td>
+            <td>Primer Nombre</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TPNombre" Width="280px"></asp:TextBox>
                 <asp:RequiredFieldValidator ControlToValidate="TPNombre" ErrorMessage="Por favor ingrese un nombre." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             </td>
         </tr>
         <tr>
-            <td>
-                Segundo Nombre
-            </td>
-            <td>
+            <td>Segundo Nombre</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TSNombre" Width="280px"></asp:TextBox>
             </td>
         </tr>
         <tr>
+            <td class="tdl">Sexo</td>
             <td>
-                Sexo
+                <asp:DropDownList ID="DSexo" runat="server">
+                    <asp:ListItem Text="F" Value="1"></asp:ListItem>
+                    <asp:ListItem Text="M" Value="2"></asp:ListItem>
+                    </asp:DropDownList>
             </td>
-            <td>
-                <asp:DropDownList ID="DSexo" runat="server" 
-                                DataSourceID="SSexo" DataTextField="nombre" 
-                                DataValueField="id">
-                                </asp:DropDownList>
-                <asp:SqlDataSource ID="SSexo" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT [sexoId] AS id, [sexoDesc] AS nombre FROM [admSexo]">
-                </asp:SqlDataSource>
-            </td>
-            <td>
-                Fecha Nacimiento
-            </td>
-            <td>
+            <td>Fecha Nacimiento</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TNacimiento" CssClass="fecha"></asp:TextBox>
                 <asp:RequiredFieldValidator ControlToValidate="TNacimiento" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator3" runat="server" Display="Dynamic">*</asp:RequiredFieldValidator>
                 <asp:RangeValidator ControlToValidate="TNacimiento" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1900" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator>
@@ -205,45 +190,29 @@
             </td>
         </tr>
         <tr>
-            <td>
-                Dirección
-            </td>
-            <td>
-                <asp:TextBox runat="server" ID="TDireccion"></asp:TextBox>
-            </td>
-            <td>
-                Barrio
-            </td>
-            <td>
+            <td class="tdl">Dirección</td>
+            <td><asp:TextBox runat="server" ID="TDireccion"></asp:TextBox></td>
+            <td>Barrio</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TBarrio"></asp:TextBox>
             </td>
         </tr>
         <tr>
-            <td>
-                Teléfono
-            </td>
+            <td class="tdl">Teléfono</td>
             <td>
                 <asp:TextBox runat="server" ID="TTelefono"></asp:TextBox>
                 <asp:RequiredFieldValidator ControlToValidate="TTelefono" ErrorMessage="Por favor ingrese un teléfono." ID="RequiredFieldValidator8" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             </td>
-            <td>
-                Teléfono1
-            </td>
-            <td>
+            <td>Teléfono1</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TTelefono1"></asp:TextBox>
             </td>
         </tr>
         <tr>
-            <td>
-                Celular
-            </td>
-            <td>
-                <asp:TextBox runat="server" ID="TMovil"></asp:TextBox>
-            </td>
-            <td>
-                Correo
-            </td>
-            <td>
+            <td class="tdl">Celular</td>
+            <td><asp:TextBox runat="server" ID="TMovil"></asp:TextBox></td>
+            <td>Correo</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TEMail"></asp:TextBox>
                 <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" 
                                 ErrorMessage="Por favor ingrese un correo electrónico valido." 
@@ -252,18 +221,13 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2">
-                Especificaciones de llegada
-            </td>
-            <td colspan="2">
-                <asp:TextBox runat="server" ID="TLlegada" TextMode="MultiLine" 
-                    Width="375px"></asp:TextBox>
+            <td class="tdl">Especificaciones de llegada</td>
+            <td colspan="3" class="tdr">
+                <asp:TextBox runat="server" ID="TLlegada" TextMode="MultiLine" Width="98%"></asp:TextBox>
             </td>
         </tr>
         <tr>
-            <td colspan="1">
-                Localidad
-            </td>
+            <td class="tdl">Localidad</td>
             <td>
                 <asp:DropDownList ID="DLocalidad" runat="server" 
                                 DataSourceID="SLocalidad" DataTextField="nombre"
@@ -271,35 +235,28 @@
                                 <asp:ListItem Text="" Value=""></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SLocalidad" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT locId id, locDescripcion nombre FROM admLocalidad">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT locId id, locDescripcion nombre FROM localidad">
                 </asp:SqlDataSource>
             </td>
-            <td colspan="1">
-                Estrato
-            </td>
-            <td>
+            <td>Estrato</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TEstrato" MaxLength="1" CssClass="entero" Width="25px"></asp:TextBox>
             </td>
         </tr>
         <tr>
-            <td >
-                Familiar Responsable
-            </td>
+            <td  class="tdl">Familiar Responsable</td>
             <td>
                 <asp:TextBox runat="server" ID="TFResponsable"></asp:TextBox>
             </td>
-            <td>
-                Parentesco
-            </td>
-            <td>
+            <td>Parentesco</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TParentesco"></asp:TextBox>
             </td>
         </tr>
         <tr>
-            <td >
-                Pago directo
-            </td>
+            <td  class="tdl">Pago directo</td>
             <td>
                 <asp:DropDownList ID="DPago" runat="server" 
                                 DataSourceID="SPago" DataTextField="nombre" 
@@ -307,26 +264,23 @@
                                 <asp:ListItem Text="" Value=""></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SPago" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT pdirId id,pdirDescripcion nombre FROM dbo.phdPagoDirecto WHERE pdirActivo=1">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT pdirId id,pdirDescripcion nombre FROM paciente_tipo_pago WHERE pdirActivo=1">
                 </asp:SqlDataSource>
             </td>
-            <td>
-                Carné
-            </td>
-            <td>
+            <td>Carné</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TCarnet"></asp:TextBox>
             </td>
         </tr>
         <tr>
-            <td>
-                Zona</td>
+            <td class="tdl">Zona</td>
             <td>
                 <asp:TextBox runat="server" ID="TZona"></asp:TextBox>
             </td>
-            <td>
-                &nbsp;</td>
-            <td>
+            <td>&nbsp;</td>
+            <td class="tdr">
                 <asp:CheckBox runat="server" ID="CSuministros" Text="Entregar Suministros" />
             </td>
         </tr>
@@ -337,9 +291,7 @@
             </td>
         </tr>
         <tr>
-            <td >
-                Asegurador
-            </td>
+            <td  class="tdl">Asegurador</td>
             <td>
                 <asp:DropDownList ID="DAsegurador" runat="server" 
                                 DataSourceID="SAsegurador" DataTextField="nombre" 
@@ -347,41 +299,38 @@
                                 <asp:ListItem Text="" Value=""></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SAsegurador" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource>
             </td>
-            <td style="margin-left: 160px">
-                Médico de cabecera
-            </td>
-            <td>
+            <td>Médico de cabecera</td>
+            <td class="tdr">
                 <asp:DropDownList ID="DMedico" runat="server" 
                                 DataSourceID="SMedico" DataTextField="nombre" 
                                 DataValueField="id" AppendDataBoundItems="true">
                                 <asp:ListItem Text="" Value=""></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SMedico" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT perId id,perNombre nombre FROM admPersonalHS WHERE eEstId=1 and carId=6 ORDER BY perNombre">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT perId id,perNombre nombre FROM recurso_humano WHERE eEstId=1 and carId=6 ORDER BY perNombre">
                 </asp:SqlDataSource>
             </td>
         </tr>
         <tr id="trDatosAsegurador">
-            <td>
-                Fecha de Ingreso al asegurador</td>
+            <td class="tdl">Fecha de Ingreso al asegurador</td>
             <td>
                 <asp:TextBox runat="server" ID="TFechaIngresoAsegurador" CssClass="fecha"></asp:TextBox>
                 <asp:RangeValidator ControlToValidate="TFechaIngresoAsegurador" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator>
             </td>
-            <td style="margin-left: 160px">
-                Grado</td>
-            <td>
+            <td>Grado</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TGrado"></asp:TextBox>
             </td>
         </tr>
         <tr ID="trDatosAsegurador">
-            <td>
-                Tipo de afiliado</td>
+            <td class="tdl">Tipo de afiliado</td>
             <td>
                 <asp:DropDownList ID="DTipoAfiliado" runat="server" AppendDataBoundItems="true">
                     <asp:ListItem Text="" Value=""></asp:ListItem>
@@ -389,9 +338,8 @@
                     <asp:ListItem Value="2" Text="Beneficiario"></asp:ListItem>
                 </asp:DropDownList>
             </td>
-            <td style="margin-left: 160px">
-                Categoría</td>
-            <td><asp:DropDownList ID="DCategoria" runat="server" 
+            <td>Categoría</td>
+            <td class="tdr"><asp:DropDownList ID="DCategoria" runat="server" 
                                 DataSourceID="SCategoria" DataTextField="nombre" 
                                 DataValueField="id" AppendDataBoundItems="true">
                                 <asp:ListItem Text="" Value=""></asp:ListItem>
@@ -410,9 +358,7 @@
             </td>
         </tr>
         <tr>
-            <td >
-                Tipo de Evento
-            </td>
+            <td  class="tdl">Tipo de Evento</td>
             <td>
                 <asp:DropDownList ID="DTipoEvento" runat="server" 
                                 DataSourceID="STipoEvento" DataTextField="nombre" 
@@ -420,85 +366,68 @@
                                 <asp:ListItem Text="" Value=""></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="STipoEvento" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT tipECod id,tipEDescripcion nombre FROM dbo.phdTipoEvento WHERE tipEActivo=1">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT tipECod id,tipEDescripcion nombre FROM tipo_evento WHERE tipEActivo=1">
                 </asp:SqlDataSource>
             </td>
-            <td style="margin-left: 160px">
-                Fec Ing Programa
-            </td>
-            <td>
+            <td>Ingreso al Programa</td>
+            <td class="tdr">
                 <asp:TextBox CssClass="fecha" runat="server" ID="TFechaIngreso"></asp:TextBox>
                 <asp:RequiredFieldValidator ControlToValidate="TFechaIngreso" ErrorMessage="Por favor ingrese una fecha de ingreso." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <asp:RangeValidator ControlToValidate="TFechaIngreso" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator2" Display="Dynamic" Type="Date">*</asp:RangeValidator>
             </td>
         </tr>
         <tr>
-            <td >
-                Estado
-            </td>
+            <td class="tdl">Estado</td>
             <td>
                 <asp:DropDownList ID="DEstado" runat="server" 
                                 DataSourceID="SEstado" DataTextField="nombre" 
                                 DataValueField="id" Enabled="false">
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SEstado" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT estId id,estDesc nombre FROM dbo.phdEstado">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT estId id,estDesc nombre FROM paciente_estado">
                 </asp:SqlDataSource>
             </td>
-            <td style="margin-left: 160px">
-                Numero ETB
-            </td>
-            <td>
+            <td>Numero ETB</td>
+            <td class="tdr">
                 <asp:TextBox runat="server" ID="TNumeroETB" CssClass="entero"></asp:TextBox>
             </td>
         </tr>
         <tr>
-            <td >
-                Intensidad Terapias
-            </td>
+            <td class="tdl">Intensidad Terapias</td>
             <td>
                 <asp:TextBox runat="server" ID="TIntensidadTerapias"></asp:TextBox>
             </td>
-            <td style="margin-left: 160px">
-                &nbsp;</td>
-            <td>
-                &nbsp;</td>
+            <td>&nbsp;</td>
+            <td class="tdr">&nbsp;</td>
         </tr>
         <tr>
-            <td >
-                &nbsp;</td>
+            <td class="tdl">&nbsp;</td>
             <td>
                 <asp:CheckBox ID="CDiabetico" runat="server" Text="Diabético" />
             </td>
-            <td style="margin-left: 160px">
-                &nbsp;</td>
-            <td>
-                &nbsp;</td>
+            <td>&nbsp;</td>
+            <td class="tdr">&nbsp;</td>
         </tr>
         <tr>
-            <td >
-                CIE 10
-            </td>
-            <td colspan="3">
-                <asp:TextBox runat="server" Width="100%" ID="TCIE1"></asp:TextBox>
+            <td class="tdl">CIE 10</td>
+            <td colspan="3" class="tdr">
+                <asp:TextBox runat="server" Width="98%" ID="TCIE1"></asp:TextBox>
             </td>
         </tr>
         <tr>
-            <td >
-                CIE 10_1
-            </td>
-            <td colspan="3">
-                <asp:TextBox runat="server" Width="100%" ID="TCIE2"></asp:TextBox>
+            <td class="tdl">CIE 10_1</td>
+            <td colspan="3" class="tdr">
+                <asp:TextBox runat="server" Width="98%" ID="TCIE2"></asp:TextBox>
             </td>
         </tr>
         <tr>
-            <td >
-                CIE 10_2
-            </td>
-            <td colspan="3">
-                <asp:TextBox runat="server" Width="100%" ID="TCIE3"></asp:TextBox>
+            <td class="tdl tdb">CIE 10_2</td>
+            <td colspan="3" class="tdb tdr">
+                <asp:TextBox runat="server" Width="98%" ID="TCIE3"></asp:TextBox>
             </td>
         </tr>
     </table>
@@ -515,27 +444,28 @@
                 <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
                     <asp:BoundField DataField="prgFechaProg" HeaderText="Fecha" SortExpression="prgFechaProg" DataFormatString="{0:d}" />
-                    <asp:BoundField DataField="perNombre" HeaderText="Profesional" SortExpression="perNombre" />
-                    <asp:BoundField DataField="actDescripcion" HeaderText="Actividad" SortExpression="actDescripcion" ItemStyle-Width="100%" />
+                    <asp:BoundField DataField="perNombre" HeaderText="Profesional" SortExpression="perNombre" ItemStyle-Wrap="false" />
+                    <asp:BoundField DataField="nombre" HeaderText="Actividad" SortExpression="nombre" ItemStyle-Width="100%" />
                     <asp:BoundField DataField="autNumero" HeaderText="Autorización" SortExpression="autNumero" />
                     <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                 </Columns>
             </asp:GridView>
                 <asp:SqlDataSource ID="SProgramacion" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT  pr.prgFechaProg, 
-		                    phdActividad.actDescripcion, 
+		                    medicamentos.nombre, 
 		                    autNumero,
-		                    admPersonalHS.perNombre,
+		                    recurso_humano.perNombre,
 		                    pr.actId
                             FROM programacion pr
-		                    LEFT JOIN phdPaciente on pr.pacId = phdPaciente.pacId
-		                    LEFT JOIN phdActividad ON pr.actId = phdActividad.actId
-		                    LEFT JOIN admPersonalHS ON pr.perId = admPersonalHS.perId
+		                    LEFT JOIN paciente on pr.pacId = paciente.pacId
+		                    LEFT JOIN medicamentos ON pr.actId = medicamentos.id
+		                    LEFT JOIN recurso_humano ON pr.perId = recurso_humano.perId
 	                    WHERE pr.pacId=@pacId
 	                          AND pr.prgActivo=1
-                              AND pr.prgFechaProg >= getdate()
-                    order by prgFechaProg desc,phdActividad.actDescripcion">
+                              AND pr.prgFechaProg >= SYSDATE()
+                    order by prgFechaProg desc,medicamentos.nombre">
                       <SelectParameters>
                         <asp:ControlParameter ControlID="HId" PropertyName="Value" DefaultValue="0" Name="pacId" />
                       </SelectParameters>
@@ -551,50 +481,30 @@
                 <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                 <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
-                    <asp:BoundField DataField="audFecha" HeaderText="Fecha" SortExpression="audFecha" />
+                    <asp:BoundField DataField="audFecha" HeaderText="Fecha" SortExpression="audFecha" ItemStyle-Wrap="false" />
                     <asp:BoundField DataField="audUsuario" HeaderText="Usuario" SortExpression="audUsuario" />
                     <asp:CheckBoxField DataField="audIngreso" HeaderText="Ingreso" SortExpression="audIngreso" />
                     <asp:CheckBoxField DataField="audEgreso" HeaderText="Egreso" SortExpression="audEgreso" />
-                    <asp:CheckBoxField DataField="pacCuraciones" HeaderText="Curaciones" SortExpression="pacCuraciones" />
-                    <asp:CheckBoxField DataField="pacAdmPuntual" HeaderText="Act.Puntual" SortExpression="pacAdmPuntual" />
-                    <asp:CheckBoxField DataField="pacTerapiaFisica" HeaderText="Ter.Física" SortExpression="pacTerapiaFisica" />
-                    <asp:CheckBoxField DataField="pacTerapiaResp" HeaderText="Ter.Resp" SortExpression="pacTerapiaResp" />
-                    <asp:CheckBoxField DataField="pacTerapiaOcup" HeaderText="Ter.Ocup" SortExpression="pacTerapiaOcup" />
-                    <asp:CheckBoxField DataField="pacTerapiaLenguaje" HeaderText="Ter.Leng" SortExpression="pacTerapiaLenguaje" />
-                    <asp:CheckBoxField DataField="pacValNutricional" HeaderText="Val.Nutri" SortExpression="pacValNutricional" />
-                    <asp:CheckBoxField DataField="pacValMedica" HeaderText="Val.Médica" SortExpression="pacValMedica" />
-                    <asp:CheckBoxField DataField="pacEnfermeria_12" HeaderText="Enf.12H" SortExpression="pacEnfermeria_12" />
-                    <asp:CheckBoxField DataField="pacEnfermeria_24" HeaderText="Enf.24H" SortExpression="pacEnfermeria_24" />
                     <asp:BoundField DataField="cingDescripcion" HeaderText="Causa Ing" SortExpression="cingDescripcion" />
                     <asp:BoundField DataField="cegDescripcion" HeaderText="Causa Egr" SortExpression="cegDescripcion" />
                     <asp:BoundField DataField="audObs" HeaderText="Obs" SortExpression="audObs" ItemStyle-Width="100%" />
                 </Columns>
             </asp:GridView>
                 <asp:SqlDataSource ID="SAuditoria" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT [audIngreso]
-	                      ,[audEgreso]
-	                      ,CONVERT(BIT,[pacCuraciones]) pacCuraciones
-                          ,CONVERT(BIT,[pacAdmPuntual]) pacAdmPuntual
-                          ,CONVERT(BIT,[pacTerapiaFisica]) pacTerapiaFisica
-                          ,CONVERT(BIT,[pacTerapiaResp]) pacTerapiaResp
-                          ,CONVERT(BIT,[pacTerapiaOcup]) pacTerapiaOcup
-                          ,CONVERT(BIT,[pacTerapiaLenguaje]) pacTerapiaLenguaje
-                          ,CONVERT(BIT,[pacValNutricional]) pacValNutricional
-                          ,CONVERT(BIT,[pacValMedica]) pacValMedica
-                          ,CONVERT(BIT,[pacEnfermeria_12]) pacEnfermeria_12
-                          ,CONVERT(BIT,[pacEnfermeria_24]) pacEnfermeria_24
-                          ,CONVERT(BIT,[pacEntregaSuministros]) pacEntregaSuministros
-                          ,[audUsuario]
-                          ,[audFecha],
-                          cingDescripcion,
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT audIngreso
+	                      ,audEgreso
+                          ,audUsuario
+                          ,audFecha
+                          ,cingDescripcion,
                           cegDescripcion,
                           audObs
-                      FROM [phdAuditServicios]
-	                    left join phdCausaReingreso on [phdAuditServicios].cingId = phdCausaReingreso.cingId
-	                    left join phdCausaEgreso on [phdAuditServicios].cegId = phdCausaEgreso.cegId
+                      FROM paciente_auditoria_servicios
+	                    left join causa_reingreso on paciente_auditoria_servicios.cingId = causa_reingreso.cingId
+	                    left join causa_egreso on paciente_auditoria_servicios.cegId = causa_egreso.cegId
                       where  pacId=@pacId
-                      order by [audFecha] desc,segFechaIngreso desc">
+                      order by audFecha desc,segFechaIngreso desc">
                       <SelectParameters>
                         <asp:ControlParameter ControlID="HId" PropertyName="Value" DefaultValue="0" Name="pacId" />
                       </SelectParameters>
@@ -616,8 +526,9 @@
                                 <asp:ListItem Text="" Value=""></asp:ListItem>
                                 </asp:DropDownList>
                         <asp:SqlDataSource ID="SMotivo" runat="server" 
-                            ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                            SelectCommand="SELECT cingId id,cingDescripcion nombre FROM dbo.phdCausaReingreso ORDER BY 2">
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                            ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            SelectCommand="SELECT cingId id,cingDescripcion nombre FROM causa_reingreso ORDER BY 2">
                         </asp:SqlDataSource>
                     </td>
                 <td><asp:TextBox runat="server" ID="TObservacionesRetiro" Width="100%" TextMode="MultiLine"></asp:TextBox></td>

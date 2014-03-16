@@ -122,19 +122,19 @@
                 ondatabound="DAutorizacion_DataBound">
                                 </asp:DropDownList><asp:RequiredFieldValidator ValidationGroup="CProgramacion" ControlToValidate="DAutorizacion" ErrorMessage="Por favor seleccione un autorización." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <asp:SqlDataSource ID="SAutorizacion" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT phdAutorizacion.autNumero
-                                FROM phdAutorizacion
-                                LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
-                                LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
-								LEFT JOIN phdTipoActividad ON (phdActividad.tpaId = phdTipoActividad.tpaId)
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT autorizacion.autNumero
+                                FROM autorizacion
+                                LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+                                LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
                                 WHERE 
-                                phdAutorizacion.autActivo=1
-                                AND phdAutorizacion.pacId=@paciente
+                                autorizacion.autActivo=1
+                                AND autorizacion.pacId=@paciente
                                 {0}
-                                AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                                AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
-                                GROUP BY phdAutorizacion.autNumero">
+                                AND SYSDATE()<=IFNULL(autFechaVenc+30,autFecha+60)
+                                AND autorizacion_detalle.autNumSesiones>(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId AND (programacion.intensidad=autorizacion_detalle.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL)))
+                                GROUP BY autorizacion.autNumero">
 			                <SelectParameters>
 			                    <asp:ControlParameter ControlID="HIdPaciente" PropertyName="Value" Name="paciente" DefaultValue="0" />
 			                </SelectParameters>
@@ -146,7 +146,7 @@
         <td align="left">
             <asp:DropDownList ID="DActividad" runat="server" 
                                 DataSourceID="SActividad" DataTextField="nombre" 
-                                DataValueField="id" ondatabound="DActividad_DataBound">
+                                DataValueField="id" ondatabound="DActividad_DataBound" CssClass="anchomaxcombo">
                                 </asp:DropDownList>
                 <asp:RequiredFieldValidator ValidationGroup="CProgramacion" ControlToValidate="DActividad" ErrorMessage="Por favor seleccione una actividad." ID="RequiredFieldValidator6" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <asp:Repeater runat="server" ID="RActividad" DataSourceID="SActividad" >
@@ -157,21 +157,21 @@
                     </ItemTemplate>
                 </asp:Repeater>
                 <asp:SqlDataSource ID="SActividad" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT CAST(phdDetalleAutorizacion.actId AS VARCHAR(9))+'_'+ISNULL(CAST(phdDetalleAutorizacion.intensidad AS VARCHAR(9)),'') AS id
-                        ,phdActividad.actDescripcion AS nombre
-                        ,phdDetalleAutorizacion.autNumSesiones
-                        ,(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))) AS realizadas
-                        FROM phdAutorizacion
-                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
-                        LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
-                        LEFT JOIN phdTipoActividad ON (phdActividad.tpaId = phdTipoActividad.tpaId) 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT CONCAT(autorizacion_detalle.actId,'_',IFNULL(autorizacion_detalle.intensidad,'')) AS id
+                        ,medicamentos.nombre AS nombre
+                        ,autorizacion_detalle.autNumSesiones
+                        ,(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId AND (programacion.intensidad=autorizacion_detalle.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL))) AS realizadas
+                        FROM autorizacion
+                        LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+                        LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
                         WHERE 
-                        phdAutorizacion.pacId=@paciente
-                        AND phdAutorizacion.autNumero=@autorizacion 
+                        autorizacion.pacId=@paciente
+                        AND autorizacion.autNumero=@autorizacion 
                         {0}
-                        AND phdDetalleAutorizacion.autNumSesiones>(SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
-                        ORDER BY phdActividad.actDescripcion">
+                        AND autorizacion_detalle.autNumSesiones>(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId AND (programacion.intensidad=autorizacion_detalle.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL)))
+                        ORDER BY medicamentos.nombre">
                         <SelectParameters>
                             <asp:ControlParameter ControlID="HIdPaciente" PropertyName="Value" Name="paciente" DefaultValue="0" />
                             <asp:ControlParameter ControlID="DAutorizacion" PropertyName="SelectedValue" Name="autorizacion" DefaultValue="0" />

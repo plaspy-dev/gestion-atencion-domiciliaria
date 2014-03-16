@@ -79,7 +79,8 @@
                 </Columns>
             </asp:GridView>
             <asp:SqlDataSource ID="SResultado" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="" 
                 DeleteCommand="" >
             </asp:SqlDataSource>

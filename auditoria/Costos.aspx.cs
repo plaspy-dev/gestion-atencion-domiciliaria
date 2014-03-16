@@ -41,31 +41,36 @@ public partial class auditoria_Costos : System.Web.UI.Page
             GResumen.Visible= GResultados.Visible = false;
         }
     }
+
+    protected void UpdateColumns() {
+
+        // reemplazamos las actividades
+        if (nFecha == -1)
+            nFecha = Utilidades.GetGridColumnIndex(GResultados, "Fecha");
+        if (actividad == -1)
+            actividad = Utilidades.GetGridColumnIndex(GResultados, "Actividad");
+        if (intensidad == -1)
+            intensidad = Utilidades.GetGridColumnIndex(GResultados, "Intensidad");
+        if (costoautorizado == -1)
+            costoautorizado = Utilidades.GetGridColumnIndex(GResultados, "Costo autorizadas");
+        if (costoprogramado == -1)
+            costoprogramado = Utilidades.GetGridColumnIndex(GResultados, "Costo programadas");
+        if (sesionesprogramadas == -1)
+            sesionesprogramadas = Utilidades.GetGridColumnIndex(GResultados, "Sesiones programadas");
+        if (sesionesautorizadas == -1)
+            sesionesautorizadas = Utilidades.GetGridColumnIndex(GResultados, "Sesiones Autorizadas");
+        if (difSesiones == -1)
+            difSesiones = Utilidades.GetGridColumnIndex(GResultados, "Diferencia sesiones");
+        if (difCosto == -1)
+            difCosto = Utilidades.GetGridColumnIndex(GResultados, "Diferencia costo");
+    }
+
     protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowIndex != -1)
         {
-            // reemplazamos las actividades
-            if (nFecha == -1)
-                nFecha = Utilidades.GetGridColumnIndex(GResultados, "Fecha");
-            if (actividad == -1)
-                actividad = Utilidades.GetGridColumnIndex(GResultados, "Actividad");
-            if (intensidad == -1)
-                intensidad = Utilidades.GetGridColumnIndex(GResultados, "Intensidad");
-            if ( costoautorizado== -1)
-                costoautorizado = Utilidades.GetGridColumnIndex(GResultados, "Costo autorizadas");
-            if ( costoprogramado== -1)
-                costoprogramado = Utilidades.GetGridColumnIndex(GResultados, "Costo programadas");
-            if ( sesionesprogramadas== -1)
-                sesionesprogramadas = Utilidades.GetGridColumnIndex(GResultados, "Sesiones programadas");
-            if ( sesionesautorizadas== -1)
-                sesionesautorizadas = Utilidades.GetGridColumnIndex(GResultados, "Sesiones Autorizadas");
-            if (difSesiones == -1)
-                difSesiones = Utilidades.GetGridColumnIndex(GResultados, "Diferencia sesiones");
-            if ( difCosto== -1)
-                difCosto = Utilidades.GetGridColumnIndex(GResultados, "Diferencia costo");
 
-
+            UpdateColumns();
 
             string fecha = e.Row.Cells[nFecha].Text;
             string asegurador = HttpUtility.HtmlDecode(e.Row.Cells[costoautorizado].Text).Trim();
@@ -146,6 +151,7 @@ public partial class auditoria_Costos : System.Web.UI.Page
         }
 
         // GResultados.AllowPaging = true;
+        UpdateColumns();
 
         GResultados.FooterRow.Cells[actividad].Text = "Total";
 

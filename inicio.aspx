@@ -57,25 +57,26 @@
     </FooterTemplate>
 </asp:Repeater>
 <asp:SqlDataSource ID="SCumpleanos" runat="server" 
-    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
     SelectCommand="SELECT per.perId AS id,per.perNombre AS nombres
-				,CASE DATEPART(d, perFechaNac) 
-				WHEN DATEPART(d, getdate()) THEN 'Hoy' 
-				WHEN DATEPART(d, getdate()-1) THEN 'Ayer'
-				WHEN DATEPART(d, getdate()-2) THEN 'Anteayer'
-				WHEN DATEPART(d, getdate()+1) THEN 'Mañana'
+				,CASE DAY(perFechaNac) 
+				WHEN DAY(SYSDATE()) THEN 'Hoy' 
+				WHEN DAY(SYSDATE()-1) THEN 'Ayer'
+				WHEN DAY(SYSDATE()-2) THEN 'Anteayer'
+				WHEN DAY(SYSDATE()+1) THEN 'Mañana'
 				END AS dia
-				,admCargo.carDescripcion AS cargo,perCorreoElectronico,per.perCelular AS celular
-                FROM dbo.admPersonalHS per  
-                LEFT JOIN admCargo on per.carId = admCargo.carId    
+				,cargo.carDescripcion AS cargo,perCorreoElectronico,per.perCelular AS celular
+                FROM recurso_humano per  
+                LEFT JOIN cargo on per.carId = cargo.carId    
 				WHERE per.eEstId=1 
-				AND DATEPART(m, perFechaNac)=DATEPART(m, getdate())
-				AND (DATEPART(d, perFechaNac)=DATEPART(d, getdate())
-				OR DATEPART(d, perFechaNac)=DATEPART(d, getdate()-2)
-				OR DATEPART(d, perFechaNac)=DATEPART(d, getdate()-1)
-				OR DATEPART(d, perFechaNac)=DATEPART(d, getdate()+1)
+				AND MONTH(perFechaNac)=MONTH(SYSDATE())
+				AND (DAY(perFechaNac)=DAY(SYSDATE())
+				OR DAY(perFechaNac)=DAY(SYSDATE()-2)
+				OR DAY(perFechaNac)=DAY(SYSDATE()-1)
+				OR DAY(perFechaNac)=DAY(SYSDATE()+1)
 				)
-				ORDER BY DATEPART(m, perFechaNac)*100+DATEPART(d, perFechaNac);">
+				ORDER BY DAY(perFechaNac)*100+DAY(perFechaNac);">
 </asp:SqlDataSource>
 </div>
 <asp:Repeater runat="server" ID="RAlertas">

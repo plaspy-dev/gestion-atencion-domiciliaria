@@ -70,8 +70,9 @@
                                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="STipo" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT tqrIdTipo id,tqrDescripcion nombre FROM serTipoFormulario ORDER BY nombre">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT tqrIdTipo id,tqrDescripcion nombre FROM tipo_queja_reclamo ORDER BY nombre">
                 </asp:SqlDataSource></td>
             <td><asp:DropDownList ID="DClasificacion" runat="server" 
                                 DataSourceID="SClasificacion" DataTextField="nombre" 
@@ -199,14 +200,15 @@
     </div>
     </div>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT 
-                            (SELECT COUNT(*) FROM serQuejasReclamos WHERE qrFecha BETWEEN @desde AND @hasta AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS quejas
-                            ,(SELECT COUNT(*) FROM serQuejasReclamos WHERE qrFecha BETWEEN @desde AND @hasta AND qrCerrado=1 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS cerradas
-                            ,(SELECT COUNT(*) FROM serQuejasReclamos WHERE qrFecha BETWEEN @desde AND @hasta AND qrAtendido=1 AND qrCerrado=0 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS atendidas
-                            ,(SELECT COUNT(*) FROM serQuejasReclamos WHERE qrFecha BETWEEN @desde AND @hasta AND qrAtendido=0 AND qrCerrado=0 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS sintramitar
-                            ,(SELECT COUNT(*) FROM serQuejasReclamos LEFT JOIN serSeguimiento ON (serSeguimiento.qrId=serQuejasReclamos.qrId) WHERE qrFecha BETWEEN @desde AND @hasta AND qrCerrado=1 AND serSeguimiento.sqrCerrar=1 AND DATEDIFF(day,serSeguimiento.segFechaIngreso,qrFecha)<4 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS dias3
-                            ,(SELECT COUNT(*) FROM serQuejasReclamos LEFT JOIN serSeguimiento ON (serSeguimiento.qrId=serQuejasReclamos.qrId) WHERE qrFecha BETWEEN @desde AND @hasta AND qrCerrado=1 AND serSeguimiento.sqrCerrar=1 AND DATEDIFF(day,serSeguimiento.segFechaIngreso,qrFecha)>3 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS masdias
+                            (SELECT COUNT(*) FROM queja_reclamo WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS quejas
+                            ,(SELECT COUNT(*) FROM queja_reclamo WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrCerrado=1 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS cerradas
+                            ,(SELECT COUNT(*) FROM queja_reclamo WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrAtendido=1 AND qrCerrado=0 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS atendidas
+                            ,(SELECT COUNT(*) FROM queja_reclamo WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrAtendido=0 AND qrCerrado=0 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS sintramitar
+                            ,(SELECT COUNT(*) FROM queja_reclamo LEFT JOIN queja_reclamo_seguimiento ON (queja_reclamo_seguimiento.qrId=queja_reclamo.qrId) WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrCerrado=1 AND queja_reclamo_seguimiento.sqrCerrar=1 AND DATEDIFF(queja_reclamo_seguimiento.segFechaIngreso,qrFecha)<4 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS dias3
+                            ,(SELECT COUNT(*) FROM queja_reclamo LEFT JOIN queja_reclamo_seguimiento ON (queja_reclamo_seguimiento.qrId=queja_reclamo.qrId) WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrCerrado=1 AND queja_reclamo_seguimiento.sqrCerrar=1 AND DATEDIFF(queja_reclamo_seguimiento.segFechaIngreso,qrFecha)>3 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS masdias
                             ">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
@@ -217,10 +219,11 @@
                  </SelectParameters>
     </asp:SqlDataSource>    
     <asp:SqlDataSource ID="SEntidades" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
-                SelectCommand="SELECT admEntidad.entNombre AS entidad,COUNT(*) AS numero FROM serQuejasReclamos 
-                            LEFT JOIN admEntidad ON (admEntidad.entId=serQuejasReclamos.entId) 
-                            WHERE qrFecha BETWEEN @desde AND @hasta
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT asegurador.entNombre AS entidad,COUNT(*) AS numero FROM queja_reclamo 
+                            LEFT JOIN asegurador ON (asegurador.entId=queja_reclamo.entId) 
+                            WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                             AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)
                             GROUP BY entNombre ORDER BY numero DESC;">
                  <SelectParameters>
@@ -239,7 +242,7 @@
             <tr>
             <td>
             <asp:GridView ID="GDetalle" runat="server" DataSourceID="SDetalle" 
-                AutoGenerateColumns="False" EmptyDataText="No se encontraron quejas" 
+                AutoGenerateColumns="False" EmptyDataText="No se encontraron quejas" Width="100%"
                 AllowPaging="True" PageSize="50" AllowSorting="True">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -248,19 +251,27 @@
                 <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                 <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
-                    <asp:TemplateField HeaderText="Paciente" SortExpression="paciente">
+                    <asp:TemplateField HeaderText="Paciente" SortExpression="paciente" ItemStyle-Wrap="false">
                         <ItemTemplate>
                             <asp:LinkButton ID="LPaciente" runat="server" CausesValidation="False" PostBackUrl='<%# Eval("qrId", "~/cliente/quejas.aspx?qid={0}") %>' Text='<%# Eval("pacNombres") %>'></asp:LinkButton>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:BoundField HeaderText="Fecha" SortExpression="qrFecha" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" DataField="qrFecha" />
-                    <asp:BoundField HeaderText="Detalle" SortExpression="qrDetalle" DataField="qrDetalle" />
+                    <asp:BoundField HeaderText="Detalle" SortExpression="qrDetalle" DataField="qrDetalle" ItemStyle-Width="100%" />
                     <asp:BoundField HeaderText="Observaciones" SortExpression="qrObsHS" DataField="qrObsHS" />
                 </Columns>
             </asp:GridView>
             <asp:SqlDataSource ID="SDetalle" runat="server" 
-                        ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                         SelectCommand="">
+                        <SelectParameters>
+                            <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
+                            <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />
+                            <asp:ControlParameter ControlID="DTipo" Name="tipo" PropertyName="SelectedValue" />
+                            <asp:ControlParameter ControlID="DClasificacion" Name="clasificacion" PropertyName="SelectedValue" />
+                            <asp:ControlParameter ControlID="DCliente" Name="cliente" PropertyName="SelectedValue" />
+                         </SelectParameters>
             </asp:SqlDataSource>
             </td>
             </tr>

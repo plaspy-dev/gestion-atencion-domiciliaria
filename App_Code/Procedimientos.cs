@@ -314,8 +314,8 @@ public class Procedimientos
     {
         string descripcion= (string)HttpRuntime.Cache["cie10" + text];
         if (descripcion == null) {
-            using(CConectorMS conector= new CConectorMS()) 
-                descripcion = conector.QueryString("SELECT [cieCodDx]+' - '+ [cirDescripcion] FROM phdCIE10 WHERE cieCodDx='" + text + "'");
+            using(CConector conector= new CConector())
+                descripcion = conector.QueryString("SELECT CONCAT(cieCodDx,' - ', cirDescripcion) FROM cie10 WHERE cieCodDx='" + text + "'");
             HttpRuntime.Cache.Insert("cie10" + text, descripcion);
         }
         return descripcion;

@@ -124,6 +124,17 @@ public class Conector : IDisposable
 
 	public void ShowError(string error)
 	{
+		string text = DateTime.Now.ToString() + " Error[Conector] : ";
+		try
+		{
+			text = ((HttpContext.Current != null) ? (text + HttpContext.Current.Request.Url.ToString()) : ((OperationContext.Current != null) ? (text + OperationContext.Current.IncomingMessageHeaders.To.ToString()) : (text + Path.GetFileName(Assembly.GetEntryAssembly().Location))));
+		}
+		catch
+		{
+		}
+		string text2 = text;
+		text = text2 + "\r\n" + m_szLastError + "\r\n" + m_szQuery;
+		Logs.WriteLog(text);
 		try
 		{
 			Page page = (Page)HttpContext.Current.Handler;

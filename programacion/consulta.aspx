@@ -95,14 +95,15 @@
                 <asp:RequiredFieldValidator ControlToValidate="TFin" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <asp:RangeValidator ControlToValidate="TFin" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator>
             </td>
-            <td><asp:DropDownList ID="DAsegurador" runat="server" 
+            <td><asp:DropDownList ID="DAsegurador" runat="server" CssClass="anchomaxcombo"
                                 DataSourceID="SAsegurador" DataTextField="nombre" 
                                 DataValueField="id" AppendDataBoundItems="true">
                                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SAsegurador" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
             <td>
             <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>
@@ -110,7 +111,7 @@
             <td>
                 <asp:TextBox Width="99%" runat="server" ID="TPersonal"></asp:TextBox><asp:TextBox runat="server" ID="TPersonalID" CssClass="hide"></asp:TextBox>
             </td>
-            <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" 
+            <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea"  CssClass="anchomaxcombo"
                     DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
@@ -121,11 +122,11 @@
                 </asp:SqlDataSource>
             </td>
             <td>
-            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" 
+            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" CssClass="anchomaxcombo" 
                 DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
             </asp:DropDownList>
-            <asp:SqlDataSource ID="SIntensidad" runat="server" 
+            <asp:SqlDataSource ID="SIntensidad" runat="server"
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND szReservado IS NULL ORDER BY nombre">
@@ -159,11 +160,11 @@
         <ItemStyle HorizontalAlign="Right"></ItemStyle>
                     </asp:HyperLinkField>
                     <asp:HyperLinkField DataTextField="pacNombres" HeaderText="Paciente" DataNavigateUrlFields="pacId" SortExpression="pacNombres"
-                        DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" />
-                    <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre"/>
-                    <asp:BoundField HeaderText="Actividad" DataField="actividad" SortExpression="actividad"/>
+                        DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" ItemStyle-Wrap="false" />
+                    <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre" ItemStyle-Wrap="false"/>
+                    <asp:BoundField HeaderText="Actividad" DataField="actividad" SortExpression="actividad" ItemStyle-Wrap="false"/>
                     <asp:BoundField HeaderText="Sesiones" DataField="prgNumSesion" SortExpression="prgNumSesion" ItemStyle-HorizontalAlign="Right"/>
-                    <asp:BoundField HeaderText="Profesional" DataField="perNombre" SortExpression="perNombre"/>
+                    <asp:BoundField HeaderText="Profesional" DataField="perNombre" SortExpression="perNombre" ItemStyle-Wrap="false"/>
                     <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio"/>
                     <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion"/>
                     <asp:BoundField HeaderText="Teléfono" DataField="pacTelefono" SortExpression="pacTelefono"/>
@@ -185,30 +186,27 @@
     </div>
     </div>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT programacion.prgFechaProg,programacion.autNumero
-                                ,phdPaciente.pacDocumento,phdPaciente.pacNombres,phdPaciente.pacBarrio,phdPaciente.pacDireccion,phdPaciente.pacId
-                                ,phdPaciente.pacTelefono
-                                ,admEntidad.entNombre
-                                ,admPersonalHS.perNombre
-                                ,CAST(programacion.actId AS VARCHAR(255))+'_'+ISNULL(CAST(programacion.intensidad AS VARCHAR(255)),'') AS actividad
+                                ,paciente.pacDocumento,paciente.pacNombres,paciente.pacBarrio,paciente.pacDireccion,paciente.pacId
+                                ,paciente.pacTelefono
+                                ,asegurador.entNombre
+                                ,recurso_humano.perNombre
+                                ,CONCAT(programacion.actId,'_',IFNULL(programacion.intensidad,'')) AS actividad
                                 ,programacion.prgId
                                 ,programacion.prgNumSesion
-                                ,novedad
+                                ,GROUP_CONCAT(
+                                    CONCAT(CASE programacion_novedad.novTipo WHEN 1 THEN 'Cancelación Programación' WHEN 2 THEN 'Reasignación' WHEN 3 THEN 'Cambio en num. sesiones' WHEN 4 THEN 'Otro' WHEN 5 THEN 'Paciente desprotegido' WHEN 6 THEN 'Cambio Servicio' ELSE NULL END,',_')
+                                ) AS novedad
                                 ,programacion.prgObservaciones
                                 FROM programacion
-                                LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId)
-                                LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-                                LEFT JOIN admPersonalHS ON (admPersonalHS.perId=programacion.perId)
-                                CROSS APPLY
-                                (
-                                    SELECT (CASE phdNovedad.novTipo WHEN 1 THEN 'Cancelación Programación' WHEN 2 THEN 'Reasignación' WHEN 3 THEN 'Cambio en num. sesiones' WHEN 4 THEN 'Otro' WHEN 5 THEN 'Paciente desprotegido' WHEN 6 THEN 'Cambio Servicio' ELSE NULL END)+',_' AS novedad
-                                    FROM phdNovedad
-                                    WHERE phdNovedad.prgId=programacion.prgId
-                                    FOR XML PATH('')
-                                ) pre_trimmed (novedad)                            
-                                LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=programacion.autNumero AND phdDetalleAutorizacion.actId=programacion.actId AND phdDetalleAutorizacion.intensidad=programacion.intensidad)
-                            WHERE programacion.prgFechaProg BETWEEN @inicio AND @fin
+                                LEFT JOIN paciente ON (paciente.pacId=programacion.pacId)
+                                LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+                                LEFT JOIN recurso_humano ON (recurso_humano.perId=programacion.perId)
+                                LEFT JOIN programacion_novedad ON (programacion_novedad.prgId=programacion.prgId)
+                                LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=programacion.autNumero AND autorizacion_detalle.actId=programacion.actId AND autorizacion_detalle.intensidad=programacion.intensidad)
+                            WHERE programacion.prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                             AND programacion.prgActivo=1
                             AND (@asegurador=0 OR programacion.entId=@asegurador)
                             AND (@personal=0 OR programacion.perId=@personal)
@@ -216,7 +214,8 @@
                             AND ('@area'='0' OR programacion.actId IN (@area))
                             AND (@intensidad=0 OR programacion.intensidad=@intensidad)
                             {0}
-                            ORDER BY programacion.prgFechaProg,phdPaciente.pacNombres">
+                            GROUP BY programacion.prgId
+                            ORDER BY programacion.prgFechaProg,paciente.pacNombres">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />

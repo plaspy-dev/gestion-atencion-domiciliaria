@@ -26,8 +26,8 @@ public partial class administrador_aseguradores : System.Web.UI.Page
     {
         if (!IsValid)
             return;
-        Query query = new Query("admEntidad");
-        using (CConectorMS conector = new CConectorMS())
+        Query query = new Query("asegurador");
+        using (CConector conector = new CConector())
         {
             string szQuery;
             string mensaje;

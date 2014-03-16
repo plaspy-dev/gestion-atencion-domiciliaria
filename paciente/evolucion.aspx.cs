@@ -65,7 +65,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
                     BAceptar.Enabled = usuario.CanInsert();
                     BMasCDiagnostico.Enabled = usuario.CanInsert();
-                    using (CConectorMS conector = new CConectorMS())
+                    using (CConector conector = new CConector())
                     {
                         TFuncionario.Enabled = usuario.CanAdmin();
                         if (!usuario.CanAdmin())
@@ -75,9 +75,9 @@ public partial class paciente_evolucion : System.Web.UI.Page
                             else
                             {
                                 TIdFuncionario.Text = usuario["personal"];
-                                TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
+                                TFuncionario.Text = conector.QueryString("SELECT perNombre FROM recurso_humano WHERE perId='" + TIdFuncionario.Text + "'");
                             }
-                            PCIE10.Visible = conector.QueryString("SELECT carId FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'") == "6";
+                            PCIE10.Visible = conector.QueryString("SELECT carId FROM recurso_humano WHERE perId='" + TIdFuncionario.Text + "'") == "6";
                             TTA.Focus();
                         }
                         else
@@ -107,10 +107,9 @@ public partial class paciente_evolucion : System.Web.UI.Page
                     qIngreso += "area_atencion";
                     qIngreso += "seguimiento";
 
-                    using(CConector conectormysql= new CConector()) 
-                    using (CConectorMS conector = new CConectorMS())
+                    using(CConector conector= new CConector()) 
                     {
-                        MySqlDataReader readermysql = conectormysql.Query(qIngreso.GetSelect("id=" + Query.GetValor(Request.QueryString["evolid"])));
+                        MySqlDataReader readermysql = conector.Query(qIngreso.GetSelect("id=" + Query.GetValor(Request.QueryString["evolid"])));
                         if (readermysql != null && readermysql.Read())
                         {
                             PNivelAtencion.Visible = true;
@@ -142,11 +141,11 @@ public partial class paciente_evolucion : System.Web.UI.Page
                             Utilidades.SelectInDropDown(DArea, readermysql["area_atencion"]);
                             TFechaSeguimiento.Text = Query.GetFromMySQLDate(readermysql["seguimiento"]);
 
-                            TFuncionario.Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'");
+                            TFuncionario.Text = conector.QueryString("SELECT perNombre FROM recurso_humano WHERE perId='" + TIdFuncionario.Text + "'");
 
                             if (TPlanManejo.Text.Length == 0)
                             {
-                                string procedimientos = Procedimientos.GetPlanDeManejo(conectormysql, CCDetallePaciente.IdPaciente, TFecha.Text);
+                                string procedimientos = Procedimientos.GetPlanDeManejo(conector, CCDetallePaciente.IdPaciente, TFecha.Text);
                                 if (procedimientos.Length > 0)
                                 {
                                     ViewState["procedimientos"] = procedimientos;
@@ -375,11 +374,10 @@ public partial class paciente_evolucion : System.Web.UI.Page
                 }
             }
 
-            if (conector.QueryString("SELECT carId FROM admPersonalHS WHERE perId='" + TIdFuncionario.Text + "'") == "6") // medico
+            if (conector.QueryString("SELECT carId FROM recurso_humano WHERE perId='" + TIdFuncionario.Text + "'") == "6") // medico
             {
-                using(CConectorMS conectorms = new CConectorMS()) 
-                    if (conectorms.QueryMod("UPDATE phdPaciente SET megId=" + Query.GetValor(TIdFuncionario.Text) + ",cieCodDx=" + Query.GetValor(cie10) + ",cieCodDx_1=" + Query.GetValor(cie102) + ",cieCodDx_2=" + Query.GetValor(cie103) + " WHERE pacId=" + CCDetallePaciente.IdPaciente) == -1)
-                        return;
+                if (conector.QueryMod("UPDATE paciente SET megId=" + Query.GetValor(TIdFuncionario.Text) + ",cieCodDx=" + Query.GetValor(cie10) + ",cieCodDx_1=" + Query.GetValor(cie102) + ",cieCodDx_2=" + Query.GetValor(cie103) + " WHERE pacId=" + CCDetallePaciente.IdPaciente) == -1)
+                    return;
             }
 
             Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
@@ -410,10 +408,10 @@ public partial class paciente_evolucion : System.Web.UI.Page
     {
         string codigo = GetCodigoCIE(TCIE10.Text);
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
-            string descripcion = conector.QueryString("SELECT cirDescripcion FROM phdCIE10 WHERE cieCodDx='" + codigo + "'");
+            string descripcion = conector.QueryString("SELECT cirDescripcion FROM cie10 WHERE cieCodDx='" + codigo + "'");
             if (descripcion.Length > 0)
             {  // si existe el codigo
 
@@ -543,18 +541,18 @@ public partial class paciente_evolucion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szBarthel$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Barthel));
         evento.Contenido = evento.Contenido.Replace("$szBraden$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Braden));
 
-        using (CConectorMS conectorms = new CConectorMS())
+        using (CConector conector = new CConector())
         {
             Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
             evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
             evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
 
-            Query query = new Query("admPersonalHS");
+            Query query = new Query("recurso_humano");
 
-            query["szProfesional"] = "admPersonalHS.perDocumento";
-            query["szCargo"] = "admCargo.carDescripcion";
+            query["szProfesional"] = "recurso_humano.perDocumento";
+            query["szCargo"] = "cargo.carDescripcion";
 
-            SqlDataReader reader = conectorms.Query(query.GetSelect("perId=" + Query.GetValor(TIdFuncionario.Text), " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"));
+            MySqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(TIdFuncionario.Text), " LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)"));
             if (reader != null)
             {
                 bool l = reader.Read();
@@ -563,8 +561,6 @@ public partial class paciente_evolucion : System.Web.UI.Page
                     evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
                 }
             }
-        }
-        using (CConector conector = new CConector()) {
             evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(TIdFuncionario.Text)));
         }
         // limpiamos el inactivo de los pacientes
@@ -579,8 +575,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            using(CConectorMS conector = new CConectorMS()) 
-                e.Row.Cells[2].Text = conector.QueryString("SELECT perNombre FROM admPersonalHS WHERE perId='" + e.Row.Cells[2].Text + "'");
+            e.Row.Cells[2].Text = Funcionario.GetFuncionario(e.Row.Cells[2].Text).Nombres;
         }
     }
     protected void BEliminar_Click(object sender, EventArgs e)

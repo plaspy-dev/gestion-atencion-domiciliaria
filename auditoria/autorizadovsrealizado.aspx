@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Informe de incumplimiento" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="autorizadovsrealizado.aspx.cs" Inherits="auditoria_autorizadovsrealizado" %>
+﻿<%@ Page Title="Informe de cumplimiento" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="autorizadovsrealizado.aspx.cs" Inherits="auditoria_autorizadovsrealizado" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
@@ -54,58 +54,58 @@
     </asp:GridView>
     </div>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="
-                            (
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="(
                                 SELECT 1 AS i,'Consolidad total' AS nombre, SUM(autNumSesiones) AS ses,SUM(a) AS a,SUM(b) AS b
                                 ,SUM(autNumSesiones)-SUM(a)-SUM(b) AS c 
-                                ,CASE SUM(autNumSesiones) WHEN 0 THEN 0 ELSE (CAST((SUM(autNumSesiones)-SUM(a)-SUM(b)) AS FLOAT)/CAST(SUM(autNumSesiones) AS FLOAT)) END AS d
+                                ,CASE SUM(autNumSesiones) WHEN 0 THEN 0 ELSE ((SUM(autNumSesiones)-SUM(a)-SUM(b))/SUM(autNumSesiones)) END AS d
                                 FROM 
                                 (
-                                SELECT phdAutorizacion.autNumero, phdDetalleautorizacion.autNumSesiones
+                                SELECT autorizacion.autNumero, autorizacion_detalle.autNumSesiones
                                 ,SUM(CASE prgActivo WHEN 1 THEN programacion.prgNumSesion ELSE 0 END) AS a
                                 ,SUM(CASE prgActivo WHEN 0 THEN programacion.prgNumSesion ELSE 0 END) AS b
-                                FROM phdAutorizacion
-                                LEFT JOIN phdDetalleautorizacion ON (phdDetalleautorizacion.autNumero=phdAutorizacion.autNumero)
-                                LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
-                                WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId,phdDetalleautorizacion.intensidad, phdDetalleautorizacion.autNumSesiones
+                                FROM autorizacion
+                                LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+                                LEFT JOIN programacion ON (programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId AND (programacion.intensidad=autorizacion_detalle.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL)))
+                                WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                GROUP BY autorizacion.autNumero, autorizacion_detalle.actId,autorizacion_detalle.intensidad, autorizacion_detalle.autNumSesiones
                                 ) AS a
                             ) UNION (
-                                SELECT 2 AS i,CAST(a.actId AS VARCHAR) AS nombre,SUM(autNumSesiones) AS ses,SUM(a) AS a,SUM(b) AS b
+                                SELECT 2 AS i,a.actId AS nombre,SUM(autNumSesiones) AS ses,SUM(a) AS a,SUM(b) AS b
                                 ,SUM(autNumSesiones)-SUM(a)-SUM(b) AS c 
-                                ,CASE SUM(autNumSesiones) WHEN 0 THEN 0 ELSE (CAST((SUM(autNumSesiones)-SUM(a)-SUM(b)) AS FLOAT)/CAST(SUM(autNumSesiones) AS FLOAT)) END AS d
+                                ,CASE SUM(autNumSesiones) WHEN 0 THEN 0 ELSE ((SUM(autNumSesiones)-SUM(a)-SUM(b))/SUM(autNumSesiones)) END AS d
                                 FROM 
                                 (
-                                    SELECT phdAutorizacion.autNumero, phdDetalleautorizacion.actId,phdDetalleautorizacion.autNumSesiones
+                                    SELECT autorizacion.autNumero, autorizacion_detalle.actId,autorizacion_detalle.autNumSesiones
                                     ,SUM(CASE prgActivo WHEN 1 THEN programacion.prgNumSesion ELSE 0 END) AS a
                                     ,SUM(CASE prgActivo WHEN 0 THEN programacion.prgNumSesion ELSE 0 END) AS b
-                                    FROM phdAutorizacion
-                                    LEFT JOIN phdDetalleautorizacion ON (phdDetalleautorizacion.autNumero=phdAutorizacion.autNumero)
-                                    LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
-                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                    AND phdDetalleautorizacion.actId IS NOT NULL
-                                    GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId,phdDetalleautorizacion.intensidad,phdDetalleautorizacion.autNumSesiones
+                                    FROM autorizacion
+                                    LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+                                    LEFT JOIN programacion ON (programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId AND (programacion.intensidad=autorizacion_detalle.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL)))
+                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                    AND autorizacion_detalle.actId IS NOT NULL
+                                    GROUP BY autorizacion.autNumero, autorizacion_detalle.actId,autorizacion_detalle.intensidad,autorizacion_detalle.autNumSesiones
                                 ) AS a GROUP BY a.actId
                             ) UNION (
                                 
-                                SELECT 3 AS i,ISNULL(a.entNombre,'(Ninguno)'),SUM(autNumSesiones),SUM(a),SUM(b)
+                                SELECT 3 AS i,IFNULL(a.entNombre,'(Ninguno)'),SUM(autNumSesiones),SUM(a),SUM(b)
                                 ,SUM(autNumSesiones)-SUM(a)-SUM(b) AS c 
-                                ,CASE SUM(autNumSesiones) WHEN 0 THEN 0 ELSE (CAST((SUM(autNumSesiones)-SUM(a)-SUM(b)) AS FLOAT)/CAST(SUM(autNumSesiones) AS FLOAT)) END AS d
+                                ,CASE SUM(autNumSesiones) WHEN 0 THEN 0 ELSE ((SUM(autNumSesiones)-SUM(a)-SUM(b))/SUM(autNumSesiones)) END AS d
                                 FROM 
                                 (
-                                SELECT phdAutorizacion.autNumero, admEntidad.entNombre, phdDetalleautorizacion.autNumSesiones
+                                SELECT autorizacion.autNumero, asegurador.entNombre, autorizacion_detalle.autNumSesiones
                                 ,SUM(CASE prgActivo WHEN 1 THEN programacion.prgNumSesion ELSE 0 END) AS a
                                 ,SUM(CASE prgActivo WHEN 0 THEN programacion.prgNumSesion ELSE 0 END) AS b
-                                FROM phdAutorizacion
-                                LEFT JOIN phdDetalleautorizacion ON (phdDetalleautorizacion.autNumero=phdAutorizacion.autNumero)
-                                LEFT JOIN programacion ON (programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)))
-                                LEFT JOIN admEntidad ON (admEntidad.entId=phdAutorizacion.entId)
-                                WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                GROUP BY phdAutorizacion.autNumero, phdDetalleautorizacion.actId,phdDetalleautorizacion.intensidad, admEntidad.entNombre,phdDetalleautorizacion.autNumSesiones
+                                FROM autorizacion
+                                LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+                                LEFT JOIN programacion ON (programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId AND (programacion.intensidad=autorizacion_detalle.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL)))
+                                LEFT JOIN asegurador ON (asegurador.entId=autorizacion.entId)
+                                WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                GROUP BY autorizacion.autNumero, autorizacion_detalle.actId,autorizacion_detalle.intensidad, asegurador.entNombre,autorizacion_detalle.autNumSesiones
                                 ) AS a
                                 GROUP BY a.entNombre
-                            ) ORDER BY i
+                            ) ORDER BY i,nombre
                             ">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />

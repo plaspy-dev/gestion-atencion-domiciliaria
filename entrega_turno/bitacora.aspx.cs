@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using SDG.Componentes;
+using MySql.Data.MySqlClient;
 
 public partial class entrega_turno_bitacora : System.Web.UI.Page
 {
@@ -25,19 +26,19 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
             if (!string.IsNullOrEmpty(Request.QueryString["bid"]))
             {
 
-                Query query = new Query("turBitacora");
-                using (CConectorMS conector = new CConectorMS())
+                Query query = new Query("bitacora_turno");
+                using (CConector conector = new CConector())
                 {
 
-                    query += "turBitacora.bitId";
-                    query += "turBitacora.bitFecha";
-                    query += "turBitacora.bitObservaciones";
-                    query += "turBitacora.tpaId";
-                    query += "turBitacora.NAdministrativa";
-                    query += "turBitacora.NServicio";
-                    query += "turBitacora.pacId";
+                    query += "bitacora_turno.bitId";
+                    query += "bitacora_turno.bitFecha";
+                    query += "bitacora_turno.bitObservaciones";
+                    query += "bitacora_turno.tpaId";
+                    query += "bitacora_turno.NAdministrativa";
+                    query += "bitacora_turno.NServicio";
+                    query += "bitacora_turno.pacId";
 
-                    SqlDataReader reader = conector.Query(query.GetSelect("bitId=" + Query.GetValor(Request.QueryString["bid"])));
+                    MySqlDataReader reader = conector.Query(query.GetSelect("bitId=" + Query.GetValor(Request.QueryString["bid"])));
                     if (reader != null && reader.Read())
                     {
 
@@ -82,13 +83,13 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
     {
         if (!IsValid)
             return;
-        Query query = new Query("turBitacora");
-        using (CConectorMS conector = new CConectorMS())
+        Query query = new Query("bitacora_turno");
+        using (CConector conector = new CConector())
         {
 
             conector.StartTransaction();
 
-            query["bitFecha"] = TFecha.Text;
+            query["bitFecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             query["bitObservaciones"] = TObservaciones.Text;
             query["tpaId"] = DTipo.SelectedValue;
             query["NAdministrativa"] = DNAdministrativa.SelectedValue;
@@ -98,7 +99,7 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
             if (string.IsNullOrEmpty(HBitacora.Value))
             {
                 query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
-                query["segFechaRegistro"] = "GETDATE()";
+                query["segFechaRegistro"] = "SYSDATE()";
 
                 int res = conector.QueryMod(query.GetInsert());
                 if (res == -1)
@@ -137,12 +138,12 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
         if (!IsValid)
             return;
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
             Query query = new Query("bitacora_seguimiento");
 
             query["bitacora"] = HBitacora.Value;
-            query["fecha"] = TFechaSeguimiento.Text + " " + THoraSeguimiento.Text + ":00";
+            query["fecha"] = Query.GetMySQLDateFormat(TFechaSeguimiento.Text + " " + THoraSeguimiento.Text + ":00", true);
             query["area"] = DArea.SelectedValue;
             query["objeto"] = TObjeto.Text;
 

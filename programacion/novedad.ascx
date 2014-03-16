@@ -105,8 +105,9 @@
                                 DataValueField="id">
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SCausa1" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT cnoId id,cnoDescripcion nombre FROM dbo.phdCausaNovedad WHERE cnoTipoNovedad=1 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT cnoId id,cnoDescripcion nombre FROM causa_novedad WHERE cnoTipoNovedad=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
             </tr>
         </table>
@@ -120,8 +121,9 @@
                                 DataValueField="id">
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SCausa3" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT cnoId id,cnoDescripcion nombre FROM dbo.phdCausaNovedad WHERE cnoTipoNovedad=4 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT cnoId id,cnoDescripcion nombre FROM causa_novedad WHERE cnoTipoNovedad=4 ORDER BY 2">
                 </asp:SqlDataSource></td>
             </tr>
             <tr>
@@ -141,8 +143,9 @@
                                 DataValueField="id">
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SCausa5" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT cnoId id,cnoDescripcion nombre FROM dbo.phdCausaNovedad WHERE cnoTipoNovedad=6 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT cnoId id,cnoDescripcion nombre FROM causa_novedad WHERE cnoTipoNovedad=6 ORDER BY 2">
                 </asp:SqlDataSource></td>
             </tr>
             <tr>
@@ -162,8 +165,9 @@
                                 DataValueField="id">
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SCausa2" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT cnoId id,cnoDescripcion nombre FROM dbo.phdCausaNovedad WHERE cnoTipoNovedad=2 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT cnoId id,cnoDescripcion nombre FROM causa_novedad WHERE cnoTipoNovedad=2 ORDER BY 2">
                 </asp:SqlDataSource></td>
             </tr>
             <tr>
@@ -184,8 +188,9 @@
                                 DataValueField="id">
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SCausa4" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT cnoId id,cnoDescripcion nombre FROM dbo.phdCausaNovedad WHERE cnoTipoNovedad=5 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT cnoId id,cnoDescripcion nombre FROM causa_novedad WHERE cnoTipoNovedad=5 ORDER BY 2">
                 </asp:SqlDataSource></td>
             </tr>
         </table>
@@ -226,17 +231,18 @@
         </Columns>
     </asp:GridView>
     <asp:SqlDataSource ID="SNovedades" runat="server" 
-        ConnectionString="<%$ ConnectionStrings:connBD %>" 
+        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
         SelectCommand="SELECT 
-                        phdNovedad.novIden,phdCausaNovedad.cnoDescripcion,personalAnt.perNombre,admPersonalHS.perNombre AS personal
-                        ,phdNovedad.novObs,phdNovedad.segUsuarioRegistro,phdNovedad.segFechaRegistro
-                        ,phdNovedad.novTipo
-                        ,CASE phdNovedad.novTipo WHEN 1 THEN 'Cancelación Programación' WHEN 2 THEN 'Reasignación' WHEN 3 THEN 'Cambio en num. sesiones' WHEN 4 THEN 'Otro' WHEN 5 THEN 'Paciente desprotegido' WHEN 6 THEN 'Cambio Servicio' ELSE NULL END AS novedad
-                        FROM phdNovedad
-                        LEFT JOIN admPersonalHS ON (phdNovedad.perId = admPersonalHS.perId)
-                        LEFT JOIN admPersonalHS AS personalAnt ON (phdNovedad.perIdAnt = personalAnt.perId) OR (phdNovedad.perIdAnt IS NULL AND personalAnt.perId IS NULL)
-                        LEFT JOIN phdCausaNovedad ON (phdNovedad.cnoId = phdCausaNovedad.cnoId)
-                        WHERE phdNovedad.prgId=@programacion ORDER BY phdNovedad.segFechaRegistro DESC"
+                        programacion_novedad.novIden,causa_novedad.cnoDescripcion,personalAnt.perNombre,recurso_humano.perNombre AS personal
+                        ,programacion_novedad.novObs,programacion_novedad.segUsuarioRegistro,programacion_novedad.segFechaRegistro
+                        ,programacion_novedad.novTipo
+                        ,CASE programacion_novedad.novTipo WHEN 1 THEN 'Cancelación Programación' WHEN 2 THEN 'Reasignación' WHEN 3 THEN 'Cambio en num. sesiones' WHEN 4 THEN 'Otro' WHEN 5 THEN 'Paciente desprotegido' WHEN 6 THEN 'Cambio Servicio' ELSE NULL END AS novedad
+                        FROM programacion_novedad
+                        LEFT JOIN recurso_humano ON (programacion_novedad.perId = recurso_humano.perId)
+                        LEFT JOIN recurso_humano AS personalAnt ON (programacion_novedad.perIdAnt = personalAnt.perId) OR (programacion_novedad.perIdAnt IS NULL AND personalAnt.perId IS NULL)
+                        LEFT JOIN causa_novedad ON (programacion_novedad.cnoId = causa_novedad.cnoId)
+                        WHERE programacion_novedad.prgId=@programacion ORDER BY programacion_novedad.segFechaRegistro DESC"
                     >
           <SelectParameters>
             <asp:ControlParameter ControlID="HIdProgramacion" Name="programacion" PropertyName="Value" Type="Int32" />

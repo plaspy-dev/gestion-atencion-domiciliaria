@@ -90,8 +90,9 @@
                                 <asp:ListItem Text="(Todas)" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SAsegurador" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -115,24 +116,25 @@
             </Fields>
         </asp:DetailsView>
             <asp:SqlDataSource ID="SResultados" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT 
-                        (SELECT COUNT(*) FROM phdEgresos 
-                        LEFT JOIN phdCausaEgreso ON (phdCausaEgreso.cegId=phdEgresos.cegId)
-                        LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdEgresos.pacId)
-                        WHERE (@eps=0 OR phdPaciente.entId=@eps) AND phdEgresos.egrFecha BETWEEN @desde AND @hasta AND phdCausaEgreso.cegDescripcion='MUERTE') AS muertos
-                        ,(SELECT COUNT(DISTINCT autNumero) FROM phdAutorizacion WHERE 
-                        (@eps=0 OR phdAutorizacion.entId=@eps) AND 
-                        autNumero IN (SELECT programacion.autNumero FROM programacion WHERE prgFechaProg BETWEEN @desde AND @hasta)) AS atendidos
+                        (SELECT COUNT(*) FROM paciente_egreso 
+                        LEFT JOIN causa_egreso ON (causa_egreso.cegId=paciente_egreso.cegId)
+                        LEFT JOIN paciente ON (paciente.pacId=paciente_egreso.pacId)
+                        WHERE (@eps=0 OR paciente.entId=@eps) AND paciente_egreso.egrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND causa_egreso.cegDescripcion='MUERTE') AS muertos
+                        ,(SELECT COUNT(DISTINCT autNumero) FROM autorizacion WHERE 
+                        (@eps=0 OR autorizacion.entId=@eps) AND 
+                        autNumero IN (SELECT programacion.autNumero FROM programacion WHERE prgFechaProg BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y'))) AS atendidos
                         ,
-                        (SELECT COUNT(*) FROM phdEgresos
-                        LEFT JOIN phdCausaEgreso ON (phdCausaEgreso.cegId=phdEgresos.cegId)
-                        LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdEgresos.pacId) 
+                        (SELECT COUNT(*) FROM paciente_egreso
+                        LEFT JOIN causa_egreso ON (causa_egreso.cegId=paciente_egreso.cegId)
+                        LEFT JOIN paciente ON (paciente.pacId=paciente_egreso.pacId) 
                         WHERE 
-                        (@eps=0 OR phdPaciente.entId=@eps) AND 
-						phdEgresos.egrFecha BETWEEN @desde AND @hasta 
+                        (@eps=0 OR paciente.entId=@eps) AND 
+						paciente_egreso.egrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') 
                         AND 
-						(phdCausaEgreso.cegDescripcion LIKE 'REINGRESO POR AGUDIZACION' OR phdCausaEgreso.cegDescripcion='REINGRESO POR PATOLOGIA ANEXA' OR phdCausaEgreso.cegDescripcion='REINGRESO POR CANALIZACIÓN FALLIDA')
+						(causa_egreso.cegDescripcion LIKE 'REINGRESO POR AGUDIZACION' OR causa_egreso.cegDescripcion='REINGRESO POR PATOLOGIA ANEXA' OR causa_egreso.cegDescripcion='REINGRESO POR CANALIZACIÓN FALLIDA')
                         ) AS egresos
                         ">
                  <SelectParameters>
@@ -256,16 +258,17 @@
                     </Columns>
                 </asp:GridView>
                 <asp:SqlDataSource ID="SCausas" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
-                    SelectCommand="SELECT TOP 10 phdCIE10.cieCodDx+' - '+ phdCIE10.cirDescripcion AS causa,COUNT(*) AS c FROM phdAutorizacion
-                                LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
-                                LEFT JOIN phdCIE10 ON (phdCIE10.cieCodDx=phdPaciente.cieCodDx)
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT CONCAT(cie10.cieCodDx,' - ', cie10.cirDescripcion) AS causa,COUNT(*) AS c FROM autorizacion
+                                LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
+                                LEFT JOIN cie10 ON (cie10.cieCodDx=paciente.cieCodDx)
                                 WHERE 
-                                phdPaciente.cieCodDx IS NOT NULL
-                                AND (@eps=0 OR phdPaciente.entId=@eps)
-                                AND phdAutorizacion.autNumero IN 
-                                (SELECT autNumero FROM programacion WHERE prgFechaProg BETWEEN @desde AND @hasta)
-                                GROUP BY phdCIE10.cieCodDx,phdCIE10.cirDescripcion ORDER BY c DESC">
+                                paciente.cieCodDx IS NOT NULL
+                                AND (@eps=0 OR paciente.entId=@eps)
+                                AND autorizacion.autNumero IN 
+                                (SELECT autNumero FROM programacion WHERE prgFechaProg BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y'))
+                                GROUP BY cie10.cieCodDx,cie10.cirDescripcion ORDER BY c DESC LIMIT 10">
                              <SelectParameters>
                                 <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
                                 <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />
@@ -304,7 +307,8 @@
             </Columns>
         </asp:GridView>
         <asp:SqlDataSource ID="SDetalle" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:ConnBD %>" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="">
                     <SelectParameters>
                         <asp:ControlParameter ControlID="DAsegurador" Name="eps" PropertyName="SelectedValue" />

@@ -21,10 +21,7 @@ public partial class _Default : System.Web.UI.Page
             {
                 Session.RemoveAll();
                 CConector.SetCookie("contrasena", "");
-                FormsAuthentication.SignOut();
-                Response.Redirect(CURLs.SwitchApp("~/Inicio.aspx", ConfigurationSettings.AppSettings["app"]));
-                // Response.Redirect("~/");
-                Response.End();
+                Response.Redirect("~/");
             }
 
             CUsuario usuario = (CUsuario)Usuario.Validate();
@@ -38,13 +35,6 @@ public partial class _Default : System.Web.UI.Page
                 return;
             }
 
-            /*m_EUsuario.Text = CConector.GetCookie("loginOrganizationExample15");
-            m_EContrasena.Text = HttpUtility.UrlDecode(CConector.GetCookie("contrasena"));
-            if (m_EContrasena.Text.Length > 0)
-            {
-                IngresarOld();
-                return;
-            }*/
             m_EUsuario.Text = CConector.GetCookie("loginOrganizationExample15");
             if (m_EUsuario.Text.Length > 0)
                 m_EContrasena.Focus();
@@ -55,7 +45,7 @@ public partial class _Default : System.Web.UI.Page
 
     protected void m_BIngresar_Click(object sender, EventArgs e)
     {
-        CUsuario usuario = (CUsuario)Usuario.Validate(m_EUsuario.Text, Crypt.EncriptarDES(m_EContrasena.Text, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4")));
+        CUsuario usuario = (CUsuario)Usuario.Validate(m_EUsuario.Text, m_EContrasena.Text);
         if (usuario != null)
         {
             string url = Request.QueryString["from"];

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using SDG.Componentes;
 using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 
 [Serializable]
 public class Entidad
@@ -21,16 +22,16 @@ public class Entidad
         if (entidad == null)
         {
             entidad = new Entidad();
-            Query query = new Query("admEntidad");
+            Query query = new Query("asegurador");
 
             query += "maximo_paciente";
             query += "maximo_mensual";
             query+="entNombre";
 
-            using (CConectorMS conector = new CConectorMS())
+            using (CConector conector = new CConector())
             {
 
-                SqlDataReader reader = conector.Query(query.GetSelect("entId=" + Query.GetValor(id)));
+                MySqlDataReader reader = conector.Query(query.GetSelect("entId=" + Query.GetValor(id)));
                 if (reader != null && reader.Read())
                 {
 

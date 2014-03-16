@@ -7,6 +7,9 @@ using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using System.Collections;
 using SDG.Componentes;
+using MySql.Data.MySqlClient;
+using System.Configuration;
+using System.IO;
 
 public partial class rh_funcionario : System.Web.UI.Page
 {
@@ -16,7 +19,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         public string ilabEmpresa { get; set; }
         public string ilabTelefono { get; set; }
         public string ilabJefeInmediato { get; set; }
-        public string ilabAño { get; set; }
+        public string ilabAno { get; set; }
 
         public Empresas() {
 
@@ -24,7 +27,7 @@ public partial class rh_funcionario : System.Web.UI.Page
 
         public Empresas(string empresa, string telefono, string jefe, string ano) {
 
-            ilabAño = ano;
+            ilabAno = ano;
             ilabEmpresa = empresa;
             ilabJefeInmediato = jefe;
             ilabTelefono = telefono;
@@ -33,9 +36,6 @@ public partial class rh_funcionario : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        Session["foto_tabla"] = "admPersonalHS";
-        Session["foto_id"] = "perId";
-
         if (!IsPostBack)
         {
             Response.Cookies["tabpersonal"].Value = null;
@@ -62,7 +62,7 @@ public partial class rh_funcionario : System.Web.UI.Page
 
             if (Request.QueryString["fid"] != null && Request.QueryString["fid"].Length > 0)
             {
-                Query query = new Query("admPersonalHS");
+                Query query = new Query("recurso_humano");
 
                 query += "perId";
                 query += "perApellidos";
@@ -111,15 +111,14 @@ public partial class rh_funcionario : System.Web.UI.Page
                 query += "profId";
                 query += "perParentescoContacto";
                 query += "residencialocId";
-                query += "nombre";
                 query += "inicio_descanso";
                 query += "fin_descanso";
                 query += "verificacionTitulos";
 
-                using (CConectorMS conector = new CConectorMS())
+                using (CConector conector = new CConector())
                 {
 
-                    SqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(Request.QueryString["fid"]) + ""));
+                    MySqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(Request.QueryString["fid"]) + ""));
 
                     if (reader != null && reader.Read())
                     {
@@ -133,19 +132,19 @@ public partial class rh_funcionario : System.Web.UI.Page
                         TApellidos.Text = reader["perApellidos"].ToString();
                         TNombres.Text = reader["perNombres"].ToString();
                         TObservaciones.Text = reader["perObservaciones"].ToString();
-                        TFIngreso.Text = ConectorMS.GetDate(reader["perFechaIngreso"]);
+                        TFIngreso.Text = Query.GetFromMySQLDate(reader["perFechaIngreso"]);
                         TDocumento.Text = reader["perDocumento"].ToString();
                         TLExpedicion.Text = reader["perLugarExpedicion"].ToString();
                         TLMilitar.Text = reader["perNumLibretaMil"].ToString();
                         TDMilitar.Text = reader["perDistritoMil"].ToString();
                         TPasadoJudicial.Text = reader["perNumPasadoJudicial"].ToString();
-                        TFPasadoJudicial.Text = ConectorMS.GetDate(reader["perFechaPasadoJudicial"]);
+                        TFPasadoJudicial.Text = Query.GetFromMySQLDate(reader["perFechaPasadoJudicial"]);
                         CTarjetaProfesional.Checked = reader["perTarjetaProfesional"].ToString() == "True" ? true : false;
                         TTarjetaNumero.Text = reader["perNumeroTP"].ToString();
                         TGrupoSanguineo.Text = reader["perGrupoSanguineo"].ToString();
                         TRH.Text = reader["perRH"].ToString();
                         DSexo.SelectedValue = reader["sexoId"].ToString();
-                        TFechaNacimiento.Text = ConectorMS.GetDate(reader["perFechaNac"]);
+                        TFechaNacimiento.Text = Query.GetFromMySQLDate(reader["perFechaNac"]);
                         TDireccion.Text = reader["perDireccion"].ToString();
                         TBarrio.Text = reader["perBarrio"].ToString();
                         TTelefono.Text = reader["perTelefono"].ToString();
@@ -164,36 +163,33 @@ public partial class rh_funcionario : System.Web.UI.Page
                         CPazySalvo.Checked = reader["perPazySalvo"].ToString() == "True" ? true : false;
                         DEstado.SelectedValue = reader["eEstId"].ToString();
                         DCargo.SelectedValue = reader["carId"].ToString();
-                        TFechaContrato.Text = ConectorMS.GetDate(reader["perFechaContrato"]);
+                        TFechaContrato.Text = Query.GetFromMySQLDate(reader["perFechaContrato"]);
                         DArea.SelectedValue = reader["areaId"].ToString();
                         DNivelComplejidad.SelectedValue = reader["nivCompId"].ToString();
                         DDisponibilidad.SelectedValue = reader["dispId"].ToString();
                         TCuenta.Text = reader["perNroCuenta"].ToString();
                         DBanco.SelectedValue = reader["banId"].ToString();
                         DTerminacion.Text = reader["mteId"].ToString();
-                        TFechaTerminacion.Text = ConectorMS.GetDate(reader["perFechaTermContrato"]);
+                        TFechaTerminacion.Text = Query.GetFromMySQLDate(reader["perFechaTermContrato"]);
                         TParentesco.Text = reader["perParentescoContacto"].ToString();
                         DLocalidadVivienda.SelectedValue = reader["residencialocId"].ToString();
                         TInicioDescanso.Text = Query.GetFromMySQLDate(reader["inicio_descanso"]);
                         TFinDescanso.Text = Query.GetFromMySQLDate(reader["fin_descanso"]);
                         TVerificacionTitulos.Text = Query.GetFromMySQLDate(reader["verificacionTitulos"]);
 
-                        if (reader["nombre"].ToString().Length != 0)
-                        {
-                            IFoto.ImageUrl = "~/archivo/foto.ashx?w=120&i=" + HId.Value;
-                            IFoto.PostBackUrl = "~/archivo/foto.ashx?i=" + HId.Value;
-                            IEliminar.Visible = usuario.CanDelete();
-                        }
+                        IFoto.ImageUrl = "~/archivo/imagen.ashx?w=120&t=r&n=" + HId.Value +".jpg";
+                        IFoto.PostBackUrl = "~/archivo/imagen.ashx?t=r&n=" + HId.Value + ".jpg";
+                        IEliminar.Visible = usuario.CanDelete();
 
-                        conector.SelectInDropDown(DTipoContrato, reader["tipContId"], "SELECT tipContDesc FROM admTipoContrato WHERE tipContId='" + reader["tipContId"].ToString() + "'");
+                        conector.SelectInDropDown(DTipoContrato, reader["tipContId"], "SELECT tipContDesc FROM tipo_contrato WHERE tipContId='" + reader["tipContId"].ToString() + "'");
                         conector.SelectInDropDown(DProfesion, reader["profId"], "SELECT profNombre FROM admProfesion WHERE profId='" + reader["profId"].ToString() + "'");
 
                         ArrayList lista = (ArrayList)ViewState["infolaboral"]; // Session[Request.Url.AbsolutePath];
-                        Query empresa = new Query("admInfoLaboral");
+                        Query empresa = new Query("recurso_humano_info_laboral");
 
                         empresa += "ilabEmpresa";
                         empresa += "ilabTelefono";
-                        empresa += "ilabAño";
+                        empresa += "ilabAno";
                         empresa += "ilabJefeInmediato";
 
                         reader = conector.Query(empresa.GetSelect("perId = " + HId.Value));
@@ -205,7 +201,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                                 lista.Add(new Empresas(reader["ilabEmpresa"].ToString(),
                                 reader["ilabTelefono"].ToString(),
                                 reader["ilabJefeInmediato"].ToString(),
-                                reader["ilabAño"].ToString()));
+                                reader["ilabAno"].ToString()));
                             }
                         }
                         GEmpresas.DataSource = lista;
@@ -223,6 +219,17 @@ public partial class rh_funcionario : System.Web.UI.Page
         }
     }
 
+    public string JoinNames(string[] nombres)
+    {
+        string resultado = "";
+        foreach (string nombre in nombres)
+        {
+            resultado += " " + nombre.Trim();
+            resultado.Trim();
+        }
+        return resultado;
+    }
+
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         if (!IsValid)
@@ -236,24 +243,24 @@ public partial class rh_funcionario : System.Web.UI.Page
             }
         }
 
-        Query query = new Query("admPersonalHS");
+        Query query = new Query("recurso_humano");
 
         query["perApellidos"] = TApellidos.Text;
         query["perNombres"] = TNombres.Text;
         query["perObservaciones"] = TObservaciones.Text;
-        query["perFechaIngreso"] = TFIngreso.Text;
+        query["perFechaIngreso"] = Query.GetMySQLDateFormat(TFIngreso.Text);
         query["perDocumento"] = TDocumento.Text;
         query["perLugarExpedicion"] = TLExpedicion.Text;
         query["perNumLibretaMil"] = TLMilitar.Text;
         query["perDistritoMil"] = TDMilitar.Text;
         query["perNumPasadoJudicial"] = TPasadoJudicial.Text;
-        query["perFechaPasadoJudicial"] = TFPasadoJudicial.Text;
+        query["perFechaPasadoJudicial"] = Query.GetMySQLDateFormat(TFPasadoJudicial.Text);
         query["perTarjetaProfesional"] = CTarjetaProfesional.Checked ? "1" : "0";
         query["perNumeroTP"] = TTarjetaNumero.Text;
         query["perGrupoSanguineo"] = TGrupoSanguineo.Text;
         query["perRH"] = TRH.Text;
         query["sexoId"] = DSexo.SelectedValue;
-        query["perFechaNac"] = TFechaNacimiento.Text;
+        query["perFechaNac"] = Query.GetMySQLDateFormat(TFechaNacimiento.Text);
         query["perDireccion"] = TDireccion.Text;
         query["perBarrio"] = TBarrio.Text;
         query["perTelefono"] = TTelefono.Text;
@@ -273,71 +280,75 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["eEstId"] = DEstado.SelectedValue;
         query["carId"] = DCargo.SelectedValue;
         query["tipContId"] = DTipoContrato.SelectedValue;
-        query["perFechaContrato"] = TFechaContrato.Text;
+        query["perFechaContrato"] = Query.GetMySQLDateFormat(TFechaContrato.Text);
         query["areaId"] = DArea.SelectedValue;
         query["nivCompId"] = DNivelComplejidad.SelectedValue;
         query["dispId"] = DDisponibilidad.SelectedValue;
         query["perNroCuenta"] = TCuenta.Text;
         query["banId"] = DBanco.SelectedValue;
         query["mteId"] = DTerminacion.SelectedValue;
-        query["perFechaTermContrato"] = TFechaTerminacion.Text;
+        query["perFechaTermContrato"] = Query.GetMySQLDateFormat(TFechaTerminacion.Text);
         query["profId"] = DProfesion.SelectedValue;
         query["perParentescoContacto"] = TParentesco.Text;
         query["residencialocId"] = DLocalidadVivienda.SelectedValue;
         query["verificacionTitulos"] = TVerificacionTitulos.Text;
+        query["perNombre"] = JoinNames(new string[] { TApellidos.Text, TNombres.Text });
 
         if (DEstado.SelectedItem.Text == "VACACIONES" || DEstado.SelectedItem.Text == "LICENCIA TEMPORAL")
         {
-            query["inicio_descanso"] = TInicioDescanso.Text;
-            query["fin_descanso"] = TFinDescanso.Text;
+            query["inicio_descanso"] = Query.GetMySQLDateFormat(TInicioDescanso.Text);
+            query["fin_descanso"] = Query.GetMySQLDateFormat(TFinDescanso.Text);
         } else {
             query["inicio_descanso"] = "";
             query["fin_descanso"] = "";
         }
 
-        if (HId.Value.Length != 0 && IFoto.PostBackUrl.Length == 0)
+        using (CConector conector = new CConector())
         {
-            query["nombre"] = "";
-            query["tipo"] = "";
-            query["archivo"] = "";
-        }
-
-        using (CConectorMS conectorms = new CConectorMS())
-        {
-            // conectorms.StartTransaction();
+            // conector.StartTransaction();
 
             if (HId.Value.Length > 0)
             {
-
-                if (conectorms.QueryMod(query.GetUpdate("perId='" + HId.Value + "'")) == -1)
+                if (conector.QueryMod(query.GetUpdate("perId='" + HId.Value + "'")) == -1)
                     return;
             }
             else
             {
 
-                int res = conectorms.QueryMod(query.GetInsert(), true);
+                int res = conector.QueryMod(query.GetInsert(), true);
                 if (res == -1)
                     return;
                 HId.Value = res.ToString();
             }
-            using(CConector conector= new CConector()) 
-                conector.InsertModificacion(HId.Value);
+            
+            conector.InsertModificacion(HId.Value);
+
+            Directory.CreateDirectory(Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "rh"));
+            string foto = Path.Combine(Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "rh"), HId.Value + ".jpg");
+            
+            if (IFoto.PostBackUrl.Length == 0)
+            {
+                File.Delete(foto);
+            }
 
             if (FFoto.HasFile)
             {
-                Archivos archivo = new Archivos(FFoto.PostedFile, Convert.ToInt32(HId.Value));
-                archivo.SaveFile(new Query("admPersonalHS"));
-            }
-            else if (WebCam.GetFoto() != null)
-            {
-                Archivos archivo = new Archivos(WebCam.GetFoto(), Convert.ToInt32(HId.Value));
-                archivo.SaveFile(new Query("admPersonalHS"));
+                File.Delete(foto);
+                FFoto.SaveAs(foto);
+            } else if (WebCam.GetFoto() != null) {
+                File.Delete(foto);
+                using (FileStream file = File.Open(foto, FileMode.CreateNew))
+                {
+                    byte[] contenido = WebCam.GetFoto();
+                    file.Write(contenido, 0, contenido.Length);
+                    file.Close();
+                }
             }
 
-            if (conectorms.QueryMod("DELETE FROM admDocsPersonalHS WHERE perId=" + HId.Value) == -1)
+            if (conector.QueryMod("DELETE FROM recurso_humano_documento WHERE perId=" + HId.Value) == -1)
                 return;
 
-            Query documentos = new Query("admDocsPersonalHS");
+            Query documentos = new Query("recurso_humano_documento");
             documentos["perId"] = HId.Value;
 
             for (int i = 0; i < DDocumentos.Items.Count; i++)
@@ -347,7 +358,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                 if (check.Checked)
                 {
                     documentos["docId"] = DDocumentos.DataKeys[i].ToString();
-                    if (conectorms.QueryMod(documentos.GetInsert()) == -1)
+                    if (conector.QueryMod(documentos.GetInsert()) == -1)
                         return;
                 }
             }
@@ -358,15 +369,15 @@ public partial class rh_funcionario : System.Web.UI.Page
                 if (check.Checked)
                 {
                     documentos["docId"] = DDocumentosContratista.DataKeys[i].ToString();
-                    if (conectorms.QueryMod(documentos.GetInsert()) == -1)
+                    if (conector.QueryMod(documentos.GetInsert()) == -1)
                         return;
                 }
             }
 
-            if (conectorms.QueryMod("DELETE FROM admPersonalInfoProf WHERE perId=" + HId.Value) == -1)
+            if (conector.QueryMod("DELETE FROM recurso_humano_formacion WHERE perId=" + HId.Value) == -1)
                 return;
 
-            Query informacion = new Query("admPersonalInfoProf");
+            Query informacion = new Query("recurso_humano_formacion");
             informacion["perId"] = HId.Value;
 
             for (int i = 0; i < GInformacionProfesional.Rows.Count; i++)
@@ -378,21 +389,21 @@ public partial class rh_funcionario : System.Web.UI.Page
                 {
                     informacion["ipId"] = GInformacionProfesional.DataKeys[i].Value.ToString();
                     TextBox text = (TextBox)GInformacionProfesional.Rows[i].FindControl("TAno");
-                    informacion["infAño"] = text.Text;
+                    informacion["infAno"] = text.Text;
                     text = (TextBox)GInformacionProfesional.Rows[i].FindControl("TInstitucion");
                     informacion["infInstitucion"] = text.Text;
                     text = (TextBox)GInformacionProfesional.Rows[i].FindControl("TActa");
                     informacion["infNroActa"] = text.Text;
 
-                    if (conectorms.QueryMod(informacion.GetInsert()) == -1)
+                    if (conector.QueryMod(informacion.GetInsert()) == -1)
                         return;
                 }
             }
 
-            if (conectorms.QueryMod("DELETE FROM admInfoLaboral WHERE perId=" + HId.Value) == -1)
+            if (conector.QueryMod("DELETE FROM recurso_humano_info_laboral WHERE perId=" + HId.Value) == -1)
                 return;
 
-            Query empresa = new Query("admInfoLaboral");
+            Query empresa = new Query("recurso_humano_info_laboral");
             empresa["perId"] = HId.Value;
 
             for (int i = 0; i < GEmpresas.Rows.Count; i++)
@@ -403,18 +414,18 @@ public partial class rh_funcionario : System.Web.UI.Page
                 text = (TextBox)GEmpresas.Rows[i].FindControl("TTelefono");
                 empresa["ilabTelefono"] = text.Text;
                 text = (TextBox)GEmpresas.Rows[i].FindControl("TAno");
-                empresa["ilabAño"] = text.Text;
+                empresa["ilabAno"] = text.Text;
                 text = (TextBox)GEmpresas.Rows[i].FindControl("TJefe");
                 empresa["ilabJefeInmediato"] = text.Text;
 
-                if (conectorms.QueryMod(empresa.GetInsert()) == -1)
+                if (conector.QueryMod(empresa.GetInsert()) == -1)
                     return;
             }
 
             Funcionario.RemoveFuncionario(HId.Value);
         }
 
-        // conectorms.Commit();
+        // conector.Commit();
         ((MasterPageI)Master).SetResultado("Usuario " + TNombres.Text + " Editado.");
     }
 
@@ -451,16 +462,6 @@ public partial class rh_funcionario : System.Web.UI.Page
         if(e.Value.Length!=0) {
             string Extension = e.Value.Substring(e.Value.LastIndexOf(".") + 1).ToLower();
             e.IsValid = Extension == "jpg" || Extension == "jpeg"; // Valid file type
-        }
-    }
-    protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        if (e.Row.RowIndex != -1)
-        {
-            if (HttpUtility.HtmlDecode(e.Row.Cells[2].Text).Trim().Length == 0)
-            {
-                e.Row.Cells[2].Text = HttpUtility.HtmlEncode(Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[3].Text).Trim()));
-            }
         }
     }
 }

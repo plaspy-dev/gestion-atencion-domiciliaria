@@ -10,7 +10,10 @@ public partial class auditoria_OrganizationExample51 : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-
+        if (!IsPostBack) {
+            THasta.Text = DateTime.Now.ToShortDateString();
+            TDesde.Text = DateTime.Now.AddDays(-30).ToShortDateString();
+        }
     }
 
     protected void BindGridView(GridView gview)

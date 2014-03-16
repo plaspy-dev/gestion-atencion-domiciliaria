@@ -13,7 +13,7 @@ public class imagen : IHttpHandler {
     public void ProcessRequest(HttpContext context)
     {
         if (string.IsNullOrEmpty(context.Request.QueryString["p"])
-            || string.IsNullOrEmpty(context.Request.QueryString["t"]))
+            && string.IsNullOrEmpty(context.Request.QueryString["t"]))
             throw new HttpException(404, "Page not found");
 
         context.Response.ContentType = "image/jpeg";
@@ -22,29 +22,50 @@ public class imagen : IHttpHandler {
         else context.Response.AddHeader("Content-Disposition", "attachment;filename=" + context.Request.QueryString["n"]);
 
         string tipo = context.Request.QueryString["t"];
-        if (tipo == "v")
-            tipo = "valoracion";
-        else if (tipo == "e")
-            tipo = "evolucion";
+        switch (tipo) { 
+            case "v":
+                tipo = "valoracion";
+                break;
+            case "e":
+                tipo = "evolucion";
+                break;
+            case "r":
+                tipo = "rh";
+                break;
+            case "p":
+                tipo = "paciente";
+                break;
+            case "q":
+                tipo = "pqr";
+                break;
+        }   
         string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo);
         if (context.Request.QueryString["d"] == "True")
         {
             archivo = Path.Combine(archivo, "temp");
             archivo = Path.Combine(archivo, context.Request.QueryString["p"]);
-        }
-        else archivo = Path.Combine(archivo, context.Request.QueryString["i"]);
-        archivo = Path.Combine(archivo, context.Request.QueryString["hi"]);
+        } else if(!string.IsNullOrEmpty(context.Request.QueryString["i"]))
+            archivo = Path.Combine(archivo, context.Request.QueryString["i"]);
+        if(!string.IsNullOrEmpty(context.Request.QueryString["hi"]))
+            archivo = Path.Combine(archivo, context.Request.QueryString["hi"]);
         if (!string.IsNullOrEmpty(context.Request.QueryString["x"])) {
-            int posicion= Convert.ToInt32(context.Request.QueryString["x"]);
-            foreach (string file in Directory.GetFiles(archivo)) {
-                posicion--;
-                if (posicion == 0)
+            try
+            {
+                int posicion = Convert.ToInt32(context.Request.QueryString["x"]);
+                foreach (string file in Directory.GetFiles(archivo))
                 {
-                    archivo = file;
-                    break;
+                    posicion--;
+                    if (posicion == 0)
+                    {
+                        archivo = file;
+                        break;
+                    }
                 }
+            } catch { //no existe el directorio
+                throw new HttpException(404, "Page not found");
             }
-        } else archivo = Path.Combine(archivo, context.Request.QueryString["n"]);
+        } else if (!string.IsNullOrEmpty(context.Request.QueryString["n"])) 
+            archivo = Path.Combine(archivo, context.Request.QueryString["n"]);
 
         if (File.Exists(archivo))
         {

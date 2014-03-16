@@ -94,73 +94,70 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     qIngreso += "area_atencion";
                     qIngreso += "seguimiento";
 
-                    using (CConectorMS conector = new CConectorMS())
+                    using (CConector conector= new CConector())
                     {
-                        using (CConector conectormysql = new CConector())
+                        MySqlDataReader readermysql = conector.Query(qIngreso.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
+                        if (readermysql != null && readermysql.Read())
                         {
-                            MySqlDataReader readermysql = conectormysql.Query(qIngreso.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
-                            if (readermysql != null && readermysql.Read())
+                            PNivelAtencion.Visible = true;
+                            BActualizar.Visible = usuario.CanInsert();
+                            BAceptar.Enabled = usuario.CanUpdate();
+                            BMasCDiagnostico.Enabled = usuario.CanUpdate();
+                            ((MasterPageI)Master).Imprimir("ingreso.html");
+
+                            GCDiagnostico.Columns[0].Visible = usuario.CanUpdate();
+                            GCDiagnostico.Columns[1].Visible = usuario.CanDelete();
+
+                            HIdIngreso.Value = readermysql["id"].ToString();
+                            conector.SelectInDropDown(DMedico, readermysql["medico"], "SELECT perNombre FROM recurso_humano WHERE perId={0}");
+
+                            TMotivo.Text = readermysql["motivo"].ToString();
+                            DMotivo.SelectedValue = readermysql["segun"].ToString();
+                            TEnfermedadActual.Text = readermysql["enfermedad_actual"].ToString();
+                            TTA.Text = readermysql["ta"].ToString();
+                            TFC.Text = readermysql["fc"].ToString();
+                            TFR.Text = readermysql["fr"].ToString();
+                            TT.Text = readermysql["t"].ToString();
+                            TPeso.Text = readermysql["peso"].ToString();
+                            TSaturacion.Text = readermysql["saturacion"].ToString();
+                            TAnalisis.Text = readermysql["analisis"].ToString();
+                            TGlucometria.Text = readermysql["glucometria"].ToString();
+                            Utilidades.SelectInDropDown(DTipoDiagnostico, readermysql["tipo_diagnostico"]);
+                            Utilidades.SelectInDropDown(DNivelAtencion, readermysql["nivel_atencion"]);
+                            Utilidades.SelectInDropDown(DArea, readermysql["area_atencion"]);
+                            TFechaSeguimiento.Text = Query.GetFromMySQLDate(readermysql["seguimiento"]);
+                            TFecha.Text = Query.GetFromMySQLDate(readermysql["fecha"], true);
+                            TConductaInicial.Text = readermysql["conducta"].ToString();
+                            if (TConductaInicial.Text.Length == 0)
                             {
-                                PNivelAtencion.Visible = true;
-                                BActualizar.Visible = usuario.CanInsert();
-                                BAceptar.Enabled = usuario.CanUpdate();
-                                BMasCDiagnostico.Enabled = usuario.CanUpdate();
-                                ((MasterPageI)Master).Imprimir("ingreso.html");
-
-                                GCDiagnostico.Columns[0].Visible = usuario.CanUpdate();
-                                GCDiagnostico.Columns[1].Visible = usuario.CanDelete();
-
-                                HIdIngreso.Value = readermysql["id"].ToString();
-                                conector.SelectInDropDown(DMedico, readermysql["medico"], "SELECT perNombre FROM admPersonalHS WHERE perId={0}");
-
-                                TMotivo.Text = readermysql["motivo"].ToString();
-                                DMotivo.SelectedValue = readermysql["segun"].ToString();
-                                TEnfermedadActual.Text = readermysql["enfermedad_actual"].ToString();
-                                TTA.Text = readermysql["ta"].ToString();
-                                TFC.Text = readermysql["fc"].ToString();
-                                TFR.Text = readermysql["fr"].ToString();
-                                TT.Text = readermysql["t"].ToString();
-                                TPeso.Text = readermysql["peso"].ToString();
-                                TSaturacion.Text = readermysql["saturacion"].ToString();
-                                TAnalisis.Text = readermysql["analisis"].ToString();
-                                TGlucometria.Text = readermysql["glucometria"].ToString();
-                                Utilidades.SelectInDropDown(DTipoDiagnostico, readermysql["tipo_diagnostico"]);
-                                Utilidades.SelectInDropDown(DNivelAtencion, readermysql["nivel_atencion"]);
-                                Utilidades.SelectInDropDown(DArea, readermysql["area_atencion"]);
-                                TFechaSeguimiento.Text = Query.GetFromMySQLDate(readermysql["seguimiento"]);
-                                TFecha.Text = Query.GetFromMySQLDate(readermysql["fecha"], true);
-                                TConductaInicial.Text = readermysql["conducta"].ToString();
-                                if (TConductaInicial.Text.Length == 0)
+                                string procedimientos = Procedimientos.GetPlanDeManejo(conector, CCDetallePaciente.IdPaciente, TFecha.Text);
+                                if (procedimientos.Length > 0)
                                 {
-                                    string procedimientos = Procedimientos.GetPlanDeManejo(conectormysql, CCDetallePaciente.IdPaciente, TFecha.Text);
-                                    if (procedimientos.Length > 0)
-                                    {
-                                        ViewState["procedimientos"] = procedimientos;
-                                        TConductaInicial.Text = procedimientos;
-                                    }
+                                    ViewState["procedimientos"] = procedimientos;
+                                    TConductaInicial.Text = procedimientos;
                                 }
-
-                                TConductaInicial.ReadOnly = !usuario.CanAdmin();
-                                BEliminar.Visible = usuario.CanDelete();
-
-                                ((MasterPageI)Master).SetModificacion(HIdIngreso.Value);
                             }
-                            else
-                            {
-                                GCDiagnostico.DataBind();
-                                if (GCDiagnostico.Rows.Count == 0)
-                                { // no se encontraron diagnosticos
 
-                                    Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+                            TConductaInicial.ReadOnly = !usuario.CanAdmin();
+                            BEliminar.Visible = usuario.CanDelete();
 
-                                    for (int i = 0; i < paciente.cie10.Count; i++)
-                                    {
-                                        TCIE10.Text = Procedimientos.GetCodigoCIE(paciente.cie10[i].ToString());
-                                        BMasCDiagnostico_Click(sender, e);
-                                    }
+                            ((MasterPageI)Master).SetModificacion(HIdIngreso.Value);
+                        }
+                        else
+                        {
+                            GCDiagnostico.DataBind();
+                            if (GCDiagnostico.Rows.Count == 0)
+                            { // no se encontraron diagnosticos
+
+                                Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+
+                                for (int i = 0; i < paciente.cie10.Count; i++)
+                                {
+                                    TCIE10.Text = Procedimientos.GetCodigoCIE(paciente.cie10[i].ToString());
+                                    BMasCDiagnostico_Click(sender, e);
                                 }
-                                TConductaInicial.ReadOnly = !usuario.CanAdmin();
                             }
+                            TConductaInicial.ReadOnly = !usuario.CanAdmin();
                         }
                     }
                 }
@@ -408,9 +405,8 @@ public partial class paciente_ingreso : System.Web.UI.Page
                 }
             }
 
-            using(CConectorMS conectorms = new CConectorMS()) 
-                if (conectorms.QueryMod("UPDATE phdPaciente SET megId=" + Query.GetValor(DMedico.SelectedValue) + ",cieCodDx=" + Query.GetValor(cie10) + ",cieCodDx_1=" + Query.GetValor(cie102) + ",cieCodDx_2=" + Query.GetValor(cie103) + " WHERE pacId=" + CCDetallePaciente.IdPaciente) == -1)
-                    return;
+            if (conector.QueryMod("UPDATE paciente SET megId=" + Query.GetValor(DMedico.SelectedValue) + ",cieCodDx=" + Query.GetValor(cie10) + ",cieCodDx_1=" + Query.GetValor(cie102) + ",cieCodDx_2=" + Query.GetValor(cie103) + " WHERE pacId=" + CCDetallePaciente.IdPaciente) == -1)
+                return;
 
             Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
 
@@ -446,10 +442,9 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
         string codigo = GetCodigoCIE(TCIE10.Text);
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
-
-            string descripcion = conector.QueryString("SELECT cirDescripcion FROM phdCIE10 WHERE cieCodDx='" + codigo + "'");
+            string descripcion = conector.QueryString("SELECT cirDescripcion FROM cie10 WHERE cieCodDx='" + codigo + "'");
             if (descripcion.Length > 0)
             {  // si existe el codigo
 
@@ -660,18 +655,18 @@ public partial class paciente_ingreso : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
         evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
 
-        Query query = new Query("phdPaciente");
+        Query query = new Query("paciente");
 
-        query["szProfesional"] = "admPersonalHS.perDocumento";
-        query["szMedico"] = "admPersonalHS.perNombre";
-        query["szCargo"] = "admCargo.carDescripcion";
+        query["szProfesional"] = "recurso_humano.perDocumento";
+        query["szMedico"] = "recurso_humano.perNombre";
+        query["szCargo"] = "cargo.carDescripcion";
 
-        using (CConectorMS conectorms = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
-            SqlDataReader reader = conectorms.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente
-                , "LEFT JOIN admPersonalHS ON (admPersonalHS.perId=phdPaciente.megId)"
-                + " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"
+            MySqlDataReader reader = conector.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente
+                , "LEFT JOIN recurso_humano ON (recurso_humano.perId=paciente.megId)"
+                + " LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)"
                 ));
             if (reader != null)
             {

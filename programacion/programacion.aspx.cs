@@ -48,7 +48,7 @@ public partial class programacion_programacion : System.Web.UI.Page
 
     protected void lnkelimMasivo_Click(object sender, EventArgs e)
     {
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
             for (int i = 0; i < GProgramacion.Rows.Count; i++)

@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using SDG.Componentes;
+using MySql.Data.MySqlClient;
 
 public partial class archivo_archivo : System.Web.UI.Page
 {
@@ -25,18 +26,18 @@ public partial class archivo_archivo : System.Web.UI.Page
 
             if (!string.IsNullOrEmpty(Request.QueryString["aid"]))
             {
-                Query query = new Query("arcArchivoGestion");
-                using (CConectorMS conector = new CConectorMS())
+                Query query = new Query("paciente_archivo");
+                using (CConector conector = new CConector())
                 {
 
-                    query += "arcArchivoGestion.arcId";
-                    query += "arcArchivoGestion.pacId";
-                    query["fecha"] = "REPLACE(STR(CAST(arcArchivoGestion.arcMes AS varchar), 2), SPACE(1), '0') + '/' + CAST(arcArchivoGestion.arcAnio AS varchar)";
-                    query += "arcArchivoGestion.arcFactura";
-                    query += "arcArchivoGestion.arcAZ";
-                    query += "arcArchivoGestion.arcObservaciones";
+                    query += "paciente_archivo.arcId";
+                    query += "paciente_archivo.pacId";
+                    query["fecha"] = "CONCAT(LPAD(paciente_archivo.arcMes,2,'0'),'/', paciente_archivo.arcAnio)";
+                    query += "paciente_archivo.arcFactura";
+                    query += "paciente_archivo.arcAZ";
+                    query += "paciente_archivo.arcObservaciones";
 
-                    SqlDataReader reader = conector.Query(query.GetSelect("arcId=" + Query.GetValor(Request.QueryString["aid"])));
+                    MySqlDataReader reader = conector.Query(query.GetSelect("arcId=" + Query.GetValor(Request.QueryString["aid"])));
                     if (reader != null && reader.Read())
                     {
                         ViewState["id"] = reader["arcId"].ToString();
@@ -79,11 +80,10 @@ public partial class archivo_archivo : System.Web.UI.Page
         if (!IsValid)
             return;
 
-        Query query = new Query("arcArchivoGestion");
-        using (CConectorMS conector = new CConectorMS())
+        Query query = new Query("paciente_archivo");
+        using (CConector conector = new CConector())
         {
-
-            string antigua = conector.QueryString(string.Format("SELECT arcId FROM arcArchivoGestion WHERE arcFactura={0}", Query.GetValor(TFactura.Text)));
+            string antigua = conector.QueryString(string.Format("SELECT arcId FROM paciente_archivo WHERE arcFactura={0}", Query.GetValor(TFactura.Text)));
             if (antigua.Length > 0)
             {
                 if (string.IsNullOrEmpty((string)ViewState["id"]) || antigua != ViewState["id"].ToString())
@@ -106,7 +106,7 @@ public partial class archivo_archivo : System.Web.UI.Page
             if (string.IsNullOrEmpty((string)ViewState["id"]))
             {
                 query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
-                query["segFechaIngreso"] = "GETDATE()";
+                query["segFechaIngreso"] = "SYSDATE()";
 
                 int res = conector.QueryMod(query.GetInsert());
                 if (res == -1)
@@ -118,9 +118,8 @@ public partial class archivo_archivo : System.Web.UI.Page
                 if (conector.QueryMod(query.GetUpdate("arcId=" + ViewState["id"].ToString())) == -1)
                     return;
             }
-            using(CConector conectorm= new CConector()) 
-                if (conectorm.InsertModificacion(ViewState["id"].ToString()) == -1)
-                    return;
+            if (conector.InsertModificacion(ViewState["id"].ToString()) == -1)
+                return;
 
             conector.Commit();
         }
@@ -149,16 +148,16 @@ public partial class archivo_archivo : System.Web.UI.Page
         if (!IsValid)
             return;
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
             Query query = new Query("prestamo_archivo");
 
             query["archivo"] = Request.QueryString["aid"];
             query["tipo"] = DTipo.SelectedValue;
             query["solicitadopor"] = TSolicitadoPor.Text;
-            query["solicitud"] = TFechaPrestamos.Text;
-            query["entrega"] = TEntrega.Text;
-            query["devolucion"] = TDevolucion.Text;
+            query["solicitud"] = Query.GetMySQLDateFormat(TFechaPrestamos.Text);
+            query["entrega"] = Query.GetMySQLDateFormat(TEntrega.Text);
+            query["devolucion"] = Query.GetMySQLDateFormat(TDevolucion.Text);
             query["objeto"] = TObjeto.Text;
 
             if (GPrestamos.SelectedIndex == -1)

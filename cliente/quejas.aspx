@@ -123,8 +123,9 @@
                         onselectedindexchanged="DTipo_SelectedIndexChanged">
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="STipo" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT tqrIdTipo id,tqrDescripcion nombre FROM serTipoFormulario ORDER BY nombre">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT tqrIdTipo id,tqrDescripcion nombre FROM tipo_queja_reclamo ORDER BY nombre">
                 </asp:SqlDataSource></td>
                 <td>Clasificación</td>
                 <td><asp:DropDownList ID="DClasificacion" runat="server" 
@@ -292,10 +293,8 @@
             </tr>
             <tr>
                 <td colspan="4">
-                    <asp:LinkButton runat="server" Text="Registrar seguimiento" ID="LASeguimiento" CausesValidation="false" 
-                        onclick="LASeguimiento_Click"></asp:LinkButton>
-                    <asp:GridView ID="GSeguimiento" runat="server" AutoGenerateColumns="False" OnSelectedIndexChanged="GSeguimiento_SelectedIndexChanged" 
-                        OnRowEditing="GSeguimiento_Editing" Width="100%"
+                    <asp:GridView ID="GSeguimiento" runat="server" AutoGenerateColumns="False" 
+                        OnRowEditing="GSeguimiento_Editing" Width="100%" OnRowDataBound="GSeguimiento_RowDataBound"
                         DataKeyNames="qrId,sqrId" EmptyDataText="No se ha encontrado seguimiento" DataSourceID="SSeguimiento" >
                         <RowStyle CssClass="GridRow"></RowStyle>
                         <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -312,16 +311,20 @@
                             <asp:BoundField DataField="sqrPendiente" HeaderText="Acciones pendientes" />
                             <asp:TemplateField HeaderText="Archivo">
                                 <ItemTemplate>
-                                    <asp:LinkButton runat="server" CausesValidation="false" ID="LArchivo" Text='<%# Eval("nombre") %>' CommandName="Select"></asp:LinkButton>
+                                    <asp:HyperLink runat="server" CausesValidation="false" ID="LArchivo" Text=""></asp:HyperLink>
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:BoundField DataField="segUsuarioIngreso" HeaderText="Usuario" ItemStyle-Wrap="false" />
                             <asp:BoundField DataField="segFechaIngreso" HeaderText="Fecha" ItemStyle-Wrap="false" />
                         </Columns>
                     </asp:GridView>
+                    <div align="right">
+                    <asp:LinkButton runat="server" Text="Registrar seguimiento" ID="LASeguimiento" CausesValidation="false" 
+                        onclick="LASeguimiento_Click"></asp:LinkButton></div>
                     <asp:SqlDataSource ID="SSeguimiento" runat="server" 
-                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                        SelectCommand="SELECT qrId,sqrId,sqrDetalles,sqrPendiente,segUsuarioIngreso,segFechaIngreso,nombre FROM serSeguimiento WHERE qrId=@queja">
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT qrId,sqrId,sqrDetalles,sqrPendiente,segUsuarioIngreso,segFechaIngreso FROM queja_reclamo_seguimiento WHERE qrId=@queja">
                         <SelectParameters>
                             <asp:ControlParameter ControlID="HIdQuejas" Name="queja" PropertyName="Value" />
                         </SelectParameters>

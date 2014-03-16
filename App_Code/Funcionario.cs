@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using SDG.Componentes;
 using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 
 [Serializable]
 public class Funcionario
@@ -32,15 +33,15 @@ public class Funcionario
         {
             funcionario = new Funcionario();
 
-            Query query = new Query("admPersonalHS");
+            Query query = new Query("recurso_humano");
 
             query += "perId";
             query += "perNombre";
             query += "perDocumento";
 
-            using (CConectorMS conector = new CConectorMS())
+            using (CConector conector = new CConector())
             {
-                SqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(id) + ""));
+                MySqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(id) + ""));
                 if (reader != null && reader.Read())
                 {
                     funcionario.Id= reader["perId"].ToString();

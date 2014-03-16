@@ -151,10 +151,10 @@ public partial class auditoria_eventoa : System.Web.UI.Page
 
     protected void BProfesional_Click(object sender, EventArgs e)
     {
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
-            SqlDataReader reader = conector.Query("SELECT perNumeroTP,profNombre,perNombre FROM admPersonalHS "
-                + " LEFT JOIN admProfesion ON (admProfesion.profId=admPersonalHS.profId)"
+            MySqlDataReader reader = conector.Query("SELECT perNumeroTP,profNombre,perNombre FROM recurso_humano "
+                + " LEFT JOIN profesion ON (profesion.profId=recurso_humano.profId)"
                 + " WHERE perId=" + Query.GetValor(TProfesionalID.Text)
                 );
             if (reader != null && reader.Read())

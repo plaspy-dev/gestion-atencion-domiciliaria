@@ -80,8 +80,9 @@
                         onselectedindexchanged="DPlantilla_SelectedIndexChanged">
                     </asp:DropDownList>
                     <asp:SqlDataSource ID="SPlantilla" runat="server" 
-                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                        SelectCommand="SELECT plantId AS id,plantAsunto AS nombre FROM admPlantillaCorreo WHERE plantTipo=1">
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT plantId AS id,plantAsunto AS nombre FROM plantilla_correo WHERE plantTipo=1">
                     </asp:SqlDataSource>
                 </td></tr>
                 <tr><td colspan=2><asp:TextBox runat="server" ID="TMensaje" Width="500" Height="200" TextMode="MultiLine"></asp:TextBox></td></tr>
@@ -93,13 +94,14 @@
         </div>
     </asp:Panel>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="SELECT per.perId AS id,per.perNombre AS nombres,  per.perFechaNac,admCargo.carDescripcion AS cargo,perCorreoElectronico,per.perCelular AS celular,YEAR(GETDATE()) AS actual, per.felicitacion
-                ,DATEPART(m, perFechaNac)*100+DATEPART(d, perFechaNac) AS ordenardias
-                FROM dbo.admPersonalHS per  
-                LEFT JOIN admCargo on per.carId = admCargo.carId    
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT per.perId AS id,per.perNombre AS nombres,  per.perFechaNac,cargo.carDescripcion AS cargo,perCorreoElectronico,per.perCelular AS celular,YEAR(SYSDATE()) AS actual, per.felicitacion
+                ,MONTH(perFechaNac)*100+DAY(perFechaNac) AS ordenardias
+                FROM recurso_humano per  
+                LEFT JOIN cargo on per.carId = cargo.carId    
 				WHERE per.eEstId=1 
-				AND DATEADD(yy, YEAR(GETDATE())-YEAR(per.perFechaNac),perFechaNac) BETWEEN @inicio AND @fin
+				AND perFechaNac+INTERVAL (YEAR(SYSDATE())-YEAR(per.perFechaNac)) YEAR BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
 				ORDER BY ordenardias">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />

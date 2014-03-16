@@ -79,8 +79,8 @@ public partial class phd_novedad : System.Web.UI.UserControl
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
-        Query query = new Query("phdNovedad");
-        using (CConectorMS conector = new CConectorMS())
+        Query query = new Query("programacion_novedad");
+        using (CConector conector = new CConector())
         {
             string[] programacion = HIdProgramacion.Value == "" ? HIdProgramaciones.Value.Split(',') : HIdProgramacion.Value.Split(',');
 
@@ -90,7 +90,7 @@ public partial class phd_novedad : System.Web.UI.UserControl
             query["novTipo"] = tipo.ToString();
             query["novObs"] = TObservaciones.Text;
             query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
-            query["segFechaRegistro"] = "GETDATE()";
+            query["segFechaRegistro"] = "SYSDATE()";
             query["novId"] = "2";
             query["prgTipo"] = "1";
 

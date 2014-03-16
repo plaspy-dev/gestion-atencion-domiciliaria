@@ -107,9 +107,10 @@
                 <SelectedRowStyle CssClass="selecteditem" />
             </asp:GridView>
             <asp:SqlDataSource ID="SqlDataSource2" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="SELECT entId AS id,entNombre AS nombre,entEPS,entAFP,entARP,entPrgNoAut,maximo_mensual,maximo_paciente FROM admEntidad ORDER BY nombre" 
-                DeleteCommand="DELETE FROM admEntidad WHERE entId=@id" >
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>"  
+                SelectCommand="SELECT entId AS id,entNombre AS nombre,entEPS,entAFP,entARP,entPrgNoAut,maximo_mensual,maximo_paciente FROM asegurador ORDER BY nombre" 
+                DeleteCommand="DELETE FROM asegurador WHERE entId=@id" >
             </asp:SqlDataSource></td>
         </tr>
         <tr>

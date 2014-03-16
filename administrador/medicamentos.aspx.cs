@@ -80,7 +80,6 @@ public partial class administrador_medicamentos : System.Web.UI.Page
     {
         Query query = new Query("medicamentos");
         using(CConector conector= new CConector()) 
-        using (CConectorMS conectorms = new CConectorMS())
         {
 
             conector.StartTransaction();
@@ -174,7 +173,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                     valores["maxima"] = maxima.Text.Replace(",", "").Replace("$", "");
                     if (conector.QueryMod(valores.GetInsert()) == -1)
                         return;
-                    if (conectorms.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(costo.Text.Replace(",", ""))
+                    if (conector.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(costo.Text.Replace(",", ""))
                                             + " WHERE actId=" + HId.Value + " AND costo IS NULL AND entId=" + GEntidades.DataKeys[i].Value.ToString()) == -1)
                         return;
                     if (conector.QueryMod("UPDATE medicamento_formulacion LEFT JOIN formulacion ON (medicamento_formulacion.formulacion=formulacion.id) "

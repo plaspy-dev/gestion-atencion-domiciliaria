@@ -69,8 +69,9 @@
                                     <asp:ListItem Text="(Ninguno)" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="STipo" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT tpaId AS id,tpaDescripcion AS nombre FROM phdTipoActividad ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT tpaId AS id,tpaDescripcion AS nombre FROM tipo_actividad ORDER BY 2">
                 </asp:SqlDataSource>
             </td>
         </tr>
@@ -137,15 +138,16 @@
                     </Columns>
                 </asp:GridView>
                 <asp:SqlDataSource ID="SSeguimiento" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     DeleteCommand="DELETE FROM bitacora_seguimiento WHERE id=@id"
                     SelectCommand="SELECT 
                                 bitacora_seguimiento.id
                                 ,bitacora_seguimiento.fecha
-                                ,phdTipoActividad.tpaDescripcion
+                                ,tipo_actividad.tpaDescripcion
                                 ,bitacora_seguimiento.objeto
                                 FROM bitacora_seguimiento
-                                LEFT JOIN phdTipoActividad ON (phdTipoActividad.tpaId=bitacora_seguimiento.area)
+                                LEFT JOIN tipo_actividad ON (tipo_actividad.tpaId=bitacora_seguimiento.area)
                                 WHERE bitacora_seguimiento.bitacora=@bitacora
                                 ORDER BY bitacora_seguimiento.fecha DESC
                             ">
@@ -184,8 +186,9 @@
                                 DataValueField="id">
                                 </asp:DropDownList>
                             <asp:SqlDataSource ID="SArea" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT tpaId AS id,tpaDescripcion AS nombre FROM phdTipoActividad ORDER BY 2">
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT tpaId AS id,tpaDescripcion AS nombre FROM tipo_actividad ORDER BY 2">
                             </asp:SqlDataSource>
                         </td>
                     </tr>
@@ -262,21 +265,22 @@
     </Triggers>
     </asp:UpdatePanel>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-        ConnectionString="<%$ ConnectionStrings:connBD %>" 
+        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
         SelectCommand="SELECT 
-                    turBitacora.bitId,turBitacora.bitFecha,turBitacora.bitObservaciones
-                    ,phdTipoActividad.tpaDescripcion,turBitacora.NServicio,turBitacora.NAdministrativa
-                    ,phdPaciente.pacNombres
-                    FROM turBitacora
-                    LEFT JOIN phdTipoActividad ON (phdTipoActividad.tpaId=turBitacora.tpaId)
-                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=turBitacora.pacId)
+                    bitacora_turno.bitId,bitacora_turno.bitFecha,bitacora_turno.bitObservaciones
+                    ,tipo_actividad.tpaDescripcion,bitacora_turno.NServicio,bitacora_turno.NAdministrativa
+                    ,paciente.pacNombres
+                    FROM bitacora_turno
+                    LEFT JOIN tipo_actividad ON (tipo_actividad.tpaId=bitacora_turno.tpaId)
+                    LEFT JOIN paciente ON (paciente.pacId=bitacora_turno.pacId)
                     WHERE 
-                    (@fecha='01/01/1900' OR turBitacora.bitFecha=@fecha)
-                    AND (@tipo='0' OR turBitacora.tpaId=@tipo)
-                    AND (@administrativa=0 OR turBitacora.NAdministrativa=@administrativa)
-                    AND (@servicio=0 OR turBitacora.NServicio=@servicio)
-                    AND (@paciente=0 OR turBitacora.pacId=@paciente)
-                    ORDER BY turBitacora.bitFecha DESC
+                    (@fecha='01/01/1900' OR bitacora_turno.bitFecha=STR_TO_DATE(@fecha, '%d/%m/%Y'))
+                    AND (@tipo='0' OR bitacora_turno.tpaId=@tipo)
+                    AND (@administrativa=0 OR bitacora_turno.NAdministrativa=@administrativa)
+                    AND (@servicio=0 OR bitacora_turno.NServicio=@servicio)
+                    AND (@paciente=0 OR bitacora_turno.pacId=@paciente)
+                    ORDER BY bitacora_turno.bitFecha DESC
                     ">
           <SelectParameters>
             <asp:ControlParameter ControlID="TFecha" PropertyName="Text" Name="fecha" DefaultValue="01/01/1900" />

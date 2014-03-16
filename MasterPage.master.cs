@@ -384,8 +384,8 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         Alertas info= resultado.First();
         dAlertas.Attributes["title"] = info.Nombre;
         SAlertas.SelectCommand = info.SelectCommand;
-        SAlertas.ConnectionString = ConfigurationManager.ConnectionStrings[info.MySQLDB ? "MySQLConnectionString" : "connBD"].ConnectionString;
-        SAlertas.ProviderName = ConfigurationManager.ConnectionStrings[info.MySQLDB ? "MySQLConnectionString" : "connBD"].ProviderName;
+        SAlertas.ConnectionString = ConfigurationManager.ConnectionStrings["MySQLConnectionString"].ConnectionString;
+        SAlertas.ProviderName = ConfigurationManager.ConnectionStrings["MySQLConnectionString"].ProviderName;
         GAlertas.DataBind();
         ((HyperLinkField)GAlertas.Columns[0]).DataNavigateUrlFormatString = info.URL;
         PAlertas.Visible = true;

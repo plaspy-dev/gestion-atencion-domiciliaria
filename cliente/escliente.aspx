@@ -181,10 +181,10 @@
                         <asp:Repeater runat="server" ID="RPreguntas" DataSourceID="SPreguntas">
                             <ItemTemplate>
                                 <tr>
-                                    <td><%# Eval("nombre") %><asp:HiddenField runat="server" ID="HId" Value='<%# Eval("id") %>' /><asp:HiddenField runat="server" ID="HIdr" Value='<%# Eval("idr") %>' /></td>
-                                    <td><asp:TextBox runat="server" Width="10px" MaxLength="1" CssClass="cal" ID="TRespuesta" Text='<%# Eval("calificacion") %>'></asp:TextBox>
+                                    <td><%# Eval("nombre") %><asp:HiddenField runat="server" ID="HId" Value='<%# Eval("id") %>' /><asp:HiddenField runat="server" ID="HIdr" Value='<%# Eval("idr") %>' />
                                     <asp:RequiredFieldValidator ControlToValidate="TRespuesta" ErrorMessage="Por favor ingrese una calificación." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                                     <asp:RegularExpressionValidator ValidationExpression="^[12345-]{1}$" ID="RegularExpressionValidator1" ControlToValidate="TRespuesta" ErrorMessage="Por favor ingrese una calificación valida." Display="Dynamic" SetFocusOnError="true" runat="server">*</asp:RegularExpressionValidator></td>
+                                    <td><asp:TextBox runat="server" Width="10px" MaxLength="1" CssClass="cal" ID="TRespuesta" Text='<%# Eval("calificacion") %>'></asp:TextBox></td>
                                 </tr>
                             </ItemTemplate>
                         </asp:Repeater>

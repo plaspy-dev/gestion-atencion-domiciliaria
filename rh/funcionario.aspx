@@ -198,14 +198,11 @@
                         <td>
                             Género</td>
                         <td>
-                            <asp:DropDownList ID="DSexo" runat="server" AppendDataBoundItems="true" 
-                                DataSourceID="SSexo" DataTextField="nombre" DataValueField="id">
+                            <asp:DropDownList ID="DSexo" runat="server">
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
+                                <asp:ListItem Text="F" Value="1"></asp:ListItem>
+                                <asp:ListItem Text="M" Value="2"></asp:ListItem>
                             </asp:DropDownList>
-                            <asp:SqlDataSource ID="SSexo" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT sexoId id,sexoDesc nombre FROM dbo.admSexo">
-                            </asp:SqlDataSource>
                         </td>
                         <td>
                             Fecha Nacimiento</td>
@@ -277,8 +274,9 @@
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SEstadoCivil" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT estCivilId id, estCivDescripcion nombre,estCivCompanero companero FROM dbo.admEstadoCivil">
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT estCivilId id, estCivDescripcion nombre,estCivCompanero companero FROM estado_civil">
                             </asp:SqlDataSource>
                             <asp:Label ID="Label21" runat="server" Text="Num. Hijos"></asp:Label>
                             <asp:TextBox runat="server" ID="THijos" CssClass="entero" Width="30px" MaxLength="2"></asp:TextBox>
@@ -337,8 +335,9 @@
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SEPS" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                             </asp:SqlDataSource>
                         </td>
                         <td>
@@ -350,8 +349,9 @@
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SFOP" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entAFP=1 ORDER BY 2">
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entAFP=1 ORDER BY 2">
                             </asp:SqlDataSource>
                         </td>
                     </tr>
@@ -364,8 +364,9 @@
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SARP" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entARP=1 ORDER BY 2">
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entARP=1 ORDER BY 2">
                             </asp:SqlDataSource>
                             </td>
                         <td>Localidad Trabajo
@@ -376,8 +377,9 @@
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SLocalidad" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT locId id, locDescripcion nombre FROM admLocalidad">
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT locId id, locDescripcion nombre FROM localidad">
                             </asp:SqlDataSource>
                             </td>
                     </tr>
@@ -393,16 +395,18 @@
                                 DataSourceID="SEstado" DataTextField="nombre" DataValueField="id">
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SEstado" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT eEstId id,eEstDesc nombre FROM dbo.admEstadoEstancia">
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT eEstId id,eEstDesc nombre FROM funcionario_estados">
                             </asp:SqlDataSource>
                         </td><td>Cargo</td><td>
                             <asp:DropDownList ID="DCargo" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SCargo" DataTextField="nombre" DataValueField="id">
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SCargo" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT carId id,carDescripcion nombre FROM dbo.admCargo ORDER BY 2">
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT carId id,carDescripcion nombre FROM cargo ORDER BY 2">
                             </asp:SqlDataSource>
                         </td></tr>
                         <tr class="descanso">
@@ -419,8 +423,9 @@
                                 DataSourceID="STipoContrato" DataTextField="nombre" DataValueField="id">
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="STipoContrato" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT tipContId id,tipContDesc nombre FROM dbo.admTipoContrato ORDER BY 2">
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT tipContId id,tipContDesc nombre FROM tipo_contrato ORDER BY 2">
                             </asp:SqlDataSource>
                         </td><td>Fecha Contrato</td><td>
                         <asp:TextBox ID="TFechaContrato" runat="server" CssClass="fecha"></asp:TextBox>
@@ -431,8 +436,9 @@
                                 DataSourceID="SArea" DataTextField="nombre" DataValueField="id">
                         </asp:DropDownList>
                         <asp:SqlDataSource ID="SArea" runat="server" 
-                            ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                            SelectCommand="SELECT areaId id,areaDesc nombre FROM dbo.admArea ORDER BY 2">
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            SelectCommand="SELECT areaId id,areaDesc nombre FROM area ORDER BY 2">
                         </asp:SqlDataSource>
                         </td></tr>
                     <tr><td nowrap="nowrap">Nivel complejidad</td><td>
@@ -441,8 +447,9 @@
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                         </asp:DropDownList>
                         <asp:SqlDataSource ID="SNivelComplejidad" runat="server" 
-                            ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                            SelectCommand="SELECT nivCompId id,nivCompDesc nombre FROM dbo.admNivelComplejidad ORDER BY 2">
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            SelectCommand="SELECT nivCompId id,nivCompDesc nombre FROM nivel_complejidad ORDER BY 2">
                         </asp:SqlDataSource>
                         </td><td>Disponibilidad</td><td>
                         <asp:DropDownList ID="DDisponibilidad" runat="server" AppendDataBoundItems="true" 
@@ -450,8 +457,9 @@
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                         </asp:DropDownList>
                         <asp:SqlDataSource ID="SDisponibilidad" runat="server" 
-                            ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                            SelectCommand="SELECT dispId id,dispDescripcion nombre FROM dbo.admDisponibilidad ORDER BY 2">
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            SelectCommand="SELECT dispId id,dispDescripcion nombre FROM disponibilidad ORDER BY 2">
                         </asp:SqlDataSource>
                         </td></tr>
                     <tr><td>Nro Cuenta</td>
@@ -464,8 +472,9 @@
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                         </asp:DropDownList>
                         <asp:SqlDataSource ID="SBanco" runat="server" 
-                            ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                            SelectCommand="SELECT banId id,banDesc nombre FROM dbo.admBanco ORDER BY 2">
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            SelectCommand="SELECT banId id,banDesc nombre FROM banco ORDER BY 2">
                         </asp:SqlDataSource>
                         </td></tr>
                     <tr><td nowrap="nowrap">Motivo Term. Contrato</td><td>
@@ -474,8 +483,9 @@
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                         </asp:DropDownList>
                         <asp:SqlDataSource ID="STerminacion" runat="server" 
-                            ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                            SelectCommand="select mteId id,mteDescripcion nombre from admMotivoTerminacion ORDER BY 2">
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            SelectCommand="select mteId id,mteDescripcion nombre from motivo_retiro ORDER BY 2">
                         </asp:SqlDataSource>
                         </td><td nowrap="nowrap">Terminación contrato</td><td>
                         <asp:TextBox runat="server" ID="TFechaTerminacion" CssClass="fecha"></asp:TextBox>
@@ -490,16 +500,17 @@
                                             <asp:DataList ID="DDocumentos" runat="server" RepeatColumns="2" DataSourceID="SDocumentos"
                                                 ShowFooter="False" ShowHeader="False" DataKeyField="docId">                
                                                 <ItemTemplate>
-                                                    <asp:CheckBox ID="CDocumentos" runat="server" Text='<%#bind("docDesc") %>' Checked='<%#bind("sel") %>' />
+                                                    <asp:CheckBox ID="CDocumentos" runat="server" Text='<%#bind("docDesc") %>' Checked='<%# Eval("sel").ToString()=="1" %>' />
                                                 </ItemTemplate>
                                             </asp:DataList>
                                              <asp:SqlDataSource ID="SDocumentos" runat="server" 
-                                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                                SelectCommand="SELECT dbo.admDocumentos.docId,
+                                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                                SelectCommand="SELECT funcionario_documentos.docId,
 		                                            docDesc,
-		                                            CONVERT(BIT,CASE WHEN dbo.admDocsPersonalHS.docId IS NULL THEN 0 ELSE 1 END) Sel		
-		                                            FROM dbo.admDocumentos
-			                                        LEFT JOIN  dbo.admDocsPersonalHS ON admDocsPersonalHS.docId = admDocumentos.docId AND perId = @perId
+		                                            CASE WHEN recurso_humano_documento.docId IS NULL THEN 0 ELSE 1 END AS Sel		
+		                                            FROM funcionario_documentos
+			                                        LEFT JOIN  recurso_humano_documento ON recurso_humano_documento.docId = funcionario_documentos.docId AND perId = @perId
 			                                        WHERE docTipoEntrega=1
 	                                            ORDER BY 2">
 	                                                <SelectParameters>
@@ -520,16 +531,17 @@
                                             <asp:DataList ID="DDocumentosContratista" runat="server" RepeatColumns="2" DataSourceID="SDocumentosContratista"
                                                 ShowFooter="False" ShowHeader="False" DataKeyField="docId">
                                                 <ItemTemplate>
-                                                    <asp:CheckBox ID="CDocumentos" runat="server" Text='<%#bind("docDesc") %>' Checked='<%#bind("sel") %>' />
+                                                    <asp:CheckBox ID="CDocumentos" runat="server" Text='<%#bind("docDesc") %>' Checked='<%# Eval("sel").ToString()=="1" %>' />
                                                 </ItemTemplate>
                                             </asp:DataList>
                                             <asp:SqlDataSource ID="SDocumentosContratista" runat="server" 
-                                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                                SelectCommand="SELECT dbo.admDocumentos.docId,
+                                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                                SelectCommand="SELECT funcionario_documentos.docId,
 		                                            docDesc,
-		                                            CONVERT(BIT,CASE WHEN dbo.admDocsPersonalHS.docId IS NULL THEN 0 ELSE 1 END) Sel		
-		                                            FROM dbo.admDocumentos
-			                                        LEFT JOIN  dbo.admDocsPersonalHS ON admDocsPersonalHS.docId = admDocumentos.docId AND perId = @perId
+		                                            CASE WHEN recurso_humano_documento.docId IS NULL THEN 0 ELSE 1 END AS Sel
+		                                            FROM funcionario_documentos
+			                                        LEFT JOIN  recurso_humano_documento ON recurso_humano_documento.docId = funcionario_documentos.docId AND perId = @perId
 			                                        WHERE docTipoEntrega=2
 	                                            ORDER BY 2">
 	                                                <SelectParameters>
@@ -553,8 +565,9 @@
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SProfesion" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT profId id, profNombre nombre FROM admProfesion ORDER BY 2">
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT profId id, profNombre nombre FROM profesion ORDER BY 2">
                             </asp:SqlDataSource></td>
                         <td width=1 nowrap="nowrap">Verificación de títulos<asp:RangeValidator ControlToValidate="TVerificacionTitulos" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator7" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
                         <td><asp:TextBox runat="server" ID="TVerificacionTitulos" CssClass="fecha"></asp:TextBox></td>
@@ -566,7 +579,7 @@
                                 <Columns>
                                     <asp:TemplateField HeaderText="Sel">
                                         <ItemTemplate>
-                                            <asp:CheckBox ID="CEntregado" runat="server" Checked='<%#bind("sel") %>' />
+                                            <asp:CheckBox ID="CEntregado" runat="server" Checked='<%#Eval("sel").ToString()=="1" %>' />
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:BoundField DataField="ipDescripcion" HeaderText="Nivel Educativo" />
@@ -577,7 +590,7 @@
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Año">
                                         <ItemTemplate>
-                                            <asp:TextBox ID="TAno" runat="server" MaxLength="4" CssClass="entero" Text='<%#bind("infAño")%>' Width="51px"></asp:TextBox>
+                                            <asp:TextBox ID="TAno" runat="server" MaxLength="4" CssClass="entero" Text='<%#bind("infAno")%>' Width="51px"></asp:TextBox>
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Institución">
@@ -593,16 +606,17 @@
                                 </Columns>
                             </asp:GridView>
                             <asp:SqlDataSource ID="SInformacionProfesional" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                                SelectCommand="SELECT dbo.admInfoProfesional.ipId,
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT funcionario_formacion.ipId,
 		                            ipDescripcion,
-		                            infAño,
+		                            infAno,
 		                            infInstitucion,
 		                            profId,
 		                            infNroActa,
-		                            CONVERT(BIT,CASE WHEN dbo.admPersonalInfoProf.ipId IS NULL THEN 0 ELSE 1 END) Sel
-		                            FROM dbo.admInfoProfesional
-			                        LEFT JOIN dbo.admPersonalInfoProf ON admPersonalInfoProf.ipId = admInfoProfesional.ipId AND perId = @perId">
+		                            CASE WHEN recurso_humano_formacion.ipId IS NULL THEN 0 ELSE 1 END AS Sel
+		                            FROM funcionario_formacion
+			                        LEFT JOIN recurso_humano_formacion ON recurso_humano_formacion.ipId = funcionario_formacion.ipId AND perId = @perId">
                                 <SelectParameters>
                                     <asp:ControlParameter ControlID="HId" PropertyName="Value" Name="perId" DefaultValue="0" />
                                 </SelectParameters>
@@ -645,7 +659,7 @@
                                             <asp:TemplateField HeaderText="Año">
                                                 <ItemTemplate>
                                                     <asp:TextBox ID="TAno" runat="server" MaxLength="4" CssClass="entero"
-                                                        Text='<%#bind("ilabAño")%>' Width="45px"></asp:TextBox>
+                                                        Text='<%#bind("ilabAno")%>' Width="45px"></asp:TextBox>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:CommandField DeleteText="Quitar" ShowDeleteButton="True" />
@@ -676,7 +690,7 @@
                 </fieldset>
                 <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" Width="100%"
                     AutoGenerateColumns="False" EmptyDataText="No se encontraron sesiones" 
-                    AllowPaging="True" PageSize="20" AllowSorting="True" onrowdatabound="GResultados_RowDataBound">
+                    AllowPaging="True" PageSize="20" AllowSorting="True">
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -685,26 +699,26 @@
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
                         <asp:BoundField HeaderText="Fecha" DataField="fecha" SortExpression="fecha" DataFormatString="{0:d}"/>
-                        <asp:BoundField HeaderText="Paciente" DataField="nombre" SortExpression="nombre"/>
+                        <asp:BoundField HeaderText="Paciente" DataField="nombre" SortExpression="nombre" ItemStyle-Wrap="false"/>
                         <asp:BoundField HeaderText="Actividad" DataField="act" SortExpression="act" ItemStyle-Width="100%"/>
-                        <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                     </Columns>
                 </asp:GridView>
                 <div style="text-align: right;">
                     <asp:Label ID="LTotal" runat="server" Text=""></asp:Label>
                 </div>
                 <asp:SqlDataSource ID="SResultados" runat="server" 
-                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                         SelectCommand="SELECT programacion.prgFechaProg fecha,
-                            (phdPaciente.pacPNombre + ' ' + phdPaciente.pacPApellido) AS nombre, 
-                            phdActividad.actDescripcion AS act,
+                            paciente.pacNombres AS nombre, 
+                            medicamentos.nombre AS act,
                             programacion.actId
                             FROM programacion 
-                            LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) 
-                            LEFT JOIN phdActividad ON (phdActividad.actId=programacion.actId)
+                            LEFT JOIN paciente ON (paciente.pacId=programacion.pacId) 
+                            LEFT JOIN medicamentos ON (medicamentos.id=programacion.actId)
                             WHERE programacion.perId=@perId 
-                            AND (@desde=' ' OR programacion.prgFechaProg>=@desde)
-                            AND (@hasta=' ' OR programacion.prgFechaProg<=@hasta)
+                            AND (@desde=' ' OR programacion.prgFechaProg>=STR_TO_DATE(@desde, '%d/%m/%Y'))
+                            AND (@hasta=' ' OR programacion.prgFechaProg<=STR_TO_DATE(@hasta, '%d/%m/%Y'))
                             ORDER BY programacion.prgFechaProg DESC">
                          <SelectParameters>
                             <asp:ControlParameter ControlID="HId" PropertyName="Value" Name="perId" DefaultValue="-1" />

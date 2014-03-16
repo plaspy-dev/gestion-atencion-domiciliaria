@@ -61,9 +61,8 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             if (ViewState["paciente_costo_paciente_actual"] == null)
             {
                 using(CConector conector= new CConector()) 
-                using (CConectorMS conectorms = new CConectorMS())
                 {
-                    string sTotal = conectorms.QueryString("SELECT SUM(costo) FROM programacion WHERE pacId=" + IdPaciente + " AND prgFechaProg>GETDATE()-30");
+                    string sTotal = conector.QueryString("SELECT SUM(costo) FROM programacion WHERE pacId=" + IdPaciente + " AND prgFechaProg>SYSDATE()-30");
                     if (sTotal.Length == 0)
                         total = 0;
                     else total = Convert.ToDouble(sTotal);
@@ -94,10 +93,9 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             double total = 0;
             if (ViewState["paciente_costo_aseguradora_actual"] == null)
             {
-                using(CConector conector= new CConector()) 
-                using (CConectorMS conectorms = new CConectorMS())
+                using(CConector conector= new CConector())
                 {
-                    string sTotal = conectorms.QueryString("SELECT SUM(costo) FROM programacion WHERE entId='" + AsegurdadorID + "' AND prgFechaProg>GETDATE()-30");
+                    string sTotal = conector.QueryString("SELECT SUM(costo) FROM programacion WHERE entId='" + AsegurdadorID + "' AND prgFechaProg>SYSDATE()-30");
                     if (sTotal.Length == 0)
                         total = 0;
                     else total = Convert.ToDouble(sTotal);
@@ -162,10 +160,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                 return;
             UCAutorizaciones.Value = HIdPaciente.Value = value;
 
-            try
-            {
-                LFechaNacimiento.Text = ConectorMS.GetDate(Convert.ToDateTime(paciente.FechaNac)) + " ";
-            } catch {}
+            LFechaNacimiento.Text = Query.GetFromMySQLDate(paciente.FechaNac) + " ";
             if(paciente.Edad!=-1)
                 LEdad.Text = paciente.Edad + " años";
             

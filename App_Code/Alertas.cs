@@ -5,6 +5,7 @@ using System.Web;
 using System.Collections;
 using System.Data.SqlClient;
 using SDG.Componentes;
+using MySql.Data.MySqlClient;
 
 /// <summary>
 /// Descripción breve de Alertas
@@ -38,9 +39,9 @@ public class Alertas
             alertas = new List<Alertas>();
             HttpContext.Current.Session["Alertas"] = alertas;
 
-            using (CConectorMS conectorc = new CConectorMS())
+            using (CConector conectorc = new CConector())
             {
-                SqlDataReader consultas = conectorc.Query("SELECT genTareas.tarTitulo AS nombre,genTareas.consulta,genTareas.url,genTareas.consultaCount,genTareas.MySQL FROM GenUsuarioTarea LEFT JOIN genTareas ON (genTareas.tarId=GenUsuarioTarea.tarId) WHERE usIdUsuario='" + Usuario.GetUsuario().GetLogin() + "' AND genTareas.consulta IS NOT NULL ORDER BY nombre");
+                MySqlDataReader consultas = conectorc.Query("SELECT alerta.tarTitulo AS nombre,alerta.consulta,alerta.url,alerta.consultaCount,alerta.MySQL FROM usuario_alerta LEFT JOIN alerta ON (alerta.tarId=usuario_alerta.tarId) WHERE usIdUsuario='" + Usuario.GetUsuario().GetLogin() + "' AND alerta.consulta IS NOT NULL ORDER BY nombre");
 
                 if (consultas != null)
                 {
@@ -56,8 +57,8 @@ public class Alertas
                         }
                         if (consulta.IndexOf("{1}") != -1)
                         {
-                            consulta = Procedimientos.SetCargos(consulta.Replace("{1}", "{0}"), "admPersonalHS.carId");
-                            consultacount = Procedimientos.SetCargos(consultacount.Replace("{1}", "{0}"), "admPersonalHS.carId");
+                            consulta = Procedimientos.SetCargos(consulta.Replace("{1}", "{0}"), "recurso_humano.carId");
+                            consultacount = Procedimientos.SetCargos(consultacount.Replace("{1}", "{0}"), "recurso_humano.carId");
                         }
 
                         alertas.Add(new Alertas(alertas.Count.ToString(), 
@@ -79,14 +80,13 @@ public class Alertas
     public static List<Alertas> GetAlertas() {
 
         List<Alertas> alertas = new List<Alertas>();
-        using (CConector conectormysql = new CConector())
-            using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
             {
                 List<Alertas> fullAlertas = GetFullAlertas();
                 for (int i = 0; i < fullAlertas.Count; i++)
                 {
                     Alertas alerta = (Alertas)fullAlertas[i];
-                    alerta.Numero = alerta.MySQLDB ? conectormysql.QueryString(alerta.SelectCount) : conector.QueryString(alerta.SelectCount);
+                    alerta.Numero = conector.QueryString(alerta.SelectCount);
                     if (alerta.Numero != "0")
                         alertas.Add(alerta);
                 }

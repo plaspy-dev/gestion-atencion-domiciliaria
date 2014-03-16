@@ -255,7 +255,7 @@
                     <h3><a href="#"><asp:Label runat="server" ID="LAutorizaciones"></asp:Label></a></h3>
                     <div class="hide">
                         <asp:GridView ID="GAutorizaciones" runat="server" AutoGenerateColumns="False"  Width="100%"
-                            DataKeyNames="autNumero" DataSourceID="SAutorizaciones" OnRowDataBound="GAutorizaciones_RowDataBound"
+                            DataKeyNames="autNumero" DataSourceID="SAutorizaciones"
                             EmptyDataText="No se encontraron autorizaciones de este usuario" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -273,27 +273,26 @@
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="autNumero" HeaderText="Autorización" ItemStyle-Wrap="false" />
                                 <asp:BoundField DataField="autFecha" HeaderText="Fecha" DataFormatString="{0:d}" />
-                                <asp:BoundField DataField="detalles" HeaderText="Detalles" ItemStyle-Width="100%" />
+                                <asp:BoundField DataField="detalles" HeaderText="Detalles" ItemStyle-Width="100%" HtmlEncode="false" />
                             </Columns>
                         </asp:GridView>
                         <asp:SqlDataSource ID="SAutorizaciones" runat="server" 
-                            ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                            SelectCommand="SELECT phdAutorizacion.autNumero, phdAutorizacion.autFecha
-                                        ,CASE LEN(detalles) WHEN 0 THEN detalles ELSE LEFT(detalles, LEN(detalles)-1) END AS detalles
-                                        FROM phdAutorizacion
-                                        CROSS APPLY
+                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                            SelectCommand="SELECT autorizacion.autNumero, autorizacion.autFecha
+                                        ,detalles.detalle AS detalles
+                                        FROM autorizacion
+                                        LEFT JOIN 
                                         (
-                                            SELECT ISNULL(phdActividad.actDescripcion,'%%'+ CAST(phdDetalleAutorizacion.actId AS VARCHAR(9))) 
-                                                + ' (' + CAST(ISNULL(phdDetalleAutorizacion.autNumSesiones,0) AS VARCHAR(9))
-                                                + '-' + CAST(ISNULL(phdDetalleAutorizacion.autSesionesDia,0) AS VARCHAR(9)) + '), '
-                                            FROM phdDetalleAutorizacion
-	                                        LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
-                                            WHERE phdDetalleAutorizacion.autNumero = phdAutorizacion.autNumero
-                                            FOR XML PATH('')
-                                        ) pre_trimmed (detalles)
-                                        WHERE phdAutorizacion.pacId=@paciente
-                                        GROUP BY phdAutorizacion.autNumero,detalles, phdAutorizacion.autFecha
-                                        ORDER BY phdAutorizacion.autFecha DESC;">
+                                        	SELECT autorizacion_detalle.autNumero
+														 ,GROUP_CONCAT(CONCAT(medicamentos.nombre, ' (', IFNULL(autorizacion_detalle.autNumSesiones,0),'-',IFNULL(autorizacion_detalle.autSesionesDia,0),')') SEPARATOR '<br/>') AS detalle
+                                            FROM autorizacion_detalle
+	                                        LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
+	                                        GROUP BY autorizacion_detalle.autNumero
+										) AS detalles ON (detalles.autNumero = autorizacion.autNumero)
+                                        WHERE autorizacion.pacId=@paciente
+                                        GROUP BY autorizacion.autNumero,detalles, autorizacion.autFecha
+                                        ORDER BY autorizacion.autFecha DESC;">
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="HIdPaciente" PropertyName="Value" Name="paciente" />
                             </SelectParameters>
@@ -360,7 +359,8 @@
                     </Columns>
                 </asp:GridView>
                 <asp:SqlDataSource ID="SPagos" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT id,valor,recibo FROM pago_autorizacion WHERE autNumero=@autorizacion"
                     DeleteCommand="DELETE FROM pago_autorizacion WHERE id=@id">
                     <SelectParameters>
@@ -416,9 +416,9 @@
                     </asp:GridView>
                     <sdg:CustomDataSource ID="SActividades" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             SelectCommand="SELECT id,nombre AS procedimiento,id AS proc_id,id AS sesionesdia,id AS numerosesiones,id AS idint,nombre AS tint,nombre AS verificacion FROM varios WHERE id IS NULL"
-                            DeleteCommand="DELETE FROM phdDetalleAutorizacion WHERE autNumero=@autorizacion AND actId=@id"
-                            InsertCommand="INSERT INTO phdDetalleAutorizacion (autNumero,actId,autNumSesiones,autSesionesDia, intensidad, verificacion) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia,@idint, @verificacion)"
-                            UpdateCommand="UPDATE phdDetalleAutorizacion SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia, intensidad=@idint WHERE id=@id"
+                            DeleteCommand="DELETE FROM autorizacion_detalle WHERE autNumero=@autorizacion AND actId=@id"
+                            InsertCommand="INSERT INTO autorizacion_detalle (autNumero,actId,autNumSesiones,autSesionesDia, intensidad, verificacion) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia,@idint, @verificacion)"
+                            UpdateCommand="UPDATE autorizacion_detalle SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia, intensidad=@idint WHERE id=@id"
                             >
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="-1" />
@@ -441,7 +441,7 @@
             <td colspan="2">
                 <asp:UpdatePanel runat="server" ID="UIntensidad" UpdateMode="Conditional">
                     <ContentTemplate>
-                        <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" DataTextField="nombre" DataValueField="id">
+                        <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" DataTextField="nombre" DataValueField="id" CssClass="anchomaxcombo">
                             <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
                         </asp:DropDownList>
                         <asp:SqlDataSource ID="SIntensidad" runat="server" 

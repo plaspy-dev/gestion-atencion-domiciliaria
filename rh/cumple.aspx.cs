@@ -30,7 +30,7 @@ public partial class rh_cumple : System.Web.UI.Page
     }
     protected void BAceptar_Click(object sender, EventArgs e)
     {
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
             for (int i = 0; i < GResultados.Rows.Count; i++)
@@ -59,7 +59,7 @@ public partial class rh_cumple : System.Web.UI.Page
                             ((MasterPageI)Master).SetMensaje(ex.ToString());
                             return;
                         }
-                        if (conector.QueryMod("UPDATE admPersonalHS SET felicitacion=YEAR(GETDATE()) WHERE perId=" + GResultados.DataKeys[i].Value.ToString()) == -1)
+                        if (conector.QueryMod("UPDATE admPersonalHS SET felicitacion=YEAR(SYSDATE()) WHERE perId=" + GResultados.DataKeys[i].Value.ToString()) == -1)
                             return;
                     }
                 }
@@ -77,8 +77,8 @@ public partial class rh_cumple : System.Web.UI.Page
     {
         if (DPlantilla.SelectedIndex == -1)
             return;
-        using(CConectorMS conector = new CConectorMS()) 
-            TMensaje.Text= conector.QueryString("SELECT plantTexto FROM admPlantillaCorreo WHERE plantId=" + DPlantilla.SelectedValue);
+        using(CConector conector = new CConector())
+            TMensaje.Text = conector.QueryString("SELECT plantTexto FROM plantilla_correo WHERE plantId=" + DPlantilla.SelectedValue);
 
     }
     protected void BBuscar_Click(object sender, EventArgs e)

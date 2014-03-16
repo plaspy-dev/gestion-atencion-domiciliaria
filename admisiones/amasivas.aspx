@@ -158,9 +158,9 @@
                     </asp:GridView>
                     <sdg:CustomDataSource ID="SActividades" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             SelectCommand="SELECT id,nombre AS procedimiento,id AS proc_id,id AS sesionesdia,id AS numerosesiones,id AS idint,nombre AS tint FROM varios WHERE id IS NULL"
-                            DeleteCommand="DELETE FROM phdDetalleAutorizacion WHERE autNumero=@autorizacion AND actId=@id"
-                            InsertCommand="INSERT INTO phdDetalleAutorizacion (autNumero,actId,autNumSesiones,autSesionesDia, intensidad) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia,@idint)"
-                            UpdateCommand="UPDATE phdDetalleAutorizacion SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia, intensidad=@idint WHERE id=@id"
+                            DeleteCommand="DELETE FROM autorizacion_detalle WHERE autNumero=@autorizacion AND actId=@id"
+                            InsertCommand="INSERT INTO autorizacion_detalle (autNumero,actId,autNumSesiones,autSesionesDia, intensidad) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia,@idint)"
+                            UpdateCommand="UPDATE autorizacion_detalle SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia, intensidad=@idint WHERE id=@id"
                             >
                     </sdg:CustomDataSource>
             </td>

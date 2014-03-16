@@ -62,15 +62,15 @@ public partial class auditoria_indicadores : System.Web.UI.Page
         }
 
         // agregamos la nueva consulta de servicios
-        string query = ",(SELECT COUNT(*) FROM programacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) WHERE " + procedimientos + " AND prgFechaProg BETWEEN @desde AND @hasta AND (@eps=0 OR phdPaciente.entId=@eps)) AS a" + id;
+        string query = ",(SELECT COUNT(*) FROM programacion LEFT JOIN paciente ON (paciente.pacId=programacion.pacId) WHERE " + procedimientos + " AND prgFechaProg BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (@eps=0 OR paciente.entId=@eps)) AS a" + id;
         SResultados.SelectCommand += query;
 
         // agregamos los pacientes atendidos
-        query = ",(SELECT COUNT(DISTINCT programacion.pacId) FROM programacion LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) WHERE " + procedimientos + " AND prgFechaProg BETWEEN @desde AND @hasta AND (@eps=0 OR phdPaciente.entId=@eps)) AS b" + id;
+        query = ",(SELECT COUNT(DISTINCT programacion.pacId) FROM programacion LEFT JOIN paciente ON (paciente.pacId=programacion.pacId) WHERE " + procedimientos + " AND prgFechaProg BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (@eps=0 OR paciente.entId=@eps)) AS b" + id;
         SResultados.SelectCommand += query;
 
         // agregamos los servicios descubiertos
-        query = ",(SELECT COUNT(*) FROM phdNovedad LEFT JOIN programacion ON (programacion.prgId=phdNovedad.prgId) LEFT JOIN phdPaciente ON (phdPaciente.pacId=programacion.pacId) WHERE phdNovedad.segFechaRegistro BETWEEN @desde AND @hasta AND phdNovedad.novTipo=5 AND phdNovedad.prgTipo=1 AND " + procedimientos + " AND (@eps=0 OR phdPaciente.entId=@eps)) AS c" + id;
+        query = ",(SELECT COUNT(*) FROM programacion_novedad LEFT JOIN programacion ON (programacion.prgId=programacion_novedad.prgId) LEFT JOIN paciente ON (paciente.pacId=programacion.pacId) WHERE programacion_novedad.segFechaRegistro BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND programacion_novedad.novTipo=5 AND programacion_novedad.prgTipo=1 AND " + procedimientos + " AND (@eps=0 OR paciente.entId=@eps)) AS c" + id;
         SResultados.SelectCommand += query;
 
         return szProcedimiento;

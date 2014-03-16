@@ -182,15 +182,15 @@ public class servicios : System.Web.Services.WebService
     {
         List<CJSon> lista = new List<CJSon>();
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
-            string query = "SELECT TOP 20 phdAutorizacion.autNumero,phdAutorizacion.autFecha,phdPaciente.pacNombres"
-                    + " FROM phdAutorizacion"
-                    + " LEFT JOIN phdPaciente ON (phdAutorizacion.pacId=phdPaciente.pacId)"
-                    + " WHERE phdAutorizacion.autNumero LIKE '%" + q.ToString() + "%'"
-                    + " ORDER BY phdAutorizacion.autFecha DESC";
-            SqlDataReader reader = conector.Query(query);
+            string query = "SELECT autorizacion.autNumero,autorizacion.autFecha,paciente.pacNombres"
+                    + " FROM autorizacion"
+                    + " LEFT JOIN paciente ON (autorizacion.pacId=paciente.pacId)"
+                    + " WHERE autorizacion.autNumero LIKE '%" + q.ToString() + "%'"
+                    + " ORDER BY autorizacion.autFecha DESC LIMIT 20";
+            MySqlDataReader reader = conector.Query(query);
             if (reader != null)
             {
                 while (reader.Read())
@@ -209,10 +209,9 @@ public class servicios : System.Web.Services.WebService
     {
         List<CJSon> lista = new List<CJSon>();
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
-
-            string query = "SELECT TOP 20 pacId id,pacDocumento AS documento, pacPNombre + ' ' + isnull(pacSNombre,'') + ' ' + pacPapellido + ' ' + isnull(pacSApellido, '') AS nombres,EstId AS estado FROM phdPaciente WHERE ";
+            string query = "SELECT pacId id,pacDocumento AS documento, pacNombres AS nombres,EstId AS estado FROM paciente WHERE ";
             string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
             // solo permitimos busquedas para los usuarios configurados
@@ -238,8 +237,8 @@ public class servicios : System.Web.Services.WebService
             }
             if (!string.IsNullOrEmpty(e))
                 query += ")";
-            query += ") ORDER BY EstId,nombres";
-            SqlDataReader reader = conector.Query(query);
+            query += ") ORDER BY EstId,nombres LIMIT 20";
+            MySqlDataReader reader = conector.Query(query);
             if (reader != null)
             {
                 while (reader.Read())
@@ -260,7 +259,7 @@ public class servicios : System.Web.Services.WebService
     {
         List<CJSon> lista = new List<CJSon>();
 
-        string query = "SELECT TOP 20 pacId id,pacDocumento AS documento, pacPNombre + ' ' + isnull(pacSNombre,'') + ' ' + pacPapellido + ' ' + isnull(pacSApellido, '') AS nombres FROM phdPaciente WHERE EstId!=2";
+        string query = "SELECT pacId id,pacDocumento AS documento, pacNombres AS nombres FROM paciente WHERE EstId!=2";
         string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
         if (!string.IsNullOrEmpty(e))
@@ -286,11 +285,11 @@ public class servicios : System.Web.Services.WebService
             }
         }
 
-        query+=")) ORDER BY nombres";
+        query += ")) ORDER BY nombres LIMIT 20";
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
-            SqlDataReader reader = conector.Query(query);
+            MySqlDataReader reader = conector.Query(query);
             if (reader != null)
             {
                 while (reader.Read())
@@ -314,10 +313,10 @@ public class servicios : System.Web.Services.WebService
     public List<CJSon> GetPersonalC(String q, String c, String s)
     {
         List<CJSon> lista = new List<CJSon>();
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
-            string query = "SELECT TOP 20 perId AS id,perDocumento AS documento, perNombre AS nombres FROM admPersonalHS WHERE ";
+            string query = "SELECT perId AS id,perDocumento AS documento, perNombre AS nombres FROM recurso_humano WHERE ";
             string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
             if (s != null)
@@ -352,9 +351,9 @@ public class servicios : System.Web.Services.WebService
             }
             if (c != null)
                 query += ")";
-            query += ") ORDER BY perNombre";
+            query += ") ORDER BY perNombre LIMIT 20";
 
-            SqlDataReader reader = conector.Query(query);
+            MySqlDataReader reader = conector.Query(query);
             if (reader != null)
             {
                 while (reader.Read())
@@ -373,9 +372,9 @@ public class servicios : System.Web.Services.WebService
     {
         List<CDiagnosticos> dDiagnosticos = new List<CDiagnosticos>();
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
-            string query = "SELECT TOP 50 cieCodDx,[cieCodDx]+' - '+ [cirDescripcion] AS descripcion FROM phdCIE10 WHERE ";
+            string query = "SELECT cieCodDx,CONCAT(cieCodDx,' - ', cirDescripcion) AS descripcion FROM cie10 WHERE ";
 
             string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
@@ -395,9 +394,9 @@ public class servicios : System.Web.Services.WebService
                 }
             }
 
-            query += ") ORDER BY cieCodDx;";
+            query += ") ORDER BY cieCodDx LIMIT 50;";
 
-            SqlDataReader reader = conector.Query(query);
+            MySqlDataReader reader = conector.Query(query);
             if (reader != null)
             {
                 while (reader.Read())

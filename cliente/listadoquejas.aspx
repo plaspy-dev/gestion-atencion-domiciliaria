@@ -31,8 +31,9 @@
                                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SAsegurador" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
                 <td><asp:DropDownList ID="DTipo" runat="server" 
                                 DataSourceID="STipo" DataTextField="nombre" 
@@ -40,8 +41,9 @@
                                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="STipo" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT tqrIdTipo id,tqrDescripcion nombre FROM serTipoFormulario ORDER BY nombre">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT tqrIdTipo id,tqrDescripcion nombre FROM tipo_queja_reclamo ORDER BY nombre">
                 </asp:SqlDataSource></td>
             <td><asp:DropDownList ID="DClasificacion" runat="server" 
                                 DataSourceID="SClasificacion" DataTextField="nombre" 
@@ -115,33 +117,34 @@
         </asp:DetailsView>
     </div>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-        ConnectionString="<%$ ConnectionStrings:connBD %>" 
+        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
         SelectCommand="SELECT 
-                    serQuejasReclamos.qrId
-                    ,serQuejasReclamos.qrFecha
-                    ,CASE serQuejasReclamos.qrTipoCliente WHEN 2 THEN 'Interno' ELSE 'Externo' END AS Cliente
-                    ,ISNULL(phdPaciente.pacNombres, admPersonalHS.perNombre) AS nombre
-                    ,serTipoFormulario.tqrDescripcion
-                    ,serQuejasReclamos.qrPersonaLlama
-                    ,serQuejasReclamos.qrDetalle
-                    ,serQuejasReclamos.clasificacion
-                    ,admEntidad.entNombre
-                    ,CASE WHEN serQuejasReclamos.qrCerrado=1 THEN 'Cerrado' WHEN serQuejasReclamos.qrAtendido=1 THEN 'Atendido' ELSE 'Sin tramitar' END AS estado
-                    FROM serQuejasReclamos
-                    LEFT JOIN serTipoFormulario ON (serTipoFormulario.tqrIdTipo=serQuejasReclamos.tqrIdTipo)
-                    LEFT JOIN admEntidad ON (admEntidad.entId=serQuejasReclamos.entId)
-                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=serQuejasReclamos.pacId)
-                    LEFT JOIN admPersonalHS ON (admPersonalHS.perId=serQuejasReclamos.perId)
+                    queja_reclamo.qrId
+                    ,queja_reclamo.qrFecha
+                    ,CASE queja_reclamo.qrTipoCliente WHEN 2 THEN 'Interno' ELSE 'Externo' END AS Cliente
+                    ,IFNULL(paciente.pacNombres, recurso_humano.perNombre) AS nombre
+                    ,tipo_queja_reclamo.tqrDescripcion
+                    ,queja_reclamo.qrPersonaLlama
+                    ,queja_reclamo.qrDetalle
+                    ,queja_reclamo.clasificacion
+                    ,asegurador.entNombre
+                    ,CASE WHEN queja_reclamo.qrCerrado=1 THEN 'Cerrado' WHEN queja_reclamo.qrAtendido=1 THEN 'Atendido' ELSE 'Sin tramitar' END AS estado
+                    FROM queja_reclamo
+                    LEFT JOIN tipo_queja_reclamo ON (tipo_queja_reclamo.tqrIdTipo=queja_reclamo.tqrIdTipo)
+                    LEFT JOIN asegurador ON (asegurador.entId=queja_reclamo.entId)
+                    LEFT JOIN paciente ON (paciente.pacId=queja_reclamo.pacId)
+                    LEFT JOIN recurso_humano ON (recurso_humano.perId=queja_reclamo.perId)
                     WHERE 
-                    serQuejasReclamos.qrFecha BETWEEN @inicio AND @fin
-                    AND (@asegurador=0 OR @asegurador=serQuejasReclamos.entId)
-                    AND (@tipo=0 OR @tipo=serQuejasReclamos.tqrIdTipo)
-                    AND (@clasificacion=0 OR @clasificacion=serQuejasReclamos.clasificacion)
-                    AND (@cliente=0 OR @cliente=serQuejasReclamos.qrTipoCliente)
+                    queja_reclamo.qrFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                    AND (@asegurador=0 OR @asegurador=queja_reclamo.entId)
+                    AND (@tipo=0 OR @tipo=queja_reclamo.tqrIdTipo)
+                    AND (@clasificacion=0 OR @clasificacion=queja_reclamo.clasificacion)
+                    AND (@cliente=0 OR @cliente=queja_reclamo.qrTipoCliente)
                     AND (@estado=0 
-                        OR (@estado=1 AND serQuejasReclamos.qrCerrado=1) 
-                        OR (@estado=2 AND serQuejasReclamos.qrCerrado=0 AND serQuejasReclamos.qrAtendido=1) 
-                        OR (@estado=3 AND serQuejasReclamos.qrCerrado=0 AND serQuejasReclamos.qrAtendido=0))
+                        OR (@estado=1 AND queja_reclamo.qrCerrado=1) 
+                        OR (@estado=2 AND queja_reclamo.qrCerrado=0 AND queja_reclamo.qrAtendido=1) 
+                        OR (@estado=3 AND queja_reclamo.qrCerrado=0 AND queja_reclamo.qrAtendido=0))
                     ">
           <SelectParameters>
             <asp:ControlParameter ControlID="TInicio" PropertyName="Text" Name="inicio" />
@@ -155,7 +158,8 @@
     </asp:SqlDataSource>
     
     <asp:SqlDataSource ID="SResumen" runat="server" 
-        ConnectionString="<%$ ConnectionStrings:connBD %>" 
+        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
         SelectCommand="SELECT COUNT(*) AS total
                     ,COUNT(CASE estado WHEN 1 THEN 1 ELSE NULL END) AS cerrados 
                     ,COUNT(CASE estado WHEN 2 THEN 1 ELSE NULL END) AS atendidos 
@@ -163,9 +167,9 @@
                     FROM 
                     (SELECT 
                     CASE WHEN qrCerrado=1 THEN 1 WHEN qrAtendido=1 THEN 2 ELSE 0 END AS estado
-                    FROM serQuejasReclamos
+                    FROM queja_reclamo
                     WHERE 
-                    qrFecha BETWEEN @inicio AND @fin
+                    qrFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                     AND (@asegurador=0 OR @asegurador=entId)
                     AND (@tipo=0 OR @tipo=tqrIdTipo)
                     AND (@clasificacion=0 OR @clasificacion=clasificacion)

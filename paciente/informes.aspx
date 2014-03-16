@@ -48,8 +48,9 @@
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SEstado" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT estId id,estDesc nombre FROM dbo.phdEstado">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT estId id,estDesc nombre FROM paciente_estado">
                 </asp:SqlDataSource>
             </td>
             <td>
@@ -113,22 +114,23 @@
         </div>
         </div>
         <asp:SqlDataSource ID="SResultados" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT   
                                   pacId,  
                                   tdocDescripcion,  
                                   pacDocumento,  
-                                  dbo.fnComNombre(pacPNombre,pacSNombre,pacPApellido,pacSApellido) pacPNombre,  
-                                  year(getdate()-pacFechaNac-1)-1900 AS edad,
+                                  pacNombres AS pacPNombre,  
+                                  year(SYSDATE()-pacFechaNac-1)-1900 AS edad,
                                   pacBarrio,
-                                  isnull(pacTelefono, '') + ' ' + isnull(pacTelefono1, '') AS telefono,
+                                  IFNULL(pacTelefono, '') + ' ' + IFNULL(pacTelefono1, '') AS telefono,
                                   pacCelular,
                                   pacEntregaSuministros,
                                   CAST(CASE WHEN estId=1 THEN 1 ELSE 0 END AS bit) AS estId
-                                 FROM dbo.phdPaciente  
-                                 INNER JOIN dbo.phdTipoDocumento ON phdPaciente.tdocId =phdTipoDocumento.tdocId  
+                                 FROM paciente  
+                                 INNER JOIN tipo_documento ON paciente.tdocId =tipo_documento.tdocId  
                                  where (@id=0 OR @id=pacId) AND 
-                                        (@pacPNombre=' ' or (dbo.fnComNombre(pacPNombre,pacSNombre,pacPApellido,pacSApellido) like '%'+REPLACE(@pacPNombre,' ','%')+'%' or pacDocumento = @pacPNombre))
+                                        (@pacPNombre=' ' or (pacNombres like '%'+REPLACE(@pacPNombre,' ','%')+'%' or pacDocumento = @pacPNombre))
 		                                and (@pacTerapias=0 or (pacTerapiaFisica=1 or pacTerapiaResp=1 or pacTerapiaOcup=1 or pacTerapiaLenguaje=1))
 		                                and (@pacEnfermeria=0 or (pacEnfermeria_12=1 or pacEnfermeria_24=1))
 		                                and(@estado=0 or estId=@estado)

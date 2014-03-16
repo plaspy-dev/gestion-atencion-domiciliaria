@@ -26,10 +26,10 @@ public partial class rh_funcionarioSimple : System.Web.UI.UserControl
             TFuncionarioID.Text = "";
             if (!string.IsNullOrEmpty(value))
             {
-                using (CConectorMS conector = new CConectorMS())
+                using (CConector conector = new CConector())
                 {
                     TFuncionarioID.Text = value;
-                    TFuncionario.Text = conector.QueryString("SELECT perDocumento + ' - ' + perNombre FROM admPersonalHS WHERE perId=" + Query.GetValor(value));
+                    TFuncionario.Text = conector.QueryString("SELECT perDocumento + ' - ' + perNombre FROM recurso_humano WHERE perId=" + Query.GetValor(value));
                 }
             }
         }

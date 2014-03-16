@@ -41,7 +41,7 @@ public partial class administrador_parametros2 : System.Web.UI.Page
         {
             if (Request.QueryString["tipo"] == null)
             {
-                Response.Redirect(Request.Url.AbsolutePath + "?tipo=admCargo");
+                Response.Redirect(Request.Url.AbsolutePath + "?tipo=cargo");
                 return;
             }
 
@@ -53,16 +53,16 @@ public partial class administrador_parametros2 : System.Web.UI.Page
 
             TreeNode parent = Add("Personal");
 
-            Add("Cargos", "admCargo", parent, "carId,carDescripcion");
+            Add("Cargos", "cargo", parent, "carId,carDescripcion");
 
             parent = Add("Reporte PQR");
-            Add("Tipos", "serTipoFormulario", parent, "tqrIdTipo,tqrDescripcion");
+            Add("Tipos", "tipo_queja_reclamo", parent, "tqrIdTipo,tqrDescripcion");
 
             parent = Add("Bitácoras");
-            Add("Tipo", "phdTipoActividad", parent, "tpaId,tpaDescripcion");
+            Add("Tipo", "tipo_actividad", parent, "tpaId,tpaDescripcion");
 
             if (HTipo.Value.Length == 0)
-                Response.Redirect(Request.Url.AbsolutePath + "?tipo=admCargo");
+                Response.Redirect(Request.Url.AbsolutePath + "?tipo=cargo");
         }
 
         string[] parametros = ViewState["parametros"].ToString().Split(',');
@@ -82,7 +82,7 @@ public partial class administrador_parametros2 : System.Web.UI.Page
         if (!IsValid)
             return;
         Query query = new Query(HTipo.Value);
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
             string mensaje;
 
@@ -103,9 +103,8 @@ public partial class administrador_parametros2 : System.Web.UI.Page
                     return;
                 mensaje = TNombre.Text + " editado";
             }
-            using(CConector conectorm= new CConector()) 
-                if (conectorm.InsertModificacion(HId.Value) == -1)
-                    return;
+            if (conector.InsertModificacion(HId.Value) == -1)    
+                return;
             Session["szMensaje"] = mensaje;
             Response.Redirect(Request.Url.AbsolutePath + "?tipo=" + HTipo.Value);
         }

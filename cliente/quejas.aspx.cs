@@ -7,6 +7,9 @@ using System.Web.UI.WebControls;
 using System.Collections;
 using System.Data.SqlClient;
 using SDG.Componentes;
+using MySql.Data.MySqlClient;
+using System.IO;
+using System.Configuration;
 
 public partial class cliente_quejas : System.Web.UI.Page
 {
@@ -18,7 +21,7 @@ public partial class cliente_quejas : System.Web.UI.Page
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
             if (Request.QueryString["qid"] != null)
             {
-                Query query = new Query("serQuejasReclamos");
+                Query query = new Query("queja_reclamo");
 
                 query += "qrId";
                 query += "qrFecha";
@@ -33,9 +36,9 @@ public partial class cliente_quejas : System.Web.UI.Page
                 query += "perId";
                 query += "clasificacion";
 
-                using (CConectorMS conector = new CConectorMS())
+                using (CConector conector = new CConector())
                 {
-                    SqlDataReader reader = conector.Query(query.GetSelect("qrId=" + Query.GetValor(Request.QueryString["qid"])));
+                    MySqlDataReader reader = conector.Query(query.GetSelect("qrId=" + Query.GetValor(Request.QueryString["qid"])));
 
                     if (reader != null && reader.Read())
                     {
@@ -73,7 +76,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                             REmpleado.Checked = true;
                         }
 
-                        reader = conector.Query("SELECT admPersonalHS.perId AS id,admPersonalHS.pernombre AS nombre FROM serQuejaRecPersonal LEFT JOIN admPersonalHS ON (admPersonalHS.perId=serQuejaRecPersonal.perId) WHERE serQuejaRecPersonal.qrId=" + HIdQuejas.Value + " ORDER BY nombre;");
+                        reader = conector.Query("SELECT recurso_humano.perId AS id,recurso_humano.pernombre AS nombre FROM queja_reclamo_funcionario LEFT JOIN recurso_humano ON (recurso_humano.perId=queja_reclamo_funcionario.perId) WHERE queja_reclamo_funcionario.qrId=" + HIdQuejas.Value + " ORDER BY nombre;");
                         if (reader != null)
                         {
 
@@ -199,13 +202,13 @@ public partial class cliente_quejas : System.Web.UI.Page
         if (!IsValid)
             return;
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
-            Query query = new Query("serQuejasReclamos");
+            Query query = new Query("queja_reclamo");
             conector.StartTransaction();
 
-            query["qrFecha"] = TFecha.Text + " " + THora.Text;
+            query["qrFecha"] = Query.GetMySQLDateFormat(TFecha.Text + " " + THora.Text, true);
             query["tqrIdTipo"] = DTipo.SelectedValue;
             query["qrPersonaLlama"] = TPLlama.Text;
             query["qrParentesco"] = TParentesco.Text;
@@ -216,7 +219,7 @@ public partial class cliente_quejas : System.Web.UI.Page
             query["pacId"] = CCDetallePaciente.IdPaciente;
             query["perId"] = FuncionarioC.IdFuncionario;
             query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
-            query["segFechaIngreso"] = "GETDATE()";
+            query["segFechaIngreso"] = "SYSDATE()";
             query["qrTipoCliente"] = RPaciente.Checked ? "1" : "2";
             query["entId"] = CCDetallePaciente.AsegurdadorID;
             query["clasificacion"] = DClasificacion.SelectedValue;
@@ -233,9 +236,8 @@ public partial class cliente_quejas : System.Web.UI.Page
                 if (conector.QueryMod(query.GetUpdate("qrId=" + HIdQuejas.Value)) == -1)
                     return;
             }
-            using(CConector conectorm= new CConector()) 
-                if (conectorm.InsertModificacion(HIdQuejas.Value) == -1)
-                    return;
+            if (conector.InsertModificacion(HIdQuejas.Value) == -1)
+                return;
 
             if (PConductaAbusiva.Visible)
             {
@@ -247,7 +249,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                 query["antecedentes"] = TAntecedentes.Text;
                 query["presentadano"] = CPresentaDano.Checked ? "1" : "0";
                 query["otro"] = TTipoDano.Text;
-                query["fecha"] = TFechaEvento.Text;
+                query["fecha"] = Query.GetMySQLDateFormat(TFechaEvento.Text);
                 query["riesgo"] = DTipoRiesgo.SelectedValue;
                 string id = (string)ViewState["idconducta"];
 
@@ -294,7 +296,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                     if (fecha.Text.Length != 0)
                     {
                         query["medida"] = GMedidas.DataKeys[i].Value.ToString();
-                        query["fecha"] = fecha.Text;
+                        query["fecha"] = Query.GetMySQLDateFormat(fecha.Text);
                         if (conector.QueryMod(query.GetInsert()) == -1)
                             return;
                     }
@@ -317,7 +319,7 @@ public partial class cliente_quejas : System.Web.UI.Page
             if (personas != null)
             {
 
-                Query qpersonas = new Query("serQuejaRecPersonal");
+                Query qpersonas = new Query("queja_reclamo_funcionario");
                 qpersonas["qrId"] = HIdQuejas.Value;
 
                 if (conector.QueryMod(qpersonas.GetDelete("qrId=" + HIdQuejas.Value)) == -1)
@@ -393,10 +395,10 @@ public partial class cliente_quejas : System.Web.UI.Page
         if (!CVSeguimiento.IsValid)
             return;
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
-            Query query = new Query("serSeguimiento");
-            Query queja = new Query("serQuejasReclamos");
+            Query query = new Query("queja_reclamo_seguimiento");
+            Query queja = new Query("queja_reclamo");
 
             query["sqrDetalles"] = TSDetalles.Text;
             if (TAcciones.Text.Length == 0)
@@ -421,24 +423,26 @@ public partial class cliente_quejas : System.Web.UI.Page
             }
 
             query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
-            query["segFechaIngreso"] = "GETDATE()";
+            query["segFechaIngreso"] = "SYSDATE()";
 
             if (string.IsNullOrEmpty((string)ViewState["sqrId"]))
             {
 
                 query["qrId"] = HIdQuejas.Value;
-                query["sqrId"] = conector.QueryString("(SELECT ISNULL(MAX(sqrId)+1,1) FROM serSeguimiento WHERE qrId=" + HIdQuejas.Value + ")");
+                query["sqrId"] = conector.QueryString("(SELECT IFNULL(MAX(sqrId)+1,1) FROM queja_reclamo_seguimiento WHERE qrId=" + HIdQuejas.Value + ")");
                 if (FArchivo.HasFile)
                 {
-                    Archivos archivo = new Archivos(FArchivo.PostedFile, 0);
-                    if (!archivo.SaveFile(query))
-                        return;
+                    string ruta = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "pqr");
+                    Directory.CreateDirectory(ruta);
+                    ruta = Path.Combine(ruta, HIdQuejas.Value);
+                    Directory.CreateDirectory(ruta);
+                    ruta = Path.Combine(ruta, query["sqrId"]);
+                    Directory.CreateDirectory(ruta);
+
+                    FArchivo.SaveAs(Path.Combine(ruta, FArchivo.FileName));
                 }
-                else
-                {
-                    if (conector.QueryMod(query.GetInsert()) == -1)
-                        return;
-                }
+                if (conector.QueryMod(query.GetInsert()) == -1)
+                    return;
             }
             else
             {
@@ -495,28 +499,6 @@ public partial class cliente_quejas : System.Web.UI.Page
             ;
         }
     }
-    protected void GSeguimiento_SelectedIndexChanged(object sender, EventArgs e) {
-
-        if(GSeguimiento.SelectedIndex==-1)
-            return;
-
-        Query query = new Query("serSeguimiento");
-        Query qarchivo = new Query("serSeguimiento");
-
-        query["nombre"]="nombre";
-        query["id"]="1";
-        query["tipo"]="nombre";
-
-        qarchivo+="archivo";
-
-        Archivos archivo = new Archivos(
-            query.GetSelect(string.Format("qrId={0} AND sqrId={1}", GSeguimiento.DataKeys[GSeguimiento.SelectedIndex].Values[0].ToString(), GSeguimiento.DataKeys[GSeguimiento.SelectedIndex].Values[1].ToString())), 
-            qarchivo.GetSelect(string.Format("qrId={0} AND sqrId={1}", GSeguimiento.DataKeys[GSeguimiento.SelectedIndex].Values[0].ToString(), GSeguimiento.DataKeys[GSeguimiento.SelectedIndex].Values[1].ToString()))
-            );
-
-        archivo.ShowFile(Response);
-        GSeguimiento.SelectedIndex=-1;
-    }
 
     protected void GSeguimiento_Editing(object sender, GridViewEditEventArgs e)
     {
@@ -524,8 +506,8 @@ public partial class cliente_quejas : System.Web.UI.Page
             
             BAceptarSeguimiento.Enabled = CUsuario.GetUsuario().CanUpdate();
 
-            Query query = new Query("serSeguimiento");
-            using (CConectorMS conector = new CConectorMS())
+            Query query = new Query("queja_reclamo_seguimiento");
+            using (CConector conector = new CConector())
             {
 
                 query += "sqrDetalles";
@@ -541,7 +523,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                 query += "como";
                 query += "porque";
 
-                SqlDataReader reader = conector.Query(query.GetSelect(string.Format("qrId={0} AND sqrId={1}"
+                MySqlDataReader reader = conector.Query(query.GetSelect(string.Format("qrId={0} AND sqrId={1}"
                     , GSeguimiento.DataKeys[e.NewEditIndex].Values[0]
                     , GSeguimiento.DataKeys[e.NewEditIndex].Values[1])));
                 if (reader != null && reader.Read())
@@ -553,7 +535,6 @@ public partial class cliente_quejas : System.Web.UI.Page
                     CCerrar.Checked = reader["sqrCerrar"].ToString() == "True";
                     if (CCerrar.Checked)
                     {
-
                         CRUsuario.Checked = reader["sqrRespuestaUsuario"].ToString() == "True";
                         CRAsegurador.Checked = reader["sqrRespuestaAsegurador"].ToString() == "True";
                         CRTelefonica.Checked = reader["sqrRespuestaTelefonica"].ToString() == "True";
@@ -634,12 +615,12 @@ public partial class cliente_quejas : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
         evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
 
-        /*query = new Query("admPersonalHS");
+        /*query = new Query("recurso_humano");
 
-        query["szProfesional"] = "admPersonalHS.perDocumento";
-        query["szCargo"] = "admCargo.carDescripcion";
+        query["szProfesional"] = "recurso_humano.perDocumento";
+        query["szCargo"] = "cargo.carDescripcion";
 
-        reader = conectorms.Query(query.GetSelect("perId=" + Query.GetValor(TIdFuncionario.Text), " LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)"));
+        reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(TIdFuncionario.Text), " LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)"));
         if (reader != null)
         {
             bool l = reader.Read();
@@ -650,5 +631,25 @@ public partial class cliente_quejas : System.Web.UI.Page
         }*/
         // limpiamos el inactivo de los pacientes
         evento.Contenido = evento.Contenido.Replace(" (Inactivo)", "");
+    }
+
+    protected void GSeguimiento_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowIndex != -1)
+        {
+            HyperLink enlace= (HyperLink)e.Row.FindControl("LArchivo");
+            
+            string ruta = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "pqr");
+            ruta = Path.Combine(ruta, HIdQuejas.Value);
+            ruta = Path.Combine(ruta, GSeguimiento.DataKeys[e.Row.RowIndex].Values["sqrId"].ToString());
+            try
+            {
+                foreach (string archivo in Directory.GetFiles(ruta))
+                {
+                    enlace.Text = Path.GetFileName(archivo);
+                    enlace.NavigateUrl = "~/archivo/archivo.ashx?t=q&a=1&i=" + HIdQuejas.Value + "&hi=" + GSeguimiento.DataKeys[e.Row.RowIndex].Values["sqrId"].ToString() + "&n=" + HttpUtility.UrlEncode(Path.GetFileName(archivo));
+                }
+            } catch { }
+        }
     }
 }

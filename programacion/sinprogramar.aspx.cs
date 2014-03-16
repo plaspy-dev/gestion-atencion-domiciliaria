@@ -9,8 +9,8 @@ public partial class programacion_sinprogramar : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        Procedimientos.SetProcedimientos(SResultados, "phdDetalleAutorizacion.actId");
-        Procedimientos.SetProcedimientos(SResumen, "phdDetalleAutorizacion.actId");
+        Procedimientos.SetProcedimientos(SResultados, "autorizacion_detalle.actId");
+        Procedimientos.SetProcedimientos(SResumen, "autorizacion_detalle.actId");
 
         SResultados.SelectCommand = SResultados.SelectCommand.Replace("@area", DArea.SelectedValue);
         SResumen.SelectCommand = SResumen.SelectCommand.Replace("@area", DArea.SelectedValue);
@@ -26,8 +26,9 @@ public partial class programacion_sinprogramar : System.Web.UI.Page
             ((MasterPageI)Master).Excel(GResultados);
             ((MasterPageI)Master).Imprimir(GResultados);
         }
-        GResumen.DataBind();
+        // GResumen.DataBind();
     }
+
     protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowIndex != -1)

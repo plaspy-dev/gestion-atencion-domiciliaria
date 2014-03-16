@@ -5,6 +5,7 @@ using System.Web;
 using SDG.Componentes;
 using System.Data.SqlClient;
 using System.Collections;
+using MySql.Data.MySqlClient;
 
 [Serializable]
 public class Paciente
@@ -44,8 +45,8 @@ public class Paciente
         return Nombres.Trim();
     } }
     public string tipoDocNombre { get {
-        using (CConectorMS conector = new CConectorMS()) {
-            return conector.QueryString(string.Format("SELECT tdocDescripcion FROM phdTipoDocumento WHERE tdocId='{0}';", tipodoc));
+        using (CConector conector = new CConector()) {
+            return conector.QueryString(string.Format("SELECT tdocDescripcion FROM tipo_documento WHERE tdocId='{0}';", tipodoc));
         }
     } }
     public string DocumentoYNombres { 
@@ -98,37 +99,37 @@ public class Paciente
         if(paciente==null) {
             paciente = new Paciente();
 
-            Query query = new Query("phdPaciente");
+            Query query = new Query("paciente");
 
-            query["tdocId"] = "phdPaciente.tdocId";
-            query["pacDocumento"] = "phdPaciente.pacDocumento";
-            query["pacPApellido"] = "phdPaciente.pacPApellido";
-            query["pacSApellido"] = "phdPaciente.pacSApellido";
-            query["pacPNombre"] = "phdPaciente.pacPNombre";
-            query["pacSNombre"] = "phdPaciente.pacSNombre";
-            query["sexoId"] = "phdPaciente.sexoId";
-            query["pacFechaNac"] = "phdPaciente.pacFechaNac";
-            query["pacDireccion"] = "phdPaciente.pacDireccion";
-            query["pacTelefono"] = "phdPaciente.pacTelefono";
-            query["pacCelular"] = "phdPaciente.pacCelular";
-            query["pacCarne"] = "phdPaciente.pacCarne";
-            query["pacBarrio"] = "phdPaciente.pacBarrio";
-            query["pacFamilarResponsable"] = "phdPaciente.pacFamilarResponsable";
-            query["pacParentesco"] = "phdPaciente.pacParentesco";
-            query["cieCodDx"] = "phdPaciente.cieCodDx";
-            query["cieCodDx_1"] = "phdPaciente.cieCodDx_1";
-            query["cieCodDx_2"] = "phdPaciente.cieCodDx_2";
-            query["tipopago"] = "phdPagoDirecto.pdirDescripcion";
-            query["estId"] = "phdPaciente.estId";
-            query["entId"] = "phdPaciente.entId";
-            query["pacGrado"] = "phdPaciente.pacGrado";
-            query["categoria"] = "phdPaciente.categoria";
+            query["tdocId"] = "paciente.tdocId";
+            query["pacDocumento"] = "paciente.pacDocumento";
+            query["pacPApellido"] = "paciente.pacPApellido";
+            query["pacSApellido"] = "paciente.pacSApellido";
+            query["pacPNombre"] = "paciente.pacPNombre";
+            query["pacSNombre"] = "paciente.pacSNombre";
+            query["sexoId"] = "paciente.sexoId";
+            query["pacFechaNac"] = "paciente.pacFechaNac";
+            query["pacDireccion"] = "paciente.pacDireccion";
+            query["pacTelefono"] = "paciente.pacTelefono";
+            query["pacCelular"] = "paciente.pacCelular";
+            query["pacCarne"] = "paciente.pacCarne";
+            query["pacBarrio"] = "paciente.pacBarrio";
+            query["pacFamilarResponsable"] = "paciente.pacFamilarResponsable";
+            query["pacParentesco"] = "paciente.pacParentesco";
+            query["cieCodDx"] = "paciente.cieCodDx";
+            query["cieCodDx_1"] = "paciente.cieCodDx_1";
+            query["cieCodDx_2"] = "paciente.cieCodDx_2";
+            query["tipopago"] = "paciente_tipo_pago.pdirDescripcion";
+            query["estId"] = "paciente.estId";
+            query["entId"] = "paciente.entId";
+            query["pacGrado"] = "paciente.pacGrado";
+            query["categoria"] = "paciente.categoria";
             query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
 
-            using (CConectorMS conector = new CConectorMS())
+            using (CConector conector = new CConector())
             {
-                SqlDataReader reader = conector.Query(query.GetSelect("phdPaciente.pacId=" + Query.GetValor(id) + "",
-                    " LEFT JOIN phdPagoDirecto ON (phdPagoDirecto.pdirId=phdPaciente.pdirId)"));
+                MySqlDataReader reader = conector.Query(query.GetSelect("paciente.pacId=" + Query.GetValor(id) + "",
+                    " LEFT JOIN paciente_tipo_pago ON (paciente_tipo_pago.pdirId=paciente.pdirId)"));
 
                 if (reader != null && reader.Read())
                 {
@@ -166,20 +167,20 @@ public class Paciente
 
                     try {
                         paciente.FechaDefuncion = DateTime.MinValue;
-                        paciente.FechaDefuncion = Convert.ToDateTime(conector.QueryString("SELECT TOP 1 egrFecha FROM phdEgresos WHERE pacId=" + paciente.Id + " AND cegId=1 ORDER BY egrFecha DESC;"));
+                        paciente.FechaDefuncion = Convert.ToDateTime(conector.QueryString("SELECT egrFecha FROM paciente_egreso WHERE pacId=" + paciente.Id + " AND cegId=1 ORDER BY egrFecha DESC LIMIT 1;"));
                     } catch {}
 
-                    paciente.Grupo = conector.QueryString("SELECT TOP 1"
-                                            + " CASE WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<17 THEN 'Grupo 1' "
-                                            + " WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<49 THEN 'Grupo 2'"
-                                            + " WHEN SUM(phdDetalleAutorizacion.autNumSesiones)<75 THEN 'Grupo 3'"
+                    paciente.Grupo = conector.QueryString("SELECT "
+                                            + " CASE WHEN SUM(autorizacion_detalle.autNumSesiones)<17 THEN 'Grupo 1' "
+                                            + " WHEN SUM(autorizacion_detalle.autNumSesiones)<49 THEN 'Grupo 2'"
+                                            + " WHEN SUM(autorizacion_detalle.autNumSesiones)<75 THEN 'Grupo 3'"
                                             + " ELSE 'Grupo 4' END"
-                                            + " FROM phdDetalleAutorizacion "
-                                            + " LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=phdDetalleAutorizacion.autNumero)"
+                                            + " FROM autorizacion_detalle "
+                                            + " LEFT JOIN autorizacion ON (autorizacion.autNumero=autorizacion_detalle.autNumero)"
                                             + " WHERE "
-                                            + " phdAutorizacion.pacId=" + id
-                                            + " AND phdDetalleAutorizacion.actId IN (5028,5029,5030,5031)"
-                                            + " GROUP BY phdDetalleAutorizacion.autNumero,phdAutorizacion.autFecha ORDER BY phdAutorizacion.autFecha DESC;");
+                                            + " autorizacion.pacId=" + id
+                                            + " AND autorizacion_detalle.actId IN (5028,5029,5030,5031)"
+                                            + " GROUP BY autorizacion_detalle.autNumero,autorizacion.autFecha ORDER BY autorizacion.autFecha DESC LIMIT 1;");
                 }
             }
 

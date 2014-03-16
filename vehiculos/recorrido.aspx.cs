@@ -50,11 +50,11 @@ public partial class vehiculos_recorrido : System.Web.UI.Page
     {
         if (!IsValid)
             return;
-        Query query = new Query("vehRecorrido");
-        using (CConectorMS conector = new CConectorMS())
+        Query query = new Query("vehiculo_recorrido");
+        using (CConector conector = new CConector())
         {
 
-            query["vrcFecha"] = TFecha.Text;
+            query["vrcFecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             query["vehPlaca"] = DVehiculo.SelectedValue;
             query["perId"] = DConductor.SelectedValue;
             query["vrcDestino"] = TLugar.Text;
@@ -69,7 +69,7 @@ public partial class vehiculos_recorrido : System.Web.UI.Page
             if (GRecorrido.SelectedIndex == -1)
             {
 
-                query.AddCampo("segFechaRegistro", "getdate()", false);
+                query.AddCampo("segFechaRegistro", "SYSDATE()", false);
                 query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
 
                 int res = conector.QueryMod(query.GetInsert(), true);
@@ -84,9 +84,8 @@ public partial class vehiculos_recorrido : System.Web.UI.Page
                     return;
             }
 
-            using(CConector conectorm= new CConector()) 
-                if (conectorm.InsertModificacion(id) == -1)
-                    return;
+            if (conector.InsertModificacion(id) == -1)
+                return;
         }
         Session["szMensaje"] = "Recorrido de " + DVehiculo.Text + " editado.";
         Response.Redirect(Request.Url.AbsolutePath + "?f=" + TFecha.Text);

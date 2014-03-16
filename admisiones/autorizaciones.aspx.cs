@@ -47,14 +47,14 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
             ViewState["entidades"] = usuario["entidades"];
-            using (CConectorMS conector = new CConectorMS())
+            using (CConector conector = new CConector())
             {
-                CGenerar.Visible = conector.QueryString("SELECT perIdPermiso FROM segPermisoEspecial WHERE usIdUsuario='" + usuario.GetLogin() + "' AND perIdPermiso='AUT_AUTOMATICA'") != "";
-                RAutorizacion.Visible = RPreautorizacion.Visible = conector.QueryString("SELECT perIdPermiso FROM segPermisoEspecial WHERE usIdUsuario='" + usuario.GetLogin() + "' AND perIdPermiso='AUT_SELPREAUT'") != "";
+                CGenerar.Visible = true;// conector.QueryString("SELECT perIdPermiso FROM segPermisoEspecial WHERE usIdUsuario='" + usuario.GetLogin() + "' AND perIdPermiso='AUT_AUTOMATICA'") != "";
+                RAutorizacion.Visible = RPreautorizacion.Visible = true;// conector.QueryString("SELECT perIdPermiso FROM segPermisoEspecial WHERE usIdUsuario='" + usuario.GetLogin() + "' AND perIdPermiso='AUT_SELPREAUT'") != "";
 
                 if (Request.QueryString["aut"] != null)
                 {
-                    Query query = new Query("phdAutorizacion");
+                    Query query = new Query("autorizacion");
 
                     query += "autNumero";
                     query += "pacId";
@@ -68,7 +68,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     query += "id";
                     query += "formulacion";
 
-                    SqlDataReader reader = conector.Query(query.GetSelect("autNumero=" + Query.GetValor(Request.QueryString["aut"])));
+                    MySqlDataReader reader = conector.Query(query.GetSelect("autNumero=" + Query.GetValor(Request.QueryString["aut"])));
                     if (reader != null && reader.Read())
                     {
 
@@ -121,11 +121,11 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                         }
                         GActivades.DataBind();
                         // actualizamos los servicios
-                        reader = conector.Query("SELECT phdDetalleAutorizacion.actId,phdActividad.actDescripcion,phdDetalleAutorizacion.autNumSesiones,phdDetalleAutorizacion.autSesionesDia, phdDetalleAutorizacion.intensidad"
-                            + " FROM phdDetalleAutorizacion"
-                            + " LEFT JOIN phdActividad ON (phdDetalleAutorizacion.actId=phdActividad.actId)"
-                            + " WHERE phdDetalleAutorizacion.autNumero=" + Query.GetValor(HIdAutorizacion.Value)
-                            + " ORDER BY phdActividad.actDescripcion;"
+                        reader = conector.Query("SELECT autorizacion_detalle.actId,medicamentos.nombre,autorizacion_detalle.autNumSesiones,autorizacion_detalle.autSesionesDia, autorizacion_detalle.intensidad"
+                            + " FROM autorizacion_detalle"
+                            + " LEFT JOIN medicamentos ON (autorizacion_detalle.actId=medicamentos.id)"
+                            + " WHERE autorizacion_detalle.autNumero=" + Query.GetValor(HIdAutorizacion.Value)
+                            + " ORDER BY medicamentos.nombre;"
                             );
                         if (reader != null)
                         {
@@ -162,7 +162,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
     }
     protected void BAgregar_Click(object sender, EventArgs e)
     {
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
 
             string temp = TAbono.Text.Replace(",", "").Replace("$", "");
@@ -199,9 +199,9 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         if (!IsValid)
             return;
 
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
-            Query query = new Query("phdAutorizacion");
+            Query query = new Query("autorizacion");
 
             // realizamos la validaciones
             if (!CGenerar.Checked && TNumero.Text.Trim().Length == 0)
@@ -234,7 +234,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             }
             if (HIdAutorizacion.Value.Length == 0 && TNumero.Text.Length > 0)
             {
-                if (conector.QueryString("SELECT autNumero FROM phdAutorizacion WHERE autNumero='" + TNumero.Text + "'").Length != 0)
+                if (conector.QueryString("SELECT autNumero FROM autorizacion WHERE autNumero='" + TNumero.Text + "'").Length != 0)
                 {
                     TNumero.Focus();
                     LError.Text = "Este numero de autorización ya existe.";
@@ -258,8 +258,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             if (CGenerar.Checked)
             {
                 TNumero.Text = conector.QueryString(
-                    String.Format("SELECT 'AD{0}'+RIGHT('000'+CAST(ISNULL(MAX(CONVERT(int,SUBSTRING(autNumero,9,LEN(autnumero)-8))), 0)+1 AS VARCHAR(3)),3)"
-                            + " FROM phdAutorizacion"
+                    String.Format("SELECT CONCAT('AD{0}',LPAD(IFNULL(MAX(REPLACE(autNumero,'AD{0}','')), 0)+1, 3, '0'))"
+                            + " FROM autorizacion"
                             + " WHERE autNumero LIKE 'AD{0}%'", tiempo.ToString("yyMMdd")));
             }
 
@@ -267,8 +267,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
             query["autNumero"] = TNumero.Text;
             query["pacId"] = HIdPaciente.Value;
-            query["autFecha"] = TFecha.Text;
-            query["autFechaVenc"] = TVencimiento.Text;
+            query["autFecha"] = Query.GetMySQLDateFormat(TFecha.Text);
+            query["autFechaVenc"] = Query.GetMySQLDateFormat(TVencimiento.Text);
             query["total"] = TValor.Text.Replace(",", "").Replace("$", "");
             query["autObservaciones"] = TObservaciones.Text;
             query["entId"] = HIdEntidad.Value;
@@ -279,14 +279,14 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             if (HIdAutorizacion.Value.Length == 0)
             {
                 query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
-                query["segFechaIngreso"] = "GETDATE()";
+                query["segFechaIngreso"] = "SYSDATE()";
                 if (CGenerar.Checked && RPreautorizacion.Visible && RPreautorizacion.Checked)
                 {
                     if (HIdEntidad.Value == "36" || HIdEntidad.Value == "29")
                     {
 
                         query["segUsuarioConfirma"] = Usuario.GetUsuario().GetLogin();
-                        query["segFechaConfirma"] = "GETDATE()";
+                        query["segFechaConfirma"] = "SYSDATE()";
                     }
                     else
                     {
@@ -302,7 +302,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             else
             {
                 query["segUsuarioModifica"] = Usuario.GetUsuario().GetLogin();
-                query["segFechaModifica"] = "GETDATE()";
+                query["segFechaModifica"] = "SYSDATE()";
                 if (conector.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(HIdAutorizacion.Value))) == -1)
                     return;
             }
@@ -327,7 +327,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             }
 
             // limpiamos los servicioes anteriores
-            if (conector.QueryMod("DELETE FROM phdDetalleAutorizacion WHERE autNumero=" + Query.GetValor(HIdAutorizacion.Value)) == -1)
+            if (conector.QueryMod("DELETE FROM autorizacion_detalle WHERE autNumero=" + Query.GetValor(HIdAutorizacion.Value)) == -1)
                 return;
 
             string[] querys = SActividades.GetQuerys();
@@ -342,7 +342,9 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                         return;
                 }
             }
+            Autorizaciones.UpdateSesiones(conector, HIdAutorizacion.Value);
             conector.Commit();
+
             Paciente.RemovePaciente(HIdPaciente.Value);
             Autorizaciones.RemoveAutorizaciones(HIdPaciente.Value);
         }
@@ -419,9 +421,9 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             LAutorizaciones.Text += GAutorizaciones.Rows.Count == 1 ? "ón" : "ones";
             PAutorizaciones.Visible = GAutorizaciones.Rows.Count>0;
 
-            using (CConectorMS conector = new CConectorMS())
+            using (CConector conector = new CConector())
             {
-                string valor = conector.QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN phdAutorizacion ON (phdAutorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(phdAutorizacion.autFecha)=YEAR(GETDATE())");
+                string valor = conector.QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN autorizacion ON (autorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(autorizacion.autFecha)=YEAR(SYSDATE())");
                 if (valor == "")
                     valor = "0";
                 maximo -= Convert.ToDouble(valor, culture.NumberFormat);
@@ -444,18 +446,18 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
     protected void BEliminar_Click(object sender, EventArgs e)
     {
-        using (CConectorMS conector = new CConectorMS())
+        using (CConector conector = new CConector())
         {
             conector.StartTransaction();
             if (conector.QueryMod("DELETE FROM pago_autorizacion WHERE autNumero='" + HIdAutorizacion.Value + "'") == -1)
             {
                 return;
             }
-            if (conector.QueryMod("DELETE FROM phdDetalleAutorizacion WHERE autNumero='" + HIdAutorizacion.Value + "'") == -1)
+            if (conector.QueryMod("DELETE FROM autorizacion_detalle WHERE autNumero='" + HIdAutorizacion.Value + "'") == -1)
             {
                 return;
             }
-            if (conector.QueryMod("DELETE FROM phdAutorizacion WHERE autNumero='" + HIdAutorizacion.Value + "'") == -1)
+            if (conector.QueryMod("DELETE FROM autorizacion WHERE autNumero='" + HIdAutorizacion.Value + "'") == -1)
             {
                 return;
             }
@@ -477,8 +479,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
     protected void BASuspencion_Click(object sender, EventArgs e)
     {
-        Query query = new Query("phdAutorizacion");
-        using (CConectorMS conector = new CConectorMS())
+        Query query = new Query("autorizacion");
+        using (CConector conector = new CConector())
         {
 
             query["autActivo"] = "0";
@@ -492,9 +494,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             if (conector.QueryMod("UPDATE programacion SET prgActivo=0 WHERE autNumero='" + HIdAutorizacion.Value + "'") == -1)
                 return;
 
-            using(CConector conectorm= new CConector()) 
-                if (conectorm.InsertModificacion(HId.Value) == -1)
-                    return;
+            if (conector.InsertModificacion(HId.Value) == -1)    
+                return;
         }
 
         Paciente.RemovePaciente(HIdPaciente.Value);
@@ -586,25 +587,6 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
         BProcedimiento.Text = "Editar";
         TProcedimiento.Focus();
-    }
-    protected void GAutorizaciones_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        if (e.Row.RowIndex != -1) {
-
-            int pos = e.Row.Cells[3].Text.IndexOf("%%");
-            while(pos!=-1) {
-                
-                string texto = "";
-                for (int i = pos+2; i < e.Row.Cells[3].Text.Length; i++) {
-                    if (e.Row.Cells[3].Text[i] == ' ')
-                        break;
-                    texto+=e.Row.Cells[3].Text[i];
-                }
-                e.Row.Cells[3].Text= e.Row.Cells[3].Text.Replace("%%" + texto, Procedimientos.GetProcedimiento(texto));
-                pos = e.Row.Cells[3].Text.IndexOf("%%");
-            }
-            e.Row.Cells[3].Text= e.Row.Cells[3].Text.Replace(",", "<br/>");
-        }
     }
 
     protected void BIntensidad_Clicked(object sender, EventArgs e)

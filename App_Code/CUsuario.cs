@@ -42,11 +42,13 @@ public class CUsuario : Usuario
     }
 
     override protected Usuario ValidateUser() {
-
-        string usuario = CConector.GetCookie("loginOrganizationExample15");
-        string contrasena = CConector.GetCookie("contrasena");
-
-        return ValidateUser(usuario, contrasena);
+        try
+        {
+            string usuario = CConector.GetCookie("loginOrganizationExample15");
+            string contrasena = CConector.GetCookie("contrasena");
+            return ValidateUser(usuario, Crypt.DesencriptarDES(contrasena, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4")));
+        } catch { }
+        return null;
     }
 
     override protected Usuario ValidateUser(string usuario, string passwd)
@@ -54,75 +56,36 @@ public class CUsuario : Usuario
         if (passwd.Length > 0 && usuario.Length > 0)
         {
             using(CConector conector= new CConector()) 
-            using (CConectorMS conectorMS = new CConectorMS())
             {
-                string nombre = conectorMS.QueryString("SELECT usIdUsuario FROM seg_Usuarios WHERE usIdUsuario='" + usuario + "' AND usClave='" + passwd + "' AND usActivo=1");
-                if (nombre.Length > 0)
+                MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,cargos,entidades,cumpleanos FROM usuario WHERE usuario='" + usuario + "' AND contrasena=PASSWORD(" + Query.GetValor(passwd) + ") AND (estado IS NULL OR estado!=-1)");
+                if (reader != null && reader.Read())
                 {
-                    MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,cargos,entidades,cumpleanos FROM usuario WHERE usuario='" + usuario + "' AND (estado IS NULL OR estado!=-1)");
-                    if (reader != null && reader.Read())
+                    CUsuario pUsuario = new CUsuario(reader["id"].ToString(), reader["nombre"].ToString(), Convert.ToInt32(reader["grupo"].ToString()), reader["usuario"].ToString());
+                    pUsuario["personal"] = reader["personal"].ToString();
+                    pUsuario["cargos"] = reader["cargos"].ToString();
+                    pUsuario["entidades"] = reader["entidades"].ToString();
+                    pUsuario["cumpleanos"] = reader["cumpleanos"].ToString();
+                    pUsuario.SetForceURL(reader["forceurl"].ToString());
+
+                    if (pUsuario["cargos"].Length > 0)
+                        pUsuario["procedimientos"] = conector.QueryString("SELECT GROUP_CONCAT(DISTINCT medicamento) FROM medicamento_area WHERE area IN (" + pUsuario["cargos"] + ")");
+
+                    if (pUsuario.GetGrupo() > 0)
                     {
-                        CUsuario pUsuario = new CUsuario(reader["id"].ToString(), reader["nombre"].ToString(), Convert.ToInt32(reader["grupo"].ToString()), reader["usuario"].ToString());
-                        pUsuario["personal"] = reader["personal"].ToString();
-                        pUsuario["cargos"] = reader["cargos"].ToString();
-                        pUsuario["entidades"] = reader["entidades"].ToString();
-                        pUsuario["cumpleanos"] = reader["cumpleanos"].ToString();
-                        pUsuario.SetForceURL(reader["forceurl"].ToString());
-
-                        if (pUsuario["cargos"].Length > 0)
-                            pUsuario["procedimientos"] = conector.QueryString("SELECT GROUP_CONCAT(DISTINCT medicamento) FROM medicamento_area WHERE area IN (" + pUsuario["cargos"] + ")");
-
-                        SqlDataReader readerms = null;
-                        if (pUsuario.GetGrupo() == 0)
+                        reader = conector.Query("SELECT url,permiso FROM permisos WHERE grupo='" + pUsuario.GetGrupo() + "'");
+                        if (reader != null)
                         {
-                            readerms = conectorMS.Query("SELECT seg_Menu.meDescMenu AS nombre,seg_Menu.meRuta AS ruta,1 AS ins,1 AS modif,1 AS elim, parent.meDescMenu AS parent"
-                                                    + " FROM seg_Menu"
-                                                    + " LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre)"
-                                                );
-                        }
-                        else
-                        {
-                            readerms = conectorMS.Query("SELECT seg_Menu.meDescMenu AS nombre, seg_Menu.meRuta AS ruta,ins,modif,elim,parent.meDescMenu AS parent " +
-                                      "FROM dbo.seg_Menu INNER JOIN dbo.fnSeg_ConMenu('" + pUsuario.GetLogin() + "',0)menuUs ON seg_Menu.meIdMenu = menuUs.IdMenu " +
-                                      "LEFT JOIN seg_Menu AS parent ON (parent.meIdMenu=seg_Menu.meIdMenuPadre) " +
-                                      " order by parent,seg_Menu.meIdMenuPadre,seg_Menu.meDescMenu,seg_Menu.meidMenu");
-                        }
-
-                        if (readerms != null)
-                        {
-                            while (readerms.Read())
+                            while (reader.Read())
                             {
-                                int permisos = 0;
-                                if (readerms["ins"].ToString() == "1")
-                                    permisos += 4;
-                                if (readerms["modif"].ToString() == "1")
-                                    permisos += 8;
-                                if (readerms["elim"].ToString() == "1")
-                                    permisos += 16;
-                                if (permisos > 0)
-                                    permisos += 1;
-
-                                pUsuario.AddPermiso(readerms["parent"].ToString(), readerms["nombre"].ToString(), CURLs.SwitchApp("~" + readerms["ruta"].ToString(), ConfigurationSettings.AppSettings["app"]), permisos);
+                                pUsuario.SetPermiso(reader["url"].ToString(), Convert.ToInt32(reader["permiso"]));
                             }
                         }
-
-                        if (pUsuario.GetGrupo() > 0)
-                        {
-                            reader = conector.Query("SELECT url,permiso FROM permisos WHERE grupo='" + pUsuario.GetGrupo() + "'");
-                            if (reader != null)
-                            {
-                                while (reader.Read())
-                                {
-                                    pUsuario.SetPermiso(reader["url"].ToString(), Convert.ToInt32(reader["permiso"]));
-                                }
-                            }
-                        }
-                        pUsuario.AddPermiso("__no__", "Contraseña", "~/contrasena.aspx", 1);
-                        CConector.SetCookie("loginOrganizationExample15", pUsuario.GetLogin());
-                        CConector.SetCookie("contrasena", passwd, DateTime.Now.AddHours(10));
-                        conector.Query("UPDATE usuario SET ingreso=SYSDATE() WHERE id='" + pUsuario.GetID() + "'");
-                        return pUsuario;
                     }
+                    pUsuario.AddPermiso("__no__", "Contraseña", "~/contrasena.aspx", 1);
+                    CConector.SetCookie("loginOrganizationExample15", pUsuario.GetLogin());
+                    CConector.SetCookie("contrasena", Crypt.EncriptarDES(passwd, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4")), DateTime.Now.AddHours(10));
+                    conector.Query("UPDATE usuario SET ingreso=SYSDATE() WHERE id='" + pUsuario.GetID() + "'");
+                    return pUsuario;
                 }
             }
         }

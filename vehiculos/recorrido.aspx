@@ -40,8 +40,9 @@
                                 DataValueField="id">
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SVehiculo" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT vehPlaca id, vehPlaca+', '+vehFabricante+', '+vehModelo nombre FROM dbo.vehVehiculo ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT vehPlaca AS id, CONCAT(vehPlaca,', ',vehFabricante,', ',vehModelo) AS nombre FROM vehiculo ORDER BY 2">
                 </asp:SqlDataSource>
             </td>
         </tr>
@@ -54,12 +55,13 @@
                                 DataValueField="id">
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SConductor" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT perId id,perNombre nombre 
-                            FROM admPersonalHS 
-                            LEFT JOIN admCargo ON (admCargo.carId=admPersonalHS.carId)
-                            WHERE admPersonalHS.eEstId=1 
-                            AND admCargo.carDescripcion like '%conductor%'
+                            FROM recurso_humano 
+                            LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)
+                            WHERE recurso_humano.eEstId=1 
+                            AND cargo.carDescripcion like '%conductor%'
                             ORDER BY nombre;">
                 </asp:SqlDataSource>
             </td>
@@ -92,8 +94,9 @@
                                 <asp:ListItem Text="" Value=""></asp:ListItem>
                                 </asp:DropDownList>
                     <asp:SqlDataSource ID="SProfesional" runat="server" 
-                        ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                        SelectCommand="SELECT perId id, perNombre nombre FROM dbo.admPersonalHS where eEstId=1 order by 2">
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT perId id, perNombre nombre FROM recurso_humano where eEstId=1 order by 2">
                     </asp:SqlDataSource>
                 </td>
             </tr>
@@ -159,13 +162,14 @@
         </Columns>
     </asp:GridView>
     <asp:SqlDataSource ID="SRecorrido" runat="server" 
-        ConnectionString="<%$ ConnectionStrings:connBD %>" 
-        SelectCommand="SELECT vehRecorrido.vrcId,vehRecorrido.vehPlaca,admPersonalHS.perNombre,vehRecorrido.vrcDestino,vehRecorrido.vrcActividad,
-vehRecorrido.vrcHoraLleg, vehRecorrido.vrcHoraSal,vehRecorrido.vrcObservacion,vehRecorrido.perIdProf AS profesional, admPersonalHS.perId AS conductorId
-FROM vehRecorrido
-LEFT JOIN admPersonalHS ON (admPersonalHS.perId = vehRecorrido.perId)
-WHERE vehRecorrido.vrcFecha=@fecha"
-            DeleteCommand="DELETE FROM vehRecorrido WHERE vrcId=@vrcId">
+        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+        SelectCommand="SELECT vehiculo_recorrido.vrcId,vehiculo_recorrido.vehPlaca,recurso_humano.perNombre,vehiculo_recorrido.vrcDestino,vehiculo_recorrido.vrcActividad,
+vehiculo_recorrido.vrcHoraLleg, vehiculo_recorrido.vrcHoraSal,vehiculo_recorrido.vrcObservacion,vehiculo_recorrido.perIdProf AS profesional, recurso_humano.perId AS conductorId
+FROM vehiculo_recorrido
+LEFT JOIN recurso_humano ON (recurso_humano.perId = vehiculo_recorrido.perId)
+WHERE vehiculo_recorrido.vrcFecha=STR_TO_DATE(@fecha, '%d/%m/%Y')"
+            DeleteCommand="DELETE FROM vehiculo_recorrido WHERE vrcId=@vrcId">
         <SelectParameters>
             <asp:ControlParameter ControlID="TFecha" PropertyName="Text" Name="fecha" />
         </SelectParameters>

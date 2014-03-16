@@ -19,8 +19,9 @@
                     <asp:ListItem Text="(Todas)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SAsegurador" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
             <td>
                 <asp:Button ID="BBuscar" runat="server" Text="Buscar" onclick="BBuscar_Click" />
@@ -53,18 +54,19 @@
             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         </asp:GridView>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="SELECT phdPaciente.pacDocumento, phdPaciente.pacNombres, phdPaciente.pacId
-                            ,phdEgresos.egrFecha,MAX(phdEgresos.segFechaIngreso) AS segFechaIngreso
-                            ,admEntidad.entNombre
-                            FROM phdEgresos
-                            LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdEgresos.pacId)
-                            LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-                            WHERE phdEgresos.cegId=1
-                            AND phdEgresos.egrFecha BETWEEN @desde AND @hasta
-                            AND (@entidad=0 OR @entidad=phdPaciente.entId)
-                            GROUP BY phdPaciente.pacId,pacDocumento,pacNombres,entNombre,egrFecha
-                            ORDER BY phdEgresos.egrFecha">
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT paciente.pacDocumento, paciente.pacNombres, paciente.pacId
+                            ,paciente_egreso.egrFecha,MAX(paciente_egreso.segFechaIngreso) AS segFechaIngreso
+                            ,asegurador.entNombre
+                            FROM paciente_egreso
+                            LEFT JOIN paciente ON (paciente.pacId=paciente_egreso.pacId)
+                            LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+                            WHERE paciente_egreso.cegId=1
+                            AND paciente_egreso.egrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                            AND (@entidad=0 OR @entidad=paciente.entId)
+                            GROUP BY paciente.pacId,pacDocumento,pacNombres,entNombre,egrFecha
+                            ORDER BY paciente_egreso.egrFecha">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
                     <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />

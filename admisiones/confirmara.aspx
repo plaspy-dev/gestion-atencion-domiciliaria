@@ -17,8 +17,9 @@
                                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SAsegurador" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" /></td>
         </tr>
@@ -59,15 +60,16 @@
             onclick="BAceptar_Click" />
     </div>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-        ConnectionString="<%$ ConnectionStrings:connBD %>" 
-        SelectCommand="SELECT phdAutorizacion.autNumero,phdAutorizacion.autFecha,phdAutorizacion.autFechaVenc 
-                    ,phdPaciente.pacDocumento,phdPaciente.pacNombres,admEntidad.entNombre,phdPaciente.pacId
-                    FROM phdAutorizacion 
-                    LEFT JOIN admEntidad ON (phdAutorizacion.entId=admEntidad.entId)
-                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
+        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+        SelectCommand="SELECT autorizacion.autNumero,autorizacion.autFecha,autorizacion.autFechaVenc 
+                    ,paciente.pacDocumento,paciente.pacNombres,asegurador.entNombre,paciente.pacId
+                    FROM autorizacion 
+                    LEFT JOIN asegurador ON (autorizacion.entId=asegurador.entId)
+                    LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
                     WHERE autProvisional=1 AND autActivo=1
-                    AND (@asegurador=0 OR @asegurador=phdAutorizacion.entId)
-                    ORDER BY phdAutorizacion.autNumero">
+                    AND (@asegurador=0 OR @asegurador=autorizacion.entId)
+                    ORDER BY autorizacion.autNumero">
          <SelectParameters>
             <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
          </SelectParameters>

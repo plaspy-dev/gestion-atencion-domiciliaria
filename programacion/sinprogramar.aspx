@@ -60,19 +60,20 @@
                 <asp:RequiredFieldValidator ControlToValidate="TFin" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <asp:RangeValidator ControlToValidate="TFin" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator>
             </td>
-            <td><asp:DropDownList ID="DAsegurador" runat="server" 
+            <td><asp:DropDownList ID="DAsegurador" runat="server"  CssClass="anchomaxcombo"
                                 DataSourceID="SAsegurador" DataTextField="nombre" 
                                 DataValueField="id" AppendDataBoundItems="true">
                                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SAsegurador" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
             <td>
             <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>
             </td>
-            <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" 
+            <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" CssClass="anchomaxcombo"
                     DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                     <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 </asp:DropDownList>
@@ -83,7 +84,7 @@
                 </asp:SqlDataSource>
             </td>
             <td>
-            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" 
+            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" CssClass="anchomaxcombo" 
                 DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
             </asp:DropDownList>
@@ -124,80 +125,41 @@
             <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre" ItemStyle-Wrap="false"/>
-            <asp:BoundField HeaderText="Actividades (Autorizadas-Programadas-Diarias)" DataField="detalles" SortExpression="detalles" ItemStyle-Wrap="false"/>
+            <asp:BoundField HeaderText="Actividades (Autorizadas-Programadas-Diarias)" DataField="detalles" SortExpression="detalles" ItemStyle-Wrap="false" HtmlEncode="false"/>
             <asp:BoundField HeaderText="Observaciones" DataField="autObservaciones" SortExpression="autObservaciones"/>
         </Columns>
     </asp:GridView>
     </div>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="SELECT phdAutorizacion.autNumero,phdAutorizacion.autFecha,phdAutorizacion.autFechaVenc,phdAutorizacion.autObservaciones
-                            ,phdPaciente.pacDocumento,phdPaciente.pacNombres,phdPaciente.pacBarrio,phdPaciente.pacDireccion,phdPaciente.pacId
-                            ,admEntidad.entNombre
-                            ,detalles
-                            FROM phdAutorizacion
-                            LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
-                            LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-                            CROSS APPLY
-                            (
-                                SELECT ISNULL(phdActividad.actDescripcion,'%%'+ CAST(phdDetalleAutorizacion.actId AS VARCHAR(9))) 
-                                    + ISNULL(' [$$' + CAST(phdDetalleAutorizacion.intensidad AS VARCHAR(9)) + ']','')
-                                    + ' (' + CAST(ISNULL(phdDetalleAutorizacion.autNumSesiones,0) AS VARCHAR(9))
-                                    + '-' + CAST((SELECT ISNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=phdAutorizacion.autNumero AND programacion.actId=phdDetalleAutorizacion.actId AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL)) ) AS VARCHAR(9)) 
-                                    + '-' + CAST(ISNULL(phdDetalleAutorizacion.autSesionesDia,0) AS VARCHAR(9)) 
-                                    + '),_ '
-                                FROM phdDetalleAutorizacion
-                                LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
-                                LEFT JOIN (
-                                    SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
-                                    FROM programacion 
-                                    GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
-                                ) AS programacion ON 
-                                (
-                                    programacion.autNumero=phdDetalleAutorizacion.autNumero 
-                                    AND programacion.actId=phdDetalleAutorizacion.actId 
-                                    AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
-                                    (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
-                                ) -- end of on join
-                                WHERE phdDetalleAutorizacion.autNumero = phdAutorizacion.autNumero
-                                {0} 
-                                AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
-                                AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
-                                AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-                                AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
-                                AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
-                                AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
-                                FOR XML PATH('')
-                            ) pre_trimmed (detalles)
-                            WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                            AND phdAutorizacion.autActivo=1
-                            AND phdPaciente.estId=1
-                            AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                            AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
-                            AND EXISTS (
-                                SELECT 1 FROM phdDetalleAutorizacion 
-                                LEFT JOIN (
-                                    SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
-                                    FROM programacion 
-                                    GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
-                                ) AS programacion ON 
-                                (
-                                    programacion.autNumero=phdDetalleAutorizacion.autNumero 
-                                    AND programacion.actId=phdDetalleAutorizacion.actId 
-                                    AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
-                                    (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
-                                ) -- end of on join
-                                WHERE 
-                                phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero 
-                                {0} 
-                                AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
-                                AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
-                                AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
-                                AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-                                AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
-                                AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
-                            )
-                            ORDER BY phdAutorizacion.autFecha">
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT autorizacion.autNumero,autorizacion.autFecha,autorizacion.autFechaVenc,autorizacion.autObservaciones
+                            ,paciente.pacDocumento,paciente.pacNombres,paciente.pacBarrio,paciente.pacDireccion,paciente.pacId
+                            ,asegurador.entNombre
+                            ,GROUP_CONCAT(CONCAT(medicamentos.nombre, ' (', IFNULL(autorizacion_detalle.autNumSesiones,0),'-'
+                                ,IFNULL(autorizacion_detalle.sesiones_programadas,0)
+                                ,'-',IFNULL(autorizacion_detalle.autSesionesDia,0),')') SEPARATOR '<br/>') AS detalles
+                            FROM autorizacion
+                            LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
+                            LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+                            LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+                            LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
+                            WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                            AND SYSDATE()<=IFNULL(autFechaVenc+INTERVAL 30 DAY,autFecha+INTERVAL 60 DAY)
+                            AND autorizacion.autActivo=1
+                            AND paciente.estId=1
+                            AND (@asegurador=0 OR paciente.entId=@asegurador)
+                            
+                            {0} 
+                            AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                            AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
+                            AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
+                            AND (autorizacion_detalle.sesiones_programadas IS NULL OR autorizacion_detalle.sesiones_programadas<autorizacion_detalle.autNumSesiones)
+                            AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)=0)
+                            AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)!=0)
+                            GROUP BY paciente.pacId,autorizacion.autNumero
+                            ORDER BY autorizacion.autFecha
+                            ">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
@@ -209,7 +171,7 @@
     </asp:SqlDataSource>
     <br />
     <div align="right">
-    <asp:GridView runat="server" ID="GResumen" AutoGenerateColumns="False" OnRowDataBound="GResumen_RowDataBound" ShowHeader="false" DataSourceID="SResumen" >
+    <asp:GridView runat="server" ID="GResumen" AutoGenerateColumns="False" OnRowDataBound="GResumen_RowDataBound" ShowHeader="false" DataSourceID="SResumen">
         <RowStyle CssClass="GridRow"></RowStyle>
         <FooterStyle CssClass="GridFooter"></FooterStyle>
         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -223,125 +185,82 @@
     </asp:GridView>
     </div>
     <asp:SqlDataSource ID="SResumen" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="( 
-                        SELECT CAST('-3' AS VARCHAR(9)) AS nombre,COUNT(DISTINCT phdAutorizacion.autNumero) AS des
-                                                    FROM phdAutorizacion
-                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
-                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
-							                        LEFT JOIN (
-                                                        SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
-                                                        FROM programacion 
-                                                        GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
-                                                    ) AS programacion ON 
-                                                    (
-                                                        programacion.autNumero=phdDetalleAutorizacion.autNumero 
-                                                        AND programacion.actId=phdDetalleAutorizacion.actId 
-                                                        AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
-                                                        (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
-                                                    ) -- end of on join
-                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                                    AND phdAutorizacion.autActivo=1
-                                                    AND phdPaciente.estId=1
-                                                    AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
+                        SELECT '-3' AS nombre,COUNT(DISTINCT autorizacion.autNumero) AS des
+                                                    FROM autorizacion
+                                                    LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
+                                                    LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+							                        LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    AND autorizacion.autActivo=1
+                                                    AND paciente.estId=1
+                                                    AND SYSDATE()<=IFNULL(autFechaVenc+INTERVAL 30 DAY,autFecha+INTERVAL 60 DAY)
+                                                    AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
-                                                    AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
-                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
-                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
-                                                    AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-                                                    AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
-                                                    AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
+                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)
+                                                    AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                                                    AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
+                                                    AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
+                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)=0)
+                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)!=0)
                         ) UNION ( 
-                        SELECT CAST('-1' AS VARCHAR(9)),COUNT(DISTINCT phdPaciente.pacNombres)
-                                                    FROM phdAutorizacion
-                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
-                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
-							                        LEFT JOIN (
-                                                        SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
-                                                        FROM programacion 
-                                                        GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
-                                                    ) AS programacion ON 
-                                                    (
-                                                        programacion.autNumero=phdDetalleAutorizacion.autNumero 
-                                                        AND programacion.actId=phdDetalleAutorizacion.actId 
-                                                        AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
-                                                        (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
-                                                    ) -- end of on join
-                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                                    AND phdAutorizacion.autActivo=1
-                                                    AND phdPaciente.estId=1
-                                                    AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
+                        SELECT '-1',COUNT(DISTINCT paciente.pacNombres)
+                                                    FROM autorizacion
+                                                    LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
+                                                    LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+							                        LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    AND autorizacion.autActivo=1
+                                                    AND paciente.estId=1
+                                                    AND SYSDATE()<=IFNULL(autFechaVenc+INTERVAL 30 DAY,autFecha+INTERVAL 60 DAY)
+                                                    AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
-                                                    AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
-                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
-                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
-                                                    AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-                                                    AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
-                                                    AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
+                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)
+                                                    AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                                                    AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
+                                                    AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
+                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)=0)
+                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)!=0)
                         ) UNION (
-                            SELECT '%%'+ CAST(phdDetalleAutorizacion.actId AS VARCHAR(9)) 
-                                    + ISNULL(' [$$' + CAST(phdDetalleAutorizacion.intensidad AS VARCHAR(9)) + ']',''),SUM(autNumSesiones)
-                                                    FROM phdAutorizacion
-                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
-                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
-							                        LEFT JOIN (
-                                                        SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
-                                                        FROM programacion 
-                                                        GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
-                                                    ) AS programacion ON 
-                                                    (
-                                                        programacion.autNumero=phdDetalleAutorizacion.autNumero 
-                                                        AND programacion.actId=phdDetalleAutorizacion.actId 
-                                                        AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
-                                                        (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
-                                                    ) -- end of on join
-                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                                    AND phdAutorizacion.autActivo=1
-                                                    AND phdPaciente.estId=1
-                                                    AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
+                            SELECT CONCAT('%%', autorizacion_detalle.actId,
+                                    IFNULL(CONCAT(' [$$',autorizacion_detalle.intensidad,']'),'')),SUM(autNumSesiones)
+                                                    FROM autorizacion
+                                                    LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
+                                                    LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+							                        LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    AND autorizacion.autActivo=1
+                                                    AND paciente.estId=1
+                                                    AND SYSDATE()<=IFNULL(autFechaVenc+INTERVAL 30 DAY,autFecha+INTERVAL 60 DAY)
+                                                    AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
-                                                    AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
-                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
-                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
-                                                    AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-                                                    AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
-                                                    AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
-							                        GROUP BY phdDetalleAutorizacion.actId,phdDetalleAutorizacion.intensidad
+                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)
+                                                    AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                                                    AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
+                                                    AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
+                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)=0)
+                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)!=0)
+							                        GROUP BY autorizacion_detalle.actId,autorizacion_detalle.intensidad
                         )UNION (
-                        SELECT CAST(5000000 AS VARCHAR(9)),SUM(phdDetalleAutorizacion.autNumSesiones)
-                                                    FROM phdAutorizacion
-                                                    LEFT JOIN phdPaciente ON (phdPaciente.pacId=phdAutorizacion.pacId)
-                                                    LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero)
-							                        LEFT JOIN (
-                                                        SELECT programacion.autNumero,programacion.actId,programacion.intensidad,SUM(programacion.prgNumSesion) AS sesionesp
-                                                        FROM programacion 
-                                                        GROUP BY programacion.autNumero,programacion.actId,programacion.intensidad
-                                                    ) AS programacion ON 
-                                                    (
-                                                        programacion.autNumero=phdDetalleAutorizacion.autNumero 
-                                                        AND programacion.actId=phdDetalleAutorizacion.actId 
-                                                        AND (programacion.intensidad=phdDetalleAutorizacion.intensidad OR 
-                                                        (programacion.intensidad IS NULL AND phdDetalleAutorizacion.intensidad IS NULL))
-                                                    ) -- end of on join
-                                                    WHERE phdAutorizacion.autFecha BETWEEN @inicio AND @fin
-                                                    AND phdAutorizacion.autActivo=1
-                                                    AND phdPaciente.estId=1
-                                                    AND GETDATE()<=ISNULL(autFechaVenc+30,autFecha+60)
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)                                                    
+                        SELECT 5000000,SUM(autorizacion_detalle.autNumSesiones)
+                                                    FROM autorizacion
+                                                    LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
+                                                    LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+							                        LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    AND autorizacion.autActivo=1
+                                                    AND paciente.estId=1
+                                                    AND SYSDATE()<=IFNULL(autFechaVenc+INTERVAL 30 DAY,autFecha+INTERVAL 60 DAY)
+                                                    AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
-                                                    AND phdDetalleAutorizacion.autNumSesiones>ISNULL(programacion.sesionesp,0)
-                                                    AND (@procedimiento=0 OR phdDetalleAutorizacion.actId=@procedimiento)
-                                                    AND ('@area'='0' OR phdDetalleAutorizacion.actId IN (@area))
-                                                    AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-                                                    AND (@completa=1 OR ISNULL(programacion.sesionesp,0)=0)
-                                                    AND (@completa=0 OR ISNULL(programacion.sesionesp,0)!=0)
+                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)
+                                                    AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                                                    AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
+                                                    AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
+                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)=0)
+                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)!=0)
                         ) ORDER BY nombre
                         ">
                  <SelectParameters>

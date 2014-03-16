@@ -74,8 +74,9 @@
                                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SAsegurador" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT entId id,entNombre nombre FROM dbo.admEntidad WHERE entEPS=1 ORDER BY 2">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
             <td>
             <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>
@@ -170,10 +171,10 @@
             </asp:TemplateField>
             <asp:BoundField HeaderText="Teléfono" DataField="pacTelefono" SortExpression="pacTelefono" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Inicio programa" DataField="pacFecIngPrograma" SortExpression="pacFecIngPrograma" DataFormatString="{0:d}" />
-            <asp:BoundField HeaderText="CIE10" DataField="cie10" SortExpression="cie10" ItemStyle-Wrap="false" />
+            <asp:BoundField HeaderText="CIE10" DataField="cie10" SortExpression="cie10" ItemStyle-Wrap="false" HtmlEncode="false" />
             <asp:BoundField HeaderText="Pago directo" DataField="pdirDescripcion" SortExpression="pdirDescripcion" />
             <asp:BoundField HeaderText="Tipo evento" DataField="tipEDescripcion" SortExpression="tipEDescripcion" />
-            <asp:BoundField HeaderText="Actividades (Autorizadas)" DataField="detalles" SortExpression="detalles" ItemStyle-Wrap="false"/>
+            <asp:BoundField HeaderText="Actividades (Autorizadas)" DataField="detalles" SortExpression="detalles" ItemStyle-Wrap="false" HtmlEncode="false"/>
         </Columns>
     </asp:GridView>
     </div>
@@ -192,8 +193,9 @@
                                 <asp:ListItem Text="" Value=""></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SLocalidad" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                    SelectCommand="SELECT locId id, locDescripcion nombre FROM admLocalidad">
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT locId id, locDescripcion nombre FROM localidad">
                 </asp:SqlDataSource></td>
             </tr>
             <tr>
@@ -210,48 +212,35 @@
     </ContentTemplate>
     </asp:UpdatePanel>
     <asp:SqlDataSource ID="SResultados" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="SELECT phdPaciente.pacDocumento,phdPaciente.pacNombres,phdPaciente.pacBarrio,phdPaciente.pacDireccion,phdPaciente.pacId
-		                    ,phdPaciente.pacTelefono,phdPaciente.pacFecIngPrograma,pdirDescripcion,phdTipoEvento.tipEDescripcion
-                            ,admEntidad.entNombre,phdPaciente.pacFechaNac
-                            ,admLocalidad.locDescripcion
-                            ,phdPaciente.locId
-                            ,detalles
-							,(SELECT phdCIE10.cieCodDx + '-'  + phdCIE10.cirDescripcion + ',_' FROM phdCIE10 
-								WHERE 
-								phdCIE10.cieCodDx=phdPaciente.cieCodDx OR phdCIE10.cieCodDx=phdPaciente.cieCodDx_1 OR phdCIE10.cieCodDx=phdPaciente.cieCodDx_2
-								FOR XML PATH('')) AS cie10
-                            FROM phdPaciente
-                            LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-                            LEFT JOIN admLocalidad ON (admLocalidad.locId=phdPaciente.locId) 
-							LEFT JOIN phdPagodirecto ON (phdPaciente.pdirId = phdPagodirecto.pdirId)
-							LEFT JOIN phdTipoEvento ON (phdPaciente.tipECod = phdTipoEvento.tipECod)
-                            CROSS APPLY
-                            (
-                                SELECT ISNULL(phdActividad.actDescripcion,'%%'+ CAST(phdDetalleAutorizacion.actId AS VARCHAR(9))) 
-                                    + ISNULL(' [$$' + CAST(phdDetalleAutorizacion.intensidad AS VARCHAR(9)) + ']','')
-                                    + ' (' + CAST(ISNULL(phdDetalleAutorizacion.autNumSesiones,0) AS VARCHAR(9))
-                                    + '),_ '
-                                FROM phdAutorizacion
-								LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero = phdAutorizacion.autNumero)
-                                LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
-                                WHERE 
-                                (phdAutorizacion.autfecha BETWEEN @inicio AND @fin
-                                OR ISNULL(phdAutorizacion.autFechaVenc,phdAutorizacion.autfecha+30) BETWEEN @inicio AND @fin)
-                                -- ISNULL(phdAutorizacion.autFechaVenc,phdAutorizacion.autfecha+30)>=GETDATE()-1
-								AND phdAutorizacion.pacId=phdPaciente.pacId 
-								AND ('@area'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId IN (@area)))
-								AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId=@procedimiento))
-								AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-								AND ('@categoria'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.intensidad IN (@categoria)))
-                                FOR XML PATH('')
-                            ) pre_trimmed (detalles)
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT paciente.pacDocumento,paciente.pacNombres,paciente.pacBarrio,paciente.pacDireccion,paciente.pacId
+		                    ,paciente.pacTelefono,paciente.pacFecIngPrograma,pdirDescripcion,tipo_evento.tipEDescripcion
+                            ,asegurador.entNombre,paciente.pacFechaNac
+                            ,localidad.locDescripcion
+                            ,paciente.locId
+                            ,GROUP_CONCAT(CONCAT(medicamentos.nombre, ' (', IFNULL(autorizacion_detalle.autNumSesiones,0),'-',IFNULL(autorizacion_detalle.autSesionesDia,0),')') SEPARATOR '<br/>') AS detalles
+							
+								,'' AS cie10
+                            FROM autorizacion
+                            LEFT JOIN paciente ON (autorizacion.pacId=paciente.pacId)
+                            LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+                            LEFT JOIN localidad ON (localidad.locId=paciente.locId) 
+							LEFT JOIN paciente_tipo_pago ON (paciente.pdirId = paciente_tipo_pago.pdirId)
+							LEFT JOIN tipo_evento ON (paciente.tipECod = tipo_evento.tipECod)
+							LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
+							LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
                             WHERE 
-                            -- phdPaciente.estId=1 
-                            -- AND 
-                            (@asegurador=0 OR phdPaciente.entId=@asegurador)
-                            AND detalles IS NOT NULL
-                            ORDER BY phdPaciente.pacNombres">
+                            (autorizacion.autfecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                OR IFNULL(autorizacion.autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y'))
+                            AND (@asegurador=0 OR paciente.entId=@asegurador)
+							AND autorizacion.pacId=paciente.pacId 
+							AND ('@area'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId IN (@area)))
+							AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId=@procedimiento))
+							AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
+							AND ('@categoria'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.intensidad IN (@categoria)))
+					        GROUP BY paciente.pacId
+                            ORDER BY paciente.pacNombres">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
@@ -261,38 +250,22 @@
                  </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SDiario" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="
-                WITH nums (i)
-                        AS
-                        (
-                        SELECT i = 0
-                        UNION all
-                        SELECT i + 1 FROM nums WHERE i < 1000
-                        )
-                        SELECT CONVERT(char(10), a.dte,103) AS fecha,COUNT(DISTINCT p.pacId) AS total
-                        FROM (SELECT dte = dateadd(dd,nums.i,@inicio) FROM nums) a
-                        LEFT JOIN (
-                        SELECT phdPaciente.pacId,phdAutorizacion.autFecha,ISNULL(phdAutorizacion.autFechaVenc,phdAutorizacion.autfecha+30) AS autFechaVenc
-                                                    FROM phdAutorizacion
-							                        LEFT JOIN phdPaciente ON (phdAutorizacion.pacId= phdPaciente.pacId)
-							                        LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero = phdAutorizacion.autNumero)
-                                                    LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
-                                                    WHERE 
-							                        (phdAutorizacion.autfecha BETWEEN @inicio AND @fin
-                                                        OR ISNULL(phdAutorizacion.autFechaVenc,phdAutorizacion.autfecha+30) BETWEEN @inicio AND @fin)
-								                    AND ('@area'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId IN (@area)))
-								                    AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId=@procedimiento))
-								                    AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-            								        AND ('@categoria'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.intensidad IN (@categoria)))
-
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
-                        ) AS p ON (a.dte BETWEEN P.autFecha AND p.autFechaVenc)
-                        WHERE a.dte <= @fin
-                        GROUP BY a.dte
-                        ORDER BY a.dte
-                        OPTION(MAXRECURSION 1000)">
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT @curRow:=@curRow+INTERVAL 1 DAY AS fecha
+                        ,(SELECT COUNT(DISTINCT autorizacion.pacId) FROM autorizacion 
+	                        LEFT JOIN paciente ON (autorizacion.pacId= paciente.pacId)
+                           LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+                           LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero = autorizacion.autNumero)
+	                        WHERE @curRow BETWEEN autFecha AND IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)
+                             AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
+                             AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                             AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
+                             AND ('@categoria'='0' OR autorizacion_detalle.intensidad IN (@categoria))
+		                        AND (@asegurador=0 OR paciente.entId=@asegurador)
+                        ) AS total
+                        FROM varios,(SELECT @curRow:=STR_TO_DATE(@inicio, '%d/%m/%Y')-INTERVAL 1 DAY) r
+                        WHERE @curRow<STR_TO_DATE(@fin, '%d/%m/%Y')">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
@@ -302,39 +275,24 @@
                  </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SMensual" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:connBD %>" 
-                SelectCommand="
-                WITH nums (i)
-                        AS
-                        (
-                        SELECT i = 0
-                        UNION all
-                        SELECT i + 1 FROM nums WHERE i < 1000
-                        )
-                        SELECT CAST(DATEPART(MM,a.dte) AS VARCHAR) + '/' + CAST(DATEPART(YY,a.dte) AS VARCHAR) AS fecha,COUNT(DISTINCT p.pacId) AS total
-                        FROM (SELECT dte = dateadd(dd,nums.i,@inicio) FROM nums) a
-                        LEFT JOIN (
-                        SELECT phdPaciente.pacId,phdAutorizacion.autFecha,ISNULL(phdAutorizacion.autFechaVenc,phdAutorizacion.autfecha+30) AS autFechaVenc
-                                                    FROM phdAutorizacion
-							                        LEFT JOIN phdPaciente ON (phdAutorizacion.pacId= phdPaciente.pacId)
-							                        LEFT JOIN admEntidad ON (admEntidad.entId=phdPaciente.entId)
-							                        LEFT JOIN phdDetalleAutorizacion ON (phdDetalleAutorizacion.autNumero = phdAutorizacion.autNumero)
-                                                    LEFT JOIN phdActividad ON (phdActividad.actId=phdDetalleAutorizacion.actId)
-                                                    WHERE 
-							                        (phdAutorizacion.autfecha BETWEEN @inicio AND @fin
-                                                        OR ISNULL(phdAutorizacion.autFechaVenc,phdAutorizacion.autfecha+30) BETWEEN @inicio AND @fin)
-								                    AND ('@area'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId IN (@area)))
-								                    AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.actId=@procedimiento))
-								                    AND (@intensidad=0 OR phdDetalleAutorizacion.intensidad=@intensidad)
-            								        AND ('@categoria'='0' OR EXISTS (SELECT 1 FROM phdDetalleAutorizacion WHERE phdDetalleAutorizacion.autNumero=phdAutorizacion.autNumero AND phdDetalleAutorizacion.intensidad IN (@categoria)))
-
-                                                    AND (@asegurador=0 OR phdPaciente.entId=@asegurador)
-                        ) AS p ON (CAST(DATEPART(MM,a.dte) AS VARCHAR) + '/' + CAST(DATEPART(YY,a.dte) AS VARCHAR)=CAST(DATEPART(MM,p.autFecha) AS VARCHAR) + '/' + CAST(DATEPART(YY,p.autFecha) AS VARCHAR) OR 
-                            CAST(DATEPART(MM,a.dte) AS VARCHAR) + '/' + CAST(DATEPART(YY,a.dte) AS VARCHAR)=CAST(DATEPART(MM,p.autFechaVenc) AS VARCHAR) + '/' + CAST(DATEPART(YY,p.autFechaVenc) AS VARCHAR))
-                        WHERE a.dte <= @fin
-                        GROUP BY CAST(DATEPART(MM,a.dte) AS VARCHAR) + '/' + CAST(DATEPART(YY,a.dte) AS VARCHAR)
-                        ORDER BY fecha
-                        OPTION(MAXRECURSION 1000)">
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT @curRow:=@curRow+INTERVAL 1 MONTH AS fecha
+                        ,(SELECT COUNT(DISTINCT autorizacion.pacId) FROM autorizacion 
+	                        LEFT JOIN paciente ON (autorizacion.pacId= paciente.pacId)
+                           LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+                           LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero = autorizacion.autNumero)
+	                        WHERE 
+	                        (CONCAT(YEAR(@curRow),LPAD(MONTH(@curRow),2,'0'))=CONCAT(YEAR(autFecha),LPAD(MONTH(autFecha),2,'0'))
+		                        OR CONCAT(YEAR(@curRow),LPAD(MONTH(@curRow),2,'0'))=CONCAT(YEAR(IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)),LPAD(MONTH(IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)),2,'0')))
+                             AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
+                             AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                             AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
+                             AND ('@categoria'='0' OR autorizacion_detalle.intensidad IN (@categoria))
+		                        AND (@asegurador=0 OR paciente.entId=@asegurador)
+                        ) AS total
+                        FROM varios,(SELECT @curRow:=STR_TO_DATE(@inicio, '%d/%m/%Y')-INTERVAL 1 MONTH) r
+                        WHERE CONCAT(YEAR(@curRow),LPAD(MONTH(@curRow),2,'0'))<CONCAT(YEAR(STR_TO_DATE(@fin, '%d/%m/%Y')),LPAD(MONTH(STR_TO_DATE(@fin, '%d/%m/%Y')),2,'0'))">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
