@@ -146,8 +146,6 @@
                 <td>Índice o escala</td>
                 <td><asp:DropDownList runat="server" ID="DIndice" AutoPostBack="true" 
                         onselectedindexchanged="DIndice_SelectedIndexChanged">
-                    <asp:ListItem Text="Índice de Barthel" Value="8"></asp:ListItem>
-                    <asp:ListItem Text="Escala Braden" Value="41"></asp:ListItem>
                 </asp:DropDownList></td>
                 <td></td>
             </tr>

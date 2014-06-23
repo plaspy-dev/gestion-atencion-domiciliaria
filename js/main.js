@@ -172,7 +172,7 @@ function inicio() {
             //            }
             $(this)
             // .unbind('click')
-            .attr("onclick", "").click(obs);
+            .removeAttr("onclick").click(obs);
         }
     });
 
@@ -250,7 +250,7 @@ function EndRequestHandler(sender, args) {
         //Hide default ajax error popup
         args.set_errorHandled(true);
         //Show your custom popup or...
-        if (confirm("¿Se ha perdido conexión con el servidor desea reintentar?")) {
+        if (confirm("Se ha producido un error con el servidor, ¿desea reintentar?")) {
             restoreSummit().click();
         } else {
             restoreSummit();
@@ -327,8 +327,8 @@ function currencyFormatted(amount) {
     i = parseInt((i + .005) * 100);
     i = i / 100;
     s = new String(i);
-    if (s.indexOf('.') < 0) { s += '.00'; }
-    if (s.indexOf('.') == (s.length - 2)) { s += '0'; }
+    /* if (s.indexOf('.') < 0) { s += '.00'; }
+    if (s.indexOf('.') == (s.length - 2)) { s += '0'; }*/
     s = minus + s;
     return '$' + commaFormatted(s);
 }
@@ -352,7 +352,7 @@ function commaFormatted(amount) {
     }
     if (n.length > 0) { a.unshift(n); }
     n = a.join(delimiter);
-    if (d.length < 1) { amount = n; }
+    if (d==undefined || d.length < 1) { amount = n; }
     else { amount = n + '.' + d; }
     amount = minus + amount;
     return amount;

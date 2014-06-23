@@ -153,7 +153,7 @@
 	                                        LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
 	                                        GROUP BY autorizacion_detalle.autNumero
 									) AS detalles ON (detalles.autNumero = autorizacion.autNumero)
-                            WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                            WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                             AND autorizacion.autActivo=1
                             AND (@asegurador=0 OR paciente.entId=@asegurador)
                             AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE  autorizacion_detalle.autNumero=autorizacion.autNumero AND  autorizacion_detalle.actId=@procedimiento))
@@ -200,7 +200,7 @@
                                                         WHERE 
                                                         autorizacion_detalle.actId IN (5028,5029,5030,5031)
                                                         GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
-                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                                                     AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
@@ -219,13 +219,13 @@
                                                         WHERE 
                                                         autorizacion_detalle.actId IN (5028,5029,5030,5031)
                                                         GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
-                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                                                     AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
                                                     AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
                         ) UNION (
-                        SELECT autorizacion_detalle.actId,SUM(autNumSesiones)
+                        SELECT CAST(autorizacion_detalle.actId AS CHAR),SUM(autNumSesiones)
                                                     FROM autorizacion
                                                     LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
                                                     LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
@@ -238,7 +238,7 @@
                                                         WHERE 
                                                         autorizacion_detalle.actId IN (5028,5029,5030,5031)
                                                         GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
-                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                                                     AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
@@ -258,7 +258,7 @@
                                                         WHERE 
                                                         autorizacion_detalle.actId IN (5028,5029,5030,5031)
                                                         GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
-                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                                                     AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))

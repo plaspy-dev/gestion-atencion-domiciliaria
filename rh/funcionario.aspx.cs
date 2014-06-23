@@ -291,7 +291,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["profId"] = DProfesion.SelectedValue;
         query["perParentescoContacto"] = TParentesco.Text;
         query["residencialocId"] = DLocalidadVivienda.SelectedValue;
-        query["verificacionTitulos"] = TVerificacionTitulos.Text;
+        query["verificacionTitulos"] = Query.GetMySQLDateFormat(TVerificacionTitulos.Text);
         query["perNombre"] = JoinNames(new string[] { TApellidos.Text, TNombres.Text });
 
         if (DEstado.SelectedItem.Text == "VACACIONES" || DEstado.SelectedItem.Text == "LICENCIA TEMPORAL")

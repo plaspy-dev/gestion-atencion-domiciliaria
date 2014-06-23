@@ -109,7 +109,7 @@
                         <asp:LinkButton ID="L1" runat="server" CommandName="quejas" OnClick="LEstadisticas_Click" Text="PQR" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("quejas")%>
+                        <asp:Label runat="server" ID="S1" Text='<%# Eval("quejas")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
@@ -119,7 +119,7 @@
                         <asp:LinkButton ID="L2" runat="server" CommandName="cerradas" OnClick="LEstadisticas_Click" Text="Cerradas" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("cerradas")%>
+                        <asp:Label runat="server" ID="S2" Text='<%# Eval("cerradas")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
@@ -129,7 +129,7 @@
                         <asp:LinkButton ID="L3" runat="server" CommandName="atendidas" OnClick="LEstadisticas_Click" Text="Atendidas" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("atendidas")%>
+                        <asp:Label runat="server" ID="S3" Text='<%# Eval("atendidas")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
@@ -141,7 +141,7 @@
                         <asp:LinkButton ID="L4" runat="server" CommandName="sintramitar" OnClick="LEstadisticas_Click" Text="Sin tramitar" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("sintramitar") %>
+                        <asp:Label runat="server" ID="S4" Text='<%# Eval("sintramitar") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
             </Fields>
@@ -153,7 +153,7 @@
                         <asp:LinkButton ID="L1" runat="server" CommandName="dias3" OnClick="LEstadisticas_Click" Text="Respuesta oportuna (Entre 72 horas)" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("dias3")%>
+                        <asp:Label runat="server" ID="S1" Text='<%# Eval("dias3")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
@@ -163,7 +163,7 @@
                         <asp:LinkButton ID="L2" runat="server" CommandName="masdias" OnClick="LEstadisticas_Click" Text="Respuesta inoportuna (Mayor a 72 horas)" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("masdias")%>
+                        <asp:Label runat="server" ID="S2" Text='<%# Eval("masdias")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
@@ -203,12 +203,12 @@
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT 
-                            (SELECT COUNT(*) FROM queja_reclamo WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS quejas
-                            ,(SELECT COUNT(*) FROM queja_reclamo WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrCerrado=1 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS cerradas
-                            ,(SELECT COUNT(*) FROM queja_reclamo WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrAtendido=1 AND qrCerrado=0 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS atendidas
-                            ,(SELECT COUNT(*) FROM queja_reclamo WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrAtendido=0 AND qrCerrado=0 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS sintramitar
-                            ,(SELECT COUNT(*) FROM queja_reclamo LEFT JOIN queja_reclamo_seguimiento ON (queja_reclamo_seguimiento.qrId=queja_reclamo.qrId) WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrCerrado=1 AND queja_reclamo_seguimiento.sqrCerrar=1 AND DATEDIFF(queja_reclamo_seguimiento.segFechaIngreso,qrFecha)<4 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS dias3
-                            ,(SELECT COUNT(*) FROM queja_reclamo LEFT JOIN queja_reclamo_seguimiento ON (queja_reclamo_seguimiento.qrId=queja_reclamo.qrId) WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrCerrado=1 AND queja_reclamo_seguimiento.sqrCerrar=1 AND DATEDIFF(queja_reclamo_seguimiento.segFechaIngreso,qrFecha)>3 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS masdias
+                            (SELECT COUNT(*) FROM queja_reclamo WHERE DATE(qrFecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS quejas
+                            ,(SELECT COUNT(*) FROM queja_reclamo WHERE DATE(qrFecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrCerrado=1 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS cerradas
+                            ,(SELECT COUNT(*) FROM queja_reclamo WHERE DATE(qrFecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrAtendido=1 AND qrCerrado=0 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS atendidas
+                            ,(SELECT COUNT(*) FROM queja_reclamo WHERE DATE(qrFecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrAtendido=0 AND qrCerrado=0 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS sintramitar
+                            ,(SELECT COUNT(*) FROM queja_reclamo LEFT JOIN queja_reclamo_seguimiento ON (queja_reclamo_seguimiento.qrId=queja_reclamo.qrId) WHERE DATE(qrFecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrCerrado=1 AND queja_reclamo_seguimiento.sqrCerrar=1 AND DATEDIFF(queja_reclamo_seguimiento.segFechaIngreso,qrFecha)<4 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS dias3
+                            ,(SELECT COUNT(*) FROM queja_reclamo LEFT JOIN queja_reclamo_seguimiento ON (queja_reclamo_seguimiento.qrId=queja_reclamo.qrId) WHERE DATE(qrFecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND qrCerrado=1 AND queja_reclamo_seguimiento.sqrCerrar=1 AND DATEDIFF(queja_reclamo_seguimiento.segFechaIngreso,qrFecha)>3 AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)) AS masdias
                             ">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
@@ -223,7 +223,7 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT asegurador.entNombre AS entidad,COUNT(*) AS numero FROM queja_reclamo 
                             LEFT JOIN asegurador ON (asegurador.entId=queja_reclamo.entId) 
-                            WHERE qrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                            WHERE DATE(qrFecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                             AND (@tipo=0  OR @tipo=tqrIdTipo) AND (@clasificacion=0 OR @clasificacion=clasificacion) AND (@cliente=0 OR @cliente=qrTipoCliente)
                             GROUP BY entNombre ORDER BY numero DESC;">
                  <SelectParameters>

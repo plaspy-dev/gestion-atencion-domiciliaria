@@ -63,7 +63,6 @@
                 <asp:BoundField HeaderText="Posología" DataField="posologia" SortExpression="posologia" />
                 <asp:BoundField HeaderText="Vía" DataField="via" SortExpression="via" />
                 <asp:BoundField HeaderText="Tiempo" DataField="tiempo" SortExpression="tiempo" />
-                <asp:BoundField HeaderText="Intensidad" DataField="intensidad" SortExpression="intensidad" />
             </Columns>
             <RowStyle CssClass="GridRow"></RowStyle>
             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -83,14 +82,12 @@
                             ,medicamento_formulacion.posologia
                             ,medicamento_formulacion.via
                             ,medicamento_formulacion.tiempo
-                            ,intensidad.nombre AS intensidad
                             FROM formulacion
                             LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id)
                             LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)
                             LEFT JOIN varios AS tipo ON (tipo.id=formulacion.tipo)
-                            LEFT JOIN varios AS intensidad ON (intensidad.id=medicamento_formulacion.intensidad)
                             WHERE 
-                            formulacion.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                            DATE(formulacion.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                             AND (@tipo=0 OR @tipo=formulacion.tipo)
                             AND (@asegurador=0 OR @asegurador=formulacion.asegurador)
                             ORDER BY fecha,paciente

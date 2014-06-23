@@ -13,9 +13,21 @@ public partial class administrador_barthel : System.Web.UI.Page
         DGrupo.Focus();
         if(!IsPostBack) {
 
+            foreach (Calificacion.Escalas info in (Calificacion.Escalas[])Enum.GetValues(typeof(Calificacion.Escalas)))
+            {
+                DIndice.Items.Add(new ListItem(Calificacion.GetNombreEscala(info), ((int)info).ToString()));
+            }
+
             if (!string.IsNullOrEmpty(Request.QueryString["ioe"]))
                 Utilidades.SelectInDropDown(DIndice, Request.QueryString["ioe"]);
+
+            if (!string.IsNullOrEmpty(Request.QueryString["ig"]))
+            {
+                DGrupo.SelectedValue = Request.QueryString["ig"];
+            }
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+
+            RModificar.NavigateUrl="~/administrador/Default.aspx?tipo=" + (Convert.ToInt32(DIndice.SelectedValue)-1);
 
             BAceptar.Enabled = usuario.CanInsert();
             GResultado.Columns[1].Visible = usuario.CanDelete();
@@ -57,7 +69,7 @@ public partial class administrador_barthel : System.Web.UI.Page
                 return;
             Procedimientos.RemoveVarios(HId.Value);
             ((MasterPageI)Master).SetResultado(mensaje, false);
-            Response.Redirect(Request.Url.AbsolutePath + "?ioe=" + DIndice.SelectedValue);
+            Response.Redirect(Request.Url.AbsolutePath + "?ioe=" + DIndice.SelectedValue + "&ig=" + DGrupo.SelectedValue);
         }
     }
 

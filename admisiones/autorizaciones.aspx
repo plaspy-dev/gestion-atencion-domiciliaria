@@ -156,7 +156,6 @@
             select: function(event, ui) {
                 $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
                 $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
-                $("#<%= BIntensidad.ClientID %>").click();
                 return false;
             },
             search: function(event, ui) {
@@ -410,15 +409,13 @@
                             <asp:BoundField DataField="procedimiento" HeaderText="Actividad" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="numerosesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="sesionesdia" HeaderText="Ses./día" ItemStyle-HorizontalAlign="Right" />
-                            <asp:BoundField DataField="tint" HeaderText="Intensidad" ItemStyle-HorizontalAlign="Right" />
-                            <asp:BoundField DataField="idint" HeaderText="HorasId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                         </Columns>
                     </asp:GridView>
                     <sdg:CustomDataSource ID="SActividades" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT id,nombre AS procedimiento,id AS proc_id,id AS sesionesdia,id AS numerosesiones,id AS idint,nombre AS tint,nombre AS verificacion FROM varios WHERE id IS NULL"
+                            SelectCommand="SELECT id,nombre AS procedimiento,id AS proc_id,id AS sesionesdia,id AS numerosesiones,nombre AS verificacion FROM varios WHERE id IS NULL"
                             DeleteCommand="DELETE FROM autorizacion_detalle WHERE autNumero=@autorizacion AND actId=@id"
-                            InsertCommand="INSERT INTO autorizacion_detalle (autNumero,actId,autNumSesiones,autSesionesDia, intensidad, verificacion) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia,@idint, @verificacion)"
-                            UpdateCommand="UPDATE autorizacion_detalle SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia, intensidad=@idint WHERE id=@id"
+                            InsertCommand="INSERT INTO autorizacion_detalle (autNumero,actId,autNumSesiones,autSesionesDia, verificacion) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia, @verificacion)"
+                            UpdateCommand="UPDATE autorizacion_detalle SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia WHERE id=@id"
                             >
                             <SelectParameters>
                                 <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="-1" />
@@ -437,30 +434,7 @@
             <td><asp:TextBox runat="server" ID="TSesionesDia" CssClass="entero"></asp:TextBox></td>
         </tr>
         <tr>
-            <td>Intensidad</td>
-            <td colspan="2">
-                <asp:UpdatePanel runat="server" ID="UIntensidad" UpdateMode="Conditional">
-                    <ContentTemplate>
-                        <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" DataTextField="nombre" DataValueField="id" CssClass="anchomaxcombo">
-                            <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
-                        </asp:DropDownList>
-                        <asp:SqlDataSource ID="SIntensidad" runat="server" 
-                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND parametro1=@procedimiento AND szReservado IS NULL ORDER BY nombre">
-                                <SelectParameters>
-                                    <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" DefaultValue="0" />
-                                </SelectParameters>
-                        </asp:SqlDataSource>
-                        <asp:RequiredFieldValidator ID="RIntensidad" Visible="false" runat="server" ErrorMessage="Por favor seleccione una intensidad." SetFocusOnError="true" ControlToValidate="DIntensidad" Display="Dynamic">*</asp:RequiredFieldValidator>
-                        <asp:Button runat="server" ID="BIntensidad" CausesValidation="false" CssClass="hide" OnClick="BIntensidad_Clicked" />
-                    </ContentTemplate>
-                    <Triggers>
-                        <asp:AsyncPostBackTrigger ControlID="TProcedimientoID" EventName="TextChanged" />
-                    </Triggers>
-                </asp:UpdatePanel>
-            </td>
-            <td align="right"><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label><asp:Button runat="server" ID="BProcedimiento" ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
+            <td align="right" colspan="4"><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label><asp:Button runat="server" ID="BProcedimiento" ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
         </tr>
         <tr>
             <td>

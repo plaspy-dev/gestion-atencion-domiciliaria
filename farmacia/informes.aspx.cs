@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using System.Globalization;
 
 public partial class farmacia_informes : System.Web.UI.Page
 {
@@ -29,10 +30,10 @@ public partial class farmacia_informes : System.Web.UI.Page
             CUsuario usuario = (CUsuario)CUsuario.GetUsuario();
             // para el filtro por usuarios.
             ViewState["entidades"] = usuario["entidades"];
-            if (string.IsNullOrEmpty(Request.QueryString["t"]))
+            if (string.IsNullOrEmpty(Request.QueryString["d"]))
                 THasta.Text = DateTime.Now.ToShortDateString();
-            else THasta.Text = Request.QueryString["t"];
-            if (string.IsNullOrEmpty(Request.QueryString["t"]))
+            else THasta.Text = Request.QueryString["d"];
+            if (string.IsNullOrEmpty(Request.QueryString["f"]))
                 TDesde.Text = DateTime.Now.AddDays(-30).ToShortDateString();
             else TDesde.Text = Request.QueryString["f"];
             if (!string.IsNullOrEmpty(Request.QueryString["p"]))
@@ -52,21 +53,25 @@ public partial class farmacia_informes : System.Web.UI.Page
     protected void Totalizar(List<GridViewRow> rows, string columna)
     {
         int col = Utilidades.GetGridColumnIndex(GResultados, columna);
-        GResultados.FooterRow.Cells[col].Text = rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : Convert.ToInt32(x.Cells[col].Text)).ToString();
+        if(GResultados.FooterRow!=null) 
+            GResultados.FooterRow.Cells[col].Text = rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : Convert.ToInt32(x.Cells[col].Text)).ToString();
     }
     protected void TotalizarDinero(List<GridViewRow> rows, string columna)
     {
         int col = Utilidades.GetGridColumnIndex(GResultados, columna);
-        GResultados.FooterRow.Cells[col].Text = string.Format("{0:C0}", rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : Convert.ToDecimal(x.Cells[col].Text.Replace("$", ""))));
+        if(GResultados.FooterRow!=null) 
+            GResultados.FooterRow.Cells[col].Text = string.Format("{0:C0}", rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : decimal.Parse(x.Cells[col].Text, NumberStyles.Currency)));
     }
     protected void ContarDistinct(List<GridViewRow> rows, string columna, string control) {
         int col = Utilidades.GetGridColumnIndex(GResultados, columna);
-        GResultados.FooterRow.Cells[col].Text = rows.Select(x => ((HyperLink)x.FindControl(control)).Text).Distinct().Count().ToString();
+        if(GResultados.FooterRow!=null) 
+            GResultados.FooterRow.Cells[col].Text = rows.Select(x => ((HyperLink)x.FindControl(control)).Text).Distinct().Count().ToString();
     }
     protected void ContarDistinct(List<GridViewRow> rows, string columna)
     {
         int col = Utilidades.GetGridColumnIndex(GResultados, columna);
-        GResultados.FooterRow.Cells[col].Text = rows.Select(x => x.Cells[col].Text).Distinct().Count().ToString();
+        if(GResultados.FooterRow!=null) 
+            GResultados.FooterRow.Cells[col].Text = rows.Select(x => x.Cells[col].Text).Distinct().Count().ToString();
     }
 
     protected void BBuscar_Click(object sender, EventArgs e)

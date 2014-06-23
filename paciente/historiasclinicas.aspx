@@ -77,21 +77,21 @@
                          FROM ((
                             SELECT paciente FROM evolucion_paciente 
                             WHERE 
-                            evolucion_paciente.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                            DATE(evolucion_paciente.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                             AND (@asegurador=0 OR @asegurador=evolucion_paciente.asegurador)
                             GROUP BY paciente
                         ) UNION (
                             SELECT paciente FROM ingreso_paciente 
                             WHERE 
-                            ingreso_paciente.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                            DATE(ingreso_paciente.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                             AND (@asegurador=0 OR @asegurador=ingreso_paciente.asegurador)
                             GROUP BY paciente
                         )) AS t
                         LEFT JOIN evolucion_paciente ON (evolucion_paciente.paciente=t.paciente)
                         LEFT JOIN ingreso_paciente ON (ingreso_paciente.paciente=t.paciente)
                         WHERE 
-                        evolucion_paciente.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
-                        AND (evolucion_paciente.id IS NOT NULL OR ingreso_paciente.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y'))
+                        DATE(evolucion_paciente.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                        AND (evolucion_paciente.id IS NOT NULL OR DATE(ingreso_paciente.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y'))
                         AND (@asegurador=0 OR @asegurador=evolucion_paciente.asegurador)
                         GROUP BY t.paciente
                         ORDER BY IF(evolucion_paciente.id IS NULL,ingreso_paciente.fecha,evolucion_paciente.fecha)

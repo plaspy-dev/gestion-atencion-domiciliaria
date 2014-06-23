@@ -71,7 +71,6 @@
             <td>Entidad</td>
             <td>Actividad o CUPS</td>
             <td>Área</td>
-            <td>Horas</td>
             <td>Categoría</td>
             <td>&nbsp;</td>
         </tr>
@@ -105,17 +104,6 @@
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT CAST(IFNULL(GROUP_CONCAT(medicamentos.id),-1) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
                 </asp:SqlDataSource>
-            </td>
-            <td>
-            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" 
-                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
-            </asp:DropDownList>
-            <asp:SqlDataSource ID="SIntensidad" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND szReservado IS NULL ORDER BY nombre">
-            </asp:SqlDataSource>
             </td>
             <td>
             <asp:DropDownList ID="DCategoria" runat="server" DataSourceID="SCategoria" 
@@ -191,9 +179,8 @@
                                 AND YEAR(autorizacion.autfecha)=@ano
 					            AND ('@area'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId IN (@area)))
 					            AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId=@procedimiento))
-					            AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
 					            AND ('@categoria'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.intensidad IN (@categoria)))
-							            
+
                                 GROUP BY paciente.pacId
                                 ORDER BY paciente.pacFecIngPrograma
                                 ">
@@ -202,7 +189,6 @@
                     <asp:ControlParameter ControlID="TAno" Name="ano" PropertyName="Text" />
                     <asp:ControlParameter ControlID="DAsegurador" Name="entidad" PropertyName="SelectedValue" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
-                    <asp:ControlParameter ControlID="DIntensidad" PropertyName="SelectedValue" Name="intensidad" />
                  </SelectParameters>
     </asp:SqlDataSource>        
         <div style="text-align: right;">

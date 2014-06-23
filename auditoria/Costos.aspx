@@ -132,7 +132,6 @@
             <asp:BoundField HeaderText="Grupo" DataField="grupo" SortExpression="grupo" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Actividad" DataField="actividad" SortExpression="actividad" ItemStyle-Wrap="false"/>
-            <asp:BoundField HeaderText="Intensidad" DataField="intensidad" SortExpression="intensidad" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Sesiones Autorizadas" DataField="autNumSesiones" SortExpression="autNumSesiones" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right"/>
             <asp:BoundField HeaderText="Costo autorizadas" DataField="entId" SortExpression="costoestimado" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Sesiones programadas" DataField="realizadas" SortExpression="realizadas" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right"/>
@@ -153,7 +152,6 @@
 	                                ,paciente.entId
 	                                ,asegurador.entNombre
 	                                ,autorizacion_detalle.actId AS actividad
-	                                ,autorizacion_detalle.intensidad
 	                                ,autorizacion_detalle.autNumSesiones
 	                                ,SUM(programacion.prgNumSesion) AS realizadas
 	                                ,NULL AS vacio
@@ -161,7 +159,7 @@
                                 LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
                                 LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
                                 LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
-                                LEFT JOIN programacion ON (programacion.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId=programacion.actId AND programacion.prgActivo=1 AND (autorizacion_detalle.intensidad=programacion.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL)))
+                                LEFT JOIN programacion ON (programacion.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId=programacion.actId AND programacion.prgActivo=1)
                                 LEFT JOIN (SELECT autorizacion_detalle.autNumero,CASE WHEN SUM(autorizacion_detalle.autNumSesiones)<17 THEN 'Grupo 1' 
                                             WHEN SUM(autorizacion_detalle.autNumSesiones)<49 THEN 'Grupo 2'
                                             WHEN SUM(autorizacion_detalle.autNumSesiones)<75 THEN 'Grupo 3'
@@ -170,13 +168,13 @@
                                             WHERE 
                                             autorizacion_detalle.actId IN (5028,5029,5030,5031)
                                             GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
-                                WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                 AND autorizacion.autActivo=1
                                 AND (@asegurador=0 OR paciente.entId=@asegurador)
                                 AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                                 AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
                                 AND (@grupo='(Todos)' OR grupo.grupo=@grupo OR (@grupo='Grupo 5' AND grupo.grupo IS NULL))
-                                GROUP BY autorizacion.autNumero,autorizacion.autFecha,paciente.pacId,paciente.pacNombres,autorizacion_detalle.actId,autorizacion_detalle.intensidad,autorizacion_detalle.autNumSesiones,paciente.entId,asegurador.entNombre,grupo.grupo
+                                GROUP BY autorizacion.autNumero,autorizacion.autFecha,paciente.pacId,paciente.pacNombres,autorizacion_detalle.actId,autorizacion_detalle.autNumSesiones,paciente.entId,asegurador.entNombre,grupo.grupo
                                 ORDER BY autorizacion.autFecha">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
@@ -218,7 +216,7 @@
                                                         WHERE 
                                                         autorizacion_detalle.actId IN (5028,5029,5030,5031)
                                                         GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
-                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                                                     AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
@@ -237,7 +235,7 @@
                                                         WHERE 
                                                         autorizacion_detalle.actId IN (5028,5029,5030,5031)
                                                         GROUP BY autorizacion_detalle.autNumero) AS grupo ON (grupo.autNumero=autorizacion.autNumero)
-                                                    WHERE autorizacion.autFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                                    WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)
                                                     AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                                                     AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))

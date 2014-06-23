@@ -145,7 +145,6 @@
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                             <asp:BoundField DataField="Nombre" HeaderText="Nombre del medicamento" ItemStyle-Width="100%" />
-                            <asp:BoundField DataField="Intensidad" HeaderText="Intensidad" />
                             <asp:BoundField DataField="Formulada" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="Posologia" HeaderText="Posología" />
                             <asp:BoundField DataField="Tiempo" HeaderText="Tiempo" />
@@ -169,24 +168,7 @@
                 </td>
                 <td colspan="3">
                     <asp:TextBox ID="TMedicamento" runat="server" Width="99%"></asp:TextBox>
-                    <asp:TextBox ID="TMedicamentoID" runat="server" CssClass="hide" AutoPostBack="true" ontextchanged="TMedicamentoID_TextChanged"></asp:TextBox>
-                </td>
-            </tr>
-            <tr runat="server" id="trIntensidad">
-                <td>Intensidad</td>
-                <td>
-                    <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" DataTextField="nombre" DataValueField="id">
-                        <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
-                    </asp:DropDownList>
-                    <asp:SqlDataSource ID="SIntensidad" runat="server" 
-                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                            SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND parametro1=@procedimiento AND szReservado IS NULL ORDER BY nombre">
-                            <SelectParameters>
-                                <asp:ControlParameter ControlID="TMedicamentoID" Name="procedimiento" DefaultValue="0" />
-                            </SelectParameters>
-                    </asp:SqlDataSource>
-                    <asp:RequiredFieldValidator ID="RIntensidad" Visible="false" runat="server" ErrorMessage="Por favor seleccione una intensidad." SetFocusOnError="true" ControlToValidate="DIntensidad" Display="Dynamic">*</asp:RequiredFieldValidator>
+                    <asp:TextBox ID="TMedicamentoID" runat="server" CssClass="hide"></asp:TextBox>
                 </td>
             </tr>
             <tr>

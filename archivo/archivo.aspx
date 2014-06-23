@@ -266,7 +266,7 @@
         ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
         SelectCommand="SELECT paciente_archivo.arcId
                     ,paciente.pacNombres
-                    ,CONCAT(LPAD(paciente_archivo.arcMes,2,'0'),'/', paciente_archivo.arcAnio) AS fecha
+                    ,CAST(CONCAT(LPAD(paciente_archivo.arcMes,2,'0'),'/', paciente_archivo.arcAnio) AS CHAR) AS fecha
                     ,paciente_archivo.arcFactura
                     ,paciente_archivo.arcAZ
                     ,paciente_archivo.arcObservaciones

@@ -22,7 +22,6 @@ public partial class auditoria_Costos : System.Web.UI.Page
     List<Grafica> grafica = new List<Grafica>();
     int nFecha = -1;
     int actividad = -1;
-    int intensidad = -1;
     int costoautorizado = -1;
     int costoprogramado = -1;
     int sesionesprogramadas = -1;
@@ -49,8 +48,6 @@ public partial class auditoria_Costos : System.Web.UI.Page
             nFecha = Utilidades.GetGridColumnIndex(GResultados, "Fecha");
         if (actividad == -1)
             actividad = Utilidades.GetGridColumnIndex(GResultados, "Actividad");
-        if (intensidad == -1)
-            intensidad = Utilidades.GetGridColumnIndex(GResultados, "Intensidad");
         if (costoautorizado == -1)
             costoautorizado = Utilidades.GetGridColumnIndex(GResultados, "Costo autorizadas");
         if (costoprogramado == -1)
@@ -75,8 +72,7 @@ public partial class auditoria_Costos : System.Web.UI.Page
             string fecha = e.Row.Cells[nFecha].Text;
             string asegurador = HttpUtility.HtmlDecode(e.Row.Cells[costoautorizado].Text).Trim();
             string procedimiento= HttpUtility.HtmlDecode(e.Row.Cells[actividad].Text).Trim();
-            string szIntensidad = HttpUtility.HtmlDecode(e.Row.Cells[intensidad].Text).Trim();
-            decimal costo=Procedimientos.GetCosto(asegurador, procedimiento, szIntensidad);
+            decimal costo = Convert.ToDecimal(Procedimientos.GetCosto(procedimiento, asegurador));
             decimal cAutorizada = 0;
             decimal cProgramada = 0;
             int sAutorizada = 0;
@@ -101,7 +97,6 @@ public partial class auditoria_Costos : System.Web.UI.Page
             e.Row.Cells[difCosto].Text = string.Format("{0:C}",cProgramada - cAutorizada);
 
             e.Row.Cells[actividad].Text = Procedimientos.GetProcedimiento(procedimiento);
-            e.Row.Cells[intensidad].Text = Procedimientos.GetVarios(szIntensidad);
 
             List<Grafica> resultado = (from g in grafica where g.fecha == fecha select g).ToList();
             Grafica info = null;
@@ -153,15 +148,18 @@ public partial class auditoria_Costos : System.Web.UI.Page
         // GResultados.AllowPaging = true;
         UpdateColumns();
 
-        GResultados.FooterRow.Cells[actividad].Text = "Total";
+        if (GResultados.FooterRow != null)
+        {
+            GResultados.FooterRow.Cells[actividad].Text = "Total";
 
-        GResultados.FooterRow.Cells[sesionesautorizadas].Text = grafica.Sum(x => x.autorizada).ToString();
-        GResultados.FooterRow.Cells[sesionesprogramadas].Text = grafica.Sum(x => x.realizada).ToString();
-        GResultados.FooterRow.Cells[difSesiones].Text = (grafica.Sum(x => x.realizada) - grafica.Sum(x => x.autorizada)).ToString();
+            GResultados.FooterRow.Cells[sesionesautorizadas].Text = grafica.Sum(x => x.autorizada).ToString();
+            GResultados.FooterRow.Cells[sesionesprogramadas].Text = grafica.Sum(x => x.realizada).ToString();
+            GResultados.FooterRow.Cells[difSesiones].Text = (grafica.Sum(x => x.realizada) - grafica.Sum(x => x.autorizada)).ToString();
 
-        GResultados.FooterRow.Cells[costoautorizado].Text = string.Format("{0:C}", grafica.Sum(x => x.cAutorizada));
-        GResultados.FooterRow.Cells[costoprogramado].Text = string.Format("{0:C}", grafica.Sum(x => x.cRealizada));
-        GResultados.FooterRow.Cells[difCosto].Text = string.Format("{0:C}", grafica.Sum(x => x.cRealizada) - grafica.Sum(x => x.cAutorizada));
+            GResultados.FooterRow.Cells[costoautorizado].Text = string.Format("{0:C}", grafica.Sum(x => x.cAutorizada));
+            GResultados.FooterRow.Cells[costoprogramado].Text = string.Format("{0:C}", grafica.Sum(x => x.cRealizada));
+            GResultados.FooterRow.Cells[difCosto].Text = string.Format("{0:C}", grafica.Sum(x => x.cRealizada) - grafica.Sum(x => x.cAutorizada));
+        }
 
         GResumen.DataBind();
 

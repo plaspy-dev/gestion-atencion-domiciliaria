@@ -112,7 +112,7 @@
                                 LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id)
                                 LEFT JOIN varios ON (varios.id=analisis_barthel.resultado)
                                 WHERE 
-                                ingreso_paciente.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                                DATE(ingreso_paciente.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                                 AND (@asegurador=0 OR @asegurador=ingreso_paciente.asegurador)
                                 AND (@nivel_atencion=0 OR @nivel_atencion=ingreso_paciente.nivel_atencion)
                                 AND (@area=0 OR @area=ingreso_paciente.area_atencion)
@@ -132,7 +132,7 @@
                                 LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id)
                                 LEFT JOIN varios ON (varios.id=analisis_barthel.resultado)
                                 WHERE 
-                                evolucion_paciente.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                                DATE(evolucion_paciente.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                                 AND (@asegurador=0 OR @asegurador=evolucion_paciente.asegurador)
                                 AND (@nivel_atencion=0 OR @nivel_atencion=evolucion_paciente.nivel_atencion)
                                 AND (@area=0 OR @area=evolucion_paciente.area_atencion)

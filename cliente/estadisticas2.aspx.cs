@@ -75,19 +75,26 @@ public partial class cliente_estadisticas2 : System.Web.UI.Page
         LTotal.Text= DResultados.Rows[0].Cells[1].Text + " Quejas";
 
         LResultado.Text = "";
-        for(int i=1; i<4; i++) {
+        for (int i = 2; i < DResultados.Rows.Count+1; i++)
+        {
             if (LResultado.Text.Length > 0)
                 LResultado.Text += ",";
 
-            LResultado.Text += "['" + ((LinkButton)DResultados.Rows[i].Cells[0].Controls[1]).Text + "', " + ((DataBoundLiteralControl)DResultados.Rows[i].Cells[1].Controls[0]).Text + "]";
+            LResultado.Text += "['" 
+                + ((LinkButton)DResultados.FindControl("L" + i)).Text 
+                + "', " 
+                + ((Label)DResultados.FindControl("S" + i)).Text + "]";
         }
 
         LResultado2.Text = "";
-        for (int i = 0; i < DSolucion.Rows.Count; i++)
+        for (int i = 1; i < DSolucion.Rows.Count+1; i++)
         {
             if (LResultado2.Text.Length > 0)
                 LResultado2.Text += ",";
-            LResultado2.Text += "['" + ((LinkButton)DSolucion.Rows[i].Cells[0].Controls[1]).Text + "', " + ((DataBoundLiteralControl)DSolucion.Rows[i].Cells[1].Controls[0]).Text + "]";
+            LResultado2.Text += "['" 
+                + ((LinkButton)DSolucion.FindControl("L" + i)).Text 
+                + "', " 
+                + ((Label)DSolucion.FindControl("S" +i)).Text + "]";
         }
     }
 }

@@ -10,6 +10,7 @@ using System.IO;
 using MySql.Data.MySqlClient;
 using SDG.Componentes;
 using System.Collections.Specialized;
+using System.Configuration;
 
 public partial class paciente_ingreso : System.Web.UI.Page
 {
@@ -319,9 +320,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                 if (id.Length > 0)
                 {
                     id = antecendentes.GetUpdate("id='" + id + "'");
-                }
-                else
-                {
+                } else {
                     antecendentes["ingreso_paciente"] = HIdIngreso.Value;
                     antecendentes["motivo"] = GExamenFisico.DataKeys[i].Values[0].ToString();
                     id = antecendentes.GetInsert();
@@ -411,7 +410,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
 
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
-            if (ingreso && (CCDetallePaciente.Edad == -1 || CCDetallePaciente.Edad > 14))
+            if (ingreso)
                 Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
             ((MasterPageI)Master).SetResultado(mensaje);
         }
@@ -617,6 +616,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
     {
 
         string resultado = "";
+        RPlanEducativo.DataBind();
         for (int i = 0; i < RPlanEducativo.Items.Count; i++)
         {
             CheckBox check = (CheckBox)RPlanEducativo.Items[i].FindControl("CSi");
@@ -648,8 +648,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + TConductaInicial.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
-        evento.Contenido = evento.Contenido.Replace("$szBarthel$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Barthel));
-        evento.Contenido = evento.Contenido.Replace("$szBraden$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Braden));
+        foreach (Calificacion.Escalas escala in (Calificacion.Escalas[])Enum.GetValues(typeof(Calificacion.Escalas)))
+        {
+            evento.Contenido = evento.Contenido.Replace("$sz" + escala.ToString() + "$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, escala));
+        }
 
         Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
         evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));

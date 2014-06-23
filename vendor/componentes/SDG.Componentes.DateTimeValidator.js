@@ -1,4 +1,6 @@
 ﻿function getDate(fecha) {
+    if (fecha instanceof Date)
+        return fecha;
     var reggie = new RegExp('(\\d{2})/(\\d{2})/(\\d{4})', 'g');
     var dateArray = reggie.exec(fecha);
     if (dateArray == null)
@@ -13,6 +15,8 @@
     );
 }
 function getDateTime(fecha) {
+    if (fecha instanceof Date)
+        return fecha;
     var reggie = new RegExp('(\\d{2})/(\\d{2})/(\\d{4}) (\\d{2}):(\\d{2})', 'g');
     var dateArray = reggie.exec(fecha);
     if(dateArray==null) 
@@ -23,7 +27,7 @@ function getDateTime(fecha) {
         (+dateArray[1]),
         (+dateArray[4]),
         (+dateArray[5]),
-        0
+        1
     );
 }
 function onValidate_DateTime(sender, args) {
@@ -43,7 +47,7 @@ function onValidate_DateTime(sender, args) {
     }
     if (sender.minimunValue) {
         var minimo = null;
-        if (fecha.getHours() == 0 && fecha.getMinutes() == 0)
+        if (fecha.getHours() == 0 && fecha.getMinutes() == 0 && fecha.getSeconds()==0)
             minimo = getDate(sender.minimunValue); // solo validamos la fecha.
         else minimo = getDateTime(sender.minimunValue);
         if (fecha < minimo) {

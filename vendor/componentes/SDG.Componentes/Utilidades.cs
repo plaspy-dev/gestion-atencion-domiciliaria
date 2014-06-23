@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.ServiceModel;
-using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -13,7 +12,7 @@ namespace SDG.Componentes;
 
 public class Utilidades
 {
-	private static bool bGetKey = false;
+	private static bool bGetKey;
 
 	public static string GetURLFullPath(Page page, string archivo)
 	{
@@ -161,154 +160,14 @@ public class Utilidades
 		return text + "</table>";
 	}
 
-	public static string RenderGrid(GridView grid)
-	{
-		return RenderGrid(grid, "width=100%");
-	}
-
-	public static string GetGridRowCellHTML(GridView grid, GridViewRow row, int columna)
-	{
-		string arg = "class='c" + columna + "'";
-		StringBuilder stringBuilder = new StringBuilder();
-		if (grid.Columns[columna].ItemStyle.HorizontalAlign == HorizontalAlign.Right)
-		{
-			stringBuilder.AppendFormat("<td align=right {0} style='text-align: right'>", arg);
-		}
-		else if (grid.Columns[columna].ItemStyle.HorizontalAlign == HorizontalAlign.Center)
-		{
-			stringBuilder.AppendFormat("<td align=center {0} style='text-align: center'>", arg);
-		}
-		else
-		{
-			stringBuilder.AppendFormat("<td {0}>", arg);
-		}
-		if (row.Cells[columna].HasControls())
-		{
-			ControlCollection controls = row.Cells[columna].Controls;
-			for (int i = 0; i < controls.Count; i++)
-			{
-				if (controls[i] is TextBox)
-				{
-					string text = ((TextBox)controls[i]).Text;
-					if (text.Length == 0)
-					{
-						text = "&nbsp;";
-					}
-					stringBuilder.Append(text);
-					break;
-				}
-				if (controls[i] is CheckBox)
-				{
-					if (((CheckBox)controls[i]).Checked)
-					{
-						stringBuilder.Append("X ");
-					}
-					else
-					{
-						stringBuilder.Append("_ ");
-					}
-					if (((CheckBox)controls[i]).Text.Length > 0)
-					{
-						stringBuilder.Append(((CheckBox)controls[i]).Text);
-					}
-					break;
-				}
-				if (controls[i] is LinkButton)
-				{
-					stringBuilder.Append(((LinkButton)controls[i]).Text);
-				}
-				else if (controls[i] is HyperLink)
-				{
-					stringBuilder.Append(((HyperLink)controls[i]).Text);
-				}
-			}
-		}
-		else
-		{
-			stringBuilder.Append(row.Cells[columna].Text);
-		}
-		stringBuilder.Append("</td>");
-		return stringBuilder.ToString();
-	}
-
-	public static string RenderGrid(GridView grid, string parametrostabla)
-	{
-		if (new Random().Next(10) == 1 && !GetKey())
-		{
-			return "";
-		}
-		if (grid.Rows.Count == 0)
-		{
-			return grid.EmptyDataText;
-		}
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.AppendFormat("<table {0} id='{1}' class='tgrid'>", parametrostabla, grid.ID);
-		stringBuilder.Append("<tr class='gh'>");
-		for (int i = 0; i < grid.Columns.Count; i++)
-		{
-			if (grid.Columns[i].Visible)
-			{
-				stringBuilder.AppendFormat("<th class='h{0}' bgcolor='#EEEEEE'><b>{1}</b></th>", i, grid.Columns[i].HeaderText);
-			}
-		}
-		stringBuilder.Append("</tr>");
-		bool flag = true;
-		for (int i = 0; i < grid.Rows.Count; i++)
-		{
-			GridViewRow gridViewRow = grid.Rows[i];
-			flag = !flag;
-			stringBuilder.Append(flag ? "<tr class='ga'>" : "<tr class='gr'>");
-			for (int j = 0; j < gridViewRow.Cells.Count; j++)
-			{
-				if (grid.Columns[j].Visible)
-				{
-					stringBuilder.Append(GetGridRowCellHTML(grid, gridViewRow, j));
-				}
-			}
-			stringBuilder.Append("</tr>");
-		}
-		if (grid.ShowFooter && grid.FooterRow != null)
-		{
-			stringBuilder.Append("<tr class='gf'>");
-			for (int i = 0; i < grid.Columns.Count; i++)
-			{
-				if (grid.Columns[i].Visible)
-				{
-					if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Right)
-					{
-						stringBuilder.AppendFormat("<td align=right class='f{0}' style='text-align: right'>", i);
-					}
-					else if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Center)
-					{
-						stringBuilder.AppendFormat("<td align=center class='f{0}' style='text-align: center'>", i);
-					}
-					else
-					{
-						stringBuilder.AppendFormat("<td class='f{0}'>", i);
-					}
-					stringBuilder.AppendFormat("<b>{0}</b></td>", grid.FooterRow.Cells[i].Text);
-				}
-			}
-			stringBuilder.Append("</tr>");
-		}
-		stringBuilder.Append("</table>");
-		return stringBuilder.ToString();
-	}
-
-	public static string ReplaceContenido(ControlCollection controles, string contenido, bool visible)
+	public static string ReplaceContenido(ControlCollection controles, string contenido, bool visible, bool clases)
 	{
 		for (int i = 0; i < controles.Count; i++)
 		{
-			try
+			if (controles[i].Controls.Count > 0 && controles[i].GetType() != typeof(GridView) && controles[i].GetType() != typeof(CheckBoxList))
 			{
-				if (controles[i].Controls.Count > 0 && controles[i].GetType() != typeof(GridView) && controles[i].GetType() != typeof(CheckBoxList))
-				{
-					contenido = ReplaceContenido(controles[i].Controls, contenido, visible ? controles[i].Visible : visible);
-					continue;
-				}
-			}
-			catch
-			{
+				contenido = ReplaceContenido(controles[i].Controls, contenido, visible ? controles[i].Visible : visible, clases);
+				continue;
 			}
 			string iD = controles[i].ID;
 			string text = "";
@@ -324,7 +183,7 @@ public class Utilidades
 			}
 			else
 			{
-				if (contenido.IndexOf(iD) == -1)
+				if (!contenido.Contains(iD))
 				{
 					continue;
 				}
@@ -363,7 +222,29 @@ public class Utilidades
 				}
 				else if (controles[i].GetType() == typeof(GridView))
 				{
-					text = RenderGrid((GridView)controles[i]);
+					GridView gridView = (GridView)controles[i];
+					try
+					{
+						if (!string.IsNullOrEmpty(gridView.DataSourceID))
+						{
+							foreach (Control controle in controles)
+							{
+								if (controle.ID == gridView.DataSourceID && controle is SqlDataSource)
+								{
+									text = GridUtils.RenderGrid(gridView, (SqlDataSource)controle, clases);
+									gridView = null;
+									break;
+								}
+							}
+						}
+					}
+					catch
+					{
+					}
+					if (gridView != null)
+					{
+						text = GridUtils.RenderGrid(gridView, "", clases);
+					}
 				}
 				else if (controles[i].GetType() == typeof(CheckBoxList))
 				{
@@ -403,11 +284,16 @@ public class Utilidades
 
 	public static string ReplaceContenido(ControlCollection controles, string contenido)
 	{
+		return ReplaceContenido(controles, contenido, clases: true);
+	}
+
+	public static string ReplaceContenido(ControlCollection controles, string contenido, bool clases)
+	{
 		if (new Random().Next(10) == 1 && !GetKey())
 		{
 			return "";
 		}
-		return ReplaceContenido(controles, contenido, visible: true);
+		return ReplaceContenido(controles, contenido, visible: true, clases);
 	}
 
 	public static StateBag GetViewState()
@@ -433,56 +319,6 @@ public class Utilidades
 			stateBag = new StateBag();
 		}
 		return stateBag;
-	}
-
-	public static void ExportExcel(HttpResponse Response, GridView view, string titulo)
-	{
-		if (new Random().Next(10) == 1 && !GetKey())
-		{
-			return;
-		}
-		bool allowPaging = view.AllowPaging;
-		if (allowPaging)
-		{
-			view.AllowPaging = false;
-			view.DataBind();
-		}
-		Response.Clear();
-		Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(titulo + ".xls").Replace("+", "%20"));
-		Response.ContentType = "application/vnd.ms-excel";
-		Response.ContentEncoding = Encoding.GetEncoding("ISO-8859-1");
-		Response.Write("<html>");
-		Response.Write("<body>\n");
-		Response.Write("<table border='1'>\n");
-		Response.Write("<tr>\n");
-		for (int i = 0; i < view.Columns.Count; i++)
-		{
-			if (view.Columns[i].Visible)
-			{
-				Response.Write("<td><strong>");
-				Response.Write(view.Columns[i].HeaderText);
-				Response.Write("</strong></td>");
-			}
-		}
-		Response.Write("</tr>\n");
-		for (int i = 0; i < view.Rows.Count; i++)
-		{
-			Response.Write("<tr>\n");
-			for (int j = 0; j < view.Columns.Count; j++)
-			{
-				if (view.Columns[j].Visible)
-				{
-					Response.Write(GetGridRowCellHTML(view, view.Rows[i], j));
-				}
-			}
-			Response.Write("</tr>\n");
-		}
-		Response.Write("</table></body></html>\n");
-		Response.End();
-		if (allowPaging)
-		{
-			view.AllowPaging = true;
-		}
 	}
 
 	public static string SaveState(ControlCollection controles)
@@ -633,6 +469,10 @@ public class Utilidades
 			if (HttpContext.Current == null)
 			{
 				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
+				if (text == "localhost")
+				{
+					return true;
+				}
 			}
 			else
 			{

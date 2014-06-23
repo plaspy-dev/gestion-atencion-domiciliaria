@@ -9,9 +9,9 @@ using System.Web.UI.WebControls;
 
 namespace SDG.Web.UI.WebControls;
 
-[ParseChildren(true)]
 [PersistChildren(false)]
 [Designer(typeof(CustomDataSourceDesigner))]
+[ParseChildren(true)]
 public class CustomDataSource : DataSourceControl
 {
 	protected static readonly string[] _views = new string[1] { "DefaultView" };
@@ -30,8 +30,8 @@ public class CustomDataSource : DataSourceControl
 
 	protected CustomDataSourceView _view;
 
-	[Category("ParentDataSource")]
 	[DefaultValue("")]
+	[Category("ParentDataSource")]
 	public string ParentDataSource
 	{
 		get
@@ -86,8 +86,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("UpdateCommand")]
+	[DefaultValue("")]
 	public string UpdateCommand
 	{
 		get
@@ -128,8 +128,8 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[DefaultValue("")]
 	[Category("Data")]
+	[DefaultValue("")]
 	public string SelectMethod
 	{
 		get
@@ -142,25 +142,25 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	[Category("Data")]
 	[MergableProperty(false)]
 	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
-	[DefaultValue(null)]
 	[PersistenceMode(PersistenceMode.InnerProperty)]
+	[Category("Data")]
+	[DefaultValue(null)]
 	public ParameterCollection SelectParameters => View.SelectParameters;
 
-	[MergableProperty(false)]
-	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
-	[Category("Data")]
 	[DefaultValue(null)]
+	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
+	[MergableProperty(false)]
+	[Category("Data")]
 	[PersistenceMode(PersistenceMode.InnerProperty)]
 	public ParameterCollection InsertParameters => View.InsertParameters;
 
-	[Category("Data")]
-	[MergableProperty(false)]
-	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
 	[PersistenceMode(PersistenceMode.InnerProperty)]
 	[DefaultValue(null)]
+	[Editor(typeof(ParameterCollectionEditor), typeof(UITypeEditor))]
+	[Category("Data")]
+	[MergableProperty(false)]
 	public ParameterCollection UpdateParameters => View.UpdateParameters;
 
 	protected CustomDataSourceView View
@@ -179,7 +179,17 @@ public class CustomDataSource : DataSourceControl
 		}
 	}
 
-	public string ModifyTable => (ParentDataSource.Length == 0) ? ID : ParentDataSource;
+	public string ModifyTable
+	{
+		get
+		{
+			if (ParentDataSource.Length != 0)
+			{
+				return ParentDataSource;
+			}
+			return ID;
+		}
+	}
 
 	protected override DataSourceView GetView(string viewName)
 	{

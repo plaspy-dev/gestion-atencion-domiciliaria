@@ -137,7 +137,7 @@
         <div id="dImprimir">
         <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados"  DataKeyNames="id"
             AutoGenerateColumns="False" EmptyDataText="No se encontraron recursos humanos" 
-            AllowPaging="True" PageSize="50" AllowSorting="True" >
+            AllowPaging="True" PageSize="50" AllowSorting="True">
             <Columns>
                 <asp:HyperLinkField DataTextField="documento" HeaderText="Documento" 
                     DataNavigateUrlFields="id" SortExpression="documento"
@@ -184,7 +184,7 @@
                 <asp:BoundField HeaderText="Próximo paciente" DataField="nombre" SortExpression="nombre">
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
-                <asp:BoundField HeaderText="Próxima programación" DataField="fecha" SortExpression="fecha" DataFormatString="{0:d}">
+                <asp:BoundField HeaderText="Próxima programación" DataField="fecha" SortExpression="fecha" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right">
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
                 <asp:BoundField HeaderText="E-Mail" DataField="perCorreoElectronico" SortExpression="perCorreoElectronico"/>
@@ -210,9 +210,9 @@
                     per.perDireccion, per.perBarrio, disponibilidad.dispDescripcion
                     ,loctrabajo.locDescripcion AS loctrabajo,locresidencia.locDescripcion AS locresidencia
                     ,CONCAT(IFNULL(per.perTelefono, ''), ' ', IFNULL(per.perTelefono1, '')) AS telefono,per.perCorreoElectronico
-					,futuro.prgFechaProg AS fecha
-					,CONCAT(IFNULL(pacientef.pacNombres,''),CASE WHEN manana.actId IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END) AS nombre
-					,CONCAT(IFNULL(paciente.pacNombres,''), CASE WHEN ayer.perId IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END) AS nombrehoy
+					,directorio.fechaf AS fecha
+					,CONCAT(IFNULL(pacientef.pacNombres,''),CASE WHEN directorio.actm IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END) AS nombre
+					,CONCAT(IFNULL(paciente.pacNombres,''), CASE WHEN directorio.acta IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END) AS nombrehoy
 					,nivel_complejidad.nivCompDesc
                     FROM recurso_humano per 
                     LEFT JOIN cargo on per.carId = cargo.carId 
@@ -221,12 +221,9 @@
                     LEFT JOIN localidad AS loctrabajo ON (loctrabajo.locId=per.locId)
                     LEFT JOIN localidad AS locresidencia ON (locresidencia.locId=per.residencialocId)
                     LEFT JOIN nivel_complejidad ON (nivel_complejidad.nivCompId=per.nivCompId)
-                    LEFT JOIN (SELECT perId,actId FROM programacion WHERE DATE(programacion.prgFechaProg)=DATE(SYSDATE()-INTERVAL 1 DAY) AND actId IN (10001,10009,10012,10013,10015)) AS ayer ON (ayer.perId=per.perId)
-					LEFT JOIN (SELECT perId,actId FROM programacion WHERE DATE(programacion.prgFechaProg)=DATE(SYSDATE()+INTERVAL 1 DAY) AND actId IN (10001,10009,10012,10013,10015)) AS manana ON (manana.perId=per.perId)
-					LEFT JOIN (SELECT perId,pacId AS pacId FROM programacion WHERE DATE(programacion.prgFechaProg)=DATE(SYSDATE())) AS hoy ON (hoy.perId=per.perId)
-					LEFT JOIN (SELECT perId,prgFechaProg,pacId AS pacId FROM programacion WHERE programacion.prgFechaProg>SYSDATE()) AS futuro ON (futuro.perId=per.perId)
-					LEFT JOIN paciente ON (hoy.pacId=paciente.pacId)
-					LEFT JOIN paciente AS pacientef ON (hoy.pacId=pacientef.pacId)
+                    LEFT JOIN directorio ON (directorio.perId=per.perId)
+                    LEFT JOIN paciente ON (directorio.pacienteh=paciente.pacId)
+                    LEFT JOIN paciente AS pacientef ON (directorio.pacientef=pacientef.pacId)
                     WHERE 
                     (@id=0 OR @id=per.perId)
                     AND (@id!=0 OR @estado=0 OR per.eEstId=@estado) 

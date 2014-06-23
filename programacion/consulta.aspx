@@ -80,10 +80,9 @@
             <td>Inicio</td>
             <td>Fin</td>
             <td>Asegurador</td>
-            <td>Actividad o CUPS</td>
+            <td style="white-space: nowrap">Actividad o CUPS</td>
             <td>Profesional</td>
             <td>Área</td>
-            <td>Horas</td>
             <td></td>
         </tr>
         <tr>
@@ -120,17 +119,6 @@
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT CAST(IFNULL(GROUP_CONCAT(medicamentos.id),-1) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
                 </asp:SqlDataSource>
-            </td>
-            <td>
-            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" CssClass="anchomaxcombo" 
-                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
-            </asp:DropDownList>
-            <asp:SqlDataSource ID="SIntensidad" runat="server"
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND szReservado IS NULL ORDER BY nombre">
-            </asp:SqlDataSource>
             </td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" /></td>
         </tr>
@@ -193,7 +181,7 @@
                                 ,paciente.pacTelefono
                                 ,asegurador.entNombre
                                 ,recurso_humano.perNombre
-                                ,CONCAT(programacion.actId,'_',IFNULL(programacion.intensidad,'')) AS actividad
+                                ,medicamentos.nombre AS actividad
                                 ,programacion.prgId
                                 ,programacion.prgNumSesion
                                 ,GROUP_CONCAT(
@@ -204,15 +192,15 @@
                                 LEFT JOIN paciente ON (paciente.pacId=programacion.pacId)
                                 LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
                                 LEFT JOIN recurso_humano ON (recurso_humano.perId=programacion.perId)
+                                LEFT JOIN medicamentos ON (medicamentos.id=programacion.actId)
                                 LEFT JOIN programacion_novedad ON (programacion_novedad.prgId=programacion.prgId)
-                                LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=programacion.autNumero AND autorizacion_detalle.actId=programacion.actId AND autorizacion_detalle.intensidad=programacion.intensidad)
-                            WHERE programacion.prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=programacion.autNumero AND autorizacion_detalle.actId=programacion.actId)
+                            WHERE DATE(programacion.prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                             AND programacion.prgActivo=1
                             AND (@asegurador=0 OR programacion.entId=@asegurador)
                             AND (@personal=0 OR programacion.perId=@personal)
                             AND (@procedimiento=0 OR programacion.actId=@procedimiento)
                             AND ('@area'='0' OR programacion.actId IN (@area))
-                            AND (@intensidad=0 OR programacion.intensidad=@intensidad)
                             {0}
                             GROUP BY programacion.prgId
                             ORDER BY programacion.prgFechaProg,paciente.pacNombres">
@@ -222,7 +210,6 @@
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
                     <asp:ControlParameter ControlID="TPersonalID" Name="personal" PropertyName="Text" DefaultValue="0" />
-                    <asp:ControlParameter ControlID="DIntensidad" PropertyName="SelectedValue" Name="intensidad" />
                  </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

@@ -136,7 +136,7 @@
                     LEFT JOIN paciente ON (paciente.pacId=queja_reclamo.pacId)
                     LEFT JOIN recurso_humano ON (recurso_humano.perId=queja_reclamo.perId)
                     WHERE 
-                    queja_reclamo.qrFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                    DATE(queja_reclamo.qrFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                     AND (@asegurador=0 OR @asegurador=queja_reclamo.entId)
                     AND (@tipo=0 OR @tipo=queja_reclamo.tqrIdTipo)
                     AND (@clasificacion=0 OR @clasificacion=queja_reclamo.clasificacion)
@@ -169,7 +169,7 @@
                     CASE WHEN qrCerrado=1 THEN 1 WHEN qrAtendido=1 THEN 2 ELSE 0 END AS estado
                     FROM queja_reclamo
                     WHERE 
-                    qrFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                    DATE(qrFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                     AND (@asegurador=0 OR @asegurador=entId)
                     AND (@tipo=0 OR @tipo=tqrIdTipo)
                     AND (@clasificacion=0 OR @clasificacion=clasificacion)

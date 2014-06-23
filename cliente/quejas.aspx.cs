@@ -56,10 +56,8 @@ public partial class cliente_quejas : System.Web.UI.Page
                         Utilidades.SelectInDropDown(DTipo, reader["tqrIdTipo"]);
                         TPLlama.Text = reader["qrPersonaLlama"].ToString();
                         TParentesco.Text = reader["qrParentesco"].ToString();
-                        TEmail.Text = reader["qrEmail"].ToString();
                         TTelefono.Text = reader["qrTelefono"].ToString();
                         TDetalle.Text = reader["qrDetalle"].ToString();
-                        TObservaciones.Text = reader["qrObsHS"].ToString();
                         CCDetallePaciente.IdPaciente = reader["pacId"].ToString();
                         FuncionarioC.IdFuncionario = reader["perId"].ToString();
                         Utilidades.SelectInDropDown(DClasificacion, reader["clasificacion"]);
@@ -76,19 +74,6 @@ public partial class cliente_quejas : System.Web.UI.Page
                             REmpleado.Checked = true;
                         }
 
-                        reader = conector.Query("SELECT recurso_humano.perId AS id,recurso_humano.pernombre AS nombre FROM queja_reclamo_funcionario LEFT JOIN recurso_humano ON (recurso_humano.perId=queja_reclamo_funcionario.perId) WHERE queja_reclamo_funcionario.qrId=" + HIdQuejas.Value + " ORDER BY nombre;");
-                        if (reader != null)
-                        {
-
-                            ArrayList personas = new ArrayList();
-                            ViewState["cliente_quejas"] = personas;
-                            while (reader.Read())
-                            {
-                                personas.Add(new Miscelaneos(reader["id"].ToString(), reader["nombre"].ToString()));
-                            }
-                            GPersonal.DataSource = personas;
-                            GPersonal.DataBind();
-                        }
                         DTipo_SelectedIndexChanged(sender, e);
                         if (!PConductaAbusiva.Visible)
                         {
@@ -212,10 +197,8 @@ public partial class cliente_quejas : System.Web.UI.Page
             query["tqrIdTipo"] = DTipo.SelectedValue;
             query["qrPersonaLlama"] = TPLlama.Text;
             query["qrParentesco"] = TParentesco.Text;
-            query["qrEmail"] = TEmail.Text;
             query["qrTelefono"] = TTelefono.Text;
             query["qrDetalle"] = TDetalle.Text;
-            query["qrObsHS"] = TObservaciones.Text;
             query["pacId"] = CCDetallePaciente.IdPaciente;
             query["perId"] = FuncionarioC.IdFuncionario;
             query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
@@ -313,8 +296,6 @@ public partial class cliente_quejas : System.Web.UI.Page
                     return;
             }
 
-            BAgregar_Click(sender, e);
-
             ArrayList personas = (ArrayList)ViewState["cliente_quejas"];
             if (personas != null)
             {
@@ -344,52 +325,6 @@ public partial class cliente_quejas : System.Web.UI.Page
         Response.Redirect(Request.Url.AbsolutePath);
     }
 
-    protected void GPersonal_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        string id = GPersonal.DataKeys[GPersonal.SelectedIndex].Value.ToString();
-        ArrayList personas = (ArrayList)ViewState["cliente_quejas"];
-        if (personas!= null)
-        {
-            for (int i = 0; i < personas.Count; i++)
-            {
-                Miscelaneos info = (Miscelaneos)personas[i];
-                if(info.Id==id) {
-                    personas.RemoveAt(i);
-                    break;
-                }
-            }
-        }
-        GPersonal.DataSource = personas;
-        GPersonal.DataBind();
-    }
-
-    protected void BAgregar_Click(object sender, EventArgs e)
-    {
-        if (TFuncionarioID.Text.Length == 0 || TFuncionario.Text.Length == 0)
-            return;
-        ArrayList personas = (ArrayList)ViewState["cliente_quejas"];
-        if (personas == null)
-        {
-            personas= new ArrayList();
-            ViewState["cliente_quejas"] = personas;
-        }
-        for (int i = 0; i < personas.Count; i++)
-        {
-            Miscelaneos info = (Miscelaneos)personas[i];
-            if (info.Id == TFuncionarioID.Text)
-            {
-                personas.RemoveAt(i);
-                break;
-            }
-        }
-        personas.Add(new Miscelaneos(TFuncionarioID.Text,TFuncionario.Text));
-
-        TFuncionarioID.Text= TFuncionario.Text="";
-        TFuncionario.Focus();
-        GPersonal.DataSource = personas;
-        GPersonal.DataBind();
-    }
-
     protected void BAceptarSeguimiento_Click(object sender, EventArgs e)
     {
         if (!CVSeguimiento.IsValid)
@@ -400,7 +335,6 @@ public partial class cliente_quejas : System.Web.UI.Page
             Query query = new Query("queja_reclamo_seguimiento");
             Query queja = new Query("queja_reclamo");
 
-            query["sqrDetalles"] = TSDetalles.Text;
             if (TAcciones.Text.Length == 0)
                 query.AddCampo("sqrPendiente", "''", false);
             else query["sqrPendiente"] = TAcciones.Text;
@@ -412,10 +346,8 @@ public partial class cliente_quejas : System.Web.UI.Page
                 query["sqrRespuestaAsegurador"] = CRAsegurador.Checked ? "1" : "";
                 query["sqrRespuestaTelefonica"] = CRTelefonica.Checked ? "1" : "";
                 query["sqrRespuestaEnteVig"] = CRVigilancia.Checked ? "1" : "";
-                query["que"] = TQue.Text;
-                query["quien"] = TQuien.Text;
-                query["como"] = TComo.Text;
-                query["porque"] = TPorque.Text;
+                query["accion_mejora"] = TAccionMejora.Text;
+                query["avances"] = TAvances.Text;
 
                 queja["qrCerrado"] = "1";
                 if (!FArchivo.HasFile)
@@ -464,12 +396,9 @@ public partial class cliente_quejas : System.Web.UI.Page
 
     protected void BCancelarSeguimiento_Click(object sender, EventArgs e)
     {
-        TSDetalles.Text = "";
         TAcciones.Text = "";
-        TPorque.Text = "";
-        TComo.Text = "";
-        TQue.Text = "";
-        TQuien.Text = "";
+        TAccionMejora.Text = "";
+        TAvances.Text = "";
         CCerrar.Checked = false;
         CRUsuario.Checked = false;
         CRAsegurador.Checked = false;
@@ -488,15 +417,8 @@ public partial class cliente_quejas : System.Web.UI.Page
 
     protected void OnValidateSeguimiento(object sender, ServerValidateEventArgs e)
     {
-        e.IsValid = TSDetalles.Text.Length>0;
         if (CCerrar.Checked) {
-
-            e.IsValid =
-            CRUsuario.Checked &&
-            CRTelefonica.Checked &&
-            FArchivo.HasFile &&
-            (CRAsegurador.Checked || CRVigilancia.Checked)
-            ;
+            e.IsValid = CRUsuario.Checked && FArchivo.HasFile;
         }
     }
 
@@ -518,10 +440,8 @@ public partial class cliente_quejas : System.Web.UI.Page
                 query += "sqrRespuestaAsegurador";
                 query += "sqrRespuestaTelefonica";
                 query += "sqrRespuestaEnteVig";
-                query += "que";
-                query += "quien";
-                query += "como";
-                query += "porque";
+                query += "accion_mejora";
+                query += "avances";
 
                 MySqlDataReader reader = conector.Query(query.GetSelect(string.Format("qrId={0} AND sqrId={1}"
                     , GSeguimiento.DataKeys[e.NewEditIndex].Values[0]
@@ -530,7 +450,6 @@ public partial class cliente_quejas : System.Web.UI.Page
                 {
 
                     ViewState["sqrId"] = GSeguimiento.DataKeys[e.NewEditIndex].Values[1].ToString();
-                    TSDetalles.Text = reader["sqrDetalles"].ToString();
                     TAcciones.Text = reader["sqrPendiente"].ToString();
                     CCerrar.Checked = reader["sqrCerrar"].ToString() == "True";
                     if (CCerrar.Checked)
@@ -539,10 +458,8 @@ public partial class cliente_quejas : System.Web.UI.Page
                         CRAsegurador.Checked = reader["sqrRespuestaAsegurador"].ToString() == "True";
                         CRTelefonica.Checked = reader["sqrRespuestaTelefonica"].ToString() == "True";
                         CRVigilancia.Checked = reader["sqrRespuestaEnteVig"].ToString() == "True";
-                        TQue.Text = reader["que"].ToString();
-                        TQuien.Text = reader["quien"].ToString();
-                        TComo.Text = reader["como"].ToString();
-                        TPorque.Text = reader["porque"].ToString();
+                        TAccionMejora.Text = reader["accion_mejora"].ToString();
+                        TAvances.Text = reader["avances"].ToString();
                     }
                     PISeguimiento.Visible = true;
                 }

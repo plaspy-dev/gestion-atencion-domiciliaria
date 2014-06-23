@@ -3,7 +3,7 @@
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tiny_mce.js"></script>
+    <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
 <script type="text/javascript">
     var editor = null;
     addFunctionToStart(function() {
@@ -49,28 +49,30 @@
             $("input[name*=TObservaciones]").width("98%");*/
 
         tinyMCE.init({
-            mode: "exact",
-            elements: "elm1",
-            theme: "advanced",
-            readonly: <%= TConductaInicial.ReadOnly ? "true" : "false" %>,
-            theme_advanced_buttons1: "",
-            theme_advanced_buttons2: "",
-            theme_advanced_buttons3: "",
-            valid_elements: "ol,li,p,br",
-            setup: function(ed) {
+            mode: "exact"
+            ,selector: '#elm1' 
+            ,readonly: <%= TConductaInicial.ReadOnly ? "true" : "false" %>
+            ,menubar:false
+            ,statusbar: false
+            ,toolbar: false
+            ,valid_elements: "ol,li,p,br"
+            ,setup: function(ed) {
                 editor = ed;
-                ed.onSubmit.add(function(ed, e) {
+                ed.on('submit', function(e) {
                     lim();
                 });
-                ed.onInit.add(function(ed) {
+                ed.on('init', function(ed) {
                     var completa = $("#<%= TConductaInicial.ClientID %>").val();
                     completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
                     editor.setContent(completa);
-                    blurevent(ed);
                     $("#elm1").remove();
                 });
-            },
-            paste_preprocess: function(pl, o) {
+                ed.on('blur', function(e) {
+                    tinyMCE.triggerSave();
+                    lim();
+                });
+            }
+            ,paste_preprocess: function(pl, o) {
                 o.content = o.content.replace(/<\S[^><]*>/g, "");
             }
         });
@@ -110,13 +112,6 @@
         $("#<%= TConductaInicial.ClientID %>").val(limpio);
         var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
         editor.setContent(completa);
-    }
-    
-    function blurevent(ed) {
-        tinyMCE.dom.Event.add(ed.getWin(), "blur", function(e) {
-            tinyMCE.triggerSave();
-            lim();
-        });
     }
     </script>
 </asp:Content>

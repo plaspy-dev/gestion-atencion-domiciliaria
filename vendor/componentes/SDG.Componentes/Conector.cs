@@ -13,7 +13,7 @@ namespace SDG.Componentes;
 
 public class Conector : IDisposable
 {
-	private static bool bGetKey = false;
+	private static bool bGetKey;
 
 	protected string m_szLastError;
 
@@ -21,7 +21,7 @@ public class Conector : IDisposable
 
 	protected string m_szConexion;
 
-	protected bool m_bTransaccion = false;
+	protected bool m_bTransaccion;
 
 	protected MySqlConnection m_pSQLConector;
 
@@ -491,6 +491,10 @@ public class Conector : IDisposable
 			if (HttpContext.Current == null)
 			{
 				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
+				if (text == "localhost")
+				{
+					return true;
+				}
 			}
 			else
 			{

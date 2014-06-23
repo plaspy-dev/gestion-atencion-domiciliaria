@@ -421,7 +421,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                 return;
             }
             
-            if (string.IsNullOrEmpty((string)ViewState["id"]) && (CCDetallePaciente.Edad == -1 || CCDetallePaciente.Edad > 14))
+            if (string.IsNullOrEmpty((string)ViewState["id"]))
                 Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
 
             conector.Commit();
@@ -852,8 +852,8 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
     protected string ImprimirPlanEducativo()
     {
-
         string resultado = "";
+        GEducativo.DataBind();
         for (int i = 0; i < GEducativo.Rows.Count; i++)
         {
             CheckBox check = (CheckBox)GEducativo.Rows[i].FindControl("CSi");
@@ -905,8 +905,10 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + TPlanManejo.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
-        evento.Contenido = evento.Contenido.Replace("$szBarthel$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Barthel));
-        evento.Contenido = evento.Contenido.Replace("$szBraden$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Braden));
+        foreach (Calificacion.Escalas escala in (Calificacion.Escalas[])Enum.GetValues(typeof(Calificacion.Escalas)))
+        {
+            evento.Contenido = evento.Contenido.Replace("$sz" + escala.ToString() + "$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, escala));
+        }
 
         Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
         evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));

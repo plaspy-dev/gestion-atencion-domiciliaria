@@ -291,12 +291,15 @@
             </td>
         </tr>
         <tr>
-            <td  class="tdl">Asegurador</td>
+            <td  class="tdl">
+                Asegurador<asp:RequiredFieldValidator ControlToValidate="DAsegurador" ErrorMessage="Por favor seleccione un asegurador." ID="RequiredFieldValidator10" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+            </td>
             <td>
                 <asp:DropDownList ID="DAsegurador" runat="server" 
                                 DataSourceID="SAsegurador" DataTextField="nombre" 
                                 DataValueField="id" AppendDataBoundItems="true">
-                                <asp:ListItem Text="" Value=""></asp:ListItem>
+                                <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
                                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SAsegurador" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 

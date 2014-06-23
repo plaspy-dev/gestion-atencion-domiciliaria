@@ -104,8 +104,9 @@
                         </Columns>
                     </asp:GridView>
                     <asp:SqlDataSource ID="SAlertas" runat="server" 
-                        ConnectionString="" 
-                        SelectCommand="">
+                        SelectCommand="SELECT NULL AS id,NULL AS nombre"
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" >
                     </asp:SqlDataSource>
                 </ContentTemplate>
             </asp:UpdatePanel>

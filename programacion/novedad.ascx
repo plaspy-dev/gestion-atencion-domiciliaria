@@ -14,7 +14,7 @@
             source: function(request, response) {
                 $.ajax({
                     url: "../webservices/servicios.asmx/GetPersonalC",
-                    data: "{ 'q': '" + request.term + "', 's': '<%= HIdServicio.Value %>', c: null }",
+                    data: "{ 'q': '" + request.term + "', 's': '<%= HIdServicio.Value %>' }",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",

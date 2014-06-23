@@ -31,7 +31,7 @@ public partial class paciente_informes : System.Web.UI.Page
 
         Usuario usuario= Usuario.GetUsuario();
         if (!usuario.CanPrint())
-            SResultados.SelectCommand = SResultados.SelectCommand.Insert(7, "TOP 10 ");
+            SResultados.SelectCommand += " LIMIT 10";
         ViewState["entidades"] = usuario["entidades"];
 
         GResultados.AllowPaging = false;

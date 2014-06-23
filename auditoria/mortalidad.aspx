@@ -63,7 +63,7 @@
                             LEFT JOIN paciente ON (paciente.pacId=paciente_egreso.pacId)
                             LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
                             WHERE paciente_egreso.cegId=1
-                            AND paciente_egreso.egrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                            AND DATE(paciente_egreso.egrFecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                             AND (@entidad=0 OR @entidad=paciente.entId)
                             GROUP BY paciente.pacId,pacDocumento,pacNombres,entNombre,egrFecha
                             ORDER BY paciente_egreso.egrFecha">

@@ -328,14 +328,17 @@ public partial class farmacia_estado : System.Web.UI.Page
         }
 
         // LCostos.Text = ",['2012/02/02', 15.15],['2012/02/01', 16.15]";
-        GKardex.FooterRow.Cells[Utilidades.GetGridColumnIndex(GKardex, "Concepto")].Text = "Total sin acumulado";
-        GKardex.FooterRow.Cells[columnaentrada].Text = string.Format("{0:F}", entradas - saldoa);
-        GKardex.FooterRow.Cells[columnasalida].Text = string.Format("{0:F}", salidas);
-        GKardex.FooterRow.Cells[columnaCostoTEntrada].Text = string.Format("{0:C}", costoentradas - costosaldoa);
-        GKardex.FooterRow.Cells[columnaCostoTSalida].Text = string.Format("{0:C}", costosalidas);
-        GKardex.FooterRow.Cells[columnasaldo].Text = string.Format("{0:F}", entradas - saldoa - salidas);
-        //GKardex.FooterRow.Cells[columnaCostoPromedio].Text = costop.ToString();
-        GKardex.FooterRow.Cells[columnaCostoTSaldo].Text = string.Format("{0:C}", costoentradas - costosaldoa - costosalidas);
+        if (GKardex.FooterRow != null)
+        {
+            GKardex.FooterRow.Cells[Utilidades.GetGridColumnIndex(GKardex, "Concepto")].Text = "Total sin acumulado";
+            GKardex.FooterRow.Cells[columnaentrada].Text = string.Format("{0:F}", entradas - saldoa);
+            GKardex.FooterRow.Cells[columnasalida].Text = string.Format("{0:F}", salidas);
+            GKardex.FooterRow.Cells[columnaCostoTEntrada].Text = string.Format("{0:C}", costoentradas - costosaldoa);
+            GKardex.FooterRow.Cells[columnaCostoTSalida].Text = string.Format("{0:C}", costosalidas);
+            GKardex.FooterRow.Cells[columnasaldo].Text = string.Format("{0:F}", entradas - saldoa - salidas);
+            //GKardex.FooterRow.Cells[columnaCostoPromedio].Text = costop.ToString();
+            GKardex.FooterRow.Cells[columnaCostoTSaldo].Text = string.Format("{0:C}", costoentradas - costosaldoa - costosalidas);
+        }
 
         LDias.Text = LRotacion.Text = "";
         try

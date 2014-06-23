@@ -3,19 +3,13 @@
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tiny_mce.js"></script>
+<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
 <script type="text/javascript">
     function lim() {
         var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
         $("#<%= TPlanManejo.ClientID %>").val(limpio);
         var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
         editor.setContent(completa);
-    }
-    function blurevent(ed) {
-        tinyMCE.dom.Event.add(ed.getWin(), "blur", function(e) {
-            tinyMCE.triggerSave();
-            lim();
-        });
     }
     function rel(text) {
         text = text.replace(/\r/gi, '');
@@ -43,29 +37,32 @@
             active: false
         });
         FullRowSelect("#<%= GParaclinicos.ClientID %>");
+        
         tinyMCE.init({
-            mode: "exact",
-            elements: "elm1",
-            theme: "advanced",
-            readonly: <%= TPlanManejo.ReadOnly ? "true" : "false" %>,
-            theme_advanced_buttons1: "",
-            theme_advanced_buttons2: "",
-            theme_advanced_buttons3: "",
-            valid_elements: "ol,li,p,br",
-            setup: function(ed) {
+            mode: "exact"
+            ,selector: '#elm1' 
+            ,readonly: <%= TPlanManejo.ReadOnly ? "true" : "false" %>
+            ,menubar:false
+            ,statusbar: false
+            ,toolbar: false
+            ,valid_elements: "ol,li,p,br"
+            ,setup: function(ed) {
                 editor = ed;
-                ed.onSubmit.add(function(ed, e) {
+                ed.on('submit', function(e) {
                     lim();
                 });
-                ed.onInit.add(function(ed) {
+                ed.on('init', function(ed) {
                     var completa = $("#<%= TPlanManejo.ClientID %>").val();
                     completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
                     editor.setContent(completa);
-                    blurevent(ed);
                     $("#elm1").remove();
                 });
-            },
-            paste_preprocess: function(pl, o) {
+                ed.on('blur', function(e) {
+                    tinyMCE.triggerSave();
+                    lim();
+                });
+            }
+            ,paste_preprocess: function(pl, o) {
                 o.content = o.content.replace(/<\S[^><]*>/g, "");
             }
         });

@@ -64,7 +64,7 @@
             source: function(request, response) {
                 $.ajax({
                     url: "../webservices/servicios.asmx/GetPersonalC",
-                    data: "{ 'q': '" + request.term + "', 's': '" + $("#<%= DActividad.ClientID %>").val().split("_")[0] + "', c: null }",
+                    data: "{ 'q': '" + request.term + "', 's': '" + $("#<%= DActividad.ClientID %>").val() + "' }",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
@@ -133,7 +133,7 @@
                                 AND autorizacion.pacId=@paciente
                                 {0}
                                 AND SYSDATE()<=IFNULL(autFechaVenc+30,autFecha+60)
-                                AND autorizacion_detalle.autNumSesiones>(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId AND (programacion.intensidad=autorizacion_detalle.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL)))
+                                AND autorizacion_detalle.autNumSesiones>(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId)
                                 GROUP BY autorizacion.autNumero">
 			                <SelectParameters>
 			                    <asp:ControlParameter ControlID="HIdPaciente" PropertyName="Value" Name="paciente" DefaultValue="0" />
@@ -159,10 +159,10 @@
                 <asp:SqlDataSource ID="SActividad" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="SELECT CONCAT(autorizacion_detalle.actId,'_',IFNULL(autorizacion_detalle.intensidad,'')) AS id
+                    SelectCommand="SELECT autorizacion_detalle.actId AS id
                         ,medicamentos.nombre AS nombre
                         ,autorizacion_detalle.autNumSesiones
-                        ,(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId AND (programacion.intensidad=autorizacion_detalle.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL))) AS realizadas
+                        ,(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId) AS realizadas
                         FROM autorizacion
                         LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
                         LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
@@ -170,7 +170,7 @@
                         autorizacion.pacId=@paciente
                         AND autorizacion.autNumero=@autorizacion 
                         {0}
-                        AND autorizacion_detalle.autNumSesiones>(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId AND (programacion.intensidad=autorizacion_detalle.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL)))
+                        AND autorizacion_detalle.autNumSesiones>(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId)
                         ORDER BY medicamentos.nombre">
                         <SelectParameters>
                             <asp:ControlParameter ControlID="HIdPaciente" PropertyName="Value" Name="paciente" DefaultValue="0" />

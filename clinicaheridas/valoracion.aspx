@@ -18,7 +18,7 @@
     text-decoration: line-through;
 }
 </style>
-<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tiny_mce.js"></script>
+<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
 <script type="text/javascript">
     $inicio(function() {
 
@@ -143,36 +143,32 @@
             editor.setContent(completa);
         }
     
-        function blurevent(ed) {
-            tinyMCE.dom.Event.add(ed.getWin(), "blur", function(e) {
-                tinyMCE.triggerSave();
-                lim();
-            });
-        }
-    
+        
         tinyMCE.init({
-            mode: "exact",
-            elements: "elm1",
-            theme: "advanced",
-            readonly: <%= TPlanManejo.ReadOnly ? "true" : "false" %>,
-            theme_advanced_buttons1: "",
-            theme_advanced_buttons2: "",
-            theme_advanced_buttons3: "",
-            valid_elements: "ol,li,p,br",
-            setup: function(ed) {
+            mode: "exact"
+            ,selector: '#elm1' 
+            ,readonly: <%= TPlanManejo.ReadOnly ? "true" : "false" %>
+            ,menubar:false
+            ,statusbar: false
+            ,toolbar: false
+            ,valid_elements: "ol,li,p,br"
+            ,setup: function(ed) {
                 editor = ed;
-                ed.onSubmit.add(function(ed, e) {
+                ed.on('submit', function(e) {
                     lim();
                 });
-                ed.onInit.add(function(ed) {
+                ed.on('init', function(ed) {
                     var completa = $("#<%= TPlanManejo.ClientID %>").val();
                     completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
                     editor.setContent(completa);
-                    blurevent(ed);
                     $("#elm1").remove();
                 });
-            },
-            paste_preprocess: function(pl, o) {
+                ed.on('blur', function(e) {
+                    tinyMCE.triggerSave();
+                    lim();
+                });
+            }
+            ,paste_preprocess: function(pl, o) {
                 o.content = o.content.replace(/<\S[^><]*>/g, "");
             }
         });
@@ -191,9 +187,9 @@
                     <tr>
                         <td style="text-align: justify"><b>Indicaciones</b><br />
 Tenga en cuenta  que la evaluación detallada de esta valoración depende  el plan de intervención requerido<br />
-En datos subjetivos  para la escala de dolor registre el numero segun corresponda.<br />
-Marque con una (x) según corresponda en la localización, etiologia, <br />
-para la medición de la herida inserte el aplicador de algodón, mantenga los dedos en la superfivie de la piel y mida desde los dedos hasta la punta, registre los cms o mms.<br />
+En datos subjetivos  para la escala de dolor registre el número según corresponda.<br />
+Marque con una (x) según corresponda en la localización, etiología, <br />
+para la medición de la herida inserte el aplicador de algodón, mantenga los dedos en la superficie de la piel y mida desde los dedos hasta la punta, registre los cms o mms.<br />
 Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecillas del reloj donde las 12 inicia de forma cefalocaudal, registre 12, 3, 6, 9.</td>
                         <td><img src="casa.jpg" /></td>
                     </tr>

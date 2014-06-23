@@ -160,7 +160,10 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                 return;
             UCAutorizaciones.Value = HIdPaciente.Value = value;
 
-            LFechaNacimiento.Text = Query.GetFromMySQLDate(paciente.FechaNac) + " ";
+            try
+            {
+                LFechaNacimiento.Text = Convert.ToDateTime(paciente.FechaNac).ToShortDateString() + " ";
+            } catch { }
             if(paciente.Edad!=-1)
                 LEdad.Text = paciente.Edad + " años";
             

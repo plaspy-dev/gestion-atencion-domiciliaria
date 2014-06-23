@@ -53,11 +53,8 @@ public partial class gerencia_programacion : System.Web.UI.Page
             if (titulo.Text.Length == 0)
             {
                 HiddenField field = e.Item.Parent==RServicios ? (HiddenField)e.Item.FindControl("HId") : (HiddenField)e.Item.FindControl("HId2");
-                HiddenField fieldi = e.Item.Parent == RServicios ? (HiddenField)e.Item.FindControl("Hi") : (HiddenField)e.Item.FindControl("Hi2");
 
                 titulo.Text = Procedimientos.GetProcedimiento(field.Value);
-                if (fieldi.Value.Length > 0)
-                    titulo.Text += " [" + Procedimientos.GetVarios(fieldi.Value) + "]";
             }
 
             if (e.Item.Parent == RServicios)

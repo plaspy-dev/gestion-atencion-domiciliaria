@@ -14,6 +14,9 @@ public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+#if DEBUG
+        Controls.Add(new LiteralControl("<style type='text/css'>.red{background-color: Red;}</style>"));
+#endif
         if (!IsPostBack)
         {
             string end = Request.QueryString["end"];

@@ -63,12 +63,12 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Plan educativo", 39, parent);
             // Add("Varios Inferior (Hoja de ingreso)", 6, parent); // eliminado.
 
-            parent = Add("Indice de Barthel");
-            Add("Grupos", 7, parent);
+            parent = Add("Índices o escalas");
+            Add("Barthel", 7, parent);
+            Add("Braden", 40, parent);
+            Add("Cruz Roja", 76, parent);
+            Add("Norton", 78, parent);
             // Add("Indice de Barthel", 8, parent);
-
-            parent = Add("Escala Braden");
-            Add("Grupos", 40, parent);
 
             parent = Add("Hoja de gastos");
             Add("Suministros", 9, parent);
@@ -160,7 +160,7 @@ public partial class administrador_Default : System.Web.UI.Page
             parent = Add("Facturación");
             Add("Causal devolución", 74, parent);
             Add("Causal glosa", 75, parent);
-            // disponible 76
+            // disponible 80
 
 
             if (HTipo.Value.Length == 0)

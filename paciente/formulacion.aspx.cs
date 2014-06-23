@@ -20,7 +20,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
         public int IdGrid { get; set; }
         public string Id { get; set; }
         public string IdMedicamento { get; set; }
-        public string IdIntensidad { get; set; }
         public string Formulada { get; set; }
         public string Posologia { get; set; }
         public string Tiempo { get; set; }
@@ -28,13 +27,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
         public string Codigo { get; set; }
 
         public string Nombre { get; set; }
-        public string Intensidad
-        {
-            get
-            {
-                return Procedimientos.GetVarios(IdIntensidad);
-            }
-        }
 
         public Medicamento(int idgrid) {
             IdGrid = idgrid;
@@ -135,9 +127,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         if (DTipo.Items.FindByValue(Request.QueryString["tf"]) != null)
                             DTipo.SelectedValue = Request.QueryString["tf"];
 
-                        Utilidades.GetGridColumn(GFormulacion, "Intensidad").Visible= 
-                        trIntensidad.Visible = DTipo.SelectedValue == idprocedimientos;
-
                         TMedicamentoID.AutoPostBack = DTipo.SelectedValue == idprocedimientos;
 
                         if (DTipo.SelectedIndex != -1)
@@ -148,11 +137,11 @@ public partial class paciente_formulacion : System.Web.UI.Page
                                 singular = DTipo.SelectedItem.Text.Substring(0, DTipo.SelectedItem.Text.Length - 1);
                             }
                             else singular = DTipo.SelectedItem.Text;
-                            GFormulacion.Columns[5].HeaderText = LPosologia.Text = conector.QueryString("SELECT descripcion FROM varios WHERE id=" + DTipo.SelectedValue);
+                            GFormulacion.Columns[4].HeaderText = LPosologia.Text = conector.QueryString("SELECT descripcion FROM varios WHERE id=" + DTipo.SelectedValue);
                             if (LPosologia.Text.ToLower() != "posología")
                             {
+                                GFormulacion.Columns[5].Visible = false;
                                 GFormulacion.Columns[6].Visible = false;
-                                GFormulacion.Columns[7].Visible = false;
                                 trPosologia.Visible = false;
                             }
 
@@ -201,7 +190,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
                             qmedicamentos["posologia"] = "medicamento_formulacion.posologia";
                             qmedicamentos["via"] = "medicamento_formulacion.via";
                             qmedicamentos["tiempo"] = "medicamento_formulacion.tiempo";
-                            qmedicamentos["intensidad"] = "medicamento_formulacion.intensidad";
                             qmedicamentos["codigo"] = "IF(hoja_sola IS NULL, medicamentos.codigo, 'hoja_sola')";
 
                             readermysql = conector.Query(qmedicamentos.GetSelect("formulacion=" + HIdFormulacion.Value + " ORDER BY medicamentos.hoja_sola IS NULL OR (codigo>900000 AND codigo<921100)"
@@ -218,7 +206,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
                                     info.Nombre = Procedimientos.GetNombreMedicamento(info.IdMedicamento);
                                     info.Via = readermysql["via"].ToString();
                                     info.Tiempo = readermysql["tiempo"].ToString();
-                                    info.IdIntensidad = readermysql["intensidad"].ToString();
                                     info.Codigo = readermysql["codigo"].ToString();
                                     medicamentos.Add(info);
                                 }
@@ -285,13 +272,11 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         + " WHERE"
                         + " formulacion.paciente={0}"
                         + " AND medicamento_formulacion.medicamento={2}"
-                        + " AND (({3}='' AND medicamento_formulacion.intensidad IS NULL) OR medicamento_formulacion.intensidad={3} )"
                         + " ORDER BY formulacion.fecha DESC"
                         + " LIMIT 1"
                         , Query.GetValor(CCDetallePaciente.IdPaciente)
                         , Query.GetValor(Query.GetMySQLDateFormat(TFecha.Text))
                         , Query.GetValor(TMedicamentoID.Text)
-                        , Query.GetValor(DIntensidad.SelectedValue)
                         ));
                     try
                     {
@@ -407,7 +392,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
         info.Nombre = TMedicamento.Text;
         info.Via = TVia.Text;
         info.Tiempo = TTiempo.Text;
-        info.IdIntensidad = DIntensidad.SelectedValue;
 
         HFormulacion.Value = Serializar.SerializeBinary(medicamentos);
         GFormulacion.SelectedIndex = -1;
@@ -417,8 +401,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
         BAceptar.OnClientClick = GFormulacion.Rows.Count == 0 ? "confirm('¿Está seguro de guardar la orden sin medicamentos o procedimientos?')" : "";
 
         TMedicamentoID.Text= TCantidad.Text= TPosologia.Text = TMedicamento.Text = TVia.Text = TTiempo.Text= "";
-        DIntensidad.SelectedIndex = -1;
-        TMedicamentoID_TextChanged(null, null);
 
         CCDetallePaciente.GetCostoPacienteActual = 0;
         CCDetallePaciente.GetCostoAseguradoraActual = 0;
@@ -567,7 +549,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 medicamento["via"] = info.Via;
                 medicamento["tiempo"] = info.Tiempo;
                 medicamento["costo"] = Procedimientos.GetCosto(info.IdMedicamento, CCDetallePaciente.AsegurdadorID).ToString(CultureInfo.InvariantCulture);
-                medicamento["intensidad"] = info.IdIntensidad;
 
                 if (string.IsNullOrEmpty(info.Id))
                 {
@@ -642,8 +623,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
             TPosologia.Text = info.Posologia;
             TTiempo.Text = info.Tiempo;
             TVia.Text = info.Via;
-            TMedicamentoID_TextChanged(sender, e);
-            Utilidades.SelectInDropDown(DIntensidad, info.IdIntensidad);
         }
     }
 
@@ -656,14 +635,11 @@ public partial class paciente_formulacion : System.Web.UI.Page
         for (; i < GFormulacion.Rows.Count && i < inicio + numero_medicamentos; i++)
         {
             resultado += "<tr><td>" + GFormulacion.Rows[i].Cells[2].Text + "</td>";
-            resultado += "<td>" + NumerosALetras.ToLetras(Convert.ToInt32(GFormulacion.Rows[i].Cells[4].Text)).ToUpper() + " (" + GFormulacion.Rows[i].Cells[4].Text + ")</td>";
-            resultado += "<td>" + GFormulacion.Rows[i].Cells[5].Text + "</td>";
+            resultado += "<td>" + NumerosALetras.ToLetras(Convert.ToInt32(GFormulacion.Rows[i].Cells[3].Text)).ToUpper() + " (" + GFormulacion.Rows[i].Cells[3].Text + ")</td>";
+            resultado += "<td>" + GFormulacion.Rows[i].Cells[4].Text + "</td>";
             if(trPosologia.Visible) {
+                resultado += "<td>" + GFormulacion.Rows[i].Cells[5].Text + "</td>";
                 resultado += "<td>" + GFormulacion.Rows[i].Cells[6].Text + "</td>";
-                resultado += "<td>" + GFormulacion.Rows[i].Cells[7].Text + "</td>";
-            }
-            if(trIntensidad.Visible) {
-                resultado += "<td>" + GFormulacion.Rows[i].Cells[Utilidades.GetGridColumnIndex(GFormulacion, "Intensidad")].Text + "</td>";
             }
             resultado += "</tr>";
         }
@@ -675,10 +651,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
             if (trPosologia.Visible)
             {
                 resultado += "<td>&nbsp;</td>";
-                resultado += "<td>&nbsp;</td>";
-            }
-            if (trIntensidad.Visible)
-            {
                 resultado += "<td>&nbsp;</td>";
             }
             resultado += "</tr>";
@@ -700,10 +672,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             encabezado += "<td align='center'><strong>Tiempo</strong></td>";
             encabezado += "<td align='center'><strong>Vía</strong></td>";
         }
-        if (trIntensidad.Visible)
-        {
-            encabezado += "<td align='center'><strong>Intensidad</strong></td>";
-        }
+        
         evento.Contenido = evento.Contenido.Replace("$GFormulacionHeader$", encabezado);
 
         Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
@@ -880,16 +849,6 @@ public partial class paciente_formulacion : System.Web.UI.Page
     protected void IIr_Click(object sender, ImageClickEventArgs e)
     {
         Response.Redirect("~/paciente/formulacion.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + string.Format("{0:d}", Convert.ToDateTime(((ImageButton)sender).CommandArgument)) + "&tf=" + ((ImageButton)sender).CommandName);
-    }
-
-    protected void TMedicamentoID_TextChanged(object sender, EventArgs e)
-    {
-        DIntensidad.DataBind();
-        RIntensidad.Visible = DIntensidad.Items.Count > 0;
-        DIntensidad.Items.Insert(0, new ListItem("(Ninguna)", ""));
-        DIntensidad.SelectedIndex = 0;
-        if(sender==TMedicamentoID)
-            DIntensidad.Focus();
     }
 
     protected void GFormulacion_RowDeleting(object sender, GridViewDeleteEventArgs e)

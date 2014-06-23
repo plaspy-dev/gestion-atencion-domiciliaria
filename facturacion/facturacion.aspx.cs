@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 
 public partial class facturacion_facturacion : System.Web.UI.Page
 {
+    public decimal valor_servicios = 0;
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
@@ -23,6 +24,8 @@ public partial class facturacion_facturacion : System.Web.UI.Page
 
             CUsuario usuario = (CUsuario)Usuario.GetUsuario();
             ViewState["entidades"] = usuario["entidades"];
+            GDevoluciones.Columns[1].Visible = usuario.CanDelete();
+
             using (CConector conector = new CConector())
             {
                 if (Request.QueryString["aut"] != null)
@@ -58,10 +61,10 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                         HIdEntidad.Value = reader["entId"].ToString();
                         TNumero.Text = reader["autNumero"].ToString();
                         TPaciente.Text = reader["pacId"].ToString();
-                        TFecha.Text = reader["autFecha"].ToString();
-                        TVencimiento.Text = reader["autFechaVenc"].ToString();
-                        TValor.Text = reader["total"].ToString();
-                        TObservaciones.Text = reader["autObservaciones"].ToString();
+                        LFecha.Text = Query.GetFromMySQLDate(reader["autFecha"]);
+                        LVencimiento.Text = Query.GetFromMySQLDate(reader["autFechaVenc"]);
+                        LValor.Text = reader["total"].ToString();
+                        LObservaciones.Text = reader["autObservaciones"].ToString();
 
                         if (reader["autActivo"].ToString().ToLower() == "false")
                         {
@@ -92,7 +95,6 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                         query += "autorizacion";
                         query += "factura";
                         query += "glosa_conciliacion";
-                        query += "segunda_factura";
 
                         MySqlDataReader readermy = conector.Query(query.GetSelect("autorizacion=" + Query.GetValor(Request.QueryString["aut"])));
                         if (readermy != null && readermy.Read()) {
@@ -100,10 +102,8 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                             BAceptar.Enabled = Usuario.GetInstance().CanUpdate();
                             ViewState["autorizacion"] = readermy["autorizacion"].ToString();
                             TFactura.Text = readermy["factura"].ToString();
-                            TFactura2.Text = readermy["segunda_factura"].ToString();
                             TConciliacion.Text = Query.GetFromMySQLDate(readermy["glosa_conciliacion"]);
                             TFactura_TextChanged(sender, e);
-                            TFactura2_TextChanged(sender, e);
                             BD_OnClicked(sender, e);
                         }
                     }
@@ -115,6 +115,7 @@ public partial class facturacion_facturacion : System.Web.UI.Page
     protected void BD_OnClicked(object sender, EventArgs e)
     {
         PDevolucion.Visible = TDevolucion.Text.Length > 0;
+        BADevolucion.Enabled = Usuario.GetInstance().CanInsert();
     }
 
     protected void TFactura_TextChanged(object sender, EventArgs e) {
@@ -123,6 +124,7 @@ public partial class facturacion_facturacion : System.Web.UI.Page
         TVencimientoF.Text= 
             TPago.Text= 
             TRadicacion.Text=
+            LVFactura.Text= 
             TFFactura.Text = "";
         
         if (TFactura.Text.Length == 0)
@@ -132,13 +134,15 @@ public partial class facturacion_facturacion : System.Web.UI.Page
 
             Query query = new Query("factura");
 
-            query += "fecha";
-            query += "radicacion";
-            query += "vencimiento";
-            query += "pago";
-            query += "devolucion";
+            query += "factura.fecha";
+            query += "factura.radicacion";
+            query += "factura.vencimiento";
+            query += "factura.pago";
+            query["valor"]= "SUM(facturacion_autorizacion_servicio.valor)";
 
-            MySqlDataReader reader= conector.Query(query.GetSelect("factura=" + Query.GetValor(TFactura.Text)));
+            MySqlDataReader reader = conector.Query(query.GetSelect("factura.factura=" + Query.GetValor(TFactura.Text) + " GROUP BY factura.factura"
+                                                        , @"LEFT JOIN facturacion_autorizacion ON (facturacion_autorizacion.factura=factura.factura)
+                                                        LEFT JOIN facturacion_autorizacion_servicio ON (facturacion_autorizacion_servicio.autorizacion=facturacion_autorizacion.autorizacion)"));
             if (reader != null && reader.Read()) {
 
                 ViewState["factura"] = TFactura.Text;
@@ -146,39 +150,11 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                 TRadicacion.Text = Query.GetFromMySQLDate(reader["radicacion"]);
                 TPago.Text = Query.GetFromMySQLDate(reader["pago"]);
                 TVencimientoF.Text = Query.GetFromMySQLDate(reader["vencimiento"]);
-                TDevolucion.Text = Query.GetFromMySQLDate(reader["devolucion"]);
-            }
-        }
-    }
-
-    protected void TFactura2_TextChanged(object sender, EventArgs e)
-    {
-        ViewState["factura2"] = null;
-        TVencimientoF2.Text =
-            TPago2.Text =
-            TRadicacion2.Text =
-            TFFactura2.Text = "";
-
-        if (TFactura2.Text.Length == 0)
-            return;
-
-        using (CConector conector = new CConector())
-        {
-            Query query = new Query("factura");
-
-            query += "fecha";
-            query += "radicacion";
-            query += "vencimiento";
-            query += "pago";
-
-            MySqlDataReader reader = conector.Query(query.GetSelect("factura=" + Query.GetValor(TFactura2.Text)));
-            if (reader != null && reader.Read())
-            {
-                ViewState["factura2"] = TFactura2.Text;
-                TFFactura2.Text = Query.GetFromMySQLDate(reader["fecha"]);
-                TRadicacion2.Text = Query.GetFromMySQLDate(reader["radicacion"]);
-                TPago2.Text = Query.GetFromMySQLDate(reader["pago"]);
-                TVencimientoF2.Text = Query.GetFromMySQLDate(reader["vencimiento"]);
+                try { 
+                    decimal valor= Convert.ToDecimal(reader["valor"]);
+                    LVFactura.Text = string.Format("{0:C0}", valor);
+                    ScriptManager.RegisterClientScriptBlock(PTodo, typeof(string), "valorf", "valor_factura=" + (valor - valor_servicios).ToString(CultureInfo.InvariantCulture) + ";", true);
+                } catch { }
             }
         }
     }
@@ -198,11 +174,9 @@ public partial class facturacion_facturacion : System.Web.UI.Page
             Query query = new Query("facturacion_autorizacion");
             
             query["factura"]= TFactura.Text;
-            query["segunda_factura"] = PDevolucion.Visible ? "" : TFactura2.Text;
             query["glosa_conciliacion"]= Query.GetMySQLDateFormat(TConciliacion.Text);
             query["entidad"] = Paciente.GetPaciente(HIdPaciente.Value).entidadId;
             query["paciente"] = HIdPaciente.Value;
-            query["segunda_factura"]= TFactura2.Text;
 
             if (string.IsNullOrEmpty(id))
             {
@@ -226,7 +200,6 @@ public partial class facturacion_facturacion : System.Web.UI.Page
             query["radicacion"] = Query.GetMySQLDateFormat(TRadicacion.Text);
             query["vencimiento"] = Query.GetMySQLDateFormat(TVencimientoF.Text);
             query["pago"] = Query.GetMySQLDateFormat(TPago.Text);
-            query["devolucion"] = Query.GetMySQLDateFormat(TDevolucion.Text);
 
             if (string.IsNullOrEmpty((string)ViewState["factura"]))
             {
@@ -234,32 +207,9 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                 if (conector.QueryMod(query.GetInsert()) == -1)
                     return;
             } else { 
-                if(conector.QueryMod(query.GetUpdate("factura=" + Query.GetValor(TFFactura.Text)))==-1)
+                if(conector.QueryMod(query.GetUpdate("factura=" + Query.GetValor(TFactura.Text)))==-1)
                     return;
             }
-
-            if (PDevolucion.Visible && TFactura2.Text.Length>0)
-            {
-                query = new Query("factura");
-
-                query["fecha"] = Query.GetMySQLDateFormat(TFFactura2.Text);
-                query["radicacion"] = Query.GetMySQLDateFormat(TRadicacion2.Text);
-                query["vencimiento"] = Query.GetMySQLDateFormat(TVencimientoF2.Text);
-                query["pago"] = Query.GetMySQLDateFormat(TPago2.Text);
-
-                if (string.IsNullOrEmpty((string)ViewState["factura2"]))
-                {
-                    query["factura"] = TFactura2.Text;
-                    if (conector.QueryMod(query.GetInsert()) == -1)
-                        return;
-                }
-                else
-                {
-                    if (conector.QueryMod(query.GetUpdate("factura=" + Query.GetValor(TFFactura2.Text))) == -1)
-                        return;
-                }
-            }
-
 
             query = new Query("facturacion_autorizacion_servicio");
 
@@ -269,7 +219,6 @@ public partial class facturacion_facturacion : System.Web.UI.Page
             foreach(GridViewRow row in GActivades.Rows) {
 
                 query["procedimiento"] = GActivades.DataKeys[row.RowIndex].Values["actId"].ToString();
-                query["intensidad"] = GActivades.DataKeys[row.RowIndex].Values["intensidad"].ToString();
                 query["cantidad"]= ((TextBox)row.FindControl("TC")).Text;
                 query["valor"] = ((TextBox)row.FindControl("TV")).Text.Replace(",", "").Replace("$", "");
                 query["autorizado"] = GActivades.DataKeys[row.RowIndex].Values["autNumSesiones"].ToString();
@@ -297,28 +246,6 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                 }
             }
 
-            query = new Query("factura_devolucion");
-
-            if (conector.QueryMod(query.GetDelete("factura=" + Query.GetValor(TFactura.Text))) == -1)
-                return;
-
-            if (PDevolucion.Visible)
-            {
-                query["factura"] = TFactura.Text;
-
-                foreach (GridViewRow row in GDevolucion.Rows)
-                {
-                    if (((CheckBox)row.FindControl("CC")).Checked)
-                    {
-                        query["causal"] = GDevolucion.DataKeys[row.RowIndex].Value.ToString();
-                        query["valor"] = ((TextBox)row.FindControl("TV")).Text.Replace("$", "").Replace(",", "");
-
-                        if (conector.QueryMod(query.GetInsert()) == -1)
-                            return;
-                    }
-                }
-            }
-
             conector.Commit();
         }
 
@@ -328,6 +255,83 @@ public partial class facturacion_facturacion : System.Web.UI.Page
     protected void BCancelar_Click(object sender, EventArgs e)
     {
         Response.Redirect(Request.Url.AbsolutePath);
+    }
+
+    protected void BADevolucion_Click(object sender, EventArgs e) {
+
+        if (!IsValid)
+            return;
+
+        // la factura tiene que existir.
+        if (string.IsNullOrEmpty((string)ViewState["factura"]))
+            return;
+
+        using (CConector conector = new CConector())
+        {
+            conector.StartTransaction();
+            Query query = new Query("factura_devolucion");
+            string id = GDevoluciones.SelectedValue.ToString();
+
+            query["factura"] = TFactura.Text;
+            query["antigua_radicacion"] = Query.GetMySQLDateFormat(TRadicacion.Text);
+            query["devolucion"] = Query.GetMySQLDateFormat(TDevolucion.Text);
+
+            if (string.IsNullOrEmpty(id))
+            {
+                int res = conector.QueryMod(query.GetInsert(), true);
+                if (res == -1)
+                    return;
+                id = res.ToString();
+            } else {
+                if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(id))) == -1)
+                    return;
+            }
+
+            query = new Query("factura_causal_devolucion");
+
+            if (conector.QueryMod(query.GetDelete("factura_devolucion=" + Query.GetValor(id))) == -1)
+                return;
+
+            query["factura_devolucion"] = id;
+
+            foreach (GridViewRow row in GDevolucion.Rows)
+            {
+                if (((CheckBox)row.FindControl("CC")).Checked)
+                {
+                    query["causal"] = GDevolucion.DataKeys[row.RowIndex].Value.ToString();
+                    query["valor"] = ((TextBox)row.FindControl("TV")).Text.Replace("$", "").Replace(",", "");
+
+                    if (conector.QueryMod(query.GetInsert()) == -1)
+                        return;
+                }
+            }
+
+            // insertamos la factura
+            if (GDevoluciones.SelectedIndex == -1)
+            {
+                query = new Query("factura");
+
+                query["radicacion"] = "";
+
+                if (conector.QueryMod(query.GetUpdate("factura=" + Query.GetValor(TFactura.Text))) == -1)
+                    return;
+            }
+
+            ViewState["radicacion"]=null;
+            BCDevolucion_Click(sender, e);
+            conector.Commit();
+
+            GDevoluciones.DataBind();
+        }
+    }
+
+    protected void BCDevolucion_Click(object sender, EventArgs e) {
+
+        TRadicacion.Text = (string)ViewState["radicacion"];
+        GDevoluciones.SelectedIndex = -1;
+        TDevolucion.Text = "";
+        GDevolucion.DataBind();
+        BD_OnClicked(sender, e);
     }
 
     protected void BIr_Click(object sender, EventArgs e)
@@ -388,7 +392,6 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                 LCategoria.Text += (paciente.TipoAfiliacion == "1" ? "Cotizante" : "Beneficiario");
             }
 
-            TFecha.Focus();
             GAutorizaciones.DataBind();
             LAutorizaciones.Text = GAutorizaciones.Rows.Count + " Autorizaci";
             LAutorizaciones.Text += GAutorizaciones.Rows.Count == 1 ? "ón" : "ones";
@@ -410,55 +413,12 @@ public partial class facturacion_facturacion : System.Web.UI.Page
         Response.Redirect("~/facturacion/facturacion.aspx?aut=" + ((ImageButton)sender).CommandArgument);
     }
 
-    protected void GActividades_RowDataBound(object sender, GridViewRowEventArgs e) {
+    protected void GDevoluciones_SelectedIndexChanged(object sender, EventArgs e) {
 
-        if (e.Row.RowIndex != -1) {
-            TableCell cell = e.Row.Cells[Utilidades.GetGridColumnIndex(GActivades, "Intensidad")];
-            cell.Text = Procedimientos.GetVarios(cell.Text);
+        ViewState["radicacion"]= TRadicacion.Text;
 
-            cell = e.Row.Cells[Utilidades.GetGridColumnIndex(GActivades, "Actividad")];
-            cell.Text = Procedimientos.GetProcedimiento(cell.Text);
-
-            using (CConector conector = new CConector())
-            {
-                Query query = new Query("facturacion_autorizacion_servicio");
-
-                query += "valor";
-                query += "cantidad";
-
-                MySqlDataReader reader = conector.Query(query.GetSelect(string.Format("autorizacion={0} AND procedimiento={1} AND intensidad={2}"
-                                                                    , Query.GetValor(HIdAutorizacion.Value)
-                                                                    , Query.GetValor(GActivades.DataKeys[e.Row.RowIndex].Values["actId"].ToString())
-                                                                    , Query.GetValor(GActivades.DataKeys[e.Row.RowIndex].Values["intensidad"].ToString())
-                                                                    )));
-                if (reader != null && reader.Read()) {
-                    ((TextBox)e.Row.FindControl("TC")).Text = reader["cantidad"].ToString();
-                    try { ((TextBox)e.Row.FindControl("TV")).Text = Convert.ToDecimal(reader["valor"]).ToString(CultureInfo.InvariantCulture); } catch {}
-                }
-            }
-        }
-    }
-
-    protected void GAutorizaciones_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        /*if (e.Row.RowIndex != -1)
-        {
-
-            int pos = e.Row.Cells[3].Text.IndexOf("%%");
-            while (pos != -1)
-            {
-
-                string texto = "";
-                for (int i = pos + 2; i < e.Row.Cells[3].Text.Length; i++)
-                {
-                    if (e.Row.Cells[3].Text[i] == ' ')
-                        break;
-                    texto += e.Row.Cells[3].Text[i];
-                }
-                e.Row.Cells[3].Text = e.Row.Cells[3].Text.Replace("%%" + texto, Procedimientos.GetProcedimiento(texto));
-                pos = e.Row.Cells[3].Text.IndexOf("%%");
-            }
-            e.Row.Cells[3].Text = e.Row.Cells[3].Text.Replace(",", "<br/>");
-        }*/
+        TRadicacion.Text= Utilidades.GetGridCellText(GDevoluciones, "Radicación", GDevoluciones.SelectedIndex);
+        TDevolucion.Text = Utilidades.GetGridCellText(GDevoluciones, "Devolución", GDevoluciones.SelectedIndex);
+        BD_OnClicked(sender, e);
     }
 }

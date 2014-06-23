@@ -193,7 +193,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         producto.cantidad = Convert.ToDecimal(TCantidad.Text, CultureInfo.InvariantCulture);
         try
         {
-            producto.Costo = Decimal.Parse(TCosto.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture);
+            producto.Costo = Decimal.Parse(TCosto.Text, NumberStyles.Currency, CultureInfo.InvariantCulture);
         }
         catch { }
         producto.GetValor(UCPaciente.IdPaciente,m_nAlmacen);
@@ -226,9 +226,12 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         TCosto.Text = TProducto.Text = TProductoID.Text = TCantidad.Text = "";
         TProducto.Focus();
 
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+        if (GProductos.FooterRow != null)
+        {
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+        }
 
         productousadoNuevo.GetProductosUsados().Add(producto);
         HProductos.Value = productousadoNuevo.Serialize();
@@ -483,9 +486,12 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         GProductos.DataSource = productoUsado.GetProductosUsados();
         GProductos.DataBind();
         HUsado.Value = productoUsado.SerializeBinary();
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+        if (GProductos.FooterRow != null)
+        {
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+        }
 
         e.Cancel = true;
     }
@@ -517,6 +523,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                 .Replace("$TPaciente$", paciente.DocumentoYNombres.Replace("Inactivo - ", ""))
                 .Replace("$szTelefono$", paciente.Telefono)
                 .Replace("$szAsegurador$", paciente.NombreEntidad)
+                .Replace("$szBarrio$", paciente.Barrio)
                 .Replace("$szPrioridad$", CPrioridad.Checked ? "Prioritaria" : "Normal")
                 .Replace("$szIniciales$", new Tercero(TTerceroID.Text).Nombre.Substring(0, 2))
                 .Replace("$szNumero$", TNumero.Text.PadLeft(3, '0'))

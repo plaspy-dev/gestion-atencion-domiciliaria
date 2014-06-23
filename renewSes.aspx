@@ -1,1 +1,0 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="renewSes.aspx.cs" Inherits="renewSes" %>

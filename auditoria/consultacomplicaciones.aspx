@@ -66,7 +66,7 @@
                                 ,(SELECT GROUP_CONCAT(varios.nombre SEPARATOR '<br/>') FROM consecuencias_evento_adverso LEFT JOIN varios ON (consecuencias_evento_adverso.consecuencia=varios.id) WHERE consecuencias_evento_adverso.evento=evento_adverso.id) AS consecuencia
                                 FROM evento_adverso
                                 WHERE 
-                                fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                                DATE(fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                                 AND (@asegurador=0 OR @asegurador=entidad)
                                 ORDER BY fecha;">
                  <SelectParameters>

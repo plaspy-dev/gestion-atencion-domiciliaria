@@ -11,7 +11,6 @@ public class Autorizaciones
     public class Detalle {
         public string Actividad { get; set; }
         public int Cantidad { get; set; }
-        public string Intensidad { get; set; }
         public string NombreCorto {
             get
             {
@@ -22,10 +21,7 @@ public class Autorizaciones
             }
         }
         public string NombreCompleto { get {
-            string nombre=Actividad;
-            if (Intensidad.Length > 0)
-                nombre += " [" + Intensidad + "]";
-            return nombre;
+            return Actividad;
         } }
         public Detalle() {}
     }
@@ -61,7 +57,6 @@ public class Autorizaciones
                         
                         detalle += "actId";
                         detalle += "autNumSesiones";
-                        detalle += "intensidad";
 
                         while (reader.Read())
                         {
@@ -79,7 +74,6 @@ public class Autorizaciones
                                     Detalle infodetalle = new Detalle();
                                     infodetalle.Actividad= Procedimientos.GetProcedimiento(reader2["actId"].ToString());
                                     infodetalle.Cantidad = Convert.ToInt32(reader2["autNumSesiones"]);
-                                    infodetalle.Intensidad = Procedimientos.GetVarios(reader2["intensidad"].ToString());
 
                                     info.detalles.Add(infodetalle);
                                 }
@@ -105,8 +99,7 @@ public class Autorizaciones
                             + " WHERE"
                             + " programacion.autNumero=autorizacion_detalle.autNumero AND programacion.actId=autorizacion_detalle.actId "
                             //+ " AND programacion.prgActivo=1 "
-                            + " AND (programacion.intensidad=autorizacion_detalle.intensidad OR (programacion.intensidad IS NULL AND autorizacion_detalle.intensidad IS NULL)))"
-                            + " WHERE autNumero={0}", Query.GetValor(autorizacion));
+                            + ") WHERE autNumero={0}", Query.GetValor(autorizacion));
         if (conector.QueryMod(query) == -1)
             return false;
         return true;

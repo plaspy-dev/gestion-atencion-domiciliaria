@@ -38,19 +38,19 @@ public partial class administrador_grupos : System.Web.UI.Page
             BAceptar.Enabled = usuario.CanInsert();
 
             TNombre.Focus();
-            ArrayList parents= new ArrayList();
-            ArrayList menu = Usuario.GetUsuario().GetFullMenu();
+            List<Parents> parents = new List<Parents>();
+            List<CURLs> menu = Usuario.GetUsuario().GetFullMenu();
             for(int i=0; i<menu.Count; i++) {
 
-                CURLs url = (CURLs)menu[i];
+                CURLs url = menu[i];
                 /*if (url.m_bNativo)
                 {*/
                 if (url.Parent=="__no__" || url.Parent.Length == 0)
                     continue;
                 Parents padre=null;
                 for (int j = 0; j < parents.Count; j++ ) {
-                    if(((Parents) parents[j]).parent==url.Parent) {
-                        padre = (Parents)parents[j];
+                    if((parents[j]).parent==url.Parent) {
+                        padre = parents[j];
                         break;
                     }
                 }
@@ -166,12 +166,12 @@ public partial class administrador_grupos : System.Web.UI.Page
     }
     protected void LGrupos_SelectedIndexChanged(object sender, EventArgs e)
     {
-        ArrayList parents = new ArrayList();
-        ArrayList menu = Usuario.GetUsuario().GetFullMenu();
+        List<Parents> parents = new List<Parents>();
+        List<CURLs> menu = Usuario.GetUsuario().GetFullMenu();
 
         for (int i = 0; i < menu.Count; i++)
         {
-            CURLs url = (CURLs)menu[i];
+            CURLs url = menu[i];
             /*if (url.m_bNativo)
             {*/
             if (url.Parent == "__no__" || url.Parent.Length == 0)
@@ -179,9 +179,9 @@ public partial class administrador_grupos : System.Web.UI.Page
             Parents padre = null;
             for (int j = 0; j < parents.Count; j++)
             {
-                if (((Parents)parents[j]).parent == url.Parent)
+                if ((parents[j]).parent == url.Parent)
                 {
-                    padre = (Parents)parents[j];
+                    padre = parents[j];
                     break;
                 }
             }
@@ -228,7 +228,7 @@ public partial class administrador_grupos : System.Web.UI.Page
                         int nPermisos = Convert.ToInt32(reader["permiso"]);
                         for (int i = 0; i < parents.Count; i++)
                         {
-                            Parents pagina = (Parents)parents[i];
+                            Parents pagina = parents[i];
                             Permisos info = pagina.FindURL(url);
                             if (info != null)
                             {

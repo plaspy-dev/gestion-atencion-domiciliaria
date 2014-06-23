@@ -87,7 +87,7 @@
 	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5028,10026) GROUP BY autNumero) AS tlenguaje ON (tlenguaje.autNumero=autorizacion.autNumero)
 	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (5021,5022,5033,10013,10029,10030,10031,10032,10033,10034) GROUP BY autNumero) AS vmedica ON (vmedica.autNumero=autorizacion.autNumero)
     WHERE paciente.entId IN (7,8)
-    AND autorizacion.AutFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+    AND DATE(autorizacion.AutFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
 	GROUP BY paciente.pacNombres,paciente.pacFechaNac,paciente.pacDocumento,paciente.entId,paciente.pacFecIngPrograma,paciente.cieCodDx,paciente.cieCodDx_1,paciente.cieCodDx_2,paciente.pacObservaciones">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TDesde" Name="inicio" PropertyName="Text" />
@@ -226,7 +226,7 @@
 	LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN (10028) OR (actId=5024 AND intensidad IN (205)) GROUP BY autNumero) AS laboratorio ON (laboratorio.autNumero=autorizacion.autNumero)
 	-- LEFT JOIN (SELECT autNumero,SUM(autNumSesiones) AS autNumSesiones FROM autorizacion_detalle WHERE actId IN () GROUP BY autNumero) AS prolaboratorio ON (prolaboratorio.autNumero=autorizacion.autNumero)
     WHERE paciente.entId IN (4,25,62) -- aliansalud, colmedica mp, cruce
-    AND autorizacion.AutFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+    AND DATE(autorizacion.AutFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
 	GROUP BY 
 	tipo_documento.tdocDescripcion
 	,paciente.pdirId

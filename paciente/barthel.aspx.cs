@@ -19,6 +19,11 @@ public partial class paciente_barthel : System.Web.UI.Page
         ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
         if (!IsPostBack)
         {
+            foreach (Calificacion.Escalas info in (Calificacion.Escalas[])Enum.GetValues(typeof(Calificacion.Escalas)))
+            {
+                DIndice.Items.Add(new ListItem(Calificacion.GetNombreEscala(info), ((int)info).ToString()));
+            }
+
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
 
             if (!string.IsNullOrEmpty(Request.QueryString["ioe"]))
@@ -174,9 +179,29 @@ public partial class paciente_barthel : System.Web.UI.Page
                     conector.QueryMod(analisis.GetInsert());
                 }
             }
-            if(Usuario.GetUsuario().GetForceURL().Length!=0 && DIndice.SelectedValue==((int)Calificacion.Escalas.Barthel).ToString())
-                Usuario.GetUsuario().SetForceURL(Usuario.GetUsuario().GetForceURL() + "&ioe=" + ((int)Calificacion.Escalas.Braden).ToString(), conector);
-            else Usuario.GetUsuario().SetForceURL("", conector);
+
+            if (Usuario.GetUsuario().GetForceURL().Length != 0)
+            {
+                bool found = false;
+                Calificacion.Escalas? proximaescala = null;
+                foreach (Calificacion.Escalas escala in (Calificacion.Escalas[])Enum.GetValues(typeof(Calificacion.Escalas)))
+                {
+                    if (DIndice.SelectedValue == ((int)escala).ToString()) // actualmente esta en esta
+                    {
+                        found = true;
+                        continue;
+                    }
+                    if (found)
+                    {
+                        proximaescala = escala;
+                        break;
+                    }
+                }
+                if(proximaescala!=null)
+                    Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)) + "&ioe=" + ((int)proximaescala.Value).ToString(), conector);
+                else Usuario.GetUsuario().SetForceURL("", conector);
+            }
+
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
             ((MasterPageI)Master).SetResultado(mensaje);
         }
@@ -285,7 +310,7 @@ public partial class paciente_barthel : System.Web.UI.Page
 
     protected void DIndice_SelectedIndexChanged(object sender, EventArgs e)
     {
-        LIncapacidad.Text = DIndice.SelectedValue=="8" ? "La incapacidad se valora como " : "Riesgo de padecer úlceras por presión ";
+        LIncapacidad.Text = Calificacion.GetMensajeDescripcion(DIndice.SelectedValue);
         ScriptManager.RegisterClientScriptBlock(LIncapacidad, typeof(string), "escala", Calificacion.GetArrayMessages(DIndice.SelectedValue), true);
     }
 }

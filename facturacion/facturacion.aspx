@@ -1,8 +1,16 @@
-﻿<%@ Page Title="Facturación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="facturacion.aspx.cs" Inherits="facturacion_facturacion" %>
+﻿<%@ Page Title="Facturación autorización" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="facturacion.aspx.cs" Inherits="facturacion_facturacion" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
+var valor_factura=0;
 addFunctionToStart(function() {
+        $(".facturado").change(function() {
+            var total=0;
+            $(".facturado").each(function() {
+                total+=parseInt($(this).autoNumeric('get')) || 0;
+            });
+            $("#<%= LVFactura.ClientID %>").html(currencyFormatted(valor_factura+total));
+        }).change();
         $("#<%= TPaciente.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -148,7 +156,7 @@ addFunctionToStart(function() {
                     <h3><a href="#"><asp:Label runat="server" ID="LAutorizaciones"></asp:Label></a></h3>
                     <div class="hide">
                         <asp:GridView ID="GAutorizaciones" runat="server" AutoGenerateColumns="False"  Width="100%"
-                            DataKeyNames="autNumero" DataSourceID="SAutorizaciones" OnRowDataBound="GAutorizaciones_RowDataBound"
+                            DataKeyNames="autNumero" DataSourceID="SAutorizaciones" 
                             EmptyDataText="No se encontraron autorizaciones de este usuario" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -199,19 +207,19 @@ addFunctionToStart(function() {
             <td>
                 Fecha</td>
             <td>
-                <asp:TextBox ID="TFecha" CssClass="fecha" runat="server" ReadOnly="true"></asp:TextBox>
+                <asp:Label runat="server" ID="LFecha"></asp:Label>
             </td>
             <td>
                 Vencimiento</td>
             <td>
-                <asp:TextBox ID="TVencimiento" CssClass="fecha" runat="server" ReadOnly="true"></asp:TextBox>
+                <asp:Label runat="server" ID="LVencimiento"></asp:Label>
             </td>
         </tr>
         <tr>
             <td style="white-space: nowrap">
                 Valor autorización</td>
             <td>
-                <asp:TextBox ID="TValor" CssClass="dinero" runat="server" ReadOnly="true"></asp:TextBox>
+                <asp:Label runat="server" ID="LValor"></asp:Label>
             </td>
             <td>
                 </td>
@@ -259,7 +267,7 @@ addFunctionToStart(function() {
         <tr>
             <td colspan="4">
                 <asp:GridView ID="GActivades" runat="server" DataSourceID="SActividades"  Width="100%"
-                    AutoGenerateColumns="False" DataKeyNames="actId,intensidad,autNumSesiones" OnRowDataBound="GActividades_RowDataBound">
+                    AutoGenerateColumns="False" DataKeyNames="actId,autNumSesiones">
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -267,18 +275,17 @@ addFunctionToStart(function() {
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
-                            <asp:BoundField DataField="actId" HeaderText="Actividad" ItemStyle-Width="100%" />
+                            <asp:BoundField DataField="actividad" HeaderText="Actividad" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="autNumSesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="autSesionesDia" HeaderText="Ses./día" ItemStyle-HorizontalAlign="Right" />
-                            <asp:BoundField DataField="intensidad" HeaderText="Intensidad" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
                             <asp:TemplateField HeaderText="Cantidad facturada" ItemStyle-HorizontalAlign="Right">
                                 <ItemTemplate>
-                                    <asp:TextBox runat="server" ID="TC" CssClass="entero" Width="20px" Text='<%# Eval("autNumSesiones") %>'></asp:TextBox>
+                                    <asp:TextBox runat="server" ID="TC" CssClass="entero" Width="20px" Text='<%# Eval("facturada") %>'></asp:TextBox>
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Valor facturado" ItemStyle-HorizontalAlign="Right">
                                 <ItemTemplate>
-                                    <asp:TextBox runat="server" ID="TV" CssClass="dinero"></asp:TextBox>
+                                    <asp:TextBox runat="server" ID="TV" CssClass="dinero facturado" Text='<%# Eval("valor")==DBNull.Value ? "" : Convert.ToDecimal(Eval("valor")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>'></asp:TextBox>
                                 </ItemTemplate>
                             </asp:TemplateField>
                         </Columns>
@@ -287,8 +294,14 @@ addFunctionToStart(function() {
                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                         SelectCommand="SELECT autorizacion_detalle.actId,autorizacion_detalle.autNumSesiones
-                            ,autorizacion_detalle.autSesionesDia, IFNULL(autorizacion_detalle.intensidad,0) AS intensidad
+                            ,autorizacion_detalle.autSesionesDia
+                            ,medicamentos.nombre AS actividad
+                            ,IFNULL(facturacion_autorizacion_servicio.cantidad,autorizacion_detalle.autNumSesiones) AS facturada
+                            ,facturacion_autorizacion_servicio.valor
                             FROM autorizacion_detalle
+                            LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
+                            LEFT JOIN facturacion_autorizacion_servicio ON (facturacion_autorizacion_servicio.autorizacion=autorizacion_detalle.autNumero 
+                                                                            AND facturacion_autorizacion_servicio.procedimiento=autorizacion_detalle.actId)
                             WHERE autorizacion_detalle.autNumero=@autorizacion;">
                           <SelectParameters>
                             <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="-1" />
@@ -300,7 +313,7 @@ addFunctionToStart(function() {
             <td>
                 Observaciones</td>
             <td colspan="3">
-                <asp:TextBox ID="TObservaciones" runat="server" TextMode="MultiLine" Width="99%" ReadOnly="true"></asp:TextBox>
+                <asp:Label runat="server" id="LObservaciones"></asp:Label>
             </td>
         </tr>
         <tr>
@@ -310,20 +323,23 @@ addFunctionToStart(function() {
             <td class="tdl">Numero de factura<asp:RequiredFieldValidator ControlToValidate="TFactura" ErrorMessage="Por favor ingrese una factura." ID="RequiredFieldValidator4" 
 	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td><asp:TextBox runat="server" ID="TFactura" CssClass="entero" AutoPostBack="true" OnTextChanged="TFactura_TextChanged"></asp:TextBox></td>
-            <td>Fecha<asp:RequiredFieldValidator ControlToValidate="TFFactura" ErrorMessage="Por favor ingrese una fecha de facturación." ID="RequiredFieldValidator1" 
-	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-            <td class="tdr"><asp:TextBox runat="server" ID="TFFactura" CssClass="fecha"></asp:TextBox></td>
+            <td>Valor</td>
+            <td class="tdr"><asp:Label runat="server" ID="LVFactura"></asp:Label></td>
         </tr>
         <tr>
-            <td class="tdl">Radicación</td>
-            <td><asp:TextBox runat="server" ID="TRadicacion" CssClass="fecha"></asp:TextBox></td>
+            <td class="tdl">Fecha<asp:RequiredFieldValidator ControlToValidate="TFFactura" ErrorMessage="Por favor ingrese una fecha de facturación." ID="RequiredFieldValidator1" 
+	                        runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td><asp:TextBox runat="server" ID="TFFactura" CssClass="fecha"></asp:TextBox></td>
             <td>Vencimiento</td>
             <td class="tdr"><asp:TextBox runat="server" ID="TVencimientoF" CssClass="fecha"></asp:TextBox></td>
         </tr>
         <tr>
-            <td class="tdl">Pago</td>
-            <td><asp:TextBox runat="server" ID="TPago" CssClass="fecha"></asp:TextBox></td>
-            <td>Devolución</td>
+            <td class="tdl">Radicación<asp:RequiredFieldValidator ControlToValidate="TRadicacion" ErrorMessage="Por favor ingrese una fecha de radicación." ID="RequiredFieldValidator3"  ValidationGroup="devolucion"
+	                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+	            </td>
+            <td><asp:TextBox runat="server" ID="TRadicacion" CssClass="fecha"></asp:TextBox></td>
+            <td>Devolución<asp:RequiredFieldValidator ControlToValidate="TDevolucion" ErrorMessage="Por favor ingrese un fecha de devolución." ID="RequiredFieldValidator5" 
+	runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="devolucion">*</asp:RequiredFieldValidator></td>
             <td class="tdr"><asp:TextBox runat="server" ID="TDevolucion" CssClass="fecha rfecha"></asp:TextBox>
             <asp:Button runat="server" ID="BD" CssClass="hide" OnClick="BD_OnClicked" CausesValidation="false" />
             </td>
@@ -333,7 +349,7 @@ addFunctionToStart(function() {
             <td colspan="4" class="celdaTitulo">Devolución</td>
         </tr>
         <tr>
-            <td colspan="4">
+            <td colspan="4" class="tdr tdl">
                 <asp:GridView ID="GDevolucion" runat="server" AutoGenerateColumns="False" DataSourceID="SDevolucion" EmptyDataText="" DataKeyNames="id" Width="100%">
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -358,13 +374,66 @@ addFunctionToStart(function() {
                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                         ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                         SelectCommand="SELECT varios.id, varios.nombre 
-                            ,factura_devolucion.causal
-                            ,factura_devolucion.valor
+                            ,factura_causal_devolucion.causal
+                            ,factura_causal_devolucion.valor
                             FROM varios 
-                            LEFT JOIN factura_devolucion ON (factura_devolucion.factura=@factura AND factura_devolucion.causal=varios.id)
+                            LEFT JOIN factura_causal_devolucion ON (factura_causal_devolucion.factura_devolucion=@factura_devolucion AND factura_causal_devolucion.causal=varios.id)
                             WHERE 
                             varios.tipo=74 AND varios.szReservado IS NULL 
                             ORDER BY varios.nombre">
+                          <SelectParameters>
+                            <asp:ControlParameter ControlID="GDevoluciones" PropertyName="SelectedValue" Name="factura_devolucion" DefaultValue="-1" />
+                          </SelectParameters>
+                    </asp:SqlDataSource>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4" align="right" class="tdl tdr tdb">
+                <asp:Button runat="server" ID="BADevolucion" Text="Agregar" onclick="BADevolucion_Click" ValidationGroup="devolucion" />
+                <asp:Button runat="server" ID="BCDevolucion" Text="Cancelar" onclick="BCDevolucion_Click" CausesValidation="false" />
+            </td>
+        </tr>
+        </asp:PlaceHolder>
+        <tr>
+            <td colspan="4" class="celdaTitulo">Devoluciones</td>
+        </tr>
+        <tr>
+            <td colspan="4" class="tdl tdr">
+                <asp:GridView ID="GDevoluciones" runat="server" AutoGenerateColumns="False" 
+                    DataSourceID="SDevoluciones" EmptyDataText="No se encontraron devoluciones" 
+                    DataKeyNames="id" Width="100%" onselectedindexchanged="GDevoluciones_SelectedIndexChanged">
+                    <RowStyle CssClass="GridRow"></RowStyle>
+                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                    <Columns>
+                        <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                        <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                        <asp:BoundField HeaderText="Radicación" SortExpression="antigua_radicacion" DataField="antigua_radicacion" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" />
+                        <asp:BoundField HeaderText="Devolución" SortExpression="devolucion" DataField="devolucion" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" />
+                        <asp:BoundField HeaderText="Valor" SortExpression="valor" DataField="valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" />
+                        <asp:BoundField HeaderText="Causal" SortExpression="causal" DataField="causal" ItemStyle-Width="100%" />
+                </Columns>
+               </asp:GridView>
+               <asp:SqlDataSource ID="SDevoluciones" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        DeleteCommand="DELETE FROM factura_devolucion WHERE id=@id"
+                        SelectCommand="SELECT 
+                                        factura_devolucion.id
+                                        ,factura_devolucion.antigua_radicacion
+                                        ,factura_devolucion.devolucion
+                                        ,GROUP_CONCAT(causal.nombre) AS causal
+                                        ,SUM(factura_causal_devolucion.valor) AS valor
+                                        FROM factura_devolucion 
+                                        LEFT JOIN factura_causal_devolucion ON (factura_causal_devolucion.factura_devolucion=factura_devolucion.id)
+                                        LEFT JOIN varios AS causal ON (causal.id=factura_causal_devolucion.causal)
+                                        WHERE 
+                                        factura_devolucion.factura=@factura
+                                        GROUP BY factura_devolucion.id
+                                        ORDER BY factura_devolucion.antigua_radicacion DESC">
                           <SelectParameters>
                             <asp:ControlParameter ControlID="TFactura" PropertyName="Text" Name="factura" DefaultValue="-1" />
                           </SelectParameters>
@@ -372,27 +441,14 @@ addFunctionToStart(function() {
             </td>
         </tr>
         <tr>
-            <td colspan="4" class="celdaTitulo">Segunda factura</td>
+            <td class="tdl tdb">Pago</td>
+            <td class="tdb"><asp:TextBox runat="server" ID="TPago" CssClass="fecha"></asp:TextBox></td>
+            <td class="tdb"></td>
+            <td class="tdr tdb"></td>
         </tr>
         <tr>
-            <td class="tdl">Numero de factura</td>
-            <td><asp:TextBox runat="server" ID="TFactura2" CssClass="entero" AutoPostBack="true" OnTextChanged="TFactura2_TextChanged"></asp:TextBox></td>
-            <td>Fecha</td>
-            <td class="tdr"><asp:TextBox runat="server" ID="TFFactura2" CssClass="fecha"></asp:TextBox></td>
+            <td colspan="4">&nbsp;</td>
         </tr>
-        <tr>
-            <td class="tdl">Radicación</td>
-            <td><asp:TextBox runat="server" ID="TRadicacion2" CssClass="fecha"></asp:TextBox></td>
-            <td>Vencimiento</td>
-            <td class="tdr"><asp:TextBox runat="server" ID="TVencimientoF2" CssClass="fecha"></asp:TextBox></td>
-        </tr>
-        <tr>
-            <td class="tdl">Pago</td>
-            <td><asp:TextBox runat="server" ID="TPago2" CssClass="fecha"></asp:TextBox></td>
-            <td></td>
-            <td class="tdr"></td>
-        </tr>
-        </asp:PlaceHolder>
         <tr>
             <td colspan="4" class="celdaTitulo">Glosa</td>
         </tr>

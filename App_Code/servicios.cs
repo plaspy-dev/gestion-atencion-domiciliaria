@@ -70,7 +70,7 @@ public class servicios : System.Web.Services.WebService
         }
     };
 
-    [WebMethod(EnableSession = true)]
+    /*[WebMethod(EnableSession = true)]
     public List<CJSon> GetIntensidad(String q, string proc)
     {
         List<CJSon> lista = new List<CJSon>();
@@ -103,7 +103,7 @@ public class servicios : System.Web.Services.WebService
             }
         }
         return lista;
-    }
+    }*/
 
     [WebMethod(EnableSession = true)]
     public List<CJSon> GetUbicacion(String q, string a)

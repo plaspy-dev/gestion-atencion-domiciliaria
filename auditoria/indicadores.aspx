@@ -122,17 +122,17 @@
                         (SELECT COUNT(*) FROM paciente_egreso 
                         LEFT JOIN causa_egreso ON (causa_egreso.cegId=paciente_egreso.cegId)
                         LEFT JOIN paciente ON (paciente.pacId=paciente_egreso.pacId)
-                        WHERE (@eps=0 OR paciente.entId=@eps) AND paciente_egreso.egrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND causa_egreso.cegDescripcion='MUERTE') AS muertos
+                        WHERE (@eps=0 OR paciente.entId=@eps) AND DATE(paciente_egreso.egrFecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND causa_egreso.cegDescripcion='MUERTE') AS muertos
                         ,(SELECT COUNT(DISTINCT autNumero) FROM autorizacion WHERE 
                         (@eps=0 OR autorizacion.entId=@eps) AND 
-                        autNumero IN (SELECT programacion.autNumero FROM programacion WHERE prgFechaProg BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y'))) AS atendidos
+                        autNumero IN (SELECT programacion.autNumero FROM programacion WHERE DATE(prgFechaProg) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y'))) AS atendidos
                         ,
                         (SELECT COUNT(*) FROM paciente_egreso
                         LEFT JOIN causa_egreso ON (causa_egreso.cegId=paciente_egreso.cegId)
                         LEFT JOIN paciente ON (paciente.pacId=paciente_egreso.pacId) 
                         WHERE 
                         (@eps=0 OR paciente.entId=@eps) AND 
-						paciente_egreso.egrFecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') 
+						DATE(paciente_egreso.egrFecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') 
                         AND 
 						(causa_egreso.cegDescripcion LIKE 'REINGRESO POR AGUDIZACION' OR causa_egreso.cegDescripcion='REINGRESO POR PATOLOGIA ANEXA' OR causa_egreso.cegDescripcion='REINGRESO POR CANALIZACIÓN FALLIDA')
                         ) AS egresos
@@ -224,13 +224,13 @@
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT 
-                                (SELECT COUNT(*) FROM evento_adverso WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')) AS eventos
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=150 OR tipo=154 OR tipo=160 OR tipo=153)) AS farmacologico
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=147 OR tipo=149)) AS epidemologicos
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=147 OR tipo=149 OR tipo=157 OR tipo=158)) AS apoyoterapeutico
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=157 OR tipo=158 OR tipo=156 )) AS lesionesapoyo
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=156 OR tipo=158 OR tipo=157)) AS autolesion
-                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND evento_adverso.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=160 OR tipo=151 OR tipo=155 )) AS atencion
+                                (SELECT COUNT(*) FROM evento_adverso WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND DATE(evento_adverso.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')) AS eventos
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND DATE(evento_adverso.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=150 OR tipo=154 OR tipo=160 OR tipo=153)) AS farmacologico
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND DATE(evento_adverso.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=147 OR tipo=149)) AS epidemologicos
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND DATE(evento_adverso.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=147 OR tipo=149 OR tipo=157 OR tipo=158)) AS apoyoterapeutico
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND DATE(evento_adverso.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=157 OR tipo=158 OR tipo=156 )) AS lesionesapoyo
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND DATE(evento_adverso.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=156 OR tipo=158 OR tipo=157)) AS autolesion
+                                ,(SELECT COUNT(DISTINCT evento_adverso.id) FROM evento_adverso LEFT JOIN tipo_evento_adverso ON (tipo_evento_adverso.evento=evento_adverso.id) WHERE (@eps=0 OR evento_adverso.entidad=@eps) AND DATE(evento_adverso.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (tipo=148 OR tipo=146 OR tipo=161 OR tipo=160 OR tipo=151 OR tipo=155 )) AS atencion
                                 ;">
                      <SelectParameters>
                         <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
@@ -267,7 +267,7 @@
                                 paciente.cieCodDx IS NOT NULL
                                 AND (@eps=0 OR paciente.entId=@eps)
                                 AND autorizacion.autNumero IN 
-                                (SELECT autNumero FROM programacion WHERE prgFechaProg BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y'))
+                                (SELECT autNumero FROM programacion WHERE DATE(prgFechaProg) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y'))
                                 GROUP BY cie10.cieCodDx,cie10.cirDescripcion ORDER BY c DESC LIMIT 10">
                              <SelectParameters>
                                 <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />

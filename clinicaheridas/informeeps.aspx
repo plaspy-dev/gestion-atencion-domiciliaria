@@ -120,9 +120,8 @@
                                 LEFT JOIN formulacion ON (formulacion.paciente=valoracion_herida.paciente AND formulacion.fecha=valoracion_herida.fecha)
                                 LEFT JOIN medicamento_formulacion ON (formulacion.id=medicamento_formulacion.formulacion)
                                 LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)
-                                LEFT JOIN varios ON (varios.id=medicamento_formulacion.intensidad)
                                 WHERE 
-                                valoracion_herida.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                                DATE(valoracion_herida.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                                 AND (@asegurador=0 OR @asegurador=valoracion_herida.asegurador)
                                 GROUP BY idherida
                             ) UNION ALL (
@@ -166,9 +165,8 @@
                                 LEFT JOIN formulacion ON (formulacion.paciente=evolucion_herida.paciente AND formulacion.fecha=evolucion_herida.fecha)
                                 LEFT JOIN medicamento_formulacion ON (formulacion.id=medicamento_formulacion.formulacion)
                                 LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)
-                                LEFT JOIN varios ON (varios.id=medicamento_formulacion.intensidad)
                                 WHERE 
-                                evolucion_herida.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
+                                DATE(evolucion_herida.fecha) BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y')
                                 AND (@asegurador=0 OR @asegurador=evolucion_herida.asegurador)
                                 GROUP BY idherida
                             )

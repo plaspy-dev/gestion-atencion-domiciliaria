@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using System.Globalization;
 
 public partial class farmacia_gastos : System.Web.UI.Page
 {
@@ -28,13 +29,15 @@ public partial class farmacia_gastos : System.Web.UI.Page
     protected void Totalizar(List<GridViewRow> rows, string columna)
     {
         int col = Utilidades.GetGridColumnIndex(GResultados, columna);
-        GResultados.FooterRow.Cells[col].Text = rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : Convert.ToInt32(x.Cells[col].Text)).ToString();
+        if(GResultados.FooterRow!=null) 
+            GResultados.FooterRow.Cells[col].Text = rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : Convert.ToInt32(x.Cells[col].Text)).ToString();
     }
 
     protected void TotalizarDinero(List<GridViewRow> rows, string columna)
     {
         int col = Utilidades.GetGridColumnIndex(GResultados, columna);
-        GResultados.FooterRow.Cells[col].Text = string.Format("{0:C0}",rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : Convert.ToDecimal(x.Cells[col].Text.Replace("$", ""))));
+        if(GResultados.FooterRow!=null) 
+            GResultados.FooterRow.Cells[col].Text = string.Format("{0:C0}", rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : decimal.Parse(x.Cells[col].Text, NumberStyles.Currency)));
     }
 
     protected void BBuscar_Click(object sender, EventArgs e)

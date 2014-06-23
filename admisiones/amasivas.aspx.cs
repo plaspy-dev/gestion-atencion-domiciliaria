@@ -202,19 +202,10 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             Page.Validate("procedimiento");
             if (!Page.IsValid)
                 return;
-
-            if (Procedimientos.HasIntensidad(TProcedimientoID.Text) && DIntensidad.SelectedValue.Length == 0)
-            {
-                LMensaje.Text = "Por favor ingrese una intensidad para el procedimiento.";
-                DIntensidad.Focus();
-                return;
-            }
         }
 
         IOrderedDictionary data = new OrderedDictionary();
         data.Add("procedimiento", TProcedimiento.Text);
-        data.Add("tint", DIntensidad.SelectedItem == null ? "" : DIntensidad.SelectedItem.Text);
-        data.Add("idint", DIntensidad.SelectedValue.Length == 0 ? null : DIntensidad.SelectedValue);
         data.Add("sesionesdia", TSesionesDia.Text.Length == 0 ? null : TSesionesDia.Text);
         data.Add("numerosesiones", TNumeroSesiones.Text);
         data.Add("proc_id", TProcedimientoID.Text);
@@ -233,8 +224,6 @@ public partial class admisiones_amasivas : System.Web.UI.Page
             dataold.Add("procedimiento", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim());
             dataold.Add("sesionesdia", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim());
             dataold.Add("numerosesiones", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim());
-            dataold.Add("tint", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[6].Text).Trim());
-            dataold.Add("idint", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
             dataold.Add("proc_id", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim());
             dataold.Add("id", GActivades.DataKeys[GActivades.SelectedIndex].Value);
 
@@ -244,7 +233,6 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         GActivades.DataBind();
 
         TProcedimientoID.Text = TProcedimiento.Text = TSesionesDia.Text = TNumeroSesiones.Text = "";
-        BIntensidad_Clicked(sender, e);
         TProcedimiento.Focus();
     }
 
@@ -262,17 +250,8 @@ public partial class admisiones_amasivas : System.Web.UI.Page
         TProcedimiento.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim();
         TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
         TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
-        Utilidades.SelectInDropDown(DIntensidad, HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[7].Text).Trim());
         TProcedimientoID.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim();
 
         TProcedimiento.Focus();
-    }
-
-    protected void BIntensidad_Clicked(object sender, EventArgs e)
-    {
-        DIntensidad.DataBind();
-        RIntensidad.Visible = DIntensidad.Items.Count > 0;
-        DIntensidad.Items.Insert(0, new ListItem("(Ninguna)", ""));
-        DIntensidad.SelectedIndex = 0;
     }
 }

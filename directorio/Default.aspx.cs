@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MySql.Data.MySqlClient;
 using SDG.Componentes;
 
 public partial class directorio_Default : System.Web.UI.Page
@@ -20,7 +21,7 @@ public partial class directorio_Default : System.Web.UI.Page
             return;
         }
         if (!Usuario.GetUsuario().CanPrint())
-            SResultados.SelectCommand = SResultados.SelectCommand.Insert(7, "TOP 5 ");
+            SResultados.SelectCommand += " LIMIT 5";
         if (IsPostBack)
         {
             Session.Remove("directorioid");

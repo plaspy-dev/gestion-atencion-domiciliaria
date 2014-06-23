@@ -24,7 +24,16 @@
                 || ((HttpException)(exx)).GetHttpCode() == 411) // omitimos los errores 403, 404 y 411 The request body is incomplete.
                 return;
         }
-
+        
+        exx = exx.GetBaseException();
+        if (exx is HttpException)
+        {
+            if (((HttpException)(exx)).GetHttpCode() == 404
+                || ((HttpException)(exx)).GetHttpCode() == 403
+                || ((HttpException)(exx)).GetHttpCode() == 405
+                || ((HttpException)(exx)).GetHttpCode() == 411) // omitimos los errores 403, 404 y 411 The request body is incomplete.    
+                return;
+        }
 #if DEBUG
         SDG.Componentes.Logs.WriteLog(SDG.Componentes.Logs.DumpPage(Server, Request));
 #else

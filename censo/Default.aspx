@@ -92,17 +92,6 @@
                 </asp:SqlDataSource>
             </td>
             <td>
-            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" CssClass="anchomaxcombo"
-                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
-            </asp:DropDownList>
-            <asp:SqlDataSource ID="SIntensidad" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND szReservado IS NULL ORDER BY nombre">
-            </asp:SqlDataSource>
-            </td>
-            <td>
             <asp:DropDownList ID="DCategoria" runat="server" DataSourceID="SCategoria" CssClass="anchomaxcombo"
                 DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                 <asp:ListItem Text="(Todas)" Value="0"></asp:ListItem>
@@ -231,13 +220,12 @@
 							LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
 							LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
                             WHERE 
-                            (autorizacion.autfecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
-                                OR IFNULL(autorizacion.autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y'))
+                            (DATE(autorizacion.autfecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                OR DATE(IFNULL(autorizacion.autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y'))
                             AND (@asegurador=0 OR paciente.entId=@asegurador)
 							AND autorizacion.pacId=paciente.pacId 
 							AND ('@area'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId IN (@area)))
 							AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId=@procedimiento))
-							AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
 							AND ('@categoria'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.intensidad IN (@categoria)))
 					        GROUP BY paciente.pacId
                             ORDER BY paciente.pacNombres">
@@ -246,7 +234,6 @@
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
-                    <asp:ControlParameter ControlID="DIntensidad" PropertyName="SelectedValue" Name="intensidad" />
                  </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SDiario" runat="server" 
@@ -260,7 +247,6 @@
 	                        WHERE @curRow BETWEEN autFecha AND IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)
                              AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
                              AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
-                             AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
                              AND ('@categoria'='0' OR autorizacion_detalle.intensidad IN (@categoria))
 		                        AND (@asegurador=0 OR paciente.entId=@asegurador)
                         ) AS total
@@ -271,7 +257,6 @@
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
-                    <asp:ControlParameter ControlID="DIntensidad" PropertyName="SelectedValue" Name="intensidad" />
                  </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SMensual" runat="server" 
@@ -287,7 +272,6 @@
 		                        OR CONCAT(YEAR(@curRow),LPAD(MONTH(@curRow),2,'0'))=CONCAT(YEAR(IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)),LPAD(MONTH(IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)),2,'0')))
                              AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
                              AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
-                             AND (@intensidad=0 OR autorizacion_detalle.intensidad=@intensidad)
                              AND ('@categoria'='0' OR autorizacion_detalle.intensidad IN (@categoria))
 		                        AND (@asegurador=0 OR paciente.entId=@asegurador)
                         ) AS total
@@ -298,7 +282,6 @@
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
-                    <asp:ControlParameter ControlID="DIntensidad" PropertyName="SelectedValue" Name="intensidad" />
                  </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

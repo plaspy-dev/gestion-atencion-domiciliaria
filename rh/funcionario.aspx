@@ -629,7 +629,7 @@
             <table>
                     <tr>
                         <td>
-                            <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                            <asp:UpdatePanel ID="UEmpresa" runat="server">
                                 <ContentTemplate>
                                     <asp:LinkButton ID="lnkAgInfoLab" CausesValidation="false" runat="server" onclick="lnkAgInfoLab_Click">Agregar Empresa</asp:LinkButton>
                                     <asp:GridView ID="GEmpresas" runat="server" 
@@ -638,10 +638,11 @@
                                         EmptyDataText="No hay información Laboral registrada, haga click en 'Agregar Empresa' para registrar una nueva empresa de la historia laboral" 
                                         onrowdeleting="GEmpresas_RowDeleting" >
                                         <Columns>
-                                            <asp:TemplateField HeaderText="Empresa">
+                                            <asp:TemplateField HeaderText="Empresa" ItemStyle-Wrap="false">
                                                 <ItemTemplate>
-                                                    <asp:TextBox ID="TEmpresa" runat="server" MaxLength="25" 
-                                                        Text='<%#bind("ilabEmpresa")%>' Width="240px"></asp:TextBox>
+                                                    <asp:TextBox ID="TEmpresa" runat="server" MaxLength="25" Text='<%#bind("ilabEmpresa")%>' Width="240px"></asp:TextBox>
+                                                    <asp:RequiredFieldValidator ControlToValidate="TEmpresa" ErrorMessage="Por favor ingrese un empresa." ID="RE" 
+	                                                        runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField HeaderText="Teléfono">

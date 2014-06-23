@@ -26,40 +26,6 @@
             }
         }).change();
 
-        $("#<%= TFuncionario.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPersonal",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                var nombre = ui.item.label;
-                var pos = nombre.indexOf(" - ");
-                if (pos != -1) {
-                    nombre = nombre.substring(pos + 3);
-                }
-                $("#<%= TFuncionario.ClientID %>").val(nombre);
-                $("#<%= TFuncionarioID.ClientID %>").val(ui.item.value);
-                return false;
-            }
-        });
-
         // seguimiento
         addDialog('#<%= PISeguimiento.ClientID%>', "#dSeguimiento");
 
@@ -70,24 +36,14 @@
                 mostrar ? tr.show() : tr.hide();
                 tr = tr.next();
             } while (tr.next().length);
-            ValidatorEnable($("#<%= RQue.ClientID %>")[0], mostrar);
-            ValidatorEnable($("#<%= RQuien.ClientID %>")[0], mostrar);
-            ValidatorEnable($("#<%= RComo.ClientID %>")[0], mostrar);
-            ValidatorEnable($("#<%= RPorque.ClientID %>")[0], mostrar);
         }).change();
     });
     function OnValidateClick(Source, args) {
 
         args.IsValid = true;
         if ($("#<%= CCerrar.ClientID %>").is(":checked")) {
-
-            args.IsValid =
-                $("#<%= CRUsuario.ClientID %>").is(":checked") &&
-                $("#<%= CRTelefonica.ClientID %>").is(":checked") &&
-                $("#<%= FArchivo.ClientID %>").val().length > 0 &&
-                ($("#<%= CRAsegurador.ClientID %>").is(":checked") ||
-                $("#<%= CRVigilancia.ClientID %>").is(":checked"))
-                ;
+            args.IsValid = $("#<%= CRUsuario.ClientID %>").is(":checked") &&
+                $("#<%= FArchivo.ClientID %>").val().length > 0;
         }
     }
 </script>
@@ -139,48 +95,12 @@
                 </asp:SqlDataSource></td>
             </tr>
             <tr>
-                <td colspan="4" class="celdaTitulo">Personal involucrado</td>
-            </tr>
-            <tr>
-                <td colspan="4">
-                    <asp:GridView ID="GPersonal" runat="server" AutoGenerateColumns="False"  Width="100%"
-                        DataKeyNames="Id" EmptyDataText="" ShowHeader="false" 
-                        onselectedindexchanged="GPersonal_SelectedIndexChanged" >
-                        <RowStyle CssClass="GridRow"></RowStyle>
-                        <FooterStyle CssClass="GridFooter"></FooterStyle>
-                        <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-                        <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-                        <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-                        <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-                        <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/eliminar.gif" />
-                            <asp:BoundField DataField="Nombre" HeaderText="Nombre" ItemStyle-Width="100%" />
-                        </Columns>
-                    </asp:GridView>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="4">
-                    <asp:TextBox runat="server" ID="TFuncionario" Width="300px"></asp:TextBox>
-                    <asp:Button ID="BAgregar" Text="+" ValidationGroup="funcionario" runat="server" 
-                        onclick="BAgregar_Click" />
-                    <asp:TextBox runat="server" ID="TFuncionarioID" CssClass="hide"></asp:TextBox>
-                    <asp:RequiredFieldValidator ControlToValidate="TFuncionarioID" ValidationGroup="funcionario" ErrorMessage="Por favor ingrese un funcionario." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true"></asp:RequiredFieldValidator>
-                </td>
-            </tr>
-            <tr>
                 <td>Quien notifica</td>
                 <td><asp:TextBox runat="server" ID="TPLlama"></asp:TextBox><asp:RequiredFieldValidator ControlToValidate="TPLlama" ErrorMessage="Por favor ingrese una persona que llama." ID="RequiredFieldValidator3" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td>Parentesco</td>
                 <td><asp:TextBox runat="server" ID="TParentesco"></asp:TextBox></td>
             </tr>
             <tr>
-                <td>Correo electrónico</td>
-                <td><asp:TextBox runat="server" ID="TEmail"></asp:TextBox><asp:RegularExpressionValidator
-                        ID="RegularExpressionValidator1" ControlToValidate="TEmail" runat="server" 
-                        Display="Dynamic" SetFocusOnError="true" 
-                        ErrorMessage="Por favor ingrese un correo electrónico valido" 
-                        ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*">*</asp:RegularExpressionValidator></td>
                 <td>Teléfono</td>
                 <td><asp:TextBox runat="server" ID="TTelefono"></asp:TextBox><asp:RequiredFieldValidator ControlToValidate="TTelefono" ErrorMessage="Por favor ingrese un teléfono." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             </tr>
@@ -188,11 +108,7 @@
                 <td>Descripción</td>
                 <td colspan="3"><asp:TextBox runat="server" TextMode="MultiLine" Height="100" Width="99%" ID="TDetalle"></asp:TextBox><asp:RequiredFieldValidator ControlToValidate="TDetalle" ErrorMessage="Por favor ingrese un detalle." ID="RequiredFieldValidator6" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             </tr>
-            <tr>
-                <td>Observaciones</td>
-                <td colspan="3"><asp:TextBox runat="server" TextMode="MultiLine" Width="99%" ID="TObservaciones"></asp:TextBox></td>
-            </tr>
-            <asp:Panel runat="server" ID="PConductaAbusiva">
+            <asp:PlaceHolder runat="server" ID="PConductaAbusiva">
                 <tr>
                     <td colspan="4" class="celdaTitulo">Hecho</td>
                 </tr>
@@ -286,8 +202,8 @@
                         </asp:SqlDataSource>
                     </td>
                 </tr>
-            </asp:Panel>
-            <asp:Panel runat="server" ID="PSeguimiento" Visible="false">
+            </asp:PlaceHolder>
+            <asp:PlaceHolder runat="server" ID="PSeguimiento" Visible="false">
             <tr>
                 <td colspan="4" class="celdaTitulo">Seguimiento</td>
             </tr>
@@ -303,12 +219,11 @@
                         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
-                            <asp:TemplateField HeaderText="Detalle" ItemStyle-Width="100%">
+                            <asp:TemplateField HeaderText="Acciones pendientes" ItemStyle-Width="100%">
                                 <ItemTemplate>
-                                    <asp:LinkButton runat="server" ID="LDetalle" CommandName="Edit" Text='<%# Eval("sqrDetalles") %>'></asp:LinkButton>
+                                    <asp:LinkButton runat="server" ID="LDetalle" CommandName="Edit" Text='<%# Eval("sqrPendiente") %>'></asp:LinkButton>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:BoundField DataField="sqrPendiente" HeaderText="Acciones pendientes" />
                             <asp:TemplateField HeaderText="Archivo">
                                 <ItemTemplate>
                                     <asp:HyperLink runat="server" CausesValidation="false" ID="LArchivo" Text=""></asp:HyperLink>
@@ -324,7 +239,7 @@
                     <asp:SqlDataSource ID="SSeguimiento" runat="server" 
                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                         ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                        SelectCommand="SELECT qrId,sqrId,sqrDetalles,sqrPendiente,segUsuarioIngreso,segFechaIngreso FROM queja_reclamo_seguimiento WHERE qrId=@queja">
+                        SelectCommand="SELECT qrId,sqrId,sqrPendiente,segUsuarioIngreso,segFechaIngreso FROM queja_reclamo_seguimiento WHERE qrId=@queja">
                         <SelectParameters>
                             <asp:ControlParameter ControlID="HIdQuejas" Name="queja" PropertyName="Value" />
                         </SelectParameters>
@@ -333,39 +248,22 @@
                         <div id="dSeguimiento" title="Seguimiento" class="hide">
                             <table>
                                 <tr>
-                                    <td>Detalles<asp:RequiredFieldValidator ControlToValidate="TSDetalles" ValidationGroup="seguimiento" ErrorMessage="Por favor ingrese detalles." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                                    </td>
-                                    <td><asp:TextBox TextMode="MultiLine" CssClass="detalle" Width="98%" runat="server" ID="TSDetalles"></asp:TextBox></td>
-                                </tr>
-                                <tr>
                                     <td>Acciones pendientes</td>
                                     <td><asp:TextBox runat="server" ID="TAcciones" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
+                                </tr>
+                                <tr>
+                                    <td>Avances</td>
+                                    <td><asp:TextBox runat="server" ID="TAvances" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
                                 </tr>
                                 <tr>
                                     <td colspan="2"><asp:CheckBox runat="server" ID="CCerrar" Text="¿Esta acción cierra la queja?" /></td>
                                 </tr>
                                 <tr>
-                                    <td>Qué?<asp:RequiredFieldValidator ControlToValidate="TQue" ValidationGroup="seguimiento" ErrorMessage="Por favor ingrese un qué." ID="RQue" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                                    </td>
-                                    <td><asp:TextBox runat="server" ID="TQue" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
+                                    <td>Acción de mejora</td>
+                                    <td><asp:TextBox runat="server" ID="TAccionMejora" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
                                 </tr>
                                 <tr>
-                                    <td>Porque?<asp:RequiredFieldValidator ControlToValidate="TPorque" ValidationGroup="seguimiento" ErrorMessage="Por favor ingrese un porque." ID="RPorque" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                                    </td>
-                                    <td><asp:TextBox runat="server" ID="TPorque" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
-                                </tr>
-                                <tr>
-                                    <td>Cómo?<asp:RequiredFieldValidator ControlToValidate="TComo" ValidationGroup="seguimiento" ErrorMessage="Por favor ingrese un cómo." ID="RComo" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                                    </td>
-                                    <td><asp:TextBox runat="server" ID="TComo" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
-                                </tr>
-                                <tr>
-                                    <td>Quién?<asp:RequiredFieldValidator ControlToValidate="TQuien" ValidationGroup="seguimiento" ErrorMessage="Por favor ingrese un quién." ID="RQuien" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                                    </td>
-                                    <td><asp:TextBox runat="server" ID="TQuien" TextMode="MultiLine" Width="98%"></asp:TextBox></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2"><asp:CheckBox runat="server" ID="CRUsuario" Text="¿Se envió respuesta al usuario?" /></td>
+                                    <td colspan="2"><asp:CheckBox runat="server" ID="CRUsuario" Text="¿Se entrega una respuesta a quien interpuso la incorformidad?" /></td>
                                 </tr>
                                 <tr>
                                     <td colspan="2"><asp:CheckBox runat="server" ID="CRTelefonica" Text="¿Se envió respuesta telefónica?" /></td>
@@ -377,20 +275,14 @@
                                     <td colspan="2"><asp:CheckBox runat="server" ID="CRVigilancia" Text="¿Se envió respuesta al ente de vigilancia y control?" /></td>
                                 </tr>
                                 <tr>
+                                    <td>Se envió oficio ante quien interpuso la queja</td>
+                                </tr>
+                                <tr>
                                     <td colspan="2"><asp:FileUpload runat="server" ID="FArchivo" Width="100%" /></td>
                                 </tr>
                                 <tr>
                                     <td colspan="2">
-                                    <asp:ValidationSummary runat="server" ID="VSErrores" />
-                                    <asp:CustomValidator ClientValidationFunction="OnValidateClick" OnServerValidate="OnValidateSeguimiento" runat="server" ValidationGroup="seguimiento" ID="CVSeguimiento" ErrorMessage="">*</asp:CustomValidator>
-                                    <br />
-                                    <span id="sError" style="color: Red">
-                                        Recuerde que una queja/Reclamo solo puede cerrarse si se ha enviado:<br />
-                                        1.Respuesta al usuario<br />
-                                        2.Respuesta telefónica<br />
-                                        3.Respuesta al asegurador o al ente de vigilancia y control<br />
-                                        4.Adjuntar la respuesta<br />
-                                    </span>
+                                        <asp:CustomValidator ClientValidationFunction="OnValidateClick" OnServerValidate="OnValidateSeguimiento" runat="server" ValidationGroup="seguimiento" ID="CVSeguimiento" ErrorMessage="Por favor seleccione se entrega una respuesta a quien interpuso la inconformidad y seleccione un archivo con la respuesta.">*</asp:CustomValidator>
                                     </td>
                                 </tr>
                                 <tr>
@@ -406,7 +298,7 @@
                     </asp:Panel>
                 </td>
             </tr>
-            </asp:Panel>
+            </asp:PlaceHolder>
             <tr>
                 <td colspan="4" align="right">
                     <asp:ValidationSummary runat="server" ID="ValidationSummary1" />

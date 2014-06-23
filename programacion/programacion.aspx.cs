@@ -50,15 +50,17 @@ public partial class programacion_programacion : System.Web.UI.Page
     {
         using (CConector conector = new CConector())
         {
-
+            conector.StartTransaction();
             for (int i = 0; i < GProgramacion.Rows.Count; i++)
             {
                 CheckBox check = (CheckBox)GProgramacion.Rows[i].Cells[0].FindControl("CSeleccionar");
                 if (check.Checked)
                 {
-                    conector.Query("DELETE programacion where prgId=" + GProgramacion.DataKeys[i].Value.ToString());
+                    conector.Query("DELETE FROM programacion WHERE prgId=" + GProgramacion.DataKeys[i].Values["prgId"].ToString());
+                    Funcionario.RebuildDirectorio(conector, GProgramacion.DataKeys[i].Values["perId"].ToString());
                 }
             }
+            conector.Commit();
             GProgramacion.DataBind();
         }
     }
@@ -75,7 +77,7 @@ public partial class programacion_programacion : System.Web.UI.Page
                 inicial=i;
                 if (seleccionados.Length > 0)
                     seleccionados += ",";
-                seleccionados += GProgramacion.DataKeys[i].Value.ToString();
+                seleccionados += GProgramacion.DataKeys[i].Values["prgId"].ToString();
             }
         }
         if (seleccionados.Length == 0)
@@ -104,7 +106,7 @@ public partial class programacion_programacion : System.Web.UI.Page
     protected void GProgramacion_RowEditing(object sender, GridViewEditEventArgs e)
     {
         GProgramacion.SelectedIndex = e.NewEditIndex;
-        UCNovedad.IdProgramacion = GProgramacion.DataKeys[e.NewEditIndex].Value.ToString();
+        UCNovedad.IdProgramacion = GProgramacion.DataKeys[e.NewEditIndex].Values["prgId"].ToString();
         UCNovedad.IdServicio = HttpUtility.HtmlDecode(GProgramacion.Rows[e.NewEditIndex].Cells[10].Text).Trim();
         UCNovedad.Visible = true;
         e.Cancel = true;
@@ -122,23 +124,10 @@ public partial class programacion_programacion : System.Web.UI.Page
 
     protected void GProgramacion_SelectedIndexChanged(object sender, EventArgs e)
     {
-        UCProgramacion.IdProgramacion = GProgramacion.DataKeys[GProgramacion.SelectedIndex].Value.ToString();
+        UCProgramacion.IdProgramacion = GProgramacion.DataKeys[GProgramacion.SelectedIndex].Values["prgId"].ToString();
         UCProgramacion.Visible = true;
     }
-    protected void GProgramacion_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        if (e.Row.RowIndex != -1) {
 
-            if (HttpUtility.HtmlDecode(e.Row.Cells[8].Text).Trim().Length==0)
-            {
-                e.Row.Cells[8].Text = HttpUtility.HtmlEncode(Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[10].Text).Trim()));
-                if (HttpUtility.HtmlDecode(e.Row.Cells[11].Text).Trim().Length != 0)
-                {
-                    e.Row.Cells[8].Text += "[" + Procedimientos.GetVarios(e.Row.Cells[11].Text) + "]";
-                }
-            }
-        }
-    }
     protected void DProgramaciones_DataBound(object sender, EventArgs e)
     {
         for (int i = 0; i < DProgramaciones.Items.Count; i++)
@@ -147,5 +136,11 @@ public partial class programacion_programacion : System.Web.UI.Page
                 DProgramaciones.Items[i].Text = Procedimientos.GetProcedimiento(DProgramaciones.Items[i].Value);
             }
         }
+    }
+
+    protected void GProgramacion_RowDeleted(object sender, GridViewDeletedEventArgs e)
+    {
+        using(CConector conector= new CConector())
+            Funcionario.RebuildDirectorio(conector, e.Keys["perId"].ToString());
     }
 }

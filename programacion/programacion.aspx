@@ -5,6 +5,7 @@
 <%@ Register src="~/programacion/novedad.ascx" tagname="novedad" tagprefix="uc3" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<style>.anchomaxcombo { max-width: 500px; }</style>
 <script type="text/javascript">
     addFunctionToStart(function() {
         $("#<%= DProgramaciones.ClientID %>").sortSelect();
@@ -50,10 +51,10 @@
                 <br />
                     <asp:GridView ID="GProgramacion" runat="server" AllowPaging="True" Width="100%"
                         AutoGenerateColumns="False" DataSourceID="SProgramacion" 
-                        EmptyDataText="No se encontraron programaciones" DataKeyNames="prgId" 
+                        EmptyDataText="No se encontraron programaciones" DataKeyNames="prgId,perId" 
                         AllowSorting="true" onrowediting="GProgramacion_RowEditing" 
                         onselectedindexchanged="GProgramacion_SelectedIndexChanged" 
-                        onrowdatabound="GProgramacion_RowDataBound">
+                        onrowdeleted="GProgramacion_RowDeleted">
                         <RowStyle CssClass="GridRow"></RowStyle>
                         <FooterStyle CssClass="GridFooter"></FooterStyle>
                         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -77,25 +78,27 @@
                                 <ItemStyle HorizontalAlign="Right" />
                             </asp:BoundField>
                             <asp:BoundField DataField="autorizacion" HeaderText="Autorización" SortExpression="autorizacion"  ItemStyle-Wrap="false"/>
-                            <asp:BoundField DataField="actividad" HeaderText="Actividad" SortExpression="actividad" ItemStyle-Wrap="false" ItemStyle-Width="100%"/>
+                            <asp:BoundField DataField="actividad" HeaderText="Actividad" SortExpression="actividad" ItemStyle-Wrap="false" 
+                                ItemStyle-Width="100%" ItemStyle-HorizontalAlign="Left"/>
                             <asp:CheckBoxField DataField="prgActivo" HeaderText="Activo?" />
                             <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
-                            <asp:BoundField DataField="intensidad" HeaderText="intensidad" SortExpression="intensidad" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
                         </Columns>
                     </asp:GridView>
                     <asp:SqlDataSource ID="SProgramacion" runat="server" 
                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                        SelectCommand="SELECT prgId,prgFechaProg,perNombre,prgNumSesion,medicamentos.nombre AS actividad,prgActivo,autorizacion_detalle.intensidad
+                        SelectCommand="SELECT prgId,prgFechaProg,perNombre,prgNumSesion,programacion.perId
+                                    ,medicamentos.nombre AS actividad
+                                    ,prgActivo
                                     ,CONCAT(programacion.autNumero,'[',IFNULL(autorizacion_detalle.autNumSesiones,0), ']') AS autorizacion
                                     , programacion.actId
                                     FROM programacion 
                                     LEFT JOIN recurso_humano ON (recurso_humano.perId=programacion.perId) 
                                     LEFT JOIN medicamentos ON (medicamentos.id=programacion.actId) 
-                                    LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=programacion.autNumero AND autorizacion_detalle.actId=programacion.actId AND autorizacion_detalle.intensidad=programacion.intensidad)
+                                    LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=programacion.autNumero AND autorizacion_detalle.actId=programacion.actId)
                                     WHERE pacId=@paciente AND (@actividad=0 OR programacion.actId=@actividad) {0}
                                     ORDER BY prgFechaProg DESC"
-                                    DeleteCommand="DELETE programacion where prgId=@prgId"
+                                    DeleteCommand="DELETE FROM programacion WHERE prgId=@prgId"
                                     >
                           <SelectParameters>
                             <asp:ControlParameter ControlID="CCDetallePaciente" Name="paciente" PropertyName="IdPaciente" />

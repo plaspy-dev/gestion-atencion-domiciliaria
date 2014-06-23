@@ -331,7 +331,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                     return;
                 if (conector.QueryMod("insert into paciente_auditoria_servicios(pacId,audIngreso,audUsuario,audFecha,audObs,segFechaIngreso) values(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "','" + TObservacionesRetiro.Text + "',SYSDATE())") == -1)
                     return;
-                if (conector.QueryMod("DELETE programacion_novedad WHERE EXISTS(SELECT 1 FROM programacion pr WHERE pacId=" + HId.Value + " and prgFechaProg>='" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=0 and pr.prgId=programacion_novedad.prgId)") == -1)
+                if (conector.QueryMod("DELETE programacion_novedad FROM programacion_novedad,programacion WHERE programacion.pacId=" + HId.Value + " AND programacion.prgId=programacion_novedad.prgId AND programacion.prgFechaProg>='" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' AND programacion.prgActivo=0") == -1)
                     return;
                 if (conector.QueryMod("UPDATE programacion set prgActivo=1 where pacId=" + HId.Value + " and prgFechaProg>='" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=0") == -1)
                     return;
@@ -349,7 +349,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 string cnoId = conector.QueryString("SELECT cnoId FROM causa_egreso WHERE cegId=" + DMotivo.SelectedValue);
                 if (cnoId.Length == 0)
                     cnoId = "NULL";
-                if (conector.QueryMod("DELETE programacion_novedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=1 and pr.prgId=programacion_novedad.prgId)") == -1)
+                if (conector.QueryMod("DELETE programacion_novedad FROM programacion_novedad,programacion WHERE programacion.pacId=" + HId.Value + " AND programacion.prgId=programacion_novedad.prgId AND programacion.prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' AND programacion.prgActivo=1") == -1)
                     return;
                 if (conector.QueryMod("INSERT INTO programacion_novedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "',SYSDATE() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=1") == -1)
                     return;
@@ -405,7 +405,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
             string cnoId = conector.QueryString("SELECT cnoId FROM causa_egreso WHERE cegId=" + 1);
             if (cnoId.Length == 0)
                 cnoId = "NULL";
-            if (conector.QueryMod("DELETE programacion_novedad WHERE EXISTS(SELECT 1 FROM programacion pr where pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "' and prgActivo=1 and pr.prgId=programacion_novedad.prgId)") == -1)
+            if (conector.QueryMod("DELETE programacion_novedad FROM programacion_novedad,programacion WHERE programacion.pacId=" + HId.Value + " AND programacion.prgId=programacion_novedad.prgId AND programacion.prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "' AND programacion.prgActivo=1") == -1)
                 return;
             if (conector.QueryMod("INSERT INTO programacion_novedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesDefuncion.Text + "','" + Usuario.GetUsuario().GetLogin() + "',SYSDATE() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "' and prgActivo=1") == -1)
                 return;

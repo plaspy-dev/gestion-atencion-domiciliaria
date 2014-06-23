@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using SDG.Componentes;
+using System.ComponentModel;
 
 /// <summary>
 /// Descripción breve de Calificacion
@@ -10,11 +11,18 @@ using SDG.Componentes;
 public class Calificacion
 {
     public enum Escalas {
+        [Description("Índice de Barthel")]
         Barthel=8,
-        Braden = 41
+        [Description("Escala Braden")]
+        Braden = 41,
+        [Description("Escala de la Cruz Roja")]
+        CruzRoja= 77,
+        [Description("Escala Norton")]
+        Norton= 79
     }
     public static Calificacion[] IndiceBarthel = { new Calificacion(45, "Severa"), new Calificacion(60, "Grave"), new Calificacion(80, "Moderada"), new Calificacion(101, "Ligera") };
     public static Calificacion[] EscalaBraden = { new Calificacion(13, "Alto riesgo"), new Calificacion(15, "Riesgo moderado"), new Calificacion(17, "Bajo riesgo"), new Calificacion(50, "Sin riesgo") };
+    public static Calificacion[] EscalaNorton = { new Calificacion(10,"Riesgo muy alto"),new Calificacion(13,"Riesgo alto"),new Calificacion(15,"Riesgo medio"),new Calificacion(50,"Riesgo mínimo")};
 
     public int maximo { get; set; }
     public string mensaje { get; set; }
@@ -24,9 +32,42 @@ public class Calificacion
         mensaje = mess;
     }
 
+    public static string GetNombreEscala(Escalas valor)
+    {
+        try
+        {
+            return ((DescriptionAttribute)valor.GetType().GetField(valor.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), true)[0]).Description;
+        } catch { }
+        return "";
+    }
+    static public string GetMensajeDescripcion(String tipo) {
+        switch (Convert.ToInt32(tipo))
+        {
+            case (int)Escalas.Barthel:
+                return "La incapacidad se valora como ";
+            case (int)Escalas.Braden:
+                return "Riesgo de padecer úlceras por presión ";
+            case (int)Escalas.Norton:
+                return "Riesgo de padecer úlceras por presión ";
+        }
+        return "";
+    }
     static public String GetDescripcion(int calificacion, String tipo)
     {
-        Calificacion[] escala = tipo == "8" ? IndiceBarthel : EscalaBraden;
+        Calificacion[] escala = null;
+        switch (Convert.ToInt32(tipo)) { 
+            case (int)Escalas.Barthel:
+                escala = IndiceBarthel;
+                break;
+            case (int)Escalas.Braden:
+                escala = EscalaBraden;
+                break;
+            case (int)Escalas.Norton:
+                escala = EscalaNorton;
+                break;
+            default:
+                return "";
+        }
         for (int i = 0; i < escala.Length; i++)
         {
             if (calificacion < escala[i].maximo)
@@ -37,13 +78,28 @@ public class Calificacion
 
     public static String GetArrayMessages(String tipo)
     {
-        string script = "escala=[";
-        Calificacion[] escala = tipo == "8" ? IndiceBarthel : EscalaBraden;
-        for (int i = 0; i < escala.Length; i++)
+        Calificacion[] escala = null;
+        switch (Convert.ToInt32(tipo))
         {
-            if (i > 0)
-                script += ",";
-            script += string.Format("[{0},'{1}']", escala[i].maximo, escala[i].mensaje);
+            case (int)Escalas.Barthel:
+                escala = IndiceBarthel;
+                break;
+            case (int)Escalas.Braden:
+                escala = EscalaBraden;
+                break;
+            case (int)Escalas.Norton:
+                escala = EscalaNorton;
+                break;
+        }
+        string script = "escala=[";
+        if (escala!=null)
+        {
+            for (int i = 0; i < escala.Length; i++)
+            {
+                if (i > 0)
+                    script += ",";
+                script += string.Format("[{0},'{1}']", escala[i].maximo, escala[i].mensaje);
+            }
         }
         return script + "]";
     }
@@ -75,7 +131,10 @@ public class Calificacion
             try
             {
                 int calificacion = Convert.ToInt32(resultado);
-                resultado= string.Format("{0} ({1})", calificacion, GetDescripcion(calificacion, ((int)tipo).ToString()));
+                string descripcion= GetDescripcion(calificacion, ((int)tipo).ToString());
+                if (string.IsNullOrEmpty(descripcion))
+                    resultado = calificacion.ToString();
+                else resultado= string.Format("{0} ({1})", calificacion, descripcion);
             } catch { }
         }
         return resultado;

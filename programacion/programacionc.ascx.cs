@@ -36,11 +36,10 @@ public partial class phd_programacionc : System.Web.UI.UserControl
 
                 query += "prgFechaProg";
                 query += "perId";
-                query["actId"] = "CONCAT(actId, '_',IFNULL(intensidad,''))";
+                query+="actId";
                 query += "prgObservaciones";
                 query += "autNumero";
                 query += "prgNumSesion";
-                query += "intensidad";
 
                 using (CConector conector = new CConector())
                 {
@@ -50,30 +49,18 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                         CRecurrente.Checked = false;
                         TFechaFinal.Text = TFecha.Text = reader["prgFechaProg"].ToString();
                         TSesiones.Text = reader["prgNumSesion"].ToString();
-                        TProfesionalID.Text = reader["perId"].ToString();
+                        ViewState["perId"] = 
+                            TProfesionalID.Text = reader["perId"].ToString();
+
                         DAutorizacion.DataBind();
                         Utilidades.SelectInDropDown(DAutorizacion, reader["autNumero"], reader["autNumero"].ToString());
                         DAutorizacion_SelectedIndexChanged(null, null);
 
-                        string procedimiento= Procedimientos.GetProcedimiento(reader["actId"].ToString().Split('_')[0]);
-                        if(!string.IsNullOrEmpty(reader["intensidad"].ToString()))
-                            procedimiento += " [" + Procedimientos.GetVarios(reader["intensidad"].ToString()) + "]";
+                        string procedimiento= Procedimientos.GetProcedimiento(reader["actId"].ToString());
 
                         DActividad.DataBind();
                         Utilidades.SelectInDropDown(DActividad, reader["actId"].ToString(), procedimiento);
-                        ListItem item = DActividad.Items.FindByValue(reader["actId"].ToString());
-                        if (item != null)
-                        {
-                            if (item.Text.Length == 0)
-                            {
-                                string[] ids = item.Value.Split('_');
-                                item.Text = Procedimientos.GetProcedimiento(ids[0]);
-                                if (ids.Length > 1 && ids[1].Length > 0)
-                                {
-                                    item.Text += " [" + Procedimientos.GetVarios(ids[1]) + "]";
-                                }
-                            }
-                        }
+
                         TObservaciones.Text = reader["prgObservaciones"].ToString();
                         TProfesional.Text = conector.QueryString("SELECT perNombre FROM recurso_humano where perId='" + reader["perId"].ToString() + "'");
                         ViewState["maximo"] = TSesiones.Text;
@@ -278,14 +265,10 @@ public partial class phd_programacionc : System.Web.UI.UserControl
             query["segFechaIngreso"] = "SYSDATE()";
             query["entId"] = entidad;
 
-            string[] ids = DActividad.SelectedValue.Split('_');
-            query["actId"] = ids[0];
-            string costo = Procedimientos.GetCosto(ids[0], entidad).ToString(CultureInfo.InvariantCulture);
+            query["actId"] = DActividad.SelectedValue;
+            string costo = Procedimientos.GetCosto(DActividad.SelectedValue, entidad).ToString(CultureInfo.InvariantCulture);
             if (costo.Length > 0)
                 query["costo"] = costo;
-
-            if (ids.Length > 1 && ids[1].Length > 0)
-                query["intensidad"] = ids[1];
 
             for (int i = 0; i < fechas.Count; i++)
             {
@@ -307,6 +290,9 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                 HId.Value = "";
             }
             Autorizaciones.UpdateSesiones(conector, DAutorizacion.SelectedValue);
+            Funcionario.RebuildDirectorio(conector, TProfesionalID.Text);
+            if(!string.IsNullOrEmpty((string)ViewState["perId"]))
+                Funcionario.RebuildDirectorio(conector, ViewState["perId"].ToString());
 
             BCancelar_Click(sender, e);
             EventHandler handler = (EventHandler)base.Events[_AceptarClicked];
@@ -353,13 +339,8 @@ public partial class phd_programacionc : System.Web.UI.UserControl
     protected void DActividad_DataBound(object sender, EventArgs e)
     {
         for (int i = 0; i < DActividad.Items.Count; i++) {
-            string []ids= DActividad.Items[i].Value.Split('_');
             if (DActividad.Items[i].Text.Length == 0)
-                DActividad.Items[i].Text = Procedimientos.GetProcedimiento(ids[0]);
-            if (ids.Length > 1 && ids[1].Length > 0)
-            {
-                DActividad.Items[i].Text += " [" + Procedimientos.GetVarios(ids[1]) + "]";
-            }
+                DActividad.Items[i].Text = Procedimientos.GetProcedimiento(DActividad.Items[i].Value);
         }
     }
 }

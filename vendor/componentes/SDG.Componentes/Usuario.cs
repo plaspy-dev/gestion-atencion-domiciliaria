@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
@@ -11,6 +12,7 @@ namespace SDG.Componentes;
 
 public class Usuario
 {
+	[Flags]
 	public enum Permisos
 	{
 		Read = 1,
@@ -21,9 +23,9 @@ public class Usuario
 		Admin = 0x20
 	}
 
-	private static bool bHeaderCache = false;
+	private static bool bHeaderCache;
 
-	private static bool bGetKey = false;
+	private static bool bGetKey;
 
 	protected string m_szNombre;
 
@@ -128,7 +130,7 @@ public class Usuario
 		m_pGrupo.AddPermisos(padre, nombre, url, permiso);
 	}
 
-	public ArrayList GetFullMenu()
+	public List<CURLs> GetFullMenu()
 	{
 		return m_pGrupo.GetFullMenu();
 	}
@@ -148,9 +150,19 @@ public class Usuario
 		return m_szID;
 	}
 
+	public virtual int GetPermisosRaiz(string url)
+	{
+		return m_pGrupo.GetPermisoRaiz(url);
+	}
+
 	public virtual int GetPermisos(string url)
 	{
 		return m_pGrupo.GetPermisos(url);
+	}
+
+	public virtual int GetPermisos()
+	{
+		return GetPermisos(HttpContext.Current.Request.Url.AbsolutePath);
 	}
 
 	public virtual bool CanRead()
@@ -159,7 +171,7 @@ public class Usuario
 		{
 			return true;
 		}
-		return GetPermisos(HttpContext.Current.Request.Url.AbsolutePath) > 0;
+		return GetPermisos() > 0;
 	}
 
 	public virtual bool CanInsert()
@@ -168,7 +180,7 @@ public class Usuario
 		{
 			return true;
 		}
-		return (GetPermisos(HttpContext.Current.Request.Url.AbsolutePath) & 4) == 4;
+		return (GetPermisos() & 4) == 4;
 	}
 
 	public virtual bool CanPrint()
@@ -177,7 +189,7 @@ public class Usuario
 		{
 			return true;
 		}
-		return (GetPermisos(HttpContext.Current.Request.Url.AbsolutePath) & 2) == 2;
+		return (GetPermisos() & 2) == 2;
 	}
 
 	public virtual bool CanUpdate()
@@ -186,7 +198,7 @@ public class Usuario
 		{
 			return true;
 		}
-		return (GetPermisos(HttpContext.Current.Request.Url.AbsolutePath) & 8) == 8;
+		return (GetPermisos() & 8) == 8;
 	}
 
 	public virtual bool CanDelete()
@@ -195,7 +207,7 @@ public class Usuario
 		{
 			return true;
 		}
-		return (GetPermisos(HttpContext.Current.Request.Url.AbsolutePath) & 0x10) == 16;
+		return (GetPermisos() & 0x10) == 16;
 	}
 
 	public virtual bool CanAdmin()
@@ -204,7 +216,7 @@ public class Usuario
 		{
 			return true;
 		}
-		return (GetPermisos(HttpContext.Current.Request.Url.AbsolutePath) & 2) == 32;
+		return (GetPermisos() & 0x20) == 32;
 	}
 
 	public virtual bool CanAccess()
@@ -221,8 +233,7 @@ public class Usuario
 		{
 			return true;
 		}
-		int permisos = GetPermisos(HttpContext.Current.Request.Url.AbsolutePath);
-		return permisos > 0;
+		return GetPermisos() > 0;
 	}
 
 	public void Redirect()
@@ -357,6 +368,10 @@ public class Usuario
 			if (HttpContext.Current == null)
 			{
 				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
+				if (text == "localhost")
+				{
+					return true;
+				}
 			}
 			else
 			{

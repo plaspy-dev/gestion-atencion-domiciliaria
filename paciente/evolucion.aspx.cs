@@ -381,7 +381,8 @@ public partial class paciente_evolucion : System.Web.UI.Page
             }
 
             Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
-            if (nuevaevolucion && (CCDetallePaciente.Edad == -1 || CCDetallePaciente.Edad > 14))
+
+            if (nuevaevolucion)
                 Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
             ((MasterPageI)Master).SetResultado(mensaje);
@@ -511,6 +512,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
     protected string ImprimirPlanEducativo() {
         
         string resultado = "";
+        RPlanEducativo.DataBind();
         for (int i = 0; i < RPlanEducativo.Items.Count; i++) {
             CheckBox check= (CheckBox)RPlanEducativo.Items[i].FindControl("CSi");
             if (check.Checked)
@@ -535,11 +537,13 @@ public partial class paciente_evolucion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szPlanEducativo$", ImprimirPlanEducativo());
         
 
-        evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + TPlanManejo.Text.Replace("\n", "</li><li>") + "</li></ol>");
+        evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + HttpUtility.HtmlEncode(TPlanManejo.Text).Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
-        evento.Contenido = evento.Contenido.Replace("$szBarthel$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Barthel));
-        evento.Contenido = evento.Contenido.Replace("$szBraden$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, Calificacion.Escalas.Braden));
+        foreach (Calificacion.Escalas escala in (Calificacion.Escalas[])Enum.GetValues(typeof(Calificacion.Escalas)))
+        {
+            evento.Contenido = evento.Contenido.Replace("$sz" + escala.ToString() + "$", Calificacion.GetCalificacionYDescripcion(CCDetallePaciente.IdPaciente, TFecha.Text, escala));
+        }
 
         using (CConector conector = new CConector())
         {

@@ -99,7 +99,8 @@ public partial class phd_novedad : System.Web.UI.UserControl
             for (int i = 0; i < programacion.Length; i++)
             {
                 query["prgId"] = programacion[i];
-                query["perIdAnt"] = conector.QueryString("SELECT perId FROM programacion WHERE prgId=" + programacion[i] + "");
+                string antiguo=conector.QueryString("SELECT perId FROM programacion WHERE prgId=" + programacion[i] + "");
+                query["perIdAnt"] = antiguo;
 
                 if (TTipo.Text == "0")
                 {
@@ -147,8 +148,14 @@ public partial class phd_novedad : System.Web.UI.UserControl
                 // no se actualizo nada
                 string szQueryProgramacion = qprogramacion.GetUpdate("prgId=" + programacion[i]);
                 if (szQueryProgramacion.Length > 0)
+                {
                     if (conector.QueryMod(szQueryProgramacion) == -1)
                         return;
+                    Funcionario.RebuildDirectorio(conector, antiguo);
+                    if(TProfesionalID.Text.Length!=0)
+                        Funcionario.RebuildDirectorio(conector, TProfesionalID.Text);
+                }
+
                 HId.Value = "";
             }
             TObservaciones.Text = "";

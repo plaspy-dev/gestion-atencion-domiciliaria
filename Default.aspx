@@ -142,7 +142,6 @@
 	box-shadow:0 0 5px #700;
 	}
 
-
 /* //  login form */	
 		
 </style>
@@ -186,7 +185,7 @@
         <td style="width:1000px;"></td>
     </tr>
     <tr>
-        <td></td>
+        <td class="red"></td>
         <td>
             <!-- contenido -->
             <asp:Panel runat="server" ID="PDatos"  DefaultButton="m_BIngresar">
@@ -237,7 +236,7 @@
                     </table>
                     </asp:Panel>
     </td>
-    <td></td>
+    <td class="red"></td>
     </tr>
     <tr style="background-color: #184580">
         <td></td>

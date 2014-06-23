@@ -25,17 +25,22 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
     protected void Page_Load(object sender, EventArgs e)
     {
+#if DEBUG
+        LMonoFix.Text="<style type='text/css'>.red{background-color: Red;}</style>";
+#endif
         CUsuario usuario = (CUsuario) Usuario.GetUsuario();
         if(usuario.GetForceURL().Length!=0) {
-
-            CURLs url = new CURLs(usuario.GetForceURL().ToLower(), "", "");
-            if (HttpContext.Current.Request.Url.ToString().ToLower().IndexOf(HttpUtility.UrlDecode(url.FullURL).Replace(" ","+")) == -1)
+            if (HttpContext.Current.Request.Url.ToString().ToLower().IndexOf(HttpUtility.UrlDecode(ResolveClientUrl(usuario.GetForceURL()).ToLower()).Replace(" ", "+")) == -1)
             {// es la misma
                 Response.Redirect(usuario.GetForceURL());
                 return;
             }
         }
         if(!IsPostBack) {
+
+            Type t = Type.GetType("Mono.Runtime");
+            if (t != null) // se esta ejecutando en mono
+                LMonoFix.Text += string.Format("<script type='text/javascript' src='{0}'></script>", ResolveClientUrl("~/js/mono.js"));
 
             RAlertasReal.DataSource= RAlertas.DataSource = Alertas.GetAlertas();
             RAlertas.DataBind();
@@ -265,7 +270,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             {
                 _ExcelClicked(this, evento);
             }
-            Utilidades.ExportExcel(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title);
+            GridUtils.ExportExcel(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title);
         }
         else if (ViewState["printfile"] != null)
         {
@@ -284,7 +289,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
 
             Response.Clear();
-            Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(Page.Title).Replace("+", "%20") + ".xls");
+            Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlPathEncode(Page.Title) + ".xls");
             Response.ContentType = "application/vnd.ms-excel";
             Response.ContentEncoding = System.Text.Encoding.GetEncoding("utf-8");
             Response.Write(evento.Contenido);
@@ -294,34 +299,11 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
     protected void lnkPDF_Click(object sender, EventArgs e) {
 
-        /*Response.ContentType = "application/pdf";
-        Response.AddHeader("content-disposition", "attachment;filename=GridViewExport.pdf");
-        Response.Cache.SetCacheability(HttpCacheability.NoCache);
-
-        StringWriter sw = new StringWriter();
-        HtmlTextWriter hw = new HtmlTextWriter(sw);
-
-        GridView1.AllowPaging = false;
-        GridView1.DataBind();
-        GridView1.RenderControl(hw);
-
-        StringReader sr = new StringReader(sw.ToString());
-        Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
-        HTMLWorker htmlparser = new HTMLWorker(pdfDoc);
-        PdfWriter.GetInstance(pdfDoc, Response.OutputStream);
-
-        pdfDoc.Open();
-        htmlparser.Parse(sr);
-        pdfDoc.Close();
-
-        Response.Write(pdfDoc);
-        Response.End();  */
-
         PrintEventArgs evento = new PrintEventArgs(true);
         Response.Clear();
         Response.ContentType = "application/pdf";
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
-        Response.AddHeader("content-disposition", "attachment;filename=" + HttpUtility.UrlEncode(Page.Title).Replace("+","%20") + ".pdf");
+        Response.AddHeader("content-disposition", "attachment;filename=" + HttpUtility.UrlPathEncode(Page.Title) + ".pdf");
 
         using (StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString())))
         {
@@ -343,8 +325,9 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
 
         evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
-        
-        Directory.SetCurrentDirectory(Server.MapPath(""));
+        evento.Contenido = evento.Contenido.Replace("../archivo/firma.ashx", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/archivo/firma.ashx")));
+
+        Directory.SetCurrentDirectory(Path.GetDirectoryName(Server.MapPath(Request.Url.LocalPath)));
 
         Document document = new Document(PageSize.LETTER, 10, 10, 10, 10);
         PdfWriter writer = PdfWriter.GetInstance(document, Response.OutputStream);

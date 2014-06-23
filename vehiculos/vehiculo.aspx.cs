@@ -86,7 +86,7 @@ public partial class vehiculos_vehiculo : System.Web.UI.Page
             query["vehFechaVenSoat"] = Query.GetMySQLDateFormat(TVencimientoSOAT.Text);
             query["vehFechaExpOtro"] = Query.GetMySQLDateFormat(TExpedicionCertificado.Text);
             query["vehFechaVenOtro"] = Query.GetMySQLDateFormat(TVencimientoCertificado.Text);
-            query["vclId"] = TClase.Text;
+            query["vclId"] = TClase.Text.Length == 0 ? "1" : TClase.Text;
             query["perId"] = DConductor.SelectedValue;
             query["vehActivo"] = CActivo.Checked ? "1": "0";
             if(string.IsNullOrEmpty(placa)) {

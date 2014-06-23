@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
 
@@ -70,6 +71,10 @@ public class DateTimeValidator : CustomValidator
 		try
 		{
 			DateTime dateTime = DateTime.Parse(args.Value);
+			if (args.Value.Contains(':'))
+			{
+				dateTime.AddSeconds(1.0);
+			}
 			if (MaximunValue.HasValue && dateTime > MaximunValue.Value)
 			{
 				args.IsValid = false;
@@ -78,7 +83,7 @@ public class DateTimeValidator : CustomValidator
 			}
 			if (MinumunValue.HasValue)
 			{
-				if (dateTime.Hour == 0 && dateTime.Minute == 0)
+				if (dateTime.Hour == 0 && dateTime.Minute == 0 && dateTime.Second == 0)
 				{
 					dateTime = dateTime.AddHours(23.0).AddMinutes(59.0).AddSeconds(59.0);
 				}

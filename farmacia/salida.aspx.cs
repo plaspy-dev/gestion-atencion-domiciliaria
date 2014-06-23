@@ -150,9 +150,12 @@ public partial class farmacia_salida : System.Web.UI.Page
                         HUsado.Value = productoUsado.SerializeBinary();
                         GProductos.DataBind();
 
-                        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
-                        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
-                        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+                        if (GProductos.FooterRow != null)
+                        {
+                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+                        }
 
                         TProducto.Focus();
                         GProductos.Columns[0].Visible = usuario.CanDelete();
@@ -229,7 +232,7 @@ public partial class farmacia_salida : System.Web.UI.Page
             producto = (Producto)productos[i];
             try
             {
-                producto.Costo = Decimal.Parse(TValor.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture);
+                producto.Costo = Decimal.Parse(TValor.Text, NumberStyles.Currency, CultureInfo.InvariantCulture);
             }
             catch { }
             productoUsado.AddProducto(producto);
@@ -259,9 +262,12 @@ public partial class farmacia_salida : System.Web.UI.Page
         REntero.Enabled = true;
         RDecimal.Enabled = true;
 
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+        if (GProductos.FooterRow != null)
+        {
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+        }
 
         HProductos.Value = productousadoNuevo.Serialize();
         HUsado.Value = productoUsado.SerializeBinary();
@@ -459,9 +465,12 @@ public partial class farmacia_salida : System.Web.UI.Page
         GProductos.DataBind();
         HUsado.Value = productoUsado.SerializeBinary();
 
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
-        GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+        if (GProductos.FooterRow != null)
+        {
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+        }
 
         e.Cancel = true;
     }

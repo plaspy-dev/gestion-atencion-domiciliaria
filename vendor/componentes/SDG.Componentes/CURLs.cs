@@ -12,7 +12,7 @@ public class CURLs
 
 	protected int m_nPermisos;
 
-	public bool m_bNativo;
+	public bool Visible { get; set; }
 
 	public int Permisos
 	{
@@ -36,9 +36,12 @@ public class CURLs
 	{
 		get
 		{
-			if (URL.Length > 2)
+			try
 			{
-				return HttpContext.Current.Request.ApplicationPath + "/" + URL.Substring(2);
+				return VirtualPathUtility.ToAbsolute(URL);
+			}
+			catch
+			{
 			}
 			return "";
 		}
@@ -46,24 +49,37 @@ public class CURLs
 
 	public CURLs(string url, string titulo, string parent)
 	{
+		Visible = true;
 		m_szURL = url;
 		m_szTitulo = titulo;
 		m_szParent = parent;
 		m_nPermisos = 0;
-		m_bNativo = false;
+	}
+
+	public CURLs(string url, string titulo, string parent, bool visible)
+	{
+		Visible = visible;
+		m_szURL = url;
+		m_szTitulo = titulo;
+		m_szParent = parent;
+		m_nPermisos = 0;
 	}
 
 	public CURLs(string url, string titulo, string parent, int permisos)
 	{
+		Visible = true;
 		m_szURL = url;
 		m_szTitulo = titulo;
 		m_szParent = parent;
 		m_nPermisos = permisos;
-		m_bNativo = false;
 	}
 
-	public static string SwitchApp(string url, string nueva)
+	public CURLs(string url, string titulo, string parent, int permisos, bool visible)
 	{
-		return url.Replace("~/", "/" + nueva + "/");
+		Visible = visible;
+		m_szURL = url;
+		m_szTitulo = titulo;
+		m_szParent = parent;
+		m_nPermisos = permisos;
 	}
 }

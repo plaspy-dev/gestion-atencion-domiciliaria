@@ -42,23 +42,20 @@
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
     <table>
         <tr>
-            <td>Inicio</td>
-            <td>Fin</td>
+            <td>Inicio
+                <asp:RequiredFieldValidator ControlToValidate="TInicio" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                <asp:RangeValidator ControlToValidate="TInicio" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
+            <td>Fin
+                <asp:RequiredFieldValidator ControlToValidate="TFin" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                <asp:RangeValidator ControlToValidate="TFin" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
             <td>Asegurador</td>
             <td nowrap=nowrap>Actividad o CUPS</td>
             <td>Área</td>
-            <td>Intensidad</td>
             <td></td>
         </tr>
         <tr>
-            <td><asp:TextBox runat="server" ID="TInicio" CssClass="fecha"></asp:TextBox>
-                <asp:RequiredFieldValidator ControlToValidate="TInicio" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                <asp:RangeValidator ControlToValidate="TInicio" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator>
-            </td>
-            <td><asp:TextBox runat="server" ID="TFin" CssClass="fecha"></asp:TextBox>
-                <asp:RequiredFieldValidator ControlToValidate="TFin" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                <asp:RangeValidator ControlToValidate="TFin" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator>
-            </td>
+            <td><asp:TextBox runat="server" ID="TInicio" CssClass="fecha"></asp:TextBox></td>
+            <td><asp:TextBox runat="server" ID="TFin" CssClass="fecha"></asp:TextBox></td>
             <td><asp:DropDownList ID="DAsegurador" runat="server"  CssClass="anchomaxcombo"
                                 DataSourceID="SAsegurador" DataTextField="nombre" 
                                 DataValueField="id" AppendDataBoundItems="true">
@@ -81,17 +78,6 @@
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT CAST(IFNULL(GROUP_CONCAT(medicamentos.id),-1) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
                 </asp:SqlDataSource>
-            </td>
-            <td>
-            <asp:DropDownList ID="DIntensidad" runat="server" DataSourceID="SIntensidad" CssClass="anchomaxcombo"
-                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
-            </asp:DropDownList>
-            <asp:SqlDataSource ID="SIntensidad" runat="server" 
-                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=21 AND szReservado IS NULL ORDER BY nombre">
-            </asp:SqlDataSource>
             </td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" onclick="BBuscar_Click" /></td>
         </tr>
@@ -159,11 +145,10 @@
                             -- factura_devolucion ON (facturacion_autorizacion.factura=factura_devolucion.factura)
                             LEFT JOIN varios AS glosa ON (facturacion_autorizacion_glosa.causal=glosa.id)
                             WHERE 
-                            fecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                            DATE(fecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                             AND (@asegurador=0 OR facturacion_autorizacion.entidad=@asegurador)
                             AND EXISTS (SELECT 1 FROM facturacion_autorizacion_servicio WHERE facturacion_autorizacion.autorizacion=facturacion_autorizacion_servicio.autorizacion 
                                     AND (@procedimiento=0 OR facturacion_autorizacion_servicio.procedimiento=@procedimiento)
-                                    AND (@intensidad=0 OR facturacion_autorizacion_servicio.intensidad=@intensidad)
                                     AND ('@area'='0' OR facturacion_autorizacion_servicio.procedimiento IN (@area))
                             )
                             GROUP BY facturacion_autorizacion.autorizacion
@@ -174,7 +159,6 @@
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
-                    <asp:ControlParameter ControlID="DIntensidad" PropertyName="SelectedValue" Name="intensidad" />
                  </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

@@ -13,7 +13,7 @@ namespace SDG.Componentes;
 [Serializable]
 public class Query
 {
-	private static bool bGetKey = false;
+	private static bool bGetKey;
 
 	protected string m_szTabla;
 
@@ -253,7 +253,6 @@ public class Query
 
 	public static string GetMySQLDateFormat(DateTime fecha, bool horas)
 	{
-		bool flag = 0 == 0;
 		string text = fecha.ToString("yyyy-MM-dd");
 		if (horas)
 		{
@@ -313,6 +312,51 @@ public class Query
 		return GetFromMySQLDate(fecha, horas: false);
 	}
 
+	public static string TryGetCurrency(string valor)
+	{
+		try
+		{
+			if (!string.IsNullOrEmpty(valor))
+			{
+				return decimal.Parse(valor, NumberStyles.Currency).ToString(CultureInfo.InvariantCulture);
+			}
+		}
+		catch
+		{
+		}
+		return "";
+	}
+
+	public static string TryGetDouble(string valor)
+	{
+		try
+		{
+			if (!string.IsNullOrEmpty(valor))
+			{
+				return Convert.ToDouble(valor).ToString(CultureInfo.InvariantCulture);
+			}
+		}
+		catch
+		{
+		}
+		return "";
+	}
+
+	public static string TryGetInt(string valor)
+	{
+		try
+		{
+			if (!string.IsNullOrEmpty(valor))
+			{
+				return Convert.ToInt32(valor).ToString();
+			}
+		}
+		catch
+		{
+		}
+		return "";
+	}
+
 	private static bool GetKey()
 	{
 #if ENABLE_LICENSE_CHECK
@@ -329,6 +373,10 @@ public class Query
 			if (HttpContext.Current == null)
 			{
 				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
+				if (text == "localhost")
+				{
+					return true;
+				}
 			}
 			else
 			{

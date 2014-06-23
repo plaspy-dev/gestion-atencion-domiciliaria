@@ -10,10 +10,7 @@
                 <table style="width: 100%;">
         <tr>
             <td>Índice o escala</td>
-            <td><asp:DropDownList runat="server" ID="DIndice" AutoPostBack="true" 
-                    onselectedindexchanged="DIndice_SelectedIndexChanged">
-                <asp:ListItem Text="Índice de Barthel" Value="8"></asp:ListItem>
-                <asp:ListItem Text="Escala Braden" Value="41"></asp:ListItem>
+            <td><asp:DropDownList runat="server" ID="DIndice" AutoPostBack="true" onselectedindexchanged="DIndice_SelectedIndexChanged">
             </asp:DropDownList></td>
             <td></td>
         </tr>
@@ -24,6 +21,7 @@
                 <asp:DropDownList ID="DGrupo" runat="server" DataSourceID="SGrupo" 
                     DataTextField="nombre" DataValueField="id">
                 </asp:DropDownList>
+                <asp:HyperLink runat="server" ID="RModificar" Text="Modificar grupos"></asp:HyperLink>
             </td>
             <td>
             <asp:SqlDataSource ID="SGrupo" runat="server" 

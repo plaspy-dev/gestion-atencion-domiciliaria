@@ -85,6 +85,14 @@ public class CUsuario : Usuario
                     CConector.SetCookie("loginOrganizationExample15", pUsuario.GetLogin());
                     CConector.SetCookie("contrasena", Crypt.EncriptarDES(passwd, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4")), DateTime.Now.AddHours(10));
                     conector.Query("UPDATE usuario SET ingreso=SYSDATE() WHERE id='" + pUsuario.GetID() + "'");
+
+                    // reconstruimos el directorio una vez al dia.
+                    if (HttpRuntime.Cache["directorio_date"]==null || (DateTime)HttpRuntime.Cache["directorio_date"] != DateTime.Now.Date)
+                    {
+                        if (Funcionario.RebuildDirectorio(conector)) 
+                            HttpRuntime.Cache["directorio_date"] = DateTime.Now.Date;
+                    }
+
                     return pUsuario;
                 }
             }

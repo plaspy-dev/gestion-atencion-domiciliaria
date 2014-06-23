@@ -77,7 +77,7 @@
                                 FROM ruta_sanitaria
                                 LEFT JOIN paciente ON (paciente.pacId=ruta_sanitaria.pacId)
                                 LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
-                            WHERE rtsFecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                            WHERE DATE(rtsFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                             AND (@asegurador=0 OR paciente.entId=@asegurador)
                             ORDER BY rtsFecha">
                  <SelectParameters>

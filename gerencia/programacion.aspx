@@ -79,7 +79,6 @@
             <asp:UpdatePanel runat="server" ID="UD" UpdateMode="Conditional">
                 <ContentTemplate>
                     <asp:HiddenField runat="server" ID="HId" Value='<%# Eval("id") %>' />
-                    <asp:HiddenField runat="server" ID="Hi" Value='<%# Eval("i") %>' />
                     <asp:Image runat="server" ID="IL" ImageUrl="~/css/ajax-loader.gif" />
                     <asp:Button runat="server" ID="BA" OnClick="OnClickBA" CssClass="hide" />
                     <asp:Repeater runat="server" ID="RH" DataSourceID="" Visible="false" onitemdatabound="RServicios_ItemDataBound">
@@ -92,7 +91,6 @@
                                 <asp:UpdatePanel runat="server" ID="UD" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:HiddenField runat="server" ID="HId2" Value='<%# Eval("id") %>' />
-                                    <asp:HiddenField runat="server" ID="Hi2" Value='<%# Eval("i") %>' />
                                     <asp:Image runat="server" ID="IL2" ImageUrl="~/css/ajax-loader.gif" />
                                     <asp:Button runat="server" ID="BA2" OnClick="OnClickBA" CssClass="hide" />
                                     <asp:GridView runat="server" ID="GR" Visible="false" AutoGenerateColumns="False" DataSourceID="" AllowSorting="true" OnRowDataBound="GResultados_RowDataBound" Width="100%">
@@ -122,9 +120,8 @@
                                                         LEFT JOIN autorizacion ON (autorizacion.autNumero=programacion.autNumero)
                                                         WHERE 
                                                         @grupo=0
-                                                        AND programacion.prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
+                                                        AND DATE(programacion.prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
                                                         AND programacion.actId=@id 
-                                                        AND ((@intensidad!=0 AND programacion.intensidad=@intensidad) OR (@intensidad=0 AND programacion.intensidad IS NULL))
                                                         AND programacion.entId=@id2
                                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
                                                         GROUP BY autorizacion.autFecha,autorizacion.autNumero,paciente.pacNombres,paciente.pacDocumento
@@ -137,27 +134,26 @@
                                                         LEFT JOIN autorizacion ON (autorizacion.autNumero=programacion.autNumero)
                                                         WHERE 
                                                         @grupo=1
-                                                        AND programacion.prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
+                                                        AND DATE(programacion.prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
                                                         AND programacion.entId=@id 
                                                         AND programacion.actId=@id2
-                                                        AND ((@intensidad2!=0 AND programacion.intensidad=@intensidad2) OR (@intensidad2=0 AND programacion.intensidad IS NULL))
                                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
                                                         GROUP BY autorizacion.autFecha,autorizacion.autNumero,paciente.pacNombres,paciente.pacDocumento
                                                     ) UNION (
                                                     SELECT 
                                                         autorizacion.autFecha AS prgFechaProg, autorizacion.autNumero
-                                                        , CONCAT(programacion.actId, '$', IFNULL(programacion.intensidad,'')) AS nombre
+                                                        , programacion.actId AS nombre
                                                         , SUM(programacion.costo) AS costo
                                                         ,COUNT(*) AS sesiones
                                                         FROM programacion
                                                         LEFT JOIN autorizacion ON (autorizacion.autNumero=programacion.autNumero)
                                                         WHERE 
                                                         @grupo=2
-                                                        AND programacion.prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
+                                                        AND DATE(programacion.prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
                                                         AND programacion.entId=@id 
                                                         AND programacion.pacId=@id2
                                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
-                                                        GROUP BY autorizacion.autFecha,autorizacion.autNumero,programacion.actId,programacion.intensidad
+                                                        GROUP BY autorizacion.autFecha,autorizacion.autNumero,programacion.actId
                                                     )
                                                     ORDER BY prgFechaProg DESC">
                                           <SelectParameters>
@@ -166,8 +162,6 @@
                                                 <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                                                 <asp:ControlParameter ControlID="HId" Name="id" PropertyName="Value" /> 
                                                 <asp:ControlParameter ControlID="HId2" Name="id2" PropertyName="Value" /> 
-                                                <asp:ControlParameter ControlID="Hi" Name="intensidad" PropertyName="Value" DefaultValue="0" /> 
-                                                <asp:ControlParameter ControlID="Hi2" Name="intensidad2" PropertyName="Value" DefaultValue="0" /> 
                                                 <asp:ControlParameter ControlID="DGrupo" PropertyName="SelectedValue" Name="grupo" />
                                           </SelectParameters>
                                     </asp:SqlDataSource>
@@ -184,34 +178,30 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                         SelectCommand="(
                                         SELECT programacion.entId AS id,asegurador.entNombre AS nombre, COUNT(*) AS c,SUM(programacion.costo) AS s 
-                                        ,0 AS i
                                         FROM programacion 
                                         LEFT JOIN asegurador ON (asegurador.entId=programacion.entId)
                                         WHERE 
                                         @grupo=0
-                                        AND programacion.prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
+                                        AND DATE(programacion.prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
                                         AND programacion.actId=@id 
-                                        AND ((@intensidad!=0 AND programacion.intensidad=@intensidad) OR (@intensidad=0 AND programacion.intensidad IS NULL))
                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
                                         GROUP BY programacion.entId,asegurador.entNombre
                                     ) UNION (
                                         SELECT actId AS id,'' AS nombre, COUNT(*) AS c,SUM(programacion.costo) AS s 
-                                        ,programacion.intensidad AS i
                                         FROM programacion 
                                         WHERE 
                                         @grupo=1
-                                        AND programacion.prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
+                                        AND DATE(programacion.prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
                                         AND programacion.entId=@id 
                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
-                                        GROUP BY actId,intensidad
+                                        GROUP BY actId
                                     ) UNION (
                                         SELECT paciente.pacId AS id,paciente.pacDocumento + ' - ' + paciente.pacNombres AS nombre, COUNT(*) AS c,SUM(programacion.costo) AS s 
-                                        ,0 AS i
                                         FROM programacion 
 										LEFT JOIN paciente ON (paciente.pacId=programacion.pacId)
                                         WHERE 
                                         @grupo=2
-                                        AND programacion.prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
+                                        AND DATE(programacion.prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
                                         AND programacion.entId=@id 
                                         AND (@asegurador=0 OR @asegurador=programacion.entId)
                                         GROUP BY paciente.pacId,paciente.pacDocumento,paciente.pacNombres
@@ -222,7 +212,6 @@
                             <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                             <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                             <asp:ControlParameter ControlID="HId" Name="id" PropertyName="Value" /> 
-                            <asp:ControlParameter ControlID="Hi" Name="intensidad" PropertyName="Value" DefaultValue="0" /> 
                             <asp:ControlParameter ControlID="DGrupo" PropertyName="SelectedValue" Name="grupo" />
                         </SelectParameters>
                     </asp:SqlDataSource>
@@ -241,26 +230,26 @@
     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
     SelectCommand="(
-                        SELECT actId AS id,'' AS nombre, COUNT(*) AS c,SUM(costo) AS s,intensidad AS i FROM programacion 
+                        SELECT actId AS id,'' AS nombre, COUNT(*) AS c,SUM(costo) AS s FROM programacion 
                         WHERE 
                         @grupo=0
-                        AND prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
+                        AND DATE(prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
                         AND (@asegurador=0 OR @asegurador=programacion.entId)
-                        GROUP BY actId,intensidad
+                        GROUP BY actId
                     ) UNION (
-                        SELECT asegurador.entId AS id,asegurador.entNombre AS nombre, COUNT(*) AS c,SUM(costo) AS s,0 AS i FROM programacion 
+                        SELECT asegurador.entId AS id,asegurador.entNombre AS nombre, COUNT(*) AS c,SUM(costo) AS s FROM programacion 
 					    LEFT JOIN asegurador ON (asegurador.entId=programacion.entId)
 					    WHERE 
 					    @grupo=1
-                        AND prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
+                        AND DATE(prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
                         AND (@asegurador=0 OR @asegurador=programacion.entId)
                         GROUP BY asegurador.entId, asegurador.entNombre
                     ) UNION (
-                        SELECT asegurador.entId AS id,asegurador.entNombre AS nombre, COUNT(DISTINCT programacion.pacId) AS c,SUM(costo) AS s,0 AS i FROM programacion 
+                        SELECT asegurador.entId AS id,asegurador.entNombre AS nombre, COUNT(DISTINCT programacion.pacId) AS c,SUM(costo) AS s FROM programacion 
 					    LEFT JOIN asegurador ON (asegurador.entId=programacion.entId)
 					    WHERE 
 					    @grupo=2
-                        AND prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
+                        AND DATE(prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
                         AND (@asegurador=0 OR @asegurador=programacion.entId)
                         GROUP BY asegurador.entId, asegurador.entNombre
                     ) ORDER BY nombre,id DESC">
@@ -287,7 +276,6 @@
             <asp:BoundField DataField="prgFechaProg" HeaderText="Inicio vigencia autorización" SortExpression="prgFechaProg" DataFormatString="{0:d}" />
             <asp:BoundField DataField="autNumero" HeaderText="Autorización" SortExpression="autNumero" />
             <asp:BoundField DataField="actId" HeaderText="Actividad" SortExpression="actId" ItemStyle-Wrap="false" />
-            <asp:BoundField DataField="intensidad" HeaderText="Descripción del servicio" SortExpression="intensidad" ItemStyle-Wrap="false" />
             <asp:BoundField DataField="sesiones" HeaderText="Sesiones" SortExpression="sesiones" ItemStyle-HorizontalAlign="Right" />
             <asp:BoundField DataField="costo" HeaderText="Costo" SortExpression="costo" DataFormatString="{0:c}" />
         </Columns>
@@ -296,7 +284,7 @@
         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
         SelectCommand="SELECT 
-                        asegurador.entNombre AS entidad,programacion.actId,programacion.intensidad,
+                        asegurador.entNombre AS entidad,programacion.actId,
                         paciente.pacDocumento,
                         autorizacion.autFecha AS prgFechaProg, autorizacion.autNumero,
                         paciente.pacNombres AS nombre, SUM(programacion.costo) AS costo
@@ -305,9 +293,9 @@
                         LEFT JOIN autorizacion ON (autorizacion.autNumero=programacion.autNumero)
                         LEFT JOIN paciente ON (paciente.pacId=programacion.pacId)
                         LEFT JOIN asegurador ON (asegurador.entId=programacion.entId)
-                        WHERE programacion.prgFechaProg BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
+                        WHERE DATE(programacion.prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y') 
                         AND (@asegurador=0 OR @asegurador=programacion.entId)
-                        GROUP BY asegurador.entNombre,autorizacion.autFecha,autorizacion.autNumero,programacion.actId,programacion.intensidad,paciente.pacDocumento,paciente.pacNombres
+                        GROUP BY asegurador.entNombre,autorizacion.autFecha,autorizacion.autNumero,programacion.actId,paciente.pacDocumento,paciente.pacNombres
                         ORDER BY entNombre,pacNombres DESC">
           <SelectParameters>
                 <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />

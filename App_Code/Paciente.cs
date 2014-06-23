@@ -184,7 +184,7 @@ public class Paciente
                 }
             }
 
-            HttpRuntime.Cache.Insert("p" + id, paciente);
+            HttpRuntime.Cache.Insert("p" + id, paciente, null, DateTime.MaxValue, new TimeSpan(6, 0, 0, 0));
         }
         return paciente;
     }

@@ -42,7 +42,7 @@ public class Procedimientos
         HttpRuntime.Cache.Remove("v" + id);
     }
 
-    static public void RemoveIntensidad(string procedimientoid)
+    /*static public void RemoveIntensidad(string procedimientoid)
     {
         HttpRuntime.Cache.Remove("pv" + procedimientoid);
     }
@@ -62,7 +62,7 @@ public class Procedimientos
             }
         }
         return cantidad!="0";
-    }
+    }*/
 
     static public string GetVarios(string id) {
 
@@ -149,7 +149,7 @@ public class Procedimientos
         HttpRuntime.Cache.Remove("sp" + entidad + ";" + procedimiento);
     }
 
-    static public void RemoveCostoIntensidad(string entidad, string intensidad) {
+    /*static public void RemoveCostoIntensidad(string entidad, string intensidad) {
 
         HttpRuntime.Cache.Remove("ci" + entidad + ";" + intensidad);
     }
@@ -180,7 +180,7 @@ public class Procedimientos
         }
         catch { }
         return 0;
-    }
+    }*/
 
     static public double GetCosto(string procedimento, string entidad)
     {
@@ -388,23 +388,17 @@ public class Procedimientos
         query += "medicamento_formulacion.tiempo";
         query+="medicamento_formulacion.formulada";
         query+="medicamento_formulacion.posologia";
-        query["intensidad"]= "varios.nombre";
         
         MySqlDataReader reader= conector.Query(query.GetSelect("formulacion.paciente=" +Query.GetValor(idpaciente) 
                             + " AND formulacion.fecha=" + Query.GetValor(Query.GetMySQLDateFormat(fecha))
                             + " AND medicamento_formulacion.id IS NOT NULL"
                             , "LEFT JOIN medicamento_formulacion ON (formulacion.id=medicamento_formulacion.formulacion)"
                             + " LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)"
-                            + " LEFT JOIN varios ON (varios.id=medicamento_formulacion.intensidad)"
                             ));
         if(reader!=null) {
             while(reader.Read()) {
                 resultado += reader["nombre"].ToString();
                 resultado += ", ";
-                if (!string.IsNullOrEmpty(reader["intensidad"].ToString()))
-                {
-                    resultado += " [" + reader["intensidad"].ToString() + "]";
-                }
                 resultado += reader["concentracion"].ToString();
                 resultado += ". ";
                 resultado += reader["posologia"].ToString();

@@ -32,10 +32,11 @@ public partial class programacion_consulta : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            string []valores= e.Row.Cells[Utilidades.GetGridColumnIndex(GResultados, "Actividad")].Text.Split('_');
+            // ya no se busca mas los procedimientos
+            /*string []valores= e.Row.Cells[Utilidades.GetGridColumnIndex(GResultados, "Actividad")].Text.Split('_');
             e.Row.Cells[Utilidades.GetGridColumnIndex(GResultados, "Actividad")].Text = Procedimientos.GetProcedimiento(valores[0]);
             if(valores.Length>1 && valores[1].Length>0)
-                e.Row.Cells[Utilidades.GetGridColumnIndex(GResultados, "Actividad")].Text += " [" + Procedimientos.GetVarios(valores[1]) + "]";
+                e.Row.Cells[Utilidades.GetGridColumnIndex(GResultados, "Actividad")].Text += " [" + Procedimientos.GetVarios(valores[1]) + "]";*/
             LinkButton boton = (LinkButton)e.Row.FindControl("LNovedad");
             boton.Text = boton.Text.Replace(",_", "<br/>");
         }
