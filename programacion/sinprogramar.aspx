@@ -82,9 +82,7 @@
                     SelectCommand="SELECT CAST(IFNULL(GROUP_CONCAT(medicamentos.id),-1) AS CHAR) AS id, varios.nombre FROM varios LEFT JOIN medicamentos ON (medicamentos.grupo=varios.id) WHERE varios.tipo=22 AND varios.szReservado IS NULL GROUP BY varios.id ORDER BY varios.nombre;">
                 </asp:SqlDataSource>
             </td>
-            <td>
-            <asp:CheckBox runat="server" ID="CCompleta" Text="Iniciados" />
-            </td>
+            <td class="nw"><asp:CheckBox runat="server" ID="CCompleta" Text="Iniciados" /></td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" /></td>
         </tr>
         </table>
@@ -93,7 +91,7 @@
     <div id="dImprimir">
     <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
         AutoGenerateColumns="False" EmptyDataText="No se encontraron autorizaciones" 
-        AllowPaging="True" PageSize="50" AllowSorting="True" OnRowDataBound="GResultados_RowDataBound" >
+        AllowPaging="True" PageSize="50" AllowSorting="True" >
         <RowStyle CssClass="GridRow"></RowStyle>
         <FooterStyle CssClass="GridFooter"></FooterStyle>
         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -133,11 +131,9 @@
                             LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
                             LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
                             WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
-                            AND SYSDATE()<=IFNULL(autFechaVenc+INTERVAL 30 DAY,autFecha+INTERVAL 60 DAY)
                             AND autorizacion.autActivo=1
                             AND paciente.estId=1
                             AND (@asegurador=0 OR paciente.entId=@asegurador)
-                            
                             {0} 
                             AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                             AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
@@ -182,7 +178,6 @@
                                                     WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                                     AND autorizacion.autActivo=1
                                                     AND paciente.estId=1
-                                                    AND SYSDATE()<=IFNULL(autFechaVenc+INTERVAL 30 DAY,autFecha+INTERVAL 60 DAY)
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
                                                     AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)
@@ -199,7 +194,6 @@
                                                     WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                                     AND autorizacion.autActivo=1
                                                     AND paciente.estId=1
-                                                    AND SYSDATE()<=IFNULL(autFechaVenc+INTERVAL 30 DAY,autFecha+INTERVAL 60 DAY)
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
                                                     AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)
@@ -217,7 +211,6 @@
                                                     WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                                     AND autorizacion.autActivo=1
                                                     AND paciente.estId=1
-                                                    AND SYSDATE()<=IFNULL(autFechaVenc+INTERVAL 30 DAY,autFecha+INTERVAL 60 DAY)
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
                                                     AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)
@@ -235,7 +228,6 @@
                                                     WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                                     AND autorizacion.autActivo=1
                                                     AND paciente.estId=1
-                                                    AND SYSDATE()<=IFNULL(autFechaVenc+INTERVAL 30 DAY,autFecha+INTERVAL 60 DAY)
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
                                                     AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)

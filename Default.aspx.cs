@@ -42,7 +42,7 @@ public partial class _Default : System.Web.UI.Page
             if (m_EUsuario.Text.Length > 0)
                 m_EContrasena.Focus();
             else m_EUsuario.Focus();
-            LVersion.Text = Version.GetVersion();
+            LVersion.Text = HomeCareVersion.Number;
         }
     }
 

@@ -304,12 +304,53 @@ public class servicios : System.Web.Services.WebService
 
     [WebMethod]
     // [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public List<CJSon> GetPersonal(String q) {
+    public List<CJSon> GetPersonal(String q)
+    {
         return GetPersonalC(q, null, null);
     }
 
     [WebMethod]
-    // [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public List<CJSon> GetPersonalOrganizationExample16(String q)
+    {
+        List<CJSon> lista = new List<CJSon>();
+        using (CConector conector = new CConector())
+        {
+
+            string query = "SELECT perId AS id,perDocumento AS documento, perNombre AS nombres, carId FROM recurso_humano WHERE areaId=12 AND ("; // OrganizationExample16 es el area 12
+            string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
+
+            if (split.Length == 1)
+            { // solo un dato puede ser un documento
+                query += " perDocumento LIKE '%" + q.Trim() + "%' OR ";
+            }
+            query += "(";
+
+            for (int i = 0; i < split.Length; i++)
+            {
+                if (split[i].Length > 0)
+                { // verificamos que no este vacio
+                    if (i > 0)
+                        query += " AND ";
+                    query += String.Format(" perNombre LIKE '%{0}%' ", split[i]);
+                }
+            }
+            query += ")) ORDER BY perNombre LIMIT 20";
+
+            // Logs.WriteLog(query);
+            MySqlDataReader reader = conector.Query(query);
+            if (reader != null)
+            {
+                while (reader.Read())
+                {
+                    lista.Add(new CJSon(reader["id"].ToString(), reader["documento"].ToString() + " - " + reader["nombres"].ToString() + " - " + Funcionario.GetCargo(reader["carId"].ToString())));
+                }
+                reader.Close();
+            }
+        }
+        return lista;
+    }
+
+    [WebMethod]
     public List<CJSon> GetPersonalC(String q, String c, String s)
     {
         List<CJSon> lista = new List<CJSon>();

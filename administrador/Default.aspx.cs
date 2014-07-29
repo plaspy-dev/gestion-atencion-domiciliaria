@@ -160,8 +160,21 @@ public partial class administrador_Default : System.Web.UI.Page
             parent = Add("Facturación");
             Add("Causal devolución", 74, parent);
             Add("Causal glosa", 75, parent);
-            // disponible 80
 
+            parent = Add("Recursos humanos");
+            Add("Empresas en las que labora actualmente", 80, parent);
+            Add("Cursos", 81, parent);
+
+            parent = Add("OrganizationExample16 - atención");
+            Add("Tipo paciente", 82, parent);
+
+            // disponible 83
+            // OrganizationExample16
+            parent = Add("OrganizationExample16 - Programación");
+            Add("Programa", 10017, parent);
+            Add("Actividad", 10018, parent);
+            Add("Plan", 10019, parent);
+            Add("Lugar", 10020, parent);
 
             if (HTipo.Value.Length == 0)
                 Response.Redirect(Request.Url.AbsolutePath + "?tipo=1");

@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using MySql.Data.MySqlClient;
 
 public partial class administrador_categoria_censo : System.Web.UI.Page
 {
@@ -18,8 +19,11 @@ public partial class administrador_categoria_censo : System.Web.UI.Page
             GResultado.Columns[1].Visible = usuario.CanDelete();
             GResultado.Columns[0].Visible = usuario.CanUpdate();
 
+            GProcedimientos.DataBind();
+            ViewState["proc"] = new List<Miscelaneos>();
         }
     }
+
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         if (!IsValid)
@@ -61,16 +65,13 @@ public partial class administrador_categoria_censo : System.Web.UI.Page
             query = new Query("categoria_censo");
             query["categoria"] = HId.Value;
 
-            for (int i = 0; i < CHoras.Items.Count; i++)
-            {
-                if (CHoras.Items[i].Selected)
-                {
-                    query["hora"] = CHoras.Items[i].Value;
-                    if (conector.QueryMod(query.GetInsert()) == -1)
-                        return;
-                }
+            List<Miscelaneos> lista = (List<Miscelaneos>)ViewState["proc"];
+            foreach (Miscelaneos info in lista) {
+                query["hora"] = info.Id;
+                if (conector.QueryMod(query.GetInsert()) == -1)
+                    return;
             }
-
+            
             conector.Commit();
             ((MasterPageI)Master).SetResultado(mensaje);
         }
@@ -89,32 +90,60 @@ public partial class administrador_categoria_censo : System.Web.UI.Page
 
         using (CConector conector = new CConector())
         {
-            string texto = conector.QueryString("SELECT GROUP_CONCAT(hora) FROM categoria_censo WHERE categoria=" + HId.Value);
-            ViewState["horas"] = texto;
-        }
+            List<Miscelaneos> lista= new List<Miscelaneos>();
 
-        CHoras.DataBind();
+            MySqlDataReader reader= conector.Query("SELECT hora FROM categoria_censo WHERE categoria=" + HId.Value);
+            if(reader!=null) {
+                while(reader.Read()) {
+                    lista.Add(new Miscelaneos(
+                        reader["hora"].ToString(),
+                        Procedimientos.GetProcedimiento(reader["hora"].ToString())
+                    ));
+                }
+            }
+
+            GProcedimientos.DataSource = lista;
+            GProcedimientos.DataBind();
+            ViewState["proc"] = lista;
+        }
 
         ((MasterPageI)Master).SetModificacion(HId.Value);
     }
 
-    protected void LHoras_DataBound(object sender, EventArgs e)
+    protected void BMas_Click(object sender, EventArgs e)
     {
-        string horas = (string)ViewState["horas"];
-        if (!string.IsNullOrEmpty(horas))
-        {
-            string[] cons = horas.Split(',');
-            for (int i = 0; i < CHoras.Items.Count; i++)
-            {
-                for (int j = 0; j < cons.Length; j++)
-                {
-                    if (cons[j] == CHoras.Items[i].Value.ToString())
-                    {
-                        CHoras.Items[i].Selected = true;
-                        break;
-                    }
-                }
-            }
-        }
+        if (!IsValid)
+            return;
+
+        List<Miscelaneos> lista= (List<Miscelaneos>) ViewState["proc"];
+
+        if (lista.Exists(x => x.Id == TProcedimientoID.Text))
+            return;
+
+        lista.Add(new Miscelaneos(TProcedimientoID.Text, TProcedimiento.Text));
+
+        TProcedimiento.Text =
+        TProcedimientoID.Text = "";
+        
+        GProcedimientos.DataSource = lista;
+        GProcedimientos.DataBind();
+        ViewState["proc"] = lista;
+    }
+    protected void GProcedimientos_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        e.Cancel = true;
+        List<Miscelaneos> lista = (List<Miscelaneos>)ViewState["proc"];
+
+        Miscelaneos info= lista.Find(x => x.Id == GProcedimientos.DataKeys[e.RowIndex].Value.ToString());
+        if (info == null)
+            return;
+
+        TProcedimiento.Text = info.Nombre;
+        TProcedimientoID.Text = info.Id;
+
+        lista.Remove(info);
+        GProcedimientos.DataSource = lista;
+        GProcedimientos.DataBind();
+        ViewState["proc"] = lista;
     }
 }

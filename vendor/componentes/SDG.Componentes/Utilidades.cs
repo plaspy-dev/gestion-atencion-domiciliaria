@@ -12,7 +12,7 @@ namespace SDG.Componentes;
 
 public class Utilidades
 {
-	private static bool bGetKey;
+	private static bool bGetKey = false;
 
 	public static string GetURLFullPath(Page page, string archivo)
 	{

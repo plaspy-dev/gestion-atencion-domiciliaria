@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Evolución" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="evolucion.aspx.cs" Inherits="paciente_evolucion" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
+<%@ Register Src="~/archivo/digitalizacionc.ascx" TagName="Digitalizacion" TagPrefix="uc6" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
@@ -160,6 +161,7 @@
         <table style="border-collapse: collapse">
             <tr>
                 <td colspan="4">
+                <uc6:Digitalizacion ID="DArchivo" runat="server" />
                 <asp:Panel ID="PEvoluciones" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LEvoluciones"></asp:Label></a></h3>
                     <div class="hide">

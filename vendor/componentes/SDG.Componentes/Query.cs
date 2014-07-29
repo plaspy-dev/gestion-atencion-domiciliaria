@@ -13,7 +13,7 @@ namespace SDG.Componentes;
 [Serializable]
 public class Query
 {
-	private static bool bGetKey;
+	private static bool bGetKey = false;
 
 	protected string m_szTabla;
 
@@ -253,6 +253,7 @@ public class Query
 
 	public static string GetMySQLDateFormat(DateTime fecha, bool horas)
 	{
+		bool flag = 0 == 0;
 		string text = fecha.ToString("yyyy-MM-dd");
 		if (horas)
 		{

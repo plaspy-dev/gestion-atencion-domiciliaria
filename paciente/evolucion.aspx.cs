@@ -53,6 +53,8 @@ public partial class paciente_evolucion : System.Web.UI.Page
                 }
                 else
                 {
+                    if(usuario.CanAdmin())
+                        DArchivo.IdPaciente = CCDetallePaciente.IdPaciente;
                     ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
                     SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
                     SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;

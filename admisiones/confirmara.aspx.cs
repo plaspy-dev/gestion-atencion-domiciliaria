@@ -21,14 +21,16 @@ public partial class admisiones_confirmara : System.Web.UI.Page
         using (CConector conector = new CConector())
         {
             conector.StartTransaction();
+            List<string> listadoPacientes = new List<string>();
+
             for (int i = 0; i < GResultados.Rows.Count; i++)
             {
-
                 TextBox autorizacion = (TextBox)GResultados.Rows[i].Cells[6].FindControl("TAutorizacion");
                 if (autorizacion.Text.Length != 0)
                 {
                     // actualizamos todas las autorizaciones
-                    string autorizacionactual = GResultados.DataKeys[i].Value.ToString();
+                    string autorizacionactual = GResultados.DataKeys[i].Values["autNumero"].ToString();
+                    listadoPacientes.Add(GResultados.DataKeys[i].Values["pacId"].ToString());
 
                     // verificamos que no este duplicado en otro paciente
                     if (autorizacion.Text != autorizacionactual)
@@ -67,13 +69,16 @@ public partial class admisiones_confirmara : System.Web.UI.Page
 
                         if (conector.QueryMod(detalle.GetUpdate("autNumero=" + Query.GetValor(autorizacionactual))) == -1)
                             return;
-                    }
 
+                        Autorizaciones.UpdateSesiones(conector, autorizacionactual);
+                    }
                     Autorizaciones.UpdateSesiones(conector, autorizacion.Text);
                     total++;
                 }
             }
             conector.Commit();
+            foreach(string paciente in listadoPacientes)
+                Autorizaciones.RemoveAutorizaciones(paciente);
         }
         ((MasterPageI)Master).SetResultado(total + " Autorizaciones confirmadas.");
     }

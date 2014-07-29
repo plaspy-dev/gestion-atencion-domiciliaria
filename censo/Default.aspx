@@ -6,11 +6,6 @@
         addDialog('#<%= PLocalidad.ClientID%>', "#dLocalidad");
     });
     $(function() {
-        /*$("#dgrafica").accordion({
-            autoHeight: false,
-            collapsible: true,
-            active: false
-        });*/
         $("#<%= TProcedimiento.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -40,7 +35,6 @@
             },
             search: function(event, ui) {
                 $("#<%= TProcedimientoID.ClientID %>").val("");
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
             }
         }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
     });
@@ -55,7 +49,6 @@
             <td>Asegurador</td>
             <td>Actividad o CUPS</td>
             <td>Área</td>
-            <td>Horas</td>
             <td>Categoría</td>
             <td></td>
         </tr>
@@ -226,7 +219,7 @@
 							AND autorizacion.pacId=paciente.pacId 
 							AND ('@area'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId IN (@area)))
 							AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId=@procedimiento))
-							AND ('@categoria'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.intensidad IN (@categoria)))
+							AND ('@categoria'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId IN (@categoria)))
 					        GROUP BY paciente.pacId
                             ORDER BY paciente.pacNombres">
                  <SelectParameters>
@@ -247,7 +240,7 @@
 	                        WHERE @curRow BETWEEN autFecha AND IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)
                              AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
                              AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
-                             AND ('@categoria'='0' OR autorizacion_detalle.intensidad IN (@categoria))
+                             AND ('@categoria'='0' OR autorizacion_detalle.actId IN (@categoria))
 		                        AND (@asegurador=0 OR paciente.entId=@asegurador)
                         ) AS total
                         FROM varios,(SELECT @curRow:=STR_TO_DATE(@inicio, '%d/%m/%Y')-INTERVAL 1 DAY) r
@@ -272,7 +265,7 @@
 		                        OR CONCAT(YEAR(@curRow),LPAD(MONTH(@curRow),2,'0'))=CONCAT(YEAR(IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)),LPAD(MONTH(IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)),2,'0')))
                              AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
                              AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
-                             AND ('@categoria'='0' OR autorizacion_detalle.intensidad IN (@categoria))
+                             AND ('@categoria'='0' OR autorizacion_detalle.actId IN (@categoria))
 		                        AND (@asegurador=0 OR paciente.entId=@asegurador)
                         ) AS total
                         FROM varios,(SELECT @curRow:=STR_TO_DATE(@inicio, '%d/%m/%Y')-INTERVAL 1 MONTH) r

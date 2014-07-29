@@ -29,7 +29,7 @@
     <div id="dImprimir">
     <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
         AutoGenerateColumns="False" EmptyDataText="No se encontraron autorizaciones" 
-        PageSize="50" AllowSorting="True" DataKeyNames="autNumero">
+        PageSize="50" AllowSorting="True" DataKeyNames="autNumero,pacId">
         <RowStyle CssClass="GridRow"></RowStyle>
         <FooterStyle CssClass="GridFooter"></FooterStyle>
         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>

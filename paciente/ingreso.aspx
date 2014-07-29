@@ -8,8 +8,6 @@
     var editor = null;
     addFunctionToStart(function() {
 
-
-
         editor = null;
         $("#<%= TTA.ClientID %>").mask("999/999");
         $("#<%= TCIE10.ClientID %>").autocomplete({

@@ -114,6 +114,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                 query += "inicio_descanso";
                 query += "fin_descanso";
                 query += "verificacionTitulos";
+                query += "laboraActualmente";
 
                 using (CConector conector = new CConector())
                 {
@@ -176,6 +177,16 @@ public partial class rh_funcionario : System.Web.UI.Page
                         TInicioDescanso.Text = Query.GetFromMySQLDate(reader["inicio_descanso"]);
                         TFinDescanso.Text = Query.GetFromMySQLDate(reader["fin_descanso"]);
                         TVerificacionTitulos.Text = Query.GetFromMySQLDate(reader["verificacionTitulos"]);
+
+                        string[] actualmente= reader["laboraActualmente"].ToString().Split(',');
+
+                        CLaboraActualmente.DataBind();
+                        foreach (ListItem item in CLaboraActualmente.Items) {
+                            foreach (string emp in actualmente)
+                            {
+                                item.Selected = item.Value == emp;
+                            }
+                        }
 
                         IFoto.ImageUrl = "~/archivo/imagen.ashx?w=120&t=r&n=" + HId.Value +".jpg";
                         IFoto.PostBackUrl = "~/archivo/imagen.ashx?t=r&n=" + HId.Value + ".jpg";
@@ -293,6 +304,17 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["residencialocId"] = DLocalidadVivienda.SelectedValue;
         query["verificacionTitulos"] = Query.GetMySQLDateFormat(TVerificacionTitulos.Text);
         query["perNombre"] = JoinNames(new string[] { TApellidos.Text, TNombres.Text });
+
+        string actualmente="";
+
+        foreach (ListItem item in CLaboraActualmente.Items)
+        {
+            if (item.Selected)
+            {
+                actualmente = string.Format("{0}{1}{2}", actualmente, actualmente.Length>0 ? "," : "", item.Value);
+            }
+        }
+        query["laboraActualmente"] = actualmente;
 
         if (DEstado.SelectedItem.Text == "VACACIONES" || DEstado.SelectedItem.Text == "LICENCIA TEMPORAL")
         {
@@ -420,6 +442,24 @@ public partial class rh_funcionario : System.Web.UI.Page
 
                 if (conector.QueryMod(empresa.GetInsert()) == -1)
                     return;
+            }
+
+            if (conector.QueryMod("DELETE FROM recurso_humano_curso WHERE funcionario=" + HId.Value) == -1)
+                return;
+
+            Query curso= new Query("recurso_humano_curso");
+            curso["funcionario"] = HId.Value;
+
+            for (int i = 0; i < GCursos.Rows.Count; i++) {
+
+                TextBox text = (TextBox)GCursos.Rows[i].FindControl("F");
+                if (text.Text.Length > 0) {
+                    curso["vencimiento"] = Query.GetMySQLDateFormat(text.Text);
+                    curso["curso"] = GCursos.DataKeys[i].Values["id"].ToString();
+
+                    if (conector.QueryMod(curso.GetInsert()) == -1)
+                        return;
+                }
             }
 
             Funcionario.RemoveFuncionario(HId.Value);

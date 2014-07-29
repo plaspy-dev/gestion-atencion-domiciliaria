@@ -13,7 +13,7 @@ namespace SDG.Componentes;
 
 public class Conector : IDisposable
 {
-	private static bool bGetKey;
+	private static bool bGetKey = false;
 
 	protected string m_szLastError;
 
@@ -21,7 +21,7 @@ public class Conector : IDisposable
 
 	protected string m_szConexion;
 
-	protected bool m_bTransaccion;
+	protected bool m_bTransaccion = false;
 
 	protected MySqlConnection m_pSQLConector;
 

@@ -13,6 +13,8 @@ public class Funcionario
     public string Id { get; set; }
     public string Nombres { get; set; }
     public string Documento { get; set; }
+    public string CarId { get; set; }
+    public string Cargo { get { return GetCargo(CarId); } }
 
     public string DocumentoYNombres
     {
@@ -27,6 +29,25 @@ public class Funcionario
     {
     }
 
+
+    static public string GetCargo(string id)
+    {
+
+        if (string.IsNullOrEmpty(id))
+            return "";
+
+        string nombre = (string)HttpRuntime.Cache["cr" + id];
+        if (nombre == null)
+        {
+            using (CConector conector = new CConector())
+            {
+                nombre = conector.QueryString("SELECT carDescripcion FROM cargo WHERE carId=" + Query.GetValor(id));
+                HttpRuntime.Cache.Insert("cr" + id, nombre);
+            }
+        }
+        return nombre;
+    }
+
     public static Funcionario GetFuncionario(string id)
     {
         Funcionario funcionario = (Funcionario)HttpRuntime.Cache["rh" + id];
@@ -39,6 +60,7 @@ public class Funcionario
             query += "perId";
             query += "perNombre";
             query += "perDocumento";
+            query += "carId";
 
             using (CConector conector = new CConector())
             {
@@ -48,6 +70,7 @@ public class Funcionario
                     funcionario.Id= reader["perId"].ToString();
                     funcionario.Documento = reader["perDocumento"].ToString();
                     funcionario.Nombres = reader["perNombre"].ToString();
+                    funcionario.CarId = reader["carId"].ToString();
                 }
             }
 

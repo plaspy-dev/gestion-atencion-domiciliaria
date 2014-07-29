@@ -110,7 +110,7 @@
             <table width="100%" align="center" cellpadding="0" cellspacing="0">
               <tr>
                 <td class="fhl"></td>
-                <td width="1px">
+                <td width="1">
                     <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="172" height="55" id="FlashID" title="OrganizationExample15">
                       <param name="movie" value="<%=ResolveUrl("~/")%>images/logo.swf" />
                       <param name="quality" value="high" />
@@ -131,6 +131,9 @@
                       </object>
                       <!--<![endif]-->
                     </object>
+                </td>
+                <td width="1" style="background-color: #327FCD; vertical-align:bottom;">
+                    <asp:ImageButton runat="server" ID="IP" ImageUrl="~/images/OrganizationExample16.jpg" PostBackUrl="~/eventos/pacientes.aspx" />
                 </td>
                 <td valign="middle" align="right" style="width:100%; text-align:right; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;">
                 <asp:UpdatePanel runat="server" ID="UAlertas" UpdateMode="Conditional">
@@ -156,7 +159,10 @@
                                     <asp:HyperLinkField DataTextField="nombre" HeaderText="Nombre" DataNavigateUrlFields="id" ItemStyle-HorizontalAlign="Left" DataNavigateUrlFormatString="~/" SortExpression="nombre" ItemStyle-Wrap="false" />
                                 </Columns>
                             </asp:GridView>
-                            <asp:SqlDataSource ID="SAlertas" runat="server">
+                            <asp:SqlDataSource ID="SAlertas" runat="server"
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT NULL AS id,NULL AS nombre">
                             </asp:SqlDataSource>
                             <button id="bAlertas" class="hide"></button>
                         </div>

@@ -51,7 +51,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             lnkAlertas.Text = RAlertasReal.Items.Count==1 ? "Alerta" : "Alertas";
         }
 
-        LVersion.Text = Version.GetVersion();
+        LVersion.Text = HomeCareVersion.Number;
         usuario.CreateMenu(TMenu, Session["parametros"]==null ? "" : Session["parametros"].ToString());
 
         // Session.Remove("parametros");
@@ -334,7 +334,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
         document.AddTitle(Page.Title);
         document.AddSubject(Request.Url.ToString());
-        document.AddCreator("OrganizationExample15: " + Version.GetVersion());
+        document.AddCreator("OrganizationExample15: " + HomeCareVersion.Number);
         document.AddAuthor(Usuario.GetUsuario().GetNombre());
 
         document.Open();

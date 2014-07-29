@@ -42,11 +42,11 @@ public class DateTimeValidator : CustomValidator
 		base.OnPreRender(e);
 		if (!MaximunValue.HasValue && !MinumunValue.HasValue)
 		{
-			throw new Exception("No se ha definido ningun valor para MinumunValue o MaximunValue (" + ID + ")");
+			throw new Exception("No se ha definido ningun valor para MinumunValue o MaximunValue [" + ID + "]");
 		}
 		if (MinumunValue.HasValue && MaximunValue.HasValue && MaximunValue.Value < MinumunValue.Value)
 		{
-			throw new Exception("El valor MaximunValue no puede ser menor al MinumunValue (" + ID + ")");
+			throw new Exception("El valor MaximunValue no puede ser menor al MinumunValue [" + ID + "] M(" + MaximunValue.ToString() + ") m(" + MinumunValue.ToString() + ")");
 		}
 		if (MinumunValue.HasValue)
 		{

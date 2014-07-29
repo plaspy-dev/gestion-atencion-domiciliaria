@@ -132,7 +132,6 @@
                                 autorizacion.autActivo=1
                                 AND autorizacion.pacId=@paciente
                                 {0}
-                                AND SYSDATE()<=IFNULL(autFechaVenc+30,autFecha+60)
                                 AND autorizacion_detalle.autNumSesiones>(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId)
                                 GROUP BY autorizacion.autNumero">
 			                <SelectParameters>

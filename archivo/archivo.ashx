@@ -37,6 +37,9 @@ public class archivo : IHttpHandler {
             case "q":
                 tipo = "pqr";
                 break;
+            case "d":
+                tipo = "digitalizacion";
+                break;
         }
         string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo);
         if (context.Request.QueryString["d"] == "True")

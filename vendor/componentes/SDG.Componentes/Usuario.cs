@@ -23,9 +23,9 @@ public class Usuario
 		Admin = 0x20
 	}
 
-	private static bool bHeaderCache;
+	private static bool bHeaderCache = false;
 
-	private static bool bGetKey;
+	private static bool bGetKey = false;
 
 	protected string m_szNombre;
 

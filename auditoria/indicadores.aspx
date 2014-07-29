@@ -150,10 +150,10 @@
             <Fields>
                 <asp:TemplateField>
                     <HeaderTemplate>
-                        <asp:LinkButton ID="L1" runat="server" CommandName="eventos" OnClick="LEventos_Click" Text="Eventos adversos" ></asp:LinkButton>
+                        <asp:LinkButton ID="A1" runat="server" CommandName="eventos" OnClick="LEventos_Click" Text="Eventos adversos" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("eventos")%>
+                        <asp:Label runat="server" ID="L1" Text='<%# Eval("eventos")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
@@ -163,7 +163,7 @@
                         <asp:LinkButton ID="L2" runat="server" CommandName="farmacologico" OnClick="LEventos_Click" Text="Farmacológico" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("farmacologico")%>
+                        <asp:Label runat="server" ID="A2" Text='<%# Eval("farmacologico")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
@@ -173,7 +173,7 @@
                         <asp:LinkButton ID="L3" runat="server" CommandName="epidemologicos" OnClick="LEventos_Click" Text="Epidemiológicos" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("epidemologicos")%>
+                        <asp:Label runat="server" ID="A3" Text='<%# Eval("epidemologicos")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
@@ -183,7 +183,7 @@
                         <asp:LinkButton ID="L4" runat="server" CommandName="apoyoterapeutico" OnClick="LEventos_Click" Text="Apoyo terapéutico" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("apoyoterapeutico")%>
+                        <asp:Label runat="server" ID="A4" Text='<%# Eval("apoyoterapeutico")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
@@ -193,7 +193,7 @@
                         <asp:LinkButton ID="L5" runat="server" CommandName="lesionesapoyo" OnClick="LEventos_Click" Text="Lesiones apoyo" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("lesionesapoyo")%>
+                        <asp:Label runat="server" ID="A5" Text='<%# Eval("lesionesapoyo")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
@@ -203,7 +203,7 @@
                         <asp:LinkButton ID="L6" runat="server" CommandName="autolesion" OnClick="LEventos_Click" Text="Autolesión" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("autolesion")%>
+                        <asp:Label runat="server" ID="A6" Text='<%# Eval("autolesion")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />
@@ -213,7 +213,7 @@
                         <asp:LinkButton ID="L7" runat="server" CommandName="atencion" OnClick="LEventos_Click" Text="Complicaciones en la atención" ></asp:LinkButton>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <%# Eval("atencion")%>
+                        <asp:Label runat="server" ID="A7" Text='<%# Eval("atencion")%>'></asp:Label>
                     </ItemTemplate>
                     <HeaderStyle HorizontalAlign="Left" />
                     <ItemStyle HorizontalAlign="Right" />

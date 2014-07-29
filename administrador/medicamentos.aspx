@@ -285,7 +285,7 @@
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT medicamentos.id, medicamentos.nombre, medicamentos.forma,medicamentos.codigo, medicamentos.principio, medicamentos.concentracion, medicamentos.aclaracion,grupo.nombre AS grupo FROM medicamentos LEFT JOIN varios AS grupo ON (grupo.id=medicamentos.grupo) WHERE medicamentos.tipo=@tipo AND medicamentos.estado IS NULL ORDER BY medicamentos.nombre" 
-                DeleteCommand="UPDATE medicamento SET estado=-1 WHERE id=@id" >
+                DeleteCommand="UPDATE medicamentos SET estado=-1 WHERE id=@id" >
                 <SelectParameters>
                     <asp:ControlParameter ControlID="LTipos" PropertyName="SelectedValue" Name="tipo" DefaultValue="0" />
                 </SelectParameters>

@@ -120,7 +120,15 @@ public partial class auditoria_indicadores : System.Web.UI.Page
 
         LChart2.Text = "['Eventos'";
         for (int i = 0; i < DEventos.Rows.Count; i++)
-            LChart2.Text += "," + ((DataBoundLiteralControl)DEventos.Rows[i].Cells[1].Controls[0]).Text;
+        {
+            foreach (Control info in DEventos.Rows[i].Cells[1].Controls)
+            {
+                if (info is Label)
+                {
+                    LChart2.Text += "," + ((Label)info).Text;
+                }
+            }
+        }
         LChart2.Text += "]";
     }
 

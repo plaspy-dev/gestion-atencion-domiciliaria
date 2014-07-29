@@ -624,6 +624,37 @@
                         </td>
                     </tr>
                 </table>
+                <fieldset>
+                    <legend>Cursos realizados</legend>
+                    <asp:GridView ID="GCursos" runat="server" AutoGenerateColumns="False" DataSourceID="SCursos" EmptyDataText="No se encontraron cursos" DataKeyNames="id">
+                                    <RowStyle CssClass="GridRow"></RowStyle>
+                                    <FooterStyle CssClass="GridFooter"></FooterStyle>
+                                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                                    <Columns>
+                                        <asp:BoundField DataField="nombre" HeaderText="Curso" ItemStyle-Width="100%" />
+                                        <asp:TemplateField HeaderText="Vencimiento">
+                                            <ItemTemplate>
+                                                <asp:TextBox runat="server" ID="F" CssClass="fecha" Text='<%# string.Format("{0:d}", Eval("vencimiento")) %>'></asp:TextBox>
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                    </Columns>
+                                </asp:GridView>
+                                    <asp:SqlDataSource ID="SCursos" runat="server" 
+                                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                        SelectCommand="SELECT id, nombre, vencimiento
+                                                    FROM varios 
+                                                    LEFT JOIN recurso_humano_curso ON (recurso_humano_curso.funcionario=@perId AND recurso_humano_curso.curso=varios.id)
+                                                    WHERE tipo=81 AND szReservado IS NULL 
+                                                    ORDER BY nombre">
+                                          <SelectParameters>
+                                            <asp:ControlParameter ControlID="HId" PropertyName="Value" Name="perId" DefaultValue="0" />
+                                          </SelectParameters>
+                                    </asp:SqlDataSource>
+                </fieldset>
             </div>
             <div id="tabs4" class="hide">
             <table>
@@ -671,6 +702,17 @@
                         </td>
                     </tr>
                 </table>
+                <fieldset>
+                    <legend>Empresas en las que labora actualmente</legend>
+                    <asp:CheckBoxList runat="server" ID="CLaboraActualmente" DataTextField="nombre" DataValueField="id" DataSourceID="SLaboraActualemente" RepeatColumns="4">
+                    </asp:CheckBoxList>
+                    <asp:SqlDataSource ID="SLaboraActualemente" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT id,nombre FROM varios 
+                            WHERE tipo=80 AND szReservado IS NULL ORDER BY nombre">
+                    </asp:SqlDataSource>
+                </fieldset>
             </div>
             <div id="tabs5" class="hide">
                 <fieldset>

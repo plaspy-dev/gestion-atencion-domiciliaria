@@ -13,7 +13,7 @@ namespace SDG.Componentes;
 
 public class GridUtils
 {
-	private static bool bGetKey;
+	private static bool bGetKey = false;
 
 	public static string GetGridRowCellHTML(DataControlField dataColumn, DataRow row, int columna, bool clases)
 	{
@@ -46,6 +46,14 @@ public class GridUtils
 			HyperLinkField hyperLinkField = (HyperLinkField)dataColumn;
 			value = ((!string.IsNullOrEmpty(hyperLinkField.DataTextFormatString)) ? string.Format(hyperLinkField.DataTextFormatString, row[hyperLinkField.DataTextField]) : row[hyperLinkField.DataTextField].ToString());
 		}
+		else if (dataColumn is TemplateField)
+		{
+			TemplateField templateField = (TemplateField)dataColumn;
+			if (!string.IsNullOrEmpty(templateField.SortExpression))
+			{
+				value = row[templateField.SortExpression].ToString();
+			}
+		}
 		stringBuilder.Append(value);
 		stringBuilder.Append("</td>");
 		return stringBuilder.ToString();
@@ -75,9 +83,9 @@ public class GridUtils
 		}
 		stringBuilder.Append("</tr>");
 		bool flag = true;
-		for (int j = 0; j < table.Rows.Count; j++)
+		for (int i = 0; i < table.Rows.Count; i++)
 		{
-			DataRow row = table.Rows[j];
+			DataRow row = table.Rows[i];
 			flag = !flag;
 			if (clases)
 			{
@@ -87,11 +95,11 @@ public class GridUtils
 			{
 				stringBuilder.Append("<tr>");
 			}
-			for (int k = 0; k < gridView.Columns.Count; k++)
+			for (int j = 0; j < gridView.Columns.Count; j++)
 			{
-				if (gridView.Columns[k].Visible)
+				if (gridView.Columns[j].Visible)
 				{
-					stringBuilder.Append(GetGridRowCellHTML(gridView.Columns[k], row, k, clases));
+					stringBuilder.Append(GetGridRowCellHTML(gridView.Columns[j], row, j, clases));
 				}
 			}
 			stringBuilder.Append("</tr>");
@@ -99,23 +107,23 @@ public class GridUtils
 		if (gridView.ShowFooter && gridView.FooterRow != null)
 		{
 			stringBuilder.Append("<tr class='gf'>");
-			for (int l = 0; l < gridView.Columns.Count; l++)
+			for (int i = 0; i < gridView.Columns.Count; i++)
 			{
-				if (gridView.Columns[l].Visible)
+				if (gridView.Columns[i].Visible)
 				{
-					if (gridView.Columns[l].FooterStyle.HorizontalAlign == HorizontalAlign.Right)
+					if (gridView.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Right)
 					{
-						stringBuilder.AppendFormat("<td align=right class='f{0}' style='text-align: right'>", l);
+						stringBuilder.AppendFormat("<td align=right class='f{0}' style='text-align: right'>", i);
 					}
-					else if (gridView.Columns[l].FooterStyle.HorizontalAlign == HorizontalAlign.Center)
+					else if (gridView.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Center)
 					{
-						stringBuilder.AppendFormat("<td align=center class='f{0}' style='text-align: center'>", l);
+						stringBuilder.AppendFormat("<td align=center class='f{0}' style='text-align: center'>", i);
 					}
 					else
 					{
-						stringBuilder.AppendFormat("<td class='f{0}'>", l);
+						stringBuilder.AppendFormat("<td class='f{0}'>", i);
 					}
-					stringBuilder.AppendFormat("<b>{0}</b></td>", gridView.FooterRow.Cells[l].Text);
+					stringBuilder.AppendFormat("<b>{0}</b></td>", gridView.FooterRow.Cells[i].Text);
 				}
 			}
 			stringBuilder.Append("</tr>");
@@ -162,9 +170,9 @@ public class GridUtils
 		}
 		stringBuilder.Append("</tr>");
 		bool flag = true;
-		for (int j = 0; j < grid.Rows.Count; j++)
+		for (int i = 0; i < grid.Rows.Count; i++)
 		{
-			GridViewRow gridViewRow = grid.Rows[j];
+			GridViewRow gridViewRow = grid.Rows[i];
 			flag = !flag;
 			if (clases)
 			{
@@ -174,11 +182,11 @@ public class GridUtils
 			{
 				stringBuilder.Append("<tr>");
 			}
-			for (int k = 0; k < gridViewRow.Cells.Count; k++)
+			for (int j = 0; j < gridViewRow.Cells.Count; j++)
 			{
-				if (grid.Columns[k].Visible)
+				if (grid.Columns[j].Visible)
 				{
-					stringBuilder.Append(GetGridRowCellHTML(grid, gridViewRow, k, clases));
+					stringBuilder.Append(GetGridRowCellHTML(grid, gridViewRow, j, clases));
 				}
 			}
 			stringBuilder.Append("</tr>");
@@ -186,23 +194,23 @@ public class GridUtils
 		if (grid.ShowFooter && grid.FooterRow != null)
 		{
 			stringBuilder.Append("<tr class='gf'>");
-			for (int l = 0; l < grid.Columns.Count; l++)
+			for (int i = 0; i < grid.Columns.Count; i++)
 			{
-				if (grid.Columns[l].Visible)
+				if (grid.Columns[i].Visible)
 				{
-					if (grid.Columns[l].FooterStyle.HorizontalAlign == HorizontalAlign.Right)
+					if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Right)
 					{
-						stringBuilder.AppendFormat("<td align=right class='f{0}' style='text-align: right'>", l);
+						stringBuilder.AppendFormat("<td align=right class='f{0}' style='text-align: right'>", i);
 					}
-					else if (grid.Columns[l].FooterStyle.HorizontalAlign == HorizontalAlign.Center)
+					else if (grid.Columns[i].FooterStyle.HorizontalAlign == HorizontalAlign.Center)
 					{
-						stringBuilder.AppendFormat("<td align=center class='f{0}' style='text-align: center'>", l);
+						stringBuilder.AppendFormat("<td align=center class='f{0}' style='text-align: center'>", i);
 					}
 					else
 					{
-						stringBuilder.AppendFormat("<td class='f{0}'>", l);
+						stringBuilder.AppendFormat("<td class='f{0}'>", i);
 					}
-					stringBuilder.AppendFormat("<b>{0}</b></td>", grid.FooterRow.Cells[l].Text);
+					stringBuilder.AppendFormat("<b>{0}</b></td>", grid.FooterRow.Cells[i].Text);
 				}
 			}
 			stringBuilder.Append("</tr>");
@@ -314,14 +322,14 @@ public class GridUtils
 			}
 		}
 		Response.Write("</tr>\n");
-		for (int j = 0; j < view.Rows.Count; j++)
+		for (int i = 0; i < view.Rows.Count; i++)
 		{
 			Response.Write("<tr>\n");
-			for (int k = 0; k < view.Columns.Count; k++)
+			for (int j = 0; j < view.Columns.Count; j++)
 			{
-				if (view.Columns[k].Visible)
+				if (view.Columns[j].Visible)
 				{
-					Response.Write(GetGridRowCellHTML(view, view.Rows[j], k, clases: false));
+					Response.Write(GetGridRowCellHTML(view, view.Rows[i], j, clases: false));
 				}
 			}
 			Response.Write("</tr>\n");

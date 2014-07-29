@@ -29,16 +29,6 @@ public partial class programacion_sinprogramar : System.Web.UI.Page
         // GResumen.DataBind();
     }
 
-    protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        if (e.Row.RowIndex != -1)
-        {
-            e.Row.Cells[8].Text = Procedimientos.ReplaceVarios(
-                                    Procedimientos.ReplaceProcedimientos(e.Row.Cells[8].Text))
-                                    .Replace(",_", "<br/>");
-        }
-    }
-
     protected void GResumen_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowIndex != -1)

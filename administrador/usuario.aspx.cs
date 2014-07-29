@@ -69,6 +69,7 @@ public partial class administrador_usuario : System.Web.UI.Page
             query["cumpleanos"] = CCumpleanos.Checked ? "1" : "";
             if (CForceChange.Checked)
                 query["forceurl"] = "~/contrasena.aspx";
+            else query["forceurl"] = ""; // reseteamos el usuario para evitar que entre en un bucle.
 
             // agregamos los cargos que puede programar el usuario
             for (int i = 0; i < GCargos.Rows.Count; i++)

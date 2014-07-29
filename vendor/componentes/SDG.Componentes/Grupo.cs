@@ -42,8 +42,8 @@ public class Grupo
 					bool flag2 = true;
 					try
 					{
-						XmlNodeList elementsByTagName8 = item3.GetElementsByTagName("visible");
-						if (elementsByTagName8[0].InnerText == "false")
+						XmlNodeList elementsByTagName4 = item3.GetElementsByTagName("visible");
+						if (elementsByTagName4[0].InnerText == "false")
 						{
 							flag2 = false;
 						}
