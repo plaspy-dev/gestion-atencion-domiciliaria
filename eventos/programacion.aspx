@@ -23,7 +23,34 @@
 	}
 </style>
 <script type="text/javascript">
-    $inicio(function() { 
+    $inicio(function() {
+        $("#<%= TNombre.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetEventos",
+                    data: "{ 'q': '" + request.term + "' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.item, label: item.value
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                $.goURL("id=" + ui.item.value);
+                return false;
+            }
+        });
         $("#<%= TPersonal.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -179,15 +206,22 @@
                 <td colspan="4" class="celdaTitulo">Personal</td>
             </tr>
             <tr>
-                <td class="tdl">Cantidad</td>
-                <td colspan="2" class="nw"><asp:TextBox runat="server" ID="TAuxiliares" CssClass="entero"></asp:TextBox> Auxiliares
-                <asp:TextBox runat="server" ID="TMedicos" CssClass="entero"></asp:TextBox> Medicos</td>
-                <td class="tdr"></td>
+                <td class="tdl tdb">Auxiliares</td>
+                <td colspan="3" class="nw tdb tbr">
+                Cantidad <asp:TextBox runat="server" ID="TAuxiliares" CssClass="entero"></asp:TextBox>
+                Valor hora <asp:TextBox runat="server" ID="TVAuxiliar" CssClass="dinero"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td class="tdl tdb">Médicos</td>
+                <td class="tdr tdb" colspan="3">
+                Cantidad <asp:TextBox runat="server" ID="TMedicos" CssClass="entero"></asp:TextBox>
+                Valor hora <asp:TextBox runat="server" ID="TVMedicos" CssClass="dinero"></asp:TextBox> 
+                </td>
             </tr>
             <tr>
                 <td colspan="4" class="tdl tdr">
                     <asp:GridView ID="GPersonal" runat="server" DataSourceID="SPersonal" Width="100%"
-                        AutoGenerateColumns="False" DataKeyNames="id,carId" 
+                        AutoGenerateColumns="False" DataKeyNames="id,carId"
                         onselectedindexchanged="GPersonal_SelectedIndexChanged" >
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -239,10 +273,17 @@
                 <td colspan="4" class="celdaTitulo">Ambulancias</td>
             </tr>
             <tr>
-                <td class="tdl">Cantidad</td>
-                <td class="nw" colspan="2"><asp:TextBox ID="TAmbulanciasB" CssClass="entero" runat="server"></asp:TextBox> TAB
-                <asp:TextBox ID="TAmbulanciasM" CssClass="entero" runat="server"></asp:TextBox> TAM</td>
-                <td class="tdr"></td>
+                <td class="tdl tdb">TAB</td>
+                <td class="nw tdr tdb" colspan="3">
+                Cantidad <asp:TextBox ID="TAmbulanciasB" CssClass="entero" runat="server"></asp:TextBox>
+                Valor hora <asp:TextBox runat="server" ID="TVTAB" CssClass="dinero"></asp:TextBox></td>
+            </tr>
+            <tr>
+                <td class="tdl tdb">TAM</td>
+                <td class="tdr tdb nw" colspan="3">
+                    Cantidad <asp:TextBox ID="TAmbulanciasM" CssClass="entero" runat="server"></asp:TextBox>
+                    Valor hora <asp:TextBox runat="server" ID="TVTAM" CssClass="dinero"></asp:TextBox>
+                </td>
             </tr>
             <tr>
                 <td colspan="4" class="tdr tdl">
@@ -259,6 +300,7 @@
                         <Columns>
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/eliminar.gif" />
                             <asp:BoundField DataField="Codigo" HeaderText="Código" ItemStyle-Width="100%" />
+                            <asp:BoundField DataField="Empresa" HeaderText="Empresa" ItemStyle-Wrap="false" />
                             <asp:BoundField DataField="Tipo" HeaderText="Tipo" ItemStyle-Wrap="false" />
                         </Columns>
                     </asp:GridView>
@@ -267,6 +309,7 @@
             <tr>
                 <td class="tdl tdb">Código</td>
                 <td colspan="3" class="nw tdr tdb"><asp:TextBox runat="server" ID="TCodigo"></asp:TextBox>
+                Empresa <asp:TextBox runat="server" ID="TEmpresa"></asp:TextBox>
                 <asp:DropDownList runat="server" ID="DTipo">
                     <asp:ListItem Text="TAB" Value="0"></asp:ListItem>
                     <asp:ListItem Text="TAM" Value="1"></asp:ListItem>
@@ -287,7 +330,7 @@
             Text="Cancelar" onclick="BCancelar_Click" />
     </div>
     <br />
-    <asp:GridView ID="GEventos" runat="server" AutoGenerateColumns="False" 
+    <asp:GridView ID="GEventos" runat="server" AutoGenerateColumns="False" AllowSorting="true" 
         DataKeyNames="id" DataSourceID="SEventos" AllowPaging="true" PageSize="20"
         onselectedindexchanged="GEventos_SelectedIndexChanged" Width="100%"
         ondatabound="GEventos_DataBound">

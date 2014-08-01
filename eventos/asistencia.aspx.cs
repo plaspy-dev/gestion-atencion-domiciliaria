@@ -59,6 +59,8 @@ public partial class eventos_asistencia : System.Web.UI.Page
 
         using (CConector conector = new CConector())
         {
+            conector.StartTransaction();
+
             Query query = new Query("asistencia");
 
             query["evento"] = DEvento.SelectedValue;
@@ -81,8 +83,37 @@ public partial class eventos_asistencia : System.Web.UI.Page
                         return;
                 }
             }
+
+
+            query = new Query("asistencia_ambulancia");
+
+            query["evento"] = DEvento.SelectedValue;
+            query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
+
+            for (int i = 0; i < GAmbulancias.Rows.Count; i++)
+            {
+                query["codigo"] = GAmbulancias.DataKeys[i].Values["codigo"].ToString();
+                TextBox ingreso = ((TextBox)GAmbulancias.Rows[i].FindControl("TIngreso"));
+                TextBox salida = ((TextBox)GAmbulancias.Rows[i].FindControl("TSalida"));
+
+                if (ingreso.Text.Length > 0 || salida.Text.Length > 0)
+                {
+                    query["ingreso"] = ingreso.Text;
+                    query["salida"] = salida.Text;
+
+                    if (conector.QueryMod(query.GetUpdate("evento=" + DEvento.SelectedValue + " AND fecha=" + Query.GetValor(Query.GetMySQLDateFormat(TFecha.Text)) + " AND codigo=" + Query.GetValor(GAmbulancias.DataKeys[i].Values["codigo"].ToString()))) == -1)
+                        return;
+                    if (conector.QueryMod(query.GetInsert().Replace("INSERT INTO ", "INSERT IGNORE INTO ")) == -1)
+                        return;
+                }
+            }
+
             if (conector.InsertModificacion(DEvento.SelectedValue) == -1)
                 return;
+
+
+
+            conector.Commit();
         }
         ((MasterPageI)Master).SetResultado("Asistencia modificada de " + DEvento.SelectedItem.Text);
     }

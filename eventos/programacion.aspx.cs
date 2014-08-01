@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
 using System.Collections.Specialized;
+using System.Globalization;
 
 public partial class eventos_programacion : System.Web.UI.Page
 {
@@ -14,6 +15,7 @@ public partial class eventos_programacion : System.Web.UI.Page
     public class Ambulancia {
         public string Codigo { get; set; }
         public string Tipo { get { return IdTipo=="1" ? "TAM" : "TAB"; } }
+        public string Empresa { get; set; }
         public string IdTipo { get; set; }
     }
 
@@ -59,6 +61,10 @@ public partial class eventos_programacion : System.Web.UI.Page
             query["mec_medio"]= TMECMedio.Text;
             query["medicos"] = TMedicos.Text;
             query["auxiliares"] = TAuxiliares.Text;
+            query["vmedico"] = TVMedicos.Text.Length==0 ? "" : decimal.Parse(TVMedicos.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
+            query["vauxiliar"] = TVMedicos.Text.Length == 0 ? "" : decimal.Parse(TVAuxiliar.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
+            query["vtab"] = TVMedicos.Text.Length == 0 ? "" : decimal.Parse(TVTAB.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
+            query["vtam"] = TVMedicos.Text.Length == 0 ? "" : decimal.Parse(TVTAM.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture);
 
             if (HIdEvento.Value.Length == 0)
             {
@@ -98,6 +104,7 @@ public partial class eventos_programacion : System.Web.UI.Page
 
                 ambulancias["codigo"]= info.Codigo;
                 ambulancias["tipo"]= info.IdTipo;
+                ambulancias["empresa"] = info.Empresa;
 
                 if (conector.QueryMod(ambulancias.GetInsert()) == -1)
                     return;
@@ -138,6 +145,10 @@ public partial class eventos_programacion : System.Web.UI.Page
             query += "responsable";
             query += "medicos";
             query += "auxiliares";
+            query += "vauxiliar";
+            query += "vmedico";
+            query += "vtab";
+            query += "vtam";
 
             if (GEventos.SelectedDataKey != null && GEventos.SelectedDataKey.Value != null)
                 HIdEvento.Value = GEventos.SelectedDataKey.Value.ToString();
@@ -163,6 +174,10 @@ public partial class eventos_programacion : System.Web.UI.Page
                 DResponsable.SelectedValue = reader["responsable"].ToString();
                 TMedicos.Text = reader["medicos"].ToString();
                 TAuxiliares.Text= reader["auxiliares"].ToString();
+                TVTAM.Text = reader["vtam"]==DBNull.Value ? "" : Convert.ToDecimal(reader["vtam"]).ToString(CultureInfo.InvariantCulture);
+                TVTAB.Text = reader["vtab"] == DBNull.Value ? "" : Convert.ToDecimal(reader["vtab"]).ToString(CultureInfo.InvariantCulture);
+                TVMedicos.Text = reader["vmedico"] == DBNull.Value ? "" : Convert.ToDecimal(reader["vmedico"]).ToString(CultureInfo.InvariantCulture);
+                TVAuxiliar.Text = reader["vauxiliar"] == DBNull.Value ? "" : Convert.ToDecimal(reader["vauxiliar"]).ToString(CultureInfo.InvariantCulture);
 
                 List<Ambulancia> lista = new List<Ambulancia>();
 
@@ -170,6 +185,7 @@ public partial class eventos_programacion : System.Web.UI.Page
 
                 ambulancias += "tipo";
                 ambulancias += "codigo";
+                ambulancias += "empresa";
 
                 reader= conector.Query(ambulancias.GetSelect("evento=" + Query.GetValor(HIdEvento.Value)));
                 if (reader != null) {
@@ -178,6 +194,7 @@ public partial class eventos_programacion : System.Web.UI.Page
                         Ambulancia info = new Ambulancia();
                         info.IdTipo= reader["tipo"].ToString();
                         info.Codigo = reader["codigo"].ToString();
+                        info.Empresa = reader["empresa"].ToString();
                         lista.Add(info);
                     }
                 }
@@ -273,7 +290,9 @@ public partial class eventos_programacion : System.Web.UI.Page
 
         item.Codigo = TCodigo.Text;
         item.IdTipo = DTipo.SelectedValue;
+        item.Empresa = TEmpresa.Text;
 
+        TEmpresa.Text = "";
         TCodigo.Text = "";
         DTipo.SelectedValue = "0";
 
@@ -290,10 +309,12 @@ public partial class eventos_programacion : System.Web.UI.Page
             return;
         
         TCodigo.Text = info.Codigo;
+        TEmpresa.Text = info.Empresa;
         DTipo.SelectedValue = info.IdTipo;
 
         lista.Remove(info);
 
+        GAmbulancias.SelectedIndex = -1;
         GAmbulancias.DataSource = lista;
         GAmbulancias.DataBind();
         ViewState["ambulancias"] = lista;

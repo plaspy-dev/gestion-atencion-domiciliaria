@@ -70,6 +70,33 @@ public class servicios : System.Web.Services.WebService
         }
     };
 
+    [WebMethod]
+    public List<CJSon> GetEventos(string q) {
+        List<CJSon> lista = new List<CJSon>();
+        using (CConector conector = new CConector()) {
+            string query = "SELECT id,CONCAT(nombre,' (', DATE_FORMAT(inicio, '%d/%m/%Y'), '-',DATE_FORMAT(fin, '%d/%m/%Y') ,')') AS nombre FROM programacion_evento WHERE 1=1 ";
+            string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
+            for (int i = 0; i < split.Length; i++)
+            {
+                if (split[i].Length > 0)
+                { // verificamos que no este vacio
+                    query += String.Format(" AND nombre LIKE '%{0}%' ", split[i]);
+                }
+            }
+            query += " ORDER BY nombre,inicio,fin LIMIT 10;";
+            MySqlDataReader reader = conector.Query(query);
+            if (reader != null)
+            {
+                while (reader.Read())
+                {
+                    lista.Add(new CJSon(reader["nombre"].ToString(), reader["id"].ToString()));
+                }
+                reader.Close();
+            }
+        }
+        return lista;
+    }
+
     /*[WebMethod(EnableSession = true)]
     public List<CJSon> GetIntensidad(String q, string proc)
     {

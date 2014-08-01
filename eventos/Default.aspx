@@ -8,35 +8,31 @@
             <td>
                 <table>
         <tr>
-            <td>
-                Nombre
-            </td>
-            <td>
-                <asp:TextBox ID="TNombre" runat="server"></asp:TextBox>
-            </td>
+            <td>Nombre</td>
+            <td><asp:TextBox ID="TNombre" runat="server"></asp:TextBox></td>
             <td>
                 <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ControlToValidate="TNombre" Display="Dynamic" SetFocusOnError="true" runat="server" ErrorMessage="Por favor ingrese un nombre"></asp:RequiredFieldValidator>
             </td>
         </tr>
         <tr>
-            <td>
-                Entidad
-            </td>
-            <td>
-                <asp:TextBox ID="TEntidad" runat="server"></asp:TextBox>
-            </td>
-            <td>
-                &nbsp;</td>
+            <td>Cargo</td>
+            <td><asp:TextBox runat="server" ID="TCargo"></asp:TextBox></td>
         </tr>
         <tr>
-            <td>
-                Teléfono
-                contacto</td>
-            <td>
-                <asp:TextBox ID="TTelefono" runat="server"></asp:TextBox>
-            </td>
-            <td>
-                &nbsp;</td>
+            <td>Organización</td>
+            <td><asp:TextBox ID="TEntidad" runat="server"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Teléfono trabajo</td>
+            <td><asp:TextBox runat="server" ID="TTelTrabajo"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Teléfono móvil</td>
+            <td><asp:TextBox ID="TTelefono" runat="server"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td>Correo electrónico</td>
+            <td><asp:TextBox runat="server" ID="TEmail"></asp:TextBox></td>
         </tr>
     </table>
             </td>
@@ -51,7 +47,7 @@
         <tr>
             <td>
                 <asp:GridView ID="GContacto" runat="server" AutoGenerateColumns="False" Width="100%"
-                DataKeyNames="id" DataSourceID="SContacto" AllowPaging="true" PageSize="20"
+                DataKeyNames="id" DataSourceID="SContacto" AllowPaging="true" PageSize="20" AllowSorting="true"
                     onselectedindexchanged="GContacto_SelectedIndexChanged" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -63,15 +59,18 @@
                     <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                     <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                     <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" ItemStyle-Width="100%" />
-                    <asp:BoundField DataField="direccion" HeaderText="Entidad" SortExpression="direccion" />
-                    <asp:BoundField DataField="telefono" HeaderText="Teléfono" SortExpression="telefono" />
+                    <asp:BoundField DataField="cargo" HeaderText="Cargo" SortExpression="cargo" />
+                    <asp:BoundField DataField="direccion" HeaderText="Organización" SortExpression="direccion" />
+                    <asp:BoundField DataField="teltrabajo" HeaderText="Teléfono trabajo" SortExpression="teltrabajo" />
+                    <asp:BoundField DataField="telefono" HeaderText="Teléfono móvil" SortExpression="telefono" />
+                    <asp:BoundField DataField="email" HeaderText="Correo electrónico" SortExpression="email" />
                 </Columns>
                 <SelectedRowStyle CssClass="selecteditem" />
             </asp:GridView>
             <asp:SqlDataSource ID="SContacto" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id, nombre, direccion, telefono FROM contacto WHERE estado IS NULL ORDER BY nombre" 
+                SelectCommand="SELECT id, nombre, direccion, telefono, teltrabajo, email,cargo FROM contacto WHERE estado IS NULL ORDER BY nombre" 
                 DeleteCommand="UPDATE contacto SET estado=-1 WHERE id=@id" >
             </asp:SqlDataSource>
                 </td>

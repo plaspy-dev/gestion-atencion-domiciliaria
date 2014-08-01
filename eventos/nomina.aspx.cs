@@ -44,8 +44,7 @@ public partial class eventos_nomina : System.Web.UI.Page
                 {
                     string texto = grilla.Rows[i].Cells[j].Text.Replace("$", "").Replace("%", "").Trim();
                     total += Convert.ToDouble(texto);
-                }
-                catch { }
+                } catch { }
             }
             string formato = ((BoundField)grilla.Columns[j]).DataFormatString;
             if (formato.Length == 0)
@@ -60,5 +59,6 @@ public partial class eventos_nomina : System.Web.UI.Page
     protected void BIr_Click(object sender, EventArgs e)
     {
         SetResumen(GResultados, 2);
+        SetResumen(GAmbulancias, 3);
     }
 }

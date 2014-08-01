@@ -28,6 +28,9 @@ public partial class eventos_Default : System.Web.UI.Page
             query["nombre"] = TNombre.Text;
             query["direccion"] = TEntidad.Text;
             query["telefono"] = TTelefono.Text;
+            query["email"]=TEmail.Text;
+            query["teltrabajo"]=TTelTrabajo.Text;
+            query["cargo"]=TCargo.Text;
 
             int id = -1;
             if (GContacto.SelectedIndex == -1)
@@ -58,9 +61,12 @@ public partial class eventos_Default : System.Web.UI.Page
     {
         BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
 
-        TNombre.Text = HttpUtility.HtmlDecode(GContacto.SelectedRow.Cells[2].Text);
-        TEntidad.Text = HttpUtility.HtmlDecode(GContacto.SelectedRow.Cells[3].Text);
-        TTelefono.Text = HttpUtility.HtmlDecode(GContacto.SelectedRow.Cells[4].Text);
+        TNombre.Text = Utilidades.GetGridCellText(GContacto, "Nombre", GContacto.SelectedIndex);
+        TEntidad.Text = Utilidades.GetGridCellText(GContacto, "Organización", GContacto.SelectedIndex);
+        TTelefono.Text = Utilidades.GetGridCellText(GContacto, "Teléfono móvil", GContacto.SelectedIndex);
+        TEmail.Text = Utilidades.GetGridCellText(GContacto, "Correo electrónico", GContacto.SelectedIndex);
+        TTelTrabajo.Text=  Utilidades.GetGridCellText(GContacto, "Teléfono trabajo", GContacto.SelectedIndex);
+        TCargo.Text = Utilidades.GetGridCellText(GContacto, "Cargo", GContacto.SelectedIndex);
 
         ((MasterPageI)Master).SetModificacion(GContacto.SelectedDataKey.Value.ToString());
     }

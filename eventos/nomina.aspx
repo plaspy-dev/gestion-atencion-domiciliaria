@@ -58,16 +58,65 @@
                     SelectCommand="SELECT recurso_humano.perNombres AS personal
                                     ,cargo.carDescripcion AS cargo 
                                     ,SUM(HOUR(SUBTIME(asistencia.salida,asistencia.ingreso))+MINUTE(SUBTIME(asistencia.salida,asistencia.ingreso))/60) AS horas
-                                    ,0 AS vhora
-                                    ,SUM(HOUR(SUBTIME(asistencia.salida,asistencia.ingreso))+MINUTE(SUBTIME(asistencia.salida,asistencia.ingreso))/60)*0 AS valor
+                                    ,IF(cargo.CarId IN (6,66),programacion_evento.vmedico, programacion_evento.vauxiliar) AS vhora
+                                    ,SUM(HOUR(SUBTIME(asistencia.salida,asistencia.ingreso))+MINUTE(SUBTIME(asistencia.salida,asistencia.ingreso))/60)*IF(cargo.CarId IN (6,66),programacion_evento.vmedico, programacion_evento.vauxiliar) AS valor
                                     FROM asistencia 
                                     LEFT JOIN recurso_humano ON (recurso_humano.perId=asistencia.personal) 
                                     LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)
+                                    LEFT JOIN programacion_evento ON (programacion_evento.id=asistencia.evento)
                                     WHERE 
                                     (@programacion=0 OR asistencia.evento=@programacion)
                                     AND (@inicio=' ' OR @fin=' ' OR asistencia.fecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y'))
                                     GROUP BY personal
                                     ORDER BY cargo, personal"
+                    >
+                    <SelectParameters>
+                        <asp:ControlParameter ControlID="DEvento" Name="programacion" PropertyName="SelectedValue" />
+                        <asp:ControlParameter ControlID="TDesde" Name="inicio" PropertyName="Text" />
+                        <asp:ControlParameter ControlID="THasta" Name="fin" PropertyName="Text"  />
+                    </SelectParameters>
+                </asp:SqlDataSource>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <asp:GridView ID="GAmbulancias" runat="server" AutoGenerateColumns="False" ShowFooter="true"
+                    DataSourceID="SAmbulancias" EmptyDataText="No se encontraron ambulancias en el evento">
+                        <RowStyle CssClass="GridRow"></RowStyle>
+                        <FooterStyle CssClass="GridFooter"></FooterStyle>
+                        <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                        <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                        <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                        <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                        <SelectedRowStyle CssClass="selecteditem" />
+                    <Columns>
+                        <asp:BoundField DataField="empresa" HeaderText="Empresa" SortExpression="empresa" ItemStyle-Wrap="false" />
+                        <asp:BoundField DataField="tipo" HeaderText="Tipo" SortExpression="tipo" ItemStyle-Wrap="false" />
+                        <asp:BoundField DataField="codigo" HeaderText="Código" SortExpression="codigo" ItemStyle-Wrap="false" ItemStyle-Width="100%" />
+                        <asp:BoundField DataField="horas" HeaderText="Horas" SortExpression="horas" DataFormatString="{0:0.00}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
+                        <asp:BoundField DataField="vhora" HeaderText="Valor hora" SortExpression="vhora" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
+                        <asp:BoundField DataField="valor" HeaderText="Valor" SortExpression="valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
+                    </Columns>
+                </asp:GridView>
+                <asp:SqlDataSource ID="SAmbulancias" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT 
+                                    programacion_evento_ambulancia.codigo,IF(tipo=1, 'TAM', 'TAB') AS tipo,empresa,ingreso,salida
+                                    ,SUM(HOUR(SUBTIME(asistencia_ambulancia.salida,asistencia_ambulancia.ingreso))+MINUTE(SUBTIME(asistencia_ambulancia.salida,asistencia_ambulancia.ingreso))/60) AS horas
+                                    ,IF(tipo=1, programacion_evento.vtam,programacion_evento.vtab) AS vhora
+                                    ,SUM(HOUR(SUBTIME(asistencia_ambulancia.salida,asistencia_ambulancia.ingreso))+MINUTE(SUBTIME(asistencia_ambulancia.salida,asistencia_ambulancia.ingreso))/60)*IF(tipo=1, programacion_evento.vtam,programacion_evento.vtab) AS valor
+                                    FROM asistencia_ambulancia
+                                    LEFT JOIN programacion_evento ON (programacion_evento.id=asistencia_ambulancia.evento)
+                                    LEFT JOIN programacion_evento_ambulancia ON (programacion_evento_ambulancia.evento=asistencia_ambulancia.evento AND programacion_evento_ambulancia.codigo=asistencia_ambulancia.codigo)
+                                    WHERE 
+                                    (@programacion=0 OR asistencia_ambulancia.evento=@programacion)
+                                    AND (@inicio=' ' OR @fin=' ' OR asistencia_ambulancia.fecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y'))
+                                    GROUP BY codigo
+                                    ORDER BY empresa, codigo"
                     >
                     <SelectParameters>
                         <asp:ControlParameter ControlID="DEvento" Name="programacion" PropertyName="SelectedValue" />
