@@ -152,8 +152,17 @@
         <tr>
             <td>Número</td>
             <td><asp:TextBox runat="server" ID="TNumero" CssClass="likenumero"></asp:TextBox></td>
-            <td></td>
-            <td></td>
+            <td>Centro de costos<asp:RequiredFieldValidator ControlToValidate="DCCosto" ErrorMessage="Por favor seleccione un centro de costos." ID="R2" 
+	            runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td><asp:DropDownList ID="DCCosto" runat="server" DataSourceID="SCCosto" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SCCosto" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=83 AND szReservado IS NULL ORDER BY nombre">
+                </asp:SqlDataSource></td>
             <td></td>
         </tr>
         <tr>
@@ -237,8 +246,8 @@
                         <asp:BoundField DataField="codigo" HeaderText="Código" SortExpression="codigo" ItemStyle-HorizontalAlign="Right" />
                         <asp:BoundField DataField="nombre" HeaderText="Producto" SortExpression="nombre" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" />
                         <asp:BoundField DataField="cantidad" HeaderText="Cantidad" SortExpression="cantidad" DataFormatString="{0:F2}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
-                        <asp:BoundField DataField="Costo" HeaderText="Costo U." SortExpression="Costo" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" HeaderStyle-Wrap="false" />
-                        <asp:BoundField DataField="CostoTotal" HeaderText="Costo T." SortExpression="CostoTotal" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" HeaderStyle-Wrap="false" />
+                        <asp:BoundField DataField="Costo" HeaderText="Costo U." SortExpression="Costo" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" HeaderStyle-Wrap="false" ItemStyle-Wrap="false" FooterStyle-Wrap="false" />
+                        <asp:BoundField DataField="CostoTotal" HeaderText="Costo T." SortExpression="CostoTotal" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" HeaderStyle-Wrap="false" ItemStyle-Wrap="false" FooterStyle-Wrap="false" />
                         <asp:BoundField DataField="unidad" HeaderText="Un." SortExpression="unidad" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" />
                         <asp:BoundField DataField="lote" HeaderText="Lote" SortExpression="lote" />
                         <asp:BoundField DataField="vence" HeaderText="Vence" SortExpression="vence" DataFormatString="{0:d}" />

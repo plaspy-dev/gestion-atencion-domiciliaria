@@ -82,6 +82,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                     query += "prioridad";
                     query += "revisado";
                     query += "creado";
+                    query += "centro_costos";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(id)));
                     if (reader != null && reader.Read())
@@ -99,6 +100,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                         RPaciente.Checked = !ROrganizationExample15.Checked;
                         LRevisado.Text = reader["revisado"].ToString();
                         LCreado.Text = reader["creado"].ToString();
+                        Utilidades.SelectInDropDown(DCCosto, reader["centro_costos"]);
 
                         Tercero tercero = new Tercero(reader["tercero"].ToString());
                         TTerceroID.Text = tercero.Id;
@@ -193,7 +195,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         producto.cantidad = Convert.ToDecimal(TCantidad.Text, CultureInfo.InvariantCulture);
         try
         {
-            producto.Costo = Decimal.Parse(TCosto.Text, NumberStyles.Currency, CultureInfo.InvariantCulture);
+            producto.Costo = Decimal.Parse(TCosto.Text.Replace("$",""), NumberStyles.Currency, CultureInfo.InvariantCulture);
         }
         catch { }
         producto.GetValor(UCPaciente.IdPaciente,m_nAlmacen);
@@ -306,6 +308,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
             query["paciente"] = RPaciente.Checked ? UCPaciente.IdPaciente : "";
             query["tercero"] = terceroid;
             query["prioridad"] = CPrioridad.Checked ? "1" : "";
+            query["centro_costos"] = DCCosto.SelectedValue;
             if (sender == BAnular)
                 query["estado"] = "-1";
 
@@ -383,8 +386,14 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
 
                 MailMessage mail = new MailMessage();
                 mail.From = new MailAddress("demo@example.invalid", "Compras OrganizationExample15");
-                if (IsValidEmail(tecero.Email)) // no le enviamos correo al proveedor
+                if (IsValidEmail(tecero.Email))
+                { // no le enviamos correo al proveedor
                     mail.To.Add(tecero.Email);
+#if DEBUG
+                    mail.To.Clear();
+                    mail.To.Add("demo@example.invalid");
+#endif
+                }
                 // mail.Bcc.Add();
 
                 mail.Subject = nueva ? "Nueva " : "Actualizada ";

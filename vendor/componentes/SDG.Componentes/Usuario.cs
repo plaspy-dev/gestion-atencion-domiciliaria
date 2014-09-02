@@ -23,9 +23,9 @@ public class Usuario
 		Admin = 0x20
 	}
 
-	private static bool bHeaderCache = false;
+	private static bool bHeaderCache;
 
-	private static bool bGetKey = false;
+	private static bool bGetKey;
 
 	protected string m_szNombre;
 
@@ -47,7 +47,17 @@ public class Usuario
 
 	public string Id => m_szID;
 
-	public int Grupo => m_nGrupo;
+	public int Grupo
+	{
+		get
+		{
+			return m_nGrupo;
+		}
+		set
+		{
+			m_nGrupo = value;
+		}
+	}
 
 	public string Login => m_szLogin;
 

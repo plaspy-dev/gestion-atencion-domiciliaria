@@ -11,13 +11,15 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2014-08-01.
+This cut records the home-care application as archived on 2014-09-02.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
 
 ### Features in the retained source
 
+- Open purchase orders for pharmacy supplies. `farmacia/ordendecompra.aspx`.
+- Consult the pharmacy reports for this edition. `farmacia/informes.aspx`.
 - Open the batch admission screen to process patient admissions. `admisiones/amasivas.aspx`.
 - Record the wound assessment in the clinical record. `clinicaheridas/valoracion.aspx`.
 - Consult and maintain wound progression notes. `clinicaheridas/evolucion.aspx`.
@@ -26,8 +28,6 @@ The application keeps the records used to arrange visits and coordinate the peop
 - View and maintain access groups. `administrador/grupos.aspx`.
 - Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
 - List cases that are waiting to be scheduled. `programacion/sinprogramar.aspx`.
-- Open purchase orders for pharmacy supplies. `farmacia/ordendecompra.aspx`.
-- Consult the pharmacy reports for this edition. `farmacia/informes.aspx`.
 
 ### Build and local use
 
@@ -37,7 +37,7 @@ The retained site entry is `Default.aspx`. Use fictional accounts and a disposab
 
 ### Archive notes
 
-The archive inventory counted 2 additions, 4 edits and 0 removals.
+The archive inventory counted 1 additions, 14 edits and 0 removals.
 
 ### Framework versions
 
@@ -45,7 +45,7 @@ The archive does not record the original framework version. The local build reci
 
 ### Usage
 
-Use the documented local build with a fictional operator. The available screens include `admisiones/amasivas.aspx` and the other routes above.
+Use the documented local build with a fictional operator. The available screens include `farmacia/ordendecompra.aspx` and the other routes above.
 
 The retained entry page is `administrador/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
 
@@ -76,13 +76,15 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2014-08-01.
+Este corte conserva la versión de atención domiciliaria archivada el 2014-09-02.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
 
 ### Funciones en el código conservado
 
+- Abre las órdenes de compra de insumos de farmacia. `farmacia/ordendecompra.aspx`.
+- Consulta los informes de farmacia de esta edición. `farmacia/informes.aspx`.
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `admisiones/amasivas.aspx`.
 - Registra la valoración de heridas en la ficha clínica. `clinicaheridas/valoracion.aspx`.
 - Consulta y actualiza las notas de evolución de heridas. `clinicaheridas/evolucion.aspx`.
@@ -91,8 +93,6 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 - Consulta y administra los grupos de acceso. `administrador/grupos.aspx`.
 - Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
 - Consulta los casos pendientes de programación. `programacion/sinprogramar.aspx`.
-- Abre las órdenes de compra de insumos de farmacia. `farmacia/ordendecompra.aspx`.
-- Consulta los informes de farmacia de esta edición. `farmacia/informes.aspx`.
 
 ### Compilación y uso local
 
@@ -102,7 +102,7 @@ La entrada conservada del sitio es `Default.aspx`. Usa cuentas ficticias y una b
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 2 adiciones, 4 cambios y 0 retiros.
+El inventario del respaldo registró 1 adiciones, 14 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 
@@ -110,7 +110,7 @@ El respaldo no registra la versión original del framework. La receta local usa 
 
 ### Uso
 
-Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `admisiones/amasivas.aspx` y las demás rutas de arriba.
+Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `farmacia/ordendecompra.aspx` y las demás rutas de arriba.
 
 La portada conservada es `administrador/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
 

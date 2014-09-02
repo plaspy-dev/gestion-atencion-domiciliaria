@@ -79,13 +79,11 @@ public class Logs
 				case "__EVENTARGUMENT":
 				case "__VIEWSTATE":
 				case "__VIEWSTATEENCRYPTED":
+				case "__EVENTVALIDATION":
 					continue;
 				}
-				if (!(item == "__EVENTVALIDATION"))
-				{
-					text = text + item + "=" + Request.Form[item];
-					text += "\r\n";
-				}
+				text = text + item + "=" + Request.Form[item];
+				text += "\r\n";
 			}
 		}
 		catch
@@ -133,8 +131,8 @@ public class Logs
 				}
 				else
 				{
-					using StreamWriter streamWriter = File.AppendText(archivo);
-					streamWriter.WriteLine(logs);
+					using StreamWriter streamWriter2 = File.AppendText(archivo);
+					streamWriter2.WriteLine(logs);
 				}
 				return true;
 			}

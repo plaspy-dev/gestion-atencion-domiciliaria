@@ -188,13 +188,26 @@
         <tr>
             <td width=1>Número</td>
             <td width=1><asp:TextBox runat="server" ID="TNumero" CssClass="likenumero"></asp:TextBox></td>
+            <td>&nbsp;</td>
+            <td><asp:CheckBox runat="server" ID="CPrioridad" Text="Prioritaria"/></td>
+        </tr>
+        <tr>
             <td width=1>Fecha
             <asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator6" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             <asp:RangeValidator ControlToValidate="TFecha" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator>
             </td>
-            <td width=1><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox>
-            </td>
-            <td>&nbsp;</td>
+            <td width=1><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox></td>
+            <td>Centro de costos<asp:RequiredFieldValidator ControlToValidate="DCCosto" ErrorMessage="Por favor seleccione un centro de costos." ID="R2" 
+	            runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td><asp:DropDownList ID="DCCosto" runat="server" DataSourceID="SCCosto" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SCCosto" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=83 AND szReservado IS NULL ORDER BY nombre">
+                </asp:SqlDataSource></td>
         </tr>
         <asp:PlaceHolder runat="server" ID="PRevisado" Visible="false">
             <tr>
@@ -206,9 +219,6 @@
         </asp:PlaceHolder>
         <tr>
             <td nowrap="nowrap"><asp:RadioButton runat="server" ID="ROrganizationExample15" Text="OrganizationExample15" /></td>
-            <td></td>
-            <td></td>
-            <td><asp:CheckBox runat="server" ID="CPrioridad" Text="Prioritaria"/></td>
         </tr>
         <tr>
             <td><asp:RadioButton runat="server" Text="Paciente" ID="RPaciente" Checked="true" /></td>
@@ -295,8 +305,8 @@
                         <asp:BoundField DataField="codigo" HeaderText="Código" SortExpression="codigo" ItemStyle-HorizontalAlign="Right" />
                         <asp:BoundField DataField="nombre" HeaderText="Producto" SortExpression="nombre" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" ItemStyle-Width="100%" />
                         <asp:BoundField DataField="cantidad" HeaderText="Cantidad" SortExpression="cantidad" DataFormatString="{0:F2}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
-                        <asp:BoundField DataField="Costo" HeaderText="Costo U." SortExpression="Costo" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" />
-                        <asp:BoundField DataField="CostoTotal" HeaderText="Costo T." SortExpression="CostoTotal" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
+                        <asp:BoundField DataField="Costo" HeaderText="Costo U." SortExpression="Costo" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" HeaderStyle-Wrap="false" FooterStyle-Wrap="false" />
+                        <asp:BoundField DataField="CostoTotal" HeaderText="Costo T." SortExpression="CostoTotal" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" HeaderStyle-Wrap="false" FooterStyle-Wrap="false" />
                         <asp:BoundField DataField="unidad" HeaderText="Un." SortExpression="unidad" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" />
                     </Columns>
                 </asp:GridView>

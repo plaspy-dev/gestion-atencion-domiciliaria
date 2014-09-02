@@ -79,7 +79,7 @@
         <asp:BoundField HeaderText="Paciente" DataField="pacNombres" SortExpression="pacNombres" ItemStyle-Wrap="false" />
         <asp:BoundField HeaderText="Aseguradora reportada" DataField="aseguradora" SortExpression="aseguradora" ItemStyle-Wrap="false" />
         <asp:BoundField HeaderText="Aseguradora Paciente" DataField="entNombre" SortExpression="entNombre" />
-        <asp:HyperLinkField HeaderText="Archivo" SortExpression="archivo" DataNavigateUrlFields="archivo" DataNavigateUrlFormatString="~/archivo/archivo.ashx?n={0}.tif&t=d" DataTextField="archivo" />
+        <asp:HyperLinkField HeaderText="Archivo" SortExpression="archivo" DataNavigateUrlFields="archivo" DataNavigateUrlFormatString="~/archivo/archivo.ashx?n={0}.tif&t=d" DataTextField="archivo" ItemStyle-Wrap="false" />
         <asp:BoundField HeaderText="Páginas" DataField="paginas" SortExpression="paginas" ItemStyle-HorizontalAlign="Right" />
     </Columns>
 </asp:GridView>

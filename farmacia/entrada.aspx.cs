@@ -92,6 +92,7 @@ public partial class farmacia_entrada : System.Web.UI.Page
                     query += "desde";
                     query += "tercero";
                     query += "estado";
+                    query += "centro_costos";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["ei"])));
                     if (reader != null && reader.Read())
@@ -103,6 +104,7 @@ public partial class farmacia_entrada : System.Web.UI.Page
                         TObservaciones.Text = reader["observaciones"].ToString();
                         TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
                         PAnulado.Visible = reader["estado"].ToString() != "";
+                        Utilidades.SelectInDropDown(DCCosto, reader["centro_costos"]);
 
                         Tercero tercero = new Tercero(reader["tercero"].ToString());
                         TTerceroID.Text = tercero.Id;
@@ -234,7 +236,7 @@ public partial class farmacia_entrada : System.Web.UI.Page
         producto.serial = TSerial.Text;
         try
         {
-            producto.Costo = Decimal.Parse(TCosto.Text, NumberStyles.Currency, CultureInfo.InvariantCulture);
+            producto.Costo = Decimal.Parse(TCosto.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture);
         }
         catch { }
         producto.estado = Convert.ToInt32(DEstado.SelectedValue);
@@ -344,6 +346,7 @@ public partial class farmacia_entrada : System.Web.UI.Page
 
             query["observaciones"] = TObservaciones.Text;
             query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
+            query["centro_costos"] = DCCosto.SelectedValue;
             query["tercero"] = terceroid;
             if (sender == BAnular)
                 query["estado"] = "-1";

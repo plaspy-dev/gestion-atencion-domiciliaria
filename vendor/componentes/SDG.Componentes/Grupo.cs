@@ -25,33 +25,38 @@ public class Grupo
 				bool flag = true;
 				try
 				{
-					XmlNodeList elementsByTagName4 = item2.GetElementsByTagName("visible");
-					if (elementsByTagName4[0].InnerText == "false")
+					foreach (XmlNode item3 in item2.GetElementsByTagName("visible"))
 					{
-						flag = false;
+						if (item3.ParentNode == item2)
+						{
+							flag = false;
+							break;
+						}
 					}
 				}
 				catch
 				{
 				}
-				XmlNodeList elementsByTagName5 = item2.GetElementsByTagName("pagina");
-				foreach (XmlElement item3 in elementsByTagName5)
+				XmlNodeList elementsByTagName4 = item2.GetElementsByTagName("pagina");
+				foreach (XmlElement item4 in elementsByTagName4)
 				{
-					XmlNodeList elementsByTagName6 = item3.GetElementsByTagName("titulo");
-					XmlNodeList elementsByTagName7 = item3.GetElementsByTagName("url");
+					XmlNodeList elementsByTagName5 = item4.GetElementsByTagName("titulo");
+					XmlNodeList elementsByTagName6 = item4.GetElementsByTagName("url");
 					bool flag2 = true;
 					try
 					{
-						XmlNodeList elementsByTagName4 = item3.GetElementsByTagName("visible");
-						if (elementsByTagName4[0].InnerText == "false")
+						foreach (XmlNode item5 in item4.GetElementsByTagName("visible"))
 						{
-							flag2 = false;
+							if (item5.ParentNode == item4)
+							{
+								flag2 = false;
+							}
 						}
 					}
 					catch
 					{
 					}
-					CURLs item = new CURLs(elementsByTagName7[0].InnerText, elementsByTagName6[0].InnerText, innerText, flag && flag2);
+					CURLs item = new CURLs(elementsByTagName6[0].InnerText, elementsByTagName5[0].InnerText, innerText, flag && flag2);
 					m_aURLs.Add(item);
 				}
 			}

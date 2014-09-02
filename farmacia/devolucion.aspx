@@ -158,10 +158,23 @@
         <tr>
             <td>Número</td>
             <td><asp:TextBox runat="server" ID="TNumero" CssClass="likenumero"></asp:TextBox></td>
+            <td></td>
+        </tr>
+        <tr>
             <td>Fecha<asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese un fecha." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             <asp:RangeValidator ControlToValidate="TFecha" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
             <td><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox></td>
-            <td></td>
+            <td>Centro de costos<asp:RequiredFieldValidator ControlToValidate="DCCosto" ErrorMessage="Por favor seleccione un centro de costos." ID="R2" 
+	            runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td><asp:DropDownList ID="DCCosto" runat="server" DataSourceID="SCCosto" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SCCosto" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=83 AND szReservado IS NULL ORDER BY nombre">
+                </asp:SqlDataSource></td>
         </tr>
         <tr>
             <td>Paciente<asp:RequiredFieldValidator ID="RPaciente" ControlToValidate="UCPaciente$TPacienteID" runat="server" ErrorMessage="Por favor ingrese un paciente" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>

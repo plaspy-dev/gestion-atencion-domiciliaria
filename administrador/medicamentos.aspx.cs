@@ -39,13 +39,14 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                 using (CConector conector = new CConector())
                 {
 
-                    MySqlDataReader reader = conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica,hoja_sola,precio_regulado FROM medicamentos WHERE id=" + Query.GetValor(Request.QueryString["imp"].Trim()));
+                    MySqlDataReader reader = conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica,hoja_sola,precio_regulado,codigoSIIGO FROM medicamentos WHERE id=" + Query.GetValor(Request.QueryString["imp"].Trim()));
 
                     if (reader != null && reader.Read())
                     {
 
                         HId.Value = reader["id"].ToString();
                         TCodigo.Text = reader["codigo"].ToString();
+                        TCodigoSIIGO.Text = reader["codigoSIIGO"].ToString();
                         TNombre.Text = reader["nombre"].ToString();
                         TPrincipio.Text = reader["principio"].ToString();
                         TForma.Text = reader["forma"].ToString();
@@ -90,6 +91,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
             query["nombre"] = TNombre.Text;
             query["forma"] = TForma.Text;
             query["codigo"] = TCodigo.Text;
+            query["codigoSIIGO"] = TCodigoSIIGO.Text;
             query["principio"] = TPrincipio.Text;
             query["concentracion"] = TConcentracion.Text;
             query["aclaracion"] = TAclaracion.Text;
@@ -209,6 +211,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         TConcentracion.Text = "";
         TAclaracion.Text = "";
         DGrupo.SelectedValue = "";
+        TCodigoSIIGO.Text = "";
         TPrecioRegulado.Text = "";
         CImprimirHoja.Checked = false;
         GCargos.DataBind();

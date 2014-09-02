@@ -39,8 +39,8 @@ public partial class facturacion_facturacioninsumos : System.Web.UI.Page
     protected void TotalizarDinero(List<GridViewRow> rows, string columna)
     {
         int col = Utilidades.GetGridColumnIndex(GResultados, columna);
-        if(GResultados.FooterRow!=null) 
-            GResultados.FooterRow.Cells[col].Text = string.Format("{0:C0}", rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : decimal.Parse(x.Cells[col].Text, NumberStyles.Currency)));
+        if(GResultados.FooterRow!=null)
+            GResultados.FooterRow.Cells[col].Text = string.Format("{0:C0}", rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : decimal.Parse(x.Cells[col].Text.Replace("$", ""), NumberStyles.Currency)));
     }
 
     protected void BBuscar_Click(object sender, EventArgs e)

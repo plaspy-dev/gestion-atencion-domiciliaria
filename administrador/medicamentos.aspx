@@ -76,6 +76,10 @@
               </td>
           </tr>
           <tr>
+            <td>Código SIIGO</td>
+            <td><asp:TextBox runat="server" ID="TCodigoSIIGO"></asp:TextBox></td>
+          </tr>
+          <tr>
             <td>Nombre</td>
             <td>
                 <asp:TextBox ID="TNombre" runat="server" Width="99%"></asp:TextBox>

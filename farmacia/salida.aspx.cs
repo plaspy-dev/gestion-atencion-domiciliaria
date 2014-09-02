@@ -92,6 +92,7 @@ public partial class farmacia_salida : System.Web.UI.Page
                     query += "documento";
                     query += "paciente";
                     query += "estado";
+                    query += "centro_costos";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["si"])));
                     if (reader != null && reader.Read())
@@ -103,6 +104,7 @@ public partial class farmacia_salida : System.Web.UI.Page
                         TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
                         TEntrega.Text = Query.GetFromMySQLDate(reader["entrega"]);
                         PAnulado.Visible = reader["estado"].ToString() != "";
+                        Utilidades.SelectInDropDown(DCCosto, reader["centro_costos"]);
 
                         UCPaciente.IdPaciente= reader["paciente"].ToString();
 
@@ -232,7 +234,7 @@ public partial class farmacia_salida : System.Web.UI.Page
             producto = (Producto)productos[i];
             try
             {
-                producto.Costo = Decimal.Parse(TValor.Text, NumberStyles.Currency, CultureInfo.InvariantCulture);
+                producto.Costo = Decimal.Parse(TValor.Text.Replace("$", ""), NumberStyles.Currency, CultureInfo.InvariantCulture);
             }
             catch { }
             productoUsado.AddProducto(producto);
@@ -303,6 +305,7 @@ public partial class farmacia_salida : System.Web.UI.Page
             query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             query["entrega"] = Query.GetMySQLDateFormat(configuracion.bManejarEntrega ? TEntrega.Text : TFecha.Text);
             query["paciente"] = UCPaciente.IdPaciente;
+            query["centro_costos"] = DCCosto.SelectedValue;
             if (sender == BAnular)
                 query["estado"] = "-1";
 

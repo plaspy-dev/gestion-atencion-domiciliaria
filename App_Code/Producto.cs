@@ -45,6 +45,12 @@ public class Producto
     [XmlIgnore]
     public bool bIngreso = false;
 
+    [XmlIgnore]
+    public string CodigoSIIGO {get;set;}
+
+    [XmlIgnore]
+    public string Tipo { get; set; }
+
     [XmlIgnore] // este es el ingreso del repuesto
     public string _Ingreso = "";
 
@@ -258,6 +264,8 @@ public class Producto
                 query += "codigo";
                 query += "concentracion";
                 query+="precio_regulado";
+                query += "codigoSIIGO";
+                query += "tipo";
 
                 /*query += "vence";
                 query += "lote";
@@ -276,6 +284,8 @@ public class Producto
                     producto.descripcion = reader["forma"].ToString();
                     producto.codigo = reader["codigo"].ToString();
                     producto.unidad = reader["concentracion"].ToString();
+                    producto.CodigoSIIGO = reader["codigoSIIGO"].ToString();
+                    producto.Tipo = reader["tipo"].ToString();
                     try { producto.PrecioRegulado = Convert.ToDecimal(reader["precio_regulado"]); } catch { }
                     producto.nVence= CConfiguracion.GetConfiguracion().nProductoVence;
                     producto.nLote = CConfiguracion.GetConfiguracion().nProductoLote;
@@ -723,6 +733,7 @@ public class Producto
         producto.Costo = Costo;
         producto.Valor = Valor;
         producto.PrecioRegulado = PrecioRegulado;
+        producto.CodigoSIIGO = CodigoSIIGO;
 
         return producto;
     }

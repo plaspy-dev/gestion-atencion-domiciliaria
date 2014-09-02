@@ -10,6 +10,7 @@
 | Path / Ruta | Author / Autor | Source / Origen | Notice / Aviso | SHA-256 |
 | --- | --- | --- | --- | --- |
 | `Bin/Antlr3.Runtime.dll` | ANTLR contributors | ANTLR 3 Runtime for .NET, byte-for-byte archived copy / copia del respaldo | BSD 3-Clause | `8c073bb62edf517b5476c68197c4742ca921bfaad423e18c3031d70336a0ec29` |
+| `Bin/FileHelpers.dll` | Marcos Meli and FileHelpers contributors | FileHelpers, byte-for-byte archived copy / copia del respaldo | Original FileHelpers distribution terms | `83c8868f3e2f70544ad36205ff4a324235c3a817607b1eac047fef3825a32c5d` |
 | `Bin/Microsoft.Web.Infrastructure.dll` | Microsoft | Microsoft Web Infrastructure, byte-for-byte archived copy / copia del respaldo | Microsoft package license | `fe18f4259c947c1fd6d74f1827370e72d7ad09aefb4b720af227333583e0169f` |
 | `Bin/MySql.Data.dll` | Oracle and MySQL contributors | MySQL Connector/NET, byte-for-byte archived copy / copia del respaldo | Original Oracle/MySQL distribution terms | `86525a33e425f2afbd00cbaedaa0135bb69145db51a042b65b0c46b1b5dbeb81` |
 | `Bin/Newtonsoft.Json.dll` | James Newton-King and contributors | Json.NET, byte-for-byte archived copy / copia del respaldo | MIT | `526f69142edc80cb1f261acdb7c73ce3db841d21ac26bee6715f604c8a238be1` |
