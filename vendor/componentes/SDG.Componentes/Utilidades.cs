@@ -64,34 +64,6 @@ public class Utilidades
 		return HttpUtility.HtmlDecode(grid.Rows[fila].Cells[GetGridColumnIndex(grid, columna)].Text).Trim();
 	}
 
-	public static int GetRowsCount(GridView grid, Label label)
-	{
-		int rowsCount = GetRowsCount(grid);
-		label.Text = rowsCount + " Resultado";
-		if (rowsCount != 1)
-		{
-			label.Text += "s";
-		}
-		return rowsCount;
-	}
-
-	public static int GetRowsCount(GridView grid)
-	{
-		int num = 0;
-		bool allowPaging = grid.AllowPaging;
-		if (allowPaging)
-		{
-			grid.AllowPaging = false;
-		}
-		grid.DataBind();
-		num = grid.Rows.Count;
-		if (allowPaging)
-		{
-			grid.AllowPaging = true;
-		}
-		return num;
-	}
-
 	public static Control FindControlForId(ControlCollection controles, string id)
 	{
 		foreach (Control controle in controles)

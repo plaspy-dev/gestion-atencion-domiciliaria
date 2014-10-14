@@ -39,7 +39,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                 using (CConector conector = new CConector())
                 {
 
-                    MySqlDataReader reader = conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica,hoja_sola,precio_regulado,codigoSIIGO FROM medicamentos WHERE id=" + Query.GetValor(Request.QueryString["imp"].Trim()));
+                    MySqlDataReader reader = conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica,hoja_sola,precio_regulado,codigoSIIGO,cuenta_inventario,cuenta_costo FROM medicamentos WHERE id=" + Query.GetValor(Request.QueryString["imp"].Trim()));
 
                     if (reader != null && reader.Read())
                     {
@@ -47,6 +47,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                         HId.Value = reader["id"].ToString();
                         TCodigo.Text = reader["codigo"].ToString();
                         TCodigoSIIGO.Text = reader["codigoSIIGO"].ToString();
+                        TCCosto.Text = reader["cuenta_costo"].ToString();
+                        TCInventario.Text = reader["cuenta_inventario"].ToString();
                         TNombre.Text = reader["nombre"].ToString();
                         TPrincipio.Text = reader["principio"].ToString();
                         TForma.Text = reader["forma"].ToString();
@@ -99,6 +101,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
             query["automatica"] = CAutomatica.Checked ? "1" : "";
             query["hoja_sola"] = CImprimirHoja.Checked ? "1" : "";
             query["precio_regulado"] = TPrecioRegulado.Text.Replace(",", "").Replace("$", "");
+            query["cuenta_costo"] = TCCosto.Text;
+            query["cuenta_inventario"] = TCInventario.Text;
 
             if (HId.Value.Length == 0)
             {
@@ -213,6 +217,8 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         DGrupo.SelectedValue = "";
         TCodigoSIIGO.Text = "";
         TPrecioRegulado.Text = "";
+        TCInventario.Text = "";
+        TCCosto.Text = "";
         CImprimirHoja.Checked = false;
         GCargos.DataBind();
         GEntidades.DataBind();

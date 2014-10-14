@@ -20,7 +20,7 @@ public partial class auditoria_OrganizationExample51 : System.Web.UI.Page
     {
         GColmedica.Visible= GOrganizationExample51.Visible = false;
         gview.Visible = true;
-        int rows = Utilidades.GetRowsCount(gview);
+        int rows = GridUtils.GetRowsCount(gview);
         LTotal.Text = rows + " paciente" + (rows == 1 ? "" : "s");
 
         if (rows > 0)

@@ -145,11 +145,11 @@ public partial class archivo_digitalizacion : System.Web.UI.Page
 
             LMensaje.Text = string.Format("Importacion realizada con exito.<br/>{0} archivos, {1} Nuevos y {2} actualizados", nuevos + actualizados, nuevos, actualizados) + debug;
 
-            Utilidades.GetRowsCount(GArchivo, LTotal);
+            GridUtils.GetRowsCount(GArchivo, LTotal);
         }
     }
     protected void BActualizar_Click(object sender, EventArgs e)
     {
-        Utilidades.GetRowsCount(GArchivo, LTotal);
+        GridUtils.GetRowsCount(GArchivo, LTotal);
     }
 }

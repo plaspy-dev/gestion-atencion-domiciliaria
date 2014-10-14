@@ -28,7 +28,7 @@ public partial class facturacion_cuentasmedicas : System.Web.UI.Page
     protected void BBuscar_Click(object sender, EventArgs e)
     {
         GResultados.Visible = true;
-        if (Utilidades.GetRowsCount(GResultados, LResultados) > 0)
+        if (GridUtils.GetRowsCount(GResultados, LResultados) > 0)
         {
             ((MasterPageI)Master).Excel(GResultados);
             List<GridViewRow> rows = GResultados.Rows.Cast<GridViewRow>().ToList();

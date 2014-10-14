@@ -137,9 +137,10 @@
                                             ON (servicios.autorizacion=facturacion_autorizacion.autorizacion)
                             LEFT JOIN facturacion_autorizacion_glosa ON (facturacion_autorizacion.autorizacion=facturacion_autorizacion_glosa.autorizacion)
                             LEFT JOIN (
-                                SELECT factura_devolucion.factura,SUM(factura_devolucion.valor) AS valor,GROUP_CONCAT(CONCAT(devolucion.nombre,' ($',CAST(FORMAT(factura_devolucion.valor,0) AS CHAR),')') SEPARATOR '<br />') AS nombre 
+                                SELECT factura_devolucion.factura,SUM(factura_causal_devolucion.valor) AS valor,GROUP_CONCAT(CONCAT(devolucion.nombre,' ($',CAST(FORMAT(factura_causal_devolucion.valor,0) AS CHAR),')') SEPARATOR '<br />') AS nombre 
                                     FROM factura_devolucion 
-                                    LEFT JOIN varios AS devolucion ON (factura_devolucion.causal=devolucion.id)
+                                    LEFT JOIN factura_causal_devolucion ON (factura_causal_devolucion.factura_devolucion=factura_devolucion=id)
+                                    LEFT JOIN varios AS devolucion ON (factura_causal_devolucion.causal=devolucion.id)
                                     GROUP BY factura
                             ) AS devolucion ON (devolucion.factura=facturacion_autorizacion.factura)
                             -- factura_devolucion ON (facturacion_autorizacion.factura=factura_devolucion.factura)

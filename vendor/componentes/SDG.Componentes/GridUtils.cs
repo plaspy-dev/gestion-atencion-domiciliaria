@@ -342,6 +342,58 @@ public class GridUtils
 		}
 	}
 
+	public static int GetRowsCount(GridView grid, Label label)
+	{
+		int rowsCount = GetRowsCount(grid);
+		label.Text = rowsCount + " Resultado";
+		if (rowsCount != 1)
+		{
+			label.Text += "s";
+		}
+		return rowsCount;
+	}
+
+	public static int GetRowsCount(GridView grid)
+	{
+		int num = 0;
+		try
+		{
+			if (!string.IsNullOrEmpty(grid.DataSourceID))
+			{
+				foreach (Control control in grid.Parent.Controls)
+				{
+					if (control.ID == grid.DataSourceID && control is SqlDataSource)
+					{
+						SqlDataSource sqlDataSource = (sqlDataSource = (SqlDataSource)control);
+						if (!sqlDataSource.EnableCaching)
+						{
+							sqlDataSource.CacheDuration = 1;
+							sqlDataSource.EnableCaching = true;
+						}
+						DataView dataView = (DataView)sqlDataSource.Select(DataSourceSelectArguments.Empty);
+						DataTable table = dataView.Table;
+						return table.Rows.Count;
+					}
+				}
+			}
+		}
+		catch
+		{
+		}
+		bool allowPaging = grid.AllowPaging;
+		if (allowPaging)
+		{
+			grid.AllowPaging = false;
+		}
+		grid.DataBind();
+		num = grid.Rows.Count;
+		if (allowPaging)
+		{
+			grid.AllowPaging = true;
+		}
+		return num;
+	}
+
 	private static bool GetKey()
 	{
 #if ENABLE_LICENSE_CHECK

@@ -151,7 +151,7 @@ public partial class farmacia_estado : System.Web.UI.Page
         Utilidades.GetGridColumn(GResultados, "Lote").Visible = CDetallado.Checked && CConfiguracion.GetConfiguracion().bLote;
         Utilidades.GetGridColumn(GResultados, "Vence").Visible = CDetallado.Checked && CConfiguracion.GetConfiguracion().bVencimiento;
 
-        if (Utilidades.GetRowsCount(GResultados, LTotal) > 0)
+        if (GridUtils.GetRowsCount(GResultados, LTotal) > 0)
         {
             ((MasterPageI)Master).Imprimir("estado.html", true);
         }

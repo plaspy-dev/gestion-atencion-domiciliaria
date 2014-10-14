@@ -80,7 +80,7 @@
                     <asp:SqlDataSource ID="STipo" runat="server" 
                                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=19 AND szReservado IS NULL ORDER BY nombre">
+                                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=19 AND (szReservado IS NULL OR szReservado!='-1') ORDER BY nombre">
                     </asp:SqlDataSource></td>
                 <td>
                     &nbsp;</td>

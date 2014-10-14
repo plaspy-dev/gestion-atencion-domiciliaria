@@ -18,7 +18,7 @@ public partial class equipo_informe : System.Web.UI.Page
 
     protected void BBuscar_Click(object sender, EventArgs e)
     {
-        if (Utilidades.GetRowsCount(GResultados, LTotal) > 0)
+        if (GridUtils.GetRowsCount(GResultados, LTotal) > 0)
         {
             ((MasterPageI)Master).Excel(GResultados);
             ((MasterPageI)Master).Imprimir(GResultados);

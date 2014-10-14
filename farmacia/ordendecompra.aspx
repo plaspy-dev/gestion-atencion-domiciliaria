@@ -159,7 +159,7 @@
                 return false;
             }
         });
-        $("#<%= TCosto.ClientID %>").attr("readonly", true);
+        $("#<%= TCosto.ClientID %>").attr("readonly", <%= CUsuario.GetInstance().CanAdmin() ? "false" : "true" %>);
         $("#<%= TNumero.ClientID %>").change(function() {
             $.goURL("oci=" + $(this).val());
         });
@@ -321,6 +321,9 @@
         <tr>
             <td>Observaciones</td>
             <td colspan="3"><asp:TextBox runat="server" ID="TObservaciones" TextMode="MultiLine" Width="99%"></asp:TextBox></td>
+        </tr>
+        <tr>
+            <td><asp:CheckBox runat="server" ID="CNotificar" Visible="false" Checked="false" Text="No notificar por correo electrónico" /></td>
         </tr>
         <tr>
             <td colspan="5"><asp:ValidationSummary runat="server" ID="ValidationSumary1" /><asp:ValidationSummary ValidationGroup="producto" runat="server" ID="ValidationSummary2" />

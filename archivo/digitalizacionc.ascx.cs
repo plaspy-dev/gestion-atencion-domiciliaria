@@ -11,7 +11,7 @@ public partial class archivo_digitalizacionc : System.Web.UI.UserControl
     public string IdPaciente {
         set {
             SArchivo.SelectParameters["paciente"].DefaultValue = value;
-            int total = Utilidades.GetRowsCount(GArchivo);
+            int total = GridUtils.GetRowsCount(GArchivo);
             UA.Visible = total != 0;
             if (total != 0)
             {

@@ -46,7 +46,7 @@ public partial class farmacia_gastos : System.Web.UI.Page
         GResultados.Visible = true;
         GResultados.DataSourceID = "SResultados";
 
-        if (Utilidades.GetRowsCount(GResultados, LTotal) > 0)
+        if (GridUtils.GetRowsCount(GResultados, LTotal) > 0)
         {
             ((MasterPageI)Master).Imprimir("gastos.html", true);
             List<GridViewRow> rows = GResultados.Rows.Cast<GridViewRow>().ToList();

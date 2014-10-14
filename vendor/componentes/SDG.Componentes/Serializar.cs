@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
 namespace SDG.Componentes;
@@ -87,8 +88,10 @@ public class Serializar
 		{
 			xmlSerializer.Serialize(textWriter, objeto);
 		}
-		string s = stringBuilder.ToString();
-		return Convert.ToBase64String(compress ? Compress(Encoding.UTF8.GetBytes(s)) : Encoding.UTF8.GetBytes(s));
+		string input = stringBuilder.ToString();
+		Regex regex = new Regex(">\\s*<");
+		input = regex.Replace(input, "><");
+		return Convert.ToBase64String(compress ? Compress(Encoding.UTF8.GetBytes(input)) : Encoding.UTF8.GetBytes(input));
 	}
 
 	public static T DesSerializeXML<T>(string variable)

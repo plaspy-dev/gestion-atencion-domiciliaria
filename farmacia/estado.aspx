@@ -86,9 +86,9 @@
             <asp:HyperLinkField HeaderText="Código" DataNavigateUrlFormatString="~/farmacia/estado.aspx?pid={0}" DataNavigateUrlFields="producto" DataTextField="codigo" SortExpression="codigo" ItemStyle-HorizontalAlign="Right" />
             <asp:HyperLinkField HeaderText="Producto" DataNavigateUrlFormatString="~/farmacia/estado.aspx?pid={0}" DataNavigateUrlFields="producto" DataTextField="nombre" SortExpression="nombre" ItemStyle-Wrap="false" ItemStyle-Width="100%" />
             <asp:BoundField HeaderText="Lote" DataField="lote" SortExpression="lote" />
-            <asp:BoundField HeaderText="Vence" DataField="vence" SortExpression="vence" DataFormatString="{0:d}" />
-            <asp:BoundField HeaderText="Cantidad" DataField="cantidad" SortExpression="cantidad" ItemStyle-HorizontalAlign="Right" />
-            <asp:BoundField HeaderText="Costo" DataField="costo" SortExpression="costo" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:C}" />
+            <asp:BoundField HeaderText="Vence" DataField="vence" SortExpression="vence" DataFormatString="{0:d}" ItemStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Cantidad" DataField="cantidad" SortExpression="cantidad" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Costo" DataField="costo" SortExpression="costo" ItemStyle-HorizontalAlign="Right" DataFormatString="{0:C}" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Un." DataField="concentracion" SortExpression="concentracion" ItemStyle-Wrap="false" />
         </Columns>
     </asp:GridView>

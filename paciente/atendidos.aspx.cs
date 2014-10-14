@@ -16,7 +16,7 @@ public partial class paciente_atendidos : System.Web.UI.Page
     }
     protected void BBuscar_Click(object sender, EventArgs e)
     {
-        int rows= Utilidades.GetRowsCount(GResultados);
+        int rows = GridUtils.GetRowsCount(GResultados);
         LTotal.Text = rows + " paciente" + (rows == 1 ? "" : "s");
 
         if (rows > 0)

@@ -63,7 +63,7 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
                 ((MasterPageI)Master).Imprimir(GResultados);
             }
         }
-        Utilidades.GetRowsCount(GResultados, LTotal);
+        GridUtils.GetRowsCount(GResultados, LTotal);
     }
 
     protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)

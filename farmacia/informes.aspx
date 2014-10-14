@@ -84,7 +84,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
-    <table>
+    <table class="tablecollapse">
         <tr>
             <td>Ver</td>
             <td>Desde</td>
@@ -95,6 +95,7 @@
             <td>Grupo</td>
             <td>Centro de costos</td>
             <td><asp:CheckBox runat="server" ID="CAlmacen" Text="Ver almacén" CssClass="hide" /></td>
+            <td class="tda"><asp:Label runat="server" ID="LSIIGO" Visible="false">SIIGO</asp:Label></td>
         </tr>
         <tr>
             <td>
@@ -149,8 +150,9 @@
             <td>
                 <asp:Button ID="BBuscar" runat="server" Text="Actualizar" onclick="BBuscar_Click" />
             </td>
-            <td>
-                <asp:Button runat="server" ID="BSiigo" Visible="false" Text="SIIGO" OnClick="BSiigo_Click" />
+            <td class="tdr tdb tdl nw">
+                <asp:Button runat="server" ID="BSiigoE" Visible="false" Text="Entradas" OnClick="BSiigo_Click" />
+                <asp:Button runat="server" ID="BSiigoS" Visible="false" Text="Salidas" OnClick="BSiigo_Click" />
             </td>
         </tr>
         </table>

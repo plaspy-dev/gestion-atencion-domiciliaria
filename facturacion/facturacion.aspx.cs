@@ -227,11 +227,11 @@ public partial class facturacion_facturacion : System.Web.UI.Page
                     return;
             }
 
-            query = new Query("facturacion_autorizacion_glosa");
+            query = new Query("factura_glosa");
 
-            if (conector.QueryMod(query.GetDelete("autorizacion=" + Query.GetValor(HIdAutorizacion.Value))) == -1)
+            if (conector.QueryMod(query.GetDelete("factura=" + Query.GetValor(TFactura.Text))) == -1)
                 return;
-            query["autorizacion"] = HIdAutorizacion.Value;
+            query["factura"] = TFactura.Text;
 
             foreach (GridViewRow row in GGlosa.Rows) {
                 if (((CheckBox)row.FindControl("CC")).Checked) {

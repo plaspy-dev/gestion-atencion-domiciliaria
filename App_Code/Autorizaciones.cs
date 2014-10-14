@@ -6,6 +6,7 @@ using SDG.Componentes;
 using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
 
+[Serializable]
 public class Autorizaciones
 {
     public class Detalle {
@@ -29,10 +30,37 @@ public class Autorizaciones
     public string Autorizacion { get; set; }
     public DateTime fecha { get; set; }
     public DateTime vencimiento { get; set; }
+    public string IdPaciente { get; set; }
+    public string NombrePaciente { get; set; }
     public List<Detalle> detalles { get; set; }
     public Autorizaciones()
     {
         detalles = new List<Detalle>();
+    }
+
+    public Autorizaciones(string NumeroAutorizacion) {
+
+        using (CConector conector = new CConector())
+        {
+            Query query = new Query("autorizacion");
+
+            query += "autNumero";
+            query += "autFecha";
+            query += "autFechaVenc";
+            query += "pacId";
+
+            MySqlDataReader reader = conector.Query(query.GetSelect("autNumero=" + Query.GetValor(NumeroAutorizacion)));
+            if (reader != null && reader.Read())
+            {
+                Autorizacion= reader["autNumero"].ToString();
+                fecha= (DateTime)reader["autFecha"];
+                if (reader["autFechaVenc"].ToString() == "")
+                    vencimiento = fecha.AddDays(30);
+                IdPaciente = reader["pacId"].ToString();
+                Paciente paciente= Paciente.GetPaciente(IdPaciente);
+                NombrePaciente = paciente.NombreCompleto;
+            }
+        }
     }
 
     public static List<Autorizaciones>GetAutorizaciones(string idpaciente) {

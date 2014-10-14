@@ -18,6 +18,6 @@ public partial class rutasanitaria_consulta : System.Web.UI.Page
     protected void BBuscar_Click(object sender, EventArgs e)
     {
         GResultados.Visible = true;
-        ((MasterPageI)Master).Excel(Utilidades.GetRowsCount(GResultados, LResultado)>0 ? GResultados : null);
+        ((MasterPageI)Master).Excel(GridUtils.GetRowsCount(GResultados, LResultado) > 0 ? GResultados : null);
     }
 }

@@ -53,7 +53,7 @@
         <asp:SqlDataSource ID="STipos" runat="server" 
             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-            SelectCommand="SELECT id,nombre FROM varios WHERE tipo=19 AND szReservado IS NULL ORDER BY nombre" >
+            SelectCommand="SELECT id,nombre FROM varios WHERE tipo=19 AND (szReservado IS NULL OR szReservado!='-1') ORDER BY nombre" >
         </asp:SqlDataSource>
         <br />
       </td>
@@ -65,19 +65,15 @@
       </tr>
       <tr>
         <td>
-<table width="100%" border="0">
+<table width="100%" border="0" class="tablecollapse">
           <tr>
-            <td>Código</td>
+            <td width=1>Código</td>
             <td>
                 <asp:TextBox ID="TCodigo" runat="server"></asp:TextBox>
               </td>
             <td align="right">
                 <asp:HiddenField ID="HId" runat="server" />
               </td>
-          </tr>
-          <tr>
-            <td>Código SIIGO</td>
-            <td><asp:TextBox runat="server" ID="TCodigoSIIGO"></asp:TextBox></td>
           </tr>
           <tr>
             <td>Nombre</td>
@@ -137,6 +133,21 @@
           <tr>
             <td>Precio regulado</td>
             <td><asp:TextBox runat="server" ID="TPrecioRegulado" CssClass="dinero"></asp:TextBox></td>
+          </tr>
+          <tr>
+            <td class="celdaTitulo" colspan="2">SIIGO</td>
+          </tr>
+          <tr>
+            <td class="tdl">Código</td>
+            <td class="tdr"><asp:TextBox runat="server" ID="TCodigoSIIGO"></asp:TextBox></td>
+          </tr>
+          <tr>
+            <td class="tdl nw">Cuenta Inventario</td>
+            <td class="tdr"><asp:TextBox runat="server" ID="TCInventario"></asp:TextBox></td>
+          </tr>
+          <tr>
+            <td class="tdl tdb">Cuenta costo</td>
+            <td class="tdr tdb"><asp:TextBox runat="server" ID="TCCosto"></asp:TextBox></td>
           </tr>
           <tr>
             <td>&nbsp;</td>

@@ -289,6 +289,7 @@
                             <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="-1" />
                           </SelectParameters>
                     </asp:SqlDataSource>
+                    <asp:HiddenField runat="server" ID="HIdAutorizacion" /><!-- esto no se usa aqui -->
             </td>
         </tr>
         <tr>

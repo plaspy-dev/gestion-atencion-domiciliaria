@@ -87,6 +87,8 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                     MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(id)));
                     if (reader != null && reader.Read())
                     {
+                        CNotificar.Visible = usuario.CanUpdate();
+
                         PRevisado.Visible = true;
                         HId.Value = TNumero.Text = reader["id"].ToString();
                         ((MasterPageI)Master).SetModificacion(HId.Value);
@@ -292,9 +294,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                 {
                     if (conector.QueryMod(tercero.GetUpdate("id=" + Query.GetValor(terceroid))) == -1)
                         return;
-                }
-                else
-                {
+                } else {
                     int res = conector.QueryMod(tercero.GetInsert());
                     if (res == -1)
                         return;
@@ -380,69 +380,72 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
             conector.Commit();
             Session["orden_compra_clean"] = 1;
 
-            try
+            if (!CNotificar.Visible || !CNotificar.Checked)
             {
-                Tercero tecero = new Tercero(TTerceroID.Text);
+                try
+                {
+                    Tercero tecero = new Tercero(TTerceroID.Text);
 
-                MailMessage mail = new MailMessage();
-                mail.From = new MailAddress("demo@example.invalid", "Compras OrganizationExample15");
-                if (IsValidEmail(tecero.Email))
-                { // no le enviamos correo al proveedor
-                    mail.To.Add(tecero.Email);
+                    MailMessage mail = new MailMessage();
+                    mail.From = new MailAddress("demo@example.invalid", "Compras OrganizationExample15");
+                    if (IsValidEmail(tecero.Email))
+                    { // no le enviamos correo al proveedor
+                        mail.To.Add(tecero.Email);
 #if DEBUG
                     mail.To.Clear();
                     mail.To.Add("demo@example.invalid");
 #endif
-                }
-                // mail.Bcc.Add();
+                    }
+                    // mail.Bcc.Add();
 
-                mail.Subject = nueva ? "Nueva " : "Actualizada ";
-                mail.Subject += "orden de compra No. " + HId.Value;
-                mail.IsBodyHtml = true;
-                mail.Priority = MailPriority.Normal;
+                    mail.Subject = nueva ? "Nueva " : "Actualizada ";
+                    mail.Subject += "orden de compra No. " + HId.Value;
+                    mail.IsBodyHtml = true;
+                    mail.Priority = MailPriority.Normal;
 
-                string Contenido = "";
-                using (StreamReader reader = new StreamReader(Server.MapPath("ordencompracorreo.html")))
-                {
-                    Contenido = reader.ReadToEnd();
-                    reader.Close();
-                }
+                    string Contenido = "";
+                    using (StreamReader reader = new StreamReader(Server.MapPath("ordencompracorreo.html")))
+                    {
+                        Contenido = reader.ReadToEnd();
+                        reader.Close();
+                    }
 
-                if (ROrganizationExample15.Checked)
-                    Contenido = Contenido.Replace("$TPaciente$", "OrganizationExample15");
+                    if (ROrganizationExample15.Checked)
+                        Contenido = Contenido.Replace("$TPaciente$", "OrganizationExample15");
 
-                Paciente paciente = Paciente.GetPaciente(UCPaciente.IdPaciente);
+                    Paciente paciente = Paciente.GetPaciente(UCPaciente.IdPaciente);
 
-                Contenido = Contenido.Replace("$szDireccion$", paciente.Direccion)
-                    .Replace("$TPaciente$", paciente.DocumentoYNombres.Replace("Inactivo - ", ""))
-                    .Replace("$szTelefono$", paciente.Telefono)
-                    .Replace("$szAsegurador$", paciente.NombreEntidad)
-                    .Replace("$szPrioridad$", CPrioridad.Checked ? "Prioritaria" : "Normal")
-                    .Replace("$szIniciales$", new Tercero(TTerceroID.Text).Nombre.Substring(0, 2))
-                    .Replace("$szNumero$", TNumero.Text.PadLeft(3, '0'))
-                    ;
+                    Contenido = Contenido.Replace("$szDireccion$", paciente.Direccion)
+                        .Replace("$TPaciente$", paciente.DocumentoYNombres.Replace("Inactivo - ", ""))
+                        .Replace("$szTelefono$", paciente.Telefono)
+                        .Replace("$szAsegurador$", paciente.NombreEntidad)
+                        .Replace("$szPrioridad$", CPrioridad.Checked ? "Prioritaria" : "Normal")
+                        .Replace("$szIniciales$", new Tercero(TTerceroID.Text).Nombre.Substring(0, 2))
+                        .Replace("$szNumero$", TNumero.Text.PadLeft(3, '0'))
+                        ;
 
-                Contenido = Utilidades.ReplaceContenido(Page.Controls, Contenido)
-                    .Replace("../imgs/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/imgs/")))
-                    .Replace("../css/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/css/")));
+                    Contenido = Utilidades.ReplaceContenido(Page.Controls, Contenido)
+                        .Replace("../imgs/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/imgs/")))
+                        .Replace("../css/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/css/")));
 
-                mail.Body = Contenido.Replace("$szVinculo$", string.Format("{0}{1}?k={3}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value, HttpUtility.UrlEncode(Crypt.EncriptarDES(HId.Value, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY")))));
+                    mail.Body = Contenido.Replace("$szVinculo$", string.Format("{0}{1}?k={3}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value, HttpUtility.UrlEncode(Crypt.EncriptarDES(HId.Value, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY")))));
 
-                SmtpClient client = new SmtpClient();
-                client.EnableSsl = client.Port == 587 || client.Port == 465;
-                if(IsValidEmail(tecero.Email)) // no le enviamos correo al proveedor
+                    SmtpClient client = new SmtpClient();
+                    client.EnableSsl = client.Port == 587 || client.Port == 465;
+                    if (IsValidEmail(tecero.Email)) // no le enviamos correo al proveedor
+                        client.Send(mail);
+
+                    // esta es la copia del correo
+                    mail.To.Clear();
+                    mail.To.Add(ConfigurationManager.AppSettings["ordenesdecompra:copia"]);
+                    mail.Body = Contenido.Replace("$szVinculo$", string.Format("{0}{1}?oci={2}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value));
                     client.Send(mail);
-
-                // esta es la copia del correo
-                mail.To.Clear();
-                mail.To.Add(ConfigurationManager.AppSettings["ordenesdecompra:copia"]);
-                mail.Body = Contenido.Replace("$szVinculo$", string.Format("{0}{1}?oci={2}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value));
-                client.Send(mail);
-            }
-            catch (Exception ex)
-            {
-                ((MasterPageI)Master).SetResultado(ex.Message);
-                return;
+                }
+                catch (Exception ex)
+                {
+                    ((MasterPageI)Master).SetResultado(ex.Message);
+                    return;
+                }
             }
 
             // Alertas.RemoveAlertas(m_nAlmacen);

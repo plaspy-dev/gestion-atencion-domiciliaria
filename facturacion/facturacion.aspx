@@ -488,17 +488,17 @@ addFunctionToStart(function() {
                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                         ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                         SelectCommand="SELECT varios.id, varios.nombre 
-                            ,facturacion_autorizacion_glosa.causal
-                            ,facturacion_autorizacion_glosa.valor
-                            ,facturacion_autorizacion_glosa.valor_aceptado
-                            ,facturacion_autorizacion_glosa.valor_soportado
+                            ,factura_glosa.causal
+                            ,factura_glosa.valor
+                            ,factura_glosa.valor_aceptado
+                            ,factura_glosa.valor_soportado
                             FROM varios 
-                            LEFT JOIN facturacion_autorizacion_glosa ON (facturacion_autorizacion_glosa.autorizacion=@autorizacion AND facturacion_autorizacion_glosa.causal=varios.id)
+                            LEFT JOIN factura_glosa ON (factura_glosa.factura=@factura AND factura_glosa.causal=varios.id)
                             WHERE 
                             varios.tipo=75 AND varios.szReservado IS NULL 
                             ORDER BY varios.nombre">
                           <SelectParameters>
-                            <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="-1" />
+                            <asp:ControlParameter ControlID="TFactura" PropertyName="Text" Name="factura" DefaultValue="-1" />
                           </SelectParameters>
                     </asp:SqlDataSource>
             </td>
