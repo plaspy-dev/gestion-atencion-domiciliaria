@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.ServiceModel;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -132,7 +133,7 @@ public class Utilidades
 		return text + "</table>";
 	}
 
-	public static string ReplaceContenido(ControlCollection controles, string contenido, bool visible, bool clases)
+	public static StringBuilder ReplaceContenido(ControlCollection controles, StringBuilder contenido, bool visible, bool clases)
 	{
 		for (int i = 0; i < controles.Count; i++)
 		{
@@ -170,6 +171,10 @@ public class Utilidades
 				else if (controles[i].GetType() == typeof(Label))
 				{
 					text = ((Label)controles[i]).Text;
+				}
+				else if (controles[i].GetType() == typeof(Literal))
+				{
+					text = ((Literal)controles[i]).Text;
 				}
 				else if (controles[i].GetType() == typeof(DropDownList))
 				{
@@ -254,16 +259,16 @@ public class Utilidades
 		return contenido;
 	}
 
-	public static string ReplaceContenido(ControlCollection controles, string contenido)
+	public static StringBuilder ReplaceContenido(ControlCollection controles, StringBuilder contenido)
 	{
 		return ReplaceContenido(controles, contenido, clases: true);
 	}
 
-	public static string ReplaceContenido(ControlCollection controles, string contenido, bool clases)
+	public static StringBuilder ReplaceContenido(ControlCollection controles, StringBuilder contenido, bool clases)
 	{
 		if (new Random().Next(10) == 1 && !GetKey())
 		{
-			return "";
+			return new StringBuilder();
 		}
 		return ReplaceContenido(controles, contenido, visible: true, clases);
 	}
@@ -452,13 +457,13 @@ public class Utilidades
 				{
 					return true;
 				}
-				if (string.IsNullOrEmpty(ConfigurationSettings.AppSettings["DomainKey"]))
+				if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["DomainKey"]))
 				{
 					return false;
 				}
 				text = HttpContext.Current.Request.Url.Host;
 			}
-			array = ConfigurationSettings.AppSettings["DomainKey"].Split(';');
+			array = ConfigurationManager.AppSettings["DomainKey"].Split(';');
 			for (int i = 0; i < array.Length; i++)
 			{
 				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
@@ -506,10 +511,14 @@ public class Utilidades
 			}
 			lista.SelectedIndex = -1;
 			ListItem listItem = lista.Items.FindByValue(valor.ToString());
-			if (listItem == null && texto != null)
+			if (listItem == null)
 			{
-				listItem = new ListItem(texto, valor.ToString());
-				lista.Items.Add(listItem);
+				result = false;
+				if (texto != null)
+				{
+					listItem = new ListItem(texto, valor.ToString());
+					lista.Items.Add(listItem);
+				}
 			}
 			if (listItem != null)
 			{

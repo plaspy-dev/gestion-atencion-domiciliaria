@@ -1,6 +1,41 @@
 ﻿<%@ Page Title="Informes" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="informes.aspx.cs" Inherits="eventos_informes" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+<script type="text/javascript">
+    $(function() {
+        $("#<%= TEvento.ClientID %>").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../webservices/servicios.asmx/GetEventos",
+                    data: "{ 'q': '" + request.term + "' }",
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function(data) { return data; },
+                    success: function(data) {
+                        response($.map(data.d, function(item) {
+                            return {
+                                value: item.item, label: item.value
+                            }
+                        }))
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+            minLength: 3,
+            select: function(event, ui) {
+                $('#<%= TEvento.ClientID %>').val(ui.item.label);
+                $('#<%= TEventoID.ClientID %>').val(ui.item.value);
+                return false;
+            },
+            search: function(event, ui) {
+                $('#<%= TEventoID.ClientID %>').val("");
+            }
+        });
+    });
+</script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
@@ -21,23 +56,9 @@
             <td>
                 Evento</td>
             <td>
-                    <asp:DropDownList ID="DEvento" runat="server" DataSourceID="SEvento" CssClass="anchomaxcombo"
-                        DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                        <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
-                    </asp:DropDownList>
-                    <asp:SqlDataSource ID="SEvento" runat="server" 
-                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                        SelectCommand="SELECT programacion_evento.id AS id
-                                ,CONCAT(programacion_evento.nombre,'-',varios.nombre) AS nombre1
-                                ,CAST(CONCAT(programacion_evento.nombre,' (', DATE_FORMAT(programacion_evento.inicio,'%d/%m/%Y'),'-',DATE_FORMAT(programacion_evento.fin,'%d/%m/%Y'), ')') AS CHAR) AS nombre
-                                FROM programacion_evento 
-                                LEFT JOIN varios ON (varios.id=programacion_evento.lugar)
-                                WHERE inicio<=SYSDATE() AND DATE_ADD(fin,INTERVAL 60 DAY)>=SYSDATE() 
-                                ORDER BY nombre,inicio,fin" >
-                                <SelectParameters>
-                                </SelectParameters>
-                </asp:SqlDataSource></td>
+                <asp:TextBox runat="server" ID="TEvento"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TEventoID" CssClass="hide"></asp:TextBox>
+            </td>
             <td class="nw">
                 <asp:CheckBox ID="CAmbulancia" runat="server" Text="Trasladados" />
             </td>
@@ -77,8 +98,16 @@
             <asp:BoundField HeaderText="CIE10" DataField="cie10" SortExpression="CIE10" />
             <asp:BoundField HeaderText="Diagnostico" DataField="diagnostico" SortExpression="diagnostico" />
             <asp:BoundField HeaderText="Evento" DataField="evento" SortExpression="evento" />
-            <asp:CheckBoxField HeaderText="Ambulancia" DataField="ambulancia" SortExpression="ambulancia" />
-            <asp:CheckBoxField HeaderText="Remitido" DataField="remitido" SortExpression="remitido" />
+            <asp:TemplateField HeaderText="Ambulancia" SortExpression="ambulancia">
+                <ItemTemplate>
+                    <asp:CheckBox runat="server" ID="C1" Enabled="false" Checked='<%# Eval("ambulancia").ToString()=="1" %>' />
+                </ItemTemplate>
+            </asp:TemplateField>
+            <asp:TemplateField HeaderText="Remitido" SortExpression="remitido">
+                <ItemTemplate>
+                    <asp:CheckBox runat="server" ID="C1" Enabled="false" Checked='<%# Eval("remitido").ToString()=="1" %>' />
+                </ItemTemplate>
+            </asp:TemplateField>
             <asp:BoundField HeaderText="IPS remisión" DataField="ips" SortExpression="ips" />
         </Columns>
     </asp:GridView>
@@ -86,7 +115,8 @@
     <asp:SqlDataSource ID="SResultados" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT atencion_paciente.fecha, atencion_paciente.hora, atencion_paciente.diagnostico, atencion_paciente.ambulancia, atencion_paciente.remitido
+                SelectCommand="SELECT atencion_paciente.fecha, atencion_paciente.hora, atencion_paciente.diagnostico
+                    , IF(atencion_paciente.ambulancia,'True', 'False') AS ambulancia, IF(atencion_paciente.remitido,'True', 'False') AS remitido
                     , ips.nombre AS ips, paciente_evento.documento, paciente_evento.nombres, paciente_evento.apellidos, paciente_evento.edad, CONCAT(cie10.cieCodDx,'-',cie10.cirDescripcion) AS cie10
                     , programacion_evento.nombre AS evento
                     FROM paciente_evento 
@@ -103,7 +133,7 @@
             <asp:ControlParameter ControlID="CAmbulancia" Name="ambulancia" DefaultValue="0" PropertyName="Checked" />
             <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
             <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />
-            <asp:ControlParameter ControlID="DEvento" Name="evento" PropertyName="SelectedValue" />
+            <asp:ControlParameter ControlID="TEventoID" Name="evento" PropertyName="Text" DefaultValue="0" />
         </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

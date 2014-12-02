@@ -614,7 +614,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
         // agregamos los medicamentos no pos
         for (int i = 0; i < GMedicamentos.Rows.Count; i++)
         {
-            string contenido = primero ? evento.Contenido : contenidoreal;
+            string contenido = primero ? evento.Contenido.ToString() : contenidoreal;
             szPos = "";
             for (int j = 2; j < GMedicamentos.Columns.Count-3; j++)
             {
@@ -646,7 +646,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
         List<Medicamento> medicamentos = Serializar.DesSerializeBinary<List<Medicamento>>(HFormulacion.Value);
         for (int i = medicamentos.Count-1; i >= 0; i--)
         {
-            string contenido = primero ? evento.Contenido : contenidoreal;
+            string contenido = primero ? evento.Contenido.ToString() : contenidoreal;
 
             contenido = contenido.Replace("$Nombre$", medicamentos[i].Nombre)
                 .Replace("$Cantidad$", medicamentos[i].Cantidad.ToString())

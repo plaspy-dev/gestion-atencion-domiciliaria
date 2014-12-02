@@ -166,7 +166,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                         DCargo.SelectedValue = reader["carId"].ToString();
                         TFechaContrato.Text = Query.GetFromMySQLDate(reader["perFechaContrato"]);
                         DArea.SelectedValue = reader["areaId"].ToString();
-                        DNivelComplejidad.SelectedValue = reader["nivCompId"].ToString();
+                        // DNivelComplejidad.SelectedValue = reader["nivCompId"].ToString();
                         DDisponibilidad.SelectedValue = reader["dispId"].ToString();
                         TCuenta.Text = reader["perNroCuenta"].ToString();
                         DBanco.SelectedValue = reader["banId"].ToString();
@@ -293,7 +293,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["tipContId"] = DTipoContrato.SelectedValue;
         query["perFechaContrato"] = Query.GetMySQLDateFormat(TFechaContrato.Text);
         query["areaId"] = DArea.SelectedValue;
-        query["nivCompId"] = DNivelComplejidad.SelectedValue;
+        // query["nivCompId"] = DNivelComplejidad.SelectedValue;
         query["dispId"] = DDisponibilidad.SelectedValue;
         query["perNroCuenta"] = TCuenta.Text;
         query["banId"] = DBanco.SelectedValue;

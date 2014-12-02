@@ -73,10 +73,15 @@ public class Serializar
 
 	public static string SerializeXML(object objeto)
 	{
-		return SerializeXML(objeto, compress: true);
+		return SerializeXML(objeto, compress: true, base64: true);
 	}
 
 	public static string SerializeXML(object objeto, bool compress)
+	{
+		return SerializeXML(objeto, compress, base64: true);
+	}
+
+	public static string SerializeXML(object objeto, bool compress, bool base64)
 	{
 		if (objeto == null)
 		{
@@ -91,21 +96,33 @@ public class Serializar
 		string input = stringBuilder.ToString();
 		Regex regex = new Regex(">\\s*<");
 		input = regex.Replace(input, "><");
-		return Convert.ToBase64String(compress ? Compress(Encoding.UTF8.GetBytes(input)) : Encoding.UTF8.GetBytes(input));
+		if (base64)
+		{
+			return Convert.ToBase64String(compress ? Compress(Encoding.UTF8.GetBytes(input)) : Encoding.UTF8.GetBytes(input));
+		}
+		return input;
 	}
 
 	public static T DesSerializeXML<T>(string variable)
 	{
-		return DesSerializeXML<T>(variable, compressed: true);
+		return DesSerializeXML<T>(variable, compressed: true, base64: true);
 	}
 
 	public static T DesSerializeXML<T>(string variable, bool compressed)
+	{
+		return DesSerializeXML<T>(variable, compressed, base64: true);
+	}
+
+	public static T DesSerializeXML<T>(string variable, bool compressed, bool base64)
 	{
 		if (!string.IsNullOrEmpty(variable))
 		{
 			try
 			{
-				variable = Encoding.UTF8.GetString(compressed ? Decompress(Convert.FromBase64String(variable)) : Convert.FromBase64String(variable));
+				if (base64)
+				{
+					variable = Encoding.UTF8.GetString(compressed ? Decompress(Convert.FromBase64String(variable)) : Convert.FromBase64String(variable));
+				}
 				StringReader textReader = new StringReader(variable);
 				XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
 				return (T)xmlSerializer.Deserialize(textReader);

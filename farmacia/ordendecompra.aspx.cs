@@ -11,6 +11,7 @@ using System.Web.UI.WebControls;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
+using System.Text;
 
 public partial class farmacia_ordendecompra : System.Web.UI.Page
 {
@@ -63,7 +64,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
             }
             if (string.IsNullOrEmpty(id))
             {
-                if (usuario.GetPermisos(Request.Url.AbsolutePath) == 2) // es un usuario de solo impresion
+                if (usuario.GetPermisos(Request.Url.AbsolutePath) == (int)Usuario.Permisos.Print) // es un usuario de solo impresion
                     throw new HttpException(404, "Page not found");
                 id = Request.QueryString["oci"];
             }
@@ -83,10 +84,38 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                     query += "revisado";
                     query += "creado";
                     query += "centro_costos";
+                    query += "lotes";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(id)));
                     if (reader != null && reader.Read())
                     {
+                        BAceptar.Enabled = usuario.CanUpdate();
+
+                        if (usuario.GetPermisos(Request.Url.AbsolutePath) == (int)Usuario.Permisos.Print) {// es un usuario de solo impresion
+                            if (reader["lotes"] == DBNull.Value && Request.QueryString["pdf"]=="1") {
+                                Response.Redirect("~/farmacia/ordendecompra.aspx?k=" + Request.QueryString["k"]);
+                            } else if (reader["lotes"] != DBNull.Value && Request.QueryString["pdf"]!="1") {
+                                Response.Redirect("~/farmacia/ordendecompra.aspx?k=" + Request.QueryString["k"] + "&pdf=1");
+                            }
+                            UCPaciente.ReadOnly =
+                            TFecha.ReadOnly = TTercero.ReadOnly = TNombre.ReadOnly = TDireccion.ReadOnly = TTelefono.ReadOnly = TEMail.ReadOnly =TObservaciones.ReadOnly =
+                            TNumero.ReadOnly = true;
+
+                            PProductos.Visible = 
+                            TFecha.Enabled =
+                            CPrioridad.Enabled = ROrganizationExample15.Enabled = RPaciente.Enabled =
+                            DCCosto.Enabled = false;
+
+                            BAceptar.Enabled = true;
+                        }
+
+                        bool editLote = usuario.CanUpdate() || usuario.GetPermisos() == (int)Usuario.Permisos.Print;
+                        Utilidades.GetGridColumn(GProductos, "Vence ").Visible =
+                                    Utilidades.GetGridColumn(GProductos, "Lote ").Visible = editLote;
+
+                        Utilidades.GetGridColumn(GProductos, "Vencimiento").Visible =
+                        Utilidades.GetGridColumn(GProductos, "Lote").Visible = !editLote;
+
                         CNotificar.Visible = usuario.CanUpdate();
 
                         PRevisado.Visible = true;
@@ -121,6 +150,8 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                         query += "cantidad";
                         query += "ingreso";
                         query += "costo";
+                        query += "vence";
+                        query += "lote";
 
                         reader = conector.Query(query.GetSelect("orden_compra=" + HId.Value));
                         if (reader != null)
@@ -133,6 +164,8 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                                 info.cantidad = Convert.ToDecimal(reader["cantidad"]);
                                 info.Ingreso = reader["ingreso"].ToString();
                                 info.Costo = Convert.ToDecimal(reader["costo"]);
+                                info.lote = reader["lote"].ToString();
+                                info.vence = Query.GetFromMySQLDate(reader["vence"]);
 
                                 productoUsado.AddProducto(info);
                             }
@@ -141,6 +174,14 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                         GProductos.DataSource = productoUsado.GetProductosUsados();
                         HUsado.Value = productoUsado.SerializeBinary();
                         GProductos.DataBind();
+                        if (!editLote)
+                        {
+                            foreach (GridViewRow row in GProductos.Rows)
+                            {
+                                ((RequiredFieldValidator)row.FindControl("R1")).Visible = false;
+                                ((RequiredFieldValidator)row.FindControl("R2")).Visible = false;
+                            }
+                        }
                         if (GProductos.FooterRow != null)
                         {
                             GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
@@ -151,7 +192,6 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                         TProducto.Focus();
                         BAgregar.Enabled = string.IsNullOrEmpty((string)ViewState["TrasladoId"]);
                         GProductos.Columns[0].Visible = usuario.CanDelete();
-                        BAceptar.Enabled = usuario.CanUpdate();
                         BAnular.Visible = usuario.CanAdmin();
                         if (PAnulado.Visible)
                         {
@@ -198,8 +238,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         try
         {
             producto.Costo = Decimal.Parse(TCosto.Text.Replace("$",""), NumberStyles.Currency, CultureInfo.InvariantCulture);
-        }
-        catch { }
+        } catch { }
         producto.GetValor(UCPaciente.IdPaciente,m_nAlmacen);
 
         ProductoUsado productousadoNuevo = new ProductoUsado(HProductos.Value);
@@ -208,9 +247,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         if (GProductos.SelectedIndex == -1)
         {
             productoUsado.AddProducto(producto);
-        }
-        else
-        {
+        } else {
             // revisar la edicion
             Producto info = productoUsado.GetProducto(Convert.ToInt32(GProductos.DataKeys[GProductos.SelectedIndex].Values[0]));
 
@@ -223,6 +260,15 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         GProductos.SelectedIndex = -1;
         GProductos.DataSource = productoUsado.GetProductosUsados();
         GProductos.DataBind();
+
+        if (!Utilidades.GetGridColumn(GProductos, "Vence ").Visible)
+        {
+            foreach (GridViewRow row in GProductos.Rows)
+            {
+                ((RequiredFieldValidator)row.FindControl("R1")).Visible = false;
+                ((RequiredFieldValidator)row.FindControl("R2")).Visible = false;
+            }
+        }
 
         REntero.Enabled = true;
         RDecimal.Enabled = true;
@@ -272,9 +318,61 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
             return;
         }
 
+        if (RPaciente.Checked && string.IsNullOrEmpty(UCPaciente.IdPaciente))
+        {
+            LMensaje.Text = "Por favor ingrese un paciente";
+            return;
+        }
+
         Query query = new Query("orden_compra" + m_nAlmacen);
+
+        
         using (CConector conector = new CConector())
         {
+            CUsuario usuario = (CUsuario)Usuario.GetInstance();
+            // actualizamos las ubicaciones de todos
+            ProductoUsado productoUsado = ProductoUsado.DesSerialize(HUsado.Value);
+            List<Producto> productos = null;
+
+            if (usuario.GetPermisos() == (int)Usuario.Permisos.Print)
+            {
+                conector.StartTransaction();
+                query["lotes"] = "SYSDATE()";
+                if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(HId.Value))) == -1)
+                {
+                    LMensaje.Text = conector.GetLastError();
+                    return;
+                }
+
+                if (conector.InsertModificacion(HId.Value) == -1)
+                {
+                    LMensaje.Text = conector.GetLastError();
+                    return;
+                }
+
+                productos = productoUsado.GetProductosUsados();
+                foreach (GridViewRow row in GProductos.Rows) {
+
+                    Producto producto= productos.Find(x=>x.IdGrid==(int)GProductos.DataKeys[row.DataItemIndex].Values["IdGrid"]);
+                    if (producto == null)
+                        continue;
+
+                    query = new Query("orden_compra_items" + m_nAlmacen);
+
+                    query["lote"] = ((TextBox)row.FindControl("TL")).Text;
+                    query["vence"] = Query.GetMySQLDateFormat(((TextBox)row.FindControl("TV")).Text);
+
+                    if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(producto.IdTabla))) == -1) {
+                        LMensaje.Text= conector.GetLastError();
+                        return;
+                    }
+                }
+
+                conector.Commit();
+                Response.Redirect("~/farmacia/ordendecompra.aspx?k=" + Request.QueryString["k"] + "&pdf=1");
+                return;
+            }
+
             bool nueva = false;
             // agregamos el tercero
             string terceroid = TTerceroID.Text;
@@ -343,11 +441,8 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                 return;
             }
 
-            // actualizamos las ubicaciones de todos
-            ProductoUsado productoUsado = ProductoUsado.DesSerialize(HUsado.Value);
-
             // eliminamos todos los productos
-            List<Producto> productos = productoUsado.GetProductoEliminado();
+            productos = productoUsado.GetProductoEliminado();
             for (int i = 0; i < productos.Count; i++)
             {
                 if (conector.QueryMod(string.Format("DELETE FROM orden_compra{0} WHERE id={1}", m_nAlmacen, productos[i].IdTabla)) == -1)
@@ -361,6 +456,16 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
 
                 query = productos[i].GetQuery("orden_compra_items" + m_nAlmacen, false);
 
+                for (int j = 0; j < GProductos.Rows.Count; j++) {
+
+                    if ((int)GProductos.DataKeys[j].Values["IdGrid"] == productos[i].IdGrid) {
+
+                        query["lote"] = ((TextBox)GProductos.Rows[j].FindControl("TL")).Text;
+                        query["vence"] = Query.GetMySQLDateFormat(((TextBox)GProductos.Rows[j].FindControl("TV")).Text);
+                        break;
+                    }
+                }
+
                 if (string.IsNullOrEmpty(productos[i].IdTabla))
                 {
                     query["valor"] = productos[i].GetValor(UCPaciente.IdAsegurador, m_nAlmacen).ToString(CultureInfo.InvariantCulture);
@@ -373,6 +478,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                     if (conector.QueryMod(query.GetUpdate("id=" + productos[i].IdTabla)) == -1)
                         return;
                 }
+
                 if (!productos[i].UpdateCosto(conector, TTerceroID.Text))
                     return;
             }
@@ -403,10 +509,10 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                     mail.IsBodyHtml = true;
                     mail.Priority = MailPriority.Normal;
 
-                    string Contenido = "";
+                    StringBuilder Contenido = new StringBuilder();
                     using (StreamReader reader = new StreamReader(Server.MapPath("ordencompracorreo.html")))
                     {
-                        Contenido = reader.ReadToEnd();
+                        Contenido = new StringBuilder(reader.ReadToEnd());
                         reader.Close();
                     }
 
@@ -419,6 +525,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                         .Replace("$TPaciente$", paciente.DocumentoYNombres.Replace("Inactivo - ", ""))
                         .Replace("$szTelefono$", paciente.Telefono)
                         .Replace("$szAsegurador$", paciente.NombreEntidad)
+                        .Replace("$szBarrio$", paciente.Barrio)
                         .Replace("$szPrioridad$", CPrioridad.Checked ? "Prioritaria" : "Normal")
                         .Replace("$szIniciales$", new Tercero(TTerceroID.Text).Nombre.Substring(0, 2))
                         .Replace("$szNumero$", TNumero.Text.PadLeft(3, '0'))
@@ -428,7 +535,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                         .Replace("../imgs/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/imgs/")))
                         .Replace("../css/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/css/")));
 
-                    mail.Body = Contenido.Replace("$szVinculo$", string.Format("{0}{1}?k={3}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value, HttpUtility.UrlEncode(Crypt.EncriptarDES(HId.Value, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY")))));
+                    mail.Body = Contenido.Replace("$szVinculo$", string.Format("{0}{1}?k={3}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value, HttpUtility.UrlEncode(Crypt.EncriptarDES(HId.Value, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY"))))).ToString();
 
                     SmtpClient client = new SmtpClient();
                     client.EnableSsl = client.Port == 587 || client.Port == 465;
@@ -438,7 +545,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                     // esta es la copia del correo
                     mail.To.Clear();
                     mail.To.Add(ConfigurationManager.AppSettings["ordenesdecompra:copia"]);
-                    mail.Body = Contenido.Replace("$szVinculo$", string.Format("{0}{1}?oci={2}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value));
+                    mail.Body = Contenido.Replace("$szVinculo$", string.Format("{0}{1}?oci={2}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value)).ToString();
                     client.Send(mail);
                 }
                 catch (Exception ex)
@@ -497,6 +604,15 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         productoUsado.DeleteProducto(producto.IdGrid);
         GProductos.DataSource = productoUsado.GetProductosUsados();
         GProductos.DataBind();
+        if (!Utilidades.GetGridColumn(GProductos, "Vence ").Visible)
+        {
+            foreach (GridViewRow row in GProductos.Rows)
+            {
+                ((RequiredFieldValidator)row.FindControl("R1")).Visible = false;
+                ((RequiredFieldValidator)row.FindControl("R2")).Visible = false;
+            }
+        }
+
         HUsado.Value = productoUsado.SerializeBinary();
         if (GProductos.FooterRow != null)
         {

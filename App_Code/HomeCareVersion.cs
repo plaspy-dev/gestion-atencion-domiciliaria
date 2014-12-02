@@ -8,5 +8,5 @@ using System.Web;
 /// </summary>
 public class HomeCareVersion
 {
-    public const string Number="1.73";
+    public const string Number="1.74";
 }

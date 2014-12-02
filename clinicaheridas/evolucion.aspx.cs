@@ -10,6 +10,7 @@ using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
+using System.Text;
 
 public partial class clinicaheridas_evolucion : System.Web.UI.Page
 {
@@ -915,15 +916,14 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
         {
             int inicio = evento.Contenido.IndexOf("<!-- inicioherida -->");
             int final = evento.Contenido.IndexOf("<!-- finherida -->");
-            string herida = "";
             if (inicio != -1 && final != -1)
             {
-                herida = evento.Contenido.Substring(inicio, final - inicio);
+                StringBuilder herida = new StringBuilder(evento.Contenido.Substring(inicio, final - inicio));
                 for (int i = GHeridas.Rows.Count - 2; i >= 0; i--)
                 {
                     GHeridas.SelectedIndex = i;
                     GHeridas_SelectedIndexChanged(sender, e);
-                    evento.Contenido = evento.Contenido.Insert(inicio, Utilidades.ReplaceContenido(Controls, herida.Replace("$szFotos$", ImprimirFotos())));
+                    evento.Contenido = evento.Contenido.Insert(inicio, Utilidades.ReplaceContenido(Controls, herida.Replace("$szFotos$", ImprimirFotos())).ToString());
                 }
             }
             GHeridas.SelectedIndex = GHeridas.Rows.Count - 1;

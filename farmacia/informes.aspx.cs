@@ -310,6 +310,7 @@ public partial class farmacia_informes : System.Web.UI.Page
             ContarDistinct(rows, "Número", "n");
             ContarDistinct(rows, "Fecha", "f");
             ContarDistinct(rows, "Paciente");
+            ContarDistinct(rows, "Asegurador");
             ContarDistinct(rows, "Centro costos");
             ContarDistinct(rows, "Proveedor");
             ContarDistinct(rows, "Productos");

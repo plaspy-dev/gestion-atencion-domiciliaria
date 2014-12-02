@@ -15,14 +15,18 @@
               title: 'Estadisticas'
             });
             
-            drawPieChart('chart_div2', [['Encuestas','Numero']
+                var options =  {
+                  width: 600, height: 400,
+                  title: 'Encuestas'
+                };
+
+              var chart = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
+
+              chart.draw(google.visualization.arrayToDataTable([['Encuestas','Numero']
             <asp:Repeater runat="server" DataSourceID="SConceptos" ID="RConceptos">
-                <ItemTemplate>,['<%# Eval("concepto") %>','<%# Eval("cal") %>']</ItemTemplate>
+                <ItemTemplate>,['<%# Eval("concepto") %>',<%# Convert.ToDouble(Eval("cal")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>]</ItemTemplate>
             </asp:Repeater>
-                ], {
-              width: 600, height: 400,
-              title: 'Encuestas'
-            });
+                ]), options);
           }
         </script>
 <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
@@ -74,13 +78,13 @@
                                 WHEN FLOOR(calificacion)=1 THEN 'Insatisfecho' 
                                 WHEN FLOOR(calificacion)=2 THEN 'Conforme' 
                                 WHEN FLOOR(calificacion)=3 THEN 'Satisfecho' 
-                                WHEN FLOOR(calificacion)=4 THEN 'Muy satisfecho' 
+                                WHEN FLOOR(calificacion)>=4 THEN 'Muy satisfecho' 
                                 ELSE '' END AS concepto
                                 FROM escliente 
                                 WHERE 
                                 (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=fecha)
                                 AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=fecha)
-                                GROUP BY cal
+                                GROUP BY concepto
                                 ORDER BY cal;
                                 ">
                              <SelectParameters>

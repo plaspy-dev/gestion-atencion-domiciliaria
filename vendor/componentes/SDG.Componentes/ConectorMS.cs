@@ -206,7 +206,7 @@ public class ConectorMS : IDisposable
 		string result = "";
 		if (sqlDataReader != null && sqlDataReader.Read())
 		{
-			result = ((sqlDataReader[0].GetType() != typeof(byte[])) ? sqlDataReader[0].ToString() : Encoding.UTF8.GetString((byte[])sqlDataReader[0]));
+			result = ((!(sqlDataReader[0].GetType() == typeof(byte[]))) ? sqlDataReader[0].ToString() : Encoding.UTF8.GetString((byte[])sqlDataReader[0]));
 		}
 		try
 		{
@@ -397,13 +397,13 @@ public class ConectorMS : IDisposable
 				{
 					return true;
 				}
-				if (string.IsNullOrEmpty(ConfigurationSettings.AppSettings["DomainKey"]))
+				if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["DomainKey"]))
 				{
 					return false;
 				}
 				text = HttpContext.Current.Request.Url.Host;
 			}
-			array = ConfigurationSettings.AppSettings["DomainKey"].Split(';');
+			array = ConfigurationManager.AppSettings["DomainKey"].Split(';');
 			for (int i = 0; i < array.Length; i++)
 			{
 				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])

@@ -22,6 +22,15 @@ public partial class paciente_pacienteSimple : System.Web.UI.UserControl
         get { return TPacienteID.Text; }
     }
 
+    public bool ReadOnly {
+        get {
+            return TPaciente.ReadOnly;
+        }
+        set {
+            TPaciente.ReadOnly = TPacienteID.ReadOnly = value;
+        }
+    }
+
     public string IdAsegurador {
 
         get {

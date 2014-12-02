@@ -198,7 +198,7 @@ public class CustomDataSourceDesigner : DataSourceDesigner
 
 	internal void RefreshSchemaInternal(Type typeName, string method, Type returnType, bool preferSilent)
 	{
-		if (typeName == null || string.IsNullOrEmpty(method) || returnType == null)
+		if (!(typeName != null) || string.IsNullOrEmpty(method) || !(returnType != null))
 		{
 			return;
 		}

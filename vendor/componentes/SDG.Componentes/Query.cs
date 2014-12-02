@@ -294,7 +294,7 @@ public class Query
 	{
 		try
 		{
-			DateTime dateTime = ((typeof(MySqlDateTime) != fecha.GetType()) ? ((DateTime)fecha) : ((MySqlDateTime)fecha).GetDateTime());
+			DateTime dateTime = ((!(typeof(MySqlDateTime) == fecha.GetType())) ? ((DateTime)fecha) : ((MySqlDateTime)fecha).GetDateTime());
 			if (horas)
 			{
 				return dateTime.ToShortDateString() + " " + dateTime.Hour.ToString("00") + ":" + dateTime.Minute.ToString("00");
@@ -384,13 +384,13 @@ public class Query
 				{
 					return true;
 				}
-				if (string.IsNullOrEmpty(ConfigurationSettings.AppSettings["DomainKey"]))
+				if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["DomainKey"]))
 				{
 					return false;
 				}
 				text = HttpContext.Current.Request.Url.Host;
 			}
-			array = ConfigurationSettings.AppSettings["DomainKey"].Split(';');
+			array = ConfigurationManager.AppSettings["DomainKey"].Split(';');
 			for (int i = 0; i < array.Length; i++)
 			{
 				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])

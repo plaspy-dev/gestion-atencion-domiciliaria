@@ -103,9 +103,9 @@ public class Logs
 	public static bool WriteLog(string logs)
 	{
 		string archivo = "";
-		if (!string.IsNullOrEmpty(ConfigurationSettings.AppSettings["filelogs"]))
+		if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["filelogs"]))
 		{
-			archivo = ConfigurationSettings.AppSettings["filelogs"].ToString();
+			archivo = ConfigurationManager.AppSettings["filelogs"].ToString();
 		}
 		return WriteLog(logs, archivo);
 	}

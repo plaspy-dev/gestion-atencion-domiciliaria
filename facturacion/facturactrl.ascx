@@ -6,7 +6,7 @@
                     $("#<%= TAutorizacion.ClientID %>").autocomplete({
                         source: function(request, response) {
                             $.ajax({
-                                url: "../webservices/servicios.asmx/GetAutorizaciones",
+                                url: "../webservices/servicios.asmx/GetAutorizacionesOPaciente",
                                 data: "{ 'q': '" + request.term + "' }",
                                 dataType: "json",
                                 type: "POST",
@@ -171,7 +171,7 @@
                     <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
                     <asp:BoundField HeaderText="Radicación" SortExpression="antigua_radicacion" DataField="antigua_radicacion" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" />
                     <asp:BoundField HeaderText="Devolución" SortExpression="devolucion" DataField="devolucion" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" />
-                    <asp:BoundField HeaderText="Valor" SortExpression="valor" DataField="valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" />
+                    <asp:BoundField HeaderText="Valor" SortExpression="valor" DataField="valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
                     <asp:BoundField HeaderText="Causal" SortExpression="causal" DataField="causal" ItemStyle-Width="100%" />
             </Columns>
            </asp:GridView>
@@ -212,7 +212,7 @@
                     <asp:BoundField DataField="_CodigoProducto" HeaderText="Código producto" ItemStyle-HorizontalAlign="Right" />
                     <asp:BoundField DataField="_DescripcionDelMovimiento" HeaderText="Descripción" ItemStyle-Width="100%" />
                     <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" DataFormatString="{0:0}" ItemStyle-HorizontalAlign="Right" />
-                    <asp:BoundField DataField="_ValorMovimiento" HeaderText="Valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" />
+                    <asp:BoundField DataField="_ValorMovimiento" HeaderText="Valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
                     <asp:TemplateField HeaderText="Procedimiento Autorización">
                         <ItemTemplate>
                             <asp:UpdatePanel runat="server" ID="U" UpdateMode="Conditional">

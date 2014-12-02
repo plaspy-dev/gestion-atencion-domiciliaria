@@ -4,7 +4,7 @@ namespace SDG.Componentes;
 
 public class PrintEventArgs : EventArgs
 {
-	public string Contenido = "";
+	public StringBuilderEx Contenido = new StringBuilderEx();
 
 	public bool pdf;
 

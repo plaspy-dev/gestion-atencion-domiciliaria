@@ -4,7 +4,7 @@
         <h3><a href="#"><asp:Label runat="server" ID="LArchivo"></asp:Label></a></h3>
         <div class="hide">
             <asp:GridView ID="GArchivo" runat="server" AutoGenerateColumns="False" DataSourceID="SArchivo" 
-                EmptyDataText="No se encontraron archivos" AllowPaging="true" PageSize="10" AllowSorting="true" Width="100%">
+                EmptyDataText="No se encontraron archivos" AllowPaging="false" Width="100%">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
                 <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -22,6 +22,7 @@
                     SelectCommand="SELECT fecha,archivo
                                 FROM digitalizacion
                                 WHERE @paciente=digitalizacion.paciente
+                                ORDER BY fecha DESC
                                 ">
                       <SelectParameters>
                         <asp:Parameter Name="paciente" />

@@ -38,6 +38,9 @@
             collapsible: true,
             active: false
         });
+        $("#<%= BEliminar.ClientID %>").click(function () {
+            return confirm("¿Esta seguro de eliminar este evento adverso?. Esta acción no se puede deshacer.");
+        });
 
         FullRowSelect("#<%= GEventos.ClientID %>");
     });
@@ -166,7 +169,8 @@
                         TextMode="MultiLine" Height="80px"></asp:TextBox></td>
             </tr>
             <tr>
-                <td colspan="4" align="right">
+                <td><asp:Button runat="server" ID="BEliminar" CausesValidation="false" Visible="false" Text="Eliminar" OnClick="BEliminar_Click" /></td>
+                <td colspan="3" align="right">
                 <asp:ValidationSummary runat="server" ID="ValidationSummary1" />
                 <asp:Button runat="server" ID="BAceptar" 
                         Text="Aceptar" onclick="BAceptar_Click" /><asp:Button runat="server" 

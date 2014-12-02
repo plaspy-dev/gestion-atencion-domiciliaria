@@ -203,6 +203,50 @@ public class servicios : System.Web.Services.WebService
         return lista;
     }
 
+    [WebMethod]
+    public List<CJSon> GetAutorizacionesOPaciente(String q)
+    {
+        List<CJSon> lista = new List<CJSon>();
+        using (CConector conector = new CConector())
+        {
+            string query = "SELECT autorizacion.autNumero,autorizacion.autFecha,paciente.pacNombres"
+                    + " FROM autorizacion"
+                    + " LEFT JOIN paciente ON (autorizacion.pacId=paciente.pacId)"
+                    + " WHERE autorizacion.autNumero LIKE '%" + q.ToString() + "%' OR ";
+
+            string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
+
+            if (split.Length == 1)
+            { // solo un dato puede ser un documento
+                query += "pacDocumento LIKE '%" + q.Trim() + "%' OR ";
+            }
+            query += "(";
+
+            for (int i = 0; i < split.Length; i++)
+            {
+                if (split[i].Length > 0)
+                { // verificamos que no este vacio
+                    if (i > 0)
+                        query += " AND ";
+                    query += String.Format(" (pacPNombre LIKE '%{0}%' OR pacSNombre LIKE '%{0}%' OR pacPapellido LIKE '%{0}%' OR pacSApellido LIKE '%{0}%') ", split[i]);
+                }
+            }
+            query+= ") ORDER BY autorizacion.autFecha DESC LIMIT 20";
+            // query += ") ORDER BY EstId,nombres LIMIT 20";
+
+            MySqlDataReader reader = conector.Query(query);
+            if (reader != null)
+            {
+                while (reader.Read())
+                {
+                    string valor = ((DateTime)reader["autFecha"]).ToShortDateString() + " - " + reader["autNumero"].ToString() + " - " + reader["pacNombres"].ToString();
+                    lista.Add(new CJSon(reader["autNumero"].ToString(), valor));
+                }
+                reader.Close();
+            }
+        }
+        return lista;
+    }
 
     [WebMethod]
     public List<CJSon> GetAutorizaciones(String q)

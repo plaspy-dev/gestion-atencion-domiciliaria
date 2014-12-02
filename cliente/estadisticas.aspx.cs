@@ -13,6 +13,7 @@ public partial class cliente_estadisticas : System.Web.UI.Page
             TDesde.Text = DateTime.Now.AddMonths(-1).ToShortDateString();
             THasta.Text = DateTime.Now.ToShortDateString();
         }
+        
         GResultados.DataBind();
         int total = 0;
         LResultado.Text = "['Concepto','Encuestas']";

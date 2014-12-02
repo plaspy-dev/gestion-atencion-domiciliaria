@@ -185,8 +185,9 @@
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField HeaderText="Centro costos" DataField="centro_costos" SortExpression="centro_costos" FooterStyle-HorizontalAlign="Right" />
-            <asp:BoundField HeaderText="Proveedor" DataField="nombre" SortExpression="nombre" FooterStyle-HorizontalAlign="Right" />
+            <asp:BoundField HeaderText="Proveedor" DataField="nombre" SortExpression="nombre" FooterStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Paciente" DataField="paciente" SortExpression="paciente" FooterStyle-HorizontalAlign="Right" />
+            <asp:BoundField HeaderText="Asegurador" DataField="asegurador" SortExpression="asegurador" FooterStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Productos" DataField="producto" SortExpression="producto" FooterStyle-HorizontalAlign="Right" />
             <asp:BoundField HeaderText="Cantidad" DataField="total" SortExpression="total" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" />
             <asp:BoundField HeaderText="Costo" DataField="costo" SortExpression="costo" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" DataFormatString="{0:C0}" FooterStyle-Wrap="false" />
@@ -204,6 +205,7 @@
                     (SELECT 1 AS consulta, entrada{0}.id,entrada{0}.fecha,tercero.nombre AS nombre
                             ,medicamentos.nombre AS producto, -entrada_items{0}.cantidad AS total
                             ,NULL AS paciente
+                            ,NULL AS asegurador
                             ,entrada_items{0}.cantidad*entrada_items{0}.costo AS costo
                             ,NULL AS valor
                             ,entrada_items{0}.cantidad*entrada_items{0}.costo AS utilidad
@@ -219,6 +221,7 @@
                             LEFT JOIN varios AS centro_costo ON (centro_costo.id=entrada{0}.centro_costos)
                         WHERE 
                         1 IN (@consultas)
+                        AND entrada{0}.estado IS NULL
                         AND @paciente=0
                         AND (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=entrada{0}.fecha)
                         AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=entrada{0}.fecha)
@@ -232,7 +235,8 @@
                    ) UNION ALL (
                         SELECT 3 AS consulta, salida{0}.id,salida{0}.fecha,NULL AS nombre
                             ,medicamentos.nombre AS producto, salida_items{0}.cantidad AS total
-                            ,CONCAT(paciente.pacDocumento,' - ',paciente.pacNombres) AS paciente
+                            ,IFNULL(CONCAT(paciente.pacDocumento,' - ',paciente.pacNombres),'OrganizationExample15') AS paciente
+                            ,asegurador.entNombre AS asegurador
                             ,salida_items{0}.cantidad*salida_items{0}.costo AS costo
                             ,salida_items{0}.cantidad*salida_items{0}.valor AS valor
                             ,salida_items{0}.cantidad*salida_items{0}.valor-salida_items{0}.cantidad*salida_items{0}.costo AS utilidad
@@ -245,9 +249,11 @@
                             LEFT JOIN salida_items{0} ON (salida{0}.id=salida_items{0}.salida)
                             LEFT JOIN medicamentos ON (medicamentos.id=salida_items{0}.producto)
                             LEFT JOIN paciente ON (paciente.pacId=salida{0}.paciente)
+                            LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
                             LEFT JOIN varios AS centro_costo ON (centro_costo.id=salida{0}.centro_costos)
                         WHERE 
                         3 IN (@consultas)
+                        AND salida{0}.estado IS NULL
                         AND (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=salida{0}.fecha)
                         AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=salida{0}.fecha)
                         AND (@paciente=0 OR salida{0}.paciente=@paciente)
@@ -260,7 +266,8 @@
                    ) UNION ALL (
                         SELECT 2 AS consulta,orden_compra{0}.id,orden_compra{0}.fecha,tercero.nombre AS nombre
                             ,medicamentos.nombre AS producto, orden_compra_items{0}.cantidad AS total
-                            ,CONCAT(paciente.pacDocumento,' - ',paciente.pacNombres) AS paciente
+                            ,IFNULL(CONCAT(paciente.pacDocumento,' - ',paciente.pacNombres),'OrganizationExample15') AS paciente
+                            ,asegurador.entNombre AS asegurador
                             ,orden_compra_items{0}.cantidad*orden_compra_items{0}.costo AS costo
                             ,orden_compra_items{0}.cantidad*orden_compra_items{0}.valor AS valor
                             ,orden_compra_items{0}.cantidad*orden_compra_items{0}.valor-orden_compra_items{0}.cantidad*orden_compra_items{0}.costo AS utilidad
@@ -274,9 +281,11 @@
                             LEFT JOIN orden_compra_items{0} ON (orden_compra{0}.id=orden_compra_items{0}.orden_compra)
                             LEFT JOIN medicamentos ON (medicamentos.id=orden_compra_items{0}.producto)
                             LEFT JOIN paciente ON (paciente.pacId=orden_compra{0}.paciente)
+                            LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
                             LEFT JOIN varios AS centro_costo ON (centro_costo.id=orden_compra{0}.centro_costos)
                         WHERE 
                         2 IN (@consultas)
+                        AND orden_compra{0}.estado IS NULL
                         AND (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=orden_compra{0}.fecha)
                         AND orden_compra{0}.estado IS NULL
                         AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=orden_compra{0}.fecha)
@@ -292,6 +301,7 @@
                         SELECT 4 AS consulta,devolucion{0}.id,devolucion{0}.fecha,NULL AS nombre
                             ,medicamentos.nombre AS producto, -devolucion_items{0}.cantidad AS total
                             ,CONCAT(paciente.pacDocumento,' - ',paciente.pacNombres) AS paciente
+                            ,asegurador.entNombre AS asegurador
                             ,devolucion_items{0}.cantidad*devolucion_items{0}.costo AS costo
                             ,devolucion_items{0}.cantidad*devolucion_items{0}.valor AS valor
                             ,devolucion_items{0}.cantidad*devolucion_items{0}.valor-devolucion_items{0}.cantidad*devolucion_items{0}.costo AS utilidad
@@ -304,9 +314,11 @@
                             LEFT JOIN devolucion_items{0} ON (devolucion{0}.id=devolucion_items{0}.devolucion)
                             LEFT JOIN medicamentos ON (medicamentos.id=devolucion_items{0}.producto)
                             LEFT JOIN paciente ON (paciente.pacId=devolucion{0}.paciente)
+                            LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
                             LEFT JOIN varios AS centro_costo ON (centro_costo.id=devolucion{0}.centro_costos)
                         WHERE 
                         4 IN (@consultas)
+                        AND devolucion{0}.estado IS NULL
                         AND (@desde=' ' OR STR_TO_DATE(@desde, '%d/%m/%Y')<=devolucion{0}.fecha)
                         AND devolucion{0}.estado IS NULL
                         AND (@hasta=' ' OR STR_TO_DATE(@hasta, '%d/%m/%Y')>=devolucion{0}.fecha)

@@ -20,7 +20,8 @@ public class Usuario
 		Insert = 4,
 		Update = 8,
 		Delete = 0x10,
-		Admin = 0x20
+		Admin = 0x20,
+		Todos = 0xFF
 	}
 
 	private static bool bHeaderCache;
@@ -43,7 +44,17 @@ public class Usuario
 
 	protected ArrayList m_saValores = new ArrayList();
 
-	public string Nombre => m_szNombre;
+	public string Nombre
+	{
+		get
+		{
+			return m_szNombre;
+		}
+		set
+		{
+			m_szNombre = value;
+		}
+	}
 
 	public string Id => m_szID;
 
@@ -95,7 +106,7 @@ public class Usuario
 			m_szLogin = login;
 			m_pGrupo = new Grupo();
 			m_szUrl = "";
-			HttpContext.Current.Session["Usuario"] = this;
+			HttpContext.Current.Session["__SDG.Usuario"] = this;
 		}
 	}
 
@@ -162,16 +173,28 @@ public class Usuario
 
 	public virtual int GetPermisosRaiz(string url)
 	{
+		if (m_nGrupo == 0)
+		{
+			return 255;
+		}
 		return m_pGrupo.GetPermisoRaiz(url);
 	}
 
 	public virtual int GetPermisos(string url)
 	{
+		if (m_nGrupo == 0)
+		{
+			return 255;
+		}
 		return m_pGrupo.GetPermisos(url);
 	}
 
 	public virtual int GetPermisos()
 	{
+		if (m_nGrupo == 0)
+		{
+			return 255;
+		}
 		return GetPermisos(HttpContext.Current.Request.Url.AbsolutePath);
 	}
 
@@ -269,11 +292,11 @@ public class Usuario
 
 	public static Usuario Validate(string usuario, string password)
 	{
-		if (!string.IsNullOrEmpty(ConfigurationSettings.AppSettings["Usuario"]))
+		if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["Usuario"]))
 		{
 			try
 			{
-				Usuario usuario2 = (Usuario)Activator.CreateInstance(Assembly.Load("App_Code").GetType(ConfigurationSettings.AppSettings["Usuario"]));
+				Usuario usuario2 = (Usuario)Activator.CreateInstance(Assembly.Load("App_Code").GetType(ConfigurationManager.AppSettings["Usuario"]));
 				return usuario2.ValidateUser(usuario, password);
 			}
 			catch
@@ -285,11 +308,11 @@ public class Usuario
 
 	public static Usuario Validate()
 	{
-		if (!string.IsNullOrEmpty(ConfigurationSettings.AppSettings["Usuario"]))
+		if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["Usuario"]))
 		{
 			try
 			{
-				Usuario usuario = (Usuario)Activator.CreateInstance(Assembly.Load("App_Code").GetType(ConfigurationSettings.AppSettings["Usuario"]));
+				Usuario usuario = (Usuario)Activator.CreateInstance(Assembly.Load("App_Code").GetType(ConfigurationManager.AppSettings["Usuario"]));
 				return usuario.ValidateUser();
 			}
 			catch
@@ -299,7 +322,7 @@ public class Usuario
 		return null;
 	}
 
-	public static Usuario GetInstance(bool redirect)
+	public static Usuario GetInstance(bool redirect = true)
 	{
 		if (!bHeaderCache)
 		{
@@ -315,7 +338,14 @@ public class Usuario
 		}
 		HttpContext.Current.Response.CacheControl = "Private";
 		HttpContext.Current.Response.Expires = 0;
-		Usuario usuario = (Usuario)HttpContext.Current.Session["Usuario"];
+		Usuario usuario = null;
+		try
+		{
+			usuario = (Usuario)HttpContext.Current.Session["__SDG.Usuario"];
+		}
+		catch
+		{
+		}
 		usuario = ((usuario != null) ? usuario.IsValidUsuario() : Validate());
 		if (usuario == null)
 		{
@@ -333,14 +363,14 @@ public class Usuario
 		return usuario;
 	}
 
-	public static Usuario GetInstance()
+	public static void LogOut()
 	{
-		return GetInstance(redirect: true);
+		HttpContext.Current.Session["__SDG.Usuario"] = null;
 	}
 
 	public static Usuario GetUsuario()
 	{
-		return GetInstance(redirect: true);
+		return GetInstance();
 	}
 
 	protected int GetCampo(string campo)
@@ -389,13 +419,13 @@ public class Usuario
 				{
 					return true;
 				}
-				if (string.IsNullOrEmpty(ConfigurationSettings.AppSettings["DomainKey"]))
+				if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["DomainKey"]))
 				{
 					return false;
 				}
 				text = HttpContext.Current.Request.Url.Host;
 			}
-			array = ConfigurationSettings.AppSettings["DomainKey"].Split(';');
+			array = ConfigurationManager.AppSettings["DomainKey"].Split(';');
 			for (int i = 0; i < array.Length; i++)
 			{
 				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])

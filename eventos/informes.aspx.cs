@@ -14,7 +14,7 @@ public partial class eventos_informes : System.Web.UI.Page
             THasta.Text = DateTime.Now.ToShortDateString();
             TDesde.Text = DateTime.Now.AddDays(-30).ToShortDateString();
         }
-        TDesde.Focus();
+        // TDesde.Focus();
         Page.Header.Title = CAmbulancia.Checked ? "Registro de pacientes trasladados" : "Registro de pacientes atendidos";
         ((MasterPageI)Master).SetTitulo(Page.Header.Title);
 

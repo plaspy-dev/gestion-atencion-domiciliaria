@@ -37,6 +37,15 @@
         if (hasStorage) 
           localStorage.salida = $("#<%= HProductos.ClientID %>").val();
         
+        $("#<%= ROrganizationExample15.ClientID %>").change(function() {
+            $("#<%= RPaciente.ClientID %>").attr('checked', !$(this).is(':checked'));
+            $("#<%=UCPaciente.ClientID %>_TPaciente").prop('disabled',!$("#<%= RPaciente.ClientID %>").is(':checked'));
+        });
+        $("#<%= RPaciente.ClientID %>").change(function() {
+            $("#<%= ROrganizationExample15.ClientID %>").attr('checked', !$(this).is(':checked'));
+            $("#<%=UCPaciente.ClientID %>_TPaciente").prop('disabled',!$("#<%= RPaciente.ClientID %>").is(':checked'));
+        }).change();
+        
         $("#<%= BAnular.ClientID %>").click(function() { return confirm('¿Esta seguro de anular este documento?. Esta acción no se puede deshacer.'); });
         $("#<%= BAceptar.ClientID %>").click(function() { window.onbeforeunload = null; });
         $("#<%= TNumero.ClientID %>").change(function() {
@@ -175,7 +184,10 @@
             <td></td>
         </tr>
         <tr>
-            <td>Paciente<asp:RequiredFieldValidator ID="RPaciente" ControlToValidate="UCPaciente$TPacienteID" runat="server" ErrorMessage="Por favor ingrese un paciente" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td nowrap="nowrap"><asp:RadioButton runat="server" ID="ROrganizationExample15" Text="OrganizationExample15" /></td>
+        </tr>
+        <tr>
+            <td><asp:RadioButton runat="server" Text="Paciente" ID="RPaciente" Checked="true" /></td>
             <td colspan="3"><uc1:pacienteSimple runat="server" ID="UCPaciente" /></td>
         </tr>
         <tr>

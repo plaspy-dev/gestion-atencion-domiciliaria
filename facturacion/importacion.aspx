@@ -40,7 +40,7 @@
                 <asp:BoundField DataField="_Fecha" HeaderText="Fecha" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" />
                 <asp:BoundField DataField="_NIT" HeaderText="NIT" ItemStyle-HorizontalAlign="Right" />
                 <asp:BoundField DataField="_DescripcionDelMovimiento" HeaderText="Descripción producto" ItemStyle-Width="100%" />
-                <asp:BoundField DataField="_ValorMovimiento" HeaderText="Valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" />
+                <asp:BoundField DataField="_ValorMovimiento" HeaderText="Valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
             </Columns>
         </asp:GridView>
     </td>

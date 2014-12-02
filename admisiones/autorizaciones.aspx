@@ -302,21 +302,22 @@
         </tr>
         <tr>
             <td>
-                Fecha</td>
+                Fecha
+                <asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator>
+                <asp:RangeValidator ControlToValidate="TFecha" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
             <td>
                 <asp:TextBox ID="TFecha" CssClass="fecha" runat="server"></asp:TextBox>
-                <asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator>
-                <asp:RangeValidator ControlToValidate="TFecha" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator>
             </td>
             <td>
-                Vencimiento</td>
-            <td>
-                <asp:TextBox ID="TVencimiento" CssClass="fecha" runat="server"></asp:TextBox>
-                <asp:RangeValidator ControlToValidate="TVencimiento" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator>
+                Vencimiento<asp:RequiredFieldValidator ControlToValidate="TVencimiento" ErrorMessage="Por favor ingrese una fecha de vencimiento." ID="RequiredFieldValidator3" 
+	                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator><asp:RangeValidator ControlToValidate="TVencimiento" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator>
                 <asp:CompareValidator ID="CompareValidator1" runat="server" 
                     ErrorMessage="Por favor ingrese una fecha mayor." ControlToCompare="TFecha" 
                     ControlToValidate="TVencimiento" Display="Dynamic" Operator="GreaterThan" 
                     SetFocusOnError="True" Type="Date">*</asp:CompareValidator>
+                </td>
+            <td>
+                <asp:TextBox ID="TVencimiento" CssClass="fecha" runat="server"></asp:TextBox>
             </td>
         </tr>
         <tr>

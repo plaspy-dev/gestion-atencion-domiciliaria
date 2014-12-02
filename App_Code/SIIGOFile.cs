@@ -135,7 +135,7 @@ public class SIIGOFile
     [FieldFixedLength(3)]
     protected int SecuenciaPedido;
     [FieldFixedLength(97)]
-    protected int Relleno1;
+    protected string Relleno1 = "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
     [FieldFixedLength(1)]
     protected string sRelleno1;
     [FieldFixedLength(12)]

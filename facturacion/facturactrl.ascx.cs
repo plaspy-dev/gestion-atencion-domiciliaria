@@ -64,10 +64,14 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
 
     protected void A_DataBound(object sender, EventArgs e)
     {
-        DropDownList drop = (DropDownList)sender;
+	DropDownList drop = (DropDownList)sender;
         drop.SelectedIndex = -1;
         GridViewRow row = (GridViewRow)drop.Parent.Parent.Parent.Parent;
-        string seleccion = (string)ViewState[GDetalle.DataKeys[row.RowIndex].Values["_CodigoProducto"] + "_" + GDetalle.DataKeys[row.RowIndex].Values["Secuencia"]];
+        string seleccion = null;
+        try { seleccion = (string)ViewState[GDetalle.DataKeys[row.RowIndex].Values["_CodigoProducto"] + "_" + GDetalle.DataKeys[row.RowIndex].Values["Secuencia"]]; } catch { 
+            if(row.DataItem!=null)
+                seleccion = (string)ViewState[DataBinder.Eval(row.DataItem,"_CodigoProducto") + "_" + DataBinder.Eval(row.DataItem,"Secuencia")];
+        }
         if (seleccion != null)
             Utilidades.SelectInDropDown(drop, seleccion);
     }
@@ -110,7 +114,7 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
         }
 
         // verificamos que no se cargue el mismo servicio a dos items.
-        for (int i = 0; i < GDetalle.Rows.Count; i++)
+        /*for (int i = 0; i < GDetalle.Rows.Count; i++)
         {
             DropDownList drop = (DropDownList)GDetalle.Rows[i].FindControl("A");
             if (drop.SelectedValue.Length == 0)
@@ -125,7 +129,7 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
                     return;
                 }
             }
-        }
+        }*/
 
         List<SIIGOFile> lista = (List<SIIGOFile>)ViewState["lista"];
         SIIGOFile factura = lista.Find(x => x.Documento.ToString() == HFactura.Value && x.TipoDocumentoCruze == "F" && x.DebitoCredito == "D");

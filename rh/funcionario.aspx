@@ -431,7 +431,9 @@
                         <asp:TextBox ID="TFechaContrato" runat="server" CssClass="fecha"></asp:TextBox>
                         </td></tr>
                     <tr><td></td><td>
-                        </td><td>Área</td><td>
+                        </td><td></td><td>
+                        </td></tr>
+                    <tr><td nowrap="nowrap">Área</td><td>
                         <asp:DropDownList ID="DArea" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SArea" DataTextField="nombre" DataValueField="id">
                         </asp:DropDownList>
@@ -439,17 +441,6 @@
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT areaId id,areaDesc nombre FROM area ORDER BY 2">
-                        </asp:SqlDataSource>
-                        </td></tr>
-                    <tr><td nowrap="nowrap">Nivel complejidad</td><td>
-                        <asp:DropDownList ID="DNivelComplejidad" runat="server" AppendDataBoundItems="true" 
-                                DataSourceID="SNivelComplejidad" DataTextField="nombre" DataValueField="id">
-                                <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
-                        </asp:DropDownList>
-                        <asp:SqlDataSource ID="SNivelComplejidad" runat="server" 
-                            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                            SelectCommand="SELECT nivCompId id,nivCompDesc nombre FROM nivel_complejidad ORDER BY 2">
                         </asp:SqlDataSource>
                         </td><td>Disponibilidad</td><td>
                         <asp:DropDownList ID="DDisponibilidad" runat="server" AppendDataBoundItems="true" 

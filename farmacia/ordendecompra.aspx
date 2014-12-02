@@ -257,6 +257,7 @@
         <tr>
             <td colspan="5" class="GridHeader"><asp:HiddenField runat="server" ID="HProductos" EnableViewState="false" /><asp:HiddenField runat="server" ID="HUsado" />Productos</td>
         </tr>
+        <asp:PlaceHolder runat="server" ID="PProductos">
         <tr class="GridAltRow hide" id="tRegulado">
             <td class="tdl"></td>
             <td colspan="4" class="tdr">Precio regulado <span id="sRegulado">$1.500</span></td>
@@ -284,10 +285,9 @@
                 <asp:Button ID="BActualizar" runat="server" Text="Actualizar" CssClass="hide" CausesValidation="false" onclick="BActualizar_Click" />
                 <asp:Button ID="BAgregar" runat="server" onclick="BAgregar_Click" Text="Agregar" ValidationGroup="producto" />
             </td>
-            <td class="tdr">
-                
-            </td>
+            <td class="tdr"></td>
         </tr>
+        </asp:PlaceHolder>
         <tr>
             <td colspan="5" align="center" class="tdl tdb tdr">
                 <asp:GridView ID="GProductos" runat="server" AutoGenerateColumns="False" 
@@ -308,6 +308,22 @@
                         <asp:BoundField DataField="Costo" HeaderText="Costo U." SortExpression="Costo" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" HeaderStyle-Wrap="false" FooterStyle-Wrap="false" />
                         <asp:BoundField DataField="CostoTotal" HeaderText="Costo T." SortExpression="CostoTotal" DataFormatString="{0:C}" ItemStyle-HorizontalAlign="Right" FooterStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" HeaderStyle-Wrap="false" FooterStyle-Wrap="false" />
                         <asp:BoundField DataField="unidad" HeaderText="Un." SortExpression="unidad" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" />
+                        <asp:BoundField DataField="lote" HeaderText="Lote" SortExpression="lote" ItemStyle-Wrap="false" Visible="false" />
+                        <asp:BoundField DataField="vence" HeaderText="Vencimiento" SortExpression="vence" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Right" Visible="false" />
+                        <asp:TemplateField HeaderText="Lote " ItemStyle-Wrap="false" Visible="false">
+                            <ItemTemplate>
+                                <asp:RequiredFieldValidator ControlToValidate="TL" ErrorMessage="Por favor ingrese un lote." ID="R1" 
+	                                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                <asp:TextBox runat="server" ID="TL" Text='<%# Eval("lote") %>'></asp:TextBox>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Vence " ItemStyle-Wrap="false" Visible="false">
+                            <ItemTemplate>
+                                <asp:RequiredFieldValidator ControlToValidate="TV" ErrorMessage="Por favor ingrese una fecha de vencimiento." ID="R2" 
+	                                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                <asp:TextBox runat="server" ID="TV" CssClass="fecha" Text='<%# Eval("vence") %>'></asp:TextBox>
+                            </ItemTemplate>
+                        </asp:TemplateField>
                     </Columns>
                 </asp:GridView>
             </td>
@@ -323,7 +339,7 @@
             <td colspan="3"><asp:TextBox runat="server" ID="TObservaciones" TextMode="MultiLine" Width="99%"></asp:TextBox></td>
         </tr>
         <tr>
-            <td><asp:CheckBox runat="server" ID="CNotificar" Visible="false" Checked="false" Text="No notificar por correo electrónico" /></td>
+            <td colspan="5"><asp:CheckBox runat="server" ID="CNotificar" Visible="false" Checked="false" Text="No notificar por correo electrónico" /></td>
         </tr>
         <tr>
             <td colspan="5"><asp:ValidationSummary runat="server" ID="ValidationSumary1" /><asp:ValidationSummary ValidationGroup="producto" runat="server" ID="ValidationSummary2" />

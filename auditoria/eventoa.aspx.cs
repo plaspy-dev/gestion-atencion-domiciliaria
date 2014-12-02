@@ -36,6 +36,7 @@ public partial class auditoria_eventoa : System.Web.UI.Page
                         CUsuario usuario = (CUsuario)Usuario.GetUsuario();
                         HIdEvento.Value = reader["id"].ToString();
                         BAceptar.Enabled = usuario.CanUpdate();
+                        BEliminar.Visible = usuario.CanDelete();
                         PDatos.Visible = true;
 
                         CCDetallePaciente.IdPaciente = reader["paciente"].ToString();
@@ -182,5 +183,27 @@ public partial class auditoria_eventoa : System.Web.UI.Page
     protected void IIr_Click(object sender, EventArgs e)
     {
         Response.Redirect("~/auditoria/eventoa.aspx?eaid=" + ((ImageButton)sender).CommandArgument);
+    }
+    protected void BEliminar_Click(object sender, EventArgs e)
+    {
+        using (CConector conector = new CConector())
+        {
+            conector.StartTransaction();
+
+            Query consecuencias = new Query("consecuencias_evento_adverso");
+            if (conector.QueryMod(consecuencias.GetDelete("id=" + HIdEvento.Value)) == -1)
+                return;
+
+            Query tipo = new Query("tipo_evento_adverso");
+            if (conector.QueryMod(tipo.GetDelete("id=" + HIdEvento.Value)) == -1)
+                return;
+
+            Query query = new Query("evento_adverso");
+            if (conector.QueryMod(query.GetDelete("id=" + Query.GetValor(HIdEvento.Value))) == -1) {
+                return;
+            }
+            conector.Commit();
+        }
+        ((MasterPageI)Master).SetResultado("Evento adverso de " + CCDetallePaciente.Nombres + " eliminado.");
     }
 }

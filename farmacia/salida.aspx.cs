@@ -107,6 +107,8 @@ public partial class farmacia_salida : System.Web.UI.Page
                         Utilidades.SelectInDropDown(DCCosto, reader["centro_costos"]);
 
                         UCPaciente.IdPaciente= reader["paciente"].ToString();
+                        ROrganizationExample15.Checked = string.IsNullOrEmpty(UCPaciente.IdPaciente);
+                        RPaciente.Checked = !ROrganizationExample15.Checked;
 
                         ProductoUsado productoUsado = ProductoUsado.DesSerialize(HUsado.Value);
                         query = new Query("salida_items" + m_nAlmacen.ToString());
@@ -304,7 +306,7 @@ public partial class farmacia_salida : System.Web.UI.Page
             query["observaciones"] = TObservaciones.Text;
             query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             query["entrega"] = Query.GetMySQLDateFormat(configuracion.bManejarEntrega ? TEntrega.Text : TFecha.Text);
-            query["paciente"] = UCPaciente.IdPaciente;
+            query["paciente"] = RPaciente.Checked ? UCPaciente.IdPaciente : "";
             query["centro_costos"] = DCCosto.SelectedValue;
             if (sender == BAnular)
                 query["estado"] = "-1";
@@ -481,5 +483,8 @@ public partial class farmacia_salida : System.Web.UI.Page
     {
         GProductos.Columns[0].Visible = false;
         PAnulado.Visible = true;
+        PrintEventArgs print = (PrintEventArgs)e;
+        if (ROrganizationExample15.Checked)
+            print.Contenido = print.Contenido.Replace("$TPaciente$", "OrganizationExample15");
     }
 }

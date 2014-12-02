@@ -142,13 +142,13 @@ public class NumerosALetras
 				{
 					return true;
 				}
-				if (string.IsNullOrEmpty(ConfigurationSettings.AppSettings["DomainKey"]))
+				if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["DomainKey"]))
 				{
 					return false;
 				}
 				text = HttpContext.Current.Request.Url.Host;
 			}
-			array = ConfigurationSettings.AppSettings["DomainKey"].Split(';');
+			array = ConfigurationManager.AppSettings["DomainKey"].Split(';');
 			for (int i = 0; i < array.Length; i++)
 			{
 				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
