@@ -93,7 +93,10 @@
                 $(this).width($(this).parent().width() - 15);
             });
         });*/
-
+        var length = tinyMCE.editors.length;
+        for (var i=length; i>0; i--) {
+            tinyMCE.editors[i-1].remove();
+        };
         tinyMCE.init({
             mode: "exact"
             ,selector: '#elm1' 

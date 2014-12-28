@@ -170,6 +170,12 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                 }
                 else
                 { // dias en especial
+                    // correccion para el mono que no guarda el estado de los elementos
+                    for (int i = 0; i < CSemana.Items.Count; i++)
+                    { // verificamos que sea un dia de las semana
+                        if (!string.IsNullOrEmpty(Request.Form[CSemana.UniqueID + "$" + i]))
+                            CSemana.Items[i].Selected = true;
+                    }
                     while (inicio <= fin)
                     {
                         for (int i = 0; i < CSemana.Items.Count; i++)

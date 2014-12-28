@@ -118,6 +118,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                             Utilidades.SelectInDropDown(DEstadoPiel, reader["estado_piel"]);
                             Utilidades.SelectInDropDown(DTipoDispositivo, reader["tipo_dispositivo"]);
                             Utilidades.SelectInDropDown(DFuncional, reader["funcional"]);
+                            CFuncional.Checked = DFuncional.SelectedValue == "";
                             TFuncionalDescripcion.Text = reader["funcional_descripcion"].ToString();
                             Utilidades.SelectInDropDown(DEscalaDolor, reader["dolor"]);                            
                             TTiempoEvolucion.Text = reader["tiempo_evolucion_ulcera"].ToString();
@@ -199,6 +200,8 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                                             info.query[reader.GetName(i)] = ((float)reader[i]).ToString(CultureInfo.InvariantCulture);
                                         else info.query[reader.GetName(i)] = reader[i].ToString();
                                     }
+                                    Utilidades.SelectInDropDown(DDefina, reader["exudado_definicion"]);
+                                    LClasificacion.Text = DDefina.SelectedItem.Text;
                                     info.query.RemoveCampo("id");
                                     heridas.Add(info);
                                 }
@@ -254,7 +257,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
             query["complicaciones"] = DComplicacion.SelectedValue;
             query["estado_piel"] = DEstadoPiel.SelectedValue;
             query["tipo_dispositivo"] = DTipoDispositivo.SelectedValue;
-            query["funcional"] = DFuncional.SelectedValue;
+            query["funcional"] = CFuncional.Checked ? "" : DFuncional.SelectedValue;
             query["funcional_descripcion"] = TFuncionalDescripcion.Text;
             query["dolor"] = DEscalaDolor.SelectedValue;
             query["tiempo_evolucion_ulcera"] = TTiempoEvolucion.Text;
@@ -282,14 +285,14 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
                 int res= conector.QueryMod(query.GetInsert(), true);
                 if (res == -1) {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
                 id = res.ToString();
             } else {
                 if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(id))) == -1)
                 {
-                    LMensaje.Text= conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
             }
@@ -299,7 +302,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                 {
                     if (!string.IsNullOrEmpty(consultas[i].IdTabla)) {
                         if(conector.QueryMod(consultas[i].query.GetDelete("id=" + Query.GetValor(consultas[i].Id)))==-1) {
-                            LMensaje.Text=conector.GetLastError();
+                            LMensaje.Text = conector.LastError;
                             return;
                         }
                     }
@@ -312,7 +315,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                         int res= conector.QueryMod(consultas[i].query.GetInsert(), true);
                         if ( res== -1)
                         {
-                            LMensaje.Text = conector.GetLastError();
+                            LMensaje.Text = conector.LastError;
                             return;
                         }
                         consultas[i].IdTemp= res.ToString();
@@ -321,7 +324,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                     {
                         if (conector.QueryMod(consultas[i].query.GetUpdate("id=" + Query.GetValor(consultas[i].IdTabla))) == -1)
                         {
-                            LMensaje.Text = conector.GetLastError();
+                            LMensaje.Text = conector.LastError;
                             return;
                         }
                     }
@@ -331,7 +334,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
             Query educativo = new Query("valoracion_herida_educativo");
             if (conector.QueryMod(educativo.GetDelete("valoracion=" + Query.GetValor(id))) == -1)
             {
-                LMensaje.Text = conector.GetLastError();
+                LMensaje.Text = conector.LastError;
                 return;
             }
 
@@ -347,7 +350,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
                     if (conector.QueryMod(educativo.GetInsert()) == -1)
                     {
-                        LMensaje.Text = conector.GetLastError();
+                        LMensaje.Text = conector.LastError;
                         return;
                     }
                 }
@@ -356,7 +359,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
             Query antecendentes = new Query("valoracion_herida_antecedentes");
             if (conector.QueryMod(antecendentes.GetDelete("valoracion=" + Query.GetValor(id))) == -1)
             {
-                LMensaje.Text = conector.GetLastError();
+                LMensaje.Text = conector.LastError;
                 return;
             }
             antecendentes["valoracion"] = id;
@@ -368,8 +371,8 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                 antecendentes["observaciones"] = ((TextBox)GAntecedentes.Rows[i].Cells[1].FindControl("TObservaciones")).Text;
 
                 if (conector.QueryMod(antecendentes.GetInsert()) == -1) {
-                    
-                    LMensaje.Text = conector.GetLastError();
+
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
             }
@@ -377,7 +380,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
             Query riesgos = new Query("valoracion_herida_riesgos");
             if (conector.QueryMod(riesgos.GetDelete("valoracion=" + Query.GetValor(id))) == -1)
             {
-                LMensaje.Text = conector.GetLastError();
+                LMensaje.Text = conector.LastError;
                 return;
             }
             riesgos["valoracion"] = id;
@@ -390,7 +393,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
                 if (conector.QueryMod(riesgos.GetInsert()) == -1)
                 {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
             }
@@ -398,7 +401,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
             Query varios = new Query("valoracion_herida_varios");
             if (conector.QueryMod(varios.GetDelete("valoracion=" + Query.GetValor(id))) == -1)
             {
-                LMensaje.Text = conector.GetLastError();
+                LMensaje.Text = conector.LastError;
                 return;
             }
             varios["valoracion"] = id;
@@ -411,13 +414,13 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
                 if (conector.QueryMod(varios.GetInsert()) == -1)
                 {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
             }
 
             if (conector.InsertModificacion(id) == -1) {
-                LMensaje.Text = conector.GetLastError();
+                LMensaje.Text = conector.LastError;
                 return;
             }
             
@@ -893,9 +896,18 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         return resultado;
     }
 
+    protected string AddPorcentajeDeTejido(string nombre, TextBox textBox, bool coma) {
+
+        if (string.IsNullOrEmpty(textBox.Text))
+            return null;
+        return (coma ? "," : "") + " <b>" + nombre + "</b> " + textBox.Text + "%";
+    }
+
     protected void OnImprimir(object sender, EventArgs e)
     {
+        string porcentajedepedido = "";
         PrintEventArgs evento = (PrintEventArgs)e;
+
         // aqui modificamos el evento.Contenido
         evento.Contenido = evento.Contenido.Replace("$szAntecedentes$", ImprimirGridTipo1(GAntecedentes));
         evento.Contenido = evento.Contenido.Replace("$szRiesgos$", ImprimirGridTipo1(GRiesgos));
@@ -913,6 +925,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
         evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
         evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
+        evento.Contenido = evento.Contenido.Replace("$szImagenEscala$", DEscalaDolor.SelectedItem.Text.Split(' ')[0]);
 
         if (GHeridas.Rows.Count > 0)
         {
@@ -925,12 +938,39 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                 {
                     GHeridas.SelectedIndex = i;
                     GHeridas_SelectedIndexChanged(sender, e);
+
+                    porcentajedepedido = "";
+
+                    porcentajedepedido += AddPorcentajeDeTejido("Compacto", TCompacto, porcentajedepedido.Length > 0);
+                    porcentajedepedido += AddPorcentajeDeTejido("De fibrina", TDeFibrina, porcentajedepedido.Length > 0);
+                    porcentajedepedido += AddPorcentajeDeTejido("Epitelización", TEpitelizacion, porcentajedepedido.Length > 0);
+                    porcentajedepedido += AddPorcentajeDeTejido("Esfacelo", TEscara, porcentajedepedido.Length > 0);
+                    porcentajedepedido += AddPorcentajeDeTejido("Granulación", TGranulacion, porcentajedepedido.Length > 0);
+                    porcentajedepedido += AddPorcentajeDeTejido("Hipergranulación", THiperGranulacion, porcentajedepedido.Length > 0);
+                    porcentajedepedido += AddPorcentajeDeTejido("Limpio pero no granulado", TLimpio, porcentajedepedido.Length > 0);
+                    porcentajedepedido += AddPorcentajeDeTejido("Necrosis profunda", TNecrosis, porcentajedepedido.Length > 0);
+
+                    herida = herida.Replace("$szPorcentajedePedido$", porcentajedepedido);
+
                     evento.Contenido = evento.Contenido.Insert(inicio, Utilidades.ReplaceContenido(Controls, herida.Replace("$szFotos$", ImprimirFotos())).ToString());
                 }
             }
             GHeridas.SelectedIndex = GHeridas.Rows.Count - 1;
             GHeridas_SelectedIndexChanged(sender, e);
         }
+
+        porcentajedepedido = "";
+        porcentajedepedido += AddPorcentajeDeTejido("Compacto", TCompacto, porcentajedepedido.Length > 0);
+        porcentajedepedido += AddPorcentajeDeTejido("De fibrina", TDeFibrina, porcentajedepedido.Length > 0);
+        porcentajedepedido += AddPorcentajeDeTejido("Epitelización", TEpitelizacion, porcentajedepedido.Length > 0);
+        porcentajedepedido += AddPorcentajeDeTejido("Esfacelo", TEscara, porcentajedepedido.Length > 0);
+        porcentajedepedido += AddPorcentajeDeTejido("Granulación", TGranulacion, porcentajedepedido.Length > 0);
+        porcentajedepedido += AddPorcentajeDeTejido("Hipergranulación", THiperGranulacion, porcentajedepedido.Length > 0);
+        porcentajedepedido += AddPorcentajeDeTejido("Limpio pero no granulado", TLimpio, porcentajedepedido.Length > 0);
+        porcentajedepedido += AddPorcentajeDeTejido("Necrosis profunda", TNecrosis, porcentajedepedido.Length > 0);
+
+        evento.Contenido = evento.Contenido.Replace("$szPorcentajedePedido$", porcentajedepedido);
+
         evento.Contenido = evento.Contenido.Replace("$szFotos$", ImprimirFotos());
         
         using (CConector conector = new CConector())
@@ -939,6 +979,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
             query["szProfesional"] = "recurso_humano.perDocumento";
             query["szCargo"] = "cargo.carDescripcion";
+            query["szNombrePersonal"] = "recurso_humano.perNombre";
 
             MySqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(UCFuncionario.IdFuncionario), " LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)"));
             if (reader != null)

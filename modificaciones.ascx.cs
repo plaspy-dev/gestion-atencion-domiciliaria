@@ -43,7 +43,7 @@ public partial class modificaciones : System.Web.UI.UserControl
 
             query["usuario"] = "usuario.nombre";
             query["fecha"] = "modificaciones.fecha";
-            string url = HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~");
+            string url = Page.AppRelativeVirtualPath;
             MySqlDataReader reader = conector.Query(query.GetSelect("modificaciones.id='" + IdModificacion + "' AND modificaciones.url='" + url + "' ORDER BY modificaciones.fecha", "LEFT JOIN usuario ON (usuario.id=modificaciones.usuario)"));
             if (reader != null)
             {

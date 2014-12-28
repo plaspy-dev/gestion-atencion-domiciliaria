@@ -152,7 +152,7 @@
                 DataNavigateUrlFields="id" 
                 DataNavigateUrlFormatString="~/rh/Default.aspx?fid={0}" SortExpression="nombres" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Cargo" DataField="cargo" SortExpression="cargo" ItemStyle-Wrap="false"/>
-            <asp:BoundField HeaderText="Teléfono movil" DataField="celular" 
+            <asp:BoundField HeaderText="Teléfono móvil" DataField="celular" 
                 SortExpression="celular">
             <ItemStyle HorizontalAlign="Right" />
             </asp:BoundField>

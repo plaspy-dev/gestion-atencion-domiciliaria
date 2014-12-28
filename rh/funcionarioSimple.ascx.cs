@@ -29,7 +29,7 @@ public partial class rh_funcionarioSimple : System.Web.UI.UserControl
                 using (CConector conector = new CConector())
                 {
                     TFuncionarioID.Text = value;
-                    TFuncionario.Text = conector.QueryString("SELECT perDocumento + ' - ' + perNombre FROM recurso_humano WHERE perId=" + Query.GetValor(value));
+                    TFuncionario.Text = conector.QueryString("SELECT CONCAT(perDocumento, ' - ', perNombre) FROM recurso_humano WHERE perId=" + Query.GetValor(value));
                 }
             }
         }

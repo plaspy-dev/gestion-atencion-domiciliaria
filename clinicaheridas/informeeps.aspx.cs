@@ -8,14 +8,15 @@ using SDG.Componentes;
 
 public partial class clinicaheridas_informeeps : System.Web.UI.Page
 {
-    int paciente = -1;
-
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
         {
             TDesde.Text = DateTime.Now.AddMonths(-1).ToShortDateString();
             THasta.Text = DateTime.Now.ToShortDateString();
+#if DEBUG
+            BBuscar_Click(sender, e);
+#endif
         }
     }
 
@@ -24,27 +25,33 @@ public partial class clinicaheridas_informeeps : System.Web.UI.Page
         GResultados.Visible = true;
         if (GridUtils.GetRowsCount(GResultados, LTotal) > 0)
         {
-            ((MasterPageI)Master).Excel(GResultados);
-            ((MasterPageI)Master).Imprimir(GResultados);
+            ((MasterPageI)Master).Imprimir("informeEPS.html"); // .Excel(GResultados);
+            // ((MasterPageI)Master).Imprimir(GResultados);
         }
+    }
+
+    static Dictionary<string, int> ColumnsIndex = new Dictionary<string, int>();
+
+    public void ReplaceProducto(string columna, GridViewRow row) {
+
+        int numero=-1;
+        try { numero = ColumnsIndex[columna]; } catch { }
+        if(numero==-1)
+            ColumnsIndex[columna]= numero= Utilidades.GetGridColumnIndex(GResultados, columna);
+        TableCell celda = row.Cells[numero];
+        string texto = HttpUtility.HtmlDecode(celda.Text).Trim();
+        if (!string.IsNullOrEmpty(texto))
+            celda.Text = Producto.GetProducto(texto).NombreCompleto;
     }
 
     protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
     {
         if (e.Row.RowIndex != -1)
         {
-            if (paciente == -1)
-                paciente = Utilidades.GetGridColumnIndex(GResultados, "Paciente");
-            /*if (documento == -1)
-                documento = Utilidades.GetGridColumnIndex(GResultados, "Documento");
-            if (medicamento == -1)
-                medicamento = Utilidades.GetGridColumnIndex(GResultados, "Medicamento");*/
-
-            Paciente info = Paciente.GetPaciente(HttpUtility.HtmlDecode(e.Row.Cells[paciente].Text).Trim());
-            e.Row.Cells[paciente].Text = info.NombreCompleto;
-            // e.Row.Cells[documento].Text = info.documento;
-
-            // e.Row.Cells[medicamento].Text = Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[medicamento].Text).Trim());
+            ReplaceProducto("INSUMO 1", e.Row);
+            ReplaceProducto("INSUMO 2", e.Row);
+            ReplaceProducto("INSUMO 3", e.Row);
+            ReplaceProducto("INSUMO 4", e.Row);
         }
     }
 }

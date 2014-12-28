@@ -232,7 +232,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
             qIngreso["plan_manejo"] =
                 (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TPlanManejo.Text != ViewState["procedimientos"].ToString())
-                ? TPlanManejo.Text
+                ? TPlanManejo.Text.Trim()
                 : "";
 
             string szQuery;

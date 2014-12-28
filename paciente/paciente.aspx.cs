@@ -93,6 +93,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 query += "cieCodDx_2";
                 query += "categoria";
                 query += "diabetico";
+                query += "egresoClinicaHeridas";
 
                 using (CConector conector = new CConector())
                 {
@@ -151,6 +152,12 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         TCIE3.Text = reader["cieCodDx_2"].ToString();
                         CDiabetico.Checked = reader["diabetico"].ToString() == "1";
                         Utilidades.SelectInDropDown(DCategoria, reader["categoria"]);
+                        TFechaRetiroClinicaHeridas.Text = Query.GetFromMySQLDate(reader["egresoClinicaHeridas"]);
+
+                        if (TFechaRetiroClinicaHeridas.Text.Length > 0) {
+                            TFechaRetiroClinicaHeridas.ReadOnly = !usuario.CanAdmin();
+                            BAceptarClinica.Enabled = usuario.CanAdmin();
+                        }
 
                         IFoto.ImageUrl = "~/archivo/imagen.ashx?w=120&t=p&n=" + HId.Value + ".jpg";
                         IFoto.PostBackUrl = "~/archivo/imagen.ashx?t=p&n=" + HId.Value + ".jpg";
@@ -180,6 +187,27 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         else
                         {
                             BAceptarDefuncion.Enabled = usuario.CanInsert();
+                        }
+
+                        if (TFechaRetiroClinicaHeridas.Text.Length == 0)
+                        {
+                            if (!string.IsNullOrEmpty(conector.QueryString("SELECT 1 FROM valoracion_herida WHERE paciente={0} LIMIT 1", Query.GetValor(HId.Value))))
+                            { // solo se activa cuando el paciente ha estado en clinica de heridas
+                                PClinicaHeridas.Visible = true;
+                            }
+                        } else { // ya fue retirado, ahora buscamos una nueva valoracion en el futuro
+                            PClinicaHeridas.Visible = true;
+                            if (!string.IsNullOrEmpty(conector.QueryString("SELECT 1 FROM valoracion_herida WHERE paciente={0} AND fecha>{1} LIMIT 1"
+                                , Query.GetValor(HId.Value)
+                                , Query.GetValor(Query.GetMySQLDateFormat(TFechaRetiroClinicaHeridas.Text))
+                                )))
+                            { // solo se activa si el paciente
+                                BAceptarClinica.Enabled = usuario.CanUpdate();
+                                TFechaRetiroClinicaHeridas.ReadOnly = !usuario.CanUpdate();
+                                LClinica.Text += ", último retiro el " + TFechaRetiroClinicaHeridas.Text;
+                            } else {
+                                LClinica.Text += ", egresado el " + TFechaRetiroClinicaHeridas.Text;
+                            }
                         }
                     }
                 }
@@ -421,5 +449,20 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         Paciente.RemovePaciente(HId.Value);
 
         ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Inactivado.");
+    }
+
+    protected void BAceptarClinica_Clicked(object sender, EventArgs e) {
+
+        using (CConector conector = new CConector()) {
+
+            Query query = new Query("paciente");
+
+            query["egresoClinicaHeridas"] = Query.GetMySQLDateFormat(TFechaRetiroClinicaHeridas.Text);
+
+            if (conector.QueryMod(query.GetUpdate("pacId={0}", Query.GetValor(HId.Value))) == -1)
+                return;
+
+            ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Egresado de clínica de heridas.");
+        }
     }
 }

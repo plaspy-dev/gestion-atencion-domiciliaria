@@ -319,7 +319,7 @@ public partial class farmacia_salida : System.Web.UI.Page
                 int res = conector.QueryMod(query.GetInsert(), true);
                 if (res == -1)
                 {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
                 HId.Value = res.ToString();
@@ -328,14 +328,14 @@ public partial class farmacia_salida : System.Web.UI.Page
             {
                 if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(HId.Value))) == -1)
                 {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
             }
 
             if (conector.InsertModificacion(HId.Value) == -1)
             {
-                LMensaje.Text = conector.GetLastError();
+                LMensaje.Text = conector.LastError;
                 return;
             }
 

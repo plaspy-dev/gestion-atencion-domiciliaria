@@ -117,11 +117,15 @@ public class Query
 		return "'" + text + "'";
 	}
 
-	public string GetUpdate(string condicion)
+	public string GetUpdate(string condicion, params object[] args)
 	{
 		if (dCampos.Count == 0)
 		{
 			return "";
+		}
+		if (args.Length > 0)
+		{
+			condicion = string.Format(condicion, args);
 		}
 		string text = "UPDATE " + m_szTabla + " SET ";
 		bool flag = false;
@@ -198,16 +202,20 @@ public class Query
 		return text + ");";
 	}
 
-	public string GetSelect(string condicion)
+	public string GetSelect(string condicion, params object[] args)
 	{
-		return GetSelect(condicion, "");
+		return GetSelect(condicion, "", args);
 	}
 
-	public string GetSelect(string condicion, string join)
+	public string GetSelect(string condicion, string join, params object[] args)
 	{
 		if (dCampos.Count == 0)
 		{
 			return "";
+		}
+		if (args.Length > 0)
+		{
+			condicion = string.Format(condicion, args);
 		}
 		string text = "SELECT ";
 		bool flag = false;
@@ -236,8 +244,12 @@ public class Query
 		return text;
 	}
 
-	public string GetDelete(string condicion)
+	public string GetDelete(string condicion, params object[] args)
 	{
+		if (args.Length > 0)
+		{
+			condicion = string.Format(condicion, args);
+		}
 		string text = "DELETE FROM " + m_szTabla;
 		if (condicion.Length != 0)
 		{

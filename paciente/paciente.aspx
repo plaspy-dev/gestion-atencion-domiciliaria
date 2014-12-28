@@ -507,6 +507,21 @@
                       </SelectParameters>
                 </asp:SqlDataSource>
         </div>
+        <asp:PlaceHolder runat="server" ID="PClinicaHeridas" Visible="false">
+        <h3><a href="#"><asp:Label runat="server" ID="LClinica" Text="Egreso clínica de heridas"></asp:Label></a></h3>
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        Fecha<asp:RequiredFieldValidator ControlToValidate="TFechaRetiroClinicaHeridas" ErrorMessage="Por favor ingrese una fecha de egreso." ID="RequiredFieldValidator4" 
+	                        ValidationGroup="clinica" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                    </td>
+                    <td><asp:TextBox runat="server" ID="TFechaRetiroClinicaHeridas" CssClass="fecha"></asp:TextBox></td>
+                    <td><asp:Button runat="server" ID="BAceptarClinica" ValidationGroup="clinica" Text="Aceptar" OnClick="BAceptarClinica_Clicked" /></td>
+                </tr>
+            </table>
+        </div>
+        </asp:PlaceHolder>
         <h3><a href="#"><asp:Label runat="server" ID="LReactivar" Text="Reactivar"></asp:Label></a></h3>
         <div>
             <table width="100%">

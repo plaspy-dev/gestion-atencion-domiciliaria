@@ -40,7 +40,7 @@ public partial class contrasena : System.Web.UI.Page
                 query.AddCampo("contrasena", "PASSWORD(" + Query.GetValor(m_EConfirmar.Text) + ")", false);
                 if (conector.QueryMod(query.GetUpdate("id=" + usuario.GetID())) == -1)
                 {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                 }
                 else
                 {

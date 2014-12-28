@@ -427,7 +427,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                 {
                     if (conector.QueryMod("DELETE FROM formato_ctc_items WHERE id=" + Query.GetValor(info.Id)) == -1)
                     {
-                        LMensajeMedicamento.Text = conector.GetLastError();
+                        LMensajeMedicamento.Text = conector.LastError;
                         return;
                     }
                 }
@@ -461,7 +461,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                 {
                     if (conector.QueryMod("DELETE FROM formato_ctc_pos_items WHERE id=" + Query.GetValor(info.Id)) == -1)
                     {
-                        LMensajeMedicamento.Text = conector.GetLastError();
+                        LMensajeMedicamento.Text = conector.LastError;
                         return;
                     }
                 }
@@ -769,7 +769,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                 {
                     if (conector.QueryMod("DELETE FROM formato_ctc_items WHERE id=" + Query.GetValor(info.Id)) == -1)
                     {
-                        LMensajeMedicamento.Text = conector.GetLastError();
+                        LMensajeMedicamento.Text = conector.LastError;
                         return;
                     }
                 }

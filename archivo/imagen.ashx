@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Globalization;
+using MySql.Data.MySqlClient;
+using SDG.Componentes;
 
 public class imagen : IHttpHandler {
 
@@ -16,11 +18,7 @@ public class imagen : IHttpHandler {
             && string.IsNullOrEmpty(context.Request.QueryString["t"]))
             throw new HttpException(404, "Page not found");
 
-        context.Response.ContentType = "image/jpeg";
-        if (string.IsNullOrEmpty(context.Request.QueryString["a"]))
-            context.Response.AddHeader("Content-Disposition", "inline;filename=" + context.Request.QueryString["n"]);
-        else context.Response.AddHeader("Content-Disposition", "attachment;filename=" + context.Request.QueryString["n"]);
-
+        string archivo = "";
         string tipo = context.Request.QueryString["t"];
         switch (tipo) { 
             case "v":
@@ -38,8 +36,42 @@ public class imagen : IHttpHandler {
             case "q":
                 tipo = "pqr";
                 break;
-        }   
-        string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo);
+            case "fe":
+                tipo = "evolucion";
+                string directorio = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo);
+                using (CConector conector = new CConector()) {
+                    MySqlDataReader reader = conector.Query("SELECT id FROM evolucion_herida WHERE id<={0} paciente={1} ORDER BY id DESC"
+                        , Query.GetValor(context.Request.QueryString["i"])
+                        , Query.GetValor(context.Request.QueryString["p"]));
+                    if (reader != null) {
+                        while (reader.Read()) {
+                            archivo = Path.Combine(directorio, reader["id"].ToString(), context.Request.QueryString["hi"]);
+                            try
+                            {
+                                int posicion = Convert.ToInt32(context.Request.QueryString["x"]);
+                                foreach (string file in Directory.GetFiles(archivo))
+                                {
+                                    posicion--;
+                                    if (posicion == 0)
+                                    {
+                                        context.Server.TransferRequest("~/archivo/imagen.ashx?p=" + context.Request.QueryString["p"] + "&i=" + context.Request.QueryString["i"] + "&hi=" + context.Request.QueryString["hi"] + "&w=150&h=150&x=1&t=e");
+                                        return;
+                                    }
+                                }
+                            } catch { //no existe el directorio
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+
+        context.Response.ContentType = "image/jpeg";
+        if (string.IsNullOrEmpty(context.Request.QueryString["a"]))
+            context.Response.AddHeader("Content-Disposition", "inline;filename=" + context.Request.QueryString["n"]);
+        else context.Response.AddHeader("Content-Disposition", "attachment;filename=" + context.Request.QueryString["n"]);
+        
+        archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo);
         if (context.Request.QueryString["d"] == "True")
         {
             archivo = Path.Combine(archivo, "temp");
@@ -66,7 +98,7 @@ public class imagen : IHttpHandler {
             }
         } else if (!string.IsNullOrEmpty(context.Request.QueryString["n"])) 
             archivo = Path.Combine(archivo, context.Request.QueryString["n"]);
-
+        
         if (File.Exists(archivo))
         {
             DateTime modificacion = File.GetLastWriteTimeUtc(archivo);
@@ -84,7 +116,7 @@ public class imagen : IHttpHandler {
             }
 
             context.Response.Cache.SetCacheability(HttpCacheability.Public);
-            context.Response.Cache.SetLastModified(modificacion);
+            context.Response.Cache.SetLastModified(modificacion.ToLocalTime());
             context.Response.Flush();
 
             if (!string.IsNullOrEmpty(context.Request.QueryString["h"]) || !string.IsNullOrEmpty(context.Request.QueryString["w"]))

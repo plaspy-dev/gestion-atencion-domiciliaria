@@ -29,6 +29,20 @@ public class Utilidades
 		return string.Format("http{0}://{1}{2}", page.Request.IsSecureConnection ? "s" : "", text, page.ResolveUrl(archivo));
 	}
 
+	public static string GetURLFullPath(string archivo)
+	{
+		string text = HttpContext.Current.Request.Url.Host;
+		if (!HttpContext.Current.Request.IsSecureConnection && HttpContext.Current.Request.Url.Port != 80)
+		{
+			text = text + ":" + HttpContext.Current.Request.Url.Port;
+		}
+		else if (HttpContext.Current.Request.IsSecureConnection && HttpContext.Current.Request.Url.Port != 443)
+		{
+			text = text + ":" + HttpContext.Current.Request.Url.Port;
+		}
+		return string.Format("http{0}://{1}{2}", HttpContext.Current.Request.IsSecureConnection ? "s" : "", text, VirtualPathUtility.ToAbsolute(archivo));
+	}
+
 	public static DataControlField GetGridColumn(GridView grid, string columna)
 	{
 		columna = columna.ToLower();
@@ -529,5 +543,23 @@ public class Utilidades
 		{
 		}
 		return result;
+	}
+
+	public static string QueryString(HttpContext context, string valor)
+	{
+		if (string.IsNullOrEmpty((string)context.Request.RequestContext.RouteData.Values[valor]))
+		{
+			return context.Request.QueryString[valor];
+		}
+		return (string)context.Request.RequestContext.RouteData.Values[valor];
+	}
+
+	public static string QueryString(Page pagina, string valor)
+	{
+		if (string.IsNullOrEmpty((string)pagina.RouteData.Values[valor]))
+		{
+			return pagina.Request.QueryString[valor];
+		}
+		return (string)pagina.RouteData.Values[valor];
 	}
 }

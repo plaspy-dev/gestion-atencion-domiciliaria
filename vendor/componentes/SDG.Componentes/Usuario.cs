@@ -6,7 +6,9 @@ using System.IO;
 using System.Reflection;
 using System.ServiceModel;
 using System.Web;
+using System.Web.UI;
 using System.Web.UI.WebControls;
+using SDG.Web;
 
 namespace SDG.Componentes;
 
@@ -23,8 +25,6 @@ public class Usuario
 		Admin = 0x20,
 		Todos = 0xFF
 	}
-
-	private static bool bHeaderCache;
 
 	private static bool bGetKey;
 
@@ -189,13 +189,26 @@ public class Usuario
 		return m_pGrupo.GetPermisos(url);
 	}
 
+	public static string GetCurrentURL()
+	{
+		if (HttpContext.Current.Handler is Page)
+		{
+			return ((Page)HttpContext.Current.Handler).AppRelativeVirtualPath;
+		}
+		if (HttpContext.Current.Handler is IHttpHandlerEx)
+		{
+			return ((IHttpHandlerEx)HttpContext.Current.Handler).AppRelativeVirtualPath;
+		}
+		return HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath;
+	}
+
 	public virtual int GetPermisos()
 	{
 		if (m_nGrupo == 0)
 		{
 			return 255;
 		}
-		return GetPermisos(HttpContext.Current.Request.Url.AbsolutePath);
+		return GetPermisosRaiz(GetCurrentURL());
 	}
 
 	public virtual bool CanRead()
@@ -258,11 +271,11 @@ public class Usuario
 		{
 			return true;
 		}
-		if (HttpContext.Current.Request.Url.AbsolutePath.IndexOf(".asmx") != -1)
+		if (GetCurrentURL().IndexOf(".asmx") != -1)
 		{
 			return true;
 		}
-		if (HttpContext.Current.Request.Url.AbsolutePath == HttpContext.Current.Request.ApplicationPath + "/inicio.aspx")
+		if (GetCurrentURL() == "~/inicio.aspx")
 		{
 			return true;
 		}
@@ -324,17 +337,17 @@ public class Usuario
 
 	public static Usuario GetInstance(bool redirect = true)
 	{
-		if (!bHeaderCache)
+		try
 		{
-			try
-			{
-				HttpContext.Current.Response.Headers["pragma"] = "no-cache";
-			}
-			catch
+			HttpContext.Current.Response.Cache.SetCacheability(HttpCacheability.NoCache);
+			HttpContext.Current.Response.Headers["pragma"] = "no-cache";
+		}
+		catch
+		{
+			if (HttpContext.Current.Response.Headers["pragma"] != "no-cache")
 			{
 				HttpContext.Current.Response.AddHeader("pragma", "no-cache");
 			}
-			bHeaderCache = true;
 		}
 		HttpContext.Current.Response.CacheControl = "Private";
 		HttpContext.Current.Response.Expires = 0;

@@ -15,11 +15,7 @@ public class Conector : IDisposable
 {
 	private static bool bGetKey;
 
-	protected string m_szLastError;
-
-	protected string m_szQuery;
-
-	protected string m_szConexion;
+	protected string _LastError;
 
 	protected bool m_bTransaccion;
 
@@ -27,13 +23,29 @@ public class Conector : IDisposable
 
 	protected MySqlDataReader m_pSQLReader;
 
+	public string LastError
+	{
+		get
+		{
+			if (string.IsNullOrEmpty(_LastError))
+			{
+				return "";
+			}
+			return _LastError + "<br>" + CurrentQuery;
+		}
+	}
+
+	public string CurrentQuery { get; protected set; }
+
+	public string ConnectionString { get; protected set; }
+
 	public Conector(string conexionstring)
 	{
-		m_szQuery = "";
-		m_szLastError = "";
+		CurrentQuery = "";
+		_LastError = "";
 		m_pSQLConector = null;
 		m_pSQLReader = null;
-		m_szConexion = conexionstring;
+		ConnectionString = conexionstring;
 	}
 
 	~Conector()
@@ -79,11 +91,6 @@ public class Conector : IDisposable
 		catch
 		{
 		}
-	}
-
-	public string GetConexionString()
-	{
-		return m_szConexion;
 	}
 
 	public MySqlConnection GetConexion()
@@ -133,7 +140,7 @@ public class Conector : IDisposable
 		{
 		}
 		string text2 = text;
-		text = text2 + "\r\n" + m_szLastError + "\r\n" + m_szQuery;
+		text = text2 + "\r\n" + _LastError + "\r\n" + CurrentQuery;
 		Logs.WriteLog(text);
 		try
 		{
@@ -156,16 +163,16 @@ public class Conector : IDisposable
 	{
 		if (m_pSQLConector == null && GetKey())
 		{
-			string szConexion = m_szConexion;
+			string connectionString = ConnectionString;
 			try
 			{
-				m_pSQLConector = new MySqlConnection(szConexion);
+				m_pSQLConector = new MySqlConnection(connectionString);
 				m_pSQLConector.Open();
 			}
 			catch (MySqlException ex)
 			{
-				m_szLastError = ex.Message;
-				ShowError(m_szLastError);
+				_LastError = ex.Message;
+				ShowError(LastError);
 				return false;
 			}
 			catch
@@ -177,17 +184,21 @@ public class Conector : IDisposable
 
 	public MySqlDataAdapter QueryAdaptador(string query)
 	{
-		return new MySqlDataAdapter(query, m_szConexion);
+		return new MySqlDataAdapter(query, ConnectionString);
 	}
 
-	public int QueryMod(string query)
+	public int QueryMod(string query, params object[] args)
 	{
-		return QueryMod(query, identity: false);
+		return QueryMod(query, identity: false, args);
 	}
 
-	public int QueryMod(string query, bool identity)
+	public int QueryMod(string query, bool identity, params object[] args)
 	{
-		m_szQuery = query;
+		if (args.Length > 0)
+		{
+			query = string.Format(query, args);
+		}
+		CurrentQuery = query;
 		if (query.IndexOf(" WHERE") == 0)
 		{
 			return 0;
@@ -217,14 +228,14 @@ public class Conector : IDisposable
 		catch (MySqlException ex)
 		{
 			num = -1;
-			m_szLastError = ex.Message;
-			ShowError(m_szLastError + "\nEn la consulta:\n" + query);
+			_LastError = ex.Message;
+			ShowError(_LastError + "\nEn la consulta:\n" + query);
 		}
 		catch (Exception ex2)
 		{
 			num = -1;
-			m_szLastError = ex2.Message;
-			ShowError(m_szLastError + "\nEn la consulta:\n" + query);
+			_LastError = ex2.Message;
+			ShowError(_LastError + "\nEn la consulta:\n" + query);
 		}
 		if (identity && num != -1)
 		{
@@ -237,8 +248,12 @@ public class Conector : IDisposable
 		return num;
 	}
 
-	public string QueryString(string query)
+	public string QueryString(string query, params object[] args)
 	{
+		if (args.Length > 0)
+		{
+			query = string.Format(query, args);
+		}
 		MySqlDataReader mySqlDataReader = Query(query);
 		string result = "";
 		if (mySqlDataReader != null && mySqlDataReader.Read())
@@ -255,23 +270,22 @@ public class Conector : IDisposable
 		return result;
 	}
 
-	public MySqlDataReader Query(string query)
+	public MySqlDataReader Query(string query, params object[] args)
 	{
-		return Query(query, reset: false);
-	}
-
-	public MySqlDataReader Query(string query, bool reset)
-	{
+		if (args.Length > 0)
+		{
+			query = string.Format(query, args);
+		}
 		if (!IsConect())
 		{
 			return null;
 		}
 		if (query == null || query.Length == 0)
 		{
-			m_szLastError = "";
+			_LastError = "";
 			return null;
 		}
-		m_szQuery = query;
+		CurrentQuery = query;
 		try
 		{
 			if (m_pSQLReader != null)
@@ -293,8 +307,8 @@ public class Conector : IDisposable
 		catch (MySqlException ex)
 		{
 			m_pSQLReader = null;
-			m_szLastError = ex.Message;
-			ShowError(m_szLastError + "\nEn la consulta:\n" + query);
+			_LastError = ex.Message;
+			ShowError(_LastError + "\nEn la consulta:\n" + query);
 		}
 		catch
 		{
@@ -311,13 +325,10 @@ public class Conector : IDisposable
 		return m_pSQLReader.FieldCount;
 	}
 
+	[Obsolete("use new variable LastError")]
 	public string GetLastError()
 	{
-		if (m_szLastError.Length == 0)
-		{
-			return "";
-		}
-		return m_szLastError + "<br>" + m_szQuery;
+		return LastError;
 	}
 
 	public static string GetCondicion(string campo, string dato)
@@ -387,7 +398,7 @@ public class Conector : IDisposable
 
 	public static string GetModificacion(string idUsuario, string idDocumento, string id2, string tabla)
 	{
-		return GetModificacion(idUsuario, idDocumento, id2, tabla, HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~"));
+		return GetModificacion(idUsuario, idDocumento, id2, tabla, Usuario.GetCurrentURL());
 	}
 
 	public static string GetModificacion(string idUsuario, string idDocumento, string id2)
@@ -433,7 +444,7 @@ public class Conector : IDisposable
 			if (listItem == null)
 			{
 				result = false;
-				using Conector conector = new Conector(m_szConexion);
+				using Conector conector = new Conector(ConnectionString);
 				string text = "";
 				if (query.Length > 0)
 				{

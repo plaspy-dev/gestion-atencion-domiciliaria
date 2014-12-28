@@ -340,13 +340,13 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                 query["lotes"] = "SYSDATE()";
                 if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(HId.Value))) == -1)
                 {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
 
                 if (conector.InsertModificacion(HId.Value) == -1)
                 {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
 
@@ -363,7 +363,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                     query["vence"] = Query.GetMySQLDateFormat(((TextBox)row.FindControl("TV")).Text);
 
                     if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(producto.IdTabla))) == -1) {
-                        LMensaje.Text= conector.GetLastError();
+                        LMensaje.Text = conector.LastError;
                         return;
                     }
                 }
@@ -421,7 +421,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                 int res = conector.QueryMod(query.GetInsert(), true);
                 if (res == -1)
                 {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
                 HId.Value = res.ToString();
@@ -430,14 +430,14 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
             {
                 if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(HId.Value))) == -1)
                 {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
             }
 
             if (conector.InsertModificacion(HId.Value) == -1)
             {
-                LMensaje.Text = conector.GetLastError();
+                LMensaje.Text = conector.LastError;
                 return;
             }
 

@@ -100,7 +100,10 @@
             editor.setContent(completa);
         }
         
-        
+        var length = tinyMCE.editors.length;
+        for (var i=length; i>0; i--) {
+            tinyMCE.editors[i-1].remove();
+        };
         tinyMCE.init({
             mode: "exact"
             ,selector: '#elm1' 
@@ -197,11 +200,11 @@
                 <td class="tdr"><asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox></td>
             </tr>
             <tr>
-                <td class="tdl">Pulsos distales</td>
-                <td nowrap="nowrap">
+                <td class="tdl nw">Pulsos distales</td>
+                <td nowrap="nw">
                 <asp:RadioButtonList runat="server" ID="RPDistales" RepeatColumns="2">
+                    <asp:ListItem Text="Presentes" Value="1"></asp:ListItem>
                     <asp:ListItem Text="Ausentes" Value="0"></asp:ListItem>
-                    <asp:ListItem Text="Distales" Value="1"></asp:ListItem>
                 </asp:RadioButtonList>
                 </td>
                 <td><asp:Label ID="Label1" runat="server" Text="Observaciones" CssClass="pulsos hide"></asp:Label></td>
@@ -213,7 +216,7 @@
             <tr>
                 <td>Valoración inicial</td>
                 <td><asp:Label runat="server" ID="LValoracionInicial"></asp:Label></td>
-                <td nowrap=nowrap>Días de evolución</td>
+                <td nowrap=nowrap>Días de valoración</td>
                 <td class="tdr"><asp:Label runat="server" ID="LDiasEvolucion"></asp:Label></td>
             </tr>
             <tr>

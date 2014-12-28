@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Web;
+using System.Web.Routing;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
 
@@ -124,6 +126,8 @@ public class Grupo
 
 	public bool CreateMenu(TreeView tree, string parametros, Usuario usuario)
 	{
+		HttpContextWrapper httpContext = new HttpContextWrapper(HttpContext.Current);
+		RequestContext requestContext = new RequestContext(httpContext, new RouteData());
 		bool result = false;
 		TreeNode treeNode = null;
 		for (int i = 0; i < m_aURLs.Count; i++)
@@ -155,6 +159,14 @@ public class Grupo
 				}
 			}
 			string text = cURLs.URL;
+			bool flag = ((Page)HttpContext.Current.Handler).AppRelativeVirtualPath == text;
+			try
+			{
+				text = RouteTable.Routes.GetVirtualPath(requestContext, text, null).VirtualPath;
+			}
+			catch
+			{
+			}
 			if (text.Length > 0 && text != "~")
 			{
 				text += parametros;
@@ -162,7 +174,7 @@ public class Grupo
 			TreeNode treeNode2 = Add(cURLs.Titulo, text);
 			TreeNodeCollection treeNodeCollection = ((treeNode == null) ? nodes : treeNode.ChildNodes);
 			treeNodeCollection.Add(treeNode2);
-			if (!(cURLs.FullURL == HttpContext.Current.Request.Url.AbsolutePath))
+			if (!flag)
 			{
 				continue;
 			}

@@ -446,6 +446,14 @@ public partial class paciente_formulacion : System.Web.UI.Page
         Response.Redirect(Request.Url.AbsolutePath + "?pid=" + CCDetallePaciente.IdPaciente + "&f=" + TFecha.Text + "&tf=" + DTipo.SelectedValue);
     }
 
+    public bool UpdateFormulacion(Conector conector, string formulacion = null)
+    {
+        if (!string.IsNullOrEmpty(formulacion))
+            formulacion = "WHERE formulacion=" + Query.GetValor(formulacion);
+        conector.QueryMod("SET @c:=0,@i=0;");
+        return conector.QueryMod("UPDATE medicamento_formulacion SET numero=IF(@i=evolucion, 1, CONCAT(@i:=evolucion, @c:=0)),numero=@c:=@c+1 " + formulacion + " ORDER BY formulacion,id;") != -1;
+    }
+
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         try
@@ -563,6 +571,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 }
             }
 
+            UpdateFormulacion(conector, HIdFormulacion.Value);
             /*if (!string.IsNullOrEmpty((string)ViewState["autorizacion"]))
             {
                 if (conector.QueryMod("DELETE FROM autorizacion_detalle WHERE autNumero=" + Query.GetValor(ViewState["autorizacion"].ToString())) == -1)
@@ -864,7 +873,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             if (!string.IsNullOrEmpty(info.Id)) {
                 using (CConector conector = new CConector()) {
                     if (conector.QueryMod("DELETE FROM medicamento_formulacion WHERE id=" + Query.GetValor(info.Id)) == -1) {
-                        LMensajeMedicamento.Text = conector.GetLastError();
+                        LMensajeMedicamento.Text = conector.LastError;
                         return;
                     }
                 }

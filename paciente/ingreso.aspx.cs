@@ -215,7 +215,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
             qIngreso["conducta"] =
                 (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TConductaInicial.Text != ViewState["procedimientos"].ToString())
-                ? TConductaInicial.Text
+                ? TConductaInicial.Text.Trim()
                 : ""; // guardamos la conducta si es diferente a la inicial
 
             string szQuery;

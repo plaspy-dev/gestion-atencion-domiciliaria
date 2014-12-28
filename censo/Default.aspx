@@ -152,6 +152,7 @@
                 <ItemStyle Wrap="False" />
             </asp:TemplateField>
             <asp:BoundField HeaderText="Teléfono" DataField="pacTelefono" SortExpression="pacTelefono" ItemStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Teléfono móvil" DataField="pacCelular" SortExpression="pacCelular" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Inicio programa" DataField="pacFecIngPrograma" SortExpression="pacFecIngPrograma" DataFormatString="{0:d}" />
             <asp:BoundField HeaderText="CIE10" DataField="cie10" SortExpression="cie10" ItemStyle-Wrap="false" HtmlEncode="false" />
             <asp:BoundField HeaderText="Pago directo" DataField="pdirDescripcion" SortExpression="pdirDescripcion" />
@@ -198,6 +199,7 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT paciente.pacDocumento,paciente.pacNombres,paciente.pacBarrio,paciente.pacDireccion,paciente.pacId
 		                    ,paciente.pacTelefono,paciente.pacFecIngPrograma,pdirDescripcion,tipo_evento.tipEDescripcion
+                            ,paciente.pacCelular
                             ,asegurador.entNombre,paciente.pacFechaNac
                             ,localidad.locDescripcion
                             ,paciente.locId

@@ -282,6 +282,11 @@ public class GridUtils
 				{
 					stringBuilder.Append(((HyperLink)controls[i]).Text);
 				}
+				else if (controls[i] is Image)
+				{
+					Image image = (Image)controls[i];
+					stringBuilder.AppendFormat("<img src='{0}' />", Utilidades.GetURLFullPath(image.ImageUrl));
+				}
 			}
 		}
 		else

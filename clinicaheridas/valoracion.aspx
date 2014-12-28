@@ -17,10 +17,54 @@
 {
     text-decoration: line-through;
 }
+img[usemap], map area{
+    outline: none;
+}
 </style>
 <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
 <script type="text/javascript">
+    function rel(text) {
+        text = text.replace(/\r/gi, '');
+        text = text.replace(/&nbsp;/gi, '');
+        while (text[0] == '\n') {
+            text = text.substring(1);
+        }
+        text = text.split('\n');
+        var szfinal = "";
+        for (x = 0; x < text.length; x++) {
+            text[x] = text[x].trim();
+            if (text[x].match(/[\S]/g) != null) {
+                if (szfinal.length)
+                    szfinal += "\n";
+                szfinal += text[x];
+            }
+        }
+        // text = text.join('\n').replace(/\n{2,}/g, '\n');
+        return szfinal;
+    }
+
+    function lim() {
+        var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
+        $("#<%= TPlanManejo.ClientID %>").val(limpio);
+        var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
+        editor.setContent(completa);
+    }
+    
     $inicio(function() {
+
+        $("#<%= DEscalaDolor.ClientID %>").change(function() {
+            $("#iEscalaDolor").attr("src", "escalas/e" + $("option:selected", this).text().split(" ")[0] + ".jpg");
+        }).change();
+        $("#mEscalaDolor area").click(function() { 
+            var valor = $(this).attr("title");
+            $("#<%= DEscalaDolor.ClientID %> option").each(function() {
+                if($(this).text().split(" ")[0]==valor) {
+                    $("#<%= DEscalaDolor.ClientID %>").val($(this).val()).change();
+                    return false;
+                }
+            });
+            return false; 
+        });
 
         $('.eliminar').each(function(i) {
             if (this.eliminar == undefined) {
@@ -28,6 +72,10 @@
                 $(this).unbind('click').attr("onclick", "").click(function() { if (confirm('¿Esta seguro de eliminar este elemento?')) { if (this.eliminar != undefined) { if (this.eliminar.toString().indexOf("function") == -1) eval(this.eliminar); else this.eliminar(); } return true; } return false; });
             }
         });
+        $("#<%= CFuncional.ClientID%>").change(function() {
+            var $dfuncional= $("#<%= DFuncional.ClientID%>");
+            $dfuncional.prop("disabled", $(this).is(":checked")).val("").change();
+        }).change();
     
         $("#<%= COstomias.ClientID %>").change(function() {
             $(".ostomia").toggle($(this).is(':checked'));
@@ -115,35 +163,10 @@
         $("#<%= TFR.ClientID %>").autoNumeric('init', { vMin: 0, mDec: 0, aSep: '', aSign: ' Min', pSign: 's' });
         $("#<%= TT.ClientID %>").autoNumeric('init', { vMin: 0, mDec: 1, aSep: '', aSign: ' °', pSign: 's', aPad: false });
         
-        
-        function rel(text) {
-            text = text.replace(/\r/gi, '');
-            text = text.replace(/&nbsp;/gi, '');
-            while (text[0] == '\n') {
-                text = text.substring(1);
-            }
-            text = text.split('\n');
-            var szfinal = "";
-            for (x = 0; x < text.length; x++) {
-                text[x] = text[x].trim();
-                if (text[x].match(/[\S]/g) != null) {
-                    if (szfinal.length)
-                        szfinal += "\n";
-                    szfinal += text[x];
-                }
-            }
-            // text = text.join('\n').replace(/\n{2,}/g, '\n');
-            return szfinal;
-        }
-
-        function lim() {
-            var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
-            $("#<%= TPlanManejo.ClientID %>").val(limpio);
-            var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
-            editor.setContent(completa);
-        }
-    
-        
+        var length = tinyMCE.editors.length;
+        for (var i=length; i>0; i--) {
+            tinyMCE.editors[i-1].remove();
+        };
         tinyMCE.init({
             mode: "exact"
             ,selector: '#elm1' 
@@ -221,11 +244,11 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 <td class="tdr"><asp:TextBox ID="TT" runat="server" CssClass="likenumber"></asp:TextBox></td>
             </tr>
             <tr>
-                <td class="tdl">Pulsos distales</td>
-                <td>
+                <td class="tdl nw">Pulsos distales</td>
+                <td class="nw">
                 <asp:RadioButtonList runat="server" ID="RPDistales" RepeatColumns="2">
+                    <asp:ListItem Text="Presentes" Value="1"></asp:ListItem>
                     <asp:ListItem Text="Ausentes" Value="0"></asp:ListItem>
-                    <asp:ListItem Text="Distales" Value="1"></asp:ListItem>
                 </asp:RadioButtonList>
                 </td>
                 <td><asp:Label runat="server" Text="Observaciones" CssClass="pulsos hide"></asp:Label></td>
@@ -257,12 +280,23 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 <asp:SqlDataSource ID="SAntecendentes" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,valoracion_herida_antecedentes.estado AS estado,valoracion_herida_antecedentes.observaciones 
+                    SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre
+                                    ,IFNULL(IFNULL(valoracion_herida_antecedentes.estado,antigua.estado),antecedentes_ingreso.estado) AS estado
+                                    ,IFNULL(IFNULL(valoracion_herida_antecedentes.observaciones,antigua.observaciones),antecedentes_ingreso.observaciones) AS observaciones
                                     FROM varios 
                                     LEFT JOIN valoracion_herida_antecedentes ON (valoracion_herida_antecedentes.valoracion=@valoracion AND valoracion_herida_antecedentes.motivo=varios.id) 
+
+                                    LEFT JOIN ingreso_paciente ON (ingreso_paciente.paciente=@paciente)
+                                    LEFT JOIN antecedentes_ingreso ON (antecedentes_ingreso.ingreso_paciente=ingreso_paciente.id AND antecedentes_ingreso.motivo=varios.id)
+                                    LEFT JOIN (
+                                        SELECT estado,observaciones,antecedentes_evolucion.motivo FROM evolucion_paciente LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=evolucion_paciente.id) WHERE
+                                        evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) FROM evolucion_paciente WHERE paciente=@paciente)
+                                    ) AS antigua ON (antigua.motivo=varios.id)
+
                                     WHERE varios.tipo=2 AND varios.szReservado IS NULL" >
                     <SelectParameters>
                         <asp:Parameter Name="valoracion" DefaultValue="0" />
+                        <asp:ControlParameter ControlID="CCDetallePaciente" Name="paciente" PropertyName="IdPaciente" />
                     </SelectParameters>
                 </asp:SqlDataSource>
                 </td>
@@ -295,14 +329,22 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre
-                                    ,valoracion_herida_riesgos.estado
-                                    ,valoracion_herida_riesgos.observaciones
+                                    ,IFNULL(IFNULL(valoracion_herida_riesgos.estado,antigua.estado),ingreso_riesgos.estado) AS estado
+                                    ,IFNULL(IFNULL(valoracion_herida_riesgos.observaciones,antigua.observaciones),ingreso_riesgos.observaciones) AS observaciones
                                     FROM varios 
                                     LEFT JOIN valoracion_herida_riesgos ON (valoracion_herida_riesgos.valoracion=@valoracion AND valoracion_herida_riesgos.motivo=varios.id) 
+
+                                    LEFT JOIN ingreso_paciente ON (ingreso_paciente.paciente=@paciente)
+                                    LEFT JOIN ingreso_riesgos ON (ingreso_riesgos.ingreso_paciente=ingreso_paciente.id AND ingreso_riesgos.motivo=varios.id)
+                                    LEFT JOIN (
+                                        SELECT estado,observaciones,evolucion_riesgos.motivo FROM evolucion_paciente LEFT JOIN evolucion_riesgos ON (evolucion_riesgos.evolucion_paciente=evolucion_paciente.id) WHERE
+                                        evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) FROM evolucion_paciente WHERE paciente=@paciente)
+                                    ) AS antigua ON (antigua.motivo=varios.id)
                                     WHERE varios.tipo=38 AND varios.szReservado IS NULL
                                     ;" >
                     <SelectParameters>
                         <asp:Parameter Name="valoracion" DefaultValue="0" />
+                        <asp:ControlParameter ControlID="CCDetallePaciente" Name="paciente" PropertyName="IdPaciente" />
                     </SelectParameters>
                 </asp:SqlDataSource>
                 </td>
@@ -335,9 +377,10 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 <td class="tdr"><asp:TextBox runat="server" ID="TUbicacion"></asp:TextBox></td>
             </tr>
             <tr class="hide ostomia">
-                <td class="tdl" nowrap="nowrap">Color del esquema</td>
+                <td class="tdl" nowrap="nowrap">Color del estoma</td>
                 <td><asp:DropDownList ID="DColor" runat="server" DataSourceID="SColor" 
-                        DataTextField="nombre" DataValueField="id">
+                        DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                        <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
                     </asp:DropDownList>
                     <asp:SqlDataSource ID="SColor" runat="server" 
                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -346,7 +389,8 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     </asp:SqlDataSource></td>
                 <td nowrap="nowrap">Estoma a nivel de la piel</td>
                 <td class="tdr"><asp:DropDownList ID="DEstoma" runat="server" DataSourceID="SEstoma" 
-                    DataTextField="nombre" DataValueField="id">
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                        <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SEstoma" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -357,7 +401,8 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
             <tr class="hide ostomia">
                 <td class="tdl">Complicaciones</td>
                 <td><asp:DropDownList ID="DComplicacion" runat="server" DataSourceID="SComplicacion" 
-                    DataTextField="nombre" DataValueField="id">
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                        <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SComplicacion" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -366,7 +411,8 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 </asp:SqlDataSource></td>
                 <td>Estado de la piel</td>
                 <td class="tdr"><asp:DropDownList ID="DEstadoPiel" runat="server" DataSourceID="SEstadoPiel" 
-                    DataTextField="nombre" DataValueField="id">
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                        <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SEstadoPiel" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -387,9 +433,10 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT id, nombre FROM varios WHERE tipo=46 AND szReservado IS NULL ORDER BY nombre">
                 </asp:SqlDataSource></td>
-                <td>Funcional</td>
+                <td><asp:CheckBox runat="server" ID="CFuncional" Text="Funcional" Checked="true" /></td>
                 <td class="tdr"><asp:DropDownList ID="DFuncional" runat="server" DataSourceID="SFuncional" 
-                    DataTextField="nombre" DataValueField="id">
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Sí)" Value=""></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SFuncional" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -416,7 +463,21 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT id, CONCAT(nombre, ' - ', descripcion) AS nombre FROM varios WHERE tipo=48 AND szReservado IS NULL ORDER BY CAST(nombre AS UNSIGNED)">
                 </asp:SqlDataSource></td>
-                <td colspan="2" class="tdr"><img src="escaladolor.jpg" /></td>
+                <td colspan="2" class="tdr">
+                    <img alt="Escala de dolor" id="iEscalaDolor" src="escaladolor.jpg" usemap="#mEscalaDolor" hidefocus="true" tabindex="-1" />
+                    <map id="mEscalaDolor">
+                        <area alt='1' title='1' href='#' shape='rect' coords='97,0,147,70' />
+                        <area alt='2' title='2' href='#' shape='rect' coords='147,0,172,70' />
+                        <area alt='3' title='3' href='#' shape='rect' coords='172,0,197,70' />
+                        <area alt='4' title='4' href='#' shape='rect' coords='197,0,222,70' />
+                        <area alt='5' title='5' href='#' shape='rect' coords='222,0,247,70' />
+                        <area alt='6' title='6' href='#' shape='rect' coords='247,0,272,70' />
+                        <area alt='7' title='7' href='#' shape='rect' coords='272,0,297,70' />
+                        <area alt='8' title='8' href='#' shape='rect' coords='297,0,322,70' />
+                        <area alt='9' title='9' href='#' shape='rect' coords='322,0,347,70' />
+                        <area alt='10' title='10' href='#' shape='rect' coords='347,0,372,70' />
+                    </map>
+                </td>
             </tr>
             
             <tr>
@@ -443,7 +504,7 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
             </tr>
             <tr>
                 <td class="tdr tdl" colspan="4">
-                <table>
+                <table style="border-collapse: collapse;">
                     <tr>
                         <td colspan="4" class="celdaTitulo tdr tdl">Valoración de heridas - Localización</td>
                     </tr>
@@ -621,10 +682,10 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                         <td colspan="4" class="celdaSubTitulo tdr tdl">Lecho de la herida</td>
                     </tr>
                     <tr>
-                        <td class="tdl">Tipo de tejido observados</td>
+                        <td class="tdl">Tejido necrótico</td>
                         <td colspan="3" class="tdr"><asp:RadioButtonList runat="server" ID="RTipoTejido" RepeatColumns="2">
-                            <asp:ListItem Text="< 25% tejido necrótico" Value="0"></asp:ListItem>
-                            <asp:ListItem Text="> 25% tejido necrótico" Value="1"></asp:ListItem>
+                            <asp:ListItem Text="menor al 25%" Value="0"></asp:ListItem>
+                            <asp:ListItem Text="mayor al 25%" Value="1"></asp:ListItem>
                         </asp:RadioButtonList></td>
                     </tr>
                     <tr>

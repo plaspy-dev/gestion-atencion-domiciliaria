@@ -234,6 +234,14 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
             }
         }
     }
+
+    public bool UpdateHeridas(Conector conector, string evolucion=null) {
+        
+        if (!string.IsNullOrEmpty(evolucion))
+            evolucion = "WHERE evolucion=" + Query.GetValor(evolucion);
+        conector.QueryMod("SET @c:=0,@i=0;");
+        return conector.QueryMod("UPDATE evolucion_herida_herida SET numero=IF(@i=evolucion, 1, CONCAT(@i:=evolucion, @c:=0)),numero=@c:=@c+1 " + evolucion + " ORDER BY evolucion,id;")!=-1;
+    }
     
     protected void BAceptar_Click(object sender, EventArgs e)
     {
@@ -280,7 +288,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
                 int res = conector.QueryMod(query.GetInsert(), true);
                 if (res == -1)
                 {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
                 id = res.ToString();
@@ -289,7 +297,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
             {
                 if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(id))) == -1)
                 {
-                    LMensaje.Text = conector.GetLastError();
+                    LMensaje.Text = conector.LastError;
                     return;
                 }
             }
@@ -302,7 +310,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
                     {
                         if (conector.QueryMod(consultas[i].query.GetDelete("id=" + Query.GetValor(consultas[i].Id) + " AND evolucion=" + Query.GetValor(id))) == -1)
                         {
-                            LMensaje.Text = conector.GetLastError();
+                            LMensaje.Text = conector.LastError;
                             return;
                         }
                     }
@@ -316,7 +324,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
                         int res = conector.QueryMod(consultas[i].query.GetInsert(), true);
                         if (res == -1)
                         {
-                            LMensaje.Text = conector.GetLastError();
+                            LMensaje.Text = conector.LastError;
                             return;
                         }
                         consultas[i].IdTemp = res.ToString();
@@ -325,7 +333,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
                     {
                         if (conector.QueryMod(consultas[i].query.GetUpdate("id=" + Query.GetValor(consultas[i].IdTabla) + " AND evolucion=" + Query.GetValor(id))) == -1)
                         {
-                            LMensaje.Text = conector.GetLastError();
+                            LMensaje.Text = conector.LastError;
                             return;
                         }
                     }
@@ -334,14 +342,14 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
 
             if (conector.InsertModificacion(id) == -1)
             {
-                LMensaje.Text = conector.GetLastError();
+                LMensaje.Text = conector.LastError;
                 return;
             }
             
             Query clinica = new Query("evolucion_herida_clinica");
             if (conector.QueryMod(clinica.GetDelete("evolucion=" + Query.GetValor(id))) == -1)
             {
-                LMensaje.Text = conector.GetLastError();
+                LMensaje.Text = conector.LastError;
                 return;
             }
 
@@ -357,7 +365,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
 
                     if (conector.QueryMod(clinica.GetInsert()) == -1)
                     {
-                        LMensaje.Text = conector.GetLastError();
+                        LMensaje.Text = conector.LastError;
                         return;
                     }
                 }
@@ -366,7 +374,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
             Query educativo = new Query("evolucion_herida_educativo");
             if (conector.QueryMod(educativo.GetDelete("evolucion=" + Query.GetValor(id))) == -1)
             {
-                LMensaje.Text = conector.GetLastError();
+                LMensaje.Text = conector.LastError;
                 return;
             }
 
@@ -382,11 +390,13 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
 
                     if (conector.QueryMod(educativo.GetInsert()) == -1)
                     {
-                        LMensaje.Text = conector.GetLastError();
+                        LMensaje.Text = conector.LastError;
                         return;
                     }
                 }
             }
+
+            UpdateHeridas(conector, id);
 
             if (string.IsNullOrEmpty((string)ViewState["id"]))
                 Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
