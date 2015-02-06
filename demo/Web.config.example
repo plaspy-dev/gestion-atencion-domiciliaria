@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<configuration>
+  <system.web>
+    <compilation targetFramework="4.8" defaultLanguage="c#" />
+    <pages>
+      <controls>
+        <add tagPrefix="sdg" namespace="SDG.Web.UI.WebControls" assembly="SDG.Componentes" />
+      </controls>
+    </pages>
+  </system.web>
+</configuration>
