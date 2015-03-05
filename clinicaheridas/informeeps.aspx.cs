@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 
 public partial class clinicaheridas_informeeps : System.Web.UI.Page
 {
@@ -37,7 +38,7 @@ public partial class clinicaheridas_informeeps : System.Web.UI.Page
         int numero=-1;
         try { numero = ColumnsIndex[columna]; } catch { }
         if(numero==-1)
-            ColumnsIndex[columna]= numero= Utilidades.GetGridColumnIndex(GResultados, columna);
+            ColumnsIndex[columna] = numero = GResultados.GetGridColumnIndex(columna);
         TableCell celda = row.Cells[numero];
         string texto = HttpUtility.HtmlDecode(celda.Text).Trim();
         if (!string.IsNullOrEmpty(texto))

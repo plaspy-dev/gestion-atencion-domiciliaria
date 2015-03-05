@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -28,8 +29,8 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
             CConfiguracion configuracion = CConfiguracion.GetConfiguracion();
 
             // costo
-            Utilidades.GetGridColumn(GProductos, "Costo U.").Visible =
-            Utilidades.GetGridColumn(GProductos, "Costo T.").Visible =
+            GProductos.GetGridColumn("Costo U.").Visible =
+            GProductos.GetGridColumn("Costo T.").Visible =
             RCostoF.Visible = RCosto.Visible =
             TCosto.Visible = LCosto.Visible = configuracion.nCosto != 0;
 
@@ -110,11 +111,11 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                         }
 
                         bool editLote = usuario.CanUpdate() || usuario.GetPermisos() == (int)Usuario.Permisos.Print;
-                        Utilidades.GetGridColumn(GProductos, "Vence ").Visible =
-                                    Utilidades.GetGridColumn(GProductos, "Lote ").Visible = editLote;
+                        GProductos.GetGridColumn("Vence ").Visible =
+                                    GProductos.GetGridColumn("Lote ").Visible = editLote;
 
-                        Utilidades.GetGridColumn(GProductos, "Vencimiento").Visible =
-                        Utilidades.GetGridColumn(GProductos, "Lote").Visible = !editLote;
+                        GProductos.GetGridColumn("Vencimiento").Visible =
+                        GProductos.GetGridColumn("Lote").Visible = !editLote;
 
                         CNotificar.Visible = usuario.CanUpdate();
 
@@ -184,9 +185,9 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
                         }
                         if (GProductos.FooterRow != null)
                         {
-                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
-                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
-                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+                            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+                            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+                            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Producto")].Text = "Total";
                         }
 
                         TProducto.Focus();
@@ -261,7 +262,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         GProductos.DataSource = productoUsado.GetProductosUsados();
         GProductos.DataBind();
 
-        if (!Utilidades.GetGridColumn(GProductos, "Vence ").Visible)
+        if (!GProductos.GetGridColumn("Vence ").Visible)
         {
             foreach (GridViewRow row in GProductos.Rows)
             {
@@ -278,9 +279,9 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
 
         if (GProductos.FooterRow != null)
         {
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Producto")].Text = "Total";
         }
 
         productousadoNuevo.GetProductosUsados().Add(producto);
@@ -604,7 +605,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         productoUsado.DeleteProducto(producto.IdGrid);
         GProductos.DataSource = productoUsado.GetProductosUsados();
         GProductos.DataBind();
-        if (!Utilidades.GetGridColumn(GProductos, "Vence ").Visible)
+        if (!GProductos.GetGridColumn("Vence ").Visible)
         {
             foreach (GridViewRow row in GProductos.Rows)
             {
@@ -616,9 +617,9 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         HUsado.Value = productoUsado.SerializeBinary();
         if (GProductos.FooterRow != null)
         {
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Producto")].Text = "Total";
         }
 
         e.Cancel = true;

@@ -9,6 +9,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 using System.Text;
 
@@ -834,7 +835,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            int funcionario = Utilidades.GetGridColumnIndex(GHistorial, "Funcionario");
+            int funcionario = GHistorial.GetGridColumnIndex("Funcionario");
             e.Row.Cells[funcionario].Text = Funcionario.GetFuncionario(e.Row.Cells[funcionario].Text).Nombres;
         }
     }

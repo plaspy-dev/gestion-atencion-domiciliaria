@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Net;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 using System.IO;
 
 
@@ -36,8 +37,8 @@ public partial class paciente_historiasclinicas : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            int paciente = Utilidades.GetGridColumnIndex(GResultados, "Paciente");
-            int documento = Utilidades.GetGridColumnIndex(GResultados, "Documento");
+            int paciente = GResultados.GetGridColumnIndex("Paciente");
+            int documento = GResultados.GetGridColumnIndex("Documento");
 
             Paciente info = Paciente.GetPaciente(HttpUtility.HtmlDecode(e.Row.Cells[paciente].Text).Trim());
             e.Row.Cells[paciente].Text = info.NombreCompleto;
@@ -46,8 +47,8 @@ public partial class paciente_historiasclinicas : System.Web.UI.Page
     }
     protected void BDescargar_Click(object sender, EventArgs e)
     {
-        int paciente = Utilidades.GetGridColumnIndex(GResultados, "Paciente");
-        int documento = Utilidades.GetGridColumnIndex(GResultados, "Documento");
+        int paciente = GResultados.GetGridColumnIndex("Paciente");
+        int documento = GResultados.GetGridColumnIndex("Documento");
 
         string ruta= Path.Combine(Path.GetTempPath(), "historias");
         Directory.CreateDirectory(ruta);

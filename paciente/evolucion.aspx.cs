@@ -138,7 +138,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
                             TAnalisis.Text = readermysql["analisis"].ToString();
                             TPeso.Text = readermysql["peso"].ToString();
                             TFecha.Text = Query.GetFromMySQLDate(readermysql["fecha"], true);
-                            TPlanManejo.Text = readermysql["plan_manejo"].ToString();
+                            TPlanManejo.Text = readermysql["plan_manejo"].ToString().Trim();
                             Utilidades.SelectInDropDown(DNivelAtencion, readermysql["nivel_atencion"]);
                             Utilidades.SelectInDropDown(DArea, readermysql["area_atencion"]);
                             TFechaSeguimiento.Text = Query.GetFromMySQLDate(readermysql["seguimiento"]);
@@ -231,7 +231,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
             qIngreso["seguimiento"] = Query.GetMySQLDateFormat(TFechaSeguimiento.Text);
 
             qIngreso["plan_manejo"] =
-                (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TPlanManejo.Text != ViewState["procedimientos"].ToString())
+                (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TPlanManejo.Text.Trim() != ViewState["procedimientos"].ToString())
                 ? TPlanManejo.Text.Trim()
                 : "";
 
@@ -471,7 +471,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
             if (text.Text.Length != 0) {
                 if (resultado.Length > 0)
                     resultado += ", ";
-                resultado += string.Format("<b>{0}: </b> {2}", check.Text, check.Checked ? "X" : "_", text.Text);
+                resultado += string.Format("<b>{0}: </b> {2}", HttpUtility.HtmlEncode(check.Text), check.Checked ? "X" : "_", HttpUtility.HtmlEncode(text.Text));
             }
         }
         if (resultado.Length == 0)
@@ -503,7 +503,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
                 }
                 if (check.Length == 0)
                     check = "_";
-                resultado += string.Format("<b>{0}</b> ({1}) {2}.", nombre.Text, check, text.Text);
+                resultado += string.Format("<b>{0}</b> ({1}) {2}.", HttpUtility.HtmlEncode(nombre.Text), check, HttpUtility.HtmlEncode(text.Text));
             }
         }
         if (resultado=="")
@@ -521,7 +521,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
             {
                 if (resultado.Length > 0)
                     resultado += ", ";
-                resultado += check.Text;
+                resultado += HttpUtility.HtmlEncode(check.Text);
             }
         }
         if (resultado.Length == 0)

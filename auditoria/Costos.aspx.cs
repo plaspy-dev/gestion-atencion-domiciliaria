@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 
 public partial class auditoria_Costos : System.Web.UI.Page
 {
@@ -45,21 +46,21 @@ public partial class auditoria_Costos : System.Web.UI.Page
 
         // reemplazamos las actividades
         if (nFecha == -1)
-            nFecha = Utilidades.GetGridColumnIndex(GResultados, "Fecha");
+            nFecha = GResultados.GetGridColumnIndex("Fecha");
         if (actividad == -1)
-            actividad = Utilidades.GetGridColumnIndex(GResultados, "Actividad");
+            actividad = GResultados.GetGridColumnIndex("Actividad");
         if (costoautorizado == -1)
-            costoautorizado = Utilidades.GetGridColumnIndex(GResultados, "Costo autorizadas");
+            costoautorizado = GResultados.GetGridColumnIndex("Costo autorizadas");
         if (costoprogramado == -1)
-            costoprogramado = Utilidades.GetGridColumnIndex(GResultados, "Costo programadas");
+            costoprogramado = GResultados.GetGridColumnIndex("Costo programadas");
         if (sesionesprogramadas == -1)
-            sesionesprogramadas = Utilidades.GetGridColumnIndex(GResultados, "Sesiones programadas");
+            sesionesprogramadas = GResultados.GetGridColumnIndex("Sesiones programadas");
         if (sesionesautorizadas == -1)
-            sesionesautorizadas = Utilidades.GetGridColumnIndex(GResultados, "Sesiones Autorizadas");
+            sesionesautorizadas = GResultados.GetGridColumnIndex("Sesiones Autorizadas");
         if (difSesiones == -1)
-            difSesiones = Utilidades.GetGridColumnIndex(GResultados, "Diferencia sesiones");
+            difSesiones = GResultados.GetGridColumnIndex("Diferencia sesiones");
         if (difCosto == -1)
-            difCosto = Utilidades.GetGridColumnIndex(GResultados, "Diferencia costo");
+            difCosto = GResultados.GetGridColumnIndex("Diferencia costo");
     }
 
     protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)

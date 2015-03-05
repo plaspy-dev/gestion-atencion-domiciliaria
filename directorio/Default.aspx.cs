@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 
 public partial class directorio_Default : System.Web.UI.Page
 {
@@ -43,8 +44,8 @@ public partial class directorio_Default : System.Web.UI.Page
             Utilidades.SelectInDropDown(DDisponibilidad, CConector.GetCookie("directorio_disponibilidad"));
         }
         CUsuario usuario = (CUsuario) Usuario.GetUsuario();
-        Utilidades.GetGridColumn(GResultados, "Disponibilidad").Visible= !usuario.CanUpdate();
-        Utilidades.GetGridColumn(GResultados, "Disponibilidad ").Visible= usuario.CanUpdate();
+        GResultados.GetGridColumn("Disponibilidad").Visible = !usuario.CanUpdate();
+        GResultados.GetGridColumn("Disponibilidad ").Visible = usuario.CanUpdate();
 
         GResultados.AllowPaging = false;
         GResultados.DataBind();

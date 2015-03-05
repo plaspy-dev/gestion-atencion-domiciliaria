@@ -97,7 +97,6 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                             ((MasterPageI)Master).Imprimir("valoracion.html");
 
                             ViewState["id"] =
-                                SVarios.SelectParameters["valoracion"].DefaultValue =
                                 SRiesgos.SelectParameters["valoracion"].DefaultValue =
                                 SAntecendentes.SelectParameters["valoracion"].DefaultValue =
                                 SEducativo.SelectParameters["valoracion"].DefaultValue =
@@ -392,27 +391,6 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                 riesgos["motivo"] = GRiesgos.DataKeys[i].Values["id"].ToString();
 
                 if (conector.QueryMod(riesgos.GetInsert()) == -1)
-                {
-                    LMensaje.Text = conector.LastError;
-                    return;
-                }
-            }
-
-            Query varios = new Query("valoracion_herida_varios");
-            if (conector.QueryMod(varios.GetDelete("valoracion=" + Query.GetValor(id))) == -1)
-            {
-                LMensaje.Text = conector.LastError;
-                return;
-            }
-            varios["valoracion"] = id;
-
-            for (int i = 0; i < GVarios.Rows.Count; i++)
-            {
-                varios["estado"] = ((CheckBox)GVarios.Rows[i].Cells[0].FindControl("CSi")).Checked ? "1" : "";
-                varios["observaciones"] = ((TextBox)GVarios.Rows[i].Cells[1].FindControl("TObservaciones")).Text;
-                varios["motivo"] = GVarios.DataKeys[i].Values["id"].ToString();
-
-                if (conector.QueryMod(varios.GetInsert()) == -1)
                 {
                     LMensaje.Text = conector.LastError;
                     return;
@@ -912,7 +890,6 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szAntecedentes$", ImprimirGridTipo1(GAntecedentes));
         evento.Contenido = evento.Contenido.Replace("$szRiesgos$", ImprimirGridTipo1(GRiesgos));
         evento.Contenido = evento.Contenido.Replace("$szPlanEducativo$", ImprimirPlanEducativo());
-        evento.Contenido = evento.Contenido.Replace("$szSeguridad$", ImprimirGridTipo1(GVarios));
 
         evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + TPlanManejo.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());

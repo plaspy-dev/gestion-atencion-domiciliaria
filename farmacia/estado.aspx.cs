@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 
 public partial class farmacia_estado : System.Web.UI.Page
 {
@@ -89,7 +90,7 @@ public partial class farmacia_estado : System.Web.UI.Page
             CConfiguracion configuracion = CConfiguracion.GetConfiguracion();
 
             // costo
-            Utilidades.GetGridColumn(GResultados, "Costo").Visible = configuracion.nCosto != 0;
+            GResultados.GetGridColumn("Costo").Visible = configuracion.nCosto != 0;
 
             // vencimiento
             TVence.Visible = LVence.Visible = configuracion.bVencimiento;
@@ -100,12 +101,12 @@ public partial class farmacia_estado : System.Web.UI.Page
             if (!string.IsNullOrEmpty(Request.QueryString["pid"]))
             { // Kardex
 
-                Utilidades.GetGridColumn(GKardex, "Costo U.E.").Visible =
-                Utilidades.GetGridColumn(GKardex, "Costo T.E.").Visible =
-                Utilidades.GetGridColumn(GKardex, "Costo U.S.").Visible =
-                Utilidades.GetGridColumn(GKardex, "Costo T.S.").Visible =
-                Utilidades.GetGridColumn(GKardex, "Costo U.").Visible =
-                Utilidades.GetGridColumn(GKardex, "Costo T.").Visible =
+                GKardex.GetGridColumn("Costo U.E.").Visible =
+                GKardex.GetGridColumn("Costo T.E.").Visible =
+                GKardex.GetGridColumn("Costo U.S.").Visible =
+                GKardex.GetGridColumn("Costo T.S.").Visible =
+                GKardex.GetGridColumn("Costo U.").Visible =
+                GKardex.GetGridColumn("Costo T.").Visible =
                 chart_costos.Visible =
                 configuracion.nCosto != 0;
 
@@ -148,8 +149,8 @@ public partial class farmacia_estado : System.Web.UI.Page
     {
         GResultados.DataSourceID = CDetallado.Checked ? "SResultados1" : "SResultados";
 
-        Utilidades.GetGridColumn(GResultados, "Lote").Visible = CDetallado.Checked && CConfiguracion.GetConfiguracion().bLote;
-        Utilidades.GetGridColumn(GResultados, "Vence").Visible = CDetallado.Checked && CConfiguracion.GetConfiguracion().bVencimiento;
+        GResultados.GetGridColumn("Lote").Visible = CDetallado.Checked && CConfiguracion.GetConfiguracion().bLote;
+        GResultados.GetGridColumn("Vence").Visible = CDetallado.Checked && CConfiguracion.GetConfiguracion().bVencimiento;
 
         if (GridUtils.GetRowsCount(GResultados, LTotal) > 0)
         {
@@ -232,16 +233,16 @@ public partial class farmacia_estado : System.Web.UI.Page
 
         Decimal saldo = 0, entradas = 0, salidas = 0, costosaldo = 0, costoentradas = 0, costosalidas = 0, costop = 0;
 
-        int columnafecha = Utilidades.GetGridColumnIndex(GKardex, "Fecha");
-        int columnasalida = Utilidades.GetGridColumnIndex(GKardex, "Salida");
-        int columnaentrada = Utilidades.GetGridColumnIndex(GKardex, "Entrada");
-        int columnasaldo = Utilidades.GetGridColumnIndex(GKardex, "Saldo");
-        int columnaCostoUEntrada = Utilidades.GetGridColumnIndex(GKardex, "Costo U.E.");
-        int columnaCostoTEntrada = Utilidades.GetGridColumnIndex(GKardex, "Costo T.E.");
-        int columnaCostoTSalida = Utilidades.GetGridColumnIndex(GKardex, "Costo T.S.");
-        int columnaCostoTSaldo = Utilidades.GetGridColumnIndex(GKardex, "Costo T.");
-        int columnaCostoPromedio = Utilidades.GetGridColumnIndex(GKardex, "Costo U.");
-        int columnaCostoUSalida = Utilidades.GetGridColumnIndex(GKardex, "Costo U.S.");
+        int columnafecha = GKardex.GetGridColumnIndex("Fecha");
+        int columnasalida = GKardex.GetGridColumnIndex("Salida");
+        int columnaentrada = GKardex.GetGridColumnIndex("Entrada");
+        int columnasaldo = GKardex.GetGridColumnIndex("Saldo");
+        int columnaCostoUEntrada = GKardex.GetGridColumnIndex("Costo U.E.");
+        int columnaCostoTEntrada = GKardex.GetGridColumnIndex("Costo T.E.");
+        int columnaCostoTSalida = GKardex.GetGridColumnIndex("Costo T.S.");
+        int columnaCostoTSaldo = GKardex.GetGridColumnIndex("Costo T.");
+        int columnaCostoPromedio = GKardex.GetGridColumnIndex("Costo U.");
+        int columnaCostoUSalida = GKardex.GetGridColumnIndex("Costo U.S.");
 
         List<Kardex> grafica = new List<Kardex>();
 
@@ -330,7 +331,7 @@ public partial class farmacia_estado : System.Web.UI.Page
         // LCostos.Text = ",['2012/02/02', 15.15],['2012/02/01', 16.15]";
         if (GKardex.FooterRow != null)
         {
-            GKardex.FooterRow.Cells[Utilidades.GetGridColumnIndex(GKardex, "Concepto")].Text = "Total sin acumulado";
+            GKardex.FooterRow.Cells[GKardex.GetGridColumnIndex("Concepto")].Text = "Total sin acumulado";
             GKardex.FooterRow.Cells[columnaentrada].Text = string.Format("{0:F}", entradas - saldoa);
             GKardex.FooterRow.Cells[columnasalida].Text = string.Format("{0:F}", salidas);
             GKardex.FooterRow.Cells[columnaCostoTEntrada].Text = string.Format("{0:C}", costoentradas - costosaldoa);

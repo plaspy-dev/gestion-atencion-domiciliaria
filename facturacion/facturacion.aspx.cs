@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using System.Globalization;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 using System.Collections.Specialized;
 
@@ -417,8 +418,8 @@ public partial class facturacion_facturacion : System.Web.UI.Page
 
         ViewState["radicacion"]= TRadicacion.Text;
 
-        TRadicacion.Text= Utilidades.GetGridCellText(GDevoluciones, "Radicación", GDevoluciones.SelectedIndex);
-        TDevolucion.Text = Utilidades.GetGridCellText(GDevoluciones, "Devolución", GDevoluciones.SelectedIndex);
+        TRadicacion.Text = GDevoluciones.GetGridCellText("Radicación", GDevoluciones.SelectedIndex);
+        TDevolucion.Text = GDevoluciones.GetGridCellText("Devolución", GDevoluciones.SelectedIndex);
         BD_OnClicked(sender, e);
     }
 }

@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using System.Reflection;
-using System.ServiceModel;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -25,8 +23,6 @@ public class Usuario
 		Admin = 0x20,
 		Todos = 0xFF
 	}
-
-	private static bool bGetKey;
 
 	protected string m_szNombre;
 
@@ -98,16 +94,13 @@ public class Usuario
 
 	public Usuario(string id, string nombre, int grupo, string login)
 	{
-		if (GetKey())
-		{
-			m_szNombre = nombre;
-			m_nGrupo = grupo;
-			m_szID = id;
-			m_szLogin = login;
-			m_pGrupo = new Grupo();
-			m_szUrl = "";
-			HttpContext.Current.Session["__SDG.Usuario"] = this;
-		}
+		m_szNombre = nombre;
+		m_nGrupo = grupo;
+		m_szID = id;
+		m_szLogin = login;
+		m_pGrupo = new Grupo();
+		m_szUrl = "";
+		HttpContext.Current.Session["__SDG.Usuario"] = this;
 	}
 
 	public string GetLogin()
@@ -403,58 +396,5 @@ public class Usuario
 			m_saValores.Add("");
 		}
 		return num;
-	}
-
-	private static bool GetKey()
-	{
-#if ENABLE_LICENSE_CHECK
-		string licenseSeed = Environment.GetEnvironmentVariable("ARCHIVED_DOMAIN_LICENSE_SEED");
-		if (String.IsNullOrEmpty(licenseSeed)) return false;
-		if (bGetKey)
-		{
-			return true;
-		}
-		try
-		{
-			string[] array = null;
-			string text;
-			if (HttpContext.Current == null)
-			{
-				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
-				if (text == "localhost")
-				{
-					return true;
-				}
-			}
-			else
-			{
-				if (HttpContext.Current.Request.Url.Host == "localhost")
-				{
-					return true;
-				}
-				if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["DomainKey"]))
-				{
-					return false;
-				}
-				text = HttpContext.Current.Request.Url.Host;
-			}
-			array = ConfigurationManager.AppSettings["DomainKey"].Split(';');
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
-				{
-					bGetKey = true;
-					return true;
-				}
-			}
-			return false;
-		}
-		catch
-		{
-		}
-		return false;
-#else
-		return true;
-#endif
 	}
 }

@@ -137,9 +137,9 @@
                             {0} 
                             AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                             AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
-                            AND (autorizacion_detalle.sesiones_programadas IS NULL OR autorizacion_detalle.sesiones_programadas<autorizacion_detalle.autNumSesiones)
-                            AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)=0)
-                            AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)!=0)
+                            AND IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)<autorizacion_detalle.autNumSesiones
+                            AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)=0)
+                            AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)!=0)
                             GROUP BY paciente.pacId,autorizacion.autNumero
                             ORDER BY autorizacion.autFecha
                             ">
@@ -180,11 +180,11 @@
                                                     AND paciente.estId=1
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
-                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)
+                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)
                                                     AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                                                     AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
-                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)=0)
-                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)!=0)
+                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)=0)
+                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)!=0)
                         ) UNION ( 
                         SELECT '-1',COUNT(DISTINCT paciente.pacNombres)
                                                     FROM autorizacion
@@ -196,11 +196,11 @@
                                                     AND paciente.estId=1
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
-                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)
+                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)
                                                     AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                                                     AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
-                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)=0)
-                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)!=0)
+                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)=0)
+                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)!=0)
                         ) UNION (
                             SELECT CAST(CONCAT('%%', autorizacion_detalle.actId) AS CHAR)
                                     ,SUM(autNumSesiones)
@@ -213,11 +213,11 @@
                                                     AND paciente.estId=1
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
-                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)
+                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)
                                                     AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                                                     AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
-                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)=0)
-                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)!=0)
+                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)=0)
+                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)!=0)
 							                        GROUP BY autorizacion_detalle.actId
                         )UNION (
                         SELECT 5000000,SUM(autorizacion_detalle.autNumSesiones)
@@ -230,11 +230,11 @@
                                                     AND paciente.estId=1
                                                     AND (@asegurador=0 OR paciente.entId=@asegurador)                                                    
                                                     {0}
-                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)
+                                                    AND autorizacion_detalle.autNumSesiones>IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)
                                                     AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
                                                     AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
-                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)=0)
-                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)!=0)
+                                                    AND (@completa=1 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)=0)
+                                                    AND (@completa=0 OR IFNULL(autorizacion_detalle.sesiones_programadas,0)+IFNULL(autorizacion_detalle.sesiones_canceladas,0)!=0)
                         ) ORDER BY nombre
                         ">
                  <SelectParameters>

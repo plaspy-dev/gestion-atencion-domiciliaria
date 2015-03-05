@@ -149,7 +149,7 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Signos y sintomas", 61, parent);
             Add("Componente educativo", 62, parent);
             Add("Definición exudado", 68, parent);
-            Add("Seguridad paciente", 69, parent);
+            // Add("Seguridad paciente", 69, parent);
 
             parent = Add("Evolución manejo de heridas");
             Add("Piel perilesional", 63, parent);

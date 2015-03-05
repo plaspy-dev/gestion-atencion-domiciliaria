@@ -122,12 +122,23 @@ public class Autorizaciones
     }
 
     public static bool UpdateSesiones(CConector conector, string autorizacion) {
+
         string query= string.Format("UPDATE autorizacion_detalle SET sesiones_programadas=(SELECT SUM(programacion.prgNumSesion)"
                             + " FROM programacion"
                             + " WHERE"
                             + " programacion.autNumero=autorizacion_detalle.autNumero AND programacion.actId=autorizacion_detalle.actId "
-                            //+ " AND programacion.prgActivo=1 "
+                            + " AND programacion.prgActivo=1 "
                             + ") WHERE autNumero={0}", Query.GetValor(autorizacion));
+        if (conector.QueryMod(query) == -1)
+            return false;
+
+        query = string.Format("UPDATE autorizacion_detalle SET sesiones_canceladas=(SELECT SUM(programacion.prgNumSesion)"
+                            + " FROM programacion"
+                            + " WHERE"
+                            + " programacion.autNumero=autorizacion_detalle.autNumero AND programacion.actId=autorizacion_detalle.actId "
+                            + " AND programacion.prgActivo=0 "
+                            + ") WHERE autNumero={0}", Query.GetValor(autorizacion));
+        
         if (conector.QueryMod(query) == -1)
             return false;
         return true;

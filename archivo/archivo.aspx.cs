@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 
 public partial class archivo_archivo : System.Web.UI.Page
@@ -65,7 +66,7 @@ public partial class archivo_archivo : System.Web.UI.Page
         if (e.Row.RowIndex != -1)
         {
             if (columnaTipo==-1)
-                columnaTipo= Utilidades.GetGridColumnIndex(GResultados, "Tipo");
+                columnaTipo = GResultados.GetGridColumnIndex("Tipo");
 
             e.Row.Cells[columnaTipo].Text = Procedimientos.GetVarios(e.Row.Cells[columnaTipo].Text);
         }

@@ -15,7 +15,7 @@ public class importarCSV : IHttpHandler {
         context.Response.Buffer = false;
         context.Response.Write("<html><head><style>.a { color: red; }.b { color: green; } .c { font-weight: bold;color: blue;}</style></head><body>");
         context.Response.Flush();
-        ConvertDirectory(context.Response, Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "entrega4"));
+        ConvertDirectory(context.Response, Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "entrega5"));
         context.Response.Write("</body></html>");
     }
 
@@ -225,7 +225,7 @@ public class importarCSV : IHttpHandler {
                 }
             }
             reader.Close();
-            // conector.Commit();
+            conector.Commit();
 
             Response.Write(string.Format("<span class=c>{0} archivos, {1} Nuevos y {2} actualizados</span><br/>", nuevos + actualizados, nuevos, actualizados) + debug + "<br/>");
             return true;

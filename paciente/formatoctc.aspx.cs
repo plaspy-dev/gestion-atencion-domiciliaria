@@ -8,6 +8,7 @@ using System.IO;
 using System.Data.SqlClient;
 using System.Globalization;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 
 public partial class paciente_formatoctc : System.Web.UI.Page
@@ -621,9 +622,9 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                 szPos += GMedicamentos.Columns[j].HeaderText + ": <b>" + GMedicamentos.Rows[i].Cells[j].Text + "</b>&nbsp;&nbsp;&nbsp;";
             }
             contenido = contenido.Replace("$szNoPOS$", szPos)
-                .Replace("$Efecto$", GMedicamentos.Rows[i].Cells[Utilidades.GetGridColumnIndex(GMedicamentos, "Efecto deseado")].Text)
-                .Replace("$Respuesta$", GMedicamentos.Rows[i].Cells[Utilidades.GetGridColumnIndex(GMedicamentos, "Tiempo de respuesta esperado")].Text)
-                .Replace("$EfectosSecundarios$", GMedicamentos.Rows[i].Cells[Utilidades.GetGridColumnIndex(GMedicamentos, "Efectos secundarios y posibles riesgos")].Text)
+                .Replace("$Efecto$", GMedicamentos.Rows[i].Cells[GMedicamentos.GetGridColumnIndex("Efecto deseado")].Text)
+                .Replace("$Respuesta$", GMedicamentos.Rows[i].Cells[GMedicamentos.GetGridColumnIndex("Tiempo de respuesta esperado")].Text)
+                .Replace("$EfectosSecundarios$", GMedicamentos.Rows[i].Cells[GMedicamentos.GetGridColumnIndex("Efectos secundarios y posibles riesgos")].Text)
 
                 .Replace("$Nombre$", "")
                 .Replace("$Cantidad$", "")

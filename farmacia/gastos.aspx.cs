@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 using System.Globalization;
 using FileHelpers;
 
@@ -29,14 +30,14 @@ public partial class farmacia_gastos : System.Web.UI.Page
 
     protected void Totalizar(List<GridViewRow> rows, string columna)
     {
-        int col = Utilidades.GetGridColumnIndex(GResultados, columna);
+        int col = GResultados.GetGridColumnIndex(columna);
         if(GResultados.FooterRow!=null) 
             GResultados.FooterRow.Cells[col].Text = rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : Convert.ToInt32(x.Cells[col].Text)).ToString();
     }
 
     protected void TotalizarDinero(List<GridViewRow> rows, string columna)
     {
-        int col = Utilidades.GetGridColumnIndex(GResultados, columna);
+        int col = GResultados.GetGridColumnIndex(columna);
         if(GResultados.FooterRow!=null) 
             GResultados.FooterRow.Cells[col].Text = string.Format("{0:C0}", rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : decimal.Parse(x.Cells[col].Text, NumberStyles.Currency)));
     }
@@ -72,7 +73,7 @@ public partial class farmacia_gastos : System.Web.UI.Page
 
         evento.Contenido= evento.Contenido.Replace("$szEntidad$", Entidad.GetEntidad(Paciente.GetPaciente(UCPaciente.IdPaciente).entidadId).Nombre);
 
-        Utilidades.GetGridColumn(GResultados, "Costo").Visible = false;
-        Utilidades.GetGridColumn(GResultados, "Utilidad").Visible = false;
+        GResultados.GetGridColumn("Costo").Visible = false;
+        GResultados.GetGridColumn("Utilidad").Visible = false;
     }
 }

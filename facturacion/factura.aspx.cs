@@ -29,7 +29,7 @@ public partial class facturacion_factura : System.Web.UI.Page
                         TFactura.Text = reader["factura"].ToString();
                         FixedFileEngine engine = new FixedFileEngine(typeof(SIIGOFile));
                         SIIGOFile[] siigo = (SIIGOFile[])engine.ReadString(reader["importacion"].ToString()); 
-                        UCFactura.SetFactura(Convert.ToInt32(reader["factura"]), siigo.ToList());
+                        UCFactura.SetFactura(Convert.ToInt32(reader["factura"]), siigo.ToList(), true);
                         UCFactura.Visible = true;
                     }
                 }

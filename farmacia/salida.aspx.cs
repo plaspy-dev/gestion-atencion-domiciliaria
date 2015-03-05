@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Collections;
 using System.Collections.Specialized;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 
 public partial class farmacia_salida : System.Web.UI.Page
@@ -25,8 +26,8 @@ public partial class farmacia_salida : System.Web.UI.Page
             ViewState["entidades"] = usuario["entidades"];
             CConfiguracion configuracion = CConfiguracion.GetConfiguracion();
 
-            Utilidades.GetGridColumn(GProductos, "Costo U.").Visible =
-            Utilidades.GetGridColumn(GProductos, "Costo T.").Visible =
+            GProductos.GetGridColumn("Costo U.").Visible =
+            GProductos.GetGridColumn("Costo T.").Visible =
             RValorF.Visible = RValor.Visible =
             TValor.Visible = LValor.Visible = configuracion.nValor != 0;
 
@@ -38,24 +39,24 @@ public partial class farmacia_salida : System.Web.UI.Page
             TEntrega.Visible = configuracion.bManejarEntrega;
 
             // lote
-            Utilidades.GetGridColumn(GProductos, "Lote").Visible =
+            GProductos.GetGridColumn("Lote").Visible =
             LLoteA.Visible = TLote.Visible = LLote.Visible = configuracion.bLote;
 
             // vencimiento
-            Utilidades.GetGridColumn(GProductos, "Vence").Visible =
+            GProductos.GetGridColumn("Vence").Visible =
             LVencimientoA.Visible = TVencimiento.Visible = LVencimiento.Visible = configuracion.bVencimiento;
 
             // serial
-            Utilidades.GetGridColumn(GProductos, "Serial").Visible =
+            GProductos.GetGridColumn("Serial").Visible =
             LSerialA.Visible = TSerial.Visible = LSerial.Visible = configuracion.bSerial;
 
             // ubicacion
-            Utilidades.GetGridColumn(GProductos, "Ubicación").Visible =
+            GProductos.GetGridColumn("Ubicación").Visible =
             TUbicacion.Visible = LUbicacion.Visible = LUbicacionA.Visible =
             configuracion.nUbicacion != 0;
 
             // estado
-            Utilidades.GetGridColumn(GProductos, "Estado").Visible =
+            GProductos.GetGridColumn("Estado").Visible =
             LEstadoA.Visible = TEstado.Visible = LEstado.Visible = configuracion.bEstado;
 
             if (Session["salida_clean"] != null)
@@ -156,9 +157,9 @@ public partial class farmacia_salida : System.Web.UI.Page
 
                         if (GProductos.FooterRow != null)
                         {
-                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
-                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
-                            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+                            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+                            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+                            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Producto")].Text = "Total";
                         }
 
                         TProducto.Focus();
@@ -268,9 +269,9 @@ public partial class farmacia_salida : System.Web.UI.Page
 
         if (GProductos.FooterRow != null)
         {
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Producto")].Text = "Total";
         }
 
         HProductos.Value = productousadoNuevo.Serialize();
@@ -472,9 +473,9 @@ public partial class farmacia_salida : System.Web.UI.Page
 
         if (GProductos.FooterRow != null)
         {
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
-            GProductos.FooterRow.Cells[Utilidades.GetGridColumnIndex(GProductos, "Producto")].Text = "Total";
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Costo T.")].Text = string.Format("{0:C}", productoUsado.GetCostoTotal());
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Cantidad")].Text = string.Format("{0:F}", productoUsado.GetTotalProductos());
+            GProductos.FooterRow.Cells[GProductos.GetGridColumnIndex("Producto")].Text = "Total";
         }
 
         e.Cancel = true;

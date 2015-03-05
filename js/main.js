@@ -73,7 +73,7 @@ function obs() {
     if (typeof this.ejecutar !== 'undefined') {
         if (typeof this.ejecutar === 'function')
             retorno = this.ejecutar();
-        else retorno = eval(this.ejecutar);
+        else retorno = eval("(function(){" + this.ejecutar +"})");
     } else {
         return true;
     }
@@ -153,7 +153,18 @@ function inicio() {
     $('input[src*="eliminar.gif"]').each(function(i) {
         if (this.eliminar == undefined) {
             this.eliminar = $(this).attr("onclick");
-            $(this).unbind('click').attr("onclick", "").click(function() { if (confirm('¿Esta seguro de eliminar este elemento?')) { if (this.eliminar != undefined) { if (this.eliminar.toString().indexOf("function") == -1) eval(this.eliminar); else this.eliminar(); } return true; } return false; });
+            $(this).unbind('click').attr("onclick", "").click(function () {
+                if (confirm('¿Esta seguro de eliminar este elemento?')) {
+                    if (this.eliminar != undefined) {
+                        var retorno = null;
+                        if (this.eliminar.toString().indexOf("function") == -1) 
+                            retorno = this.eliminar.indexOf("return") == -1 ? eval(this.eliminar) : eval("(function(){" + this.eliminar + "})()");
+                        else retorno = this.eliminar();
+                        return retorno;
+                    }
+                    return true;
+                } return false;
+            });
         }
     });
 

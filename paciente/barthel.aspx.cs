@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using System.Text;
 using System.IO;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 
 public partial class paciente_barthel : System.Web.UI.Page
 {
@@ -234,8 +235,8 @@ public partial class paciente_barthel : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            int descripcion= Utilidades.GetGridColumnIndex(GHistorial, "Descripción");
-            int calificacion= Utilidades.GetGridColumnIndex(GHistorial, "Puntuación");
+            int descripcion = GHistorial.GetGridColumnIndex("Descripción");
+            int calificacion = GHistorial.GetGridColumnIndex("Puntuación");
             try
             {
                 e.Row.Cells[descripcion].Text = Calificacion.GetDescripcion(Convert.ToInt32(e.Row.Cells[calificacion].Text), e.Row.Cells[descripcion].Text);

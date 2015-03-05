@@ -26,7 +26,7 @@ public partial class programacion_sinprogramar : System.Web.UI.Page
             ((MasterPageI)Master).Excel(GResultados);
             ((MasterPageI)Master).Imprimir(GResultados);
         }
-        // GResumen.DataBind();
+        GResumen.DataBind();
     }
 
     protected void GResumen_RowDataBound(object sender, GridViewRowEventArgs e)

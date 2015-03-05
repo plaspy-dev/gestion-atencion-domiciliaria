@@ -128,7 +128,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                             Utilidades.SelectInDropDown(DArea, readermysql["area_atencion"]);
                             TFechaSeguimiento.Text = Query.GetFromMySQLDate(readermysql["seguimiento"]);
                             TFecha.Text = Query.GetFromMySQLDate(readermysql["fecha"], true);
-                            TConductaInicial.Text = readermysql["conducta"].ToString();
+                            TConductaInicial.Text = readermysql["conducta"].ToString().Trim();
                             if (TConductaInicial.Text.Length == 0)
                             {
                                 string procedimientos = Procedimientos.GetPlanDeManejo(conector, CCDetallePaciente.IdPaciente, TFecha.Text);
@@ -214,7 +214,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             qIngreso["seguimiento"] = Query.GetMySQLDateFormat(TFechaSeguimiento.Text);
 
             qIngreso["conducta"] =
-                (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TConductaInicial.Text != ViewState["procedimientos"].ToString())
+                (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TConductaInicial.Text.Trim() != ViewState["procedimientos"].ToString())
                 ? TConductaInicial.Text.Trim()
                 : ""; // guardamos la conducta si es diferente a la inicial
 
@@ -503,7 +503,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                 resultado += "<td width='300'>";
             else */
             resultado += "<td>";
-            resultado += "<b>" + grid.Columns[i].HeaderText + "</b></td>";
+            resultado += "<b>" + HttpUtility.HtmlEncode(grid.Columns[i].HeaderText) + "</b></td>";
         }
         resultado += "</tr>";
         bool negrilla=false;
@@ -520,7 +520,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
                         if (controles[k] is TextBox)
                         {
-                            String texto = ((TextBox)controles[k]).Text;
+                            String texto = HttpUtility.HtmlEncode(((TextBox)controles[k]).Text);
                             if (texto.Length == 0)
                                 texto = "&nbsp;";
                             resultado += texto;
@@ -537,7 +537,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                             {
                                 if (negrilla)
                                     resultado += "<b>";
-                                resultado += ((CheckBox)controles[k]).Text;
+                                resultado += HttpUtility.HtmlEncode(((CheckBox)controles[k]).Text);
                                 if (negrilla)
                                 {
                                     resultado += "</b>";
@@ -547,10 +547,8 @@ public partial class paciente_ingreso : System.Web.UI.Page
                             break;
                         }
                     }
-                }
-                else
-                {
-                    resultado += row.Cells[j].Text;
+                } else {
+                    resultado += HttpUtility.HtmlEncode(row.Cells[j].Text);
                 }
                 resultado += "</td>";
             }
@@ -572,7 +570,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             {
                 if (resultado.Length > 0)
                     resultado += ", ";
-                resultado += string.Format("<b>{0}: </b> {2}", check.Text, check.Checked ? "X" : "_", text.Text);
+                resultado += string.Format("<b>{0}: </b> {2}", HttpUtility.HtmlEncode(check.Text), check.Checked ? "X" : "_", HttpUtility.HtmlEncode(text.Text));
             }
         }
         if (resultado.Length == 0)
@@ -604,7 +602,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                 }
                 if (check.Length == 0)
                     check = "_";
-                resultado += string.Format("<b>{0}</b> ({1}) {2}.", nombre.Text, check, text.Text);
+                resultado += string.Format("<b>{0}</b> ({1}) {2}.", HttpUtility.HtmlEncode(nombre.Text), check, HttpUtility.HtmlEncode(text.Text));
             }
         }
         if (resultado == "")
@@ -624,7 +622,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             {
                 if (resultado.Length > 0)
                     resultado += ", ";
-                resultado += check.Text;
+                resultado += HttpUtility.HtmlEncode(check.Text);
             }
         }
         if (resultado.Length == 0)
@@ -645,7 +643,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             evento.Contenido = evento.Contenido.Replace("$szGinecologico$", "<strong>Examen ginecológico</strong>: " + ImprimirGridTipo1(GGinecologico));
         else evento.Contenido = evento.Contenido.Replace("$szGinecologico$", "");
 
-        evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + TConductaInicial.Text.Replace("\n", "</li><li>") + "</li></ol>");
+        evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + HttpUtility.HtmlEncode(TConductaInicial.Text).Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
         foreach (Calificacion.Escalas escala in (Calificacion.Escalas[])Enum.GetValues(typeof(Calificacion.Escalas)))
@@ -657,7 +655,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
         evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
 
-        Query query = new Query("paciente");
+        Query query = new Query("recurso_humano");
 
         query["szProfesional"] = "recurso_humano.perDocumento";
         query["szMedico"] = "recurso_humano.perNombre";
@@ -665,10 +663,8 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
         using (CConector conector = new CConector())
         {
-
-            MySqlDataReader reader = conector.Query(query.GetSelect("pacId=" + CCDetallePaciente.IdPaciente
-                , "LEFT JOIN recurso_humano ON (recurso_humano.perId=paciente.megId)"
-                + " LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)"
+            MySqlDataReader reader = conector.Query(query.GetSelect("recurso_humano.perId=" + DMedico.SelectedValue
+                , " LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)"
                 ));
             if (reader != null)
             {

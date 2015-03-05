@@ -59,6 +59,6 @@
         <td colspan="2" class="celdaTitulo">CIE10</td>
     </tr>
     <tr>
-        <td colspan="2" class="tdl tdr tdb"><asp:Label ID="LCIE10" runat="server" Text=""></asp:Label></td>
+        <td colspan="2" class="tdl tdr tdb"><asp:Literal ID="LCIE10" runat="server" Text=""></asp:Literal></td>
     </tr>
 </table>

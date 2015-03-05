@@ -451,7 +451,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
         if (!string.IsNullOrEmpty(formulacion))
             formulacion = "WHERE formulacion=" + Query.GetValor(formulacion);
         conector.QueryMod("SET @c:=0,@i=0;");
-        return conector.QueryMod("UPDATE medicamento_formulacion SET numero=IF(@i=evolucion, 1, CONCAT(@i:=evolucion, @c:=0)),numero=@c:=@c+1 " + formulacion + " ORDER BY formulacion,id;") != -1;
+        return conector.QueryMod("UPDATE medicamento_formulacion SET numero=IF(@i=formulacion, 1, CONCAT(@i:=formulacion, @c:=0)),numero=@c:=@c+1 " + formulacion + " ORDER BY formulacion,id;") != -1;
     }
 
     protected void BAceptar_Click(object sender, EventArgs e)

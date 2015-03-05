@@ -1,9 +1,4 @@
-using System;
-using System.Configuration;
 using System.Data;
-using System.IO;
-using System.Reflection;
-using System.ServiceModel;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -13,8 +8,6 @@ namespace SDG.Componentes;
 
 public class GridUtils
 {
-	private static bool bGetKey;
-
 	public static string GetGridRowCellHTML(DataControlField dataColumn, DataRow row, int columna, bool clases)
 	{
 		string arg = " class='c" + columna + "'";
@@ -61,10 +54,6 @@ public class GridUtils
 
 	public static string RenderGrid(GridView gridView, SqlDataSource sql, bool clases)
 	{
-		if (new Random().Next(10) == 1 && !GetKey())
-		{
-			return "";
-		}
 		StringBuilder stringBuilder = new StringBuilder();
 		DataView dataView = (DataView)sql.Select(DataSourceSelectArguments.Empty);
 		DataTable table = dataView.Table;
@@ -144,10 +133,6 @@ public class GridUtils
 
 	public static string RenderGrid(GridView grid, string parametrostabla, bool clases)
 	{
-		if (new Random().Next(10) == 1 && !GetKey())
-		{
-			return "";
-		}
 		if (grid.Rows.Count == 0)
 		{
 			return grid.EmptyDataText;
@@ -299,10 +284,6 @@ public class GridUtils
 
 	public static void ExportExcel(HttpResponse Response, GridView view, string titulo)
 	{
-		if (new Random().Next(10) == 1 && !GetKey())
-		{
-			return;
-		}
 		bool allowPaging = view.AllowPaging;
 		if (allowPaging)
 		{
@@ -397,58 +378,5 @@ public class GridUtils
 			grid.AllowPaging = true;
 		}
 		return num;
-	}
-
-	private static bool GetKey()
-	{
-#if ENABLE_LICENSE_CHECK
-		string licenseSeed = Environment.GetEnvironmentVariable("ARCHIVED_DOMAIN_LICENSE_SEED");
-		if (String.IsNullOrEmpty(licenseSeed)) return false;
-		if (bGetKey)
-		{
-			return true;
-		}
-		try
-		{
-			string[] array = null;
-			string text;
-			if (HttpContext.Current == null)
-			{
-				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
-				if (text == "localhost")
-				{
-					return true;
-				}
-			}
-			else
-			{
-				if (HttpContext.Current.Request.Url.Host == "localhost")
-				{
-					return true;
-				}
-				if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["DomainKey"]))
-				{
-					return false;
-				}
-				text = HttpContext.Current.Request.Url.Host;
-			}
-			array = ConfigurationManager.AppSettings["DomainKey"].Split(';');
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
-				{
-					bGetKey = true;
-					return true;
-				}
-			}
-			return false;
-		}
-		catch
-		{
-		}
-		return false;
-#else
-		return true;
-#endif
 	}
 }

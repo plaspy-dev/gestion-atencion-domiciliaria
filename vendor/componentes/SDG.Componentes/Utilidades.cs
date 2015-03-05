@@ -1,9 +1,6 @@
 using System;
-using System.Configuration;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
-using System.ServiceModel;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -13,8 +10,6 @@ namespace SDG.Componentes;
 
 public class Utilidades
 {
-	private static bool bGetKey;
-
 	public static string GetURLFullPath(Page page, string archivo)
 	{
 		string text = page.Request.Url.Host;
@@ -41,42 +36,6 @@ public class Utilidades
 			text = text + ":" + HttpContext.Current.Request.Url.Port;
 		}
 		return string.Format("http{0}://{1}{2}", HttpContext.Current.Request.IsSecureConnection ? "s" : "", text, VirtualPathUtility.ToAbsolute(archivo));
-	}
-
-	public static DataControlField GetGridColumn(GridView grid, string columna)
-	{
-		columna = columna.ToLower();
-		for (int i = 0; i < grid.Columns.Count; i++)
-		{
-			if (grid.Columns[i].HeaderText.ToLower() == columna)
-			{
-				return grid.Columns[i];
-			}
-		}
-		return null;
-	}
-
-	public static int GetGridColumnIndex(GridView grid, string columna)
-	{
-		columna = columna.ToLower();
-		for (int i = 0; i < grid.Columns.Count; i++)
-		{
-			if (grid.Columns[i].HeaderText.ToLower() == columna)
-			{
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	public static TableCell GetGridCell(GridView grid, string columna, int fila)
-	{
-		return grid.Rows[fila].Cells[GetGridColumnIndex(grid, columna)];
-	}
-
-	public static string GetGridCellText(GridView grid, string columna, int fila)
-	{
-		return HttpUtility.HtmlDecode(grid.Rows[fila].Cells[GetGridColumnIndex(grid, columna)].Text).Trim();
 	}
 
 	public static Control FindControlForId(ControlCollection controles, string id)
@@ -137,7 +96,7 @@ public class Utilidades
 				text = ((!list.Items[num].Selected) ? (text + "&nbsp;") : (text + "X"));
 				text += "</td>";
 				text += "<td>";
-				text += list.Items[num].Text;
+				text += HttpUtility.HtmlEncode(list.Items[num].Text);
 				text += "</td>";
 				num2++;
 				num++;
@@ -176,7 +135,7 @@ public class Utilidades
 				}
 				if (controles[i].GetType() == typeof(TextBox))
 				{
-					text = ((TextBox)controles[i]).Text;
+					text = HttpUtility.HtmlEncode(((TextBox)controles[i]).Text);
 				}
 				else if (controles[i].GetType() == typeof(CheckBox))
 				{
@@ -184,7 +143,7 @@ public class Utilidades
 				}
 				else if (controles[i].GetType() == typeof(Label))
 				{
-					text = ((Label)controles[i]).Text;
+					text = HttpUtility.HtmlEncode(((Label)controles[i]).Text);
 				}
 				else if (controles[i].GetType() == typeof(Literal))
 				{
@@ -204,7 +163,7 @@ public class Utilidades
 					}
 					if (((DropDownList)controles[i]).SelectedItem != null)
 					{
-						text = ((DropDownList)controles[i]).SelectedItem.Text;
+						text = HttpUtility.HtmlEncode(((DropDownList)controles[i]).SelectedItem.Text);
 					}
 				}
 				else if (controles[i].GetType() == typeof(HiddenField))
@@ -252,7 +211,7 @@ public class Utilidades
 							{
 								text += ", ";
 							}
-							text += listBox.Items[j].Text;
+							text += HttpUtility.HtmlEncode(listBox.Items[j].Text);
 						}
 					}
 				}
@@ -280,19 +239,11 @@ public class Utilidades
 
 	public static StringBuilder ReplaceContenido(ControlCollection controles, StringBuilder contenido, bool clases)
 	{
-		if (new Random().Next(10) == 1 && !GetKey())
-		{
-			return new StringBuilder();
-		}
 		return ReplaceContenido(controles, contenido, visible: true, clases);
 	}
 
 	public static StateBag GetViewState()
 	{
-		if (new Random().Next(10) == 1 && !GetKey())
-		{
-			return null;
-		}
 		StateBag stateBag = null;
 		try
 		{
@@ -314,10 +265,6 @@ public class Utilidades
 
 	public static string SaveState(ControlCollection controles)
 	{
-		if (new Random().Next(10) == 1 && !GetKey())
-		{
-			return "";
-		}
 		string text = "";
 		foreach (Control controle in controles)
 		{
@@ -444,59 +391,6 @@ public class Utilidades
 		return true;
 	}
 
-	private static bool GetKey()
-	{
-#if ENABLE_LICENSE_CHECK
-		string licenseSeed = Environment.GetEnvironmentVariable("ARCHIVED_DOMAIN_LICENSE_SEED");
-		if (String.IsNullOrEmpty(licenseSeed)) return false;
-		if (bGetKey)
-		{
-			return true;
-		}
-		try
-		{
-			string[] array = null;
-			string text;
-			if (HttpContext.Current == null)
-			{
-				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
-				if (text == "localhost")
-				{
-					return true;
-				}
-			}
-			else
-			{
-				if (HttpContext.Current.Request.Url.Host == "localhost")
-				{
-					return true;
-				}
-				if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["DomainKey"]))
-				{
-					return false;
-				}
-				text = HttpContext.Current.Request.Url.Host;
-			}
-			array = ConfigurationManager.AppSettings["DomainKey"].Split(';');
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
-				{
-					bGetKey = true;
-					return true;
-				}
-			}
-			return false;
-		}
-		catch
-		{
-		}
-		return false;
-#else
-		return true;
-#endif
-	}
-
 	public static string TryConverToDoubleInvariantCulture(object valor)
 	{
 		try
@@ -561,5 +455,45 @@ public class Utilidades
 			return pagina.Request.QueryString[valor];
 		}
 		return (string)pagina.RouteData.Values[valor];
+	}
+
+	[Obsolete("use new GridView Extension using SDG.Componentes.SDG.Web.UI.WebControls;")]
+	public static DataControlField GetGridColumn(GridView grid, string columna)
+	{
+		columna = columna.ToLower();
+		for (int i = 0; i < grid.Columns.Count; i++)
+		{
+			if (grid.Columns[i].HeaderText.ToLower() == columna)
+			{
+				return grid.Columns[i];
+			}
+		}
+		return null;
+	}
+
+	[Obsolete("use new GridView Extension using SDG.Componentes.SDG.Web.UI.WebControls;")]
+	public static int GetGridColumnIndex(GridView grid, string columna)
+	{
+		columna = columna.ToLower();
+		for (int i = 0; i < grid.Columns.Count; i++)
+		{
+			if (grid.Columns[i].HeaderText.ToLower() == columna)
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	[Obsolete("use new GridView Extension using SDG.Componentes.SDG.Web.UI.WebControls;")]
+	public static TableCell GetGridCell(GridView grid, string columna, int fila)
+	{
+		return grid.Rows[fila].Cells[GetGridColumnIndex(grid, columna)];
+	}
+
+	[Obsolete("use new GridView Extension using SDG.Componentes.SDG.Web.UI.WebControls;")]
+	public static string GetGridCellText(GridView grid, string columna, int fila)
+	{
+		return HttpUtility.HtmlDecode(grid.Rows[fila].Cells[GetGridColumnIndex(grid, columna)].Text).Trim();
 	}
 }

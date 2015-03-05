@@ -32,7 +32,8 @@
                             $("#<%= TAutorizacionID.ClientID %>").val(ui.item.value);
                         }
                     });
-                    $("#<%= TDevolucion.ClientID %>").datepicker({ onSelect: function() {
+                    $("#<%= TDevolucion.ClientID %>,#<%= TPago.ClientID %>").datepicker({
+                        onSelect: function () {
                         $("#<%= BD.ClientID %>").click();
                     } 
                     }).change(function() {
@@ -89,6 +90,12 @@
         </td>
     </tr>
     <tr>
+        <td class="tdl">Fecha</td>
+        <td><div style="width: 103px; text-align: right;" ><asp:Label runat="server" ID="LFecha"></asp:Label></div></td>
+        <td>Valor</td>
+        <td class="tdr"><div style="width: 103px; text-align: right;" ><asp:Label runat="server" ID="LValor"></asp:Label></div></td>
+    </tr>
+    <tr>
         <td class="tdl">Radicación<asp:RequiredFieldValidator ControlToValidate="TRadicacion" ErrorMessage="Por favor ingrese una fecha de radicación." ID="R3"
 	                runat="server" Display="Dynamic" SetFocusOnError="false">*</asp:RequiredFieldValidator></td>
         <td><asp:TextBox runat="server" ID="TRadicacion" CssClass="fecha"></asp:TextBox></td>
@@ -98,8 +105,8 @@
     </tr>
     <tr>
         <td class="tdl">Pago</td>
-        <td><asp:TextBox runat="server" ID="TPago" CssClass="fecha"></asp:TextBox></td>
-        <td>Devolución</td>
+        <td><asp:TextBox runat="server" ID="TPago" CssClass="fecha rfecha"></asp:TextBox></td>
+        <td><asp:Label runat="server" ID="LDevolucion" Text="Devolución"></asp:Label></td>
         <td class="tdr"><asp:TextBox runat="server" ID="TDevolucion" CssClass="fecha rfecha"></asp:TextBox><asp:Button runat="server" ID="BD" CssClass="hide" OnClick="BD_OnClicked" CausesValidation="false" /></td>
     </tr>
     <asp:PlaceHolder runat="server" ID="PDevolucion" Visible="false">
@@ -121,11 +128,6 @@
                             <asp:CheckBox runat="server" ID="CC" Text='<%# Eval("nombre") %>' Checked='<%# Eval("causal").ToString()!="" %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Valor">
-                        <ItemTemplate>
-                            <asp:TextBox runat="server" ID="TV" CssClass="dinero" Text='<%# Eval("valor").ToString()=="" ? "" : Convert.ToDecimal(Eval("valor")).ToString(System.Globalization.CultureInfo.InvariantCulture) %>'></asp:TextBox>
-                        </ItemTemplate>
-                    </asp:TemplateField>
             </Columns>
            </asp:GridView>
            <asp:SqlDataSource ID="SDevolucion" runat="server" 
@@ -133,7 +135,6 @@
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT varios.id, varios.nombre 
                         ,factura_causal_devolucion.causal
-                        ,factura_causal_devolucion.valor
                         FROM varios 
                         LEFT JOIN factura_causal_devolucion ON (factura_causal_devolucion.factura_devolucion=@factura_devolucion AND factura_causal_devolucion.causal=varios.id)
                         WHERE 
@@ -152,6 +153,7 @@
         </td>
     </tr>
     </asp:PlaceHolder>
+    <asp:PlaceHolder runat="server" ID="PDevoluciones">
     <tr>
         <td colspan="4" class="celdaTitulo">Devoluciones</td>
     </tr>
@@ -167,11 +169,10 @@
                 <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                 <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
-                    <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                    <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                    <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" CausesValidation="false" />
+                    <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" CausesValidation="false" />
                     <asp:BoundField HeaderText="Radicación" SortExpression="antigua_radicacion" DataField="antigua_radicacion" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" />
                     <asp:BoundField HeaderText="Devolución" SortExpression="devolucion" DataField="devolucion" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" />
-                    <asp:BoundField HeaderText="Valor" SortExpression="valor" DataField="valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
                     <asp:BoundField HeaderText="Causal" SortExpression="causal" DataField="causal" ItemStyle-Width="100%" />
             </Columns>
            </asp:GridView>
@@ -184,7 +185,6 @@
                                     ,factura_devolucion.antigua_radicacion
                                     ,factura_devolucion.devolucion
                                     ,GROUP_CONCAT(causal.nombre) AS causal
-                                    ,SUM(factura_causal_devolucion.valor) AS valor
                                     FROM factura_devolucion 
                                     LEFT JOIN factura_causal_devolucion ON (factura_causal_devolucion.factura_devolucion=factura_devolucion.id)
                                     LEFT JOIN varios AS causal ON (causal.id=factura_causal_devolucion.causal)
@@ -198,10 +198,11 @@
                 </asp:SqlDataSource>
         </td>
     </tr>
+    </asp:PlaceHolder>
     <tr>
         <td colspan="4" class="tdl tdr">
             <asp:GridView ID="GDetalle" runat="server" AutoGenerateColumns="False" EmptyDataText="No se encontraron datos" 
-                Width="100%" DataKeyNames="Secuencia,Cantidad,_ValorMovimiento,_CodigoProducto">
+                Width="100%" DataKeyNames="Secuencia,Cantidad,_ValorMovimiento,_CodigoProducto" ShowFooter="true">
                 <RowStyle CssClass="GridRow"></RowStyle>
                 <FooterStyle CssClass="GridFooter"></FooterStyle>
                 <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -210,9 +211,9 @@
                 <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
                     <asp:BoundField DataField="_CodigoProducto" HeaderText="Código producto" ItemStyle-HorizontalAlign="Right" />
-                    <asp:BoundField DataField="_DescripcionDelMovimiento" HeaderText="Descripción" ItemStyle-Width="100%" />
-                    <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" DataFormatString="{0:0}" ItemStyle-HorizontalAlign="Right" />
-                    <asp:BoundField DataField="_ValorMovimiento" HeaderText="Valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
+                    <asp:BoundField DataField="_DescripcionDelMovimiento" HeaderText="Descripción" ItemStyle-Width="100%" FooterStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" />
+                    <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" DataFormatString="{0:0}" ItemStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" />
+                    <asp:BoundField DataField="_ValorMovimiento" HeaderText="Valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" />
                     <asp:TemplateField HeaderText="Procedimiento Autorización">
                         <ItemTemplate>
                             <asp:UpdatePanel runat="server" ID="U" UpdateMode="Conditional">
@@ -248,6 +249,7 @@
     <tr>
         <td colspan="4">&nbsp;</td>
     </tr>
+    <asp:PlaceHolder runat="server" ID="PGlosa" Visible="false">
     <tr>
         <td colspan="4" class="celdaTitulo">Glosa</td>
     </tr>
@@ -308,6 +310,7 @@
         <td class="tdb">Conciliación</td>
         <td class="tdr tdb" align="right"><asp:TextBox runat="server" ID="TConciliacion" CssClass="fecha"></asp:TextBox></td>
     </tr>
+    </asp:PlaceHolder>
     <tr>
         <td colspan="4" class="tdl tdr">&nbsp;
             <asp:ValidationSummary runat="server" ID="V" />

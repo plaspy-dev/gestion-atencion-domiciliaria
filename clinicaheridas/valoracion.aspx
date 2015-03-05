@@ -855,46 +855,6 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 </td>
             </tr>
             <tr>
-                <td colspan="4" class="tdl tdr">
-                <asp:GridView ID="GVarios" runat="server" AutoGenerateColumns="False" Width="100%" DataKeyNames="id" DataSourceID="SVarios">
-                    <RowStyle CssClass="GridRow"></RowStyle>
-                    <FooterStyle CssClass="GridFooter"></FooterStyle>
-                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-                    <Columns>
-                        <asp:TemplateField HeaderText="Seguridad Pte.">
-                            <ItemTemplate>
-                                <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
-                                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese una observación." runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                            </ItemTemplate>
-                            <ItemStyle Wrap="false" />
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Observaciones" ItemStyle-Width="100%">
-                            <ItemTemplate>
-                                <asp:TextBox runat="server" ID="TObservaciones" Width="99%" Text='<%# Eval("observaciones") %>'></asp:TextBox>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                    </Columns>
-                </asp:GridView>
-                <asp:SqlDataSource ID="SVarios" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre
-                                    ,valoracion_herida_varios.estado
-                                    ,valoracion_herida_varios.observaciones
-                                    FROM varios 
-                                    LEFT JOIN valoracion_herida_varios ON (valoracion_herida_varios.valoracion=@valoracion AND valoracion_herida_varios.motivo=varios.id) 
-                                    WHERE varios.tipo=69 AND varios.szReservado IS NULL
-                                    ;" >
-                    <SelectParameters>
-                        <asp:Parameter Name="valoracion" DefaultValue="0" />
-                    </SelectParameters>
-                </asp:SqlDataSource>
-                </td>
-            </tr>
-            <tr>
                 <td colspan="4" class="celdaTitulo tdr tdl">Plan de intervención</td>
             </tr>
             <tr>

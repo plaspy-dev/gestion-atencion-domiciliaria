@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 
 public partial class paciente_atendidos : System.Web.UI.Page
 {
@@ -29,25 +30,25 @@ public partial class paciente_atendidos : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1) {
             if (paciente == -1)
-                paciente = Utilidades.GetGridColumnIndex(GResultados, "Paciente");
+                paciente = GResultados.GetGridColumnIndex("Paciente");
             if ( documento== -1)
-                 documento= Utilidades.GetGridColumnIndex(GResultados, "Documento");
+                documento = GResultados.GetGridColumnIndex("Documento");
             if ( sexo== -1)
-                 sexo= Utilidades.GetGridColumnIndex(GResultados, "Sexo");
+                sexo = GResultados.GetGridColumnIndex("Sexo");
             if ( edad== -1)
-                 edad= Utilidades.GetGridColumnIndex(GResultados, "Edad");
+                edad = GResultados.GetGridColumnIndex("Edad");
             if ( direccion== -1)
-                 direccion= Utilidades.GetGridColumnIndex(GResultados, "Dirección");
+                direccion = GResultados.GetGridColumnIndex("Dirección");
             if ( barrio== -1)
-                 barrio= Utilidades.GetGridColumnIndex(GResultados, "Barrio");
+                barrio = GResultados.GetGridColumnIndex("Barrio");
             if ( telefono== -1)
-                 telefono= Utilidades.GetGridColumnIndex(GResultados, "Teléfonos");
+                telefono = GResultados.GetGridColumnIndex("Teléfonos");
             if ( cie1== -1)
-                cie1 = Utilidades.GetGridColumnIndex(GResultados, "Diagnostico 1");
+                cie1 = GResultados.GetGridColumnIndex("Diagnostico 1");
             if ( cie2== -1)
-                cie2 = Utilidades.GetGridColumnIndex(GResultados, "Diagnostico 2");
+                cie2 = GResultados.GetGridColumnIndex("Diagnostico 2");
             if ( cie3== -1)
-                cie3 = Utilidades.GetGridColumnIndex(GResultados, "Diagnostico 3");
+                cie3 = GResultados.GetGridColumnIndex("Diagnostico 3");
 
             Paciente info = Paciente.GetPaciente(HttpUtility.HtmlDecode(e.Row.Cells[paciente].Text).Trim());
             e.Row.Cells[paciente].Text= info.NombreCompleto;

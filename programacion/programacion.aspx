@@ -51,7 +51,7 @@
                 <br />
                     <asp:GridView ID="GProgramacion" runat="server" AllowPaging="True" Width="100%"
                         AutoGenerateColumns="False" DataSourceID="SProgramacion" 
-                        EmptyDataText="No se encontraron programaciones" DataKeyNames="prgId,perId" 
+                        EmptyDataText="No se encontraron programaciones" DataKeyNames="prgId,perId,autNumero" 
                         AllowSorting="true" onrowediting="GProgramacion_RowEditing" 
                         onselectedindexchanged="GProgramacion_SelectedIndexChanged" 
                         onrowdeleted="GProgramacion_RowDeleted">
@@ -92,6 +92,7 @@
                                     ,prgActivo
                                     ,CONCAT(programacion.autNumero,'[',IFNULL(autorizacion_detalle.autNumSesiones,0), ']') AS autorizacion
                                     , programacion.actId
+                                    ,programacion.autNumero
                                     FROM programacion 
                                     LEFT JOIN recurso_humano ON (recurso_humano.perId=programacion.perId) 
                                     LEFT JOIN medicamentos ON (medicamentos.id=programacion.actId) 

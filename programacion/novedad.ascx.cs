@@ -156,6 +156,7 @@ public partial class phd_novedad : System.Web.UI.UserControl
                         Funcionario.RebuildDirectorio(conector, TProfesionalID.Text);
                 }
 
+                Autorizaciones.UpdateSesiones(conector, conector.QueryString("SELECT autNumero FROM programacion WHERE prgId=" + Query.GetValor(programacion[i])));
                 HId.Value = "";
             }
             TObservaciones.Text = "";

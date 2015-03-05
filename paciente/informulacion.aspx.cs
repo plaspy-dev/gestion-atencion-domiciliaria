@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 
 public partial class paciente_informulacion : System.Web.UI.Page
 {
@@ -30,11 +31,11 @@ public partial class paciente_informulacion : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1) { 
             if(paciente==-1)
-                paciente= Utilidades.GetGridColumnIndex(GResultados, "Paciente");
+                paciente = GResultados.GetGridColumnIndex("Paciente");
             if(documento==-1)
-                documento= Utilidades.GetGridColumnIndex(GResultados, "Documento");
+                documento = GResultados.GetGridColumnIndex("Documento");
             if (medicamento == -1)
-                medicamento = Utilidades.GetGridColumnIndex(GResultados, "Medicamento");
+                medicamento = GResultados.GetGridColumnIndex("Medicamento");
             
             Paciente info= Paciente.GetPaciente(HttpUtility.HtmlDecode(e.Row.Cells[paciente].Text).Trim());
             e.Row.Cells[paciente].Text=info.NombreCompleto;

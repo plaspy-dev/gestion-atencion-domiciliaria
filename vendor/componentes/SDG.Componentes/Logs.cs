@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.ServiceModel;
 using System.Web;
 
@@ -80,6 +81,7 @@ public class Logs
 				case "__VIEWSTATE":
 				case "__VIEWSTATEENCRYPTED":
 				case "__EVENTVALIDATION":
+				case "__VC":
 					continue;
 				}
 				text = text + item + "=" + Request.Form[item];
@@ -100,6 +102,45 @@ public class Logs
 		return text + "\r\n";
 	}
 
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	public static string GetCurrentMethod(int stack)
+	{
+		StackTrace stackTrace = new StackTrace();
+		StackFrame frame = stackTrace.GetFrame(stack);
+		return frame.GetMethod().Name;
+	}
+
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	public static string GetCurrentClass(int stack = 1)
+	{
+		StackTrace stackTrace = new StackTrace();
+		StackFrame frame = stackTrace.GetFrame(stack);
+		return frame.GetMethod().DeclaringType.ToString();
+	}
+
+	public static bool WriteClassLog(string log, string ClassName = null, string functionName = null)
+	{
+		if (ClassName == null)
+		{
+			ClassName = GetCurrentClass(2);
+		}
+		if (functionName == null)
+		{
+			functionName = GetCurrentMethod(2);
+		}
+		string text = $"{DateTime.Now} [{ClassName}:{functionName}] ";
+		try
+		{
+			string text2 = "";
+			text2 = ((HttpContext.Current != null) ? HttpContext.Current.Request.Url.ToString() : ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.ToString() : Path.GetFileName(Assembly.GetEntryAssembly().Location)));
+			text += $"({text2}) ";
+		}
+		catch
+		{
+		}
+		return WriteLog(text + log);
+	}
+
 	public static bool WriteLog(string logs)
 	{
 		string archivo = "";
@@ -108,6 +149,15 @@ public class Logs
 			archivo = ConfigurationManager.AppSettings["filelogs"].ToString();
 		}
 		return WriteLog(logs, archivo);
+	}
+
+	public static bool Write(string log, params object[] args)
+	{
+		if (args.Length > 0)
+		{
+			log = string.Format(log, args);
+		}
+		return WriteLog(log);
 	}
 
 	public static bool WriteLog(string logs, string archivo)

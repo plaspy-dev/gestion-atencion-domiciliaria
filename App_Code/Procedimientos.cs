@@ -451,6 +451,6 @@ public class Procedimientos
             }
         }
 
-        return resultado;
+        return resultado.Trim();
     }
 }

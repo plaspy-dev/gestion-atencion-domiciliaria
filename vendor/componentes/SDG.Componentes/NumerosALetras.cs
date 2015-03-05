@@ -1,16 +1,9 @@
 using System;
-using System.Configuration;
-using System.IO;
-using System.Reflection;
-using System.ServiceModel;
-using System.Web;
 
 namespace SDG.Componentes;
 
 public class NumerosALetras
 {
-	private static bool bGetKey = false;
-
 	private static string[] m_saCeroAVeinte = new string[20]
 	{
 		"cero", "un", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve",
@@ -72,10 +65,6 @@ public class NumerosALetras
 
 	public static string ToLetras(double valor)
 	{
-		if (new Random().Next(10) == 1 && !GetKey())
-		{
-			return "";
-		}
 		string text = ToLetras(valor, comas: false);
 		if (text.Length > 0)
 		{
@@ -113,58 +102,5 @@ public class NumerosALetras
 			}
 		}
 		return "";
-	}
-
-	private static bool GetKey()
-	{
-#if ENABLE_LICENSE_CHECK
-		string licenseSeed = Environment.GetEnvironmentVariable("ARCHIVED_DOMAIN_LICENSE_SEED");
-		if (String.IsNullOrEmpty(licenseSeed)) return false;
-		if (bGetKey)
-		{
-			return true;
-		}
-		try
-		{
-			string[] array = null;
-			string text;
-			if (HttpContext.Current == null)
-			{
-				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
-				if (text == "localhost")
-				{
-					return true;
-				}
-			}
-			else
-			{
-				if (HttpContext.Current.Request.Url.Host == "localhost")
-				{
-					return true;
-				}
-				if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["DomainKey"]))
-				{
-					return false;
-				}
-				text = HttpContext.Current.Request.Url.Host;
-			}
-			array = ConfigurationManager.AppSettings["DomainKey"].Split(';');
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
-				{
-					bGetKey = true;
-					return true;
-				}
-			}
-			return false;
-		}
-		catch
-		{
-		}
-		return false;
-#else
-		return true;
-#endif
 	}
 }

@@ -93,20 +93,20 @@
         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         <Columns>
-            <asp:HyperLinkField HeaderText="Autorización" SortExpression="autorizacion" DataTextField="autorizacion" DataNavigateUrlFields="autorizacion" Target="_blank" DataNavigateUrlFormatString="~/facturacion/facturacion.aspx?aut={0}" />
-            <asp:HyperLinkField HeaderText="Factura" SortExpression="factura" DataTextField="factura" DataNavigateUrlFields="autorizacion" Target="_blank" DataNavigateUrlFormatString="~/facturacion/facturacion.aspx?aut={0}" />
-            <asp:HyperLinkField HeaderText="Fecha" SortExpression="fecha" DataTextField="fecha" DataNavigateUrlFields="autorizacion" Target="_blank" DataNavigateUrlFormatString="~/facturacion/facturacion.aspx?aut={0}" DataTextFormatString="{0:d}" />
-            <asp:BoundField HeaderText="Radicación" SortExpression="radicacion" DataField="radicacion" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
-            <asp:BoundField HeaderText="Valor facturado" SortExpression="facturado" DataField="facturado" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
-            <asp:BoundField HeaderText="Glosa" SortExpression="glosa" DataField="glosa" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
-            <asp:BoundField HeaderText="Glosa aceptada" SortExpression="glosa_aceptada" DataField="glosa_aceptada" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
-            <asp:BoundField HeaderText="Glosa soportada" SortExpression="glosa_soportado" DataField="glosa_soportado" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
-            <asp:BoundField HeaderText="Servicios no facturados" SortExpression="nofacturado" DataField="nofacturado" />
-            <asp:BoundField HeaderText="Sin seguimiento" SortExpression="" DataField="" />
+            <asp:HyperLinkField HeaderText="Autorización" SortExpression="autorizacion" DataTextField="autorizacion" DataNavigateUrlFields="factura" Target="_blank" DataNavigateUrlFormatString="~/facturacion/factura.aspx?fid={0}" FooterStyle-HorizontalAlign="Right" />
+            <asp:HyperLinkField HeaderText="Factura" SortExpression="factura" DataTextField="factura" DataNavigateUrlFields="factura" Target="_blank" DataNavigateUrlFormatString="~/facturacion/factura.aspx?fid={0}" FooterStyle-HorizontalAlign="Right" />
+            <asp:HyperLinkField HeaderText="Fecha" SortExpression="fecha" DataTextField="fecha" DataNavigateUrlFields="factura" Target="_blank" DataNavigateUrlFormatString="~/facturacion/factura.aspx?fid={0}" DataTextFormatString="{0:d}" />
+            <asp:BoundField HeaderText="Total facturado" SortExpression="valor" DataField="valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Total Valor Glosa" SortExpression="glosa" DataField="glosa" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Total Valor Glosa Aceptada" SortExpression="glosa_aceptada" DataField="glosa_aceptada" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Total Valor Glosa Soportada" SortExpression="glosa_soportado" DataField="glosa_soportado" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Servicios no facturados" SortExpression="nofacturado" DataField="nofacturado" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Factura sin seguimiento" SortExpression="sinseguimiento" DataField="sinseguimiento" />
             <asp:BoundField HeaderText="Glosa sin seguimiento" SortExpression="glosa_seg" DataField="glosa_seg" />
-            <asp:BoundField HeaderText="Glosas" SortExpression="causal_glosa" DataField="causal_glosa" HtmlEncode="false" ItemStyle-Wrap="false" />
-            <asp:BoundField HeaderText="Devolución" SortExpression="causal_devolucion" DataField="causal_devolucion" HtmlEncode="false" ItemStyle-Wrap="false" />
-            <asp:BoundField HeaderText="Valor devolución" SortExpression="devolucion" DataField="devolucion" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Causales de Glosa" SortExpression="causal_glosa" DataField="causal_glosa" HtmlEncode="false" ItemStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Valores de las causales de Glosa: desglosada por causal" SortExpression="valor_glosas" DataField="valor_glosas" HtmlEncode="false" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" FooterStyle-Wrap="false" />
+
+            <asp:BoundField HeaderText="Causales de devoluciones" SortExpression="causal_devolucion" DataField="causal_devolucion" HtmlEncode="false" ItemStyle-Wrap="false" />
         </Columns>
     </asp:GridView>
     <div align=right>
@@ -116,43 +116,51 @@
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT 
-                            facturacion_autorizacion.autorizacion
+                            GROUP_CONCAT(facturacion_autorizacion.autorizacion SEPARATOR '<br />') AS autorizacion
                             ,facturacion_autorizacion.factura
                             ,factura.fecha
                             ,factura.radicacion
-                            ,servicios.valor AS facturado
-                            ,SUM(facturacion_autorizacion_glosa.valor) AS glosa
-                            ,SUM(facturacion_autorizacion_glosa.valor_aceptado) AS glosa_aceptada
-                            ,SUM(facturacion_autorizacion_glosa.valor_soportado) AS glosa_soportado
-                            ,servicios.autorizado-servicios.cantidad AS nofacturado
-                            ,IF(SUM(facturacion_autorizacion_glosa.valor)>0 AND facturacion_autorizacion.glosa_conciliacion IS NULL, 'Si', 'No') AS glosa_seg
-                            ,GROUP_CONCAT(CONCAT(glosa.nombre,' ($',CAST(FORMAT(facturacion_autorizacion_glosa.valor,0) AS CHAR),')') SEPARATOR '<br />') AS causal_glosa
+                            ,factura.valor
+                            ,glosa.glosa
+                            ,glosa.glosa_aceptada
+                            ,glosa.glosa_soportado
+                            ,SUM(facturacion_autorizacion_servicio.autorizado)-SUM(facturacion_autorizacion_servicio.cantidad) AS nofacturado
+                            ,IF(factura.radicacion IS NULL OR (factura.vencimiento>SYSDATE() AND factura.pago IS NULL),'Si', 'No') AS sinseguimiento
+                            ,IF(IFNULL(glosa.glosa, 0)>0 AND facturacion_autorizacion.glosa_conciliacion IS NULL, 'Si', 'No') AS glosa_seg
+                            ,glosa.causal_glosa
+                            ,glosa.valor_glosas
                             ,devolucion.nombre AS causal_devolucion
-                            ,devolucion.valor AS devolucion
-                            FROM facturacion_autorizacion
-                            LEFT JOIN factura ON (facturacion_autorizacion.factura=factura.factura)
-                            LEFT JOIN (SELECT autorizacion,SUM(valor) AS valor,SUM(cantidad) AS cantidad,SUM(autorizado) AS autorizado 
-                                        FROM facturacion_autorizacion_servicio 
-                                        GROUP BY autorizacion) AS servicios 
-                                            ON (servicios.autorizacion=facturacion_autorizacion.autorizacion)
-                            LEFT JOIN facturacion_autorizacion_glosa ON (facturacion_autorizacion.autorizacion=facturacion_autorizacion_glosa.autorizacion)
+                            FROM factura
+                            LEFT JOIN facturacion_autorizacion ON (facturacion_autorizacion.factura=factura.factura)
+							LEFT JOIN facturacion_autorizacion_servicio ON (facturacion_autorizacion_servicio.autorizacion=facturacion_autorizacion.autorizacion)
                             LEFT JOIN (
-                                SELECT factura_devolucion.factura,SUM(factura_causal_devolucion.valor) AS valor,GROUP_CONCAT(CONCAT(devolucion.nombre,' ($',CAST(FORMAT(factura_causal_devolucion.valor,0) AS CHAR),')') SEPARATOR '<br />') AS nombre 
+                                SELECT 
+                                    factura_glosa.factura
+                                    ,SUM(factura_glosa.valor) AS glosa
+			                        ,SUM(factura_glosa.valor_aceptado) AS glosa_aceptada
+			                        ,SUM(factura_glosa.valor_soportado) AS glosa_soportado
+			                        ,GROUP_CONCAT(glosa.nombre SEPARATOR '<br />') AS causal_glosa
+			                        ,GROUP_CONCAT(CONCAT('$', FORMAT(factura_glosa.valor, 0)) SEPARATOR '<br />') AS valor_glosas
+									        FROM factura_glosa
+									        LEFT JOIN varios AS glosa ON (glosa.id=factura_glosa.causal)
+									        GROUP BY factura_glosa.factura
+							) AS glosa ON (glosa.factura=factura.factura)
+                            LEFT JOIN (
+                                SELECT factura_devolucion.factura,GROUP_CONCAT(devolucion.nombre SEPARATOR '<br />') AS nombre 
                                     FROM factura_devolucion 
                                     LEFT JOIN factura_causal_devolucion ON (factura_causal_devolucion.factura_devolucion=factura_devolucion=id)
                                     LEFT JOIN varios AS devolucion ON (factura_causal_devolucion.causal=devolucion.id)
                                     GROUP BY factura
                             ) AS devolucion ON (devolucion.factura=facturacion_autorizacion.factura)
-                            -- factura_devolucion ON (facturacion_autorizacion.factura=factura_devolucion.factura)
-                            LEFT JOIN varios AS glosa ON (facturacion_autorizacion_glosa.causal=glosa.id)
+
                             WHERE 
-                            DATE(fecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                            DATE(factura.fecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                             AND (@asegurador=0 OR facturacion_autorizacion.entidad=@asegurador)
-                            AND EXISTS (SELECT 1 FROM facturacion_autorizacion_servicio WHERE facturacion_autorizacion.autorizacion=facturacion_autorizacion_servicio.autorizacion 
+                            /*AND EXISTS (SELECT 1 FROM facturacion_autorizacion_servicio WHERE facturacion_autorizacion.autorizacion=facturacion_autorizacion_servicio.autorizacion 
                                     AND (@procedimiento=0 OR facturacion_autorizacion_servicio.procedimiento=@procedimiento)
                                     AND ('@area'='0' OR facturacion_autorizacion_servicio.procedimiento IN (@area))
-                            )
-                            GROUP BY facturacion_autorizacion.autorizacion
+                            )*/
+                            GROUP BY factura.factura
                             ORDER BY factura.fecha
                             ">
                  <SelectParameters>
@@ -160,6 +168,7 @@
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
+                     <asp:ControlParameter ControlID="DArea" Name="area" PropertyName="SelectedValue" />
                  </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

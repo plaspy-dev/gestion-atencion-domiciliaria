@@ -20,7 +20,7 @@
     
     addFunctionToStart(function() {
         
-        $("#<%= TValor.ClientID %>").change(function() {
+        /*$("#<%= TValor.ClientID %>").change(function() {
 
             var total = $(this).autoNumeric('get');
             $("#vpagado").each(function() {
@@ -32,7 +32,7 @@
             $("#<%= TAbono.ClientID %>").val(total);
             $("#<%= TAbono.ClientID %>").autoNumeric('set', total);
             Calcular();
-        });
+        });*/
         $("#<%= TAbono.ClientID %>").change(Calcular);
         Calcular();
 

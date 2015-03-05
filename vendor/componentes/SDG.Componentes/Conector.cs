@@ -1,5 +1,4 @@
 using System;
-using System.Configuration;
 using System.IO;
 using System.Reflection;
 using System.ServiceModel;
@@ -13,8 +12,6 @@ namespace SDG.Componentes;
 
 public class Conector : IDisposable
 {
-	private static bool bGetKey;
-
 	protected string _LastError;
 
 	protected bool m_bTransaccion;
@@ -141,7 +138,7 @@ public class Conector : IDisposable
 		}
 		string text2 = text;
 		text = text2 + "\r\n" + _LastError + "\r\n" + CurrentQuery;
-		Logs.WriteLog(text);
+		Logs.WriteClassLog(text);
 		try
 		{
 			Page page = (Page)HttpContext.Current.Handler;
@@ -161,7 +158,7 @@ public class Conector : IDisposable
 
 	protected bool IsConect()
 	{
-		if (m_pSQLConector == null && GetKey())
+		if (m_pSQLConector == null)
 		{
 			string connectionString = ConnectionString;
 			try
@@ -485,58 +482,5 @@ public class Conector : IDisposable
 		bool result = QueryMod("COMMIT;") != -1;
 		CloseAll();
 		return result;
-	}
-
-	private static bool GetKey()
-	{
-#if ENABLE_LICENSE_CHECK
-		string licenseSeed = Environment.GetEnvironmentVariable("ARCHIVED_DOMAIN_LICENSE_SEED");
-		if (String.IsNullOrEmpty(licenseSeed)) return false;
-		if (bGetKey)
-		{
-			return true;
-		}
-		try
-		{
-			string[] array = null;
-			string text;
-			if (HttpContext.Current == null)
-			{
-				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
-				if (text == "localhost")
-				{
-					return true;
-				}
-			}
-			else
-			{
-				if (HttpContext.Current.Request.Url.Host == "localhost")
-				{
-					return true;
-				}
-				if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["DomainKey"]))
-				{
-					return false;
-				}
-				text = HttpContext.Current.Request.Url.Host;
-			}
-			array = ConfigurationManager.AppSettings["DomainKey"].Split(';');
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
-				{
-					bGetKey = true;
-					return true;
-				}
-			}
-			return false;
-		}
-		catch
-		{
-		}
-		return false;
-#else
-		return true;
-#endif
 	}
 }

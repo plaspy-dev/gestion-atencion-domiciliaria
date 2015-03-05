@@ -1,11 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.ServiceModel;
-using System.Web;
 using MySql.Data.Types;
 
 namespace SDG.Componentes;
@@ -13,8 +8,6 @@ namespace SDG.Componentes;
 [Serializable]
 public class Query
 {
-	private static bool bGetKey;
-
 	protected string m_szTabla;
 
 	protected Dictionary<string, string> dCampos;
@@ -49,12 +42,9 @@ public class Query
 
 	public Query(string tabla)
 	{
-		if (new Random().Next(10) != 2 || GetKey())
-		{
-			m_szTabla = tabla;
-			dCampos = new Dictionary<string, string>();
-			dQuoted = new Dictionary<string, bool>();
-		}
+		m_szTabla = tabla;
+		dCampos = new Dictionary<string, string>();
+		dQuoted = new Dictionary<string, bool>();
 	}
 
 	public string GetTabla()
@@ -64,10 +54,7 @@ public class Query
 
 	public void SetTabla(string tabla)
 	{
-		if (new Random().Next(10) != 3 || GetKey())
-		{
-			m_szTabla = tabla;
-		}
+		m_szTabla = tabla;
 	}
 
 	public static Query operator +(Query query, string valor)
@@ -202,12 +189,7 @@ public class Query
 		return text + ");";
 	}
 
-	public string GetSelect(string condicion, params object[] args)
-	{
-		return GetSelect(condicion, "", args);
-	}
-
-	public string GetSelect(string condicion, string join, params object[] args)
+	public string GetSelect(string condicion, string join = null, params object[] args)
 	{
 		if (dCampos.Count == 0)
 		{
@@ -258,12 +240,7 @@ public class Query
 		return text;
 	}
 
-	public static string GetMySQLDateFormat(DateTime fecha)
-	{
-		return GetMySQLDateFormat(fecha, horas: false);
-	}
-
-	public static string GetMySQLDateFormat(DateTime fecha, bool horas)
+	public static string GetMySQLDateFormat(DateTime fecha, bool horas = false)
 	{
 		string text = fecha.ToString("yyyy-MM-dd");
 		if (horas)
@@ -273,19 +250,18 @@ public class Query
 		return text;
 	}
 
-	public static string GetMySQLDateFormat(string text)
-	{
-		return GetMySQLDateFormat(text, horas: false);
-	}
-
-	public static string GetMySQLDateFormat(string text, bool horas)
+	public static string GetMySQLDateFormat(string text, bool horas = false)
 	{
 		try
 		{
-			return GetMySQLDateFormat(Convert.ToDateTime(text), horas);
+			if (!string.IsNullOrEmpty(text))
+			{
+				return GetMySQLDateFormat(Convert.ToDateTime(text), horas);
+			}
 		}
 		catch
 		{
+			Logs.WriteClassLog(text);
 		}
 		return "";
 	}
@@ -294,15 +270,19 @@ public class Query
 	{
 		try
 		{
-			return DateTime.ParseExact(fecha, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+			if (!string.IsNullOrEmpty(fecha))
+			{
+				return DateTime.ParseExact(fecha, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+			}
 		}
 		catch
 		{
+			Logs.WriteClassLog(fecha);
 		}
 		return DateTime.MinValue;
 	}
 
-	public static string GetFromMySQLDate(object fecha, bool horas)
+	public static string GetFromMySQLDate(object fecha, bool horas = false)
 	{
 		try
 		{
@@ -317,11 +297,6 @@ public class Query
 		{
 		}
 		return "";
-	}
-
-	public static string GetFromMySQLDate(object fecha)
-	{
-		return GetFromMySQLDate(fecha, horas: false);
 	}
 
 	public static string TryGetCurrency(string valor)
@@ -367,58 +342,5 @@ public class Query
 		{
 		}
 		return "";
-	}
-
-	private static bool GetKey()
-	{
-#if ENABLE_LICENSE_CHECK
-		string licenseSeed = Environment.GetEnvironmentVariable("ARCHIVED_DOMAIN_LICENSE_SEED");
-		if (String.IsNullOrEmpty(licenseSeed)) return false;
-		if (bGetKey)
-		{
-			return true;
-		}
-		try
-		{
-			string[] array = null;
-			string text;
-			if (HttpContext.Current == null)
-			{
-				text = ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.Host : Path.GetFileName(Assembly.GetEntryAssembly().Location));
-				if (text == "localhost")
-				{
-					return true;
-				}
-			}
-			else
-			{
-				if (HttpContext.Current.Request.Url.Host == "localhost")
-				{
-					return true;
-				}
-				if (string.IsNullOrEmpty(ConfigurationManager.AppSettings["DomainKey"]))
-				{
-					return false;
-				}
-				text = HttpContext.Current.Request.Url.Host;
-			}
-			array = ConfigurationManager.AppSettings["DomainKey"].Split(';');
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (Crypt.GetMD5(Crypt.Encriptar3DES(text.PadRight(29, 'x').PadRight(37, '?').Replace("x", ";"), licenseSeed.Replace("2", "1").Replace("2", "6"))) == array[i])
-				{
-					bGetKey = true;
-					return true;
-				}
-			}
-			return false;
-		}
-		catch
-		{
-		}
-		return false;
-#else
-		return true;
-#endif
 	}
 }

@@ -58,6 +58,7 @@ public partial class programacion_programacion : System.Web.UI.Page
                 {
                     conector.Query("DELETE FROM programacion WHERE prgId=" + GProgramacion.DataKeys[i].Values["prgId"].ToString());
                     Funcionario.RebuildDirectorio(conector, GProgramacion.DataKeys[i].Values["perId"].ToString());
+                    Autorizaciones.UpdateSesiones(conector, GProgramacion.DataKeys[i].Values["autNumero"].ToString());
                 }
             }
             conector.Commit();
@@ -140,7 +141,10 @@ public partial class programacion_programacion : System.Web.UI.Page
 
     protected void GProgramacion_RowDeleted(object sender, GridViewDeletedEventArgs e)
     {
-        using(CConector conector= new CConector())
+        using (CConector conector = new CConector())
+        {
             Funcionario.RebuildDirectorio(conector, e.Keys["perId"].ToString());
+            Autorizaciones.UpdateSesiones(conector, e.Keys["autNumero"].ToString());
+        }
     }
 }

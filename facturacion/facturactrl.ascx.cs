@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 using MySql.Data.MySqlClient;
 using System.Globalization;
 using FileHelpers;
@@ -113,24 +114,6 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
             return;
         }
 
-        // verificamos que no se cargue el mismo servicio a dos items.
-        /*for (int i = 0; i < GDetalle.Rows.Count; i++)
-        {
-            DropDownList drop = (DropDownList)GDetalle.Rows[i].FindControl("A");
-            if (drop.SelectedValue.Length == 0)
-                continue;
-            for (int j = i + 1; j < GDetalle.Rows.Count; j++)
-            {
-                DropDownList drop2 = (DropDownList)GDetalle.Rows[j].FindControl("A");
-                if (drop.SelectedValue == drop2.SelectedValue)
-                {
-                    LMensaje.Text = "Procedimiento duplicado en líneas " + (i + 1) + " y " + (j + 1);
-                    drop2.Focus();
-                    return;
-                }
-            }
-        }*/
-
         List<SIIGOFile> lista = (List<SIIGOFile>)ViewState["lista"];
         SIIGOFile factura = lista.Find(x => x.Documento.ToString() == HFactura.Value && x.TipoDocumentoCruze == "F" && x.DebitoCredito == "D");
         if (factura == null)
@@ -150,6 +133,7 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
             query["factura"] = factura.Documento.ToString();
             FixedFileEngine engine = new FixedFileEngine(typeof(SIIGOFile));
             query["importacion"] = engine.WriteString(lista);
+            query["valor"] = lista.Sum(x => x.ValorMovimiento).ToString(CultureInfo.InvariantCulture);
 
             if (conector.QueryMod(query.GetUpdate("factura=" + Query.GetValor(factura.Documento.ToString()))) == -1)
                 return;
@@ -238,14 +222,18 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
             BCancelarClicked(sender, e);
     }
 
-    public void SetFactura(int NumeroFactura, List<SIIGOFile> lista) {
+    public void SetFactura(int NumeroFactura, List<SIIGOFile> lista, bool existe=false) {
 
         ViewState.Clear(); // limpiamos todo el viewstate
         GAutorizacion.DataBind();
         HAutorizaciones.Value = "";
         TAutorizacion.Text = TAutorizacionID.Text = "";
         TRadicacion.Text = TVencimientoF.Text = TDevolucion.Text = TPago.Text = "";
+        PDevolucion.Visible = false;
+        PDevoluciones.Visible = LDevolucion.Visible = TDevolucion.Visible = existe;
+        LFactura.Visible = !existe;
 
+        decimal valor = lista.Sum(x=>x.ValorMovimiento);
         lista = lista.Where(x => x.Documento == NumeroFactura).ToList(); // limpiamos y solo dejamos el que necesitamos
         HFactura.Value= NumeroFactura.ToString();
         ViewState["lista"] = lista;
@@ -258,6 +246,7 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
             Query query = new Query("facturacion_autorizacion");
 
             query += "autorizacion";
+            query += "glosa_conciliacion";
 
             MySqlDataReader reader = conector.Query(query.GetSelect("factura=" + Query.GetValor(factura.Documento.ToString())));
             if (reader != null)
@@ -265,6 +254,7 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
                 while (reader.Read())
                 {
                     TAutorizacionID.Text = reader["autorizacion"].ToString();
+                    TConciliacion.Text= Query.GetFromMySQLDate(reader["glosa_conciliacion"]);
                     BAdd_Clicked(null, null);
                 }
             }
@@ -281,7 +271,7 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
                 TRadicacion.Text = Query.GetFromMySQLDate(reader["radicacion"]);
                 TVencimientoF.Text = Query.GetFromMySQLDate(reader["vencimiento"]);
                 TPago.Text = Query.GetFromMySQLDate(reader["pago"]);
-
+                PGlosa.Visible = TPago.Text.Length > 0;
                 ViewState["factura"] = NumeroFactura.ToString();
             }
 
@@ -298,7 +288,6 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
 
             foreach (Autorizaciones autorizacion in autorizaciones)
             {
-
                 reader = conector.Query(query.GetSelect("autorizacion=" + Query.GetValor(autorizacion.Autorizacion)));
                 if (reader != null)
                 {
@@ -311,14 +300,27 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
             }
         }
 
-        GDetalle.DataSource = lista.Where(x => x.Documento == factura.Documento && x.DebitoCredito == "C" && x.Cantidad != 0).ToList();
+        lista=  lista.Where(x => x.Documento == factura.Documento && x.DebitoCredito == "C" && x.Cantidad != 0).ToList();
+        GDetalle.DataSource = lista;
         GDetalle.DataBind();
-        LFactura.Text = "Factura No. " + factura.Documento + " del " + factura.Fecha.ToShortDateString();
+
+        if (GDetalle.FooterRow != null) {
+
+            GDetalle.FooterRow.Cells[GDetalle.GetGridColumnIndex("Cantidad")].Text = lista.Sum(x => x.Cantidad).ToString();
+            GDetalle.FooterRow.Cells[GDetalle.GetGridColumnIndex("Valor")].Text= lista.Sum(x=>x._ValorMovimiento).ToString("C0");
+            GDetalle.FooterRow.Cells[GDetalle.GetGridColumnIndex("Descripción")].Text = lista.Count.ToString();
+        }
+
+        LFecha.Text = factura.Fecha.ToShortDateString();
+        LValor.Text = string.Format("{0:C0}", valor);
+
+        LFactura.Text = "Factura No. " + factura.Documento;
     }
 
     protected void BD_OnClicked(object sender, EventArgs e)
     {
         PDevolucion.Visible = TDevolucion.Text.Length > 0;
+        PGlosa.Visible = TPago.Text.Length > 0;
         BADevolucion.Enabled = Usuario.GetInstance().CanInsert();
     }
 
@@ -365,8 +367,6 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
                 if (((CheckBox)row.FindControl("CC")).Checked)
                 {
                     query["causal"] = GDevolucion.DataKeys[row.RowIndex].Value.ToString();
-                    query["valor"] = ((TextBox)row.FindControl("TV")).Text.Replace("$", "").Replace(",", "");
-
                     if (conector.QueryMod(query.GetInsert()) == -1)
                         return;
                 }
@@ -406,8 +406,8 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
 
         ViewState["radicacion"] = TRadicacion.Text;
 
-        TRadicacion.Text = Utilidades.GetGridCellText(GDevoluciones, "Radicación", GDevoluciones.SelectedIndex);
-        TDevolucion.Text = Utilidades.GetGridCellText(GDevoluciones, "Devolución", GDevoluciones.SelectedIndex);
+        TRadicacion.Text = GDevoluciones.GetGridCellText("Radicación", GDevoluciones.SelectedIndex);
+        TDevolucion.Text = GDevoluciones.GetGridCellText("Devolución", GDevoluciones.SelectedIndex);
         BD_OnClicked(sender, e);
     }
 }

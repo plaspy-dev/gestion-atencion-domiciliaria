@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
+using SDG.Web.UI.WebControls;
 
 public partial class eventos_Default : System.Web.UI.Page
 {
@@ -61,12 +62,12 @@ public partial class eventos_Default : System.Web.UI.Page
     {
         BAceptar.Enabled = Usuario.GetUsuario().CanUpdate();
 
-        TNombre.Text = Utilidades.GetGridCellText(GContacto, "Nombre", GContacto.SelectedIndex);
-        TEntidad.Text = Utilidades.GetGridCellText(GContacto, "Organización", GContacto.SelectedIndex);
-        TTelefono.Text = Utilidades.GetGridCellText(GContacto, "Teléfono móvil", GContacto.SelectedIndex);
-        TEmail.Text = Utilidades.GetGridCellText(GContacto, "Correo electrónico", GContacto.SelectedIndex);
-        TTelTrabajo.Text=  Utilidades.GetGridCellText(GContacto, "Teléfono trabajo", GContacto.SelectedIndex);
-        TCargo.Text = Utilidades.GetGridCellText(GContacto, "Cargo", GContacto.SelectedIndex);
+        TNombre.Text = GContacto.GetGridCellText("Nombre", GContacto.SelectedIndex);
+        TEntidad.Text = GContacto.GetGridCellText("Organización", GContacto.SelectedIndex);
+        TTelefono.Text = GContacto.GetGridCellText("Teléfono móvil", GContacto.SelectedIndex);
+        TEmail.Text = GContacto.GetGridCellText("Correo electrónico", GContacto.SelectedIndex);
+        TTelTrabajo.Text = GContacto.GetGridCellText("Teléfono trabajo", GContacto.SelectedIndex);
+        TCargo.Text = GContacto.GetGridCellText("Cargo", GContacto.SelectedIndex);
 
         ((MasterPageI)Master).SetModificacion(GContacto.SelectedDataKey.Value.ToString());
     }
