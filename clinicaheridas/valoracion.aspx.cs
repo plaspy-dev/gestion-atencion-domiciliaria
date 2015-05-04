@@ -766,42 +766,42 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         ViewState["idherida"] = info.Id;
 
         Utilidades.SelectInDropDown(DLocalizacion, info.query["localizacion"]);
-        try { RLocalizacion2.SelectedValue = info.query["localizacion2"]; } catch { }
-        try { RLocalizacion3.SelectedValue = info.query["localizacion3"]; } catch { }
-        try { RMI.SelectedValue = info.query["mi"]; } catch { }
-        try { RPies.SelectedValue = info.query["pies"]; } catch { }
-        TUbicacionEspecifica.Text = info.query["ubicacion_especifica"];
+        try { RLocalizacion2.SelectedValue = info.query["localizacion2"].ToString(); } catch { }
+        try { RLocalizacion3.SelectedValue = info.query["localizacion3"].ToString(); } catch { }
+        try { RMI.SelectedValue = info.query["mi"].ToString(); } catch { }
+        try { RPies.SelectedValue = info.query["pies"].ToString(); } catch { }
+        TUbicacionEspecifica.Text = info.query["ubicacion_especifica"].ToString();
         Utilidades.SelectInDropDown(DEtiologia, info.query["etiologia"]);
-        TOtroEtiologia.Text = info.query["etiologia_otro"];
+        TOtroEtiologia.Text = info.query["etiologia_otro"].ToString();
         Utilidades.SelectInDropDown(DClasificacion, info.query["clasificacion"]);
-        TFactoresRiesgo.Text = info.query["factores_riesgo"];
-        TLongitud.Text = info.query["longitud"];
-        TAnchura.Text = info.query["anchura"];
-        TProfunidad.Text = info.query["profundidad"];
-        CTunelizacion.Checked = info.query["tunelizacion"] == "" ? false : true;
-        TTunelizacion.Text = info.query["tunelizacion"];
-        TCavidad.Text = info.query["cavidad"];
-        TBolsilloProfundidad.Text = info.query["bolsillo_tamano"];
-        TBolsilloUbicacion.Text = info.query["bolsillo_ubicacion"];
+        TFactoresRiesgo.Text = info.query["factores_riesgo"].ToString();
+        TLongitud.Text = info.query["longitud"].ToString();
+        TAnchura.Text = info.query["anchura"].ToString();
+        TProfunidad.Text = info.query["profundidad"].ToString();
+        CTunelizacion.Checked = info.query["tunelizacion"].ToString() == "" ? false : true;
+        TTunelizacion.Text = info.query["tunelizacion"].ToString();
+        TCavidad.Text = info.query["cavidad"].ToString();
+        TBolsilloProfundidad.Text = info.query["bolsillo_tamano"].ToString();
+        TBolsilloUbicacion.Text = info.query["bolsillo_ubicacion"].ToString();
         CBolsillo.Checked = TBolsilloProfundidad.Text.Length > 0;
-        try { RTipoTejido.SelectedValue = info.query["tipo_tejido"]; } catch { }
-        TCompacto.Text = info.query["compacto"];
-        TDeFibrina.Text = info.query["fibrina"];
-        TEpitelizacion.Text = info.query["epitelizacion"];
-        TEscara.Text = info.query["escara"];
-        TGranulacion.Text = info.query["granulacion"];
-        THiperGranulacion.Text = info.query["hipergranulacion"];
-        TLimpio.Text = info.query["limpio"];
-        TNecrosis.Text = info.query["necrosis"];
+        try { RTipoTejido.SelectedValue = info.query["tipo_tejido"].ToString(); } catch { }
+        TCompacto.Text = info.query["compacto"].ToString();
+        TDeFibrina.Text = info.query["fibrina"].ToString();
+        TEpitelizacion.Text = info.query["epitelizacion"].ToString();
+        TEscara.Text = info.query["escara"].ToString();
+        TGranulacion.Text = info.query["granulacion"].ToString();
+        THiperGranulacion.Text = info.query["hipergranulacion"].ToString();
+        TLimpio.Text = info.query["limpio"].ToString();
+        TNecrosis.Text = info.query["necrosis"].ToString();
         Utilidades.SelectInDropDown(DSeleccione, info.query["seleccion_tejido"]);
         Utilidades.SelectInDropDown(DExudado, info.query["exudado"]);
         Utilidades.SelectInDropDown(DTipoExudado, info.query["tipo_exudado"]);
         Utilidades.SelectInDropDown(DPielCircundante, info.query["piel_circundante"]);
         Utilidades.SelectInDropDown(DBordesHerida, info.query["bordes_herida"]);
         Utilidades.SelectInDropDown(DOlor, info.query["olor"]);
-        TOlorDescripcion.Text = info.query["olor_descripcion"];
+        TOlorDescripcion.Text = info.query["olor_descripcion"].ToString();
         Utilidades.SelectInDropDown(DSignosSintomas, info.query["signos_sintomas"]);
-        TComplicaciones.Text = info.query["exudado_complicacion"];
+        TComplicaciones.Text = info.query["exudado_complicacion"].ToString();
         CComplicaciones.Checked = TComplicaciones.Text.Length > 0;
         Utilidades.SelectInDropDown(DDefina, info.query["exudado_definicion"]);
 

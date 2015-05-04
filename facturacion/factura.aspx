@@ -8,7 +8,7 @@
     <tr>
         <td>Numero</td>
         <td colspan="3"><asp:TextBox runat="server" CssClass="entero" ID="TFactura"></asp:TextBox>
-        <asp:Button runat="server" ID="BBuscar" OnClick="BBuscar_Click" Text="Buscar" /></td>
+        <asp:Button runat="server" ID="BBuscar" OnClick="BBuscar_Click" Text="Buscar" CausesValidation="false" /></td>
     </tr>
     <uc:Factura runat="server" ID="UCFactura" Visible="false" OnBCancelarClicked="BCancelar_Clicked" />
 </table>

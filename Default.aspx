@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Administrador de Servicios Médicos Gestión de atención domiciliaria::Inicio</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery-1.7.2.min.js"></script>
     <link href="css/estilo.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript">

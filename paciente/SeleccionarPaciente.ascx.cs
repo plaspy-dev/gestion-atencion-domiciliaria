@@ -26,10 +26,6 @@ public partial class paciente_SeleccionarPaciente : System.Web.UI.UserControl
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
-        {
-            Usuario usuario = Usuario.GetUsuario();
-            ViewState["entidades"] = usuario["entidades"];
             TPaciente.Focus();
-        }
     }
 }

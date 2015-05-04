@@ -15,17 +15,10 @@ public partial class directorio_Default : System.Web.UI.Page
         Procedimientos.SetCargos(SResultados, "per.carId");
         Procedimientos.SetCargos(SCargo, "carId");
         
-        if (Request.QueryString["fiid"] != null)
-        {
-            Session["directorioid"] = Request.QueryString["fiid"];
-            Response.Redirect(Request.Url.AbsolutePath);
-            return;
-        }
         if (!Usuario.GetUsuario().CanPrint())
             SResultados.SelectCommand += " LIMIT 5";
         if (IsPostBack)
         {
-            Session.Remove("directorioid");
             Conector.SetCookie("directorio_area", DArea.SelectedValue);
             Conector.SetCookie("directorio_estado", DEStado.SelectedValue);
             Conector.SetCookie("directorio_cargo", DCargo.SelectedValue);
@@ -33,10 +26,10 @@ public partial class directorio_Default : System.Web.UI.Page
         } 
         else
         {
-            if (Session["directorioid"] == null)
+            if (Request.QueryString["fiid"] != null)
             {
-                DEStado.DataBind();
-                DEStado.SelectedValue = "1";
+                TNombreID.Text = Request.QueryString["fiid"];
+                TNombres.Text = Funcionario.GetFuncionario(Request.QueryString["fiid"]).DocumentoYNombres;
             }
             Utilidades.SelectInDropDown(DArea, CConector.GetCookie("directorio_area"));
             Utilidades.SelectInDropDown(DEStado, (CConector.GetCookie("directorio_estado") == "" || CConector.GetCookie("directorio_estado") == "0") ? "1" : CConector.GetCookie("directorio_estado"));

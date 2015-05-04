@@ -20,85 +20,44 @@ public class imagen : IHttpHandler {
 
         string archivo = "";
         string tipo = context.Request.QueryString["t"];
-        switch (tipo) { 
-            case "v":
-                tipo = "valoracion";
-                break;
-            case "e":
-                tipo = "evolucion";
-                break;
-            case "r":
-                tipo = "rh";
-                break;
-            case "p":
-                tipo = "paciente";
-                break;
-            case "q":
-                tipo = "pqr";
-                break;
-            case "fe":
-                tipo = "evolucion";
-                string directorio = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo);
-                using (CConector conector = new CConector()) {
-                    MySqlDataReader reader = conector.Query("SELECT id FROM evolucion_herida WHERE id<={0} paciente={1} ORDER BY id DESC"
-                        , Query.GetValor(context.Request.QueryString["i"])
-                        , Query.GetValor(context.Request.QueryString["p"]));
-                    if (reader != null) {
-                        while (reader.Read()) {
-                            archivo = Path.Combine(directorio, reader["id"].ToString(), context.Request.QueryString["hi"]);
-                            try
+        if (context.Request.QueryString["t"] == "fe") { 
+            tipo = "e";
+            string directorio = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo);
+            using (CConector conector = new CConector()) {
+                MySqlDataReader reader = conector.Query("SELECT id FROM evolucion_herida WHERE id<={0} paciente={1} ORDER BY id DESC"
+                    , Query.GetValor(context.Request.QueryString["i"])
+                    , Query.GetValor(context.Request.QueryString["p"]));
+                if (reader != null) {
+                    while (reader.Read()) {
+                        archivo = Path.Combine(directorio, reader["id"].ToString(), context.Request.QueryString["hi"]);
+                        try
+                        {
+                            int posicion = Convert.ToInt32(context.Request.QueryString["x"]);
+                            foreach (string file in Directory.GetFiles(archivo))
                             {
-                                int posicion = Convert.ToInt32(context.Request.QueryString["x"]);
-                                foreach (string file in Directory.GetFiles(archivo))
+                                posicion--;
+                                if (posicion == 0)
                                 {
-                                    posicion--;
-                                    if (posicion == 0)
-                                    {
-                                        context.Server.TransferRequest("~/archivo/imagen.ashx?p=" + context.Request.QueryString["p"] + "&i=" + context.Request.QueryString["i"] + "&hi=" + context.Request.QueryString["hi"] + "&w=150&h=150&x=1&t=e");
-                                        return;
-                                    }
+                                    context.Server.TransferRequest("~/archivo/imagen.ashx?p=" + context.Request.QueryString["p"] + "&i=" + context.Request.QueryString["i"] + "&hi=" + context.Request.QueryString["hi"] + "&w=150&h=150&x=1&t=e");
+                                    return;
                                 }
-                            } catch { //no existe el directorio
                             }
+                        } catch { //no existe el directorio
                         }
                     }
                 }
-                break;
+            }
         }
 
+        archivo = Archivo.GetFileName(tipo, context.Request.QueryString["i"], context.Request.QueryString["n"], context.Request.QueryString["p"], context.Request.QueryString["hi"], context.Request.QueryString["x"], context.Request.QueryString["d"]);
+        if(string.IsNullOrEmpty(archivo))
+            throw new HttpException(404, "Page not found");
+        
         context.Response.ContentType = "image/jpeg";
         if (string.IsNullOrEmpty(context.Request.QueryString["a"]))
             context.Response.AddHeader("Content-Disposition", "inline;filename=" + context.Request.QueryString["n"]);
         else context.Response.AddHeader("Content-Disposition", "attachment;filename=" + context.Request.QueryString["n"]);
-        
-        archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo);
-        if (context.Request.QueryString["d"] == "True")
-        {
-            archivo = Path.Combine(archivo, "temp");
-            archivo = Path.Combine(archivo, context.Request.QueryString["p"]);
-        } else if(!string.IsNullOrEmpty(context.Request.QueryString["i"]))
-            archivo = Path.Combine(archivo, context.Request.QueryString["i"]);
-        if(!string.IsNullOrEmpty(context.Request.QueryString["hi"]))
-            archivo = Path.Combine(archivo, context.Request.QueryString["hi"]);
-        if (!string.IsNullOrEmpty(context.Request.QueryString["x"])) {
-            try
-            {
-                int posicion = Convert.ToInt32(context.Request.QueryString["x"]);
-                foreach (string file in Directory.GetFiles(archivo))
-                {
-                    posicion--;
-                    if (posicion == 0)
-                    {
-                        archivo = file;
-                        break;
-                    }
-                }
-            } catch { //no existe el directorio
-                throw new HttpException(404, "Page not found");
-            }
-        } else if (!string.IsNullOrEmpty(context.Request.QueryString["n"])) 
-            archivo = Path.Combine(archivo, context.Request.QueryString["n"]);
-        
+               
         if (File.Exists(archivo))
         {
             DateTime modificacion = File.GetLastWriteTimeUtc(archivo);

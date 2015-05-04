@@ -216,6 +216,7 @@
 							LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
                             WHERE 
                             DATE(programacion.prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                            AND programacion.prgActivo=1
 							AND ('@area'='0' OR programacion.actId IN (@area))
 							AND (@procedimiento=0 OR programacion.actId=@procedimiento)
 							AND ('@categoria'='0' OR programacion.actId IN (@categoria))
@@ -237,6 +238,7 @@
                                 LEFT JOIN paciente ON (paciente.pacId=programacion.pacId)
                                 WHERE 
                                 prgFechaProg BETWEEN STR_TO_DATE(@inicio,'%d/%m/%Y') AND STR_TO_DATE(@fin,'%d/%m/%Y')
+                            AND programacion.prgActivo=1
                                 AND ('@area'='0' OR programacion.actId IN (@area))
                                 AND (@procedimiento=0 OR programacion.actId=@procedimiento)
                                 AND ('@categoria'='0' OR programacion.actId IN (@categoria))
@@ -257,6 +259,7 @@
                                 LEFT JOIN paciente ON (paciente.pacId=programacion.pacId)
                                 WHERE 
                                 prgFechaProg BETWEEN STR_TO_DATE(@inicio,'%d/%m/%Y') AND STR_TO_DATE(@fin,'%d/%m/%Y')
+                            AND programacion.prgActivo=1
                                 AND ('@area'='0' OR programacion.actId IN (@area))
                                 AND (@procedimiento=0 OR programacion.actId=@procedimiento)
                                 AND ('@categoria'='0' OR programacion.actId IN (@categoria))

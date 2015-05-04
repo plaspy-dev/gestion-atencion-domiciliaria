@@ -140,6 +140,11 @@ public partial class farmacia_informes : System.Web.UI.Page
                             salida.DescripcionDelMovimiento = "R" + salida.Documento + " " + salida.DescripcionDelMovimiento;
                             salidaCosto.DescripcionDelMovimiento = salida.DescripcionDelMovimiento;
 
+                            salida.Secuencia = salidas.Count(x => x.Documento == salida.Documento) + 1;
+
+                            if (salida.NIT == 0)
+                                salidaCosto.NIT= salida.NIT = NIT_OrganizationExample15;
+
                             lista.Add(salida);
 
                             // solo la segunda salida lleva el centro de costo.

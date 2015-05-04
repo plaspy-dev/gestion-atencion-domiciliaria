@@ -328,18 +328,20 @@ public class GridUtils
 		}
 	}
 
-	public static int GetRowsCount(GridView grid, Label label)
+	public static string GetLabelText(int total, string resultadoText = null, string resultadosText = null)
 	{
-		int rowsCount = GetRowsCount(grid);
-		label.Text = rowsCount + " Resultado";
-		if (rowsCount != 1)
+		if (string.IsNullOrEmpty(resultadoText))
 		{
-			label.Text += "s";
+			resultadoText = "Resultado";
 		}
-		return rowsCount;
+		if (string.IsNullOrEmpty(resultadosText))
+		{
+			resultadosText = "Resultados";
+		}
+		return $"{total} {((total == 1) ? resultadoText : resultadosText)}";
 	}
 
-	public static int GetRowsCount(GridView grid)
+	public static int GetRowsCount(GridView grid, Label label = null, string resultadoText = null, string resultadosText = null)
 	{
 		int num = 0;
 		try
@@ -358,7 +360,12 @@ public class GridUtils
 						}
 						DataView dataView = (DataView)sqlDataSource.Select(DataSourceSelectArguments.Empty);
 						DataTable table = dataView.Table;
-						return table.Rows.Count;
+						num = table.Rows.Count;
+						if (label != null)
+						{
+							label.Text = GetLabelText(num, resultadoText, resultadosText);
+						}
+						return num;
 					}
 				}
 			}
@@ -376,6 +383,10 @@ public class GridUtils
 		if (allowPaging)
 		{
 			grid.AllowPaging = true;
+		}
+		if (label != null)
+		{
+			label.Text = GetLabelText(num, resultadoText, resultadosText);
 		}
 		return num;
 	}

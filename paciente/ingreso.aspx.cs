@@ -128,10 +128,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
                             Utilidades.SelectInDropDown(DArea, readermysql["area_atencion"]);
                             TFechaSeguimiento.Text = Query.GetFromMySQLDate(readermysql["seguimiento"]);
                             TFecha.Text = Query.GetFromMySQLDate(readermysql["fecha"], true);
-                            TConductaInicial.Text = readermysql["conducta"].ToString().Trim();
+                            TConductaInicial.Text = HttpUtility.HtmlEncode(readermysql["conducta"].ToString().Trim());
                             if (TConductaInicial.Text.Length == 0)
                             {
-                                string procedimientos = Procedimientos.GetPlanDeManejo(conector, CCDetallePaciente.IdPaciente, TFecha.Text);
+                                string procedimientos = HttpUtility.HtmlEncode(Procedimientos.GetPlanDeManejo(conector, CCDetallePaciente.IdPaciente, TFecha.Text));
                                 if (procedimientos.Length > 0)
                                 {
                                     ViewState["procedimientos"] = procedimientos;
@@ -215,7 +215,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
             qIngreso["conducta"] =
                 (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TConductaInicial.Text.Trim() != ViewState["procedimientos"].ToString())
-                ? TConductaInicial.Text.Trim()
+                ? HttpUtility.HtmlDecode(TConductaInicial.Text.Trim())
                 : ""; // guardamos la conducta si es diferente a la inicial
 
             string szQuery;
@@ -643,7 +643,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             evento.Contenido = evento.Contenido.Replace("$szGinecologico$", "<strong>Examen ginecológico</strong>: " + ImprimirGridTipo1(GGinecologico));
         else evento.Contenido = evento.Contenido.Replace("$szGinecologico$", "");
 
-        evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + HttpUtility.HtmlEncode(TConductaInicial.Text).Replace("\n", "</li><li>") + "</li></ol>");
+        evento.Contenido = evento.Contenido.Replace("$szConductaInicial$", "<ol><li>" + TConductaInicial.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
         foreach (Calificacion.Escalas escala in (Calificacion.Escalas[])Enum.GetValues(typeof(Calificacion.Escalas)))

@@ -67,7 +67,7 @@ public partial class facturacion_facturactrl : System.Web.UI.UserControl
     {
 	DropDownList drop = (DropDownList)sender;
         drop.SelectedIndex = -1;
-        GridViewRow row = (GridViewRow)drop.Parent.Parent.Parent.Parent;
+        GridViewRow row = (GridViewRow)drop.Parent.Parent;
         string seleccion = null;
         try { seleccion = (string)ViewState[GDetalle.DataKeys[row.RowIndex].Values["_CodigoProducto"] + "_" + GDetalle.DataKeys[row.RowIndex].Values["Secuencia"]]; } catch { 
             if(row.DataItem!=null)

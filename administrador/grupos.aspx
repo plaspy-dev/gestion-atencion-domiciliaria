@@ -90,6 +90,13 @@
                             <asp:TextBox ID="TDescripcion" runat="server"></asp:TextBox>
                         </td>
                     </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <asp:CheckBoxList runat="server" ID="CPermisos" DataTextField="titulo" DataValueField="lectura">
+                            </asp:CheckBoxList>
+                        </td>
+                    </tr>
                     </table>
                         </td>
                     </tr>

@@ -47,6 +47,11 @@ public partial class administrador_grupos : System.Web.UI.Page
                 {*/
                 if (url.Parent=="__no__" || url.Parent.Length == 0)
                     continue;
+                if (url.Parent == "Permisos_Especiales")
+                {
+                    CPermisos.Items.Add(new ListItem(url.Titulo, url.URL));
+                    continue;
+                }
                 Parents padre=null;
                 for (int j = 0; j < parents.Count; j++ ) {
                     if((parents[j]).parent==url.Parent) {
@@ -104,10 +109,11 @@ public partial class administrador_grupos : System.Web.UI.Page
             if (conector.QueryMod("DELETE FROM permisos WHERE grupo='" + grupo + "'") == -1)
                 return;
 
+            Query permisos = new Query("permisos");
+
             for (int j = 0; j < R.Items.Count; j++)
             {
-                GridView grid = (GridView)R.Items[j].FindControl("P");
-                Query permisos = new Query("permisos");
+                GridView grid = (GridView)R.Items[j].FindControl("P");    
 
                 for (int i = 0; i < grid.Rows.Count; i++)
                 {
@@ -145,6 +151,24 @@ public partial class administrador_grupos : System.Web.UI.Page
                 }
             }
 
+            for (int i = 0; i < CPermisos.Items.Count; i++)
+            { // verificamos que sea un dia de las semana
+                if (!string.IsNullOrEmpty(Request.Form[CPermisos.UniqueID + "$" + i]))
+                    CPermisos.Items[i].Selected = true;
+            }
+
+            foreach (ListItem item in CPermisos.Items)
+            {
+                if (item.Selected)
+                {
+                    permisos["url"] = item.Value;
+                    permisos["permiso"] = "1";
+
+                    if (conector.QueryMod(permisos.GetInsert()) == -1)
+                        return;
+                }
+            }
+
             ((MasterPageI)Master).SetResultado(mensaje);
         }
     }
@@ -169,6 +193,8 @@ public partial class administrador_grupos : System.Web.UI.Page
         List<Parents> parents = new List<Parents>();
         List<CURLs> menu = Usuario.GetUsuario().GetFullMenu();
 
+        CPermisos.Items.Clear();
+
         for (int i = 0; i < menu.Count; i++)
         {
             CURLs url = menu[i];
@@ -176,6 +202,14 @@ public partial class administrador_grupos : System.Web.UI.Page
             {*/
             if (url.Parent == "__no__" || url.Parent.Length == 0)
                 continue;
+            if (url.Parent == "Permisos_Especiales")
+            {
+                ListItem item = new ListItem(url.Titulo, url.URL);
+                item.Selected = LGrupos.SelectedValue == "0";
+                CPermisos.Items.Add(item);
+                continue;
+            }
+
             Parents padre = null;
             for (int j = 0; j < parents.Count; j++)
             {
@@ -233,6 +267,10 @@ public partial class administrador_grupos : System.Web.UI.Page
                             if (info != null)
                             {
                                 info.SetPermisos(nPermisos);
+                            } else { // puede ser un permiso especial
+                                ListItem item = CPermisos.Items.FindByValue(url);
+                                if (item != null)
+                                    item.Selected = true;
                             }
                         }
                     }

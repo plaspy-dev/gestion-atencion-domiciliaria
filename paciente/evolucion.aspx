@@ -4,7 +4,7 @@
 <%@ Register Src="~/archivo/digitalizacionc.ascx" TagName="Digitalizacion" TagPrefix="uc6" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
+    <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
 <script type="text/javascript">
     var editor = null;
     addFunctionToStart(function() {
@@ -83,16 +83,6 @@
 
         FullRowSelect("#<%= GEvoluciones.ClientID %>");
 
-        /*if (!$.browser.msie || $.browser.version > 8)
-            $("input[name*=TObservaciones]").width("98%");
-        $(window).resize(function() {
-            $("input[name*=TObservaciones]").each(function() {
-                $(this).width($(this).parent().width() - 15);
-            });
-            $("input[name*=TObservaciones]").each(function() {
-                $(this).width($(this).parent().width() - 15);
-            });
-        });*/
         var length = tinyMCE.editors.length;
         for (var i=length; i>0; i--) {
             tinyMCE.editors[i-1].remove();
@@ -120,39 +110,39 @@
                     tinyMCE.triggerSave();
                     lim();
                 });
-            }
+                }
             ,paste_preprocess: function(pl, o) {
                 o.content = o.content.replace(/<\S[^><]*>/g, "");
             }
         });
-    });
+        });
     
-    function rel(text) {
-        text = text.replace(/\r/gi, '');
-        text = text.replace(/&nbsp;/gi, '');
-        while (text[0] == '\n') {
-            text = text.substring(1);
-        }
-        text = text.split('\n');
-        var szfinal = "";
-        for (x = 0; x < text.length; x++) {
-            text[x] = text[x].trim();
-            if (text[x].match(/[\S]/g) != null) {
-                if (szfinal.length)
-                    szfinal += "\n";
-                szfinal += text[x];
+        function rel(text) {
+            text = text.replace(/\r/gi, '');
+            text = text.replace(/&nbsp;/gi, '');
+            while (text[0] == '\n') {
+                text = text.substring(1);
             }
+            text = text.split('\n');
+            var szfinal = "";
+            for (x = 0; x < text.length; x++) {
+                text[x] = text[x].trim();
+                if (text[x].match(/[\S]/g) != null) {
+                    if (szfinal.length)
+                        szfinal += "\n";
+                    szfinal += text[x];
+                }
+            }
+            // text = text.join('\n').replace(/\n{2,}/g, '\n');
+            return szfinal;
         }
-        // text = text.join('\n').replace(/\n{2,}/g, '\n');
-        return szfinal;
-    }
 
-    function lim() {
-        var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
-        $("#<%= TPlanManejo.ClientID %>").val(limpio);
-        var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
-        editor.setContent(completa);
-    }
+        function lim() {
+            var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
+            $("#<%= TPlanManejo.ClientID %>").val(limpio);
+                var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
+                editor.setContent(completa);
+            }
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
@@ -260,25 +250,27 @@
             </tr>
             <tr>
                 <td>
-                    TA</td>
+                    TA<asp:RequiredFieldValidator ControlToValidate="TTA" ErrorMessage="Por favor ingrese una tension arterial." ID="RequiredFieldValidator6" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td>
                     <asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>mm/Hg</td>
                 <td>
-                    FC</td>
+                    FC<asp:RequiredFieldValidator ControlToValidate="TFC" ErrorMessage="Por favor ingrese una frecuencia cardiaca." ID="RequiredFieldValidator9" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td nowrap="nowrap">
                     <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>Lat/min</td>
             </tr>
             <tr>
                 <td>
-                    FR</td>
+                    FR<asp:RequiredFieldValidator ControlToValidate="TFR" ErrorMessage="Por favor ingrese una frecuencia respiratoria." ID="RequiredFieldValidator10" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td>
                     <asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>
                     Min</td>
                 <td>
                     T</td>
                 <td>
-                    <asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox>
-                    °</td>
+                    <asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox>°</td>
             </tr>
             <tr>
                 <td>
@@ -456,8 +448,7 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
                 </SelectParameters>
             </asp:SqlDataSource></td>
             </tr>
-            <asp:UpdatePanel runat="server" ID="PCIE10" UpdateMode="Conditional">
-            <ContentTemplate>
+            <asp:PlaceHolder runat="server" ID="PCIE10">
                 <tr>
                     <td colspan="4" class="celdaTitulo">Código de diagnóstico</td>
                 </tr>
@@ -498,8 +489,7 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
                     <asp:RequiredFieldValidator ControlToValidate="TCIE10" ValidationGroup="cie10" ErrorMessage="Por favor ingrese un CIE10." ID="RequiredFieldValidator14" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                     <asp:Button ID="BMasCDiagnostico" runat="server" OnClick="BMasCDiagnostico_Click" Text="+" ValidationGroup="cie10" /></td>
                 </tr>
-                </ContentTemplate>
-            </asp:UpdatePanel>
+            </asp:PlaceHolder>
             <tr>
                 <td colspan="4">Analisis<asp:RequiredFieldValidator ControlToValidate="TAnalisis" ErrorMessage="Por favor ingrese un análisis." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             </tr>

@@ -16,7 +16,7 @@ public class Query
 
 	public int Count => dCampos.Count;
 
-	public string this[string campo]
+	public object this[string campo]
 	{
 		get
 		{
@@ -31,10 +31,26 @@ public class Query
 		}
 		set
 		{
-			string text = ((value == null) ? "" : value);
+			string text = ((value == null) ? "" : value.ToString());
 			if (string.IsNullOrEmpty(campo))
 			{
 				campo = text;
+			}
+			else if (value is float num)
+			{
+				text = num.ToString(CultureInfo.InvariantCulture);
+			}
+			else if (value is double num2)
+			{
+				text = num2.ToString(CultureInfo.InvariantCulture);
+			}
+			else if (value is decimal num3)
+			{
+				text = num3.ToString(CultureInfo.InvariantCulture);
+			}
+			else if (value is DateTime)
+			{
+				text = GetMySQLDateFormat((DateTime)value);
 			}
 			dCampos[campo] = text;
 		}

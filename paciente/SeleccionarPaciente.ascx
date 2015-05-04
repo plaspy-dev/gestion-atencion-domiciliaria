@@ -6,7 +6,7 @@
             source: function(request, response) {
                 $.ajax({
                     url: <%= PacienteURL %>,
-                    data: "{ 'q': '" + request.term + "', 'e': '<%= ViewState["entidades"].ToString() %>' }",
+                    data: "{ 'q': '" + request.term + "', 'e': '<%= CUsuario.GetInstance()["entidades"] %>'}",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",

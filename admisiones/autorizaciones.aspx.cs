@@ -340,16 +340,23 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 return;
 
             // desactivamos pacientes que no tengan autorizaciones
-            if (conector.QueryMod(@"UPDATE paciente 
-                                    SET estId=2
-                                    WHERE 
-                                    paciente.estId=1
-                                    AND (SELECT MAX(IFNULL(autFechaVenc,autFecha+INTERVAL 1 MONTH)) FROM autorizacion WHERE pacId=paciente.pacId)<(SYSDATE()-INTERVAL 5 DAY)") == -1)
+            if (conector.QueryMod("SET @uids:='0'") == -1)
                 return;
 
+            // string ids1 = conector.QueryString("SELECT TRIM(LEADING ',' FROM @uids);");
+
+            if (conector.QueryMod(@"UPDATE paciente set estId=2
+                WHERE paciente.estId=1 
+                AND (SELECT MAX(IFNULL(autFechaVenc,autFecha+INTERVAL 1 MONTH)) FROM autorizacion WHERE pacId=paciente.pacId)<(SYSDATE()-INTERVAL 5 DAY)
+                AND CONCAT_WS(',', @uids, paciente.pacId)=(SELECT @uids := CONCAT_WS(',', @uids, paciente.pacId) )") == -1)
+                return;
+
+            string ids = conector.QueryString("SELECT @uids");
             Autorizaciones.UpdateSesiones(conector, HIdAutorizacion.Value);
             conector.Commit();
 
+            foreach (string pacienteId in ids.Split(',')) 
+                Paciente.RemovePaciente(pacienteId);
             Paciente.RemovePaciente(HIdPaciente.Value);
             Autorizaciones.RemoveAutorizaciones(HIdPaciente.Value);
         }

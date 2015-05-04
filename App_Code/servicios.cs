@@ -275,15 +275,25 @@ public class servicios : System.Web.Services.WebService
         return lista;
     }
 
-    [WebMethod]
+    [WebMethod(true)]
     public List<CJSon> GetPacienteI(String q, string e)
     {
         List<CJSon> lista = new List<CJSon>();
+        CUsuario usuario = (CUsuario)CUsuario.GetInstance();
+
+        string usuarioQuery = "";
+        if (usuario.GetPermisosRaiz("~/App_data/Paciente") == 0)
+        {
+            usuarioQuery = string.Format(@" AND (SELECT 1 FROM programacion 
+WHERE programacion.pacId=paciente.pacId AND programacion.prgFechaProg>SYSDATE()-INTERVAL 7 DAY AND programacion.perId={0}
+LIMIT 1)", Query.GetValor(usuario["personal"]));
+        }
 
         using (CConector conector = new CConector())
         {
             string query = "SELECT pacId id,pacDocumento AS documento, pacNombres AS nombres,EstId AS estado FROM paciente WHERE ";
             string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
+            string usuarioId = usuario.GetPermisosRaiz("~/App_data/Paciente") > 0 ? "" : usuario["personal"];
 
             // solo permitimos busquedas para los usuarios configurados
             if (!string.IsNullOrEmpty(e))
@@ -308,7 +318,8 @@ public class servicios : System.Web.Services.WebService
             }
             if (!string.IsNullOrEmpty(e))
                 query += ")";
-            query += ") ORDER BY EstId,nombres LIMIT 20";
+            query += ")" + usuarioQuery + " ORDER BY EstId,nombres LIMIT 20";
+
             MySqlDataReader reader = conector.Query(query);
             if (reader != null)
             {
@@ -324,11 +335,19 @@ public class servicios : System.Web.Services.WebService
         }
         return lista;
     }
-    [WebMethod]
+
+    [WebMethod(true)]
     // [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public List<CJSon> GetPaciente(String q, string e)
     {
         List<CJSon> lista = new List<CJSon>();
+        CUsuario usuario= (CUsuario)CUsuario.GetInstance();
+        string usuarioQuery="";
+        if (usuario.GetPermisosRaiz("~/App_data/Paciente")==0) {
+            usuarioQuery = string.Format(@" AND (SELECT 1 FROM programacion 
+WHERE programacion.pacId=paciente.pacId AND programacion.prgFechaProg>SYSDATE()-INTERVAL 7 DAY AND programacion.perId={0}
+LIMIT 1)", Query.GetValor(usuario["personal"]));
+        }
 
         string query = "SELECT pacId id,pacDocumento AS documento, pacNombres AS nombres FROM paciente WHERE EstId!=2";
         string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
@@ -356,7 +375,7 @@ public class servicios : System.Web.Services.WebService
             }
         }
 
-        query += ")) ORDER BY nombres LIMIT 20";
+        query += "))" + usuarioQuery + " ORDER BY nombres LIMIT 20";
 
         using (CConector conector = new CConector())
         {

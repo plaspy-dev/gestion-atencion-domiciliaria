@@ -73,7 +73,7 @@ function obs() {
     if (typeof this.ejecutar !== 'undefined') {
         if (typeof this.ejecutar === 'function')
             retorno = this.ejecutar();
-        else retorno = eval("(function(){" + this.ejecutar +"})");
+        else retorno = this.ejecutar.indexOf("return") == -1 ? eval(this.ejecutar) : eval("(function(){" + this.ejecutar + "})()");
     } else {
         return true;
     }
@@ -252,7 +252,7 @@ function restoreSummit() {
     return $(h).show();
 }
 
-function EndRequestHandler(sender, args) {
+/*function EndRequestHandler(sender, args) {
     //if UpdatePanel error occurs...
     if (args.get_error() != undefined) {
         var Error = "[Code]:" +
@@ -271,7 +271,7 @@ function EndRequestHandler(sender, args) {
 
 $(function() {
     Sys.WebForms.PageRequestManager.getInstance().add_endRequest(EndRequestHandler);
-});
+});*/
 
 $.fn.sortSelect = function() {
     var sel = this.val();

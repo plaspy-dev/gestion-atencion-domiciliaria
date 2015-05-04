@@ -219,6 +219,7 @@
                         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
+                            <asp:CommandField ButtonType="Image" ShowEditButton="true" EditImageUrl="~/imgs/edit.gif" />
                             <asp:TemplateField HeaderText="Acciones pendientes" ItemStyle-Width="100%">
                                 <ItemTemplate>
                                     <asp:LinkButton runat="server" ID="LDetalle" CommandName="Edit" Text='<%# Eval("sqrPendiente") %>'></asp:LinkButton>
@@ -282,7 +283,7 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2">
-                                        <asp:CustomValidator ClientValidationFunction="OnValidateClick" OnServerValidate="OnValidateSeguimiento" runat="server" ValidationGroup="seguimiento" ID="CVSeguimiento" ErrorMessage="Por favor seleccione se entrega una respuesta a quien interpuso la inconformidad y seleccione un archivo con la respuesta.">*</asp:CustomValidator>
+                                        <asp:CustomValidator ClientValidationFunction="OnValidateClick" Visible="false" OnServerValidate="OnValidateSeguimiento" runat="server" ValidationGroup="seguimiento" ID="CVSeguimiento" Display="Dynamic" ErrorMessage="Por favor seleccione se entrega una respuesta a quien interpuso la inconformidad y seleccione un archivo con la respuesta."></asp:CustomValidator>
                                     </td>
                                 </tr>
                                 <tr>

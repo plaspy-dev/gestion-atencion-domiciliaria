@@ -327,8 +327,8 @@ public partial class cliente_quejas : System.Web.UI.Page
 
     protected void BAceptarSeguimiento_Click(object sender, EventArgs e)
     {
-        if (!CVSeguimiento.IsValid)
-            return;
+        /*if (!CVSeguimiento.IsValid)
+            return;*/
 
         using (CConector conector = new CConector())
         {
@@ -350,8 +350,8 @@ public partial class cliente_quejas : System.Web.UI.Page
                 query["avances"] = TAvances.Text;
 
                 queja["qrCerrado"] = "1";
-                if (!FArchivo.HasFile)
-                    return;
+                /*if (!FArchivo.HasFile)
+                    return;*/
             }
 
             query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
@@ -368,7 +368,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                     Directory.CreateDirectory(ruta);
                     ruta = Path.Combine(ruta, HIdQuejas.Value);
                     Directory.CreateDirectory(ruta);
-                    ruta = Path.Combine(ruta, query["sqrId"]);
+                    ruta = Path.Combine(ruta, query["sqrId"].ToString());
                     Directory.CreateDirectory(ruta);
 
                     FArchivo.SaveAs(Path.Combine(ruta, FArchivo.FileName));

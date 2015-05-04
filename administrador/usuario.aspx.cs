@@ -99,7 +99,6 @@ public partial class administrador_usuario : System.Web.UI.Page
             }
             query["entidades"] = entidad;
 
-
             if (TContrasena.Text.Length > 0)
                 query.AddCampo("contrasena", "PASSWORD(" + Query.GetValor(TContrasena.Text) + ")", false);
 

@@ -11,22 +11,22 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2015-03-05.
+This cut records the home-care application as archived on 2015-05-04.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
 
 ### Features in the retained source
 
+- Review the list of therapeutic progress notes. `terapeutico/evoluciones.aspx`.
 - Record the wound assessment in the clinical record. `clinicaheridas/valoracion.aspx`.
-- List cases that are waiting to be scheduled. `programacion/sinprogramar.aspx`.
+- Consult and maintain wound progression notes. `clinicaheridas/evolucion.aspx`.
+- View and maintain access groups. `administrador/grupos.aspx`.
 - Start from the census to review cases recorded in the site. `censo/Default.aspx`.
 - Open the batch admission screen to process patient admissions. `admisiones/amasivas.aspx`.
 - List discharges from the wound-care clinic. `clinicaheridas/egresos.aspx`.
-- Consult and maintain wound progression notes. `clinicaheridas/evolucion.aspx`.
 - Open the patient record and its care information. `paciente/paciente.aspx`.
 - Open the staff record for the care team. `rh/funcionario.aspx`.
-- View and maintain access groups. `administrador/grupos.aspx`.
 - Manage the operator accounts used to sign in. `administrador/usuario.aspx`.
 
 ### Build and local use
@@ -37,7 +37,7 @@ The retained site entry is `Default.aspx`. Use fictional accounts and a disposab
 
 ### Archive notes
 
-The archive inventory counted 1 additions, 26 edits and 0 removals.
+The archive inventory counted 5 additions, 24 edits and 0 removals.
 
 ### Framework versions
 
@@ -45,7 +45,7 @@ The archive does not record the original framework version. The local build reci
 
 ### Usage
 
-Use the documented local build with a fictional operator. The available screens include `clinicaheridas/valoracion.aspx` and the other routes above.
+Use the documented local build with a fictional operator. The available screens include `terapeutico/evoluciones.aspx` and the other routes above.
 
 The retained entry page is `administrador/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
 
@@ -76,22 +76,22 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2015-03-05.
+Este corte conserva la versión de atención domiciliaria archivada el 2015-05-04.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
 
 ### Funciones en el código conservado
 
+- Consulta el listado de notas de evolución terapéutica. `terapeutico/evoluciones.aspx`.
 - Registra la valoración de heridas en la ficha clínica. `clinicaheridas/valoracion.aspx`.
-- Consulta los casos pendientes de programación. `programacion/sinprogramar.aspx`.
+- Consulta y actualiza las notas de evolución de heridas. `clinicaheridas/evolucion.aspx`.
+- Consulta y administra los grupos de acceso. `administrador/grupos.aspx`.
 - Empieza en el censo para consultar los casos registrados en el sitio. `censo/Default.aspx`.
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `admisiones/amasivas.aspx`.
 - Consulta los egresos de la clínica de heridas. `clinicaheridas/egresos.aspx`.
-- Consulta y actualiza las notas de evolución de heridas. `clinicaheridas/evolucion.aspx`.
 - Abre la ficha del paciente y su información de atención. `paciente/paciente.aspx`.
 - Abre la ficha del personal del equipo de atención. `rh/funcionario.aspx`.
-- Consulta y administra los grupos de acceso. `administrador/grupos.aspx`.
 - Administra las cuentas de operador para ingresar. `administrador/usuario.aspx`.
 
 ### Compilación y uso local
@@ -102,7 +102,7 @@ La entrada conservada del sitio es `Default.aspx`. Usa cuentas ficticias y una b
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 1 adiciones, 26 cambios y 0 retiros.
+El inventario del respaldo registró 5 adiciones, 24 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 
@@ -110,7 +110,7 @@ El respaldo no registra la versión original del framework. La receta local usa 
 
 ### Uso
 
-Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `clinicaheridas/valoracion.aspx` y las demás rutas de arriba.
+Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `terapeutico/evoluciones.aspx` y las demás rutas de arriba.
 
 La portada conservada es `administrador/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
 

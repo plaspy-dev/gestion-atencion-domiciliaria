@@ -139,7 +139,7 @@ public class SIIGOFile
     [FieldFixedLength(1)]
     protected string sRelleno1;
     [FieldFixedLength(12)]
-    protected int Relleno2;
+    protected UInt64 Relleno2;
     [FieldFixedLength(6)]
     protected string sRelleno2;
     [FieldFixedLength(1)]
@@ -151,33 +151,39 @@ public class SIIGOFile
     [FieldFixedLength(4)]
     protected string sRelleno4;
     [FieldFixedLength(11)]
-    protected int Relleno5;
+    protected UInt64 Relleno5;
     [FieldFixedLength(10)]
     protected string sRelleno5;
 
     [FieldFixedLength(10)]
-    protected int Relleno6;
+    protected UInt64 Relleno6;
 
     [FieldFixedLength(20)]
     [FieldConverter(typeof(NumberConverter), 5)]
     protected Decimal ValorUnitario;
     [FieldFixedLength(14)]
-    protected int Relleno6b;
+    protected UInt64 Relleno6b;
     [FieldFixedLength(1)]
     protected string sRelleno6;
     [FieldFixedLength(3)]
     protected int Relleno7;
     [FieldFixedLength(13)]
     protected string sRelleno7;
-    [FieldFixedLength(48)]
-    protected int Relleno8;
+    [FieldFixedLength(15)]
+    protected UInt64 Relleno8a;
+    [FieldFixedLength(15)]
+    protected UInt64 Relleno8b;
+    [FieldFixedLength(18)]
+    protected UInt64 Relleno8c;
     [FieldFixedLength(1)]
     protected string sRelleno8;
     [FieldFixedLength(18)]
     [FieldConverter(typeof(NumberConverter), 5)]
     protected decimal nCantidad2;
-    [FieldFixedLength(21)]
-    protected int Relleno9;
+    [FieldFixedLength(10)]
+    protected UInt64 Relleno9a;
+    [FieldFixedLength(11)]
+    protected UInt64 Relleno9b;
     [FieldFixedLength(6)]
     protected string sRelleno9;
     [FieldFixedLength(4)]
@@ -185,20 +191,24 @@ public class SIIGOFile
     [FieldFixedLength(83)]
     protected string sRelleno10;
 
-    [FieldFixedLength(36)]
-    protected int Relleno11;
+    [FieldFixedLength(18)]
+    protected UInt64 Relleno11a;
+    [FieldFixedLength(18)]
+    protected UInt64 Relleno11b;
     [FieldFixedLength(3)]
     protected string sRelleno11;
     [FieldFixedLength(15)]
-    protected int Relleno12;
+    protected UInt64 Relleno12;
     [FieldFixedLength(24)]
     protected string sRelleno12;
-    [FieldFixedLength(30)]
-    protected int Relleno13;
+    [FieldFixedLength(15)]
+    protected UInt64 Relleno13a;
+    [FieldFixedLength(15)]
+    protected UInt64 Relleno13b;
     [FieldFixedLength(67)]
     protected string sRelleno13;
     [FieldFixedLength(15)]
-    protected int Relleno14;
+    protected UInt64 Relleno14;
 
 
     public decimal Cantidad

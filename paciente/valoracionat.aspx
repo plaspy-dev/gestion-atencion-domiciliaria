@@ -106,7 +106,8 @@
                         onselectedindexchanged="DTipo_SelectedIndexChanged">
                     <asp:ListItem Text="Terapias respiratorias" Value="1"></asp:ListItem>
                     <asp:ListItem Text="Terapias físicas" Value="2"></asp:ListItem>
-                    <asp:ListItem Text="Terapias ocupacionales y lenguaje" Value="3"></asp:ListItem>
+                    <asp:ListItem Text="Terapias ocupacional" Value="3"></asp:ListItem>
+                    <asp:ListItem Text="Terapias de lenguaje" Value="4"></asp:ListItem>
                 </asp:DropDownList></td>
                 <td>Número de terapias</td>
                 <td><asp:TextBox runat="server" ID="TNumeroTerapias" CssClass="entero"></asp:TextBox>
@@ -130,7 +131,7 @@
                 <td colspan="4" class="celdaTitulo">Terapias respiratorias</td>
             </tr>
             <tr>
-                <td colspan="4" class="celdaTitulo">Oxigenodependiente</td>
+                <td colspan="4" class="celdaTitulo">Oxigeno dependiente</td>
             </tr>
             <tr>
                 <td colspan="4">
@@ -170,7 +171,7 @@
                 <td colspan="3"><asp:TextBox runat="server" ID="TOxigeno" Width="99%"></asp:TextBox></td>
             </tr>
             <tr>
-                <td nowrap="nowrap"><asp:CheckBox runat="server" ID="CLatrogenia" Text="Latrogenia por uso de dispositivos" /></td>
+                <td nowrap="nowrap"><asp:CheckBox runat="server" ID="CLatrogenia" Text="Iatrogenia por uso de dispositivos" /></td>
                 <td colspan="3"><asp:TextBox runat="server" ID="TLatrogenia" Width="99%"></asp:TextBox></td>
             </tr>
             </asp:Panel>
@@ -233,26 +234,29 @@
             </asp:Panel>
             <asp:Panel runat="server" ID="PComun">
             <tr>
-                <td>Justificación de la terapia</td>
+                <td>Objetivo terapéutico</td>
                 <td colspan="3"><asp:TextBox runat="server" ID="TJustificacion" Width="99%"></asp:TextBox></td>
             </tr>
             <tr>
                 <td colspan="4" class="celdaTitulo">Signos vitales</td>
             </tr>
             <tr>
-                <td>TA</td>
+                <td>TA<asp:RequiredFieldValidator ControlToValidate="TTA" ErrorMessage="Por favor ingrese una tension arterial." ID="RequiredFieldValidator6" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>mm/Hg</td>
-                <td>FC</td>
+                <td>FC<asp:RequiredFieldValidator ControlToValidate="TFC" ErrorMessage="Por favor ingrese una frecuencia cardiaca." ID="RequiredFieldValidator9" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>Lat/min</td>
             </tr>
             <tr>
-                <td>FR</td>
+                <td>FR<asp:RequiredFieldValidator ControlToValidate="TFR" ErrorMessage="Por favor ingrese una frecuencia respiratoria." ID="RequiredFieldValidator10" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>Min</td>
                 <td>Sat 02</td>
                 <td><asp:TextBox ID="TSaturacion" runat="server" CssClass="entero"></asp:TextBox></td>
             </tr>
             <tr>
-                <td>Revisión del patrón aterado</td>
+                <td>Revisión del patrón alterado</td>
                 <td colspan="3"><asp:TextBox runat="server" ID="TPatron" Width="99%"></asp:TextBox></td>
             </tr>
             <tr>

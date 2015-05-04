@@ -158,7 +158,7 @@ img[usemap], map area{
                 else $("#<%= LTotalPorcentaje.ClientID %>").css("color", "#00FF00");
             })
             .change();
-        $("#<%= TTA.ClientID %>").mask("999/99 mm/Hg");
+        $("#<%= TTA.ClientID %>").mask("999/999 mm/Hg");
         $("#<%= TFC.ClientID %>").autoNumeric('init', { vMin: 0, mDec: 0, aSep: '', aSign: ' Lat/min', pSign: 's' });
         $("#<%= TFR.ClientID %>").autoNumeric('init', { vMin: 0, mDec: 0, aSep: '', aSign: ' Min', pSign: 's' });
         $("#<%= TT.ClientID %>").autoNumeric('init', { vMin: 0, mDec: 1, aSep: '', aSign: ' °', pSign: 's', aPad: false });
@@ -232,13 +232,16 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 <td colspan="4" class="celdaSubTitulo tdr tdl">Datos objetivos - signos vitales</td>
             </tr>
             <tr>
-                <td class="tdl">TA</td>
+                <td class="tdl">TA<asp:RequiredFieldValidator ControlToValidate="TTA" ErrorMessage="Por favor ingrese una tension arterial." ID="RequiredFieldValidator6" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox></td>
-                <td>FC</td>
+                <td>FC<asp:RequiredFieldValidator ControlToValidate="TFC" ErrorMessage="Por favor ingrese una frecuencia cardiaca." ID="RequiredFieldValidator9" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td class="tdr" nowrap=nowrap><asp:TextBox ID="TFC" runat="server" CssClass="likenumber"></asp:TextBox></td>
             </tr>
             <tr>
-                <td class="tdl">FR</td>
+                <td class="tdl">FR<asp:RequiredFieldValidator ControlToValidate="TFR" ErrorMessage="Por favor ingrese una frecuencia respiratoria." ID="RequiredFieldValidator10" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:TextBox ID="TFR" runat="server" CssClass="likenumber"></asp:TextBox></td>
                 <td>T</td>
                 <td class="tdr"><asp:TextBox ID="TT" runat="server" CssClass="likenumber"></asp:TextBox></td>

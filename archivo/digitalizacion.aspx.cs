@@ -128,16 +128,16 @@ public partial class archivo_digitalizacion : System.Web.UI.Page
                     }
                 }
 
-                if (conector.QueryString("SELECT fecha FROM digitalizacion WHERE paciente=" + Query.GetValor(query["paciente"]) + " AND factura=" + Query.GetValor(query["factura"])).Length == 0)
+                if (conector.QueryString("SELECT fecha FROM digitalizacion WHERE paciente=" + Query.GetValor(query["paciente"].ToString()) + " AND factura=" + Query.GetValor(query["factura"].ToString())).Length == 0)
                 {
                     nuevos++;
                     if (conector.QueryMod(query.GetInsert()) == -1)
                         return;
                 } else {
-                    if (conector.QueryMod(query.GetUpdate("paciente=" + Query.GetValor(query["paciente"]) + " AND factura=" + Query.GetValor(query["factura"]))) == -1)
+                    if (conector.QueryMod(query.GetUpdate("paciente=" + Query.GetValor(query["paciente"].ToString()) + " AND factura=" + Query.GetValor(query["factura"].ToString()))) == -1)
                         return;
                     actualizados++;
-                    debug += "<br/>Paciente actualizado paciente " + Query.GetValor(query["documento"]) + " y factura " + Query.GetValor(query["factura"]) + " en línea " + linea;
+                    debug += "<br/>Paciente actualizado paciente " + Query.GetValor(query["documento"].ToString()) + " y factura " + Query.GetValor(query["factura"].ToString()) + " en línea " + linea;
                 }
             }
             reader.Close();

@@ -201,6 +201,8 @@
     </asp:PlaceHolder>
     <tr>
         <td colspan="4" class="tdl tdr">
+            <asp:UpdatePanel runat="server" ID="U" UpdateMode="Conditional">
+            <ContentTemplate>
             <asp:GridView ID="GDetalle" runat="server" AutoGenerateColumns="False" EmptyDataText="No se encontraron datos" 
                 Width="100%" DataKeyNames="Secuencia,Cantidad,_ValorMovimiento,_CodigoProducto" ShowFooter="true">
                 <RowStyle CssClass="GridRow"></RowStyle>
@@ -216,34 +218,32 @@
                     <asp:BoundField DataField="_ValorMovimiento" HeaderText="Valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" />
                     <asp:TemplateField HeaderText="Procedimiento Autorización">
                         <ItemTemplate>
-                            <asp:UpdatePanel runat="server" ID="U" UpdateMode="Conditional">
-                                <ContentTemplate>
-                                    <asp:DropDownList ID="A" runat="server" DataSourceID="SActividad" CssClass="anchomaxcombo" 
-                                        DataTextField="nombre" DataValueField="id" OnDataBound="A_DataBound">
-                                    </asp:DropDownList>    
-                                </ContentTemplate>
-                                <Triggers>
-                                    <asp:AsyncPostBackTrigger ControlID="BAdd" />
-                                    <asp:AsyncPostBackTrigger ControlID="GAutorizacion" EventName="RowDeleting" />
-                                </Triggers>
-                            </asp:UpdatePanel>
-                                    <asp:SqlDataSource ID="SActividad" runat="server" 
-                                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                                        SelectCommand="(SELECT NULL AS id, '(Ninguno)' AS nombre ) UNION (
-                                                        SELECT CONCAT(autNumero,';',actId,';',autNumSesiones) AS id
-                                                        ,CONCAT(autNumero, ': ', medicamentos.codigo, ' - ',medicamentos.nombre, ' (', autNumSesiones, '-', autSesionesDia,')') AS nombre
-                                                        FROM autorizacion_detalle 
-                                                        LEFT JOIN medicamentos ON (medicamentos.id= autorizacion_detalle.actId)
-                                                        WHERE FIND_IN_SET(autorizacion_detalle.autNumero,@autorizacion)!=0 ORDER BY nombre);">
-                                                <SelectParameters>
-                                                    <asp:ControlParameter ControlID="HAutorizaciones" Name="autorizacion" PropertyName="Value" DefaultValue="-1" />
-                                                </SelectParameters>
-                                    </asp:SqlDataSource>
+                            <asp:DropDownList ID="A" runat="server" DataSourceID="SActividad" CssClass="anchomaxcombo" 
+                                DataTextField="nombre" DataValueField="id" OnDataBound="A_DataBound">
+                            </asp:DropDownList>    
+                            <asp:SqlDataSource ID="SActividad" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="(SELECT NULL AS id, '(Ninguno)' AS nombre ) UNION (
+                                                SELECT CONCAT(autNumero,';',actId,';',autNumSesiones) AS id
+                                                ,CONCAT(autNumero, ': ', medicamentos.codigo, ' - ',medicamentos.nombre, ' (', autNumSesiones, '-', autSesionesDia,')') AS nombre
+                                                FROM autorizacion_detalle 
+                                                LEFT JOIN medicamentos ON (medicamentos.id= autorizacion_detalle.actId)
+                                                WHERE FIND_IN_SET(autorizacion_detalle.autNumero,@autorizacion)!=0 ORDER BY nombre);">
+                                        <SelectParameters>
+                                            <asp:ControlParameter ControlID="HAutorizaciones" Name="autorizacion" PropertyName="Value" DefaultValue="-1" />
+                                        </SelectParameters>
+                            </asp:SqlDataSource>
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
-            </asp:GridView>
+            </asp:GridView>                        
+            </ContentTemplate>
+            <Triggers>
+                <asp:AsyncPostBackTrigger ControlID="BAdd" />
+                <asp:AsyncPostBackTrigger ControlID="GAutorizacion" EventName="RowDeleting" />
+            </Triggers>
+        </asp:UpdatePanel>
         </td>
     </tr>
     <tr>

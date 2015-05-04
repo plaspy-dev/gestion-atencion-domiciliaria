@@ -15,7 +15,7 @@ public class importarCSV : IHttpHandler {
         context.Response.Buffer = false;
         context.Response.Write("<html><head><style>.a { color: red; }.b { color: green; } .c { font-weight: bold;color: blue;}</style></head><body>");
         context.Response.Flush();
-        ConvertDirectory(context.Response, Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "entrega5"));
+        ConvertDirectory(context.Response, Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "entrega6"));
         context.Response.Write("</body></html>");
     }
 
@@ -59,12 +59,15 @@ public class importarCSV : IHttpHandler {
         int id = -1;
 
         string directory = Path.GetDirectoryName(file);
-        string subdirectory = null;
+        /*string subdirectory = null;
         foreach (string directorio in Directory.GetDirectories(directory)) {
             subdirectory = directorio;
             break;
         }
-        bool subcarpetas = Directory.GetDirectories(subdirectory).Length != 0;
+        if (string.IsNullOrEmpty(subdirectory))
+            return true;
+        bool subcarpetas = Directory.GetDirectories(subdirectory) != null && Directory.GetDirectories(subdirectory).Length != 0;*/
+        bool subcarpetas = true;
 
         Response.Write("<span class=c>" + file + "</span><br/>");
         Query query = new Query("digitalizacion");
@@ -72,7 +75,7 @@ public class importarCSV : IHttpHandler {
         if (reader.Peek() < 0)
         {
             Response.Write("No se puede leer el archivo<br/>");
-            return false;
+            return true;
         }
         string header = reader.ReadLine();
         string[] textos = header.ToLower().Split(';');
@@ -146,7 +149,11 @@ public class importarCSV : IHttpHandler {
                     {                        
                         valor = textos[i].Trim().Replace(".", "").Replace(",", "");
                         if (valor.ToLower().StartsWith("rela"))
-                            break;
+                        {
+                            query["paciente"] = "0";
+                            query["documento"] = valor;
+                            continue;
+                        }
                         currentID = conector.QueryString(string.Format("SELECT pacId FROM paciente WHERE pacDocumento={0}", Query.GetValor(valor)));
 
                         if (string.IsNullOrEmpty(currentID))
@@ -163,7 +170,8 @@ public class importarCSV : IHttpHandler {
                         if (valor.Length == 0)
                         {
                             Response.Write("No se puede ingresar el valor " + i + " en blanco en la línea " + linea + "<br/>");
-                            return false;
+                            continue;
+                            // return false;
                         }
                         switch (campos[i])
                         {
@@ -185,28 +193,31 @@ public class importarCSV : IHttpHandler {
                 
                 // tenemos que buscar el archivo de factura y el archivo del paciente
 
-                string archivo = FindFile(subdirectory, subcarpetas ? query["documento"] : query["factura"]);
+                string archivo = FindFile(directory, query["documento"].ToString());
                 if (string.IsNullOrEmpty(archivo))
                 {
-                    debug += "<span class=a>No se encontro la historia clinica del paciente con documento " + query["documento"] + "</span><br/>";
+                    archivo = FindFile(directory, query["factura"].ToString());
+                    if (string.IsNullOrEmpty(archivo))
+                        debug += "<span class=a>No se encontro la historia clinica del paciente con documento " + query["documento"] + "</span><br/>";
+                    else archivo = archivo.Replace(directory + Path.DirectorySeparatorChar, "");
                 } else {
-                    archivo = archivo.Replace(subdirectory + Path.DirectorySeparatorChar, "");
+                    archivo = archivo.Replace(directory + Path.DirectorySeparatorChar, "");
                 }
                 
                 if (subcarpetas)
                 {
-                    string factura = FindFile(subdirectory, query["factura"]);
+                    string factura = FindFile(directory, query["factura"].ToString());
                     if (string.IsNullOrEmpty(factura))
                     {
                         debug += "<span class=a>No se encontro el archivo con la factura " + query["factura"] + "</span><br/>";
                     } else {
-                        factura = factura.Replace(subdirectory + Path.DirectorySeparatorChar, "");
+                        factura = factura.Replace(directory + Path.DirectorySeparatorChar, "");
                     }
                     query["factura_archivo"] = factura;
                 }
                 query["archivo"] = archivo;
 
-                if (conector.QueryString("SELECT fecha FROM digitalizacion WHERE paciente=" + Query.GetValor(query["paciente"]) + " AND factura=" + Query.GetValor(query["factura"])).Length == 0)
+                if (conector.QueryString("SELECT fecha FROM digitalizacion WHERE paciente=" + Query.GetValor(query["paciente"].ToString()) + " AND factura=" + Query.GetValor(query["factura"].ToString())).Length == 0)
                 {
                     nuevos++;
                     if (conector.QueryMod(query.GetInsert()) == -1)
@@ -215,13 +226,13 @@ public class importarCSV : IHttpHandler {
                         return false;
                     }
                 } else {
-                    if (conector.QueryMod(query.GetUpdate("paciente=" + Query.GetValor(query["paciente"]) + " AND factura=" + Query.GetValor(query["factura"]))) == -1)
+                    if (conector.QueryMod(query.GetUpdate("paciente=" + Query.GetValor(query["paciente"].ToString()) + " AND factura=" + Query.GetValor(query["factura"].ToString()))) == -1)
                     {
                         Response.Write(conector.LastError + "<br/>");
                         return false;
                     }
                     actualizados++;
-                    debug += "Paciente actualizado paciente " + Query.GetValor(query["documento"]) + " y factura " + Query.GetValor(query["factura"]) + " en línea " + linea + "<br/>";
+                    debug += "Paciente actualizado paciente " + Query.GetValor(query["documento"].ToString()) + " y factura " + Query.GetValor(query["factura"].ToString()) + " en línea " + linea + "<br/>";
                 }
             }
             reader.Close();

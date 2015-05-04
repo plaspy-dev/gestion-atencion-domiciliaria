@@ -27,9 +27,17 @@
             minLength: 3,
             select: function(event, ui) {
 
-                $.goURL("fiid=" + ui.item.value);
-                return true;
+                $("#<%= TNombres.ClientID %>").val(ui.item.label);
+                $("#<%= TNombreID.ClientID %>").val(ui.item.value);
+                $("#<%= BBuscar.ClientID %>").click();
+                return false;
+            },
+            search: function () {
+                $("#<%= TNombreID.ClientID %>").val("");
             }
+        }).change(function () {
+            if ($(this).val().length == 0)
+                $("#<%= TNombreID.ClientID %>").val("");
         });
         $("#dResultados").attr("title", $("#ctl00_cph_DeDisponibilidad_LNombres").html());
         $("#ctl00_cph_DeDisponibilidad_LNombres").hide();
@@ -75,6 +83,7 @@
             </td>
             <td>
                 <asp:TextBox ID="TNombres" runat="server"></asp:TextBox>
+                <asp:TextBox ID="TNombreID" CssClass="hide" runat="server"></asp:TextBox>
             </td>
             <td>
                 <asp:DropDownList ID="DArea" runat="server" AppendDataBoundItems="true" AutoPostBack="true" CssClass="anchomaxcombo" 
@@ -225,14 +234,15 @@
                     LEFT JOIN paciente ON (directorio.pacienteh=paciente.pacId)
                     LEFT JOIN paciente AS pacientef ON (directorio.pacientef=pacientef.pacId)
                     WHERE 
-                    (@id=0 OR @id=per.perId)
+                    (@personalID!=0 AND per.perId=@personalID) OR (
+                    @personalID=0
                     AND (@id!=0 OR @estado=0 OR per.eEstId=@estado) 
-                    {0}
                     AND (@id!=0 OR @cargo=0 or per.carId=@cargo) 
                     AND (@id!=0 OR @complejidad=0 OR per.nivCompId=@complejidad)
                     AND (@id!=0 OR @disponibilidad=0 OR per.dispId=@disponibilidad)
                     AND (@id!=0 OR @area=0 OR @area=per.areaId)
                     AND (@id!=0 OR @nombres=' ' OR per.perNombre LIKE CONCAT('%',@nombres,'%') )
+                    {0})
                     GROUP BY per.perId
                     ORDER BY per.perNombre">
                      <SelectParameters>
@@ -242,7 +252,7 @@
                         <asp:ControlParameter ControlID="DArea" PropertyName="SelectedValue" Name="area" />
                         <asp:ControlParameter ControlID="DNivelComplejidad" PropertyName="SelectedValue" Name="complejidad" />
                         <asp:ControlParameter ControlID="TNombres" Name="nombres" PropertyName="Text" DefaultValue=" " />
-                        <asp:SessionParameter SessionField="directorioid" Name="id" DefaultValue="0" />
+                        <asp:ControlParameter ControlID="TNombreID" Name="personalID" DefaultValue="0" />
                      </SelectParameters>
         </asp:SqlDataSource>        
         <div id="dResultados" title="Disponiblidad">

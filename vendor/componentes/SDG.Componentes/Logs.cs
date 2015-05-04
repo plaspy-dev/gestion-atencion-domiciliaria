@@ -164,8 +164,21 @@ public class Logs
 	{
 		try
 		{
-			string text = ((HttpContext.Current != null) ? HttpContext.Current.Request.Url.Segments[1].Replace("/", "") : ((OperationContext.Current != null) ? OperationContext.Current.IncomingMessageHeaders.To.ToString() : Path.GetFileName(Assembly.GetEntryAssembly().Location)));
-			EventLog.WriteEntry("Application", text + ": " + logs);
+			if (HttpContext.Current == null)
+			{
+				if (OperationContext.Current == null)
+				{
+					Path.GetFileName(Assembly.GetEntryAssembly().Location);
+				}
+				else
+				{
+					OperationContext.Current.IncomingMessageHeaders.To.ToString();
+				}
+			}
+			else
+			{
+				HttpContext.Current.Request.Url.Segments[1].Replace("/", "");
+			}
 		}
 		catch
 		{

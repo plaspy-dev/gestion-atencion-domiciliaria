@@ -138,7 +138,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
                             TAnalisis.Text = readermysql["analisis"].ToString();
                             TPeso.Text = readermysql["peso"].ToString();
                             TFecha.Text = Query.GetFromMySQLDate(readermysql["fecha"], true);
-                            TPlanManejo.Text = readermysql["plan_manejo"].ToString().Trim();
+                            TPlanManejo.Text = HttpUtility.HtmlEncode(readermysql["plan_manejo"].ToString().Trim());
                             Utilidades.SelectInDropDown(DNivelAtencion, readermysql["nivel_atencion"]);
                             Utilidades.SelectInDropDown(DArea, readermysql["area_atencion"]);
                             TFechaSeguimiento.Text = Query.GetFromMySQLDate(readermysql["seguimiento"]);
@@ -147,7 +147,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
                             if (TPlanManejo.Text.Length == 0)
                             {
-                                string procedimientos = Procedimientos.GetPlanDeManejo(conector, CCDetallePaciente.IdPaciente, TFecha.Text);
+                                string procedimientos = HttpUtility.HtmlEncode(Procedimientos.GetPlanDeManejo(conector, CCDetallePaciente.IdPaciente, TFecha.Text));
                                 if (procedimientos.Length > 0)
                                 {
                                     ViewState["procedimientos"] = procedimientos;
@@ -232,7 +232,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
             qIngreso["plan_manejo"] =
                 (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TPlanManejo.Text.Trim() != ViewState["procedimientos"].ToString())
-                ? TPlanManejo.Text.Trim()
+                ? HttpUtility.HtmlDecode(TPlanManejo.Text.Trim())
                 : "";
 
             string szQuery;
@@ -539,7 +539,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szPlanEducativo$", ImprimirPlanEducativo());
         
 
-        evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + HttpUtility.HtmlEncode(TPlanManejo.Text).Replace("\n", "</li><li>") + "</li></ol>");
+        evento.Contenido = evento.Contenido.Replace("$szPlanManejo$", "<ol><li>" + TPlanManejo.Text.Replace("\n", "</li><li>") + "</li></ol>");
         evento.Contenido = evento.Contenido.Replace("$szUsuario$", Usuario.GetUsuario().GetNombre());
 
         foreach (Calificacion.Escalas escala in (Calificacion.Escalas[])Enum.GetValues(typeof(Calificacion.Escalas)))
