@@ -13,7 +13,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        // ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
+        ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
         if (!IsPostBack) {
             CUsuario usuario = (CUsuario)Usuario.GetUsuario();
             BAceptar.Enabled = false;
@@ -88,6 +88,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
                                 BAceptar.Enabled = usuario.CanUpdate();
                                 BEliminar.Visible = usuario.CanDelete();
                                 ((MasterPageI)Master).SetModificacion(reader["id"].ToString());
+                                ((MasterPageI)Master).Imprimir("evolucion.html");
 
                                 ViewState["id"] = reader["id"].ToString();
                                 TFecha.Text = Query.GetFromMySQLDate(reader["fecha"], true);
@@ -209,6 +210,34 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
                 return;
             conector.Commit();
             Response.Redirect(Request.Url.AbsolutePath);
+        }
+    }
+
+    public void OnImprimir(object sender, EventArgs e) {
+
+        PrintEventArgs evento = (PrintEventArgs)e;
+
+        using (CConector conector = new CConector())
+        {
+            Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+            evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
+            evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
+
+            Query query = new Query("recurso_humano");
+
+            query["szProfesional"] = "recurso_humano.perDocumento";
+            query["szCargo"] = "cargo.carDescripcion";
+
+            MySqlDataReader reader = conector.Query(query.GetSelect("perId=" + Query.GetValor(UCFuncionario.IdFuncionario), " LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)"));
+            if (reader != null)
+            {
+                bool l = reader.Read();
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
+                }
+            }
+            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(UCFuncionario.IdFuncionario)));
         }
     }
 }

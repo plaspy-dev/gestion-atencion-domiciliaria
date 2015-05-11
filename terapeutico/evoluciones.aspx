@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Evoluciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="evoluciones.aspx.cs" Inherits="terapeutico_evoluciones" %>
 <%@ Register src="~/paciente/pacienteSimple.ascx" tagname="PacienteSimple" tagprefix="uc5" %>
 <%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>
+<%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
@@ -51,7 +52,7 @@
             <ContentTemplate>
                 <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
                     AutoGenerateColumns="False" EmptyDataText="No se encontraron autorizaciones"
-                    AllowPaging="True" PageSize="50" AllowSorting="True" >
+                    AllowPaging="True" PageSize="50" AllowSorting="True" DataKeyNames="id,paciente" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -101,5 +102,11 @@
                      <asp:ControlParameter ControlID="UCPaciente$TPacienteID" Name="paciente" PropertyName="Text" DefaultValue="0" />
                  </SelectParameters>
     </asp:SqlDataSource>
+
+    <asp:Panel runat="server" ID="PP" Visible="false">
+        <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
+        <asp:Label runat="server" ID="TPaciente"></asp:Label>
+        <asp:Label runat="server" ID="LPaciente"></asp:Label>
+    </asp:Panel>
 </asp:Content>
 

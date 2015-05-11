@@ -148,6 +148,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
         set {
 
             HIdPaciente.Value = "";
+            
 
             ViewState["paciente_costo_paciente_actual"] = null;
             ViewState["paciente_costo_aseguradora_actual"] = null;
@@ -160,6 +161,8 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                 return;
             UCAutorizaciones.Value = HIdPaciente.Value = value;
 
+            LEdad.Text = "";
+            LFechaNacimiento.Text = "";
             try
             {
                 LFechaNacimiento.Text = Convert.ToDateTime(paciente.FechaNac).ToShortDateString() + " ";
@@ -179,6 +182,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
             LParentesco.Text = paciente.parentesco;
             LGrupo.Text = paciente.Grupo;
 
+            LCIE10.Text = "";
             for (int i = 0; i < paciente.cie10.Count; i++)
             {
                 if (i != 0)

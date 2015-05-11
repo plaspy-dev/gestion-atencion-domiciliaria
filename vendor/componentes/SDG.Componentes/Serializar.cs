@@ -71,17 +71,7 @@ public class Serializar
 		return (T)Activator.CreateInstance(typeof(T));
 	}
 
-	public static string SerializeXML(object objeto)
-	{
-		return SerializeXML(objeto, compress: true, base64: true);
-	}
-
-	public static string SerializeXML(object objeto, bool compress)
-	{
-		return SerializeXML(objeto, compress, base64: true);
-	}
-
-	public static string SerializeXML(object objeto, bool compress, bool base64)
+	public static string SerializeXML(object objeto, bool compress = true, bool base64 = true)
 	{
 		if (objeto == null)
 		{
@@ -103,17 +93,7 @@ public class Serializar
 		return input;
 	}
 
-	public static T DesSerializeXML<T>(string variable)
-	{
-		return DesSerializeXML<T>(variable, compressed: true, base64: true);
-	}
-
-	public static T DesSerializeXML<T>(string variable, bool compressed)
-	{
-		return DesSerializeXML<T>(variable, compressed, base64: true);
-	}
-
-	public static T DesSerializeXML<T>(string variable, bool compressed, bool base64)
+	public static T DesSerializeXML<T>(string variable, bool compressed = true, bool base64 = true)
 	{
 		if (!string.IsNullOrEmpty(variable))
 		{
