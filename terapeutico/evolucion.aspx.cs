@@ -11,18 +11,20 @@ using System.IO;
 
 public partial class terapeutico_evolucion : System.Web.UI.Page
 {
+    public const int nMinutosTerapia=45;
+
     protected void Page_Load(object sender, EventArgs e)
     {
         ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
         if (!IsPostBack) {
             CUsuario usuario = (CUsuario)Usuario.GetUsuario();
             BAceptar.Enabled = false;
-            TFecha.Text = Query.GetFromMySQLDate(DateTime.Now, true);
+            TFecha.Text = Query.GetFromMySQLDate(DateTime.Now.Date, true);
             UCFuncionario.IdFuncionario = usuario["personal"];
             TTA.Focus();
             DTV.MinumunValue = DateTime.Now.AddDays(-2);
             DTV.MaximunValue = DateTime.Now.AddMinutes(1);
-            DTV.Enabled = usuario.CanUpdate();
+            DTV.Enabled = !usuario.CanUpdate();
 
             using(CConector conector= new CConector()) {
                 if (Request.QueryString["pid"] != null)
@@ -51,7 +53,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
                         ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
                         SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
                         SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
-                        TFecha.Text = Query.GetFromMySQLDate(DateTime.Now, true);
+                        TFecha.Text = Query.GetFromMySQLDate(DateTime.Now.Date, true);
 
                         if (Request.QueryString["npdf"] == "1")
                             Title = CCDetallePaciente.Documento + " - " + CCDetallePaciente.Nombres.Replace("(Inactivo)", "");
@@ -92,6 +94,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
 
                                 ViewState["id"] = reader["id"].ToString();
                                 TFecha.Text = Query.GetFromMySQLDate(reader["fecha"], true);
+                                LFinal.Text = Query.GetFromMySQLDate(((DateTime)reader["fecha"]).AddMinutes(nMinutosTerapia), true);
                                 UCFuncionario.IdFuncionario = reader["funcionario"].ToString();
                                 TNumero.Text = reader["sesion"].ToString();
                                 TLogros.Text = reader["logros"].ToString();

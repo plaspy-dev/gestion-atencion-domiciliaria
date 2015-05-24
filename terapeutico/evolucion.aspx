@@ -12,6 +12,18 @@
                 active: false
             });
             $("#<%= TTA.ClientID %>").mask("999/999");
+            $("#<%= TFecha.ClientID%>").change(function () {
+                var final= new Date($(this).datetimepicker("getDate").getTime()+ <%= nMinutosTerapia %>*60000);
+                $("#<%= LFinal.ClientID%>").text(
+                    $.datepicker.formatDate( $(this).datepicker("option", "dateFormat"), final)
+                    + " " + $.datepicker.formatTime($(this).datepicker("option", "timeFormat"), 
+                    $.extend({
+                        hour: final.getHours(),
+                        minute: final.getMinutes(),
+                        second: final.getSeconds(),
+                    }, {}))
+                    );
+            });
         });
     </script>
 </asp:Content>
@@ -41,14 +53,23 @@
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:BoundField DataField="fecha" HeaderText="Fecha" ItemStyle-Wrap="false" />
+                    <asp:BoundField DataField="perNombre" HeaderText="Funcionario" ItemStyle-Wrap="false" />
+                    <asp:BoundField DataField="nombre" HeaderText="Tipo" ItemStyle-Wrap="false" />
+                    <asp:BoundField DataField="sesion" HeaderText="Sesión" ItemStyle-HorizontalAlign="Right" />
                     <asp:BoundField DataField="logros" HeaderText="Logros" ItemStyle-Width="100%" />
                 </Columns>
             </asp:GridView>
             <asp:SqlDataSource ID="SEvoluciones" runat="server" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                SelectCommand="SELECT evolucion_terapeutivo.id,evolucion_terapeutivo.fecha,evolucion_terapeutivo.logros, evolucion_terapeutivo.paciente
+                SelectCommand="SELECT evolucion_terapeutivo.id,evolucion_terapeutivo.fecha
+                            ,recurso_humano.perNombre, CONCAT(medicamentos.codigo, ' - ',medicamentos.nombre) AS nombre
+                            ,evolucion_terapeutivo.sesion
+                            ,evolucion_terapeutivo.paciente
+                            ,evolucion_terapeutivo.logros
                             FROM evolucion_terapeutivo
+                            LEFT JOIN medicamentos ON (medicamentos.id=evolucion_terapeutivo.tipo)
+                            LEFT JOIN recurso_humano ON (recurso_humano.perId=evolucion_terapeutivo.funcionario)
                             WHERE evolucion_terapeutivo.paciente=@paciente
                             ORDER BY fecha DESC;">
                 <SelectParameters>
@@ -62,14 +83,20 @@
     <asp:Panel runat="server" ID="PDatos" Visible="false">
             <table style="border-collapse: collapse">
                 <tr>
-                    <td>Fecha<asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" 
+                    <td>Fecha Inicio<asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" 
 	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                        <asp:RegularExpressionValidator ID="R2" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una hora valida" Display="Dynamic" 
+                            SetFocusOnError="true" ValidationExpression="^((?!00:00).)*$" runat="server" >*</asp:RegularExpressionValidator>
                         <sdg:DateTimeValidator runat="server" ID="DTV" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha valida." 
                     Display="Dynamic" SetFocusOnError="true">*</sdg:DateTimeValidator></td>
                     <td><asp:TextBox runat="server" ID="TFecha" CssClass="fechahora"></asp:TextBox></td>
+                    <td>Final</td>
+                    <td align="right"><asp:Label runat="server" ID="LFinal"></asp:Label></td>
+                </tr>
+                <tr>
                     <td>Atendido por<asp:RequiredFieldValidator ControlToValidate="UCFuncionario$TFuncionarioID" ErrorMessage="Por favor ingrese un funcionario." ID="RequiredFieldValidator1" 
 	                    runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-                    <td><uc1:funcionario runat="server" ID="UCFuncionario" /></td>
+                    <td colspan="3"><uc1:funcionario runat="server" ID="UCFuncionario" /></td>
                 </tr>
                 <tr>
                     <td>Tipo<asp:RequiredFieldValidator ControlToValidate="DTipo" ErrorMessage="Por favor seleccione un tipo." ID="RequiredFieldValidator2" 

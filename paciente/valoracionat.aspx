@@ -1,11 +1,12 @@
 ﻿<%@ Page Title="Valoración apoyo terapéutico" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="valoracionat.aspx.cs" Inherits="paciente_valoracionat" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
+<%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
     addFunctionToStart(function() {
-        function joinTableRows(selector, indice) {
+        /*function joinTableRows(selector, indice) {
             var anterior = null;
             selector.each(function() {
                 if (anterior && anterior.children("td:eq(" + indice + ")").text() == $(this).children("td:eq(" + indice + ")").text()) {
@@ -29,7 +30,7 @@
                 }
             });
             return selector;
-        }
+        }*/
 
         $("#<%= PHistorial.ClientID %>").accordion({
             autoHeight: false,
@@ -37,10 +38,23 @@
             active: false
         });
         FullRowSelect("#<%= GHistorial.ClientID %>");
+
+        $("#<%= TInicio.ClientID%>").change(function () {
+            var final= new Date($(this).datetimepicker("getDate").getTime()+ <%= nMinutosTerapia %>*60000);
+            $("#<%= LFinal.ClientID%>").text(
+                $.datepicker.formatDate( $(this).datepicker("option", "dateFormat"), final)
+                + " " + $.datepicker.formatTime($(this).datepicker("option", "timeFormat"), 
+                $.extend({
+                    hour: final.getHours(),
+                    minute: final.getMinutes(),
+                    second: final.getSeconds(),
+                }, {}))
+                );
+        });
         
         $("#<%= TTA.ClientID %>").mask("999/999");
-        joinTableRows(joinTableRows($("#<%= GOxigeno.ClientID %> tr"), 1), 0);
-        joinTableCells($("#<%= GOxigeno.ClientID %> tr:eq(0) th"));
+        // joinTableRows(joinTableRows($("#<%= GOxigeno.ClientID %> tr"), 1), 0);
+        // joinTableCells($("#<%= GOxigeno.ClientID %> tr:eq(0) th"));
         $("#<%= GFuerza.ClientID %> tbody tr:eq(0)").before("<tr class=GridHeader><th colspan=2></th><th colspan=2>Derecha</th><th colspan=2>Izquierda</th><th>Grados</th></tr>");
     });
 </script>
@@ -71,24 +85,21 @@
                                         <asp:ImageButton CommandArgument='<%# Eval("id") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                <asp:BoundField DataField="tipo" HeaderText="Tipo" />
-                                <asp:BoundField DataField="inicio" HeaderText="Inicio" DataFormatString="{0:d}" />
-                                <asp:BoundField DataField="fin" HeaderText="Fin" DataFormatString="{0:d}" />
-                                <asp:BoundField DataField="numero_terapias" HeaderText="Numero de sesiones" ItemStyle-HorizontalAlign="Right" />
-                                <asp:BoundField DataField="observaciones" HeaderText="Observaciones" ItemStyle-Width="100%"/>
+                                <asp:BoundField DataField="inicio" HeaderText="Fecha" ItemStyle-Wrap="false" />
+                                <asp:BoundField DataField="perNombre" HeaderText="Funcionario" ItemStyle-Wrap="false" />
+                                <asp:BoundField DataField="nombre" HeaderText="Tipo" ItemStyle-Wrap="false" />
+                                <asp:BoundField DataField="observaciones" HeaderText="Logros" ItemStyle-Width="100%" />
                             </Columns>
                         </asp:GridView>
                         <asp:SqlDataSource ID="SHistorial" runat="server" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT valoracionat.id,valoracionat.numero_terapias, valoracionat.inicio,valoracionat.fin
+                            SelectCommand="SELECT valoracionat.id, valoracionat.inicio
+                                        ,recurso_humano.perNombre, CONCAT(medicamentos.codigo, ' - ',medicamentos.nombre) AS nombre
                                         ,valoracionat.observaciones
-                                        ,CASE valoracionat.tipo 
-                                        WHEN 1 THEN 'Terapias respiratorias' 
-                                        WHEN 2 THEN 'Terapias físicas' 
-                                        WHEN 3 THEN 'Terapias ocupacionales y lenguaje' END
-                                        AS tipo
                                         FROM valoracionat 
+           	                            LEFT JOIN medicamentos ON (medicamentos.id=valoracionat.tipo)
+                            			LEFT JOIN recurso_humano ON (recurso_humano.perId=valoracionat.funcionario)
                                         WHERE valoracionat.paciente=@paciente
                                         ORDER BY valoracionat.inicio DESC
                                         ">
@@ -101,30 +112,53 @@
             </td>
             </tr>
             <tr>
-                <td>Tipo</td>
-                <td><asp:DropDownList ID="DTipo" runat="server" AutoPostBack="True" 
-                        onselectedindexchanged="DTipo_SelectedIndexChanged">
-                    <asp:ListItem Text="Terapias respiratorias" Value="1"></asp:ListItem>
-                    <asp:ListItem Text="Terapias físicas" Value="2"></asp:ListItem>
-                    <asp:ListItem Text="Terapias ocupacional" Value="3"></asp:ListItem>
-                    <asp:ListItem Text="Terapias de lenguaje" Value="4"></asp:ListItem>
-                </asp:DropDownList></td>
-                <td>Número de terapias</td>
-                <td><asp:TextBox runat="server" ID="TNumeroTerapias" CssClass="entero"></asp:TextBox>
-                <asp:RequiredFieldValidator ControlToValidate="TNumeroTerapias" ErrorMessage="Por favor ingrese un número de terapias." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                </td>
+                <td>Fecha Inicio
+                    <asp:RequiredFieldValidator ControlToValidate="TInicio" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" 
+	                    runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                    <asp:RegularExpressionValidator ID="R2" ControlToValidate="TInicio" ErrorMessage="Por favor ingrese una hora valida" Display="Dynamic" 
+                            SetFocusOnError="true" ValidationExpression="^((?!00:00).)*$" runat="server" >*</asp:RegularExpressionValidator>
+                        <sdg:DateTimeValidator runat="server" ID="DTV" ControlToValidate="TInicio" ErrorMessage="Por favor ingrese una fecha valida." 
+                    Display="Dynamic" SetFocusOnError="true">*</sdg:DateTimeValidator></td>
+                <td><asp:TextBox runat="server" ID="TInicio" CssClass="fechahora"></asp:TextBox></td>
+                <td>Final</td>
+                <td align="right"><asp:Label runat="server" ID="LFinal"></asp:Label></td>
             </tr>
             <tr>
-                <td>Inicio</td>
-                <td><asp:TextBox runat="server" ID="TInicio" CssClass="fecha"></asp:TextBox>
-                <asp:RequiredFieldValidator ControlToValidate="TInicio" ErrorMessage="Por favor ingrese una fecha inicial." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                <asp:RangeValidator ControlToValidate="TInicio" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator>
+                <td>Tipo<asp:RequiredFieldValidator ControlToValidate="DTipo" ErrorMessage="Por favor seleccione un tipo." ID="RequiredFieldValidator3" 
+	                    runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td>
+                    <asp:DropDownList ID="DTipo" runat="server" DataSourceID="STipo" 
+                        DataTextField="nombre" DataValueField="id" CssClass="anchomaxcombo" AutoPostBack="true" OnSelectedIndexChanged="DTipo_SelectedIndexChanged">
+                    </asp:DropDownList>
+                    <asp:SqlDataSource ID="STipo" runat="server" 
+                        ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                        ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                        SelectCommand="SELECT programacion.actId AS id, CONCAT(medicamentos.codigo, ' - ',medicamentos.nombre) AS nombre
+                            FROM programacion 
+                            LEFT JOIN medicamentos ON (medicamentos.id=programacion.actId)
+                            WHERE programacion.pacId=@paciente 
+                            AND programacion.prgFechaProg>SYSDATE()-INTERVAL 7 DAY 
+                            AND (@canUpdate=1 OR programacion.perId=@funcionario)
+                            GROUP BY programacion.actId 
+                            ORDER BY nombre">
+                        <SelectParameters>
+                            <asp:ControlParameter ControlID="CCDetallePaciente" PropertyName="IdPaciente" Name="paciente" />
+                            <asp:ControlParameter ControlID="UCFuncionario" PropertyName="IdFuncionario" Name="funcionario" DefaultValue="0" />
+                            <asp:Parameter Name="canUpdate" DefaultValue="0" />
+                        </SelectParameters>
+                    </asp:SqlDataSource>
                 </td>
-                <td>Fin</td>
-                <td><asp:TextBox runat="server" ID="TFin" CssClass="fecha"></asp:TextBox>
-                <asp:RequiredFieldValidator ControlToValidate="TFin" ErrorMessage="Por favor ingrese un fecha final." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                <asp:RangeValidator ControlToValidate="TFin" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator>
-                </td>
+                <td>Número de terapias</td>
+                <td>
+                    <asp:UpdatePanel runat="server" ID="UN" UpdateMode="Conditional">
+                        <ContentTemplate><asp:Label runat="server" ID="LNumeroTerapias"></asp:Label></ContentTemplate>
+                        <Triggers><asp:AsyncPostBackTrigger ControlID="DTipo" /></Triggers>
+                    </asp:UpdatePanel></td>
+            </tr>
+            <tr>
+                <td>Atendido por<asp:RequiredFieldValidator ControlToValidate="UCFuncionario$TFuncionarioID" ErrorMessage="Por favor ingrese un funcionario." ID="RequiredFieldValidator1" 
+	                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td colspan="3"><uc1:funcionario runat="server" ID="UCFuncionario" /></td>
             </tr>
             <asp:Panel runat="server" ID="PRespiratoria">
             <tr>
@@ -143,9 +177,9 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
-                        <asp:BoundField DataField="grupo" HeaderText="Flujo en lt/min" />
-                        <asp:BoundField DataField="nombre" HeaderText="Flujo en lt/min" />
-                        <asp:BoundField DataField="descripcion" HeaderText="Flujo en lt/min" ItemStyle-HorizontalAlign="Center"  ItemStyle-Width="100%"/>
+                        <asp:BoundField DataField="grupo" HeaderText="Flujo en lt/min" ItemStyle-Wrap="false" />
+                        <asp:BoundField DataField="nombre" HeaderText="Flujo en lt/min" ItemStyle-Wrap="false" />
+                        <asp:BoundField DataField="descripcion" HeaderText="Flujo en lt/min" ItemStyle-Width="100%"/>
                         <asp:TemplateField HeaderText="FI 02(%)" ItemStyle-HorizontalAlign="Right">
                             <ItemTemplate>
                                 <asp:TextBox runat="server" ID="TValor" Width="40px" Text='<%# Eval("valor") %>'></asp:TextBox>
