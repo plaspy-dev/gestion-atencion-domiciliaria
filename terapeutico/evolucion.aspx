@@ -101,13 +101,14 @@
                 <tr>
                     <td>Tipo<asp:RequiredFieldValidator ControlToValidate="DTipo" ErrorMessage="Por favor seleccione un tipo." ID="RequiredFieldValidator2" 
 	                    runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-                    <td><asp:DropDownList ID="DTipo" runat="server" DataSourceID="STipo" 
+                    <td><asp:DropDownList ID="DTipo" runat="server" DataSourceID="STipo" AutoPostBack="true" 
+                            OnSelectedIndexChanged="DTipo_SelectedIndexChanged"
                             DataTextField="nombre" DataValueField="id" CssClass="anchomaxcombo">
                         </asp:DropDownList>
                         <asp:SqlDataSource ID="STipo" runat="server" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                            SelectCommand="SELECT programacion.actId AS id, CONCAT(medicamentos.codigo, ' - ',medicamentos.nombre) AS nombre
+                            SelectCommand="SELECT CONCAT(programacion.autNumero, ';',programacion.actId) AS id, CONCAT(medicamentos.codigo, ' - ',medicamentos.nombre) AS nombre
                                 FROM programacion 
                                 LEFT JOIN medicamentos ON (medicamentos.id=programacion.actId)
                                 WHERE programacion.pacId=@paciente 
@@ -124,7 +125,16 @@
                     </td>
                     <td>Sesión No.<asp:RequiredFieldValidator ControlToValidate="TNumero" ErrorMessage="Por favor ingrese un número de sesion." ID="RequiredFieldValidator3" 
 	                    runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-                    <td><asp:TextBox runat="server" ID="TNumero" CssClass="entero"></asp:TextBox></td>
+                    <td>
+                        <asp:UpdatePanel runat="server" ID="US" UpdateMode="Conditional">
+                            <ContentTemplate>
+                                <asp:TextBox runat="server" ID="TNumero" CssClass="entero"></asp:TextBox>
+                            </ContentTemplate>
+                            <Triggers>
+                                <asp:AsyncPostBackTrigger ControlID="DTipo" />
+                            </Triggers>
+                        </asp:UpdatePanel>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="4" class="celdaTitulo">Signos vitales</td>

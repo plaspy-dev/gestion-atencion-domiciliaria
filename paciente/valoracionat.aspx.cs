@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
+using System.Text.RegularExpressions;
 
 public partial class paciente_valoracionat : System.Web.UI.Page
 {
@@ -23,7 +24,8 @@ public partial class paciente_valoracionat : System.Web.UI.Page
             TInicio.Text = Query.GetFromMySQLDate(DateTime.Now.Date, true);
             UCFuncionario.IdFuncionario = usuario["personal"];
 
-            DTV.MinumunValue = DateTime.Now.AddDays(-2);
+            // DTV.MinumunValue = DateTime.Now.AddDays(-2);
+            DTV.MinumunValue = DateTime.Now.AddMonths(-1);
             DTV.MaximunValue = DateTime.Now.AddMinutes(1);
             DTV.Enabled = !usuario.CanUpdate();
 
@@ -49,7 +51,7 @@ public partial class paciente_valoracionat : System.Web.UI.Page
 
                         TInicio.Focus();
                         DTipo.DataBind();
-                        DTipo_SelectedIndexChanged(sender, e);
+                        // DTipo_SelectedIndexChanged(sender, e);
 
                         if (!string.IsNullOrEmpty(Request.QueryString["vatid"]))
                         {
@@ -60,7 +62,7 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                             valoracion += "inicio";
                             // valoracion += "fin";
                             valoracion += "tipo";
-                            // valoracion += "numero_terapias";
+                            valoracion += "autorizacion";
                             valoracion += "observaciones";
                             valoracion += "paciente";
                             valoracion += "funcionario";
@@ -92,7 +94,7 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                                 TInicio.Text = Query.GetFromMySQLDate(readermysql["inicio"], true);
                                 LFinal.Text = Query.GetFromMySQLDate(((DateTime)readermysql["inicio"]).AddMinutes(nMinutosTerapia), true);
                                 // TFin.Text = Query.GetFromMySQLDate(readermysql["fin"]);
-                                DTipo.SelectedValue = readermysql["tipo"].ToString();
+                                Utilidades.SelectInDropDown(DTipo, readermysql["autorizacion"].ToString() + ";" + readermysql["tipo"].ToString(), Procedimientos.GetNombreMedicamento(readermysql["tipo"].ToString()));
                                 // TNumeroTerapias.Text = readermysql["numero_terapias"].ToString();
                                 TObservaciones.Text = readermysql["observaciones"].ToString();
                                 UCFuncionario.IdFuncionario = readermysql["funcionario"].ToString();
@@ -158,7 +160,7 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                         LHistorial.Text = GHistorial.Rows.Count + " Valoraci";
                         LHistorial.Text += GHistorial.Rows.Count == 1 ? "ón" : "ones";
                         PHistorial.Visible = GHistorial.Rows.Count > 0;
-                        // DTipo_SelectedIndexChanged(sender, e);
+                        DTipo_SelectedIndexChanged(sender, e);
                     }
                 }
             }
@@ -184,7 +186,9 @@ public partial class paciente_valoracionat : System.Web.UI.Page
 
             valoracion["inicio"] = Query.GetMySQLDateFormat(TInicio.Text, true);
             // valoracion["fin"] = Query.GetMySQLDateFormat(TFin.Text);
-            valoracion["tipo"] = DTipo.SelectedValue;
+            string[] valores = DTipo.SelectedValue.Split(';');
+            valoracion["autorizacion"] = valores[0];
+            valoracion["tipo"] = valores[1];
             // valoracion["numero_terapias"] = TNumeroTerapias.Text;
             valoracion["observaciones"] = TObservaciones.Text;
             valoracion["TA"] = TTA.Text;
@@ -294,17 +298,9 @@ public partial class paciente_valoracionat : System.Web.UI.Page
     {
         Response.Redirect(Request.Url.AbsolutePath + "?pid=" + CCDetallePaciente.IdPaciente + "&vatid=" + ((ImageButton)sender).CommandArgument);
     }
-    /*protected void DTipo_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        PRespiratoria.Visible= DTipo.SelectedValue=="1";
-        PFisica.Visible = DTipo.SelectedValue == "2";
-        POcupacional.Visible = DTipo.SelectedValue == "3";
-        PComun.Visible = PRespiratoria.Visible || PFisica.Visible;
-    }*/
 
     public void OnImprimir(object sender, EventArgs e)
     {
-
         PrintEventArgs evento = (PrintEventArgs)e;
 
         using (CConector conector = new CConector())
@@ -328,10 +324,45 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                 }
             }
             evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(UCFuncionario.IdFuncionario)));
+
+            RemoveSection(PRespiratoria, evento);
+            RemoveSection(PFisica, evento);
+            RemoveSection(POcupacional, evento);
         }
     }
+
+    public void RemoveSection(PlaceHolder control, PrintEventArgs evento) {
+
+        if (control.Visible)
+            return;
+
+        Regex regx = new Regex(string.Format(".*<!--.*{0}.*-->(?<content>.*)<!--.*{0}End.*-->.*", control.ID)
+            , RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        Match match = regx.Match(evento.Contenido.ToString());
+        if (match.Success)
+        {
+            evento.Contenido = evento.Contenido.Replace(match.Groups["content"].Value, "");
+        }
+    }
+
     protected void DTipo_SelectedIndexChanged(object sender, EventArgs e)
     {
+        if (string.IsNullOrEmpty(DTipo.SelectedValue)) {
+            LNumeroTerapias.Text = "";
+            return;
+        }
+
+        string []valores= DTipo.SelectedValue.Split(';');
+        Procedimientos.TipoServicio tiposervicio= Procedimientos.TipoServicio.Ninguno;
+        try {
+            Producto producto= Producto.GetProducto(valores[1]);
+            tiposervicio = (Procedimientos.TipoServicio) Convert.ToInt32(producto.TipoServicio);
+        } catch {}
+        PRespiratoria.Visible = tiposervicio == Procedimientos.TipoServicio.TerapiaRespiratoria;
+        PFisica.Visible = tiposervicio == Procedimientos.TipoServicio.TerapiaFisica;
+        POcupacional.Visible = tiposervicio == Procedimientos.TipoServicio.TerapiaOcupacional || tiposervicio == Procedimientos.TipoServicio.TerapiaLenguaje;
+        LTerapiaOcupacional.Text = Procedimientos.GetNombreTipoServicio(tiposervicio).ToUpper();
+
         using (CConector conector = new CConector())
         {
             LNumeroTerapias.Text = conector.QueryString(@"SELECT autorizacion_detalle.autNumSesiones
@@ -340,8 +371,11 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                             WHERE programacion.pacId={0} 
                             AND programacion.prgFechaProg>SYSDATE()-INTERVAL 7 DAY 
                             AND ({1}=1 OR programacion.perId={2})
-                            AND programacion.actId={3} LIMIT 1
-                            ", Query.GetValor(CCDetallePaciente.IdPaciente), CUsuario.GetInstance().CanUpdate() ? 1 : 0, Query.GetValor(UCFuncionario.IdFuncionario), DTipo.SelectedValue);
+                            AND programacion.actId={3} 
+                            AND programacion.autNumero={4}
+                            LIMIT 1
+                            ", Query.GetValor(CCDetallePaciente.IdPaciente), CUsuario.GetInstance().CanUpdate() ? 1 : 0
+                             , Query.GetValor(UCFuncionario.IdFuncionario), Query.GetValor(valores[1]), Query.GetValor(valores[0]));
         }
     }
 }

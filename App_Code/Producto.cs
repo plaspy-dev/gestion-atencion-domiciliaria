@@ -41,6 +41,8 @@ public class Producto
     public int DiasV { set; get; }
     public string FormatoLote { set; get; }
     public Decimal? PrecioRegulado { set; get; }
+    [XmlIgnore]
+    public string TipoServicio { set; get; }
 
     [XmlIgnore]
     public bool bIngreso = false;
@@ -274,6 +276,7 @@ public class Producto
                 query += "tipo";
                 query += "cuenta_inventario";
                 query += "cuenta_costo";
+                query += "tipo_servicio";
 
                 /*query += "vence";
                 query += "lote";
@@ -297,6 +300,7 @@ public class Producto
                     producto.CuentaInventario = reader["cuenta_inventario"].ToString();
                     producto.Tipo = reader["tipo"].ToString();
                     try { producto.PrecioRegulado = Convert.ToDecimal(reader["precio_regulado"]); } catch { }
+                    producto.TipoServicio= reader["tipo_servicio"].ToString();
                     producto.nVence= CConfiguracion.GetConfiguracion().nProductoVence;
                     producto.nLote = CConfiguracion.GetConfiguracion().nProductoLote;
                     producto.nSerial = 0;

@@ -22,7 +22,8 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
             TFecha.Text = Query.GetFromMySQLDate(DateTime.Now.Date, true);
             UCFuncionario.IdFuncionario = usuario["personal"];
             TTA.Focus();
-            DTV.MinumunValue = DateTime.Now.AddDays(-2);
+            // DTV.MinumunValue = DateTime.Now.AddDays(-2);
+            DTV.MinumunValue = DateTime.Now.AddMonths(-1);
             DTV.MaximunValue = DateTime.Now.AddMinutes(1);
             DTV.Enabled = !usuario.CanUpdate();
 
@@ -34,21 +35,10 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
                     {
                         Response.Redirect(Request.Url.AbsolutePath);
                     } else {
-                        Query query = new Query("evolucion_terapeutivo");
-                        
-                        query["sesion"] = "sesion+1";
-                        query+="plan";
-                        if(usuario.CanUpdate())
+                        if (usuario.CanUpdate())
                             STipo.SelectParameters["canUpdate"].DefaultValue = "1";
-
-                        MySqlDataReader reader = conector.Query(query.GetSelect("paciente={0} ORDER BY fecha DESC LIMIT 1", null, Query.GetValor(Request.QueryString["pid"])));
-                        if (reader != null && reader.Read()) {
-                            TNumero.Text= reader["sesion"].ToString();
-                            TPlan.Text = reader["plan"].ToString();
-                        }
-                        
-                        if (TNumero.Text.Length == 0)
-                            TNumero.Text = "1";
+                        DTipo.DataBind();
+                        DTipo_SelectedIndexChanged(sender, e);
 
                         ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
                         SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
@@ -66,7 +56,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
 
                         if (!string.IsNullOrEmpty(Request.QueryString["evtid"]))
                         {
-                            query = new Query("evolucion_terapeutivo");
+                            Query query = new Query("evolucion_terapeutivo");
 
                             query += "id";
                             query += "paciente";
@@ -78,9 +68,10 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
                             query += "sesion";
                             query += "logros";
                             query += "plan";
+                            query += "autorizacion";
                             query += "tipo";
 
-                            reader = conector.Query(query.GetSelect("id={0}", null, Query.GetValor(Request.QueryString["evtid"])));
+                            MySqlDataReader reader = conector.Query(query.GetSelect("id={0}", null, Query.GetValor(Request.QueryString["evtid"])));
                             if (reader != null && reader.Read())
                             {
                                 if (reader["paciente"].ToString() != Request.QueryString["pid"]) 
@@ -102,7 +93,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
                                 TFR.Text = reader["fr"].ToString();
                                 TFC.Text = reader["fc"].ToString();
                                 TTA.Text = reader["ta"].ToString();
-                                Utilidades.SelectInDropDown(DTipo, reader["tipo"]);
+                                Utilidades.SelectInDropDown(DTipo, reader["autorizacion"].ToString() + ";" + reader["tipo"].ToString(), Procedimientos.GetNombreMedicamento(reader["tipo"].ToString()));
 
 
                                 string file = Archivo.GetFileName("evolucion_apoyo", CCDetallePaciente.IdPaciente, reader["id"].ToString() + ".jpg");
@@ -144,7 +135,10 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
             query["sesion"] = TNumero.Text;
             query["logros"] = TLogros.Text;
             query["plan"] = TPlan.Text;
-            query["tipo"] = DTipo.SelectedValue;
+            string []valores= DTipo.SelectedValue.Split(';');
+            query["autorizacion"] = valores[0];
+            query["tipo"] = valores[1];
+            
 
             if (string.IsNullOrEmpty(id))
             {
@@ -241,6 +235,49 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
                 }
             }
             evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(UCFuncionario.IdFuncionario)));
+        }
+    }
+    protected void DTipo_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (string.IsNullOrEmpty(DTipo.SelectedValue))
+        {
+            TNumero.Text = "";
+            TPlan.Text = "";
+            return;
+        }
+
+        using (CConector conector = new CConector())
+        {
+            TNumero.Text = "";
+            string[] valores = DTipo.SelectedValue.Split(';');
+
+            Query query = new Query("evolucion_terapeutivo");
+
+            query["sesion"] = "sesion+1";
+            query += "plan";
+
+            MySqlDataReader reader = conector.Query(query.GetSelect("paciente={0} AND autorizacion={1} AND tipo={2} ORDER BY fecha DESC LIMIT 1", null
+                , Query.GetValor(Request.QueryString["pid"])
+                , Query.GetValor(valores[0]), Query.GetValor(valores[1])
+                ));
+            if (reader != null && reader.Read())
+            {
+                TNumero.Text = reader["sesion"].ToString();
+                TPlan.Text = reader["plan"].ToString();
+            }
+
+            if (TNumero.Text.Length == 0)
+            {
+                query = new Query("valoracionat");
+                query += "1";
+
+                string resultado = conector.QueryString(
+                    query.GetSelect("paciente={0} AND MONTH(inicio)={1} AND YEAR(inicio)={2} AND autorizacion={3} AND tipo={4} LIMIT 1", null
+                        , Query.GetValor(Request.QueryString["pid"])
+                        , DateTime.Now.Month, DateTime.Now.Year, Query.GetValor(valores[0]), Query.GetValor(valores[1])));
+
+                TNumero.Text = string.IsNullOrEmpty(resultado) ? "1" : "2";
+            }
         }
     }
 }

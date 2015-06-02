@@ -33,13 +33,21 @@ public partial class administrador_medicamentos : System.Web.UI.Page
             }
             else BAceptar.Enabled = false;
 
+
+            foreach (Procedimientos.TipoServicio info in (Procedimientos.TipoServicio[])Enum.GetValues(typeof(Procedimientos.TipoServicio)))
+            {
+                if (info == 0)
+                    continue;
+                DTipo.Items.Add(new ListItem(Procedimientos.GetNombreTipoServicio(info), ((int)info).ToString()));
+            }
+        
             if (Request.QueryString["imp"] != null && Request.QueryString["imp"].Length > 0)
             {
 
                 using (CConector conector = new CConector())
                 {
 
-                    MySqlDataReader reader = conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica,hoja_sola,precio_regulado,codigoSIIGO,cuenta_inventario,cuenta_costo FROM medicamentos WHERE id=" + Query.GetValor(Request.QueryString["imp"].Trim()));
+                    MySqlDataReader reader = conector.Query("SELECT id, nombre, forma,codigo, principio, concentracion, aclaracion,area,tipo,grupo,automatica,hoja_sola,precio_regulado,codigoSIIGO,cuenta_inventario,cuenta_costo,tipo_servicio FROM medicamentos WHERE id=" + Query.GetValor(Request.QueryString["imp"].Trim()));
 
                     if (reader != null && reader.Read())
                     {
@@ -58,6 +66,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
                         try { TPrecioRegulado.Text = Convert.ToDecimal(reader["precio_regulado"]).ToString(CultureInfo.InvariantCulture); } catch { }
                         CImprimirHoja.Checked = reader["hoja_sola"].ToString() == "1";
                         Utilidades.SelectInDropDown(DGrupo, reader["grupo"]);
+                        Utilidades.SelectInDropDown(DTipo, reader["tipo_servicio"]);
 
                         ListItem item = LTipos.Items.FindByValue(reader["tipo"].ToString());
                         if (item != null)
@@ -103,6 +112,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
             query["precio_regulado"] = TPrecioRegulado.Text.Replace(",", "").Replace("$", "");
             query["cuenta_costo"] = TCCosto.Text;
             query["cuenta_inventario"] = TCInventario.Text;
+            query["tipo_servicio"] = DTipo.SelectedValue;
 
             if (HId.Value.Length == 0)
             {
@@ -223,6 +233,7 @@ public partial class administrador_medicamentos : System.Web.UI.Page
         GCargos.DataBind();
         GEntidades.DataBind();
         CAutomatica.Checked = false;
+        DTipo.SelectedValue = "";
         BAceptar.Enabled = Usuario.GetUsuario().CanInsert();
 
         GResultado.SelectedIndex = -1;

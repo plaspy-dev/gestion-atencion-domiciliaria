@@ -325,7 +325,7 @@
                         ,paciente.pacNombres,IF(paciente.sexoId=2, 'Masculino', 'Femenino') AS sexo
                         ,tipo_documento.tdocDescripcion
                         ,paciente.pacDocumento
-                        ,'OrganizationExample15 y Compañia S.A.' AS 'IPS'
+                        ,'OrganizationExample15 SAS' AS 'IPS'
                         ,valoracion_herida.fecha
                         ,TIMESTAMPDIFF(YEAR, paciente.pacFechaNac, NOW()) AS edad
                         ,COUNT(valoracion_herida_herida.id) AS 'lesiones'

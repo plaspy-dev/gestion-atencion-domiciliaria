@@ -130,6 +130,12 @@
               <td>
                   &nbsp;</td>
           </tr>
+        <tr>
+            <td>Tipo servicio</td>
+            <td><asp:DropDownList runat="server" ID="DTipo">
+                <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
+                </asp:DropDownList></td>
+        </tr>
           <tr>
             <td>Precio regulado</td>
             <td><asp:TextBox runat="server" ID="TPrecioRegulado" CssClass="dinero"></asp:TextBox></td>

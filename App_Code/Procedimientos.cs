@@ -7,12 +7,36 @@ using System.Web.UI.WebControls;
 using System.Collections;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
+using System.ComponentModel;
 
 /// <summary>
 /// Descripción breve de Procedimientos
 /// </summary>
 public class Procedimientos
 {
+    public enum TipoServicio { 
+        [Description("(Ninguno)")]
+        Ninguno=0,
+        [Description("Terapia física")]
+        TerapiaFisica=1,
+        [Description("Terapia respiratoria")]
+        TerapiaRespiratoria,
+        [Description("Terapia ocupacional")]
+        TerapiaOcupacional,
+        [Description("Terapia de lenguaje")]
+        TerapiaLenguaje
+    }
+
+    public static string GetNombreTipoServicio(TipoServicio valor)
+    {
+        try
+        {
+            return ((DescriptionAttribute)valor.GetType().GetField(valor.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), true)[0]).Description;
+        }
+        catch { }
+        return "";
+    }
+
     public class Procedimiento { 
         public string sNombre;
         public Boolean bAutomatica;

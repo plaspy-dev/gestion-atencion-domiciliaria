@@ -52,7 +52,7 @@
             <ContentTemplate>
                 <asp:GridView ID="GResultados" runat="server" DataSourceID="SResultados" 
                     AutoGenerateColumns="False" EmptyDataText="No se encontraron autorizaciones"
-                    AllowPaging="True" PageSize="50" AllowSorting="True" DataKeyNames="id,paciente" >
+                    AllowPaging="True" PageSize="50" AllowSorting="True" DataKeyNames="id,paciente,evolucion" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -60,10 +60,17 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
-                        <asp:HyperLinkField HeaderText="Fecha" DataNavigateUrlFields="id,paciente" DataNavigateUrlFormatString="~/terapeutico/evolucion.aspx?pid={1}&evtid={0}" SortExpression="fecha" DataTextField="fecha" ItemStyle-Wrap="false" />
+                        <asp:TemplateField HeaderText="Fecha" SortExpression="fecha" ItemStyle-Wrap="false">
+                            <ItemTemplate>
+                                <asp:HyperLink runat="server" ID="H" NavigateUrl='<%# string.Format(Eval("evolucion").ToString()=="1" 
+                                        ? "~/terapeutico/evolucion.aspx?pid={0}&evtid={1}" 
+                                        : "~/paciente/valoracionat.aspx?pid={0}&vatid={1}", Eval("paciente"), Eval("id")) %>' Text='<%# Eval("Fecha") %>' Target="_blank"></asp:HyperLink>
+                            </ItemTemplate>
+                        </asp:TemplateField>
                         <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre" ItemStyle-Wrap="false"/>
                         <asp:BoundField HeaderText="Paciente" DataField="pacNombres" SortExpression="pacNombres" ItemStyle-Wrap="false"/>
                         <asp:BoundField HeaderText="Funcionario" DataField="perNombre" SortExpression="perNombre" ItemStyle-Wrap="false"/>
+                        <asp:BoundField HeaderText="Servicio" DataField="nombre" SortExpression="nombre" ItemStyle-Wrap="false" />
                         <asp:BoundField HeaderText="Sesión" DataField="sesion" SortExpression="sesion" ItemStyle-HorizontalAlign="Right"/>
                         <asp:BoundField HeaderText="Logros" DataField="logros" SortExpression="logros"/>
                         <asp:BoundField HeaderText="Plan" DataField="plan" SortExpression="plan"/>
@@ -78,21 +85,42 @@
     <asp:SqlDataSource ID="SResultados" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT evolucion_terapeutivo.id,evolucion_terapeutivo.paciente
+                SelectCommand="(SELECT evolucion_terapeutivo.id,evolucion_terapeutivo.paciente
                                 ,paciente.pacNombres,recurso_humano.perNombre,asegurador.entNombre
                                 ,evolucion_terapeutivo.fecha
                                 ,evolucion_terapeutivo.sesion
                                 ,evolucion_terapeutivo.logros
                                 ,evolucion_terapeutivo.plan
+                                , CONCAT(medicamentos.codigo, ' - ',medicamentos.nombre) AS nombre
+                                ,1 AS evolucion
                                 FROM evolucion_terapeutivo
                                 LEFT JOIN paciente ON (paciente.pacId=evolucion_terapeutivo.paciente)
                                 LEFT JOIN recurso_humano ON (recurso_humano.perId=evolucion_terapeutivo.funcionario)
+                                LEFT JOIN medicamentos ON (medicamentos.id=evolucion_terapeutivo.tipo)
                                 LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
                             WHERE DATE(evolucion_terapeutivo.fecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                             AND (@paciente=0 OR evolucion_terapeutivo.paciente=@paciente)
-                            -- AND (@procedimiento=0 OR programacion.actId=@procedimiento)
                             AND (@personal=0 OR evolucion_terapeutivo.funcionario=@personal)
                             AND (@asegurador=0 OR paciente.entId=@asegurador)
+                            ) UNION (
+                            SELECT valoracionat.id,valoracionat.paciente
+                                ,paciente.pacNombres,recurso_humano.perNombre,asegurador.entNombre
+                                ,valoracionat.inicio AS fecha
+                                ,1 AS sesion
+                                ,valoracionat.observaciones AS logros
+                                ,NULL AS plan
+                                , CONCAT(medicamentos.codigo, ' - ',medicamentos.nombre) AS nombre
+                                ,0 AS evolucion
+                                FROM valoracionat
+                                LEFT JOIN paciente ON (paciente.pacId=valoracionat.paciente)
+                                LEFT JOIN recurso_humano ON (recurso_humano.perId=valoracionat.funcionario)
+                                LEFT JOIN medicamentos ON (medicamentos.id=valoracionat.tipo)
+                                LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+                                    WHERE DATE(valoracionat.inicio) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                    AND (@paciente=0 OR valoracionat.paciente=@paciente)
+                                    AND (@personal=0 OR valoracionat.funcionario=@personal)
+                                    AND (@asegurador=0 OR paciente.entId=@asegurador)
+                            )
                             ORDER BY fecha">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
@@ -107,6 +135,52 @@
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
         <asp:Label runat="server" ID="TPaciente"></asp:Label>
         <asp:Label runat="server" ID="LPaciente"></asp:Label>
+
+        <!-- esto espara la evolucion-->
+        <asp:GridView ID="GFuerza" runat="server" AutoGenerateColumns="False" DataSourceID="SFuerza" DataKeyNames="id" Width="100%">
+            <RowStyle CssClass="GridRow"></RowStyle>
+            <FooterStyle CssClass="GridFooter"></FooterStyle>
+            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+            <Columns>
+                <asp:BoundField DataField="nombre" HeaderText="" ItemStyle-Width="100%" />
+                <asp:TemplateField HeaderText="Fuerza muscular" ItemStyle-HorizontalAlign="Right">
+                    <ItemTemplate>
+                        <asp:TextBox runat="server" ID="TPuntaje" Width="40px" Text='<%# Eval("puntuacion") %>' CssClass="entero"></asp:TextBox>
+                        <asp:RegularExpressionValidator ValidationExpression="^[012345]{1}$" ID="RegularExpressionValidator1" ControlToValidate="TPuntaje" ErrorMessage="Por favor ingrese una calificación valida." Display="Dynamic" SetFocusOnError="true" runat="server">*</asp:RegularExpressionValidator></td>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:BoundField DataField="descripcion" HeaderText="Grado" ItemStyle-HorizontalAlign="Center" />
+                <asp:TemplateField HeaderText="Movilidad" ItemStyle-HorizontalAlign="Right">
+                    <ItemTemplate>
+                        <asp:TextBox runat="server" ID="TIzquierda" Width="40px" Text='<%# Eval("izquierda") %>' CssClass="entero"></asp:TextBox>
+                        <asp:RegularExpressionValidator ValidationExpression="^[012345]{1}$" ID="RegularExpressionValidator2" ControlToValidate="TIzquierda" ErrorMessage="Por favor ingrese una calificación valida." Display="Dynamic" SetFocusOnError="true" runat="server">*</asp:RegularExpressionValidator></td>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:BoundField DataField="descripcion" HeaderText="Grado" ItemStyle-HorizontalAlign="Center" />
+                <asp:TemplateField HeaderText="Movilidad" ItemStyle-HorizontalAlign="Right">
+                    <ItemTemplate>
+                        <asp:TextBox runat="server" ID="TDerecha" Width="40px" Text='<%# Eval("derecha") %>' CssClass="entero"></asp:TextBox>
+                        <asp:RegularExpressionValidator ValidationExpression="^[012345]{1}$" ID="RegularExpressionValidator3" ControlToValidate="TDerecha" ErrorMessage="Por favor ingrese una calificación valida." Display="Dynamic" SetFocusOnError="true" runat="server">*</asp:RegularExpressionValidator></td>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:BoundField DataField="descripcion" HeaderText="Ideal" ItemStyle-HorizontalAlign="Center" />
+            </Columns>
+        </asp:GridView>
+        <asp:SqlDataSource ID="SFuerza" runat="server" 
+            ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+            ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+            SelectCommand="SELECT varios.id,varios.nombre,varios.descripcion,valoracionat_fuerza_muscular.izquierda,valoracionat_fuerza_muscular.derecha,valoracionat_fuerza_muscular.puntuacion
+                            FROM varios 
+                            LEFT JOIN valoracionat_fuerza_muscular ON (valoracionat_fuerza_muscular.valoracion=@valoracion AND valoracionat_fuerza_muscular.tipo=varios.id) 
+                            WHERE varios.tipo=25 AND varios.szReservado IS NULL">
+                <SelectParameters>
+                    <asp:Parameter Name="valoracion" DefaultValue="" />
+                </SelectParameters>
+        </asp:SqlDataSource>
+
     </asp:Panel>
 </asp:Content>
 

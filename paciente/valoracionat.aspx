@@ -133,7 +133,7 @@
                     <asp:SqlDataSource ID="STipo" runat="server" 
                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                         ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                        SelectCommand="SELECT programacion.actId AS id, CONCAT(medicamentos.codigo, ' - ',medicamentos.nombre) AS nombre
+                        SelectCommand="SELECT CONCAT(programacion.autNumero, ';',programacion.actId) AS id, CONCAT(medicamentos.codigo, ' - ',medicamentos.nombre) AS nombre
                             FROM programacion 
                             LEFT JOIN medicamentos ON (medicamentos.id=programacion.actId)
                             WHERE programacion.pacId=@paciente 
@@ -149,18 +149,14 @@
                     </asp:SqlDataSource>
                 </td>
                 <td>Número de terapias</td>
-                <td>
-                    <asp:UpdatePanel runat="server" ID="UN" UpdateMode="Conditional">
-                        <ContentTemplate><asp:Label runat="server" ID="LNumeroTerapias"></asp:Label></ContentTemplate>
-                        <Triggers><asp:AsyncPostBackTrigger ControlID="DTipo" /></Triggers>
-                    </asp:UpdatePanel></td>
+                <td align="right"><asp:Label runat="server" ID="LNumeroTerapias"></asp:Label></td>
             </tr>
             <tr>
                 <td>Atendido por<asp:RequiredFieldValidator ControlToValidate="UCFuncionario$TFuncionarioID" ErrorMessage="Por favor ingrese un funcionario." ID="RequiredFieldValidator1" 
 	                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td colspan="3"><uc1:funcionario runat="server" ID="UCFuncionario" /></td>
             </tr>
-            <asp:Panel runat="server" ID="PRespiratoria">
+            <asp:PlaceHolder runat="server" ID="PRespiratoria" Visible="false">
             <tr>
                 <td colspan="4" class="celdaTitulo">Terapias respiratorias</td>
             </tr>
@@ -208,8 +204,8 @@
                 <td nowrap="nowrap"><asp:CheckBox runat="server" ID="CLatrogenia" Text="Iatrogenia por uso de dispositivos" /></td>
                 <td colspan="3"><asp:TextBox runat="server" ID="TLatrogenia" Width="99%"></asp:TextBox></td>
             </tr>
-            </asp:Panel>
-            <asp:Panel runat="server" ID="PFisica">
+            </asp:PlaceHolder>
+            <asp:PlaceHolder runat="server" ID="PFisica" Visible="false">
             <tr>
                 <td colspan="4" class="celdaTitulo">Terapias físicas</td>
             </tr>
@@ -265,8 +261,8 @@
                     Nota: en la fuerza muscular defina de 0 a 5 según corresponda donde 5 es total y cero nula, se mide la fuerza de un movimiento articular
                 </td>
             </tr>
-            </asp:Panel>
-            <asp:Panel runat="server" ID="PComun">
+            </asp:PlaceHolder>
+            <asp:PlaceHolder runat="server" ID="PComun">
             <tr>
                 <td>Objetivo terapéutico</td>
                 <td colspan="3"><asp:TextBox runat="server" ID="TJustificacion" Width="99%"></asp:TextBox></td>
@@ -301,10 +297,10 @@
                 <td>Resultado diagnostico</td>
                 <td colspan="3"><asp:TextBox runat="server" ID="TResultados" Width="99%"></asp:TextBox></td>
             </tr>
-            </asp:Panel>
-            <asp:Panel runat="server" ID="POcupacional">
+            </asp:PlaceHolder>
+            <asp:PlaceHolder runat="server" ID="POcupacional" Visible="false">
             <tr>
-                <td colspan="4" class="celdaTitulo">Terapias ocupacionales y lenguaje</td>
+                <td colspan="4" class="celdaTitulo"><asp:Label runat="server" ID="LTerapiaOcupacional" Text="Terapias ocupacionales"></asp:Label></td>
             </tr>
             <tr>
                 <td><asp:CheckBox runat="server" ID="CPresentoEA" Text="¿Se presento EA?" /></td>
@@ -314,7 +310,7 @@
                 <td>Que medidas se realizarón</td>
                 <td colspan="3"><asp:TextBox runat="server" ID="TMedidas" Width="99%"></asp:TextBox></td>
             </tr>
-            </asp:Panel>
+            </asp:PlaceHolder>
             <tr>
                 <td>Observaciones</td>
                 <td colspan="3"><asp:TextBox runat="server" ID="TObservaciones" TextMode="MultiLine" Width="99%"></asp:TextBox></td>
