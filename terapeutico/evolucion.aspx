@@ -183,11 +183,11 @@
                         <asp:ValidationSummary runat="server" ID="V" /></td>
                 </tr>
                 <tr>
-                    <td colspan="4" align="right">
+                    <td><asp:Button Text="Eliminar" runat="server" ID="BEliminar" Visible="false" OnClientClick="confirm('¿Esta seguro de eliminar esta evolución?')" 
+                                CausesValidation="false" onclick="BEliminar_Click" /></td>
+                    <td colspan="3" align="right">
                         <asp:Button ID="BAceptar" runat="server" onclick="BAceptar_Click" Text="Aceptar" />
                         <asp:Button ID="BCancelar" runat="server" CausesValidation="False" onclick="BCancelar_Click" Text="Cancelar" />
-                        <asp:Button Text="Eliminar" runat="server" ID="BEliminar" Visible="false" OnClientClick="confirm('¿Esta seguro de eliminar esta hoja de evolución?')" 
-                                CausesValidation="false" onclick="BEliminar_Click" />
                     </td>
                 </tr>
             </table>

@@ -316,7 +316,9 @@
                 <td colspan="3"><asp:TextBox runat="server" ID="TObservaciones" TextMode="MultiLine" Width="99%"></asp:TextBox></td>
             </tr>
             <tr>
-                <td colspan="4" align="right">
+                <td><asp:Button Text="Eliminar" runat="server" ID="BEliminar" Visible="false" OnClientClick="confirm('¿Esta seguro de eliminar esta valoración?')" 
+                            CausesValidation="false" onclick="BEliminar_Click" /></td>
+                <td colspan="3" align="right">
                                 <asp:ValidationSummary ID="ValidationSummary1" runat="server" />
                                 <asp:Button ID="BAceptar" runat="server" onclick="BAceptar_Click" Text="Aceptar" />
                                 <asp:Button ID="BCancelar" runat="server" CausesValidation="False" onclick="BCancelar_Click" Text="Cancelar" /></td>

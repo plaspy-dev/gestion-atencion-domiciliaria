@@ -206,7 +206,8 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
             if (conector.QueryMod("UPDATE programacion SET prestado_evolucion=NULL WHERE prestado_evolucion={0}", Query.GetValor(ViewState["id"].ToString()))==-1)
                 return;
             conector.Commit();
-            Response.Redirect(Request.Url.AbsolutePath);
+            ((MasterPageI)Master).SetResultado("Evolución eliminada " + CCDetallePaciente.Nombres);
+            // Response.Redirect(Request.Url.AbsolutePath);
         }
     }
 

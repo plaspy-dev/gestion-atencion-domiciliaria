@@ -82,6 +82,7 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                             {
                                 ((MasterPageI)Master).Imprimir("valoracionat.html");
                                 BAceptar.Enabled = usuario.CanUpdate();
+                                BEliminar.Visible = usuario.CanDelete();
                                 // verificamos que el paciente solicitado sea el mismo 
                                 if (CCDetallePaciente.IdPaciente != readermysql["paciente"].ToString()) { // son diferetnes
 
@@ -376,6 +377,26 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                             LIMIT 1
                             ", Query.GetValor(CCDetallePaciente.IdPaciente), CUsuario.GetInstance().CanUpdate() ? 1 : 0
                              , Query.GetValor(UCFuncionario.IdFuncionario), Query.GetValor(valores[1]), Query.GetValor(valores[0]));
+        }
+    }
+    protected void BEliminar_Click(object sender, EventArgs e)
+    {
+        using (CConector conector = new CConector())
+        {
+            conector.StartTransaction();
+            if (conector.QueryMod("DELETE FROM valoracionat WHERE id=" + HIdValoracion.Value) == -1)
+                return;
+            // eliminamos las otras tablas
+            if (conector.QueryMod("DELETE FROM valoracionat_ocupacional WHERE valoracion=" + HIdValoracion.Value) == -1)
+                return;
+            if (conector.QueryMod("DELETE FROM valoracionat_oxigeno WHERE valoracion=" + HIdValoracion.Value) == -1)
+                return;
+            if (conector.QueryMod("DELETE FROM valoracionat_respiratoria WHERE valoracion=" + HIdValoracion.Value) == -1)
+                return;
+            if (conector.QueryMod("DELETE FROM valoracionat_fuerza_muscular WHERE valoracion=" + HIdValoracion.Value) == -1)
+                return;
+            conector.Commit();
+            ((MasterPageI)Master).SetResultado("Valoración eliminada " + CCDetallePaciente.Nombres);
         }
     }
 }
