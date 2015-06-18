@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Índice de Barthel</title>
+<style type="text/css">
+	body {
+		font-size: 12px;
+		margin-left: 0px;
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 10px;
+	}
+	a, a:link {
+	  color: #000;
+	  text-decoration: none;
+	  padding: 5px 10px;
+	  background: #E7E6E8;
+	  font: 80% Verdana, Arial, Helvetica, sans-serif;
+	  border-right: 2px solid #9697A2;
+	  border-bottom: 2px solid #9697A2;
+	  border-top: 1px solid #FFF;
+	  border-left: 1px solid #FFF;
+	  cursor: default;
+	}
+	
+	a:active {
+	  border-left: 2px solid #9697A2;
+	  border-top: 2px solid #9697A2;
+	  border-bottom: 1px solid #FFF;
+	  border-right: 1px solid #FFF;
+	}
+</style>
+</head>
+<body>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td colspan="3"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td><img src="https://service.example.invalid/OrganizationExample15/imgs/Logo.jpg" width="170" height="60" alt="logo" /></td>
+        <td valign="bottom"><strong>Programación</strong></td>
+        <td align="right" valign="middle"><strong>OrganizationExample15 SAS</strong><br />
+          NIT. 000.000.015-0<br />
+            Dirección de demostración<br />
+            000 000 0101</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr bgcolor="#FFFFFF">
+    <td colspan="3"><fieldset>
+    <strong>
+    <legend>Datos Paciente</legend>
+      </strong>
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>Documento</td>
+        <td><strong>$TPaciente$</strong></td>
+        <td>Nombre</td>
+        <td nowrap="nowrap"><strong>$LPaciente$</strong></td>
+      </tr>
+      <tr>
+        <td>Nacimiento</td>
+        <td>$LFechaNacimiento$</td>
+        <td>Sexo</td>
+        <td>$LSexo$ </td>
+      </tr>
+      <tr>
+        <td>Asegurador</td>
+        <td>$LAsegurador$</td>
+        <td>Tipo de Afiliaci&oacute;n</td>
+        <td>$szTipoAfiliacion$</td>
+      </tr>
+      <tr>
+        <td>Direcci&oacute;n</td>
+        <td>$LDireccion$</td>
+        <td>Barrio</td>
+        <td>$LBarrio$</td>
+      </tr>
+      <tr>
+        <td>Pago directo</td>
+        <td>$LTipoPago$</td>
+        <td>Tel&eacute;fono</td>
+        <td>$LTelefono$</td>
+      </tr>
+      <tr>
+        <td>Familiar</td>
+        <td>$LFamiliar$</td>
+        <td>Parentesco</td>
+        <td>$LParentesco$</td>
+      </tr>
+      <tr>
+        <td>Observaciones</td>
+        <td colspan="3">$TObservaciones$</td>
+        </tr>
+      <tr>
+        <td colspan="4">$LCIE10$</td>
+      </tr>
+    </table>
+    </fieldset></td>
+  </tr>
+  <tr>
+    <td colspan="3">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="3" valign="top">$GProgramacion$</td>
+  </tr>
+  <tr>
+    <td colspan="3" valign="top">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="center" valign="top"><a href="http://$servidor$?a=$Autorizacion$&amp;k=$key$&amp;r=1">Aceptar</a></td>
+    <td align="center" valign="top">&nbsp;</td>
+    <td align="center" valign="top"><a href="http://$servidor$?a=$Autorizacion$&amp;k=$key$&amp;r=0">Rechazar</a></td>
+  </tr>
+  </table>
+</body>
+</html>

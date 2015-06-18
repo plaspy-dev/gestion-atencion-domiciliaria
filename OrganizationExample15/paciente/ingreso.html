@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Hoja de ingreso</title>
+<style type="text/css">
+	body {
+	font-size: 12px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	}
+</style>
+</head>
+<body>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td colspan="5"><table width="100%" border="0">
+      <tr>
+        <td width="31%" height="66"><p><strong>HOJA DE INGRESO</strong></p>
+              <p><strong>OrganizationExample15 SAS</strong><br />
+                NIT. 000.000.015-0</p></td>
+        <td width="54%" valign="bottom"><p align="right">&nbsp;</p></td>
+        <td width="15%" align="right" valign="middle"><br />
+              <img src="../imgs/Logo.jpg" width="143" height="49" alt="logo" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr bgcolor="#FFFFFF">
+    <td colspan="5"><fieldset>
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td width="12%">Documento</td>
+          <td width="17%"><strong>$TPaciente$</strong></td>
+          <td width="12%">Nombre</td>
+          <td width="36%" nowrap="nowrap"><strong>$LPaciente$</strong></td>
+          <td width="9%" nowrap="nowrap">Sexo</td>
+          <td width="14%" nowrap="nowrap">$LSexo$ </td>
+        </tr>
+        <tr>
+          <td>Nacimiento</td>
+          <td>$LFechaNacimiento$</td>
+          <td>Asegurador</td>
+          <td>$LAsegurador$</td>
+          <td>Categoría</td>
+          <td>$szCategoria$</td>
+        </tr>
+        <tr>
+          <td>Barrio</td>
+          <td>$LBarrio$</td>
+          <td>Direcci&oacute;n</td>
+          <td colspan="3">$LDireccion$</td>
+        </tr>
+        <tr>
+          <td>Tel&eacute;fono</td>
+          <td>$LTelefono$</td>
+          <td>Familiar</td>
+          <td>$LFamiliar$</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>Parentesco</td>
+          <td>$LParentesco$</td>
+          <td>Tipo de Afiliaci&oacute;n</td>
+          <td>$szTipoAfiliacion$</td>
+          <td>Pago directo</td>
+          <td>$LTipoPago$</td>
+        </tr>
+        <tr>
+          <td height="15" colspan="6"><strong>$LCIE10$</strong></td>
+        </tr>
+      </table>
+    </fieldset></td>
+  </tr>
+  <tr>
+    <td><strong>Medico </strong></td>
+    <td colspan="2">$DMedico$</td>
+    <td><strong>Fecha</strong> </td>
+    <td nowrap="nowrap">$TFecha$</td>
+  </tr>
+  <tr>
+    <td><strong>Según</strong></td>
+    <td colspan="4">$DMotivo$</td>
+  </tr>
+  <tr>
+    <td><strong>Motivo Consulta</strong></td>
+    <td colspan="4">$TMotivo$</td>
+  </tr>
+  <tr>
+	<td><strong>Signos vitales</strong></td>
+    <td colspan="4"><strong>T</strong>: $TT$ °, <strong>FC</strong>: $TFC$ Lat/min, <strong>TA</strong>:$TTA$ mm/Hg, <strong>FR</strong>: $TFR$ Min, <strong>Saturación</strong>: $TSaturacion$ %, <strong>Peso</strong>: $TPeso$ Kg., <strong>Glucometría</strong>: $TGlucometria$ mg/dl</td>
+  </tr>
+  <tr>
+	  <td><strong>Índice de Barthel</strong></td>
+      <td>$szBarthel$</td>
+      <td></td>
+   	  <td><strong>Escala de Braden</strong></td>
+      <td>$szBraden$</td>
+  </tr>
+  <tr>
+    <td><strong>Escala Norton</strong></td>
+    <td>$szNorton$</td>
+    <td></td>
+    <td><strong>Escala Cruz Roja</strong></td>
+    <td>$szCruzRoja$</td>
+  </tr>
+</table>
+  <p align="justify"><strong>Enfermedad actual</strong>: $TEnfermedadActual$</p>
+  <p align="justify"><strong>Revisión sistemas</strong><br />$szRevision$</p>
+  <p align="justify"><strong>Antecedentes</strong>: $szAntecedentes$</p>
+  <p align="justify">$szGinecologico$</p>
+  <p align="justify"><strong>Examen físico</strong><br />$szExamenFisico$</p>
+  <p align="justify"><strong>Riesgos</strong>: $szRiesgos$</p>
+  <p align="justify"><strong>Plan educativo</strong>: $szPlanEducativo$</p>
+  <p align="justify"><strong>Tipo diagnóstico</strong>: $DTipoDiagnostico$</p>
+  <p align="justify"><strong>Análisis clínico</strong>: $TAnalisis$</p>
+  <p align="justify"><strong>Conducta inicial</strong>: $szConductaInicial$</p>
+  <p>
+  <br />  
+  <img src="../archivo/firma.ashx?ui=$szIdUsuario$" /><br />
+  ______________________________<br/>
+  <strong>$szMedico$</strong><br />
+  Registro médico $szProfesional$ <br />
+$szCargo$</p>
+</body>
+</html>

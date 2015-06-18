@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Evolución</title>
+<style type="text/css">
+	body {
+	font-size: 12px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	}
+	.separador {
+		text-align: center;
+		color: #FFF;
+		text-transform: uppercase;
+		background-color: rgb(64, 107, 175);
+	}
+</style>
+</head>
+<body>
+<table width="100%" border="0">
+  <tr>
+    <td colspan="4"><table width="100%" border="0">
+      <tr>
+        <td><img src="../imgs/Logo.jpg" width="170" height="60" alt="logo" /></td>
+        <td valign="bottom"><strong>REPORTE PQR</strong></td>
+        <td align="right" valign="middle"><strong>OrganizationExample15 SAS</strong><br />
+          NIT. 000.000.015-0<br />
+            Dirección de demostración<br />
+            000 000 0101
+      </tr>
+    </table></td>
+  </tr>
+  <tr bgcolor="#FFFFFF">
+    <td colspan="4"><fieldset>
+    <strong>
+    <legend>Datos Paciente</legend>
+      </strong>
+    <table width="100%">
+      <tr>
+        <td>Documento</td>
+        <td><strong>$TPaciente$</strong></td>
+        <td>Nombre</td>
+        <td nowrap="nowrap"><strong>$LPaciente$</strong></td>
+      </tr>
+      <tr>
+        <td>Nacimiento</td>
+        <td>$LFechaNacimiento$</td>
+        <td>Sexo</td>
+        <td>$LSexo$ </td>
+      </tr>
+      <tr>
+        <td>Asegurador</td>
+        <td>$LAsegurador$</td>
+        <td>Tipo de Afiliaci&oacute;n</td>
+        <td>$szTipoAfiliacion$</td>
+      </tr>
+      <tr>
+        <td>Direcci&oacute;n</td>
+        <td>$LDireccion$</td>
+        <td>Barrio</td>
+        <td>$LBarrio$</td>
+      </tr>
+      <tr>
+        <td>Pago directo</td>
+        <td>$LTipoPago$</td>
+        <td>Tel&eacute;fono</td>
+        <td>$LTelefono$</td>
+      </tr>
+      <tr>
+        <td>Familiar</td>
+        <td>$LFamiliar$</td>
+        <td>Parentesco</td>
+        <td>$LParentesco$</td>
+      </tr>
+      <tr>
+        <td>Fecha </td>
+        <td>$TFecha$ $THora$</td>
+        <td>Categoria</td>
+        <td>$szCategoria$</td>
+      </tr>
+      <tr>
+        <td colspan="4">$LCIE10$</td>
+      </tr>
+    </table>
+    </fieldset></td>
+  </tr>
+  <tr>
+    <td colspan="2" width="50%">&nbsp;</td>
+    <td colspan="2" width="50%">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>Fecha</td>
+    <td>$TFecha$</td>
+    <td>Hora</td>
+    <td>$THora$</td>
+  </tr>
+  <tr>
+    <td>Tipo</td>
+    <td>$DTipo$</td>
+    <td>Clasificación</td>
+    <td>$DClasificacion$</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="separador">Personal involucrado</td>
+  </tr>
+  <tr>
+    <td colspan="4">$GPersonal$</td>
+  </tr>
+  <tr>
+    <td>Quien notifica</td>
+    <td>$TPLlama$</td>
+    <td>Parentesco</td>
+    <td>$TParentesco$</td>
+  </tr>
+  <tr>
+    <td>Correo electrónico</td>
+    <td>$TEmail$</td>
+    <td>Teléfono</td>
+    <td>$TTelefono$</td>
+  </tr>
+  <tr>
+    <td>Descripción</td>
+    <td colspan="3">$TDetalle$</td>
+  </tr>
+  <tr>
+    <td>Observaciones</td>
+    <td colspan="3">$TObservaciones$</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="separador">Hecho</td>
+  </tr>
+  <tr>
+    <td>Lugar</td>
+    <td colspan="3">$TLugar$</td>
+  </tr>
+  <tr>
+    <td>Circunstancias relacionadas</td>
+    <td colspan="3">$TCircunstanacias$</td>
+  </tr>
+  <tr>
+    <td>Antecedentes que desataron la conducta del usuario</td>
+    <td colspan="3">$TAntecedentes$</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="separador">Fuente de información reportante</td>
+  </tr>
+  <tr>
+    <td><label for="ctl00_cph_CPresentaDano">$CPresentaDano$ Presenta daño</label></td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="4">$CTipoDano$</td>
+  </tr>
+  <tr>
+    <td>Otro?</td>
+    <td colspan="3">$TTipoDano$</td>
+  </tr>
+  <tr>
+    <td>Fecha del evento</td>
+    <td>$TFechaEvento$</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="separador">Identificación del riesgo</td>
+  </tr>
+  <tr>
+    <td>Riesgo presentado</td>
+    <td>$DTipoRiesgo$</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="4">$GMedidas$</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="separador">Seguimiento</td>
+  </tr>
+  <tr>
+    <td colspan="4">$GSeguimiento$</td>
+  </tr>
+  </table>
+</body>
+</html>
