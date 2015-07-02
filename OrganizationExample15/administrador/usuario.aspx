@@ -58,11 +58,11 @@
                     nombre = nombre.substring(pos + 3);
                 }
                 $("#<%= TNombres.ClientID %>").val(nombre);
-                $("#<%= TIdPersonal.ClientID %>").val(ui.item.value);
+                $("#<%= TIdPersonal.ClientID %>").val(ui.item.value).change();
                 return false;
             },
             search: function(event, ui) {
-                $("#<%= TIdPersonal.ClientID %>").val("");
+                $("#<%= TIdPersonal.ClientID %>").val("").change();
             }
         });
     });
@@ -78,7 +78,9 @@
             </td>
             <td>
                 <asp:TextBox ID="TNombres" runat="server"></asp:TextBox>
-                <asp:TextBox ID="TIdPersonal" runat="server" CssClass="hide"></asp:TextBox>
+                <asp:UpdatePanel runat="server" ID="UP" UpdateMode="Conditional">
+                    <ContentTemplate><asp:TextBox ID="TIdPersonal" runat="server" AutoPostBack="true" OnTextChanged="TIdPersonal_TextChanged" CssClass="hide"></asp:TextBox></ContentTemplate>
+                </asp:UpdatePanel>
             </td>
             <td>
                 <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="TNombres" Display="Dynamic" ErrorMessage="Por favor ingrese un nombre." SetFocusOnError="True"></asp:RequiredFieldValidator>
@@ -97,20 +99,19 @@
             </td>
         </tr>
         <tr>
+            <td>Grupo</td>
             <td>
-                Grupo</td>
-            <td>
-                <asp:DropDownList ID="DGrupos" runat="server" DataSourceID="SGrupos" DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                    <asp:ListItem Text="Administrador" Value="0" Selected="True"></asp:ListItem>
+                <asp:DropDownList ID="DGrupos" runat="server" DataSourceID="SGrupos" DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true" CssClass="anchomaxcombo">
+                    <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
+                    <asp:ListItem Text="Administrador" Value="0"></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SGrupos" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT id, nombre FROM grupo" >
+                SelectCommand="SELECT id, nombre FROM grupo ORDER BY nombre" >
             </asp:SqlDataSource>
             </td>
-            <td>
-                &nbsp;</td>
+            <td><asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ControlToValidate="DGrupos" Display="Dynamic" ErrorMessage="Por favor seleccione un grupo." SetFocusOnError="True"></asp:RequiredFieldValidator></td>
         </tr>
         <tr>
             <td></td>
@@ -254,7 +255,7 @@
     <asp:GridView ID="GUsuarios" runat="server" DataSourceID="SUsuarios"  Width="100%"
         DataKeyNames="id" AutoGenerateColumns="false" 
         onselectedindexchanged="GUsuarios_SelectedIndexChanged" 
-        AllowSorting="True" >
+        AllowSorting="True" AllowPaging="true" PageSize="50">
         <RowStyle CssClass="GridRow"></RowStyle>
         <FooterStyle CssClass="GridFooter"></FooterStyle>
         <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>

@@ -37,7 +37,7 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
         GridUtils.GetRowsCount(GResultados, LTotal);
     }
 
-    public StringBuilderEx RemoveSection(bool visible, string control, StringBuilderEx Contenido)
+    public StringBuilderEx RemoveSection(bool visible, string control, StringBuilderEx Contenido, string replaceString="")
     {
         if (!visible)
         {
@@ -46,7 +46,7 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
             Match match = regx.Match(Contenido.ToString());
             if (match.Success)
             {
-                Contenido = Contenido.Replace(match.Groups["content"].Value, "");
+                Contenido = Contenido.Replace(match.Groups["content"].Value, replaceString);
             }
         }
         return Contenido;
@@ -79,6 +79,7 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
 
         // Request.Cookies
         PP.Visible = true;
+        string currentPaciente = "";
 
         using (CConector conector = new CConector())
         {
@@ -95,7 +96,7 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
 
                 if (GResultados.DataKeys[i].Values["evolucion"].ToString() == "1")
                 {
-                    contenido += plantilla.ToString();
+                    contenido += RemoveSection(currentPaciente != CCDetallePaciente.IdPaciente, "datospaciente", plantilla.ToString(), "<tr><td colspan='5'><hr/></td></tr>").ToString();
                     query = new Query("evolucion_terapeutivo");
 
                     query["TFecha"] = "fecha";
@@ -121,8 +122,10 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
                         }
                         idFuncionario = reader["funcionario"].ToString();
                     }
-                } else { // valoracion
-                    StringBuilderEx valoracionStringBuilder = new StringBuilderEx(plantillaValoracion.ToString());
+                }
+                else
+                { // valoracion
+                    StringBuilderEx valoracionStringBuilder = RemoveSection(currentPaciente != CCDetallePaciente.IdPaciente, "datospaciente", plantillaValoracion.ToString(), "<tr><td colspan='5'><hr/></td></tr>");
 
                     GFuerza.Visible = true;
                     SFuerza.SelectParameters["valoracion"].DefaultValue = GResultados.DataKeys[i].Values["id"].ToString();
@@ -131,7 +134,7 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
                     Query valoracion = new Query("valoracionat");
 
                     valoracion["TInicio"] = "inicio";
-                    valoracion["DTipo"]= "tipo";
+                    valoracion["DTipo"] = "tipo";
                     valoracion["TObservaciones"] = "observaciones";
                     valoracion["funcionario"] = "funcionario";
                     valoracion["LFinal"] = "inicio+interval 45 minute";
@@ -156,7 +159,8 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
                             Producto producto = Producto.GetProducto(reader["DTipo"].ToString());
                             valoracionStringBuilder = valoracionStringBuilder.Replace(string.Format("${0}$", "DTipo"), producto.NombreCompleto);
                             tiposervicio = (Procedimientos.TipoServicio)Convert.ToInt32(producto.TipoServicio);
-                        } catch { }
+                        }
+                        catch { }
 
                         for (int j = 0; j < reader.FieldCount; j++)
                         {
@@ -165,7 +169,7 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
                         idFuncionario = reader["funcionario"].ToString();
 
                         valoracionStringBuilder = valoracionStringBuilder.Replace("$LNumeroTerapias$"
-                            ,conector.QueryString(@"SELECT autorizacion_detalle.autNumSesiones
+                            , conector.QueryString(@"SELECT autorizacion_detalle.autNumSesiones
                             FROM programacion 
                             LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=programacion.autNumero AND autorizacion_detalle.actId=programacion.actId)
                             WHERE programacion.pacId={0} 
@@ -235,6 +239,7 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
                 }
                 contenido = contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(UCFuncionario.IdFuncionario)));
                 contenido = Utilidades.ReplaceContenido(PP.Controls, contenido);
+                currentPaciente = CCDetallePaciente.IdPaciente;
             }
         }
         evento.Contenido = evento.Contenido.Replace("{body}", contenido.ToString());

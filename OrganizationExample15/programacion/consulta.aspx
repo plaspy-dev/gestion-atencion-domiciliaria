@@ -82,7 +82,7 @@
             <td>Asegurador</td>
             <td style="white-space: nowrap">Actividad o CUPS</td>
             <td>Profesional</td>
-            <td>Área</td>
+            <td><asp:Label runat="server" ID="LArea">Área</asp:Label></td>
             <td></td>
         </tr>
         <tr>
@@ -141,14 +141,16 @@
                 <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
                     <asp:BoundField HeaderText="Fecha" DataField="prgFechaProg" SortExpression="prgFechaProg" DataFormatString="{0:d}" />
-                    <asp:HyperLinkField DataTextField="pacDocumento" HeaderText="Documento" 
-                        DataNavigateUrlFields="pacId" SortExpression="pacDocumento"
-                        DataNavigateUrlFormatString="~/programacion/programacion.aspx?pid={0}" 
-                        ItemStyle-HorizontalAlign="Right" >
-        <ItemStyle HorizontalAlign="Right"></ItemStyle>
-                    </asp:HyperLinkField>
-                    <asp:HyperLinkField DataTextField="pacNombres" HeaderText="Paciente" DataNavigateUrlFields="pacId" SortExpression="pacNombres"
-                        DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" ItemStyle-Wrap="false" />
+                    <asp:TemplateField HeaderText="Documento" SortExpression="pacDocumento" ItemStyle-HorizontalAlign="Right">
+                        <ItemTemplate>
+                            <asp:HyperLink Enabled='<%# CUsuario.GetInstance().CanInsert() %>' runat="server" ID="H" Text='<%# Eval("pacDocumento") %>' NavigateUrl='<%# string.Format("~/programacion/programacion.aspx?pid={0}", Eval("pacId")) %>'></asp:HyperLink>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Paciente" SortExpression="pacNombres" ItemStyle-Wrap="false">
+                        <ItemTemplate>
+                            <asp:HyperLink Enabled='<%# CUsuario.GetInstance().CanInsert() %>' runat="server" ID="D" Text='<%# Eval("pacNombres") %>' NavigateUrl='<%# string.Format("~/programacion/programacion.aspx?pid={0}", Eval("pacId")) %>'></asp:HyperLink>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre" ItemStyle-Wrap="false"/>
                     <asp:BoundField HeaderText="Actividad" DataField="actividad" SortExpression="actividad" ItemStyle-Wrap="false"/>
                     <asp:BoundField HeaderText="Sesiones" DataField="prgNumSesion" SortExpression="prgNumSesion" ItemStyle-HorizontalAlign="Right"/>
@@ -156,8 +158,11 @@
                     <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio"/>
                     <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion"/>
                     <asp:BoundField HeaderText="Teléfono" DataField="pacTelefono" SortExpression="pacTelefono"/>
-                    <asp:HyperLinkField DataTextField="autNumero" HeaderText="Autorización" DataNavigateUrlFields="autNumero" 
-                        DataNavigateUrlFormatString="~/admisiones/autorizaciones.aspx?aut={0}" SortExpression="autNumero" />
+                    <asp:TemplateField HeaderText="Autorización" SortExpression="autNumero" ItemStyle-Wrap="false">
+                        <ItemTemplate>
+                            <asp:HyperLink Enabled='<%# CUsuario.GetInstance().CanInsert() %>' runat="server" ID="A" Text='<%# Eval("autNumero") %>' NavigateUrl='<%# string.Format("~/admisiones/autorizaciones.aspx?aut={0}", Eval("autNumero")) %>'></asp:HyperLink>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:BoundField HeaderText="Observaciones" DataField="prgObservaciones" SortExpression="prgObservaciones"/>
                     <asp:TemplateField HeaderText="Novedades" SortExpression="novedad" ItemStyle-Wrap="false">
                         <ItemTemplate>

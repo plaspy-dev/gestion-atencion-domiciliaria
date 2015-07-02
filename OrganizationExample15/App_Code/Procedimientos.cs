@@ -312,11 +312,10 @@ public class Procedimientos
         return datasource.SelectCommand;
     }
 
-    static public string SetProcedimientos(string query, string variable) {
-
+    static public string SetProcedimientos(string query, string variable, bool skipAdmin = false) {
         CUsuario usuario = (CUsuario)Usuario.GetUsuario();
         string condicion = "";
-        if (!usuario.CanAdmin())
+        if (!(usuario.CanAdmin() || skipAdmin))
         {
             if (!string.IsNullOrEmpty(usuario["procedimientos"]))
             {
@@ -328,9 +327,9 @@ public class Procedimientos
         return query;
     }
 
-    static public string SetProcedimientos(SqlDataSource datasource, string variable)
+    static public string SetProcedimientos(SqlDataSource datasource, string variable, bool skipAdmin=false)
     {
-        datasource.SelectCommand = SetProcedimientos(datasource.SelectCommand, variable);
+        datasource.SelectCommand = SetProcedimientos(datasource.SelectCommand, variable, skipAdmin);
         return datasource.SelectCommand;
     }
 

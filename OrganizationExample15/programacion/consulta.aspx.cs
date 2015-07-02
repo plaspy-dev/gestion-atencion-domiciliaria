@@ -11,8 +11,19 @@ public partial class programacion_consulta : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         SResultados.SelectCommand = SResultados.SelectCommand.Replace("@area", DArea.SelectedValue);
+        
+        CUsuario usuario = (CUsuario)CUsuario.GetInstance();
+        if (!usuario.CanInsert())
+        {
+            DArea.Visible=
+            LArea.Visible = false;
+            TPersonalID.Text= usuario["personal"];
+            TPersonal.Text= usuario.Nombre;
+            TPersonalID.ReadOnly=
+            TPersonal.ReadOnly=true;
+        }
+        Procedimientos.SetProcedimientos(SResultados, "programacion.actId", !usuario.CanInsert());
 
-        Procedimientos.SetProcedimientos(SResultados, "programacion.actId");
         if (!IsPostBack)
         {
             TInicio.Text = TFin.Text = DateTime.Now.ToShortDateString();

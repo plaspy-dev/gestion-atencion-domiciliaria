@@ -22,30 +22,55 @@ public partial class administrador_usuario : System.Web.UI.Page
             GUsuarios.Columns[0].Visible = usuario.CanUpdate();
             ViewState["cargos"] = "";
             ViewState["entidades"] = "";
+
+            if (!string.IsNullOrEmpty(Request.QueryString["id"])) {
+
+                Query query = new Query("usuario");
+
+                query += "id";
+                query += "nombre";
+                query += "usuario";
+                query += "grupo";
+                query += "personal";
+                query += "cumpleanos";
+                query += "forceurl";
+                query += "cargos";
+                query += "entidades";
+
+                using (CConector conector = new CConector())
+                {
+                    MySqlDataReader reader = conector.Query(query.GetSelect("id={0}", null, Query.GetValor(Request.QueryString["id"])));
+                    if (reader != null && reader.Read()) {
+
+                        BAceptar.Enabled = usuario.CanUpdate();
+                        RContrasena.Enabled = false;
+
+                        HId.Value = reader["id"].ToString();
+                        TNombres.Text= reader["nombre"].ToString();
+                        TUsuario.Text = reader["usuario"].ToString();
+                        DGrupos.DataBind();
+                        Utilidades.SelectInDropDown(DGrupos, reader["grupo"]);
+                        TIdPersonal.Text= reader["personal"].ToString();
+                        CCumpleanos.Checked = reader["cumpleanos"].ToString()=="1";
+                        CForceChange.Checked = false;
+                        HUsuario.Value = TUsuario.Text;
+                        ViewState["cargos"] = reader["cargos"].ToString();
+                        ViewState["entidades"] = reader["entidades"].ToString();
+
+                        GCargos.DataBind();
+                        GEntidades.DataBind();
+                        IFirma.Visible = true;
+                        IFirma.ImageUrl = "~/archivo/firma.ashx?ui=" + HId.Value;
+
+                        ((MasterPageI)Master).SetModificacion(HId.Value);
+                    }
+                }
+            }
         }
     }
     protected void GUsuarios_SelectedIndexChanged(object sender, EventArgs e)
     {
-        RContrasena.Enabled = false;
-        HId.Value = GUsuarios.SelectedDataKey.Value.ToString();
-        CConector.SelectInComboText(DGrupos, HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[4].Text));
-        TNombres.Text = HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[2].Text);
-        TUsuario.Text = HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[3].Text);
-        TIdPersonal.Text= HttpUtility.HtmlDecode(GUsuarios.SelectedRow.Cells[6].Text).Trim();
-        CCumpleanos.Checked = ((CheckBox)GUsuarios.SelectedRow.FindControl("C")).Checked;
-        CForceChange.Checked = false;
-        HUsuario.Value = TUsuario.Text;
-        using (CConector conector = new CConector())
-        {
-            ViewState["cargos"] = conector.QueryString("SELECT cargos FROM usuario WHERE id=" + HId.Value);
-            ViewState["entidades"] = conector.QueryString("SELECT entidades FROM usuario WHERE id=" + HId.Value);
-        }
-        GCargos.DataBind();
-        GEntidades.DataBind();
-        IFirma.Visible = true;
-        IFirma.ImageUrl = "~/archivo/firma.ashx?ui=" + HId.Value;
-        
-        ((MasterPageI)Master).SetModificacion(HId.Value);
+        Response.Redirect(Request.Url.AbsolutePath + "?id=" + GUsuarios.SelectedDataKey.Value.ToString());
     }
 
     protected void BAceptar_Click(object sender, EventArgs e)
@@ -189,6 +214,18 @@ public partial class administrador_usuario : System.Web.UI.Page
                         break;
                     }
                 }
+            }
+        }
+    }
+
+    protected void TIdPersonal_TextChanged(object sender, EventArgs e)
+    {
+        if (string.IsNullOrEmpty(TIdPersonal.Text) || TIdPersonal.Text == HId.Value)
+            return;
+        using(CConector conector= new CConector()) {
+            string idUsuario = conector.QueryString("SELECT id FROM usuario WHERE personal={0} AND estado IS NULL", Query.GetValor(TIdPersonal.Text));
+            if (!string.IsNullOrEmpty(idUsuario)) {
+                Response.Redirect(Request.Url.AbsolutePath + "?id=" + idUsuario);
             }
         }
     }
