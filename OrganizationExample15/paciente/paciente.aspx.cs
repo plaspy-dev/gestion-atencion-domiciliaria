@@ -142,7 +142,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         TFechaIngresoAsegurador.Text = Query.GetFromMySQLDate(reader["pacFecIngAsegurador"]);
                         TGrado.Text = reader["pacGrado"].ToString();
                         Utilidades.SelectInDropDown(DTipoAfiliado, reader["pacTipoAfiliado"]);
-                        conector.SelectInDropDown(DTipoEvento, reader["tipECod"], "SELECT tipEDescripcion FROM phdTipoEvento WHERE tipECod={0}");
+                        conector.SelectInDropDown(DTipoEvento, reader["tipECod"], "SELECT tipEDescripcion FROM tipo_evento WHERE tipECod={0}");
                         TFechaIngreso.Text = Query.GetFromMySQLDate(reader["pacFecIngPrograma"]);
                         conector.SelectInDropDown(DEstado, reader["estId"], "SELECT estDesc FROM paciente_estado WHERE estId={0}");
                         TNumeroETB.Text = reader["pacNumeroETB"].ToString();

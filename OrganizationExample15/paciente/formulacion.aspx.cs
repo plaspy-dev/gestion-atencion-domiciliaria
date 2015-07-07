@@ -94,6 +94,11 @@ public partial class paciente_formulacion : System.Web.UI.Page
                                     }
                                     break;
                                 case "Acuerdo 042 y 046":
+                                    // ya no esta visible
+                                    DTipo.Items.RemoveAt(i);
+                                    i--;
+                                    break;
+                                case "Acuerdo 052":
                                     if(CCDetallePaciente.AsegurdadorID != iddisan){
                                         DTipo.Items.RemoveAt(i);
                                         i--;
