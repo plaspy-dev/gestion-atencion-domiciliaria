@@ -399,7 +399,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
 
             UpdateHeridas(conector, id);
 
-            if (string.IsNullOrEmpty((string)ViewState["id"]))
+            if (string.IsNullOrEmpty((string)ViewState["id"]) && Usuario.GetInstance().GetPermisosRaiz("~/App_data/Escalas") ==0)
                 Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
 
             conector.Commit();

@@ -107,7 +107,7 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
-                                <asp:BoundField DataField="tipo" HeaderText="Tipo" />
+                                <asp:BoundField DataField="tipo" HeaderText="Tipo" ItemStyle-Wrap="false" />
                                 <asp:BoundField DataField="medicamentos" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" ItemStyle-Width="100%" />
                             </Columns>
                         </asp:GridView>

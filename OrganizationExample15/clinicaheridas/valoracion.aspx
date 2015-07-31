@@ -284,18 +284,11 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre
-                                    ,IFNULL(IFNULL(valoracion_herida_antecedentes.estado,antigua.estado),antecedentes_ingreso.estado) AS estado
-                                    ,IFNULL(IFNULL(valoracion_herida_antecedentes.observaciones,antigua.observaciones),antecedentes_ingreso.observaciones) AS observaciones
+                                    ,IFNULL(valoracion_herida_antecedentes.estado,antecedentes_paciente.estado) AS estado
+                                    ,IFNULL(valoracion_herida_antecedentes.observaciones,antecedentes_paciente.observaciones) AS observaciones
                                     FROM varios 
                                     LEFT JOIN valoracion_herida_antecedentes ON (valoracion_herida_antecedentes.valoracion=@valoracion AND valoracion_herida_antecedentes.motivo=varios.id) 
-
-                                    LEFT JOIN ingreso_paciente ON (ingreso_paciente.paciente=@paciente)
-                                    LEFT JOIN antecedentes_ingreso ON (antecedentes_ingreso.ingreso_paciente=ingreso_paciente.id AND antecedentes_ingreso.motivo=varios.id)
-                                    LEFT JOIN (
-                                        SELECT estado,observaciones,antecedentes_evolucion.motivo FROM evolucion_paciente LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=evolucion_paciente.id) WHERE
-                                        evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) FROM evolucion_paciente WHERE paciente=@paciente)
-                                    ) AS antigua ON (antigua.motivo=varios.id)
-
+                                    LEFT JOIN antecedentes_paciente ON (antecedentes_paciente.paciente=@paciente AND antecedentes_paciente.motivo=varios.id)
                                     WHERE varios.tipo=2 AND varios.szReservado IS NULL" >
                     <SelectParameters>
                         <asp:Parameter Name="valoracion" DefaultValue="0" />

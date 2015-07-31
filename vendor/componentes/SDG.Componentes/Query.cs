@@ -160,6 +160,15 @@ public class Query
 		return text;
 	}
 
+	public string GetInsert(bool replace)
+	{
+		string statement = GetInsert();
+		if (!replace || statement.Length == 0)
+			return statement;
+		const string prefix = "INSERT INTO ";
+		return "REPLACE INTO " + statement.Substring(prefix.Length);
+	}
+
 	public string GetInsert()
 	{
 		if (dCampos.Count == 0)

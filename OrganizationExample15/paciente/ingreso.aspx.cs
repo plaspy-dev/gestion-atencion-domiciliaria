@@ -262,6 +262,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     antecendentes["motivo"] = GAntecedentes.DataKeys[i].Values[0].ToString();
                     id = antecendentes.GetInsert();
                 }
+                Paciente.SaveAntecedente(conector, CCDetallePaciente.IdPaciente, GAntecedentes.DataKeys[i].Values[0].ToString(), antecendentes["estado"].ToString(), antecendentes["observaciones"].ToString());
                 conector.QueryMod(id);
             }
 
@@ -410,7 +411,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
 
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
-            if (ingreso)
+            if (ingreso && Usuario.GetInstance().GetPermisosRaiz("~/App_data/Escalas")==0)
                 Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
             ((MasterPageI)Master).SetResultado(mensaje);
         }

@@ -16,6 +16,11 @@ using iTextSharp.text.html.simpleparser;
 using iTextSharp.text.pdf;
 using iTextSharp.text.xml;
 using iTextSharp.tool.xml;
+using iTextSharp.tool.xml.pipeline.html;
+using iTextSharp.tool.xml.html;
+using iTextSharp.tool.xml.pipeline.css;
+using iTextSharp.tool.xml.pipeline.end;
+using iTextSharp.tool.xml.parser;
 
 public partial class MasterPageI : System.Web.UI.MasterPage
 {
@@ -251,7 +256,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido= evento.Contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {}</script></body>");
             // contenido= contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {if(window.name=='popup')return;var venImp = window.open('../imp.htm', 'popup');venImp.document.write(document.documentElement.innerHTML);venImp.document.close();if(venImp.print) {venImp.print();}window.history.back();}</script></body>");
 #else
-            evento.Contenido = evento.Contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {if(window.print) {window.print();}window.close();}</script></body>");
+            evento.Contenido = evento.Contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () { if (window.print) { window.print(); setTimeout(function () { window.close(); }, 1); } }</script></body>");
             // contenido = contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {if(window.name=='popup')return;var venImp = window.open('../imp.htm', 'popup');venImp.document.write(document.documentElement.innerHTML);venImp.document.close();if(venImp.print) {venImp.print();venImp.close();}window.history.back();}</script></body>");
 #endif
             // llamamos a la pagina cliente
@@ -338,6 +343,26 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         document.AddAuthor(Usuario.GetUsuario().GetNombre());
 
         document.Open();
+
+        /*HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
+        htmlContext.SetTagFactory(Tags.GetHtmlTagProcessorFactory());
+        ICSSResolver cssResolver = XMLWorkerHelper.GetInstance().GetDefaultCssResolver(true);
+        cssResolver.AddCss(Server.MapPath("~/css/pdf.css"), true);
+        IPipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(htmlContext,
+            new PdfWriterPipeline(document, writer)));
+        XMLWorker worker = new XMLWorker(pipeline, true);
+        XMLParser p = new XMLParser(worker);
+        using (MemoryStream stream = new MemoryStream())
+        {
+            using (StreamWriter swriter = new StreamWriter(stream))
+            {
+                swriter.Write(evento.Contenido);
+                swriter.Flush();
+                stream.Position = 0;
+                p.Parse(swriter.BaseStream);
+                // XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, stream, cssReader.BaseStream);
+            }
+        }*/
 
         using (StreamReader cssReader = new StreamReader(Server.MapPath("~/css/pdf.css")))
         {

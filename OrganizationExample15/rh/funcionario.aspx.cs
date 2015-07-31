@@ -115,6 +115,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                 query += "fin_descanso";
                 query += "verificacionTitulos";
                 query += "laboraActualmente";
+                query += "origen_tp";
 
                 using (CConector conector = new CConector())
                 {
@@ -177,6 +178,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                         TInicioDescanso.Text = Query.GetFromMySQLDate(reader["inicio_descanso"]);
                         TFinDescanso.Text = Query.GetFromMySQLDate(reader["fin_descanso"]);
                         TVerificacionTitulos.Text = Query.GetFromMySQLDate(reader["verificacionTitulos"]);
+                        Utilidades.SelectInDropDown(DOrigenTarjeta, reader["origen_tp"]);
 
                         string[] actualmente= reader["laboraActualmente"].ToString().Split(',');
 
@@ -304,6 +306,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["residencialocId"] = DLocalidadVivienda.SelectedValue;
         query["verificacionTitulos"] = Query.GetMySQLDateFormat(TVerificacionTitulos.Text);
         query["perNombre"] = JoinNames(new string[] { TApellidos.Text, TNombres.Text });
+        query["origen_tp"] = DOrigenTarjeta.SelectedValue;
 
         string actualmente="";
 

@@ -265,9 +265,16 @@
             <asp:SqlDataSource ID="SAntecendentes" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,antecedentes_ingreso.id AS antecedente,antecedentes_ingreso.estado AS estado,antecedentes_ingreso.observaciones FROM varios LEFT JOIN antecedentes_ingreso ON (antecedentes_ingreso.ingreso_paciente=@idingreso AND antecedentes_ingreso.motivo=varios.id) WHERE varios.tipo=2 AND varios.szReservado IS NULL" >
+                SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre,antecedentes_ingreso.id AS antecedente
+                    ,IFNULL(antecedentes_ingreso.estado,antecedentes_paciente.estado) AS estado
+                    ,IFNULL(antecedentes_ingreso.observaciones,antecedentes_paciente.observaciones) AS observaciones
+                    FROM varios 
+                    LEFT JOIN antecedentes_ingreso ON (antecedentes_ingreso.ingreso_paciente=@idingreso AND antecedentes_ingreso.motivo=varios.id) 
+                    LEFT JOIN antecedentes_paciente ON (antecedentes_paciente.paciente=@paciente AND antecedentes_paciente.motivo=varios.id)
+                    WHERE varios.tipo=2 AND varios.szReservado IS NULL" >
                 <SelectParameters>
                     <asp:ControlParameter ControlID="HIdIngreso" Name="idingreso" PropertyName="Value" DefaultValue="0" />
+                    <asp:ControlParameter ControlID="CCDetallePaciente" Name="paciente" PropertyName="IdPaciente" />
                 </SelectParameters>
             </asp:SqlDataSource></td>
             </tr>

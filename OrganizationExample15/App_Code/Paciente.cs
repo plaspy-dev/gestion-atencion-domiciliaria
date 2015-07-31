@@ -93,6 +93,18 @@ public class Paciente
     {
     }
 
+    public static bool SaveAntecedente(Conector conector, string IdPaciente, string idMotivo, string estado, string texto) {
+
+        Query query = new Query("antecedentes_paciente");
+
+        query["paciente"] = IdPaciente;
+        query["motivo"] = idMotivo;
+        query["estado"] = estado;
+        query["observaciones"] = texto;
+
+        return conector.QueryMod(query.GetInsert(true)) != -1;
+    }
+
     public static Paciente GetPaciente(string id) {
 
         Paciente paciente = (Paciente)HttpRuntime.Cache["p" + id];

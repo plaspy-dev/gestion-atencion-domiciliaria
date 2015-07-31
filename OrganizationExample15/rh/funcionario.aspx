@@ -173,8 +173,19 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">
+                        <td style="white-space: nowrap">
                             <asp:CheckBox ID="CTarjetaProfesional" runat="server" Text="Tarjeta profesional" />
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="DOrigenTarjeta" runat="server" DataSourceID="SOrigenTarjeta" 
+                                DataTextField="nombre" DataValueField="id" CssClass="anchomaxcombo" AppendDataBoundItems="true" Width="100%">
+                                <asp:ListItem Text="Bogotá" Value=""></asp:ListItem>
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="SOrigenTarjeta" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=84 AND szReservado IS NULL ORDER BY nombre">
+                            </asp:SqlDataSource>
                         </td>
                         <td>
                             Num Tarjeta Prof.</td>

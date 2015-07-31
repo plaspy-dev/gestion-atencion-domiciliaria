@@ -198,7 +198,7 @@ public partial class paciente_barthel : System.Web.UI.Page
                         break;
                     }
                 }
-                if(proximaescala!=null)
+                if (proximaescala != null && Usuario.GetInstance().GetPermisosRaiz("~/App_data/Escalas")==0)
                     Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)) + "&ioe=" + ((int)proximaescala.Value).ToString(), conector);
                 else Usuario.GetUsuario().SetForceURL("", conector);
             }

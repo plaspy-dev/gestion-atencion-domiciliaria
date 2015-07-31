@@ -369,7 +369,8 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                 antecendentes["estado"] = ((CheckBox)GAntecedentes.Rows[i].Cells[0].FindControl("CSi")).Checked ? "1" : "";
                 antecendentes["observaciones"] = ((TextBox)GAntecedentes.Rows[i].Cells[1].FindControl("TObservaciones")).Text;
 
-                if (conector.QueryMod(antecendentes.GetInsert()) == -1) {
+                if (!Paciente.SaveAntecedente(conector, CCDetallePaciente.IdPaciente, antecendentes["motivo"].ToString(), antecendentes["estado"].ToString(), antecendentes["observaciones"].ToString())
+                    || conector.QueryMod(antecendentes.GetInsert()) == -1) {
 
                     LMensaje.Text = conector.LastError;
                     return;
@@ -401,8 +402,8 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                 LMensaje.Text = conector.LastError;
                 return;
             }
-            
-            if (string.IsNullOrEmpty((string)ViewState["id"]))
+
+            if (string.IsNullOrEmpty((string)ViewState["id"]) && Usuario.GetInstance().GetPermisosRaiz("~/App_data/Escalas")==0)
                 Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
 
             conector.Commit();

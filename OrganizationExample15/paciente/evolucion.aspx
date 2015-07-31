@@ -160,8 +160,7 @@
                     <div class="hide">
                         <asp:GridView ID="GEvoluciones" runat="server" AutoGenerateColumns="False" Width="100%" 
                             DataSourceID="SEvoluciones" 
-                            EmptyDataText="No se encontraron evoluciones de este paciente" 
-                            onrowdatabound="GEvoluciones_RowDataBound" >
+                            EmptyDataText="No se encontraron evoluciones de este paciente">
                             <RowStyle CssClass="GridRow"></RowStyle>
                             <FooterStyle CssClass="GridFooter"></FooterStyle>
                             <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -175,7 +174,8 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
-                                <asp:BoundField DataField="medico" HeaderText="Funcionario" ItemStyle-Wrap="false" />
+                                <asp:BoundField DataField="perNombre" HeaderText="Funcionario" ItemStyle-Wrap="false" />
+                                <asp:BoundField DataField="carDescripcion" HeaderText="Cargo" ItemStyle-Wrap="false" />
                                 <asp:BoundField DataField="motivo" HeaderText="Motivo" ItemStyle-Width="100%" />
                             </Columns>
                         </asp:GridView>
@@ -183,8 +183,10 @@
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             SelectCommand="SELECT evolucion_paciente.id,evolucion_paciente.fecha,evolucion_paciente.motivo
-                                        ,evolucion_paciente.medico
+                                        ,evolucion_paciente.medico,recurso_humano.perNombre,cargo.carDescripcion
                                         FROM evolucion_paciente
+                                        LEFT JOIN recurso_humano ON (recurso_humano.perId=evolucion_paciente.medico)
+                                        LEFT JOIN cargo ON (cargo.carId=recurso_humano.carId)
                                         WHERE evolucion_paciente.paciente=@paciente
                                         ORDER BY fecha DESC;">
                             <SelectParameters>
@@ -339,16 +341,11 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT varios.id AS id, varios.nombre AS nombre
                                 ,antecedentes_evolucion.id AS antecedente
-                                ,IFNULL(IFNULL(antecedentes_evolucion.estado,antigua.estado),antecedentes_ingreso.estado) AS estado
-                                ,IFNULL(IFNULL(antecedentes_evolucion.observaciones,antigua.observaciones),antecedentes_ingreso.observaciones) AS observaciones
+                                ,IFNULL(antecedentes_evolucion.estado,antecedentes_paciente.estado) AS estado
+                                ,IFNULL(antecedentes_evolucion.observaciones,antecedentes_paciente.observaciones) AS observaciones
                                 FROM varios 
                                 LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=@idingreso AND antecedentes_evolucion.motivo=varios.id) 
-                                LEFT JOIN ingreso_paciente ON (ingreso_paciente.paciente=@paciente)
-                                LEFT JOIN antecedentes_ingreso ON (antecedentes_ingreso.ingreso_paciente=ingreso_paciente.id AND antecedentes_ingreso.motivo=varios.id)
-                                LEFT JOIN (
-SELECT estado,observaciones,antecedentes_evolucion.motivo FROM evolucion_paciente LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=evolucion_paciente.id) WHERE
-evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) FROM evolucion_paciente WHERE paciente=@paciente)
-                                ) AS antigua ON (antigua.motivo=varios.id)
+                                LEFT JOIN antecedentes_paciente ON (antecedentes_paciente.paciente=@paciente AND antecedentes_paciente.motivo=varios.id)
                                 WHERE varios.tipo=2 AND varios.szReservado IS NULL
                                 ;" >
                 <SelectParameters>

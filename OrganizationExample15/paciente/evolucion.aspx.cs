@@ -267,6 +267,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
                 antecendentes["estado"] = ((CheckBox)GAntecedentes.Rows[i].Cells[0].FindControl("CSi")).Checked ? "1" : "";
                 antecendentes["observaciones"] = ((TextBox)GAntecedentes.Rows[i].Cells[1].FindControl("TObservaciones")).Text;
+
                 if (id.Length > 0)
                 {
                     id = antecendentes.GetUpdate("id='" + id + "'");
@@ -278,6 +279,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
                     id = antecendentes.GetInsert();
                 }
                 conector.QueryMod(id);
+                Paciente.SaveAntecedente(conector, CCDetallePaciente.IdPaciente, GAntecedentes.DataKeys[i].Values[0].ToString(), antecendentes["estado"].ToString(), antecendentes["observaciones"].ToString());
             }
 
             for (int i = 0; i < GRiesgos.Rows.Count; i++)
@@ -384,7 +386,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
 
             Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
 
-            if (nuevaevolucion)
+            if (nuevaevolucion && Usuario.GetInstance().GetPermisosRaiz("~/App_data/Escalas")==0)
                 Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
             ((MasterPageI)Master).SetResultado(mensaje);
@@ -577,13 +579,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
     {
         Response.Redirect("~/paciente/evolucion.aspx?pid=" + CCDetallePaciente.IdPaciente + "&evolid=" + ((ImageButton)sender).CommandArgument);
     }
-    protected void GEvoluciones_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        if (e.Row.RowIndex != -1)
-        {
-            e.Row.Cells[2].Text = Funcionario.GetFuncionario(e.Row.Cells[2].Text).Nombres;
-        }
-    }
+
     protected void BEliminar_Click(object sender, EventArgs e)
     {
         using (CConector conector = new CConector())

@@ -165,11 +165,73 @@ public partial class administrador_Default : System.Web.UI.Page
             parent = Add("Recursos humanos");
             Add("Empresas en las que labora actualmente", 80, parent);
             Add("Cursos", 81, parent);
+            Add("Origen Tarjeta profesional", 84, parent);
 
             parent = Add("OrganizationExample16 - atención");
             Add("Tipo paciente", 82, parent);
 
-            // disponible 84
+            parent = Add("Valoración enfermería");
+            Add("Patrón de percepción y cuidado de la salud", 85, parent);
+            // Add("Antecedentes", 86, parent);
+            Add("Patrón nutricional y metabólico", 87, parent);
+            Add("Patrón de eliminación", 88, parent);
+            Add("Patrón actividad y ejercicio", 89, parent);
+            Add("Patrón sueño y descanso", 90, parent);
+            Add("Patrón cognitivo perceptual", 91, parent);
+            Add("Patrón autopercepción y auto concepto 1", 96, parent);
+            Add("Patrón autopercepción y auto concepto 2", 92, parent);
+            Add("Patrón función y relación", 93, parent);
+            Add("Patrón de afrontamiento y tolerancia al stress", 94, parent);
+            Add("Patrón de valores y creencias", 95, parent);
+
+            parent = Add("Valoración trabajo social");
+            Add("Tipología familiar", 97, parent);
+            Add("Como afronta la familia las dificultades?", 98, parent);
+            Add("Tenencia", 99, parent);
+            Add("Tipo de vivienda", 100, parent);
+            Add("Condiciones de la vivienda", 101, parent);
+            Add("Pisos", 102, parent);
+            Add("Estructura", 103, parent);
+            Add("Espacios", 104, parent);
+            Add("Varios", 108, parent);
+            Add("Servicios públicos", 105, parent);
+            Add("Ingresos mensuales", 106, parent);
+            Add("Egresos mensuales", 107, parent);
+
+            parent = Add("Valoración Psicología");
+
+            Add("Motivo consulta ", 109, parent);
+            Add("Motivo consulta problema", 110, parent);
+            // Add("Antecendentes", 111, parent);
+            Add("Perfil histórico de desarrollo y funcionamiento", 112, parent);
+            Add("Porte", 113, parent);
+            Add("Actitud", 114, parent);
+            Add("Conciencia", 115, parent);
+            Add("Orientación", 116, parent);
+            Add("Memoria", 117, parent);
+            Add("Atención", 118, parent);
+            Add("Pensamiento", 119, parent);
+            Add("Curso", 120, parent);
+            Add("Contenido", 121, parent);
+            Add("Afecto", 122, parent);
+            Add("Afecto (Tono)", 123, parent);
+            Add("Sensopercepción", 124, parent);
+            Add("Conducta Motora", 125, parent);
+            Add("Inteligencia", 126, parent);
+            Add("Lenguaje verbal", 127, parent);
+            Add("Lenguaje escrito", 128, parent);
+            Add("Lenguaje mímico", 129, parent);
+            Add("Sueño", 130, parent);
+            Add("Conducta Alimentaria", 131, parent);
+            Add("Conducta Sexual", 132, parent);
+            Add("Introspección", 133, parent);
+            Add("Prospección", 134, parent);
+            Add("Juicio", 135, parent);
+            Add("Impresión diagnóstica", 136, parent);
+            Add("Plan de tratamiento", 137, parent);
+
+
+            // disponible 138
             // OrganizationExample16
             parent = Add("OrganizationExample16 - Programación");
             Add("Programa", 10017, parent);
