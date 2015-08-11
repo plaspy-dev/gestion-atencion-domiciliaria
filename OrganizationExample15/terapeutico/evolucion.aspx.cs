@@ -242,14 +242,14 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
     {
         if (string.IsNullOrEmpty(DTipo.SelectedValue))
         {
-            TNumero.Text = "";
+            TNumero.Text = "1";
             TPlan.Text = "";
             return;
         }
 
         using (CConector conector = new CConector())
         {
-            TNumero.Text = "";
+            TNumero.Text = "1";
             string[] valores = DTipo.SelectedValue.Split(';');
 
             Query query = new Query("evolucion_terapeutivo");
@@ -279,6 +279,15 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
 
                 TNumero.Text = string.IsNullOrEmpty(resultado) ? "1" : "2";
             }
+            if (TNumero.Text.Length==0) {
+                TNumero.Text = "1";
+            }
         }
+    }
+
+    protected void TUF_Click(object sender, EventArgs e)
+    {
+        DTipo.DataBind();
+        DTipo_SelectedIndexChanged(sender, e);
     }
 }

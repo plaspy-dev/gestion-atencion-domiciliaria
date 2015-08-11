@@ -108,6 +108,7 @@
                 DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" ItemStyle-HorizontalAlign="Right" />
             <asp:HyperLinkField DataTextField="pacNombres" HeaderText="Paciente" DataNavigateUrlFields="pacId" SortExpression="pacNombres"
                 DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" ItemStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Localidad" DataField="locDescripcion" SortExpression="locDescripcion" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre" ItemStyle-Wrap="false"/>
@@ -121,7 +122,7 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT autorizacion.autNumero,autorizacion.autFecha,autorizacion.autFechaVenc,autorizacion.autObservaciones
                             ,paciente.pacDocumento,paciente.pacNombres,paciente.pacBarrio,paciente.pacDireccion,paciente.pacId
-                            ,asegurador.entNombre
+                            ,asegurador.entNombre,localidad.locDescripcion 
                             ,GROUP_CONCAT(CONCAT(medicamentos.nombre, ' (', IFNULL(autorizacion_detalle.autNumSesiones,0),'-'
                                 ,IFNULL(autorizacion_detalle.sesiones_programadas,0)
                                 ,'-',IFNULL(autorizacion_detalle.autSesionesDia,0),')') SEPARATOR '<br/>') AS detalles
@@ -130,6 +131,7 @@
                             LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
                             LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
                             LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
+                            LEFT JOIN localidad ON (paciente.locId=localidad.locId)
                             WHERE DATE(autorizacion.autFecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                             AND autorizacion.autActivo=1
                             AND paciente.estId=1

@@ -6,32 +6,27 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
     addFunctionToStart(function() {
-        /*function joinTableRows(selector, indice) {
-            var anterior = null;
-            selector.each(function() {
-                if (anterior && anterior.children("td:eq(" + indice + ")").text() == $(this).children("td:eq(" + indice + ")").text()) {
-                    anterior.children("td:eq(" + indice + ")").attr("rowspan", anterior.children("td:eq(" + indice + ")").attr("rowspan") + 1);
-                    $(this).children("td:eq(" + indice + ")").remove();
-                } else {
-                    anterior = $(this);
-                }
-            });
-            return selector;
+        var fechaActual=null;
+        function uFechaFinal(e) {
+            var final= new Date($(e).datetimepicker("getDate").getTime()+ <%= nMinutosTerapia %>*60000);
+            $("#<%= LFinal.ClientID%>").text(
+                $.datepicker.formatDate( $(e).datepicker("option", "dateFormat"), final)
+                + " " + $.datepicker.formatTime($(e).datepicker("option", "timeFormat"), 
+                $.extend({
+                    hour: final.getHours(),
+                    minute: final.getMinutes(),
+                    second: final.getSeconds(),
+                }, {}))
+                );
+            var fecha=$(e).datetimepicker("getDate");
+            fecha.setHours(0,0,0,0);
+            if(fechaActual==null || +fecha==+fechaActual) {
+                fechaActual=fecha;
+                return;
+            }
+            fechaActual=fecha;
+            $("#<%= TUF.ClientID %>").click();
         }
-
-        function joinTableCells(selector) {
-            var anterior = null;
-            selector.each(function() {
-                if (anterior && anterior.text() == $(this).text()) {
-                    anterior.attr("colspan", anterior.attr("colspan") + 1);
-                    $(this).remove();
-                } else {
-                    anterior = $(this);
-                }
-            });
-            return selector;
-        }*/
-
         $("#<%= PHistorial.ClientID %>").accordion({
             autoHeight: false,
             collapsible: true,
@@ -40,17 +35,11 @@
         FullRowSelect("#<%= GHistorial.ClientID %>");
 
         $("#<%= TInicio.ClientID%>").change(function () {
-            var final= new Date($(this).datetimepicker("getDate").getTime()+ <%= nMinutosTerapia %>*60000);
-            $("#<%= LFinal.ClientID%>").text(
-                $.datepicker.formatDate( $(this).datepicker("option", "dateFormat"), final)
-                + " " + $.datepicker.formatTime($(this).datepicker("option", "timeFormat"), 
-                $.extend({
-                    hour: final.getHours(),
-                    minute: final.getMinutes(),
-                    second: final.getSeconds(),
-                }, {}))
-                );
+            uFechaFinal(this);
         });
+        setTimeout(function() {
+            uFechaFinal($("#<%= TInicio.ClientID%>")[0]);
+        }, 1000);
         
         $("#<%= TTA.ClientID %>").mask("999/999");
         // joinTableRows(joinTableRows($("#<%= GOxigeno.ClientID %> tr"), 1), 0);
@@ -119,7 +108,9 @@
                             SetFocusOnError="true" ValidationExpression="^((?!00:00).)*$" runat="server" >*</asp:RegularExpressionValidator>
                         <sdg:DateTimeValidator runat="server" ID="DTV" ControlToValidate="TInicio" ErrorMessage="Por favor ingrese una fecha valida." 
                     Display="Dynamic" SetFocusOnError="true">*</sdg:DateTimeValidator></td>
-                <td><asp:TextBox runat="server" ID="TInicio" CssClass="fechahora"></asp:TextBox></td>
+                <td><asp:TextBox runat="server" ID="TInicio" CssClass="fechahora"></asp:TextBox>
+                    <asp:Button runat="server" ID="TUF" CssClass="hide" Text="BUF" CausesValidation="false" OnClick="TUF_Click" />
+                </td>
                 <td>Final</td>
                 <td align="right"><asp:Label runat="server" ID="LFinal"></asp:Label></td>
             </tr>
@@ -133,17 +124,18 @@
                     <asp:SqlDataSource ID="STipo" runat="server" 
                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                         ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                        SelectCommand="SELECT CONCAT(programacion.autNumero, ';',programacion.actId) AS id, CONCAT(medicamentos.codigo, ' - ',medicamentos.nombre) AS nombre
+                        SelectCommand="SELECT CONCAT(programacion.autNumero, ';',programacion.actId) AS id, CONCAT(programacion.autNumero, ' - ', medicamentos.codigo, ' - ',medicamentos.nombre) AS nombre
                             FROM programacion 
                             LEFT JOIN medicamentos ON (medicamentos.id=programacion.actId)
                             WHERE programacion.pacId=@paciente 
-                            AND programacion.prgFechaProg>SYSDATE()-INTERVAL 7 DAY 
+                            AND DATE(programacion.prgFechaProg)=STR_TO_DATE(@fecha, '%d/%m/%Y')
                             AND (@canUpdate=1 OR programacion.perId=@funcionario)
                             GROUP BY programacion.actId 
-                            ORDER BY nombre">
+                            ORDER BY programacion.prgFechaProg DESC">
                         <SelectParameters>
                             <asp:ControlParameter ControlID="CCDetallePaciente" PropertyName="IdPaciente" Name="paciente" />
                             <asp:ControlParameter ControlID="UCFuncionario" PropertyName="IdFuncionario" Name="funcionario" DefaultValue="0" />
+                            <asp:ControlParameter ControlID="TInicio" PropertyName="Text" Name="fecha" />
                             <asp:Parameter Name="canUpdate" DefaultValue="0" />
                         </SelectParameters>
                     </asp:SqlDataSource>
@@ -276,7 +268,7 @@
                 <td><asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>mm/Hg</td>
                 <td>FC<asp:RequiredFieldValidator ControlToValidate="TFC" ErrorMessage="Por favor ingrese una frecuencia cardiaca." ID="RequiredFieldValidator9" 
 	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-                <td><asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>Lat/min</td>
+                <td class="nw"><asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>Lat/min</td>
             </tr>
             <tr>
                 <td>FR<asp:RequiredFieldValidator ControlToValidate="TFR" ErrorMessage="Por favor ingrese una frecuencia respiratoria." ID="RequiredFieldValidator10" 

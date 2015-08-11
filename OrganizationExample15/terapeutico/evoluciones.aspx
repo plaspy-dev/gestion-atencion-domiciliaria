@@ -4,6 +4,41 @@
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <script type="text/javascript">
+        $(function () {
+            $("#<%= TProcedimiento.ClientID %>").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "../webservices/servicios.asmx/GetMedicamentos",
+                        data: "{ 'q': '" + request.term + "', 't': '173' }",
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        dataFilter: function (data) { return data; },
+                        success: function (data) {
+                            response($.map(data.d, function (item) {
+                                return {
+                                    value: item.value, label: item.item
+                                }
+                            }))
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert(textStatus);
+                        }
+                    });
+                },
+                minLength: 3,
+                select: function (event, ui) {
+                    $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
+                    $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
+                    return false;
+                },
+                search: function (event, ui) {
+                    $("#<%= TProcedimientoID.ClientID %>").val("");
+                }
+            }).change(function () { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
+        });
+    </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <asp:Panel runat="server" ID="PBuscar" DefaultButton="BBuscar">
@@ -14,6 +49,7 @@
             <td>Asegurador</td>
             <td>Paciente</td>
             <td>Funcionario</td>
+            <td>Servicio</td>
         </tr>
         <tr>
             <td><asp:TextBox runat="server" ID="TInicio" CssClass="fecha"></asp:TextBox>
@@ -39,6 +75,9 @@
             </td>
             <td>
                 <uc1:funcionario runat="server" ID="UCFuncionario" />
+            </td>
+            <td>
+                <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>
             </td>
             <td>
                 <asp:Button runat="server" ID="BBuscar" Text="Actualizar" OnClick="BBuscar_Click" />
@@ -101,6 +140,7 @@
                             WHERE DATE(evolucion_terapeutivo.fecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                             AND (@paciente=0 OR evolucion_terapeutivo.paciente=@paciente)
                             AND (@personal=0 OR evolucion_terapeutivo.funcionario=@personal)
+                            AND (@procedimiento=0 OR evolucion_terapeutivo.tipo=@procedimiento)
                             AND (@asegurador=0 OR paciente.entId=@asegurador)
                             ) UNION (
                             SELECT valoracionat.id,valoracionat.paciente
@@ -119,6 +159,7 @@
                                     WHERE DATE(valoracionat.inicio) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                                     AND (@paciente=0 OR valoracionat.paciente=@paciente)
                                     AND (@personal=0 OR valoracionat.funcionario=@personal)
+                                    AND (@procedimiento=0 OR valoracionat.tipo=@procedimiento)
                                     AND (@asegurador=0 OR paciente.entId=@asegurador)
                             )
                             ORDER BY fecha">
@@ -128,6 +169,7 @@
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="UCFuncionario" Name="personal" PropertyName="IdFuncionario" DefaultValue="0" />
                      <asp:ControlParameter ControlID="UCPaciente$TPacienteID" Name="paciente" PropertyName="Text" DefaultValue="0" />
+                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
                  </SelectParameters>
     </asp:SqlDataSource>
 

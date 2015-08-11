@@ -349,7 +349,7 @@ public partial class paciente_valoracionat : System.Web.UI.Page
     protected void DTipo_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (string.IsNullOrEmpty(DTipo.SelectedValue)) {
-            LNumeroTerapias.Text = "";
+            LNumeroTerapias.Text = "0";
             return;
         }
 
@@ -377,6 +377,8 @@ public partial class paciente_valoracionat : System.Web.UI.Page
                             LIMIT 1
                             ", Query.GetValor(CCDetallePaciente.IdPaciente), CUsuario.GetInstance().CanUpdate() ? 1 : 0
                              , Query.GetValor(UCFuncionario.IdFuncionario), Query.GetValor(valores[1]), Query.GetValor(valores[0]));
+            if(LNumeroTerapias.Text.Length==0)
+                LNumeroTerapias.Text="0";
         }
     }
     protected void BEliminar_Click(object sender, EventArgs e)
@@ -398,5 +400,11 @@ public partial class paciente_valoracionat : System.Web.UI.Page
             conector.Commit();
             ((MasterPageI)Master).SetResultado("Valoración eliminada " + CCDetallePaciente.Nombres);
         }
+    }
+
+    protected void TUF_Click(object sender, EventArgs e)
+    {
+        DTipo.DataBind();
+        DTipo_SelectedIndexChanged(sender, e);
     }
 }

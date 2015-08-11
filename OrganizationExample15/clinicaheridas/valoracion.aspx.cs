@@ -911,9 +911,10 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
             int final = evento.Contenido.IndexOf("<!-- finherida -->");
             if (inicio != -1 && final != -1)
             {
-                StringBuilder herida = new StringBuilder(evento.Contenido.Substring(inicio, final - inicio));
+                StringBuilder heridaCompleta = new StringBuilder(evento.Contenido.Substring(inicio, final - inicio));
                 for (int i = GHeridas.Rows.Count - 2; i >= 0; i--)
                 {
+                    StringBuilder herida = new StringBuilder(heridaCompleta.ToString());
                     GHeridas.SelectedIndex = i;
                     GHeridas_SelectedIndexChanged(sender, e);
 

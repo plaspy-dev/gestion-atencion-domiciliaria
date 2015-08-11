@@ -181,7 +181,6 @@
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT id, nombre FROM varios WHERE tipo=98 AND szReservado IS NULL ORDER BY nombre">
                 </asp:SqlDataSource></td>
-            <td></td>
         </tr>
         <tr>
             <td colspan="4">En caso de presentarse dificultades acuden a alguien? Explicar.</td>
