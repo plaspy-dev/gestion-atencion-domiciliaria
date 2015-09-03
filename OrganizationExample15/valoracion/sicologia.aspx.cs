@@ -12,6 +12,7 @@ public partial class valoracion_sicologia : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
+        if(IsPostBack) SDG.Web.UI.CompressedPage.FixCheckBoxList(Request.Form, Controls);
         if (!IsPostBack)
         {
             CUsuario usuario = (CUsuario)Usuario.GetUsuario();

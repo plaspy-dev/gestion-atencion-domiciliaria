@@ -80,4 +80,35 @@ public class CompressedPage : Page
 		}
 		PageStatePersister.Save();
 	}
+        public static void FixCheckBoxList(System.Collections.Specialized.NameValueCollection Form, System.Web.UI.ControlCollection controles) {
+
+            if (System.Type.GetType("Mono.Runtime") == null)
+
+                return;
+
+            foreach (System.Web.UI.Control control in controles) {
+
+                if (control is System.Web.UI.WebControls.CheckBoxList) {
+
+                    System.Web.UI.WebControls.CheckBoxList checkboxlist = (System.Web.UI.WebControls.CheckBoxList)control;
+
+                    for (int i = 0; i < checkboxlist.Items.Count; i++)
+
+                    {
+
+                        string uniqueid = string.Format("{0}${1}", checkboxlist.UniqueID, i);
+
+                        checkboxlist.Items[i].Selected = !string.IsNullOrEmpty(Form[uniqueid]);
+
+                    }
+
+                }
+
+                if(control.HasControls())
+
+                    FixCheckBoxList(Form, control.Controls);
+
+            }
+
+        }
 }

@@ -169,6 +169,57 @@ public class Query
 		return "REPLACE INTO " + statement.Substring(prefix.Length);
 	}
 
+	public string TableName
+	{
+		get { return m_szTabla; }
+		set { m_szTabla = value; }
+	}
+
+	public static Query operator -(Query query, string valor)
+
+        {
+
+            query.RemoveCampo(valor);
+
+            return query;
+
+        }
+
+	static public string GetValor(object value)
+
+        {
+
+            string valor=null;
+
+            if (value is string) { valor = (string)value; }
+
+            else if (value is float) {
+
+                valor = ((float)value).ToString(CultureInfo.InvariantCulture);
+
+            } else if (value is double) {
+
+                valor = ((double)value).ToString(CultureInfo.InvariantCulture);
+
+            } else if (value is decimal) {
+
+                valor = ((decimal)value).ToString(CultureInfo.InvariantCulture);
+
+            } else if (value is DateTime) {
+
+                valor = Query.GetMySQLDateFormat((DateTime)value, true);
+
+            } else if(value!= null) {
+
+                valor= value.ToString();
+
+            }
+
+
+
+            return GetValor(valor);
+        }
+
 	public string GetInsert()
 	{
 		if (dCampos.Count == 0)

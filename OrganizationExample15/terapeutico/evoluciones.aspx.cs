@@ -118,7 +118,7 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
 
                         for (int j = 0; j < reader.FieldCount; j++)
                         {
-                            contenido = contenido.Replace(string.Format("${0}$", reader.GetName(j)), reader.GetValue(j).ToString());
+                            contenido = contenido.Replace(string.Format("${0}$", reader.GetName(j)), HttpUtility.HtmlEncode(reader.GetValue(j).ToString()));
                         }
                         idFuncionario = reader["funcionario"].ToString();
                     }
@@ -164,7 +164,7 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
 
                         for (int j = 0; j < reader.FieldCount; j++)
                         {
-                            valoracionStringBuilder = valoracionStringBuilder.Replace(string.Format("${0}$", reader.GetName(j)), reader.GetValue(j).ToString());
+                            valoracionStringBuilder = valoracionStringBuilder.Replace(string.Format("${0}$", reader.GetName(j)), HttpUtility.HtmlEncode(reader.GetValue(j).ToString()));
                         }
                         idFuncionario = reader["funcionario"].ToString();
 

@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections;
 using SDG.Componentes;
+using System.Globalization;
 
 public partial class administrador_Default : System.Web.UI.Page
 {

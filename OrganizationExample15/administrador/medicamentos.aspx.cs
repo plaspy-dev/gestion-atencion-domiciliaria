@@ -184,16 +184,17 @@ public partial class administrador_medicamentos : System.Web.UI.Page
 
                 if (costo.Text.Length > 0 || maxima.Text.Length > 0)
                 {
+                    string costolimpio = costo.Text.Replace(",", "").Replace("$", "");
                     valores["entidad"] = GEntidades.DataKeys[i].Value.ToString();
-                    valores["costo"] = costo.Text.Replace(",", "").Replace("$", "");
+                    valores["costo"] = costolimpio;
                     valores["maxima"] = maxima.Text.Replace(",", "").Replace("$", "");
                     if (conector.QueryMod(valores.GetInsert()) == -1)
                         return;
-                    if (conector.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(costo.Text.Replace(",", ""))
+                    if (conector.QueryMod("UPDATE programacion SET costo=" + Query.GetValor(costolimpio)
                                             + " WHERE actId=" + HId.Value + " AND costo IS NULL AND entId=" + GEntidades.DataKeys[i].Value.ToString()) == -1)
                         return;
                     if (conector.QueryMod("UPDATE medicamento_formulacion LEFT JOIN formulacion ON (medicamento_formulacion.formulacion=formulacion.id) "
-                        + " SET medicamento_formulacion.costo=" + Query.GetValor(costo.Text.Replace(",", ""))
+                        + " SET medicamento_formulacion.costo=" + Query.GetValor(costolimpio)
                         + " WHERE medicamento_formulacion.medicamento=" + HId.Value + " AND formulacion.asegurador=" + GEntidades.DataKeys[i].Value.ToString() + " AND medicamento_formulacion.costo IS NULL") == -1)
                         return;
                 }

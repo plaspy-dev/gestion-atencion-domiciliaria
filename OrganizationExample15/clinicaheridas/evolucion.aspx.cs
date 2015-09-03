@@ -18,8 +18,8 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
-        if (!IsPostBack) { 
-            
+        if (!IsPostBack) {
+
             CUsuario usuario = (CUsuario)Usuario.GetUsuario();
             UCFuncionario.ReadOnly = !usuario.CanAdmin();
             BAceptar.Enabled = false;
@@ -134,7 +134,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
                                     SEducativo.SelectParameters["evolucion"].DefaultValue =
                                     reader["id"].ToString();
 
-                                TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
+                                TFecha.Text = Query.GetFromMySQLDate(reader["fecha"], true);
                                 UCFuncionario.IdFuncionario = reader["funcionario"].ToString();
                                 TTA.Text = reader["ta"].ToString();
                                 TFC.Text = reader["fc"].ToString();
@@ -154,8 +154,6 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
                                         TPlanManejo.Text = procedimientos;
                                     }
                                 }
-
-                                
 
                                 ((MasterPageI)Master).SetModificacion(ViewState["id"].ToString());
                             }
@@ -268,7 +266,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
 
             Query query = new Query("evolucion_herida");
 
-            query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
+            query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text, true);
             query["funcionario"] = UCFuncionario.IdFuncionario;
             query["ta"] = TTA.Text;
             query["fc"] = TFC.Text.Replace(" Lat/min", "");
@@ -320,9 +318,25 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
                 {
                     if (!consultas[i].Existe)
                     {
+                        query = Serializar.DesSerializeBinary<Query>(Serializar.SerializeBinary(consultas[i].query, false), false);
+                        query.TableName = "valoracion_herida_herida";
+
+                        query -= "cambio_herida";
+                        query -= "signo_infeccion";
+
+                        query["valoracion"] = "0";
+
+                        int res = conector.QueryMod(query.GetInsert(), true);
+                        if (res == -1)
+                        {
+                            LMensaje.Text = conector.LastError;
+                            return;
+                        }
+
+                        consultas[i].IdTabla = res.ToString();
                         consultas[i].query["id"] = consultas[i].IdTabla; //  establecemos el id de la herida
                         consultas[i].query["evolucion"] = id;
-                        int res = conector.QueryMod(consultas[i].query.GetInsert(), true);
+                        res = conector.QueryMod(consultas[i].query.GetInsert(), true);
                         if (res == -1)
                         {
                             LMensaje.Text = conector.LastError;
@@ -524,6 +538,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
         PHerida.Visible= 
         BAgregar.Visible = true;
         BEliminar.Visible = Usuario.GetInstance().CanDelete();
+        BAgregarHerida.Visible = false;
 
         RebuildGalery();
     }
@@ -542,23 +557,26 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
     {
         LMensajeHerida.Text = "";
 
-        RLocalizacion2.SelectedIndex =
-            RLocalizacion3.SelectedIndex =
-            RMI.SelectedIndex =
-            RPies.SelectedIndex =
-            // DEtiologia.SelectedIndex =
-            DClasificacion.SelectedIndex =
-            // RTipoTejido.SelectedIndex =
-            // DSeleccione.SelectedIndex =
-            DExudado.SelectedIndex =
-            DTipoExudado.SelectedIndex =
-            DPielCircundante.SelectedIndex =
-            DBordesHerida.SelectedIndex =
-            // DOlor.SelectedIndex =
-            DSignosSintomas.SelectedIndex =
-            // DDefina.SelectedIndex =
-            DTipoCambios.SelectedIndex= 
-            DLocalizacion.SelectedIndex = 0;
+        try
+        {
+            RLocalizacion2.SelectedIndex =
+                RLocalizacion3.SelectedIndex =
+                RMI.SelectedIndex =
+                RPies.SelectedIndex =
+                // DEtiologia.SelectedIndex =
+                DClasificacion.SelectedIndex =
+                // RTipoTejido.SelectedIndex =
+                // DSeleccione.SelectedIndex =
+                DExudado.SelectedIndex =
+                DTipoExudado.SelectedIndex =
+                DPielCircundante.SelectedIndex =
+                DBordesHerida.SelectedIndex =
+                // DOlor.SelectedIndex =
+                DSignosSintomas.SelectedIndex =
+                // DDefina.SelectedIndex =
+                DTipoCambios.SelectedIndex =
+                DLocalizacion.SelectedIndex = 0;
+        } catch { }
 
         TFactoresRiesgo.Text =
             TLongitud.Text =
@@ -595,12 +613,13 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
         BAgregar.Visible = false;
         BAgregar.Enabled = Usuario.GetInstance().CanInsert();
         BEliminar.Visible = false;
+        BAgregarHerida.Visible = true;
     }
 
     protected void BAgregar_Click(object sender, EventArgs e)
     {
-        if (string.IsNullOrEmpty((string)ViewState["idherida"])) // no se pueden agregar heridas, solo editar
-            return;
+        /*if (string.IsNullOrEmpty((string)ViewState["idherida"])) // no se pueden agregar heridas, solo editar
+            return;*/
 
         if (!IsValid)
             return;
@@ -647,7 +666,8 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
         }
         if (info == null)
         {
-            info = new Heridas(((consultas.Count + 1) * -1).ToString(), TUbicacionEspecifica.Text);
+            info = new Heridas(((consultas.Count + 1) * -1).ToString(), TUbicacionEspecifica.Text, null, "evolucion_herida_herida", false);
+            info.query["id"] = "";
             consultas.Add(info);
         }
 
@@ -963,5 +983,19 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
         }
         // limpiamos el inactivo de los pacientes
         evento.Contenido = evento.Contenido.Replace(" (Inactivo)", "");
+    }
+
+    protected void BAgregarHerida_Click(object sender, EventArgs e)
+    {
+        BCancelarHerida_Click(sender, e); // limpiamos primero el texto
+
+        BAgregar.Enabled = Usuario.GetInstance().CanUpdate();
+        BAgregar.Text = "Editar";
+        PHerida.Visible =
+        BAgregar.Visible = true;
+        BEliminar.Visible = Usuario.GetInstance().CanDelete();
+        BAgregarHerida.Visible = false;
+
+        RebuildGalery();
     }
 }

@@ -203,7 +203,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
             conector.StartTransaction();
             if (conector.QueryMod("DELETE FROM evolucion_terapeutivo WHERE id=" + ViewState["id"].ToString()) == -1)
                 return;
-            if (conector.QueryMod("UPDATE programacion SET prestado_evolucion=NULL WHERE prestado_evolucion={0}", Query.GetValor(ViewState["id"].ToString()))==-1)
+            if (conector.QueryMod("UPDATE programacion SET prestado_evolucion=NULL WHERE prestado_evolucion={0}", false, Query.GetValor(ViewState["id"].ToString()))==-1)
                 return;
             conector.Commit();
             ((MasterPageI)Master).SetResultado("Evolución eliminada " + CCDetallePaciente.Nombres);

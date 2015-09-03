@@ -231,7 +231,7 @@
                                     </SelectParameters>
                         </asp:SqlDataSource>
                     </div>
-                    <h3><a href="#">Precios y restricciones</a></h3>
+                    <h3><a href="#">Costos y restricciones por entidad</a></h3>
                     <div class="hide">
                         <asp:GridView ID="GEntidades" runat="server" AutoGenerateColumns="False" DataSourceID="SEntidades"  Width="100%"
                             EmptyDataText="No se encontraron entidades" DataKeyNames="id" onrowdatabound="GEntidades_RowDataBound">
@@ -243,7 +243,7 @@
                             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                             <Columns>
                                 <asp:BoundField HeaderText="Entidad" DataField="nombre" ItemStyle-Width="100%" />
-                                <asp:TemplateField HeaderText="Precio del servicio">
+                                <asp:TemplateField HeaderText="Costo del servicio">
                                     <ItemTemplate>
                                         <asp:TextBox runat="server" CssClass="dinero" ID="TCosto"></asp:TextBox>
                                     </ItemTemplate>

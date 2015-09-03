@@ -177,7 +177,7 @@
         <table style="border-collapse: collapse">
             <tr>
                 <td>Fecha</td>
-                <td><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox></td>
+                <td><asp:TextBox runat="server" ID="TFecha" CssClass="fechahora"></asp:TextBox></td>
                 <td>Funcionario<asp:RequiredFieldValidator ID="RequiredFieldValidator3" ControlToValidate="UCFuncionario$TFuncionarioID" runat="server" ErrorMessage="Por favor ingrese un funcionario" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><uc6:Funcionario runat="server" ID="UCFuncionario" /></td>
             </tr>
@@ -250,10 +250,13 @@
                     </asp:GridView>
                 </td>
             </tr>
+            <tr>
+                <td colspan="4" style="text-align: right;" class="tdr tdl"><asp:Button runat="server" ID="BAgregarHerida" Text="Agregar" CausesValidation="false" OnClick="BAgregarHerida_Click" /></td>
+            </tr>
             <asp:PlaceHolder runat="server" ID="PHerida" Visible="false">
             <tr>
                 <td class="tdr tdl" colspan="4">
-                <table>
+                <table style="border-collapse: collapse;">
                     <tr>
                         <td colspan="4" class="celdaTitulo tdr tdl">Valoración de heridas - Localización</td>
                     </tr>
