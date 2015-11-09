@@ -22,8 +22,8 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
             TFecha.Text = Query.GetFromMySQLDate(DateTime.Now.Date, true);
             UCFuncionario.IdFuncionario = usuario["personal"];
             TTA.Focus();
-            // DTV.MinumunValue = DateTime.Now.AddDays(-2);
-            DTV.MinumunValue = DateTime.Now.AddMonths(-1);
+            DTV.MinumunValue = DateTime.Now.AddDays(-2);
+            // DTV.MinumunValue = DateTime.Now.AddMonths(-1);
             DTV.MaximunValue = DateTime.Now.AddMinutes(1);
             DTV.Enabled = !usuario.CanUpdate();
 

@@ -152,6 +152,10 @@
             <td><asp:RegularExpressionValidator ID="RegularExpressionValidator1" SetFocusOnError="true" ValidationExpression="^.+\.((jpg)|(JPG)|(jpeg)|(JPEG))$" Display="Dynamic" ControlToValidate="FFirma" runat="server" ErrorMessage="Por favor seleccione un archivo de imagen JPG.">*</asp:RegularExpressionValidator></td>
         </tr>
         <tr>
+            <td>Estado</td>
+            <td><asp:Label runat="server" ID="LEstado"></asp:Label></td>
+        </tr>
+        <tr>
             <td colspan="3">
                 <div id="accordion">
                     <h3><a href="#">Cargos a programar</a></h3>
@@ -270,6 +274,11 @@
                     <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" ItemStyle-Wrap="false" />
                     <asp:BoundField DataField="ingreso" HeaderText="Último ingreso" SortExpression="ingreso" ItemStyle-Wrap="false" />
                     <asp:BoundField DataField="personal" HeaderText="PersonalID" SortExpression="personal" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
+                    <asp:TemplateField HeaderText="Inactivo" SortExpression="estado" ItemStyle-HorizontalAlign="Right">
+                        <ItemTemplate>
+                            <asp:CheckBox ID="I" runat="server" Checked='<%# Eval("estado").ToString()=="0" %>' Enabled="false" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Cumpleaños" SortExpression="cumpleanos" ItemStyle-HorizontalAlign="Right">
                         <ItemTemplate>
                             <asp:CheckBox ID="C" runat="server" Checked='<%# Eval("cumpleanos").ToString()=="1" %>' Enabled="false" />
@@ -282,7 +291,7 @@
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT usuario.id AS id,usuario.nombre AS nombre,usuario.usuario AS usuario,IFNULL(grupo.nombre,'Administrador') AS grupo,usuario.ingreso AS ingreso,usuario.personal 
-                        ,usuario.cumpleanos
+                        ,usuario.cumpleanos,usuario.estado
                         FROM usuario 
                         LEFT JOIN grupo ON (usuario.grupo=grupo.id) 
                         WHERE usuario.estado IS NULL OR usuario.estado!=-1 

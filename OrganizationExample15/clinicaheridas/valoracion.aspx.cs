@@ -200,7 +200,9 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                                         else info.query[reader.GetName(i)] = reader[i].ToString();
                                     }
                                     Utilidades.SelectInDropDown(DDefina, reader["exudado_definicion"]);
+                                    Utilidades.SelectInDropDown(DEtiologia, reader["etiologia"]);
                                     LClasificacion.Text = DDefina.SelectedItem.Text;
+                                    LTipo.Text = DEtiologia.SelectedItem.Text;
                                     info.query.RemoveCampo("id");
                                     heridas.Add(info);
                                 }
@@ -212,7 +214,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                         }
                         TPlanManejo.ReadOnly = !usuario.CanAdmin();
                     }
-                    RebuildGalery();
+                    Heridas.RebuildGalery(CCDetallePaciente.IdPaciente, (string)ViewState["id"], (string)ViewState["idherida"], "v", DFotos);
                 }
             }
         }
@@ -414,9 +416,9 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
                 try
                 {
-                    foreach (string archivo in Directory.GetFiles(GetTemporalPath(consultas[i].Id, false)))
+                    foreach (string archivo in Directory.GetFiles(Heridas.GetTemporalPath(CCDetallePaciente.IdPaciente, consultas[i].Id, false, "v")))
                     {
-                        string rutafinal = GetFinalPath(id, string.IsNullOrEmpty(consultas[i].IdTabla) ? consultas[i].IdTemp : consultas[i].IdTabla, true);
+                        string rutafinal = Heridas.GetFinalPath(id, string.IsNullOrEmpty(consultas[i].IdTabla) ? consultas[i].IdTemp : consultas[i].IdTabla, true, "v");
                         if (consultas[i].eliminado)
                             File.Delete(archivo);
                         else File.Move(archivo, Path.Combine(rutafinal, Path.GetFileName(archivo)));
@@ -427,7 +429,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                 {
                     if (consultas[i].eliminado)
                     {
-                        string rutafinal = GetFinalPath(id, string.IsNullOrEmpty(consultas[i].IdTabla) ? consultas[i].IdTemp : consultas[i].IdTabla, false);
+                        string rutafinal = Heridas.GetFinalPath(id, string.IsNullOrEmpty(consultas[i].IdTabla) ? consultas[i].IdTemp : consultas[i].IdTabla, false, "v");
                         foreach (string archivo in Directory.GetFiles(rutafinal))
                             File.Delete(archivo);
                         Directory.Delete(rutafinal);
@@ -458,38 +460,6 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         return id;
     }
 
-    public List<Heridas.Fotos> RebuildGalery()
-    {
-        List<Heridas.Fotos> fotos = new List<Heridas.Fotos>();
-        string id= GetHeridaID();
-        try
-        {
-            foreach (string archivo in Directory.GetFiles(GetTemporalPath(id, false)))
-            {
-                Heridas.Fotos info = new Heridas.Fotos();
-                info.Archivo = Path.GetFileName(archivo);
-                info.Temporal = true;
-                info.Id = id;
-                fotos.Add(info);
-            }
-        } catch { }
-        try
-        {
-            foreach (string archivo in Directory.GetFiles(GetFinalPath((string)ViewState["id"], id, false)))
-            {
-                Heridas.Fotos info = new Heridas.Fotos();
-                info.Archivo = Path.GetFileName(archivo);
-                info.Temporal = false;
-                info.Id = id;
-                fotos.Add(info);
-            }
-        } catch {}
-
-        DFotos.DataSource = fotos;
-        DFotos.DataBind();
-        return fotos;
-    }
-
     public void CleanTemporalPath(string id) {
 
         List<string> archivos = new List<string>();
@@ -511,48 +481,6 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         }
     }
 
-    public string GetTemporalPath(string id, bool create) {
-
-        string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "valoracion");
-        if(create)
-            Directory.CreateDirectory(archivo);
-        archivo = Path.Combine(archivo, "temp");
-        if (create)
-            Directory.CreateDirectory(archivo);
-        archivo = Path.Combine(archivo, CCDetallePaciente.IdPaciente);
-        if (create)
-            Directory.CreateDirectory(archivo);
-        archivo = Path.Combine(archivo, id);
-        if (create)
-            Directory.CreateDirectory(archivo);
-
-        return archivo;
-    }
-
-    public string GetFinalPath(string id, string idHerida, bool create)
-    {
-        string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "valoracion");
-
-        if (string.IsNullOrEmpty(id))
-        {
-            archivo = Path.Combine(Path.GetTempPath(), "evolucion");
-            if(create)
-                Directory.CreateDirectory(archivo);
-        }
-        else
-        {
-            if (create)
-                Directory.CreateDirectory(archivo);
-            archivo = Path.Combine(archivo, id);
-            if (create)
-                Directory.CreateDirectory(archivo);
-            archivo = Path.Combine(archivo, idHerida);
-            if (create)
-                Directory.CreateDirectory(archivo);
-        }
-        return archivo;
-    }
-
     protected void BSubir_Click(object sender, EventArgs e)
     {
         if (!IsValid)
@@ -560,10 +488,10 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         if (!FFoto.HasFile) 
             return;
 
-        string archivo = Path.Combine(GetTemporalPath(GetHeridaID(), true), FFoto.FileName);
+        string archivo = Path.Combine(Heridas.GetTemporalPath(CCDetallePaciente.IdPaciente, GetHeridaID(), true, "v"), FFoto.FileName);
         FFoto.SaveAs(archivo);
 
-        RebuildGalery();
+        Heridas.RebuildGalery(CCDetallePaciente.IdPaciente, (string)ViewState["id"], (string)ViewState["idherida"], "v", DFotos);
 
         ScriptManager.RegisterStartupScript(FFoto, typeof(string), "registro", "$('html, body').animate({scrollTop: $('#registrofotografico').offset().top}, 0);", true);
     }
@@ -571,10 +499,10 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
     protected void DFotos_DeleteCommand(object source, DataListCommandEventArgs e)
     {
         string archivo = DFotos.DataKeys[e.Item.ItemIndex].ToString();
-        try { File.Delete(Path.Combine(GetTemporalPath(GetHeridaID(), false), archivo)); } catch {}
-        try { File.Delete(Path.Combine(GetFinalPath((string)ViewState["id"], GetHeridaID(), false), archivo)); } catch { }
+        try { File.Delete(Path.Combine(Heridas.GetTemporalPath(CCDetallePaciente.IdPaciente, GetHeridaID(), false, "v"), archivo)); } catch {}
+        try { File.Delete(Path.Combine(Heridas.GetFinalPath((string)ViewState["id"], GetHeridaID(), false, "v"), archivo)); } catch { }
         CleanTemporalPath(GetHeridaID());
-        RebuildGalery();
+        Heridas.RebuildGalery(CCDetallePaciente.IdPaciente, (string)ViewState["id"], (string)ViewState["idherida"], "v", DFotos);
     }
     
     protected void BAgregar_Click(object sender, EventArgs e)
@@ -714,7 +642,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
         GHeridas.SelectedIndex = -1;
         ViewState["idherida"] = null;
-        RebuildGalery();
+        Heridas.RebuildGalery(CCDetallePaciente.IdPaciente, (string)ViewState["id"], (string)ViewState["idherida"], "v", DFotos);
 
         BAgregar.Text = "Agregar";
         BAgregar.Enabled = Usuario.GetInstance().CanInsert();
@@ -810,7 +738,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         BAgregar.Text = "Editar";
         BEliminar.Visible = Usuario.GetInstance().CanDelete();
 
-        RebuildGalery();
+        Heridas.RebuildGalery(CCDetallePaciente.IdPaciente, (string)ViewState["id"], (string)ViewState["idherida"], "v", DFotos);
     }
 
     protected static string ImprimirGridTipo1(GridView grid)
@@ -851,30 +779,6 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         return resultado;
     }
 
-    public string ImprimirFotos() {
-
-        if (DFotos.Items.Count == 0) {
-            return "No se encontro registro fotográfico.";
-        }
-
-        string resultado = "<table>";
-        List<Heridas.Fotos> fotos = RebuildGalery();
-        for (int i = 0; i < fotos.Count; i += 3) {
-            resultado += "<tr>";
-            for (int j = i; j < i + 3 && j < fotos.Count; j++)
-            {
-                resultado += "<td>";
-                resultado += string.Format("<img border=0 src='{5}{6}?t=v&p={0}&i={1}&n={2}&hi={4}&d={3}&w=150&h=150'/>",
-                                    CCDetallePaciente.IdPaciente, ViewState["id"], fotos[j].Archivo, fotos[j].Temporal, fotos[j].Id
-                                    , ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/archivo/imagen.ashx"));
-                resultado += "</td>";
-            }
-            resultado += "</tr>";
-        }
-        resultado += "</table>";
-        return resultado;
-    }
-
     protected string AddPorcentajeDeTejido(string nombre, TextBox textBox, bool coma) {
 
         if (string.IsNullOrEmpty(textBox.Text))
@@ -907,8 +811,8 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
         if (GHeridas.Rows.Count > 0)
         {
-            int inicio = evento.Contenido.IndexOf("<!-- inicioherida -->");
-            int final = evento.Contenido.IndexOf("<!-- finherida -->");
+            int inicio = evento.Contenido.IndexOf("<!-- seccionherida -->");
+            int final = evento.Contenido.IndexOf("<!-- seccionheridaEnd -->");
             if (inicio != -1 && final != -1)
             {
                 StringBuilder heridaCompleta = new StringBuilder(evento.Contenido.Substring(inicio, final - inicio));
@@ -931,7 +835,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
                     herida = herida.Replace("$szPorcentajedePedido$", porcentajedepedido);
 
-                    evento.Contenido = evento.Contenido.Insert(inicio, Utilidades.ReplaceContenido(Controls, herida.Replace("$szFotos$", ImprimirFotos())).ToString());
+                    evento.Contenido = evento.Contenido.Insert(inicio, Utilidades.ReplaceContenido(Controls, herida.Replace("$szFotos$", Heridas.ImprimirFotos(CCDetallePaciente.IdPaciente, ViewState["id"].ToString(), ViewState["idherida"].ToString(), "v"))).ToString());
                 }
             }
             GHeridas.SelectedIndex = GHeridas.Rows.Count - 1;
@@ -950,7 +854,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
         evento.Contenido = evento.Contenido.Replace("$szPorcentajedePedido$", porcentajedepedido);
 
-        evento.Contenido = evento.Contenido.Replace("$szFotos$", ImprimirFotos());
+        evento.Contenido = evento.Contenido.Replace("$szFotos$", Heridas.ImprimirFotos(CCDetallePaciente.IdPaciente, ViewState["id"].ToString(), ViewState["idherida"].ToString(), "v"));
         
         using (CConector conector = new CConector())
         {

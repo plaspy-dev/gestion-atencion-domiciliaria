@@ -1,2 +1,2 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="pacienteSimple.ascx.cs" Inherits="paciente_pacienteSimple" %>
-<asp:TextBox runat="server" ID="TPaciente" Width="100%"></asp:TextBox><asp:TextBox runat="server" ID="TPacienteID" CssClass="hide"></asp:TextBox>
+<asp:TextBox runat="server" ID="TPaciente" Width="100%" style="min-width: 172px;"></asp:TextBox><asp:TextBox runat="server" ID="TPacienteID" CssClass="hide"></asp:TextBox>

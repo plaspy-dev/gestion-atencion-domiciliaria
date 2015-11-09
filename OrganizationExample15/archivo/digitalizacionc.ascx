@@ -13,19 +13,24 @@
                 <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
                     <asp:BoundField DataField="fecha" HeaderText="Fecha" SortExpression="fecha" DataFormatString="{0:d}" />
-                    <asp:HyperLinkField HeaderText="Archivo" SortExpression="archivo" DataNavigateUrlFields="archivo" DataNavigateUrlFormatString="~/archivo/archivo.ashx?n={0}.tif&t=d" DataTextField="archivo" ItemStyle-Width="100%" />
+                    <asp:BoundField DataField="tipo" HeaderText="Tipo" SortExpression="tipo" />
+                    <asp:HyperLinkField HeaderText="Archivo" SortExpression="archivo" DataNavigateUrlFields="archivo" DataNavigateUrlFormatString="~/archivo/archivo.ashx?n={0}&t=d" DataTextField="archivo" ItemStyle-Width="100%" />
                 </Columns>
             </asp:GridView>
                 <asp:SqlDataSource ID="SArchivo" runat="server" 
                     ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="SELECT fecha,archivo
+                    SelectCommand="SELECT digitalizacion.fecha,IF(digitalizacion.tipo=0, digitalizacion.factura_archivo, digitalizacion.archivo) AS archivo, tipo.nombre AS tipo
                                 FROM digitalizacion
-                                WHERE @paciente=digitalizacion.paciente
+                                LEFT JOIN varios AS tipo ON (tipo.id=digitalizacion.tipo)
+                                WHERE @paciente=digitalizacion.paciente 
+                                AND (digitalizacion.tipo=@tipo OR digitalizacion.tipo=@tipo2)
                                 ORDER BY fecha DESC
                                 ">
                       <SelectParameters>
-                        <asp:Parameter Name="paciente" />
+                            <asp:Parameter Name="paciente" />
+                            <asp:Parameter Name="tipo" />
+                            <asp:Parameter Name="tipo2" />
                       </SelectParameters>
             </asp:SqlDataSource>
         </div>

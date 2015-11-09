@@ -465,6 +465,13 @@ public partial class rh_funcionario : System.Web.UI.Page
                 }
             }
 
+            // actualizamos la informacion del paciente
+            if (conector.QueryMod("UPDATE usuario SET estado={0} WHERE personal={1} AND (estado IS NULL OR estado!=-1)"
+                , false
+                , DEstado.SelectedValue=="1" ? "NULL" : "0"
+                , HId.Value ) == -1)
+                return;
+
             Funcionario.RemoveFuncionario(HId.Value);
         }
 

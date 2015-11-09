@@ -157,8 +157,12 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
 
             Paciente paciente = Paciente.GetPaciente(value);
 
+            if (string.IsNullOrEmpty(paciente.Id))
+                return;
+
             if (!((CUsuario)Usuario.GetUsuario()).CheckEntidad(paciente.entidadId))
                 return;
+
             UCAutorizaciones.Value = HIdPaciente.Value = value;
 
             LEdad.Text = "";

@@ -73,13 +73,14 @@
     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
     <Columns>
-        <asp:BoundField DataField="fecha" HeaderText="Fecha" SortExpression="fecha" DataFormatString="{0:d}" />
+        <asp:HyperLinkField HeaderText="Fecha" DataTextField="fecha" SortExpression="fecha" DataTextFormatString="{0:d}" DataNavigateUrlFormatString="~/archivo/subir.aspx?pid={0}&fn={1}" DataNavigateUrlFields="paciente,factura" />
         <asp:BoundField HeaderText="Documento reportado" DataField="documento" SortExpression="documento" />
-        <asp:BoundField HeaderText="Factura" DataField="factura" SortExpression="factura" ItemStyle-HorizontalAlign="Right" />
+        <asp:HyperLinkField HeaderText="Factura" DataTextField="factura" SortExpression="factura" DataTextFormatString="{0:d}" DataNavigateUrlFormatString="~/archivo/subir.aspx?pid={0}&fn={1}" DataNavigateUrlFields="paciente,factura" />
         <asp:BoundField HeaderText="Paciente" DataField="pacNombres" SortExpression="pacNombres" ItemStyle-Wrap="false" />
         <asp:BoundField HeaderText="Aseguradora reportada" DataField="aseguradora" SortExpression="aseguradora" ItemStyle-Wrap="false" />
         <asp:BoundField HeaderText="Aseguradora Paciente" DataField="entNombre" SortExpression="entNombre" />
-        <asp:HyperLinkField HeaderText="Archivo" SortExpression="archivo" DataNavigateUrlFields="archivo" DataNavigateUrlFormatString="~/archivo/archivo.ashx?n={0}.tif&t=d" DataTextField="archivo" ItemStyle-Wrap="false" />
+        <asp:HyperLinkField HeaderText="Archivo" SortExpression="archivo" DataNavigateUrlFields="archivo" DataNavigateUrlFormatString="~/archivo/archivo.ashx?n={0}&t=d" DataTextField="archivo" ItemStyle-Wrap="false" />
+        <asp:HyperLinkField HeaderText="Facura" SortExpression="factura_archivo" DataNavigateUrlFields="factura_archivo" DataNavigateUrlFormatString="~/archivo/archivo.ashx?n={0}&t=d" DataTextField="factura_archivo" ItemStyle-Wrap="false" />
         <asp:BoundField HeaderText="Páginas" DataField="paginas" SortExpression="paginas" ItemStyle-HorizontalAlign="Right" />
     </Columns>
 </asp:GridView>
@@ -87,7 +88,7 @@
         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
         ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
         SelectCommand="SELECT fecha,paciente,factura,documento,aseguradora,archivo,paginas 
-                    ,paciente.pacNombres,asegurador.entNombre
+                    ,paciente.pacNombres,asegurador.entNombre,factura_archivo
                     FROM digitalizacion
                     LEFT JOIN paciente ON (paciente.pacId=digitalizacion.paciente)
                     LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)

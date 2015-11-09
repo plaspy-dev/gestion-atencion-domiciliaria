@@ -57,7 +57,7 @@ public class CUsuario : Usuario
         {
             using(CConector conector= new CConector()) 
             {
-                MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,cargos,entidades,cumpleanos FROM usuario WHERE usuario='" + usuario + "' AND contrasena=PASSWORD(" + Query.GetValor(passwd) + ") AND (estado IS NULL OR estado!=-1)");
+                MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,cargos,entidades,cumpleanos FROM usuario WHERE usuario='" + usuario + "' AND contrasena=PASSWORD(" + Query.GetValor(passwd) + ") AND estado IS NULL");
                 if (reader != null && reader.Read())
                 {
                     CUsuario pUsuario = new CUsuario(reader["id"].ToString(), reader["nombre"].ToString(), Convert.ToInt32(reader["grupo"].ToString()), reader["usuario"].ToString());

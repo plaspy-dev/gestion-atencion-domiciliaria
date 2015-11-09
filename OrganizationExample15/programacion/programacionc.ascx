@@ -252,6 +252,7 @@
     <tr>
         <td align="left">Num Sesiones/Día</td>
         <td align="left"><asp:TextBox runat="server" Text="1" ID="TSesiones" CssClass="entero" MaxLength="2" Width="40px"></asp:TextBox>
+            <asp:CheckBox runat="server" ID="CVehiculo" Text="Vehículo"  />
         <asp:RequiredFieldValidator ValidationGroup="CProgramacion" ControlToValidate="TSesiones" ErrorMessage="Por favor ingrese un número de sesiones." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
         <asp:CompareValidator ValidationGroup="CProgramacion" ID="CompareValidator2" runat="server" ErrorMessage="el valor debe ser mayor a cero" ControlToValidate="TSesiones" Operator="GreaterThan" ValueToCompare="0" Type="Integer" >*</asp:CompareValidator></td>
     </tr>

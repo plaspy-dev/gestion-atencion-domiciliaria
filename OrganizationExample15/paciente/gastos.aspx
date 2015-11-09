@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Hoja de gastos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="gastos.aspx.cs" Inherits="paciente_gastos" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
+<%@ Register Src="~/archivo/digitalizacionc.ascx" TagName="Digitalizacion" TagPrefix="uc6" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
@@ -32,6 +33,7 @@
 <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
     <asp:Panel runat="server" id="PDatos" Visible="false">
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
+        <uc6:Digitalizacion ID="DArchivo" runat="server" Tipo="Hoja de gastos" />
     <fieldset>
         <legend>Suministros</legend>
         <table style="width: 100%;">

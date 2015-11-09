@@ -47,13 +47,15 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             if (t != null) // se esta ejecutando en mono
                 LMonoFix.Text += string.Format("<script type='text/javascript' src='{0}'></script>", ResolveClientUrl("~/js/mono.js"));
 
+            lPropiedades.Visible=
+            MModificaciones.Visible = Usuario.GetInstance().GetPermisosRaiz("~/modificaciones.ascx") > 0;
             RAlertasReal.DataSource= RAlertas.DataSource = Alertas.GetAlertas();
             RAlertas.DataBind();
             RAlertasReal.DataBind();
             LTotalAlertas.Text = RAlertasReal.Items.Count.ToString();
             PTotalAlerta.Visible= lnkAlertas.Visible =
             LTotalAlertas.Visible = RAlertasReal.Items.Count > 0;
-            lnkAlertas.Text = RAlertasReal.Items.Count==1 ? "Alerta" : "Alertas";
+            // lnkAlertas.Text = RAlertasReal.Items.Count==1 ? "Alerta" : "Alertas";
         }
 
         LVersion.Text = HomeCareVersion.Number;

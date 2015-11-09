@@ -36,10 +36,11 @@ public partial class phd_programacionc : System.Web.UI.UserControl
 
                 query += "prgFechaProg";
                 query += "perId";
-                query+="actId";
+                query += "actId";
                 query += "prgObservaciones";
                 query += "autNumero";
                 query += "prgNumSesion";
+                query += "vehiculo";
 
                 using (CConector conector = new CConector())
                 {
@@ -47,6 +48,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
                     if (reader != null && reader.Read())
                     {
                         CRecurrente.Checked = false;
+                        CVehiculo.Checked = reader["vehiculo"].ToString()=="1";
                         TFechaFinal.Text = TFecha.Text = reader["prgFechaProg"].ToString();
                         TSesiones.Text = reader["prgNumSesion"].ToString();
                         ViewState["perId"] = 
@@ -270,6 +272,7 @@ public partial class phd_programacionc : System.Web.UI.UserControl
             query["segUsuarioIngreso"] = usuario.GetLogin();
             query["segFechaIngreso"] = "SYSDATE()";
             query["entId"] = entidad;
+            query["vehiculo"] = CVehiculo.Checked ? "1" : "";
 
             query["actId"] = DActividad.SelectedValue;
             string costo = Procedimientos.GetCosto(DActividad.SelectedValue, entidad).ToString(CultureInfo.InvariantCulture);

@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Hoja de enfermería" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="enfermeria.aspx.cs" Inherits="paciente_enfermeria" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
+<%@ Register Src="~/archivo/digitalizacionc.ascx" TagName="Digitalizacion" TagPrefix="uc6" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
@@ -34,6 +35,7 @@
     <ContentTemplate>
         <asp:HiddenField runat="server" ID="HIdValoracion" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
+        <uc6:Digitalizacion ID="DArchivo" runat="server" Tipo="Hoja de enfermería" />
         <table>
             <tr>
                 <td>Fecha</td>

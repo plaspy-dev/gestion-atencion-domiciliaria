@@ -36,6 +36,7 @@ public partial class administrador_usuario : System.Web.UI.Page
                 query += "forceurl";
                 query += "cargos";
                 query += "entidades";
+                query += "estado";
 
                 using (CConector conector = new CConector())
                 {
@@ -54,6 +55,17 @@ public partial class administrador_usuario : System.Web.UI.Page
                         CCumpleanos.Checked = reader["cumpleanos"].ToString()=="1";
                         CForceChange.Checked = false;
                         HUsuario.Value = TUsuario.Text;
+                        switch (reader["estado"].ToString()) {
+                            case "0":
+                                LEstado.Text = "Inactivo";
+                                break;
+                            case "1":
+                                LEstado.Text = "Eliminado";
+                                break;
+                            default:
+                                LEstado.Text = "Activo";
+                                break;
+                        }
                         ViewState["cargos"] = reader["cargos"].ToString();
                         ViewState["entidades"] = reader["entidades"].ToString();
 

@@ -487,5 +487,15 @@ public partial class farmacia_salida : System.Web.UI.Page
         PrintEventArgs print = (PrintEventArgs)e;
         if (ROrganizationExample15.Checked)
             print.Contenido = print.Contenido.Replace("$TPaciente$", "OrganizationExample15");
+
+        Paciente paciente = Paciente.GetPaciente(UCPaciente.IdPaciente);
+
+        print.Contenido = print.Contenido.Replace("$szDireccion$", paciente.Direccion)
+            .Replace("$TPaciente$", paciente.DocumentoYNombres.Replace("Inactivo - ", ""))
+            .Replace("$szTelefono$", paciente.Telefono)
+            .Replace("$szAsegurador$", paciente.NombreEntidad)
+            .Replace("$szBarrio$", paciente.Barrio)
+            .Replace("$szNumero$", TNumero.Text.PadLeft(3, '0'))
+            ;
     }
 }

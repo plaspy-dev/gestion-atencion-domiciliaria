@@ -110,6 +110,8 @@ public class Paciente
         Paciente paciente = (Paciente)HttpRuntime.Cache["p" + id];
         if(paciente==null) {
             paciente = new Paciente();
+            if (string.IsNullOrEmpty(id) || id == "0")
+                return paciente;
 
             Query query = new Query("paciente");
 

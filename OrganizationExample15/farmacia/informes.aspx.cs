@@ -137,6 +137,7 @@ public partial class farmacia_informes : System.Web.UI.Page
                             // return "Orden de compra";
                             break;
                         case "3": // Requisicion
+                            salida.CodigoTipoDocumento = 1;
                             salida.DescripcionDelMovimiento = "R" + salida.Documento + " " + salida.DescripcionDelMovimiento;
                             salidaCosto.DescripcionDelMovimiento = salida.DescripcionDelMovimiento;
 

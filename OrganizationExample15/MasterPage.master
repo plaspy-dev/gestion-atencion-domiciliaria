@@ -78,6 +78,32 @@
                 }
             });
 
+            function minValue(i, j) {
+                return j > i ? i : j;
+            }
+
+            function maxValue(i, j) { 
+                return i > j ? i : j;
+            }
+
+            var $header = $("#headerm");
+            var $headerNext = $header.parent().next();
+            var $headerParent = $header.parent();
+            function updateHeader() {
+                var rigthNext = $headerNext.width() + $headerNext.position().left;
+                var maxAncho = maxValue($headerNext.position().left + $headerNext.width() - $headerParent.position().left - $headerParent.width() - 3, 0);
+                ancho = minValue(rigthNext - $header.width(), $(window).width() + $(window).scrollLeft() - $headerParent.position().left - $headerParent.width());
+                if (ancho > maxAncho)
+                    ancho = maxAncho;
+                if(ancho<1)
+                    ancho = 1;
+                $header.css({
+                    'left': ancho
+                });
+            }
+            $(window).scroll(updateHeader).resize(updateHeader);
+            updateHeader();
+
             addFunctionToStart(function() {
 
                 if ($("#<%= LMensaje.ClientID %>").html().length > 0) {
@@ -136,7 +162,7 @@
                 <td width="1" style="background-color: #327FCD; vertical-align:bottom;">
                     <asp:ImageButton runat="server" ID="IP" ImageUrl="~/images/OrganizationExample16.jpg" PostBackUrl="~/eventos/pacientes.aspx" />
                 </td>
-                <td valign="middle" align="right" style="width:100%; text-align:right; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;">
+                <td valign="middle" align="right" style="text-align:right; min-width: 20px; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;">
                 <asp:UpdatePanel runat="server" ID="UAlertas" UpdateMode="Conditional">
                     <ContentTemplate>
                         <asp:Repeater runat="server" ID="RAlertasReal">
@@ -171,17 +197,22 @@
                     </ContentTemplate>
                 </asp:UpdatePanel>
                 </td>
-                <td valign="middle" align="right" style="text-align:right; white-space: nowrap; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;position:relative;">
-                <asp:Panel ID="PTotalAlerta" runat="server" CssClass="alerta"><asp:Label runat="server" ID="LTotalAlertas"></asp:Label></asp:Panel>
-                <asp:LinkButton runat="server" ID="lnkAlertas" CssClass="menuArriba" Visible="True" CausesValidation="false" PostBackUrl="">Alertas</asp:LinkButton>
-                <asp:LinkButton ID="lnkNuevo" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" PostBackUrl="">Nuevo</asp:LinkButton>
-                <asp:LinkButton ID="lnkImp" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" OnClientClick="imprimir();return false;" onclick="lnkImp_Click">Imprimir</asp:LinkButton>
-                <asp:LinkButton ID="lnkGuardar" runat="server" CssClass="menuArriba" Visible="False" ValidationGroup="Guardar">Guardar</asp:LinkButton>
-                <asp:LinkButton ID="lnkExcel" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" onclick="lnkExcel_Click">Excel</asp:LinkButton>
-                <asp:LinkButton ID="lnkPDF" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" onclick="lnkPDF_Click">PDF</asp:LinkButton>
-                <asp:LinkButton ID="lnkCambioClave" runat="server" CssClass="menuArriba" CausesValidation="False" PostBackUrl="~/contrasena.aspx">Contraseña</asp:LinkButton>
-                <asp:LinkButton ID="lnkSalir" runat="server" CssClass="menuArriba" CausesValidation="False" PostBackUrl="~/Default.aspx?end=1">Salir</asp:LinkButton>
+                <td valign="middle" align="right" style="min-width: 630px; text-align:right; white-space: nowrap; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;position:relative;">
+                    <div id="headerm" style="position: absolute; top: 1px; width: 100%;">
+                        <asp:HyperLink runat="server" href="#" ID="lnkAlertas" CssClass="menuArriba">
+                            <span style="margin-left: 30px;">Alertas</span>
+                            <asp:Panel ID="PTotalAlerta" runat="server" CssClass="alerta" style="position: relative; display: inline; top: 1px; left: -90px;"><asp:Label style="padding-right: 2px; margin-left: 2px;" runat="server" ID="LTotalAlertas"></asp:Label></asp:Panel>
+                        </asp:HyperLink>
+                        <asp:LinkButton ID="lnkNuevo" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" PostBackUrl="">Nuevo</asp:LinkButton>
+                        <asp:LinkButton ID="lnkImp" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" OnClientClick="imprimir();return false;" onclick="lnkImp_Click">Imprimir</asp:LinkButton>
+                        <asp:LinkButton ID="lnkGuardar" runat="server" CssClass="menuArriba" Visible="False" ValidationGroup="Guardar">Guardar</asp:LinkButton>
+                        <asp:LinkButton ID="lnkExcel" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" onclick="lnkExcel_Click">Excel</asp:LinkButton>
+                        <asp:LinkButton ID="lnkPDF" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" onclick="lnkPDF_Click">PDF</asp:LinkButton>
+                        <asp:LinkButton ID="lnkCambioClave" runat="server" CssClass="menuArriba" CausesValidation="False" PostBackUrl="~/contrasena.aspx">Contraseña</asp:LinkButton>
+                        <asp:LinkButton ID="lnkSalir" runat="server" CssClass="menuArriba" CausesValidation="False" PostBackUrl="~/Default.aspx?end=1">Salir</asp:LinkButton>
+                    </div>
                 </td>
+                <td style="background-color: #327FCD;width: 100%; min-width: 3px;"></td>
                 <td class="fhr"></td>
               </tr>
             </table>
@@ -202,7 +233,7 @@
 	                        <div id="tabs" style="min-width: 230px">
                                 <ul>
                                     <li><a href="#tabs-1">Navegador</a></li>
-                                    <li><a href="#tabs-2">Propiedades</a></li>
+                                    <li runat="server" id="lPropiedades"><a href="#tabs-2">Propiedades</a></li>
                                 </ul>
                                 <div id="tabs-1">
                                     <asp:TreeView ID="TMenu" runat="server" EnableViewState="False" ExpandImageUrl="~/images/tema/menubg.jpg" CollapseImageUrl="~/images/tema/menubg.jpg">

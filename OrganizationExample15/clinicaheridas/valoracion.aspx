@@ -875,7 +875,7 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 <td colspan="4" class="celdaTitulo tdr tdl">Componente educativo</td>
             </tr>
             <tr>
-                <td colspan="4"><asp:CheckBox runat="server" ID="CConsentimiento" Text="Consentimiento informado" /></td>
+                <td colspan="4" class="tdr tdl"><asp:CheckBox runat="server" ID="CConsentimiento" Text="Consentimiento informado" /></td>
             </tr>
             <tr>
                 <td colspan="4" class="tdr tdl tdb">

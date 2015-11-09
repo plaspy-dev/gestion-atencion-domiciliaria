@@ -556,8 +556,8 @@
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT id, nombre,valor FROM varios 
-                                LEFT JOIN evolucion_herida_educativo ON (evolucion_herida_educativo.evolucion=@evolucion AND varios.id=evolucion_herida_educativo.concepto)
-                                WHERE tipo=62 AND szReservado IS NULL ORDER BY nombre">
+                                LEFT JOIN evolucion_herida_clinica ON (evolucion_herida_clinica.evolucion=@evolucion AND varios.id=evolucion_herida_clinica.concepto)
+                                WHERE tipo=69 AND szReservado IS NULL ORDER BY nombre">
                             <SelectParameters>
                                 <asp:Parameter Name="evolucion" DefaultValue="0" />
                             </SelectParameters>
@@ -592,7 +592,7 @@
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT id, nombre,valor FROM varios 
-                                LEFT JOIN evolucion_herida_clinica ON (evolucion_herida_clinica.evolucion=@evolucion AND varios.id=evolucion_herida_clinica.concepto)
+                                LEFT JOIN evolucion_herida_educativo ON (evolucion_herida_educativo.evolucion=@evolucion AND varios.id=evolucion_herida_educativo.concepto)
                                 WHERE tipo=62 AND szReservado IS NULL ORDER BY nombre">
                             <SelectParameters>
                                 <asp:Parameter Name="evolucion" DefaultValue="0" />

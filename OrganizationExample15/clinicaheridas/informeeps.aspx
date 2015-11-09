@@ -1,4 +1,6 @@
 ﻿<%@ Page Title="Informe EPS" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="informeeps.aspx.cs" Inherits="clinicaheridas_informeeps" %>
+<%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
+<%@ Register src="~/paciente/pacienteSimple.ascx" tagname="PacienteSimple" tagprefix="uc5" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <style type="text/css">.GridHeader th {width: auto !important;}</style>
@@ -15,6 +17,7 @@
                 Hasta<asp:RequiredFieldValidator ControlToValidate="THasta" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator>
                 <asp:RangeValidator ControlToValidate="THasta" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
             <td>Entidad</td>
+            <td>Paciente</td>
             <td>
                 &nbsp;</td>
         </tr>
@@ -32,6 +35,7 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
+            <td><uc5:PacienteSimple runat="server" ID="UCPaciente" /></td>
             <td>
                 <asp:Button ID="BBuscar" runat="server" Text="Buscar" onclick="BBuscar_Click" />
             </td>
@@ -42,10 +46,11 @@
         <div id="dImprimir">
         <asp:GridView ID="GResultados" runat="server" Visible="false"
             AutoGenerateColumns="False" EmptyDataText="No se encontraron pacientes" 
-            AllowPaging="True" PageSize="50" AllowSorting="True" DataKeyNames="id"
+            AllowPaging="True" PageSize="50" AllowSorting="True" DataKeyNames="id,paciente,Idevolucion"
                 DataSourceID="SResultados" onrowdatabound="GResultados_RowDataBound" >
             <Columns>
-                <asp:HyperLinkField HeaderText="NOMBRE" DataTextField="pacNombres" SortExpression="pacNombres" Target="_blank" DataNavigateUrlFields="id" DataNavigateUrlFormatString="~/clinicaheridas/evolucion.aspx?hveid={0}" />
+                <asp:HyperLinkField HeaderText="NOMBRE" DataTextField="pacNombres" SortExpression="pacNombres" Target="_blank" DataNavigateUrlFields="paciente,id" 
+                    DataNavigateUrlFormatString="~/clinicaheridas/evolucion.aspx?pid={0}&hveid={1}" />
                 <asp:BoundField HeaderText="SEXO" DataField="sexo" SortExpression="sexo" />
                 <asp:BoundField HeaderText="TIPO DE DOCUMENTO" DataField="tdocDescripcion" SortExpression="tdocDescripcion" />
                 <asp:BoundField HeaderText="N.DE DOCUMENTO" DataField="pacDocumento" SortExpression="pacDocumento" />
@@ -321,7 +326,7 @@
             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
             SelectCommand="SELECT 
-                        valoracion_herida.id,valoracion_herida.paciente,evolucion_herida.id AS Idevolucion
+                        valoracion_herida.id,valoracion_herida.paciente,GROUP_CONCAT(evolucion_herida.id) AS Idevolucion
                         ,paciente.pacNombres,IF(paciente.sexoId=2, 'Masculino', 'Femenino') AS sexo
                         ,tipo_documento.tdocDescripcion
                         ,paciente.pacDocumento
@@ -338,6 +343,7 @@
                         ,CONCAT(IFNULL(valoracion_herida.ubicacion, ''),IFNULL(CONCAT(', ',color.nombre),''),IFNULL(CONCAT(', ',nivelpiel.nombre),''),IFNULL(CONCAT(', ',complicaciones.nombre),''),IFNULL(CONCAT(', ',estadopiel.nombre),'')) AS estoma
                         ,valoracion_herida.localizacion_fistula AS fistula
                         ,valoracion_herida.cantidad_afluente  AS afluente
+                        ,paciente.pacId AS paciente
 
                         ,NULL AS tipo1
                         ,IF(COALESCE(herida1.anchura,herida1.longitud,herida1.profundidad) IS NULL, '', CONCAT(IFNULL(herida1.anchura,'0'), 'x',IFNULL(herida1.longitud,'0'), 'x', IFNULL(herida1.profundidad,'0'))) AS tamano1
@@ -652,18 +658,32 @@
 						LEFT JOIN medicamento_formulacion AS formulacion4 ON (formulacion.id=formulacion4.formulacion AND formulacion4.numero=4)
 
                         WHERE 
-                            valoracion_herida.paciente IN (SELECT paciente FROM evolucion_herida WHERE evolucion_herida.fecha BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') AND (@asegurador=0 OR evolucion_herida.asegurador=@asegurador) GROUP BY paciente)
+                            valoracion_herida.paciente IN 
+                                    (SELECT paciente 
+                                        FROM evolucion_herida 
+                                        WHERE evolucion_herida.fecha 
+                                        BETWEEN STR_TO_DATE(@desde, '%d/%m/%Y') AND STR_TO_DATE(@hasta, '%d/%m/%Y') 
+                                        AND (@paciente=0 OR paciente=@paciente)
+                                        AND (@asegurador=0 OR evolucion_herida.asegurador=@asegurador) 
+                                        GROUP BY paciente)
                             AND evolucion_herida.id IN (SELECT id FROM evolucion_herida WHERE evolucion_herida.paciente=valoracion_herida.paciente GROUP BY MONTH(fecha))
                         GROUP BY valoracion_herida.id">
             <SelectParameters>
                 <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
                 <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />
                 <asp:ControlParameter ControlID="DAsegurador" Name="asegurador" PropertyName="SelectedValue" />
+                <asp:ControlParameter ControlID="UCPaciente$TPacienteID" Name="paciente" PropertyName="Text" DefaultValue="0" />
             </SelectParameters>
         </asp:SqlDataSource>
         <div style="text-align: right;">
             <asp:Label ID="LTotal" runat="server" Text=""></asp:Label>
         </div>
         </div>
+
+    <asp:Panel runat="server" ID="PP" Visible="false">
+        <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
+        <asp:Label runat="server" ID="TPaciente"></asp:Label>
+        <asp:Label runat="server" ID="LPaciente"></asp:Label>
+    </asp:Panel>
 </asp:Content>
 
