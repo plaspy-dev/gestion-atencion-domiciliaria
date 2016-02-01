@@ -20,37 +20,48 @@
 {
     border: 1px solid #a6c9e2;
 }
+.r1 {
+    background-color: #FF0000;
+    color: #FFF;
+}
+.r2 {
+    background-color: #FFCC00;
+}
+.r3 {
+    background-color: #FFFF00;
+}
+.r4 {
+    background-color: #99CC00;
+}
+.r5 {
+    background-color: #CCFFFF;
+}
+
 </style>
 <script type="text/javascript">
     $(function() {
 
         function GetColor(valor) {
-            var color = "";
             var tipo = "";
             switch (valor) {
                 case 1:
-                    color = "#FF0000";
                     tipo = "Muy insatisfecho";
                     break;
                 case 2:
-                    color = "#FFCC00";
                     tipo = "Insatisfecho";
                     break;
                 case 3:
-                    color = "#FFFF00";
                     tipo = "Conforme";
                     break;
                 case 4:
-                    color = "#99CC00";
                     tipo = "Satisfecho";
                     break;
                 case 5:
-                    color = "#CCFFFF";
                     tipo = "Muy satisfecho";
                     break;
             }
             $("#sres").html(tipo);
-            return color;
+            return "r" + valor;
         }
 
         $("#promedio").autoNumeric({ vMin: 0, aSep: '', mDec: 2, aPad: false });
@@ -77,10 +88,10 @@
         $(".cal").css("text-align", "left").ForceNumericOnly().change(function() {
 
             if ($(this).val() == "-") {
-                $(this).parent().css("background-color", "#0000FF")
-                .prev().css("background-color", "#0000FF");
-            } else $(this).parent().css("background-color", GetColor(parseInt($(this).val())))
-                .prev().css("background-color", GetColor(parseInt($(this).val())));
+                $(this).parent().attr("class", "")  // .css("background-color", "#0000FF")
+                .prev().attr("class", ""); // .css("background-color", "#0000FF");
+            } else $(this).parent().attr("class", GetColor(parseInt($(this).val()))) // .css("background-color", GetColor(parseInt($(this).val())))
+                .prev().attr("class", GetColor(parseInt($(this).val()))); // .css("background-color", GetColor(parseInt($(this).val())));
             var total = 0;
             var cuenta = 0;
             $(".cal").each(function() {
@@ -98,7 +109,8 @@
             if (total > 0 && total < 0.6)
                 total = 1;
             total = Math.round(total);
-            $("#promedio").parent().parent().css("background-color", GetColor(total));
+            $("#promedio").parent().parent().attr("class", GetColor(total));
+                // .css("background-color", GetColor(total));
         }).change();
 
         $("#<%= PEncuestas.ClientID %>").accordion({

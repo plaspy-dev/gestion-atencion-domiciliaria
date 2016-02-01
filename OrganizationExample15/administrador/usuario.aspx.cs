@@ -235,7 +235,7 @@ public partial class administrador_usuario : System.Web.UI.Page
         if (string.IsNullOrEmpty(TIdPersonal.Text) || TIdPersonal.Text == HId.Value)
             return;
         using(CConector conector= new CConector()) {
-            string idUsuario = conector.QueryString("SELECT id FROM usuario WHERE personal={0} AND estado IS NULL", Query.GetValor(TIdPersonal.Text));
+            string idUsuario = conector.QueryString("SELECT id FROM usuario WHERE personal={0} AND (estado IS NULL OR estado!=-1)", Query.GetValor(TIdPersonal.Text));
             if (!string.IsNullOrEmpty(idUsuario)) {
                 Response.Redirect(Request.Url.AbsolutePath + "?id=" + idUsuario);
             }

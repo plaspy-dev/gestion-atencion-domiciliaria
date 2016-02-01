@@ -77,8 +77,11 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
                             id = reader["id"].ToString();
                             condicion = "valoracion=" + Query.GetValor(id);
 
-                            TimeSpan ts= fecha-DateTime.Parse(LValoracionInicial.Text);
-                            LDiasEvolucion.Text = ts.Days.ToString();
+                            try
+                            {
+                                TimeSpan ts = fecha - DateTime.Parse(LValoracionInicial.Text);
+                                LDiasEvolucion.Text = ts.Days.ToString();
+                            } catch { }
                         }
 
                         bool completa = !string.IsNullOrEmpty(Request.QueryString["ehid"]);
@@ -857,7 +860,8 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
             GHeridas.SelectedIndex = GHeridas.Rows.Count - 1;
             GHeridas_SelectedIndexChanged(sender, e);
         }
-        evento.Contenido = evento.Contenido.Replace("$szFotos$", Heridas.ImprimirFotos(CCDetallePaciente.IdPaciente, ViewState["id"].ToString(), ViewState["idherida"].ToString(), "e"));
+        evento.Contenido = evento.Contenido.Replace("$szFotos$", Heridas.ImprimirFotos(CCDetallePaciente.IdPaciente, ViewState["id"].ToString()
+            , GHeridas.Rows.Count > 0 ? ViewState["idherida"].ToString() : "", "e"));
 
         using (CConector conector = new CConector())
         {

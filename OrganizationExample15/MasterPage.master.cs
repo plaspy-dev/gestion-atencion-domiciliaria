@@ -10,17 +10,7 @@ using MySql.Data.MySqlClient;
 using System.Data.SqlClient;
 using System.IO;
 using System.Collections;
-using iTextSharp.text;
-using iTextSharp.text.html;
-using iTextSharp.text.html.simpleparser;
-using iTextSharp.text.pdf;
-using iTextSharp.text.xml;
-using iTextSharp.tool.xml;
-using iTextSharp.tool.xml.pipeline.html;
-using iTextSharp.tool.xml.html;
-using iTextSharp.tool.xml.pipeline.css;
-using iTextSharp.tool.xml.pipeline.end;
-using iTextSharp.tool.xml.parser;
+using System.Diagnostics;
 
 public partial class MasterPageI : System.Web.UI.MasterPage
 {
@@ -304,6 +294,61 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
     }
 
+    private static void ErrorDataHandler(object sendingProcess, DataReceivedEventArgs errLine)
+    {
+        if (errLine.Data == null)
+            return;
+        Logs.WriteLog(errLine.Data);
+    }
+
+    private static void OutputDataHandler(object sendingProcess, DataReceivedEventArgs outputLine)
+    {
+        if (outputLine.Data == null)
+            return;
+        Logs.WriteLog(outputLine.Data);
+    }
+
+    public static int Execute(string ExeName, string arguments)
+    {
+
+        // Console.WriteLine(ExeName + " " + arguments);
+        // return 0;
+        // Prepare the process to run
+        ProcessStartInfo start = new ProcessStartInfo();
+        // Enter in the command line arguments, everything you would enter after the executable name itself
+        start.Arguments = arguments;
+        // Enter the executable to run, including the complete path
+        start.FileName = ExeName;
+        start.UseShellExecute = false;
+        start.RedirectStandardOutput = true;
+        start.RedirectStandardError = true;
+        // Do you want to show a console window?
+        start.WindowStyle = ProcessWindowStyle.Hidden;
+        start.CreateNoWindow = true;
+
+        int exitCode = -1;
+
+        // Run the external process & wait for it to finish
+        using (Process proc = Process.Start(start))
+        {
+            proc.ErrorDataReceived += ErrorDataHandler;
+            proc.OutputDataReceived += OutputDataHandler;
+
+            proc.BeginErrorReadLine();
+            proc.BeginOutputReadLine();
+
+            proc.WaitForExit();
+
+            // Retrieve the app's exit code
+            exitCode = proc.ExitCode;
+        }
+        if (exitCode != 0)
+        {
+            // Logs.WriteLog(DateTime.Now + " [PDF]: Error generando PDF");
+        }
+        return exitCode;
+    }
+
     protected void lnkPDF_Click(object sender, EventArgs e) {
 
         PrintEventArgs evento = new PrintEventArgs(true);
@@ -318,13 +363,13 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             reader.Close();
         }
 
-        int pos= evento.Contenido.IndexOf("<head>");
-        if(pos!=-1) {
+        /*int pos = evento.Contenido.IndexOf("<head>");
+        if (pos != -1) {
 
-            int posf= evento.Contenido.IndexOf("</head>");
+            int posf = evento.Contenido.IndexOf("</head>");
             evento.Contenido = evento.Contenido.Substring(0, pos) + evento.Contenido.Substring(posf + "</head>".Length);
             pos = posf;
-        }
+        }*/
 
         if (_ImprimirClicked != null)
         {
@@ -332,55 +377,34 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
 
         evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
-        evento.Contenido = evento.Contenido.Replace("../archivo/firma.ashx", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/archivo/firma.ashx")));
+        evento.Contenido = evento.Contenido.Replace("../archivo/firma.ashx", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/archivo/firma.ashx")))
+                .Replace("../", Server.MapPath("../"))
+                .Replace("~/", Server.MapPath("~/"));
 
         Directory.SetCurrentDirectory(Path.GetDirectoryName(Server.MapPath(Request.Url.LocalPath)));
 
-        Document document = new Document(PageSize.LETTER, 10, 10, 10, 10);
-        PdfWriter writer = PdfWriter.GetInstance(document, Response.OutputStream);
+        string htmlFile = Path.GetTempPath() + Guid.NewGuid().ToString();
+        string pdfFile = htmlFile + ".pdf";
+        htmlFile += ".html";
 
+        File.WriteAllText(htmlFile, evento.Contenido.ToString());
+
+        /*
         document.AddTitle(Page.Title);
         document.AddSubject(Request.Url.ToString());
         document.AddCreator("OrganizationExample15: " + HomeCareVersion.Number);
         document.AddAuthor(Usuario.GetUsuario().GetNombre());
+        */
+        Execute(ConfigurationManager.AppSettings["PDF:GeneratorProgram"]
+            , string.Format("{0} \"{1}\" \"{2}\"", ConfigurationManager.AppSettings["PDF:ParamsProgram"], htmlFile, pdfFile));
 
-        document.Open();
+        Response.Flush();
+        Response.WriteFile(pdfFile);
+        Response.Flush();
 
-        /*HtmlPipelineContext htmlContext = new HtmlPipelineContext(null);
-        htmlContext.SetTagFactory(Tags.GetHtmlTagProcessorFactory());
-        ICSSResolver cssResolver = XMLWorkerHelper.GetInstance().GetDefaultCssResolver(true);
-        cssResolver.AddCss(Server.MapPath("~/css/pdf.css"), true);
-        IPipeline pipeline = new CssResolverPipeline(cssResolver, new HtmlPipeline(htmlContext,
-            new PdfWriterPipeline(document, writer)));
-        XMLWorker worker = new XMLWorker(pipeline, true);
-        XMLParser p = new XMLParser(worker);
-        using (MemoryStream stream = new MemoryStream())
-        {
-            using (StreamWriter swriter = new StreamWriter(stream))
-            {
-                swriter.Write(evento.Contenido);
-                swriter.Flush();
-                stream.Position = 0;
-                p.Parse(swriter.BaseStream);
-                // XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, stream, cssReader.BaseStream);
-            }
-        }*/
+        File.Delete(htmlFile);
+        File.Delete(pdfFile);
 
-        using (StreamReader cssReader = new StreamReader(Server.MapPath("~/css/pdf.css")))
-        {
-            using (MemoryStream stream = new MemoryStream()) {
-                using (StreamWriter swriter = new StreamWriter(stream))
-                {
-                    swriter.Write(evento.Contenido);
-                    swriter.Flush();
-                    stream.Position = 0;
-                    XMLWorkerHelper.GetInstance().ParseXHtml(writer, document, stream, cssReader.BaseStream);
-                }
-            }
-            cssReader.Close();
-        }
-        document.Close();
-        Directory.SetCurrentDirectory(Server.MapPath("~/"));
         Response.End();
     }
 

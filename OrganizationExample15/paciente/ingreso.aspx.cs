@@ -24,6 +24,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
             BAceptar.Enabled = false;
             BMasCDiagnostico.Enabled = false;
 
+            DTV.MinumunValue = DateTime.Now.AddDays(-2);
+            DTV.MaximunValue = DateTime.Now.AddMinutes(1);
+            DTV.Enabled = !usuario.CanUpdate();
+
             if (!string.IsNullOrEmpty(Request.QueryString["aid"]))
             {
                 using (CConector conector = new CConector())
@@ -100,6 +104,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                         MySqlDataReader readermysql = conector.Query(qIngreso.GetSelect("paciente=" + CCDetallePaciente.IdPaciente));
                         if (readermysql != null && readermysql.Read())
                         {
+                            DTV.Enabled = false;
                             PNivelAtencion.Visible = true;
                             BActualizar.Visible = usuario.CanInsert();
                             BAceptar.Enabled = usuario.CanUpdate();

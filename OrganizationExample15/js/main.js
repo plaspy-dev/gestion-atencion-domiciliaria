@@ -117,9 +117,9 @@ function inicio() {
         
     // todos los campos fecha
         $(".fecha:not(.rfecha)").mask("99/99/9999").
-        datepicker({ onSelect: function() { } }).addClass("rfecha");
+        datepicker({ onSelect: function () { $(this).change(); } }).addClass("rfecha");
     // $(".fecha").datepicker({ onSelect: function() { } });
-        $(".fechahora:not(.rfechahora)").datetimepicker({ hour: new Date().getHours(), minute: new Date().getMinutes(), onSelect: function() { } }).addClass("rfechahora");
+        $(".fechahora:not(.rfechahora)").datetimepicker({ hour: new Date().getHours(), minute: new Date().getMinutes(), onSelect: function () { $(this).change(); } }).addClass("rfechahora");
     // todos los campos entero
     $('.entero:not(.rentero)').autoNumeric('init', { vMin: 0, mDec: 0, aSep: '' }).addClass("rentero");
 

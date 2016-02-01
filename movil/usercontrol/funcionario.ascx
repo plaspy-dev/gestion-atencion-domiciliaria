@@ -1,0 +1,3 @@
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="funcionario.ascx.cs" Inherits="usercontrol_funcionario" %>
+<asp:TextBox runat="server" data-type="search" ID="P"></asp:TextBox><asp:TextBox runat="server" ID="I" data-role="none" CssClass="hide"></asp:TextBox>
+<ul runat="server" id="A" data-role="listview" style="position:absolute; z-index: 5; left: 5px;" data-inset="true" data-filter="true"></ul>

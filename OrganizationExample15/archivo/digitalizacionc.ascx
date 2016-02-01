@@ -13,7 +13,7 @@
                 <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
                     <asp:BoundField DataField="fecha" HeaderText="Fecha" SortExpression="fecha" DataFormatString="{0:d}" />
-                    <asp:BoundField DataField="tipo" HeaderText="Tipo" SortExpression="tipo" />
+                    <asp:BoundField DataField="tipo" HeaderText="Tipo" SortExpression="tipo" ItemStyle-Wrap="false" />
                     <asp:HyperLinkField HeaderText="Archivo" SortExpression="archivo" DataNavigateUrlFields="archivo" DataNavigateUrlFormatString="~/archivo/archivo.ashx?n={0}&t=d" DataTextField="archivo" ItemStyle-Width="100%" />
                 </Columns>
             </asp:GridView>
@@ -24,13 +24,11 @@
                                 FROM digitalizacion
                                 LEFT JOIN varios AS tipo ON (tipo.id=digitalizacion.tipo)
                                 WHERE @paciente=digitalizacion.paciente 
-                                AND (digitalizacion.tipo=@tipo OR digitalizacion.tipo=@tipo2)
+                                AND digitalizacion.tipo IN ({@tipo})
                                 ORDER BY fecha DESC
                                 ">
                       <SelectParameters>
                             <asp:Parameter Name="paciente" />
-                            <asp:Parameter Name="tipo" />
-                            <asp:Parameter Name="tipo2" />
                       </SelectParameters>
             </asp:SqlDataSource>
         </div>

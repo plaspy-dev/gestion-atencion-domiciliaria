@@ -103,9 +103,11 @@
             }
             $(window).scroll(updateHeader).resize(updateHeader);
             updateHeader();
+            setTimeout(updateHeader, 1000);
 
-            addFunctionToStart(function() {
+            addFunctionToStart(function () {
 
+                setTimeout(updateHeader, 1000);
                 if ($("#<%= LMensaje.ClientID %>").html().length > 0) {
                     $("#dialog-message").dialog({
                         modal: true,

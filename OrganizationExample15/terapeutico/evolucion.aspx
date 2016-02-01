@@ -172,8 +172,8 @@
                 <tr>
                     <td class="tdl tdb">TA</td>
                     <td class="tdb"><asp:TextBox ID="TTA" runat="server" CssClass="likenumber"></asp:TextBox>mm/Hg</td>
-                    <td class="tdb"></td>
-                    <td class="tdb tdr"></td>
+                    <td class="tdb">Saturación</td>
+                    <td class="tdb tdr"><asp:TextBox ID="TSaturacion" runat="server" CssClass="float"></asp:TextBox>%</td>
                 </tr>
                 <tr>
                     <td>Logros obtenidos<asp:RequiredFieldValidator ControlToValidate="TLogros" ErrorMessage="Por favor ingrese unos logros." ID="RequiredFieldValidator5" 

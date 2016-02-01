@@ -1,0 +1,20 @@
+﻿body {
+}
+.hidei {
+    display: none !important;
+}
+#mmenu, .hide, .h {
+    display: none;
+}
+#mmenu {
+    background-color: transparent !important;
+}
+.wrap {
+    white-space: normal !important;
+}
+.red {
+    color: #FF0000;
+}
+/*.ui-header .ui-link {
+    background-color: transparent;
+}*/

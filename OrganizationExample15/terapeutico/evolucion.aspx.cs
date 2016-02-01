@@ -24,6 +24,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
             TTA.Focus();
             DTV.MinumunValue = DateTime.Now.AddDays(-2);
             // DTV.MinumunValue = DateTime.Now.AddMonths(-1);
+
             DTV.MaximunValue = DateTime.Now.AddMinutes(1);
             DTV.Enabled = !usuario.CanUpdate();
 
@@ -65,6 +66,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
                             query += "fr";
                             query += "fc";
                             query += "ta";
+                            query += "saturacion";
                             query += "sesion";
                             query += "logros";
                             query += "plan";
@@ -93,6 +95,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
                                 TFR.Text = reader["fr"].ToString();
                                 TFC.Text = reader["fc"].ToString();
                                 TTA.Text = reader["ta"].ToString();
+                                TSaturacion.Text = reader["saturacion"].ToString();
                                 Utilidades.SelectInDropDown(DTipo, reader["autorizacion"].ToString() + ";" + reader["tipo"].ToString(), Procedimientos.GetNombreMedicamento(reader["tipo"].ToString()));
 
 
@@ -132,13 +135,14 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
             query["fr"] = TFR.Text;
             query["fc"] = TFC.Text;
             query["ta"] = TTA.Text;
+            query["saturacion"] = TSaturacion.Text;
             query["sesion"] = TNumero.Text;
             query["logros"] = TLogros.Text;
             query["plan"] = TPlan.Text;
             string []valores= DTipo.SelectedValue.Split(';');
             query["autorizacion"] = valores[0];
             query["tipo"] = valores[1];
-            
+
 
             if (string.IsNullOrEmpty(id))
             {

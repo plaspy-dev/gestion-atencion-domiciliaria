@@ -15,7 +15,7 @@ public partial class archivo_digitalizacion : System.Web.UI.Page
         if (!IsPostBack) {
             CUsuario usuario = (CUsuario)CUsuario.GetUsuario();
             ViewState["entidades"] = usuario["entidades"];
-            PImportacion.Visible = Usuario.GetInstance().CanAdmin();
+            // PImportacion.Visible = Usuario.GetInstance().CanAdmin();
             BActualizar_Click(sender, e);
         }
     }

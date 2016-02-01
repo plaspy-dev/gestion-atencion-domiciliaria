@@ -17,7 +17,7 @@ public partial class archivo_subir : System.Web.UI.Page
         {
             CUsuario usuario = (CUsuario)Usuario.GetUsuario();
             BAceptar.Enabled = false;
-            TFecha.Text = Query.GetFromMySQLDate(DateTime.Now.Date, true);
+            TFecha.Text = Query.GetFromMySQLDate(DateTime.Now.Date);
 
             using (CConector conector = new CConector())
             {
@@ -53,33 +53,47 @@ public partial class archivo_subir : System.Web.UI.Page
         using (CConector conector = new CConector()) {
 
             conector.StartTransaction();
+            string factura = TFactura.Text;
 
             Query query = new Query("digitalizacion");
 
             query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             query["paciente"] = CCDetallePaciente.IdPaciente;
-            query["factura"] = TFactura.Text;
+            query["factura"] = string.IsNullOrEmpty(factura) ? "0" : factura;
             query["documento"] = CCDetallePaciente.Documento;
             query["tipo"] = "0";
 
-            if (FFactura.HasFile) {
+            if (FFactura.HasFile)
+            {
                 string filename = TFactura.Text + "/" + FFactura.FileName;
                 string file = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "digitalizacion", filename);
                 Directory.CreateDirectory(Path.GetDirectoryName(file));
                 FFactura.SaveAs(file);
                 query["factura_archivo"] = filename;
 
-                if (conector.QueryMod(query.GetDelete("factura={0} AND tipo=0", Query.GetValor(TFactura.Text))) == -1) {
+                if (conector.QueryMod(query.GetDelete("factura={0} AND tipo=0", Query.GetValor(TFactura.Text))) == -1)
+                {
+                    LMensaje.Text = conector.LastError;
+                    return;
+                }
+
+                if (conector.QueryMod(query.GetInsert(true)) == -1)
+                {
+                    LMensaje.Text = conector.LastError;
+                    return;
+                }
+            } else {
+                if (conector.QueryMod(query.GetUpdate("fecha={0} AND factura={1} AND paciente={2}"
+                    , Query.GetValor(Query.GetMySQLDateFormat(TFecha.Text)), Query.GetValor(CCDetallePaciente.IdPaciente)
+                    , Query.GetValor(TFactura.Text.Length > 0 ? TFactura.Text : "0"))) == -1)
+                {
                     LMensaje.Text = conector.LastError;
                     return;
                 }
             }
 
-            if (conector.QueryMod(query.GetInsert(true)) == -1)
-            {
-                LMensaje.Text = conector.LastError;
-                return;
-            }
+            if (string.IsNullOrEmpty(factura))
+                factura = Query.GetMySQLDateFormat(TFecha.Text);
 
             foreach (RepeaterItem item in RArchivo.Items) {
 
@@ -88,24 +102,25 @@ public partial class archivo_subir : System.Web.UI.Page
 
                 if (upload.HasFile)
                 {
-                    string filename = TFactura.Text + "/" + CCDetallePaciente.IdPaciente + "/" + upload.FileName;
+                    string filename = factura + "/" + CCDetallePaciente.IdPaciente + "/" + upload.FileName;
                     string file = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "digitalizacion", filename);
                     Directory.CreateDirectory(Path.GetDirectoryName(file));
                     upload.SaveAs(file);
                     query["archivo"] = filename;
                     query["tipo"] = hi.Value;
 
-                    if (conector.QueryMod(query.GetDelete("factura={0} AND paciente={1} AND tipo={0}"
-                        , Query.GetValor(TFactura.Text)
+                    if (conector.QueryMod(query.GetDelete("factura={0} AND paciente={1} AND tipo={2} AND fecha={3}"
+                        , Query.GetValor(TFactura.Text.Length>0 ? TFactura.Text : "0")
                         , Query.GetValor(CCDetallePaciente.IdPaciente)
-                        , Query.GetValor(hi.Value))) == -1) {
+                        , Query.GetValor(hi.Value)
+                        , Query.GetValor(Query.GetMySQLDateFormat(TFecha.Text))
+                        )) == -1) {
                         LMensaje.Text = conector.LastError;
                         return;
                     }
 
                     if (conector.QueryMod(query.GetInsert(true)) == -1)
                     {
-
                         LMensaje.Text = conector.LastError;
                         return;
                     }
@@ -131,7 +146,8 @@ public partial class archivo_subir : System.Web.UI.Page
         BEliminar.Visible = false;
         TFecha.ReadOnly = false;
 
-        if(string.IsNullOrEmpty(TFactura.Text))
+        PFactura.Visible = TFactura.Text.Length > 0;
+        if (string.IsNullOrEmpty(TFactura.Text))
             return;
 
         using (CConector conector = new CConector()) {
@@ -142,27 +158,6 @@ public partial class archivo_subir : System.Web.UI.Page
             query += "fecha";
             query += "archivo";
             query += "factura_archivo";
-
-            /*MySqlDataReader reader = conector.Query(query.GetSelect("factura={0} AND paciente={1} AND tipo IS NULL", null, Query.GetValor(TFactura.Text), Query.GetValor(CCDetallePaciente.IdPaciente)));
-            if (reader != null && reader.Read())
-            {
-                TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
-
-                HFactura.Text = Path.GetFileName(reader["factura_archivo"].ToString());
-                HFactura.NavigateUrl = string.Format("~/archivo/archivo.ashx?n={0}&t=d", reader["factura_archivo"]);
-                HFactura.Visible = HFactura.Text.Length > 0;
-
-                /*HHistoria.Text = Path.GetFileName(reader["archivo"].ToString());
-                HHistoria.NavigateUrl = string.Format("~/archivo/archivo.ashx?n={0}&t=d", reader["archivo"]);
-                HHistoria.Visible = HFactura.Text.Length > 0;
-
-                // RHistoria.Enabled = false;
-                RFactura.Enabled = false;
-
-                BAceptar.Enabled = usuario.CanUpdate();
-                BEliminar.Visible = usuario.CanDelete();
-                return;
-            }*/
 
             // buscamos solo la factura
             MySqlDataReader reader = conector.Query(query.GetSelect("factura=" + Query.GetValor(TFactura.Text) + " AND tipo=0"));
@@ -187,12 +182,19 @@ public partial class archivo_subir : System.Web.UI.Page
         {
             Query query = new Query("digitalizacion");
 
-            if (conector.QueryMod(query.GetDelete("factura={0} AND paciente={1}", null, Query.GetValor(TFactura.Text), Query.GetValor(CCDetallePaciente.IdPaciente))) == -1)
+            if (conector.QueryMod(query.GetDelete("factura={0} AND paciente={1}", null
+                , Query.GetValor(TFactura.Text.Length>0 ? TFactura.Text : "0"), Query.GetValor(CCDetallePaciente.IdPaciente)
+                , Query.GetValor(Query.GetMySQLDateFormat(TFecha.Text))
+                )) == -1)
             {
                 LMensaje.Text = conector.LastError;
                 return;
             }
             ((MasterPageI)Master).SetResultado("Archivos eliminados");
         }
+    }
+
+    protected void TFecha_TextChanged(object sender, EventArgs e)
+    {
     }
 }

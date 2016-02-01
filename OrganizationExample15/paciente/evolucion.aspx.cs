@@ -23,6 +23,10 @@ public partial class paciente_evolucion : System.Web.UI.Page
             BMasCDiagnostico.Enabled = false;
             PEvoluciones.Visible = false;
 
+            DTV.MinumunValue = DateTime.Now.AddDays(-2);
+            DTV.MaximunValue = DateTime.Now.AddMinutes(1);
+            DTV.Enabled = !usuario.CanUpdate();
+
             if (!string.IsNullOrEmpty(Request.QueryString["aid"])) {
 
                 if (Request.QueryString["aid"][0] == 'i') {
@@ -114,6 +118,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
                         MySqlDataReader readermysql = conector.Query(qIngreso.GetSelect("id=" + Query.GetValor(Request.QueryString["evolid"])));
                         if (readermysql != null && readermysql.Read())
                         {
+                            DTV.Enabled = false;
                             PNivelAtencion.Visible = true;
                             BActualizar.Visible = usuario.CanInsert();
 

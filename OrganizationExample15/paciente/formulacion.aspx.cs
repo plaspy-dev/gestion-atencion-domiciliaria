@@ -694,7 +694,8 @@ public partial class paciente_formulacion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);
         evento.Contenido = evento.Contenido.Replace("$szGrado$", paciente.Grado);
         evento.Contenido = evento.Contenido.Replace("$cCIE10$", paciente.cie10.Count>0 ? Procedimientos.GetCodigoCIE(paciente.cie10[0].ToString()) : "");
-
+        evento.Contenido = evento.Contenido.Replace("$DateTime$", DateTime.Now.ToString());
+        evento.Contenido = evento.Contenido.Replace("$Date$", DateTime.Now.ToShortDateString());
         // obtenemos el ID del usuario que lo modifico primero
         string idmedico = "";
         string url = HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~");

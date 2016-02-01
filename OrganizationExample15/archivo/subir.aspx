@@ -3,6 +3,13 @@
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <script type="text/javascript">
+        $inicio(function () {
+            
+            $(".likefecha").mask("99/99/9999").
+                datepicker({ onSelect: function () { $(this).change(); } }).addClass("rfecha");
+        })
+    </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
@@ -11,20 +18,22 @@
     <ContentTemplate>
     <table class="tablecollapse tableborder">
         <tr>
-            <td>Factura<asp:RequiredFieldValidator ControlToValidate="TFactura" ErrorMessage="Por favor ingrese una factura." ID="RequiredFieldValidator4" 
+            <td>Factura<asp:RequiredFieldValidator Enabled="false" ControlToValidate="TFactura" ErrorMessage="Por favor ingrese una factura." ID="RequiredFieldValidator4" 
 	            runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td><asp:TextBox AutoPostBack="true" OnTextChanged="TFactura_TextChanged" runat="server" CssClass="likenumber" ID="TFactura"></asp:TextBox></td>
             <td>Fecha<asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha de la factura." ID="RequiredFieldValidator1" 
 	            runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-            <td><asp:TextBox runat="server" ID="TFecha" CssClass="fecha"></asp:TextBox></td>
+            <td><asp:TextBox runat="server" ID="TFecha" AutoPostBack="true" OnTextChanged="TFecha_TextChanged" CssClass="likefecha"></asp:TextBox></td>
             <td></td>
         </tr>
+        <asp:PlaceHolder runat="server" ID="PFactura" Visible="false">
         <tr>
             <td>Factura<asp:RequiredFieldValidator ControlToValidate="FFactura" ErrorMessage="Por favor selecione un archivo." ID="RFactura" 
 	            runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td colspan="3"><asp:FileUpload runat="server" ID="FFactura" /></td>
             <td><asp:HyperLink runat="server" ID="HFactura" Visible="false"></asp:HyperLink></td>
         </tr>
+        </asp:PlaceHolder>
         <asp:Repeater runat="server" ID="RArchivo" DataSourceID="SArchivo">
             <ItemTemplate>
                 <tr>
@@ -39,11 +48,16 @@
             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
             SelectCommand="SELECT varios.id, varios.nombre, digitalizacion.archivo
                 FROM varios 
-                LEFT JOIN digitalizacion ON (digitalizacion.paciente=@paciente AND digitalizacion.factura=@factura AND digitalizacion.tipo=varios.id)
+                LEFT JOIN digitalizacion ON (digitalizacion.paciente=@paciente 
+                AND digitalizacion.tipo=varios.id
+                AND ((@factura=0 AND digitalizacion.factura=0 AND digitalizacion.fecha=STR_TO_DATE(@fecha, '%d/%m/%Y')) 
+                    OR (@factura!=0 AND digitalizacion.factura=@factura))
+                )
                 WHERE varios.tipo=138 AND varios.szReservado IS NULL ORDER BY nombre;">
             <SelectParameters>
                 <asp:ControlParameter ControlID="CCDetallePaciente" PropertyName="IdPaciente" Name="paciente" />
-                <asp:ControlParameter ControlID="TFactura" PropertyName="Text" Name="factura" />
+                <asp:ControlParameter ControlID="TFactura" PropertyName="Text" Name="factura" DefaultValue="0" />
+                <asp:ControlParameter ControlID="TFecha" PropertyName="Text" Name="fecha" />
             </SelectParameters>
         </asp:SqlDataSource>
         <tr>

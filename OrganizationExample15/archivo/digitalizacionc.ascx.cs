@@ -10,7 +10,6 @@ using SDG.Web.UI.WebControls;
 public partial class archivo_digitalizacionc : System.Web.UI.UserControl
 {
     public string Tipo { get; set; }
-    public string Tipo2 { get; set; }
 
     public static int GetTipo(string Tipo) {
         if (Tipo == "facturacion")
@@ -40,13 +39,21 @@ public partial class archivo_digitalizacionc : System.Web.UI.UserControl
         return tipo;
     }
 
+    public string GetTipos() {
+        string tipos = "-1";
+        foreach (string tipo in Tipo.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)) {
+            int nTipo = GetTipo(tipo.Trim());
+            if(nTipo!=-1)
+                tipos += "," + nTipo;
+        }
+        return tipos;
+    }
+
     public string IdPaciente {
         set {
+            SArchivo.SelectCommand = SArchivo.SelectCommand.Replace("{@tipo}", GetTipos());
             SArchivo.SelectParameters["paciente"].DefaultValue = value;
-            SArchivo.SelectParameters["tipo"].DefaultValue = GetTipo(Tipo).ToString();
-            SArchivo.SelectParameters["tipo2"].DefaultValue = GetTipo(Tipo2).ToString();
-            if(GetTipo(Tipo2)==-1)
-                GArchivo.GetGridColumn("Tipo").Visible = false;
+            GArchivo.GetGridColumn("Tipo").Visible = Tipo.Contains(',');
 
             int total = GridUtils.GetRowsCount(GArchivo);
             UA.Visible = total != 0;
@@ -59,7 +66,8 @@ public partial class archivo_digitalizacionc : System.Web.UI.UserControl
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if(UA.Visible)
+        SArchivo.SelectCommand = SArchivo.SelectCommand.Replace("{@tipo}", GetTipos());
+        if (UA.Visible)
             ScriptManager.RegisterClientScriptBlock(UA, typeof(string), "aarchivo", "$(function() { $('#" + UA.ClientID + "').accordion({ autoHeight: false,collapsible: true, active: false}); });", true);
     }
 }

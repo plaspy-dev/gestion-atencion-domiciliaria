@@ -136,7 +136,7 @@ public partial class clinicaheridas_informeeps : System.Web.UI.Page
 
             contenido = contenido.Replace("$szPlanManejo$",
                 "<ol><li>"
-                + string.Join("</li><li>", HttpUtility.HtmlEncode(reader["szPlanManejo"].ToString()).Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                + string.Join("</li><li>", reader["szPlanManejo"].ToString().Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 + "</li></ol>"
             );
 
@@ -409,7 +409,7 @@ where valoracion={0};", idValoracion)));
         {
             contenido = contenido.Replace("$szPlanManejo$",
                 "<ol><li>"
-                + string.Join("</li><li>", HttpUtility.HtmlEncode(reader["szPlanManejo"].ToString()).Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                + string.Join("</li><li>", reader["szPlanManejo"].ToString().Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                 + "</li></ol>"
             );
             contenido = contenido.Replace("$szImagenEscala$", GetVarios(reader["dolor"].ToString()));
@@ -462,7 +462,7 @@ where valoracion={0};", idValoracion)));
         PrintEventArgs evento = (PrintEventArgs)e;
 #if DEBUG
 #else
-        if (evento.pdf)
+        // if (evento.pdf)
 #endif
         {
             StringBuilderEx plantilla = new StringBuilderEx();
@@ -516,7 +516,7 @@ where valoracion={0};", idValoracion)));
                     currentPaciente = CCDetallePaciente.IdPaciente;
 
                     string idEvolucion = GResultados.DataKeys[i].Values["Idevolucion"].ToString();
-                    foreach (string evolucion in idEvolucion.Split(','))
+                    foreach (string evolucion in idEvolucion.Split(',').Distinct())
                     {
                         contenido += Heridas.RemoveSection(false, "datospaciente", plantilla.ToString(), "<tr><td colspan='5'><hr/></td></tr>").ToString();
                         contenido= ImprimirEvolucion(conector, contenido, herida, evolucion);
