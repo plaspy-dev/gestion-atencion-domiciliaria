@@ -47,7 +47,7 @@
     <uc4:detallepaciente ID="CCDetallePaciente" runat="server" Visible="false" />
     <asp:Panel ID="PEvoluciones" runat="server" Visible="false">
         <h3><a href="#"><asp:Label runat="server" ID="LEvoluciones"></asp:Label></a></h3>
-        <div class="hide">
+        <div class="hidet">
             <asp:UpdatePanel runat="server" ID="U" UpdateMode="Conditional">
                 <ContentTemplate>
             <asp:GridView ID="GEvoluciones" runat="server" AutoGenerateColumns="False" Width="100%" 
@@ -105,7 +105,7 @@
                         <sdg:DateTimeValidator runat="server" ID="DTV" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha valida." 
                     Display="Dynamic" SetFocusOnError="true">*</sdg:DateTimeValidator></td>
                     <td><asp:TextBox runat="server" ID="TFecha" CssClass="fechahora"></asp:TextBox>
-                        <asp:Button runat="server" ID="TUF" CssClass="hide" Text="BUF" CausesValidation="false" OnClick="TUF_Click" />
+                        <asp:Button runat="server" ID="TUF" CssClass="hidet" Text="BUF" CausesValidation="false" OnClick="TUF_Click" />
                     </td>
                     <td>Final</td>
                     <td align="right"><asp:Label runat="server" ID="LFinal"></asp:Label></td>

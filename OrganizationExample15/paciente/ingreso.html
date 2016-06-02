@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/imprimir.css" type="text/css" rel="stylesheet" />
 <title>Hoja de ingreso</title>
 <style type="text/css">
 	body {
@@ -119,7 +120,7 @@
   <p align="justify"><strong>Conducta inicial</strong>: $szConductaInicial$</p>
   <p>
   <br />  
-  <img src="../archivo/firma.ashx?ui=$szIdUsuario$" /><br />
+  <img src="~/Image/firmas/$szIdUsuario$.jpg" class="firma" /><img src="~/Image/sellos/$szIdUsuario$.jpg" class="firma" /><br />
   ______________________________<br/>
   <strong>$szMedico$</strong><br />
   Registro médico $szProfesional$ <br />

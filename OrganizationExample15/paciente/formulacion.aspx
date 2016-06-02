@@ -64,7 +64,7 @@
             <tr>
                 <td>Fecha</td>
                 <td><asp:TextBox ID="TFecha" runat="server" CssClass="fecha"></asp:TextBox>
-                            <asp:Button ID="BFecha" CssClass="hide" runat="server" Text="..." onclick="BFecha_Click" /></td>
+                            <asp:Button ID="BFecha" CssClass="hidet" runat="server" Text="..." onclick="BFecha_Click" /></td>
                 <td>
                 <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese una fecha." SetFocusOnError="true" ControlToValidate="TFecha" Display="Dynamic">*</asp:RequiredFieldValidator><asp:RangeValidator ID="RangeValidator1" runat="server" MinimumValue="12/12/1900" MaximumValue="12/12/2100" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Display="Dynamic" Type="Date">*</asp:RangeValidator></td>
                 <td align="right">
@@ -91,7 +91,7 @@
                 <td colspan="4">
                 <asp:Panel ID="PFormulaciones" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LFormulaciones"></asp:Label></a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GFormulaciones" runat="server" AutoGenerateColumns="False"  Width="100%"
                             DataSourceID="SFormulaciones" EmptyDataText="No se encontraron Formulaciones de este usuario" >
                             <RowStyle CssClass="GridRow"></RowStyle>
@@ -168,7 +168,7 @@
                 </td>
                 <td colspan="3">
                     <asp:TextBox ID="TMedicamento" runat="server" Width="99%"></asp:TextBox>
-                    <asp:TextBox ID="TMedicamentoID" runat="server" CssClass="hide"></asp:TextBox>
+                    <asp:TextBox ID="TMedicamentoID" runat="server" CssClass="hidet"></asp:TextBox>
                 </td>
             </tr>
             <tr>

@@ -31,9 +31,15 @@ Copy-Item -LiteralPath $pdfLibrary -Destination (Join-Path $site 'Bin')
 
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Web.config.example') -Destination (Join-Path $site 'Web.config') -Force
 $library = Join-Path $target 'componentes'
-python (Join-Path $PSScriptRoot 'build-componentes.py') --output $library
+$references = Join-Path $library 'references'
+New-Item -ItemType Directory -Path $references -Force | Out-Null
+Copy-Item -LiteralPath (Join-Path $root 'vendor/componentes') -Destination (Join-Path $library 'source') -Recurse
+Copy-Item -LiteralPath (Join-Path $site 'Bin/MySql.Data.dll') -Destination $references
+$project = Get-ChildItem -LiteralPath (Join-Path $library 'source') -Filter '*.csproj'
+if (@($project).Count -ne 1) { throw 'The recovered library project was not found.' }
+dotnet build $project.FullName --configuration Release -m:1
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-Copy-Item -LiteralPath (Join-Path $library 'bin/SDG.Componentes.dll') -Destination (Join-Path $site 'Bin')
+Copy-Item -LiteralPath (Join-Path $library 'source/bin/Release/net48/SDG.Componentes.dll') -Destination (Join-Path $site 'Bin')
 $compiler = Join-Path $env:WINDIR 'Microsoft.NET/Framework/v4.0.30319/aspnet_compiler.exe'
 & $compiler -v / -p $site -f (Join-Path $target 'compiled')
 exit $LASTEXITCODE

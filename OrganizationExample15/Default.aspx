@@ -4,8 +4,8 @@
 <head runat="server">
     <title>Administrador de Servicios Médicos OrganizationExample15::Inicio</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery-1.7.2.min.js"></script>
-    <link href="css/estilo.css" type="text/css" rel="stylesheet" />
+    <link href="<%= HomeCareVersion.CssPath("estilo.css")%>" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="<%= HomeCareVersion.JSPath("jquery-1.7.2.min.js") %>"></script>
     <script type="text/javascript">
 		$(function() {
 			$("#m_EUsuario").attr("title","Por favor ingrese un usuario");

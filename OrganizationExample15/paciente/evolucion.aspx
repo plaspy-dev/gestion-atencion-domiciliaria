@@ -4,7 +4,7 @@
 <%@ Register Src="~/archivo/digitalizacionc.ascx" TagName="Digitalizacion" TagPrefix="uc6" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
+    <script type="text/javascript" src="<%= HomeCareVersion.JSPath("tinymce.min.js")%>"></script>
 <script type="text/javascript">
     var editor = null;
     addFunctionToStart(function() {
@@ -157,7 +157,7 @@
                 <uc6:Digitalizacion ID="DArchivo" runat="server" Tipo="Historia Clínica,Laboratorio Clínico,Concurrencia" />
                 <asp:Panel ID="PEvoluciones" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LEvoluciones"></asp:Label></a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GEvoluciones" runat="server" AutoGenerateColumns="False" Width="100%" 
                             DataSourceID="SEvoluciones" 
                             EmptyDataText="No se encontraron evoluciones de este paciente">
@@ -212,7 +212,7 @@
                     Funcionario que atiende<asp:RequiredFieldValidator ControlToValidate="TIdFuncionario" ErrorMessage="Por favor ingrese un funcionario." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td>
                     <asp:TextBox ID="TFuncionario" runat="server" Width="98%"></asp:TextBox>
-                    <asp:TextBox ID="TIdFuncionario" runat="server" CssClass="hide"></asp:TextBox>
+                    <asp:TextBox ID="TIdFuncionario" runat="server" CssClass="hidet"></asp:TextBox>
                 </td>
                 <td nowrap="nowrap">Nivel de atención<asp:RequiredFieldValidator ControlToValidate="DNivelAtencion" ErrorMessage="Por favor seleccione un nivel de atención." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:DropDownList ID="DNivelAtencion" runat="server" DataSourceID="SNivelAtencion" 

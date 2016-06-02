@@ -86,7 +86,7 @@
                 <td class="tdl tdb">Procedimiento<asp:RequiredFieldValidator ControlToValidate="TProcedimientoID" ValidationGroup="proc"
                                 ErrorMessage="Por favor ingrese un procedimiento." ID="R4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 </td>
-                <td class="tdb"><asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox></td>
+                <td class="tdb"><asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hidet"></asp:TextBox></td>
                 <td class="tdr tdb"><asp:Button runat="server" Text="+" ID="BMas" ValidationGroup="proc" onclick="BMas_Click" /></td>
             </tr>
           <tr>

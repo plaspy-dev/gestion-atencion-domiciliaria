@@ -21,7 +21,7 @@ img[usemap], map area{
     outline: none;
 }
 </style>
-<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
+<script type="text/javascript" src="<%= HomeCareVersion.JSPath("tinymce.min.js")%>"></script>
 <script type="text/javascript">
     function rel(text) {
         text = text.replace(/\r/gi, '');
@@ -254,8 +254,8 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     <asp:ListItem Text="Ausentes" Value="0"></asp:ListItem>
                 </asp:RadioButtonList>
                 </td>
-                <td><asp:Label runat="server" Text="Observaciones" CssClass="pulsos hide"></asp:Label></td>
-                <td class="tdr"><asp:TextBox runat="server" ID="TObservacionPulso" CssClass="pulsos hide"></asp:TextBox></td>
+                <td><asp:Label runat="server" Text="Observaciones" CssClass="pulsos hidet"></asp:Label></td>
+                <td class="tdr"><asp:TextBox runat="server" ID="TObservacionPulso" CssClass="pulsos hidet"></asp:TextBox></td>
             </tr>
             <tr>
                 <td colspan="4" class="tdr tdl">
@@ -348,13 +348,13 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
             <tr>
                 <td colspan="4" class="tdl tdr celdaSubTitulo"><asp:CheckBox runat="server" ID="CFistulas" Text="Fístulas" /></td>
             </tr>
-            <tr class="hide fistula">
+            <tr class="hidet fistula">
                 <td class="tdl">Localización</td>
                 <td><asp:TextBox runat="server" ID="TLocalizacionFistula"></asp:TextBox></td>
                 <td></td>
                 <td class="tdr"></td>
             </tr>
-            <tr class="hide fistula">
+            <tr class="hidet fistula">
                 <td class="tdl">Cantidad afluente</td>
                 <td><asp:TextBox runat="server" ID="TCAfluente" CssClass="cms"></asp:TextBox></td>
                 <td class="tdr" colspan="2"><asp:CheckBox runat="server" ID="CSignosInfeccion" Text="Signos de infección" /></td>
@@ -362,7 +362,7 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
             <tr>
                 <td colspan="4" class="tdl tdr celdaSubTitulo"><asp:CheckBox runat="server" ID="COstomias" Text="Ostomías" /></td>
             </tr>
-            <tr class="hide ostomia">
+            <tr class="hidet ostomia">
                 <td class="tdl">Tipo</td>
                 <td nowrap="nowrap">
                 <asp:RadioButtonList runat="server" ID="RTipo" RepeatColumns="2">
@@ -372,7 +372,7 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 <td>Ubicación del estoma</td>
                 <td class="tdr"><asp:TextBox runat="server" ID="TUbicacion"></asp:TextBox></td>
             </tr>
-            <tr class="hide ostomia">
+            <tr class="hidet ostomia">
                 <td class="tdl" nowrap="nowrap">Color del estoma</td>
                 <td><asp:DropDownList ID="DColor" runat="server" DataSourceID="SColor" 
                         DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
@@ -394,7 +394,7 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     SelectCommand="SELECT id, nombre FROM varios WHERE tipo=43 AND szReservado IS NULL ORDER BY nombre">
                 </asp:SqlDataSource></td>
             </tr>
-            <tr class="hide ostomia">
+            <tr class="hidet ostomia">
                 <td class="tdl">Complicaciones</td>
                 <td><asp:DropDownList ID="DComplicacion" runat="server" DataSourceID="SComplicacion" 
                     DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
@@ -419,7 +419,7 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
             <tr>
                 <td colspan="4" class="celdaSubTitulo tdl tdr"><asp:CheckBox runat="server" Text="Dispositivos médicos insertados" ID="CDispositivosMedicos" /></td>
             </tr>
-            <tr class="hide dispositivos">
+            <tr class="hidet dispositivos">
                 <td class="tdl">Tipo</td>
                 <td><asp:DropDownList ID="DTipoDispositivo" runat="server" DataSourceID="STipoDispositivo" 
                     DataTextField="nombre" DataValueField="id">
@@ -440,7 +440,7 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     SelectCommand="SELECT id, nombre FROM varios WHERE tipo=47 AND szReservado IS NULL ORDER BY nombre">
                 </asp:SqlDataSource></td>
             </tr>
-            <tr class="hide obstruido">
+            <tr class="hidet obstruido">
                 <td class="tdl"></td>
                 <td></td>
                 <td>Descripción</td>
@@ -583,20 +583,20 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT id, nombre FROM varios WHERE tipo=50 AND szReservado IS NULL ORDER BY nombre">
                         </asp:SqlDataSource></td>
-                        <td><asp:Label runat="server" Text="Otro" ID="LOtroEtiologia" CssClass="etiologia hide"></asp:Label></td>
-                        <td class="tdr"><asp:TextBox runat="server" CssClass="etiologia hide" ID="TOtroEtiologia"></asp:TextBox></td>
+                        <td><asp:Label runat="server" Text="Otro" ID="LOtroEtiologia" CssClass="etiologia hidet"></asp:Label></td>
+                        <td class="tdr"><asp:TextBox runat="server" CssClass="etiologia hidet" ID="TOtroEtiologia"></asp:TextBox></td>
                     </tr>
                     <tr>
                         <td colspan="4" class="celdaTitulo tdl tdr">Categoría</td>
                     </tr>
-                    <tr class="etiologiam hide">
+                    <tr class="etiologiam hidet">
                         <td colspan="4" class="celdaSubTitulo tdl tdr">Evolución</td>
                     </tr>
-                    <tr class="etiologiam hide">
+                    <tr class="etiologiam hidet">
                         <td class="tdl">Tiempo de evolución de la úlcera</td>
                         <td><asp:TextBox runat="server" ID="TTiempoEvolucion"></asp:TextBox></td>
                         <td>Tejido profundo sospechoso</td>
-                        <td class="tdr"><asp:DropDownList CssClass="hide" ID="DTejidoSospechoso" runat="server" DataSourceID="STejidoSospechoso" 
+                        <td class="tdr"><asp:DropDownList CssClass="hidet" ID="DTejidoSospechoso" runat="server" DataSourceID="STejidoSospechoso" 
                             DataTextField="nombre" DataValueField="id">
                         </asp:DropDownList>
                         <asp:SqlDataSource ID="STejidoSospechoso" runat="server" 
@@ -605,11 +605,11 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                             SelectCommand="SELECT id, CONCAT(nombre,':',descripcion) AS nombre FROM varios WHERE tipo=52 AND szReservado IS NULL ORDER BY nombre">
                         </asp:SqlDataSource></td>
                     </tr>
-                    <tr class="etiologiam hide">
+                    <tr class="etiologiam hidet">
                         <td colspan="2" class="tdl"></td>
                         <td colspan="2" class="tdr" id="descripciontejido"></td>
                     </tr>
-                    <tr class="etiologiam hide">
+                    <tr class="etiologiam hidet">
                         <td class="tdl">Lugar donde se originó la úlcera</td>
                         <td><asp:DropDownList ID="DLugarOrigen" runat="server" DataSourceID="SLugarOrigen" 
                             DataTextField="nombre" DataValueField="id">
@@ -619,8 +619,8 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT id, nombre FROM varios WHERE tipo=51 AND szReservado IS NULL ORDER BY nombre">
                         </asp:SqlDataSource></td>
-                        <td><asp:Label Text="Especifique" runat="server" ID="LHogarGeriatrico" CssClass="hide geriatrico"></asp:Label></td>
-                        <td class="tdr"><asp:TextBox runat="server" ID="THogarGeriatrico" CssClass="hide geriatrico"></asp:TextBox></td>
+                        <td><asp:Label Text="Especifique" runat="server" ID="LHogarGeriatrico" CssClass="hidet geriatrico"></asp:Label></td>
+                        <td class="tdr"><asp:TextBox runat="server" ID="THogarGeriatrico" CssClass="hidet geriatrico"></asp:TextBox></td>
                     </tr>
                     <tr>
                         <td colspan="4" class="celdaSubTitulo tdl tdr">Categoría</td>
@@ -665,7 +665,7 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     <tr>
                         <td colspan="4" class="tdl tdr celdaSubTitulo"><asp:CheckBox runat="server" ID="CBolsillo" Text="Bolsillo" /></td>
                     </tr>
-                    <tr class="bolsillo hide">
+                    <tr class="bolsillo hidet">
                         <td class="tdl">Profunidad</td>
                         <td><asp:TextBox runat="server" ID="TBolsilloProfundidad" CssClass="cms"></asp:TextBox></td>
                         <td>Ubicación</td>
@@ -867,7 +867,7 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
             </tr>
             <tr>
                 <td class="tdl" valign="top">Manejo</td>
-                <td colspan="3"><asp:TextBox ID="TPlanManejo" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>
+                <td colspan="3"><asp:TextBox ID="TPlanManejo" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hidet"></asp:TextBox>
                 <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
                 </td>
             </tr>

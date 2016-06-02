@@ -603,7 +603,7 @@ public partial class paciente_formatoctc : System.Web.UI.Page
                 evento.Contenido = evento.Contenido.Replace("$enfermedad_actual$", myreader["enfermedad_actual"].ToString());
             }
             
-            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(idmedico)));
+            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", idmedico);
         }
 
 

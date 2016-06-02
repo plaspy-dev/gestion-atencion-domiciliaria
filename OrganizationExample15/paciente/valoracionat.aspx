@@ -59,7 +59,7 @@
             <td colspan="4">
                 <asp:Panel ID="PHistorial" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LHistorial"></asp:Label></a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GHistorial" runat="server" AutoGenerateColumns="False" Width="100%"
                             DataSourceID="SHistorial" EmptyDataText="No se encontraron índices anteriores de este paciente" >
                             <RowStyle CssClass="GridRow"></RowStyle>
@@ -109,7 +109,7 @@
                         <sdg:DateTimeValidator runat="server" ID="DTV" ControlToValidate="TInicio" ErrorMessage="Por favor ingrese una fecha valida." 
                     Display="Dynamic" SetFocusOnError="true">*</sdg:DateTimeValidator></td>
                 <td><asp:TextBox runat="server" ID="TInicio" CssClass="fechahora"></asp:TextBox>
-                    <asp:Button runat="server" ID="TUF" CssClass="hide" Text="BUF" CausesValidation="false" OnClick="TUF_Click" />
+                    <asp:Button runat="server" ID="TUF" CssClass="hidet" Text="BUF" CausesValidation="false" OnClick="TUF_Click" />
                 </td>
                 <td>Final</td>
                 <td align="right"><asp:Label runat="server" ID="LFinal"></asp:Label></td>

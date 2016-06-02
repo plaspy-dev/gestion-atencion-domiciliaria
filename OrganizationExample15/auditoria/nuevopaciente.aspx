@@ -77,8 +77,8 @@
         <tr>
             <td>
                 <asp:TextBox runat="server" ID="TDesde" CssClass="fechaex" ></asp:TextBox>
-                <asp:TextBox runat="server" ID="TMes" CssClass="hide"></asp:TextBox>
-                <asp:TextBox runat="server" ID="TAno" CssClass="hide"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TMes" CssClass="hidet"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TAno" CssClass="hidet"></asp:TextBox>
                 <asp:RequiredFieldValidator ControlToValidate="TMes" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" >*</asp:RequiredFieldValidator>
             </td>
             <td>
@@ -93,7 +93,7 @@
                     SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entEPS=1 ORDER BY 2">
                 </asp:SqlDataSource></td>
             <td>
-            <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>
+            <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hidet"></asp:TextBox>
             </td>
             <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" 
                     DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">

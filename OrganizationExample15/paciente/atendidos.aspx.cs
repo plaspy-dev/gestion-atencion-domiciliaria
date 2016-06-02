@@ -13,10 +13,14 @@ public partial class paciente_atendidos : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         if(!IsPostBack) {
+            GResultados.Visible = false;
+            TDesde.Text = Query.GetFromMySQLDate(DateTime.Now.AddMonths(-1));
+            THasta.Text = Query.GetFromMySQLDate(DateTime.Now);
         }
     }
     protected void BBuscar_Click(object sender, EventArgs e)
     {
+        GResultados.Visible = true;
         int rows = GridUtils.GetRowsCount(GResultados);
         LTotal.Text = rows + " paciente" + (rows == 1 ? "" : "s");
 

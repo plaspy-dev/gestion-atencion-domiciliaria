@@ -364,7 +364,7 @@ public partial class valoracion_enfermeria : System.Web.UI.Page
                     evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
                 }
             }
-            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(UCFuncionario.IdFuncionario)));
+            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", UCFuncionario.IdFuncionario);
         }
     }
 }

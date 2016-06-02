@@ -574,7 +574,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
                     evento.Contenido = evento.Contenido.Replace("$" + reader.GetName(i) + "$", l ? reader[i].ToString() : "");
                 }
             }
-            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(TIdFuncionario.Text)));
+            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", TIdFuncionario.Text);
         }
         // limpiamos el inactivo de los pacientes
         evento.Contenido = evento.Contenido.Replace(" (Inactivo)", "");

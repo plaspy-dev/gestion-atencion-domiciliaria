@@ -233,7 +233,7 @@
                         <Columns>
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                            <asp:BoundField DataField="idpersonal" HeaderText="idpersonal" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
+                            <asp:BoundField DataField="idpersonal" HeaderText="idpersonal" ItemStyle-CssClass="hidet" HeaderStyle-CssClass="hidet" />
                             <asp:BoundField DataField="personal" HeaderText="Personal" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="chaqueta" HeaderText="No." ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="cargo" HeaderText="Cargo" ItemStyle-Wrap="false" />
@@ -261,7 +261,7 @@
                 <td class="tdl">Nombre</td>
                 <td class="nw" colspan="2">
                     <asp:TextBox runat="server" ID="TPersonal" Width="100%"></asp:TextBox>
-                    <asp:TextBox runat="server" ID="TIdPersonal" CssClass="hide"></asp:TextBox>
+                    <asp:TextBox runat="server" ID="TIdPersonal" CssClass="hidet"></asp:TextBox>
                     No. Chaqueta <asp:TextBox runat="server" ID="TChaqueta" CssClass="entero"></asp:TextBox>
                     <asp:Button ID="BMasPersonal" ValidationGroup="personal" CausesValidation="false" runat="server" onclick="BMasPersonal_Click" Text="+" />
                     <asp:RequiredFieldValidator ValidationGroup="personal" ControlToValidate="TIdPersonal" ErrorMessage="Por favor ingrese un personal." ID="R7" runat="server" Display="Dynamic" SetFocusOnError="true"></asp:RequiredFieldValidator>

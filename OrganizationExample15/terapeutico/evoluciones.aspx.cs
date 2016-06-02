@@ -18,8 +18,8 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
         if (!IsPostBack) {
 
             CUsuario usuario= (CUsuario)CUsuario.GetInstance();
-            TInicio.Text = DateTime.Now.AddDays(-1).ToShortDateString();
-            TFin.Text = DateTime.Now.ToShortDateString();
+            TInicio.Text = Query.GetFromMySQLDate(DateTime.Now.AddDays(-1));
+            TFin.Text = Query.GetFromMySQLDate(DateTime.Now);
             if(!usuario.CanInsert()) {
                 UCFuncionario.IdFuncionario= usuario["personal"];
                 UCFuncionario.ReadOnly = true;
@@ -237,7 +237,7 @@ public partial class terapeutico_evoluciones : System.Web.UI.Page
                         contenido = contenido.Replace("$" + reader.GetName(j) + "$", l ? reader[j].ToString() : "");
                     }
                 }
-                contenido = contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(UCFuncionario.IdFuncionario)));
+                contenido = contenido.Replace("$szIdUsuario$", UCFuncionario.IdFuncionario);
                 contenido = Utilidades.ReplaceContenido(PP.Controls, contenido);
                 currentPaciente = CCDetallePaciente.IdPaciente;
             }

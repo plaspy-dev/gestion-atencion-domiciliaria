@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Inicio" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="inicio.aspx.cs" Inherits="inicio" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<link href="css/notas.css" type="text/css" rel="stylesheet" />
+<link href="<%= HomeCareVersion.CssPath("notas.css") %>"" type="text/css" rel="stylesheet" />
 <style type="text/css">
 .closebutton {
     position: absolute;
@@ -41,7 +41,7 @@
         <ul>
     </HeaderTemplate>
     <ItemTemplate>
-        <li class="hide">
+        <li class="hidet">
           <a href="mailto:<%# Eval("perCorreoElectronico")%>" onclick="return false;">
             <span class="closebutton" perid="<%# Eval("id") %>">Close</span> 
             <h2><%# Eval("dia") %><br /><%# Eval("nombres") %></h2>
@@ -85,11 +85,11 @@
     </HeaderTemplate>
     <ItemTemplate>
         <h3><a href="#"><%# Eval("Nombre")+" (" + Eval("Numero") + ")" %></a></h3>
-        <div class="hide">
+        <div class="hidet">
             <asp:UpdatePanel runat="server" ID="UD" UpdateMode="Conditional">
                 <ContentTemplate>
                     <asp:Image runat="server" ID="IL" ImageUrl="~/css/ajax-loader.gif" />
-                    <asp:Button runat="server" ID="BA" OnClick="OnClickBA" CssClass="hide" />
+                    <asp:Button runat="server" ID="BA" OnClick="OnClickBA" CssClass="hidet" />
                     <asp:LinkButton Visible="false" Text="" runat="server" ID="LA" CommandArgument='<%# Eval("Id") %>'></asp:LinkButton>
                     <asp:GridView ID="GAlertas" runat="server" AutoGenerateColumns="False" Visible="false" Width="100%"  OnRowDataBound="GAlertas_RowDataBound"
                         DataSourceID="SAlertas" EmptyDataText="No se encontraron alertas" ShowHeader="false">

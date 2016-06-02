@@ -97,7 +97,7 @@
         <tr>
             <td>Paciente<asp:RequiredFieldValidator ControlToValidate="TPacienteID" ErrorMessage="Por favor ingrese un Paciente." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td><asp:TextBox ID="TPaciente" runat="server" Width="98%"></asp:TextBox>
-            <asp:TextBox runat="server" ID="TPacienteID" CssClass="hide"></asp:TextBox></td>
+            <asp:TextBox runat="server" ID="TPacienteID" CssClass="hidet"></asp:TextBox></td>
         </tr>
         <tr>
             <td>Observaciones</td>
@@ -147,7 +147,7 @@
         <tr>
             <td align="right" colspan="2">
             <asp:Panel runat="server" ID="PMas" Visible="false">
-                <div id="dMas" title="Solicitud de prestamo" align="left" class="hide">
+                <div id="dMas" title="Solicitud de prestamo" align="left" class="hidet">
                 <table>
                     <tr>
                         <td>Solicitud

@@ -100,7 +100,7 @@
             <td colspan="3">
                 <asp:Panel ID="PHistorial" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LHistorial"></asp:Label></a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GHistorial" runat="server" AutoGenerateColumns="False"  Width="100%" OnRowDataBound="GHistorial_RowDataBound"
                             DataSourceID="SHistorial" EmptyDataText="No se encontraron índices anteriores de este paciente" >
                             <RowStyle CssClass="GridRow"></RowStyle>
@@ -164,7 +164,7 @@
                 <td>Funcionario que atiende</td>
                 <td colspan="2">
                     <asp:TextBox ID="TFuncionario" runat="server" Width="98%"></asp:TextBox>
-                    <asp:TextBox ID="TIdFuncionario" runat="server" CssClass="hide"></asp:TextBox>
+                    <asp:TextBox ID="TIdFuncionario" runat="server" CssClass="hidet"></asp:TextBox>
                     <asp:RequiredFieldValidator ControlToValidate="TIdFuncionario" ErrorMessage="Por favor ingrese un funcionario." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                     </td>
             </tr>

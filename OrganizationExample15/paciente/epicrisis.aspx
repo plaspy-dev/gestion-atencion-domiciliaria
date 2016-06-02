@@ -23,7 +23,7 @@
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
     <asp:Panel ID="PHistorial" runat="server" Visible="false">
         <h3><a href="#"><asp:Label runat="server" ID="LHistorial"></asp:Label></a></h3>
-        <div class="hide">
+        <div class="hidet">
             <asp:UpdatePanel runat="server" ID="U" UpdateMode="Conditional">
                 <ContentTemplate>
             <asp:GridView ID="GHistorial" runat="server" AutoGenerateColumns="False" Width="100%" 

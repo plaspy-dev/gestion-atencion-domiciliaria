@@ -55,11 +55,11 @@
                 <asp:RangeValidator ID="RangeValidator1" runat="server" Type="Date" ErrorMessage="Por favor ingrese una fecha valida." Text="*" MinimumValue="01/01/1900" MaximumValue="01/01/3000" SetFocusOnError="True" Display="Dynamic" ControlToValidate="TVence"></asp:RangeValidator>
             </td>
             <td>
-                <asp:TextBox runat="server" ID="TProducto"></asp:TextBox><asp:TextBox runat="server" ID="TProductoID" CssClass="hide"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TProducto"></asp:TextBox><asp:TextBox runat="server" ID="TProductoID" CssClass="hidet"></asp:TextBox>
             </td>
             <td>
                 <asp:TextBox runat="server" ID="TUbicacion" CssClass="tlote tubicacion"></asp:TextBox>
-                <asp:TextBox runat="server" ID="TUbicacionID" CssClass="hide"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TUbicacionID" CssClass="hidet"></asp:TextBox>
             </td>
             <td nowrap=nowrap>
                 <asp:CheckBox ID="CDetallado" runat="server" Text="Detallado" />

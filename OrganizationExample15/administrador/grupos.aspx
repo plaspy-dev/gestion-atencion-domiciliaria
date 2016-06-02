@@ -112,7 +112,7 @@
                                 </FooterTemplate>
                                 <ItemTemplate>
                                     <h3><a href="#"><%# Eval("parent") %></a></h3>
-                                    <div class="hide">
+                                    <div class="hidet">
                                     <asp:GridView ID="P" runat="server" AutoGenerateColumns="false" DataKeyNames="pagina" Width="100%">
                                         <RowStyle CssClass="GridRow"></RowStyle>
                                         <FooterStyle CssClass="GridFooter"></FooterStyle>

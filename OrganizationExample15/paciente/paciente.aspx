@@ -444,7 +444,7 @@
                     <asp:BoundField DataField="perNombre" HeaderText="Profesional" SortExpression="perNombre" ItemStyle-Wrap="false" />
                     <asp:BoundField DataField="nombre" HeaderText="Actividad" SortExpression="nombre" ItemStyle-Width="100%" />
                     <asp:BoundField DataField="autNumero" HeaderText="Autorización" SortExpression="autNumero" />
-                    <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
+                    <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hidet" HeaderStyle-CssClass="hidet" />
                 </Columns>
             </asp:GridView>
                 <asp:SqlDataSource ID="SProgramacion" runat="server" 

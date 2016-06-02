@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="novedad.ascx.cs" Inherits="phd_novedad" %>
-<div id="dscriptNovedad" class="hide">
+<div id="dscriptNovedad" class="hidet">
 <script type="text/javascript">
     addFunctionToStart(function() {
         $("#<%= TTipo.ClientID %>").hide();
@@ -112,7 +112,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-3" class="hide">
+    <div id="tnov-3" class="hidet">
         <table width="100%">
             <tr>
                 <td style="width: 85px; text-align:left;">Causa</td>
@@ -134,7 +134,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-5" class="hide">
+    <div id="tnov-5" class="hidet">
         <table width="100%">
             <tr>
                 <td style="width: 85px; text-align:left;">Causa</td>
@@ -151,12 +151,12 @@
             <tr>
                 <td>Nuevo servicio</td>
                 <td>
-                <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>
+                <asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hidet"></asp:TextBox>
                 </td>
             </tr>
         </table>
     </div>
-    <div id="tnov-2" class="hide">
+    <div id="tnov-2" class="hidet">
         <table width="100%">
             <tr>
                 <td style="width: 85px; text-align:left;">Causa</td>
@@ -174,12 +174,12 @@
                 <td>Profesional</td>
                 <td>
                 <asp:TextBox Width="99%" runat="server" ID="TProfesional"></asp:TextBox>
-                <asp:TextBox runat="server" ID="TProfesionalID" CssClass="hide"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TProfesionalID" CssClass="hidet"></asp:TextBox>
                 </td>
             </tr>
         </table>
     </div>
-    <div id="tnov-4" class="hide">
+    <div id="tnov-4" class="hidet">
         <table width="100%">
             <tr>
                 <td style="width: 85px; text-align:left;">Causa</td>
@@ -195,7 +195,7 @@
             </tr>
         </table>
     </div>
-    <div id="tnov-6" class="hide">
+    <div id="tnov-6" class="hidet">
     </div>
 </div>
 </asp:Panel>

@@ -108,7 +108,7 @@
         </table>
     </div>
 </asp:Panel>
-<div id="dProgramacion" title="Programación" class="hide">
+<div id="dProgramacion" title="Programación" class="hidet">
 <asp:HiddenField ID="HId" runat="server" />
 <asp:HiddenField ID="HIdPaciente" runat="server" />
 <asp:ValidationSummary ValidationGroup="CProgramacion" ID="ValidationSummary1" runat="server" />
@@ -245,7 +245,7 @@
         <td align="left">Profesional</td>
         <td align="left">
             <asp:TextBox Width="99%" runat="server" ID="TProfesional"></asp:TextBox>
-            <asp:TextBox runat="server" ID="TProfesionalID" CssClass="hide"></asp:TextBox>
+            <asp:TextBox runat="server" ID="TProfesionalID" CssClass="hidet"></asp:TextBox>
             <asp:RequiredFieldValidator ValidationGroup="CProgramacion" ControlToValidate="TProfesionalID" ErrorMessage="Por favor seleccione un profesional." ID="RequiredFieldValidator7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
          </td>
     </tr>

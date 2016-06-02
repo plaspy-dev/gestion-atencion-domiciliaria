@@ -83,7 +83,7 @@
             </td>
             <td>
                 <asp:TextBox ID="TNombres" runat="server"></asp:TextBox>
-                <asp:TextBox ID="TNombreID" CssClass="hide" runat="server"></asp:TextBox>
+                <asp:TextBox ID="TNombreID" CssClass="hidet" runat="server"></asp:TextBox>
             </td>
             <td>
                 <asp:DropDownList ID="DArea" runat="server" AppendDataBoundItems="true" AutoPostBack="true" CssClass="anchomaxcombo" 

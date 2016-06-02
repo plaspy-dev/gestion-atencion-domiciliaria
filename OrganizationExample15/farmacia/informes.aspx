@@ -1,8 +1,8 @@
 ﻿<%@ Page Title="Informes" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="informes.aspx.cs" Inherits="farmacia_informes" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<link rel="Stylesheet" type="text/css" href="../css/jquery.multiselect.css" />
-<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/jquery.multiselect.min.js"></script>
+<link rel="Stylesheet" type="text/css" href="<%= HomeCareVersion.CssPath("jquery.multiselect.css") %>" />
+<script type="text/javascript" src="<%= HomeCareVersion.JSPath("jquery.multiselect.min.js")%>"></script>
 <style type="text/css">.GridHeader th {width: auto;} .anchomax { width: 150px; }</style>
 <script type="text/javascript">
     $(function() {
@@ -94,7 +94,7 @@
             <td>Paciente</td>
             <td>Grupo</td>
             <td>Centro de costos</td>
-            <td><asp:CheckBox runat="server" ID="CAlmacen" Text="Ver almacén" CssClass="hide" /></td>
+            <td><asp:CheckBox runat="server" ID="CAlmacen" Text="Ver almacén" CssClass="hidet" /></td>
             <td class="tda"><asp:Label runat="server" ID="LSIIGO" Visible="false">SIIGO</asp:Label></td>
         </tr>
         <tr>
@@ -117,13 +117,13 @@
                     MinimumValue="01/01/1900" SetFocusOnError="True" Text="*" Type="Date"></asp:RangeValidator>
             </td>
             <td>
-                <asp:TextBox runat="server" ID="TTercero"></asp:TextBox><asp:TextBox runat="server" ID="TTerceroID" CssClass="hide"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TTercero"></asp:TextBox><asp:TextBox runat="server" ID="TTerceroID" CssClass="hidet"></asp:TextBox>
             </td>
             <td>
                 <asp:TextBox runat="server" ID="TNombre"></asp:TextBox>
             </td>
             <td>
-                <asp:TextBox runat="server" ID="TPaciente"></asp:TextBox><asp:TextBox runat="server" ID="TPacienteID" CssClass="hide"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TPaciente"></asp:TextBox><asp:TextBox runat="server" ID="TPacienteID" CssClass="hidet"></asp:TextBox>
             </td>
             <td><asp:DropDownList ID="DGrupo" runat="server" AppendDataBoundItems="true" CssClass="anchomax" 
                     DataSourceID="SGrupo" DataTextField="nombre" DataValueField="id">

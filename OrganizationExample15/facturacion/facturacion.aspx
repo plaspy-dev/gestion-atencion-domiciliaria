@@ -103,7 +103,7 @@ addFunctionToStart(function() {
                 Paciente<asp:HiddenField runat="server" ID="HIdPaciente" /><asp:HiddenField runat="server" ID="HIdEntidad" />
             </td>
             <td>
-                <asp:TextBox ID="TPaciente" CssClass="likenumber" runat="server"></asp:TextBox><asp:Button ID="BIr" runat="server" Text="Ir" CausesValidation="false" CssClass="hide" onclick="BIr_Click" />
+                <asp:TextBox ID="TPaciente" CssClass="likenumber" runat="server"></asp:TextBox><asp:Button ID="BIr" runat="server" Text="Ir" CausesValidation="false" CssClass="hidet" onclick="BIr_Click" />
             </td>
             <td colspan="2">
                 <asp:Label ID="LInactivo" Text="Inactivo - " Font-Bold="true" runat="server" Visible="false"></asp:Label><asp:Label ID="LNombrePaciente" runat="server"></asp:Label>
@@ -154,7 +154,7 @@ addFunctionToStart(function() {
             <td colspan="4">
                 <asp:Panel ID="PAutorizaciones" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LAutorizaciones"></asp:Label></a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GAutorizaciones" runat="server" AutoGenerateColumns="False"  Width="100%"
                             DataKeyNames="autNumero" DataSourceID="SAutorizaciones" 
                             EmptyDataText="No se encontraron autorizaciones de este usuario" >
@@ -341,7 +341,7 @@ addFunctionToStart(function() {
             <td>Devolución<asp:RequiredFieldValidator ControlToValidate="TDevolucion" ErrorMessage="Por favor ingrese un fecha de devolución." ID="RequiredFieldValidator5" 
 	runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="devolucion">*</asp:RequiredFieldValidator></td>
             <td class="tdr"><asp:TextBox runat="server" ID="TDevolucion" CssClass="fecha rfecha"></asp:TextBox>
-            <asp:Button runat="server" ID="BD" CssClass="hide" OnClick="BD_OnClicked" CausesValidation="false" />
+            <asp:Button runat="server" ID="BD" CssClass="hidet" OnClick="BD_OnClicked" CausesValidation="false" />
             </td>
         </tr>
         <asp:PlaceHolder runat="server" ID="PDevolucion" Visible="false">

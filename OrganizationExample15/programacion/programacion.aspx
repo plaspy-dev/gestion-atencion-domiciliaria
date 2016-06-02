@@ -81,7 +81,7 @@
                             <asp:BoundField DataField="actividad" HeaderText="Actividad" SortExpression="actividad" ItemStyle-Wrap="false" 
                                 ItemStyle-Width="100%" ItemStyle-HorizontalAlign="Left"/>
                             <asp:CheckBoxField DataField="prgActivo" HeaderText="Activo?" />
-                            <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
+                            <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hidet" HeaderStyle-CssClass="hidet" />
                         </Columns>
                     </asp:GridView>
                     <asp:SqlDataSource ID="SProgramacion" runat="server" 

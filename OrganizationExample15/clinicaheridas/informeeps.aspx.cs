@@ -20,8 +20,8 @@ public partial class clinicaheridas_informeeps : System.Web.UI.Page
 
         if (!IsPostBack)
         {
-            TDesde.Text = DateTime.Now.AddMonths(-1).ToShortDateString();
-            THasta.Text = DateTime.Now.ToShortDateString();
+            TDesde.Text = Query.GetFromMySQLDate(DateTime.Now.AddMonths(-1));
+            THasta.Text = Query.GetFromMySQLDate(DateTime.Now);
 
             if (Request.QueryString["p"] == "1")
             {
@@ -29,7 +29,7 @@ public partial class clinicaheridas_informeeps : System.Web.UI.Page
                     BBuscar_Click(sender, e);
             }
 #if DEBUG
-            // BBuscar_Click(sender, e);
+            BBuscar_Click(sender, e);
 #endif
         }
     }
@@ -41,31 +41,6 @@ public partial class clinicaheridas_informeeps : System.Web.UI.Page
         {
             ((MasterPageI)Master).Imprimir("informeEPS.html", true); // .Excel(GResultados);
             // ((MasterPageI)Master).Imprimir(GResultados);
-        }
-    }
-
-    static Dictionary<string, int> ColumnsIndex = new Dictionary<string, int>();
-
-    public void ReplaceProducto(string columna, GridViewRow row) {
-
-        int numero=-1;
-        try { numero = ColumnsIndex[columna]; } catch { }
-        if(numero==-1)
-            ColumnsIndex[columna] = numero = GResultados.GetGridColumnIndex(columna);
-        TableCell celda = row.Cells[numero];
-        string texto = HttpUtility.HtmlDecode(celda.Text).Trim();
-        if (!string.IsNullOrEmpty(texto))
-            celda.Text = Producto.GetProducto(texto).NombreCompleto;
-    }
-
-    protected void GResultados_RowDataBound(object sender, GridViewRowEventArgs e)
-    {
-        if (e.Row.RowIndex != -1)
-        {
-            ReplaceProducto("INSUMO 1", e.Row);
-            ReplaceProducto("INSUMO 2", e.Row);
-            ReplaceProducto("INSUMO 3", e.Row);
-            ReplaceProducto("INSUMO 4", e.Row);
         }
     }
 
@@ -95,7 +70,7 @@ public partial class clinicaheridas_informeeps : System.Web.UI.Page
                 contenido = contenido.Replace("$" + reader.GetName(j) + "$", l ? reader[j].ToString() : "");
             }
         }
-        return contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(idFuncionario)));
+        return contenido.Replace("$szIdUsuario$", idFuncionario);
     }
 
     protected string AddPorcentajeDeTejido(string nombre, object valor, bool coma)
@@ -468,6 +443,7 @@ where valoracion={0};", idValoracion)));
             StringBuilderEx plantilla = new StringBuilderEx();
             StringBuilderEx plantillaValoracion = new StringBuilderEx();
             StringBuilderEx contenido = new StringBuilderEx();
+            SResultados.SelectCommand= SResultados.SelectCommand.Replace(" ORDER BY fecha", "ORDER BY paciente,fecha");
             GResultados.AllowPaging = false;
             GResultados.DataBind();
 
@@ -510,18 +486,17 @@ where valoracion={0};", idValoracion)));
                     TPaciente.Text = CCDetallePaciente.Documento;
                     LPaciente.Text = CCDetallePaciente.Nombres;
 
-                    contenido += Heridas.RemoveSection(currentPaciente != CCDetallePaciente.IdPaciente, "datospaciente", plantillaValoracion.ToString(), "<tr><td colspan='5'><hr/></td></tr>").ToString();
-                    contenido = ImprimirValoracion(conector, contenido, heridaValoracion, GResultados.DataKeys[i].Values["id"].ToString());
+                    if (string.IsNullOrEmpty(GResultados.DataKeys[i].Values["evolucion"].ToString()))
+                    {
+                        contenido += Heridas.RemoveSection(currentPaciente != CCDetallePaciente.IdPaciente, "datospaciente", plantillaValoracion.ToString(), "<tr><td colspan='5'><hr/></td></tr>").ToString();
+                        contenido = ImprimirValoracion(conector, contenido, heridaValoracion, GResultados.DataKeys[i].Values["id"].ToString());
+                    } else {
+                        contenido += Heridas.RemoveSection(currentPaciente != CCDetallePaciente.IdPaciente, "datospaciente", plantilla.ToString(), "<tr><td colspan='5'><hr/></td></tr>").ToString();
+                        contenido = ImprimirEvolucion(conector, contenido, herida, GResultados.DataKeys[i].Values["id"].ToString());
+                    }
+
                     contenido = Utilidades.ReplaceContenido(PP.Controls, contenido);
                     currentPaciente = CCDetallePaciente.IdPaciente;
-
-                    string idEvolucion = GResultados.DataKeys[i].Values["Idevolucion"].ToString();
-                    foreach (string evolucion in idEvolucion.Split(',').Distinct())
-                    {
-                        contenido += Heridas.RemoveSection(false, "datospaciente", plantilla.ToString(), "<tr><td colspan='5'><hr/></td></tr>").ToString();
-                        contenido= ImprimirEvolucion(conector, contenido, herida, evolucion);
-                        contenido = Utilidades.ReplaceContenido(PP.Controls, contenido);
-                    }
 
                     contenido = contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));
                     contenido = contenido.Replace("$szTipoAfiliacion$", paciente.TipoAfiliacion);

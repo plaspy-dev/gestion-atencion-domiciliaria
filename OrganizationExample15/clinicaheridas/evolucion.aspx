@@ -18,7 +18,7 @@
     text-decoration: line-through;
 }
 </style>
-<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
+<script type="text/javascript" src="<%= HomeCareVersion.JSPath("tinymce.min.js")%>"></script>
 <script type="text/javascript">
     $inicio(function() {
 
@@ -140,7 +140,7 @@
 <uc4:detallepaciente ID="CCDetallePaciente" runat="server" Visible="false" />
 <asp:Panel ID="PHistorial" runat="server" Visible="false">
     <h3><a href="#"><asp:Label runat="server" ID="LHistorial"></asp:Label></a></h3>
-    <div class="hide">
+    <div class="hidet">
         <asp:GridView ID="GHistorial" runat="server" AutoGenerateColumns="False"  Width="100%" OnRowDataBound="GHistorial_RowDataBound"
             DataSourceID="SHistorial" EmptyDataText="No se encontraron índices anteriores de este paciente" >
             <RowStyle CssClass="GridRow"></RowStyle>
@@ -210,8 +210,8 @@
                     <asp:ListItem Text="Ausentes" Value="0"></asp:ListItem>
                 </asp:RadioButtonList>
                 </td>
-                <td><asp:Label ID="Label1" runat="server" Text="Observaciones" CssClass="pulsos hide"></asp:Label></td>
-                <td class="tdr"><asp:TextBox runat="server" ID="TObservacionPulso" CssClass="pulsos hide"></asp:TextBox></td>
+                <td><asp:Label ID="Label1" runat="server" Text="Observaciones" CssClass="pulsos hidet"></asp:Label></td>
+                <td class="tdr"><asp:TextBox runat="server" ID="TObservacionPulso" CssClass="pulsos hidet"></asp:TextBox></td>
             </tr>
             <tr>
                 <td colspan="4" class="celdaTitulo">Diagnóstico - Condición actual</td>
@@ -366,7 +366,7 @@
                     <tr>
                         <td colspan="4" class="tdl tdr celdaSubTitulo"><asp:CheckBox runat="server" ID="CBolsillo" Text="Bolsillo" /></td>
                     </tr>
-                    <tr class="bolsillo hide">
+                    <tr class="bolsillo hidet">
                         <td class="tdl">Profunidad</td>
                         <td><asp:TextBox runat="server" ID="TBolsilloProfundidad" CssClass="cms"></asp:TextBox></td>
                         <td>Ubicación</td>
@@ -526,7 +526,7 @@
                 <td colspan="4" class="celdaSubTitulo tdr tdl">Plan de manejo</td>
             </tr>
             <td class="tdl" valign="top">Manejo</td>
-                <td colspan="3"><asp:TextBox ID="TPlanManejo" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>
+                <td colspan="3"><asp:TextBox ID="TPlanManejo" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hidet"></asp:TextBox>
                 <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
             </td>
             <tr>

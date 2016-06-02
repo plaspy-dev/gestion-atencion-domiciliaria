@@ -141,7 +141,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <asp:Panel runat="server" ID="PImprimir" Visible="false">
-    <div id="dialog-confirm" title="Imprimir" class="hide"> 
+    <div id="dialog-confirm" title="Imprimir" class="hidet"> 
         <p><asp:Label runat="server" ID="LImprimir"></asp:Label></p>
     </div>
     <script type="text/javascript">
@@ -199,24 +199,24 @@
         <tr>
             <td colspan="5" class="tdl tdr"><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label></td>
         </tr>
-        <tr class="GridAltRow hide" id="tRegulado">
+        <tr class="GridAltRow hidet" id="tRegulado">
             <td class="tdl"></td>
             <td colspan="4" class="tdr">Precio regulado <span id="sRegulado">$1.500</span></td>
         </tr>
         <tr>
             <td class="tdl"><asp:CheckBox runat="server" ID="CAutomatico" Text="Automático" Checked="true" /></td>
             <td align="right"><asp:Label runat="server" ID="LLote" Text="Lote: "></asp:Label></td>
-            <td><asp:TextBox ID="TLote" runat="server" CssClass="tlote hide"></asp:TextBox><asp:Label runat="server" ID="LLoteA" Text="Automático"></asp:Label></td>
+            <td><asp:TextBox ID="TLote" runat="server" CssClass="tlote hidet"></asp:TextBox><asp:Label runat="server" ID="LLoteA" Text="Automático"></asp:Label></td>
             <td align="right"><asp:Label runat="server" ID="LVencimiento" Text="Vence: "></asp:Label></td>
-            <td class="tdr"><asp:TextBox ID="TVencimiento" runat="server" CssClass="tvence hide"></asp:TextBox><asp:Label runat="server" ID="LVencimientoA" Text="Automático"></asp:Label>
+            <td class="tdr"><asp:TextBox ID="TVencimiento" runat="server" CssClass="tvence hidet"></asp:TextBox><asp:Label runat="server" ID="LVencimientoA" Text="Automático"></asp:Label>
             </td>
         </tr>
         <tr>
-            <td class="tdl" nowrap=nowrap><asp:Label runat="server" ID="LUbicacion" Text="Ubicación: "></asp:Label><asp:TextBox runat="server" ID="TUbicacion" CssClass="tlote hide"></asp:TextBox><asp:Label runat="server" ID="LUbicacionA" Text="Automática"></asp:Label></td>
+            <td class="tdl" nowrap=nowrap><asp:Label runat="server" ID="LUbicacion" Text="Ubicación: "></asp:Label><asp:TextBox runat="server" ID="TUbicacion" CssClass="tlote hidet"></asp:TextBox><asp:Label runat="server" ID="LUbicacionA" Text="Automática"></asp:Label></td>
             <td align="right"><asp:Label runat="server" ID="LSerial" Text="Serial:"></asp:Label></td>
-            <td><asp:TextBox runat="server" ID="TSerial" CssClass="tlote hide"></asp:TextBox><asp:Label runat="server" ID="LSerialA" Text="Automático"></asp:Label></td>
+            <td><asp:TextBox runat="server" ID="TSerial" CssClass="tlote hidet"></asp:TextBox><asp:Label runat="server" ID="LSerialA" Text="Automático"></asp:Label></td>
             <td align="right"><asp:Label runat="server" ID="LEstado" Text="Estado:"></asp:Label></td>
-            <td class="tdr"><asp:TextBox ID="TEstado" runat="server" CssClass="tlote hide"></asp:TextBox><asp:Label runat="server" ID="LEstadoA" Text="Automático"></asp:Label></td>
+            <td class="tdr"><asp:TextBox ID="TEstado" runat="server" CssClass="tlote hidet"></asp:TextBox><asp:Label runat="server" ID="LEstadoA" Text="Automático"></asp:Label></td>
         </tr>
         <tr class="GridAltRow">
             <td class="tdl"><span id="smax"></span></td>
@@ -224,7 +224,7 @@
         </tr>
         <tr class="GridAltRow">
             <td class="tdl">Producto<asp:RequiredFieldValidator ControlToValidate="TProductoID" ValidationGroup="producto" ErrorMessage="Por favor ingrese un producto." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-            <td colspan="4" class="tdr"><asp:TextBox ID="TProducto" runat="server" Width="98%"></asp:TextBox><asp:TextBox runat="server" ID="TProductoID" CssClass="hide"></asp:TextBox></td>
+            <td colspan="4" class="tdr"><asp:TextBox ID="TProducto" runat="server" Width="98%"></asp:TextBox><asp:TextBox runat="server" ID="TProductoID" CssClass="hidet"></asp:TextBox></td>
         </tr>
         <tr>
             <td class="tdl">Cantidad<asp:RequiredFieldValidator ControlToValidate="TCantidad" ValidationGroup="producto" ErrorMessage="Por favor ingrese una cantidad." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
@@ -238,7 +238,7 @@
             <td><asp:TextBox runat="server" EnableViewState="false" ID="TValor" CssClass="dinero"></asp:TextBox></td>
             <td class="tdr">
                 <asp:Button ID="BAgregar" runat="server" Text="Agregar" ValidationGroup="producto" onclick="BAgregar_Click" />
-                <asp:Button ID="BActualizar" runat="server" Text="Actualizar" CssClass="hide" CausesValidation="false" onclick="BActualizar_Click" />
+                <asp:Button ID="BActualizar" runat="server" Text="Actualizar" CssClass="hidet" CausesValidation="false" onclick="BActualizar_Click" />
             </td>
         </tr>
         <tr>

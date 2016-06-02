@@ -10,6 +10,7 @@ using SDG.Componentes;
 using MySql.Data.MySqlClient;
 using System.Configuration;
 using System.IO;
+using System.Drawing;
 
 public partial class rh_funcionario : System.Web.UI.Page
 {
@@ -127,9 +128,17 @@ public partial class rh_funcionario : System.Web.UI.Page
                         BAceptar.Enabled = usuario.CanUpdate();
                         lnkAgInfoLab.Visible = usuario.CanUpdate();
                         GEmpresas.Columns[4].Visible = usuario.CanDelete();
+                        HSello.Visible =
+                        HFirma.Visible = true;
 
                         HId.Value = reader["perId"].ToString();
                         ((MasterPageI)Master).SetModificacion(HId.Value);
+
+                        HFirma.NavigateUrl += HId.Value + ".jpg";
+                        HSello.NavigateUrl += HId.Value + ".jpg";
+
+                        HFirma.ImageUrl += HId.Value + ".jpg";
+                        HSello.ImageUrl += HId.Value + ".jpg";
 
                         TApellidos.Text = reader["perApellidos"].ToString();
                         TNombres.Text = reader["perNombres"].ToString();
@@ -241,6 +250,154 @@ public partial class rh_funcionario : System.Web.UI.Page
             resultado.Trim();
         }
         return resultado;
+    }
+
+    /*public Bitmap CropImage(Bitmap source, Rectangle section)
+    {
+        // An empty bitmap which will hold the cropped image
+        Bitmap bmp = new Bitmap(section.Width, section.Height);
+        using (Graphics g = Graphics.FromImage(bmp))
+        {
+            // Draw the given area (section) of the source image
+            // at location 0,0 on the empty bitmap (bmp)
+            g.DrawImage(source, 0, 0, section, GraphicsUnit.Pixel);
+            return bmp;
+        }
+    }*/
+
+    public Bitmap CheckImage(Bitmap firma) {
+
+        int whites = 0;
+        int blacks = 0;
+        int initialline = 0;
+        int finalline = 0;
+        int initialrow = 0;
+        int finalrow = 0;
+        int lastwhite = 0;
+
+        for (int x = 0; x < firma.Width; x++)
+        {
+            bool hasblacks = false;
+            for (int y = 0; y < firma.Height; y++)
+            {
+                Color color = firma.GetPixel(x, y);
+                if (color.R > 150 && color.B > 150 && color.G > 150) {
+                    whites++;
+                } else {
+                    hasblacks = true;
+                    blacks++;
+                }
+            }
+            if (hasblacks) {
+                if (initialrow == 0) { 
+                    initialrow = x - 1;
+                } else {
+                    if (x-finalrow > 5)
+                        lastwhite = finalrow;
+                    finalrow = x + 1;
+                }
+            } else if (x-initialrow<10) {
+                initialrow = 0;
+                lastwhite = 0;
+                finalrow = 0;
+            } else if(lastwhite > 0 && x - finalrow<10) {
+                finalrow = lastwhite;
+            }
+        }
+
+        double percentage = (double)blacks / whites;
+        if (percentage > 0.005 && percentage < 0.10) { // si la cantidad de negros en la imagen es menor al 1% la rechazamos o mayor al 10%
+
+            for (int y = 0; y < firma.Height; y++)
+            {
+                bool hasblacks = false;
+                for (int x = 0; x < firma.Width; x++)
+                {
+                    Color color = firma.GetPixel(x, y);
+                    if (color.R > 150 && color.B > 150 && color.G > 150) {
+                        /*if (color.R > 240 && color.B > 240 && color.G > 240)
+                            firma.SetPixel(x, y, Color.White);*/
+                    } else {
+                        hasblacks = true;
+                    }
+                }
+                if (hasblacks)
+                {
+                    if (initialline == 0) { 
+                        initialline = y - 1;
+                    } else {
+                        if(y - finalline>5)
+                            lastwhite = finalline;
+                        finalline = y + 1;
+                    }
+                } else if (y-initialline<10) {
+                    initialline = 0;
+                    lastwhite = 0;
+                    finalline = 0;
+                } else if(lastwhite>0 && y - finalline < 10) {
+                    finalline = lastwhite;
+                }
+            }
+
+            if (finalline == 0 || finalline > firma.Height)
+                finalline = firma.Height;
+            if (finalrow == 0 || finalrow > firma.Width)
+                finalrow = firma.Width;
+            if (initialline < 0)
+                initialline = 0;
+            if (initialrow < 0)
+                initialrow = 0;
+
+            return firma.Clone(new Rectangle(initialrow, initialline, finalrow - initialrow, finalline - initialline), firma.PixelFormat);
+        }
+        return null; 
+    }
+
+    public bool CheckFirmas(Bitmap firmaysello, bool rotate=true) {
+
+        int ystart = 400;
+        int xstart = 250;
+        int width = 550;
+        int height = 260;
+
+        if (firmaysello.Width < xstart + width || firmaysello.Height<ystart+height) // El archivo es mas pequeño de lo pensado
+            return false;
+
+        using (Bitmap firma2 = firmaysello.Clone(new Rectangle(xstart, ystart, width, height), firmaysello.PixelFormat))
+        {
+            using (Bitmap firma = CheckImage(firma2)) 
+            {
+                if (firma == null)
+                {
+                    if (rotate)
+                    {
+                        firmaysello.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                        return CheckFirmas(firmaysello, false);
+                    }
+                    return false;
+                }
+                string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "firmas");
+                Directory.CreateDirectory(archivo);
+                archivo = Path.Combine(archivo, HId.Value + ".jpg");
+                firma.Save(archivo);
+            }
+        }
+        xstart = 900;
+        using (Bitmap sello2 = firmaysello.Clone(new Rectangle(xstart, ystart, width, height), firmaysello.PixelFormat))
+        {
+            using (Bitmap sello = CheckImage(sello2))
+            {
+                if (sello == null)
+                    return false;
+
+                string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "sellos");
+                Directory.CreateDirectory(archivo);
+                archivo = Path.Combine(archivo, HId.Value + ".jpg");
+                sello.Save(archivo);
+            }
+        }
+
+        return true;
     }
 
     protected void BAceptar_Click(object sender, EventArgs e)
@@ -370,6 +527,18 @@ public partial class rh_funcionario : System.Web.UI.Page
                 }
             }
 
+            // Tratamos de cortar la firma
+            if (FFirma.HasFile)
+            {
+                using (Bitmap firmaysello = new Bitmap(FFirma.FileContent))
+                {
+                    if (!CheckFirmas(firmaysello)) {
+                        LMensaje.Text = "El archivo " + FFirma.FileName + " parece no contener un archivo con firmas y sello valido.";
+                        return;
+                    }
+                }
+            }
+
             if (conector.QueryMod("DELETE FROM recurso_humano_documento WHERE perId=" + HId.Value) == -1)
                 return;
 
@@ -433,7 +602,6 @@ public partial class rh_funcionario : System.Web.UI.Page
 
             for (int i = 0; i < GEmpresas.Rows.Count; i++)
             {
-
                 TextBox text = (TextBox)GEmpresas.Rows[i].FindControl("TEmpresa");
                 empresa["ilabEmpresa"] = text.Text;
                 text = (TextBox)GEmpresas.Rows[i].FindControl("TTelefono");

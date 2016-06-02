@@ -56,7 +56,7 @@
                 <td colspan="4">
                 <asp:Panel ID="PEventos" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LEventos"></asp:Label></a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GEventos" runat="server" AutoGenerateColumns="False"  Width="100%"
                             DataKeyNames="id" DataSourceID="SEventos" EmptyDataText="No se encontraron eventos de este usuario" >
                             <RowStyle CssClass="GridRow"></RowStyle>
@@ -158,8 +158,8 @@
             <tr>
                 <td>Funcionario</td>
                 <td colspan="2"><asp:TextBox runat="server" ID="TProfesional" Width="98%"></asp:TextBox>
-                    <asp:TextBox runat="server" ID="TProfesionalID" CssClass="hide"></asp:TextBox>
-                    <asp:Button runat="server" ID="BProfesional" CausesValidation="false" CssClass="hide"
+                    <asp:TextBox runat="server" ID="TProfesionalID" CssClass="hidet"></asp:TextBox>
+                    <asp:Button runat="server" ID="BProfesional" CausesValidation="false" CssClass="hidet"
                         Text="..." onclick="BProfesional_Click" /></td>
                 <td><b><asp:Label runat="server" ID="LProfesion"></asp:Label><asp:Label runat="server" ID="LTProfesional"></asp:Label></b></td>
             </tr>

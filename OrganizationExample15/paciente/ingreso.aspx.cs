@@ -683,7 +683,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
         }
         using (CConector conector = new CConector())
         {
-            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(DMedico.SelectedValue)));
+            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", DMedico.SelectedValue);
         }
         // limpiamos el inactivo de los pacientes
         evento.Contenido = evento.Contenido.Replace(" (Inactivo)", "");

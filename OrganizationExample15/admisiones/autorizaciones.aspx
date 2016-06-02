@@ -188,7 +188,7 @@
                 <asp:HyperLink runat="server" ID="HFormula" Target="_blank"></asp:HyperLink>
             </td>
         </tr>
-        <tr id="tauto" class="hide">
+        <tr id="tauto" class="hidet">
             <td></td>
             <td></td>
             <td colspan="2">
@@ -201,7 +201,7 @@
                 Paciente<asp:HiddenField runat="server" ID="HIdPaciente" /><asp:HiddenField runat="server" ID="HIdEntidad" />
             </td>
             <td>
-                <asp:TextBox ID="TPaciente" CssClass="likenumber" runat="server"></asp:TextBox><asp:Button ID="BIr" runat="server" Text="Ir" CausesValidation="false" CssClass="hide" onclick="BIr_Click" />
+                <asp:TextBox ID="TPaciente" CssClass="likenumber" runat="server"></asp:TextBox><asp:Button ID="BIr" runat="server" Text="Ir" CausesValidation="false" CssClass="hidet" onclick="BIr_Click" />
             </td>
             <td colspan="2">
                 <asp:Label ID="LInactivo" Text="Inactivo - " Font-Bold="true" runat="server" Visible="false"></asp:Label><asp:Label ID="LNombrePaciente" runat="server"></asp:Label>
@@ -252,7 +252,7 @@
             <td colspan="4">
                 <asp:Panel ID="PAutorizaciones" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LAutorizaciones"></asp:Label></a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GAutorizaciones" runat="server" AutoGenerateColumns="False"  Width="100%"
                             DataKeyNames="autNumero" DataSourceID="SAutorizaciones"
                             EmptyDataText="No se encontraron autorizaciones de este usuario" >
@@ -406,7 +406,7 @@
                         <Columns>
                             <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
                             <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                            <asp:BoundField DataField="proc_id" HeaderText="idMedicamento" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
+                            <asp:BoundField DataField="proc_id" HeaderText="idMedicamento" ItemStyle-CssClass="hidet" HeaderStyle-CssClass="hidet" />
                             <asp:BoundField DataField="procedimiento" HeaderText="Actividad" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="numerosesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="sesionesdia" HeaderText="Ses./día" ItemStyle-HorizontalAlign="Right" />
@@ -426,7 +426,7 @@
         </tr>
         <tr>
             <td>Procedimiento<asp:RequiredFieldValidator ValidationGroup="procedimiento" ControlToValidate="TProcedimientoID" ErrorMessage="Por favor ingrese un procedimiento." ID="RProcedimiento" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-            <td colspan="3"><asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox></td>
+            <td colspan="3"><asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hidet"></asp:TextBox></td>
         </tr>
         <tr>
             <td>Número de sesiones<asp:RequiredFieldValidator ValidationGroup="procedimiento" ControlToValidate="TNumeroSesiones" ErrorMessage="Por favor ingrese un número." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
@@ -468,7 +468,7 @@
     </ContentTemplate>
     </asp:UpdatePanel>
     <asp:Panel runat="server" ID="PSuspender">
-    <div id="dSuspender" title="Anular o suspender" class="hide">
+    <div id="dSuspender" title="Anular o suspender" class="hidet">
         <table style="width: 100%;">
             <tr>
                 <td>

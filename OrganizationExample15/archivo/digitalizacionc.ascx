@@ -2,7 +2,7 @@
 <asp:UpdatePanel runat="server" ID="UA" UpdateMode="Conditional" Visible="false">
     <ContentTemplate>
         <h3><a href="#"><asp:Label runat="server" ID="LArchivo"></asp:Label></a></h3>
-        <div class="hide">
+        <div class="hidet">
             <asp:GridView ID="GArchivo" runat="server" AutoGenerateColumns="False" DataSourceID="SArchivo" 
                 EmptyDataText="No se encontraron archivos" AllowPaging="false" Width="100%">
                 <RowStyle CssClass="GridRow"></RowStyle>

@@ -2,7 +2,7 @@
 <%@ Register Src="~/paciente/pacienteSimple.ascx" TagName="pacienteSimple" TagPrefix="uc1" %>
 <%@ Register Src="~/rh/funcionarioSimple.ascx" TagName="funcionarioSimple" TagPrefix="uc1" %>
 <asp:Panel runat="server" ID="PPrestamo" Visible="false">
-    <div id="dPrestamo" class="hide" align="left" title="Prestamo">
+    <div id="dPrestamo" class="hidet" align="left" title="Prestamo">
         <table>
             <tr>
                 <td>Fecha<asp:RequiredFieldValidator ValidationGroup="prestamo" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>

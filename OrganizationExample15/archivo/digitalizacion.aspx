@@ -49,7 +49,7 @@
         </tr>
         <tr>
             <td><asp:TextBox ID="TPaciente" runat="server"></asp:TextBox>
-            <asp:TextBox runat="server" ID="TPacienteID" CssClass="hide"></asp:TextBox></td>
+            <asp:TextBox runat="server" ID="TPacienteID" CssClass="hidet"></asp:TextBox></td>
             <td><asp:TextBox ID="TFactura" runat="server"></asp:TextBox></td>
             <td><asp:DropDownList ID="DAsegurador" runat="server"  CssClass="anchomaxcombo"
                                 DataSourceID="SAsegurador" DataTextField="nombre" 

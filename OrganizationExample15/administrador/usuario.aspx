@@ -79,7 +79,7 @@
             <td>
                 <asp:TextBox ID="TNombres" runat="server"></asp:TextBox>
                 <asp:UpdatePanel runat="server" ID="UP" UpdateMode="Conditional">
-                    <ContentTemplate><asp:TextBox ID="TIdPersonal" runat="server" AutoPostBack="true" OnTextChanged="TIdPersonal_TextChanged" CssClass="hide"></asp:TextBox></ContentTemplate>
+                    <ContentTemplate><asp:TextBox ID="TIdPersonal" runat="server" AutoPostBack="true" OnTextChanged="TIdPersonal_TextChanged" CssClass="hidet"></asp:TextBox></ContentTemplate>
                 </asp:UpdatePanel>
             </td>
             <td>
@@ -142,16 +142,6 @@
             </td>
         </tr>
         <tr>
-            <td></td>
-            <td><asp:Image runat="server" ID="IFirma" Visible="false" /></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Firma</td>
-            <td><asp:FileUpload runat="server" ID="FFirma" /></td>
-            <td><asp:RegularExpressionValidator ID="RegularExpressionValidator1" SetFocusOnError="true" ValidationExpression="^.+\.((jpg)|(JPG)|(jpeg)|(JPEG))$" Display="Dynamic" ControlToValidate="FFirma" runat="server" ErrorMessage="Por favor seleccione un archivo de imagen JPG.">*</asp:RegularExpressionValidator></td>
-        </tr>
-        <tr>
             <td>Estado</td>
             <td><asp:Label runat="server" ID="LEstado"></asp:Label></td>
         </tr>
@@ -159,7 +149,7 @@
             <td colspan="3">
                 <div id="accordion">
                     <h3><a href="#">Cargos a programar</a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GCargos" runat="server" DataSourceID="SCargos"  Width="100%"
                             DataKeyNames="id" AutoGenerateColumns="false" ShowHeader="false"
                             AllowSorting="True" onrowdatabound="GCargos_RowDataBound">
@@ -273,7 +263,7 @@
                     <asp:BoundField DataField="usuario" HeaderText="Usuario" SortExpression="usuario" ItemStyle-Wrap="false" />
                     <asp:BoundField DataField="grupo" HeaderText="Grupo" SortExpression="grupo" ItemStyle-Wrap="false" />
                     <asp:BoundField DataField="ingreso" HeaderText="Último ingreso" SortExpression="ingreso" ItemStyle-Wrap="false" />
-                    <asp:BoundField DataField="personal" HeaderText="PersonalID" SortExpression="personal" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
+                    <asp:BoundField DataField="personal" HeaderText="PersonalID" SortExpression="personal" ItemStyle-CssClass="hidet" HeaderStyle-CssClass="hidet" />
                     <asp:TemplateField HeaderText="Inactivo" SortExpression="estado" ItemStyle-HorizontalAlign="Right">
                         <ItemTemplate>
                             <asp:CheckBox ID="I" runat="server" Checked='<%# Eval("estado").ToString()=="0" %>' Enabled="false" />

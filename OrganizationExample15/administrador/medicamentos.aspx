@@ -174,7 +174,7 @@
               <td colspan="3">
               <div id="accordion">
                     <h3><a href="#">Cargo</a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GCargos" runat="server" DataSourceID="SCargos"  Width="100%"
                             DataKeyNames="id" AutoGenerateColumns="false" ShowHeader="false"
                             AllowSorting="True" onrowdatabound="GCargos_RowDataBound">
@@ -199,7 +199,7 @@
                         </asp:SqlDataSource>
                     </div>
                     <h3><a href="#">Costos por proveedor</a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GProveedor" runat="server" AutoGenerateColumns="False" Width="100%"
                             DataKeyNames="id" DataSourceID="SProveedor" AllowPaging="true" AllowSorting="true"
                             onselectedindexchanged="GResultado_SelectedIndexChanged" >
@@ -232,7 +232,7 @@
                         </asp:SqlDataSource>
                     </div>
                     <h3><a href="#">Costos y restricciones por entidad</a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GEntidades" runat="server" AutoGenerateColumns="False" DataSourceID="SEntidades"  Width="100%"
                             EmptyDataText="No se encontraron entidades" DataKeyNames="id" onrowdatabound="GEntidades_RowDataBound">
                             <RowStyle CssClass="GridRow"></RowStyle>

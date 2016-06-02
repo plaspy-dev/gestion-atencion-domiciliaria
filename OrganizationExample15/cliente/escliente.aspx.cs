@@ -177,7 +177,7 @@ public partial class cliente_escliente : System.Web.UI.Page
                 DataTable rowDataTable = rowDataView.Table;
                 for (int j = 0; j < rowDataTable.Rows.Count; j++) {
                     total++;
-                    calificacion += Convert.ToInt32(rowDataTable.Rows[j]["calificacion"]);
+                    try { calificacion += Convert.ToInt32(rowDataTable.Rows[j]["calificacion"]); } catch { }
                     encuesta += string.Format("<tr><td>{0}</td><td>{1}</td></tr>",
                         rowDataTable.Rows[j]["nombre"]
                         , rowDataTable.Rows[j]["calificacion"]);

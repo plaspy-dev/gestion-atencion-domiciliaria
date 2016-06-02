@@ -246,7 +246,7 @@
                         </SelectParameters>
                     </asp:SqlDataSource>
                     <asp:Panel runat="server" ID="PISeguimiento" Visible="false">
-                        <div id="dSeguimiento" title="Seguimiento" class="hide">
+                        <div id="dSeguimiento" title="Seguimiento" class="hidet">
                             <table>
                                 <tr>
                                     <td>Acciones pendientes</td>

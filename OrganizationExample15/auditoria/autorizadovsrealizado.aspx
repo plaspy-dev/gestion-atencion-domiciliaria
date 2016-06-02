@@ -47,7 +47,7 @@
             <asp:BoundField HeaderText="Sesiones canceladas por novedad" DataField="b" SortExpression="i,b" ItemStyle-HorizontalAlign="Right"/>
             <asp:BoundField HeaderText="Sesiones incumplidas" DataField="c" SortExpression="i,c" ItemStyle-HorizontalAlign="Right"/>
             <asp:BoundField HeaderText="Inclumplimiento" DataField="d" SortExpression="i,d" DataFormatString="{0:p}" ItemStyle-HorizontalAlign="Right"/>
-            <asp:TemplateField ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide">  
+            <asp:TemplateField ItemStyle-CssClass="hidet" HeaderStyle-CssClass="hidet">  
                 <ItemTemplate><b class="h<%# Eval("i") %>"></b></ItemTemplate>
             </asp:TemplateField>
         </Columns>

@@ -721,7 +721,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
         using (CConector conector = new CConector())
         {
-            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", conector.QueryString("SELECT id FROM usuario WHERE personal=" + Query.GetValor(idmedico)));
+            evento.Contenido = evento.Contenido.Replace("$szIdUsuario$", idmedico);
         }
 
         int total_medicamentos = 5;

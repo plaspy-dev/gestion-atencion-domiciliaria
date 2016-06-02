@@ -134,7 +134,7 @@
                 <td>
                     <asp:Panel ID="PEncuestas" runat="server">
                         <h3><a href="#"><asp:Label runat="server" ID="LEncuestas"></asp:Label></a></h3>
-                        <div class="hide">
+                        <div class="hidet">
                             <asp:GridView ID="GEncuestas" runat="server" AutoGenerateColumns="False" Width="100%"
                                 DataKeyNames="id" DataSourceID="SEncuestas" EmptyDataText="No se encontraron encuestas de este usuario" >
                                 <RowStyle CssClass="GridRow"></RowStyle>

@@ -57,7 +57,7 @@
                 Evento</td>
             <td>
                 <asp:TextBox runat="server" ID="TEvento"></asp:TextBox>
-                <asp:TextBox runat="server" ID="TEventoID" CssClass="hide"></asp:TextBox>
+                <asp:TextBox runat="server" ID="TEventoID" CssClass="hidet"></asp:TextBox>
             </td>
             <td class="nw">
                 <asp:CheckBox ID="CAmbulancia" runat="server" Text="Trasladados" />

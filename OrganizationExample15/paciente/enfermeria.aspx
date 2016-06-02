@@ -45,7 +45,7 @@
                         ErrorMessage="Por favor ingrese una fecha." SetFocusOnError="True"></asp:RequiredFieldValidator>
                         <asp:RangeValidator ID="RangeValidator1" runat="server" MinimumValue="12/12/1900" MaximumValue="12/12/2100" SetFocusOnError="true" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." Type="Date"></asp:RangeValidator>
                     <asp:HiddenField ID="HIdHoja" runat="server" />
-                    <asp:Button ID="BFecha" CssClass="hide" runat="server" CausesValidation="False" onclick="BFecha_Click" Text="->"/></td>
+                    <asp:Button ID="BFecha" CssClass="hidet" runat="server" CausesValidation="False" onclick="BFecha_Click" Text="->"/></td>
                 <td></td>
                 <td></td>
             </tr>

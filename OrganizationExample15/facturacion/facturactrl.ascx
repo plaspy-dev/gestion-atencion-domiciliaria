@@ -83,7 +83,7 @@
             <asp:UpdatePanel runat="server" ID="UA" UpdateMode="Conditional">
                 <ContentTemplate>
                     <asp:TextBox runat="server" ID="TAutorizacion"></asp:TextBox>
-                    <asp:TextBox runat="server" ID="TAutorizacionID" CssClass="hide"></asp:TextBox>
+                    <asp:TextBox runat="server" ID="TAutorizacionID" CssClass="hidet"></asp:TextBox>
                     <asp:Button runat="server" ID="BAdd" Text="+" OnClick="BAdd_Clicked" ValidationGroup="autorizacion" />
                 </ContentTemplate>
             </asp:UpdatePanel>
@@ -107,7 +107,7 @@
         <td class="tdl">Pago</td>
         <td><asp:TextBox runat="server" ID="TPago" CssClass="fecha rfecha"></asp:TextBox></td>
         <td><asp:Label runat="server" ID="LDevolucion" Text="Devolución"></asp:Label></td>
-        <td class="tdr"><asp:TextBox runat="server" ID="TDevolucion" CssClass="fecha rfecha"></asp:TextBox><asp:Button runat="server" ID="BD" CssClass="hide" OnClick="BD_OnClicked" CausesValidation="false" /></td>
+        <td class="tdr"><asp:TextBox runat="server" ID="TDevolucion" CssClass="fecha rfecha"></asp:TextBox><asp:Button runat="server" ID="BD" CssClass="hidet" OnClick="BD_OnClicked" CausesValidation="false" /></td>
     </tr>
     <asp:PlaceHolder runat="server" ID="PDevolucion" Visible="false">
     <tr>

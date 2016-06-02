@@ -3,7 +3,7 @@
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
+    <script type="text/javascript" src="<%= HomeCareVersion.JSPath("tinymce.min.js")%>"></script>
 <script type="text/javascript">
     var editor = null;
     addFunctionToStart(function() {
@@ -538,7 +538,7 @@
                 <td colspan="4">Conducta inicial (Tomada de orden médica)</td>
             </tr>
             <tr>
-                <td colspan="4"><asp:TextBox ID="TConductaInicial" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>
+                <td colspan="4"><asp:TextBox ID="TConductaInicial" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hidet"></asp:TextBox>
                 <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
                 </td>
             </tr>

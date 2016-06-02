@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -71,8 +72,6 @@ public partial class administrador_usuario : System.Web.UI.Page
 
                         GCargos.DataBind();
                         GEntidades.DataBind();
-                        IFirma.Visible = true;
-                        IFirma.ImageUrl = "~/archivo/firma.ashx?ui=" + HId.Value;
 
                         ((MasterPageI)Master).SetModificacion(HId.Value);
                     }
@@ -171,14 +170,6 @@ public partial class administrador_usuario : System.Web.UI.Page
                     if (conector.QueryMod(alertas.GetInsert()) == -1)
                         return;
                 }
-            }
-
-            if (FFirma.HasFile)
-            {
-                string archivo = ConfigurationManager.AppSettings["pathFiles"] + "firmas\\";
-                System.IO.Directory.CreateDirectory(archivo);
-                archivo += HId.Value + ".jpg";
-                FFirma.SaveAs(archivo);
             }
 
             conector.Commit();

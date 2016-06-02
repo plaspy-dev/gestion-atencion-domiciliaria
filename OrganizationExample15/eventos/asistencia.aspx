@@ -48,7 +48,7 @@
                         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <SelectedRowStyle CssClass="selecteditem" />
                     <Columns>
-                        <asp:BoundField DataField="idpersonal" SortExpression="idpersonal" HeaderText="idpersonal" ItemStyle-CssClass="hide" HeaderStyle-CssClass="hide" />
+                        <asp:BoundField DataField="idpersonal" SortExpression="idpersonal" HeaderText="idpersonal" ItemStyle-CssClass="hidet" HeaderStyle-CssClass="hidet" />
                         <asp:BoundField DataField="cargo" HeaderText="Cargo" SortExpression="cargo" ItemStyle-Wrap="false" />
                         <asp:BoundField DataField="personal" HeaderText="Funcionario" SortExpression="personal" ItemStyle-Wrap="false" ItemStyle-Width="100%" />
                         <asp:TemplateField HeaderText="Ingreso" ItemStyle-HorizontalAlign="Right">

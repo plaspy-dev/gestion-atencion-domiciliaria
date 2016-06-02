@@ -168,7 +168,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <asp:Panel runat="server" ID="PImprimir" Visible="false">
-    <div id="dialog-confirm" title="Imprimir" class="hide"> 
+    <div id="dialog-confirm" title="Imprimir" class="hidet"> 
         <p><asp:Label runat="server" ID="LImprimir"></asp:Label></p>
     </div>
     <script type="text/javascript">
@@ -232,7 +232,7 @@
                 <asp:RequiredFieldValidator ControlToValidate="TTerceroID" ErrorMessage="Por favor ingrese un proveedor." ID="RTerceroID" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <asp:RequiredFieldValidator ControlToValidate="TNombre" ErrorMessage="Por favor ingrese un nombre." ID="RNombre" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             </td>
-            <td colspan="3"><asp:TextBox runat="server" ID="TNombre"  Width="98%"></asp:TextBox><asp:TextBox runat="server" ID="TTerceroID" CssClass="hide" ontextchanged="TTerceroID_TextChanged"></asp:TextBox></td>
+            <td colspan="3"><asp:TextBox runat="server" ID="TNombre"  Width="98%"></asp:TextBox><asp:TextBox runat="server" ID="TTerceroID" CssClass="hidet" ontextchanged="TTerceroID_TextChanged"></asp:TextBox></td>
             <td class="tdr"></td>
         </tr>
         <tr>
@@ -258,7 +258,7 @@
             <td colspan="5" class="GridHeader"><asp:HiddenField runat="server" ID="HProductos" EnableViewState="false" /><asp:HiddenField runat="server" ID="HUsado" />Productos</td>
         </tr>
         <asp:PlaceHolder runat="server" ID="PProductos">
-        <tr class="GridAltRow hide" id="tRegulado">
+        <tr class="GridAltRow hidet" id="tRegulado">
             <td class="tdl"></td>
             <td colspan="4" class="tdr">Precio regulado <span id="sRegulado">$1.500</span></td>
         </tr>
@@ -268,7 +268,7 @@
         </tr>
         <tr>
             <td class="tdl">Producto<asp:RequiredFieldValidator ControlToValidate="TProductoID" ValidationGroup="producto" ErrorMessage="Por favor ingrese un producto." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-            <td colspan="3"><asp:TextBox ID="TProducto" Width="98%" runat="server"></asp:TextBox><asp:TextBox runat="server" ID="TProductoID" CssClass="hide"></asp:TextBox></td>
+            <td colspan="3"><asp:TextBox ID="TProducto" Width="98%" runat="server"></asp:TextBox><asp:TextBox runat="server" ID="TProductoID" CssClass="hidet"></asp:TextBox></td>
             <td class="tdr"><span id="sunidad"></span></td>
         </tr>
         <tr>
@@ -282,7 +282,7 @@
             <asp:RequiredFieldValidator ControlToValidate="TCosto" ValidationGroup="producto" ErrorMessage="Por favor ingrese un costo unitario." ID="RCosto" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             <asp:RegularExpressionValidator ValidationExpression="^[$][+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]+)?$" ID="RCostoF" runat="server" ValidationGroup="producto" ErrorMessage="Por favor ingrese un numero decimal." ControlToValidate="TCosto" Display="Dynamic" SetFocusOnError="True">*</asp:RegularExpressionValidator></td>
             <td nowrap=nowrap><asp:TextBox runat="server" ID="TCosto" CssClass="dinero"></asp:TextBox>
-                <asp:Button ID="BActualizar" runat="server" Text="Actualizar" CssClass="hide" CausesValidation="false" onclick="BActualizar_Click" />
+                <asp:Button ID="BActualizar" runat="server" Text="Actualizar" CssClass="hidet" CausesValidation="false" onclick="BActualizar_Click" />
                 <asp:Button ID="BAgregar" runat="server" onclick="BAgregar_Click" Text="Agregar" ValidationGroup="producto" />
             </td>
             <td class="tdr"></td>

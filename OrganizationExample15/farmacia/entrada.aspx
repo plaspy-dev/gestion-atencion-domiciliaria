@@ -179,7 +179,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
     <asp:Panel runat="server" ID="PImprimir" Visible="false">
-    <div id="dialog-confirm" title="Imprimir" class="hide"> 
+    <div id="dialog-confirm" title="Imprimir" class="hidet"> 
         <p><asp:Label runat="server" ID="LImprimir"></asp:Label></p>
     </div>
     <script type="text/javascript">
@@ -228,7 +228,7 @@
                 <asp:RequiredFieldValidator ControlToValidate="TTerceroID" ErrorMessage="Por favor ingrese un proveedor." ID="RTerceroID" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <asp:RequiredFieldValidator ControlToValidate="TNombre" ErrorMessage="Por favor ingrese un nombre." ID="RNombre" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
             </td>
-            <td colspan="3"><asp:TextBox runat="server" ID="TNombre"  Width="98%"></asp:TextBox><asp:TextBox runat="server" ID="TTerceroID" CssClass="hide" ontextchanged="TTerceroID_TextChanged"></asp:TextBox></td>
+            <td colspan="3"><asp:TextBox runat="server" ID="TNombre"  Width="98%"></asp:TextBox><asp:TextBox runat="server" ID="TTerceroID" CssClass="hidet" ontextchanged="TTerceroID_TextChanged"></asp:TextBox></td>
             <td class="tdr"></td>
         </tr>
         <tr>
@@ -259,7 +259,7 @@
         </tr>
         <tr>
             <td class="tdl">Producto<asp:RequiredFieldValidator ControlToValidate="TProductoID" ValidationGroup="producto" ErrorMessage="Por favor ingrese un producto." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-            <td colspan="3"><asp:TextBox ID="TProducto" Width="98%" runat="server"></asp:TextBox><asp:TextBox runat="server" ID="TProductoID" CssClass="hide"></asp:TextBox></td>
+            <td colspan="3"><asp:TextBox ID="TProducto" Width="98%" runat="server"></asp:TextBox><asp:TextBox runat="server" ID="TProductoID" CssClass="hidet"></asp:TextBox></td>
             <td class="tdr"></td>
         </tr>
         <tr class="GridAltRow">
@@ -300,7 +300,7 @@
             <td><asp:TextBox CssClass="tlote" runat="server" ID="TSerial"></asp:TextBox></td>
             <td>
                 <asp:TextBox runat="server" ID="TUbicacion" CssClass="tlote tubicacion"></asp:TextBox>
-                <asp:TextBox runat="server" ID="TUbicacionID" Text="0" CssClass="hide"></asp:TextBox></td>
+                <asp:TextBox runat="server" ID="TUbicacionID" Text="0" CssClass="hidet"></asp:TextBox></td>
             <td>
                 <asp:DropDownList ID="DEstado" runat="server" AppendDataBoundItems="true" CssClass="tlote"
                         DataSourceID="SEstado" DataTextField="nombre" DataValueField="id">
@@ -323,7 +323,7 @@
                 &nbsp;</td>
             <td class="tdr">
                 <asp:Button ID="BAgregar" runat="server" Text="Agregar" ValidationGroup="producto" onclick="BAgregar_Click" />
-                <asp:Button ID="BActualizar" runat="server" Text="Actualizar" CssClass="hide" CausesValidation="false" onclick="BActualizar_Click" />
+                <asp:Button ID="BActualizar" runat="server" Text="Actualizar" CssClass="hidet" CausesValidation="false" onclick="BActualizar_Click" />
             </td>
         </tr>
         <tr>
@@ -353,7 +353,7 @@
                         <asp:TemplateField HeaderText="Ubicación ">
                             <ItemTemplate>
                                 <asp:TextBox runat="server" ID="TUbicacion" CssClass="tlote tubicacion" Text='<%# Eval("NombreUbicacion") %>'></asp:TextBox>
-                                <asp:TextBox runat="server" ID="TUbicacionID" CssClass="hide" Text='<%# Eval("ubicacion") %>'></asp:TextBox>
+                                <asp:TextBox runat="server" ID="TUbicacionID" CssClass="hidet" Text='<%# Eval("ubicacion") %>'></asp:TextBox>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="szEstado" HeaderText="Estado" SortExpression="szEstado" />

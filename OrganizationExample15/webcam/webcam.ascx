@@ -39,7 +39,7 @@ object {
     });
 </script>
 <input id="aTomarFoto" type="button" value="Tomar foto" onclick="$('#dwebcam').dialog( { width: 350 });$('#bAceptar,#foto').hide();Page_IsValid=false;" />
-<div id="dwebcam" title="Tomar foto" class="hide">
+<div id="dwebcam" title="Tomar foto" class="hidet">
 <table>
     <tr>
         <td>
@@ -47,12 +47,12 @@ object {
             </div>
         </td>
         <td>
-            <img id="foto" class="foto hide" src="" alt="foto"/>
+            <img id="foto" class="foto hidet" src="" alt="foto"/>
         </td>
     </tr>
     <tr>
         <td align="right"><input type="button" value="Tomar" id="bTomar" onclick="$(this).val('Procesando...').attr('disable',true);setTimeout(function() {webcam.capture();webcam.save('<%=ResolveUrl("~/webcam/up.ashx")%>');},100);Page_IsValid=false;" />
-        <input type="button" value="Aceptar" id="bAceptar" class="hide" onclick="$('#dwebcam').dialog('close');Page_IsValid=false;" /></td>
+        <input type="button" value="Aceptar" id="bAceptar" class="hidet" onclick="$('#dwebcam').dialog('close');Page_IsValid=false;" /></td>
         <td></td>
     </tr>
 </table>

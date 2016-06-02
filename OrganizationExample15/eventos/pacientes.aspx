@@ -67,7 +67,7 @@
                 Documento</td>
             <td>
                 <asp:TextBox CssClass="entero" ID="TDocumento" runat="server"></asp:TextBox>
-                <asp:Button ID="BBuscar" CssClass="hide" runat="server" Text="..." onclick="BBuscar_Click" CausesValidation="false" />
+                <asp:Button ID="BBuscar" CssClass="hidet" runat="server" Text="..." onclick="BBuscar_Click" CausesValidation="false" />
                 <asp:RequiredFieldValidator ID="R4" runat="server" 
                     ControlToValidate="TDocumento" Display="Dynamic" 
                     ErrorMessage="Por favor ingrese un documento." SetFocusOnError="True">*</asp:RequiredFieldValidator>
@@ -153,7 +153,7 @@
                 <tr>
                     <td>Fecha<asp:RequiredFieldValidator ID="R1" runat="server" ErrorMessage="Por favor ingrese una fecha." ControlToValidate="TFecha" SetFocusOnError="True" Display="Dynamic">*</asp:RequiredFieldValidator></td>
                     <td class="nw"><asp:TextBox ID="TFecha" runat="server" CssClass="fechahora"></asp:TextBox>
-                    <asp:Button runat="server" ID="BActualizar" CausesValidation="false" Text="U" onclick="BActualizar_Click" CssClass="hide" />
+                    <asp:Button runat="server" ID="BActualizar" CausesValidation="false" Text="U" onclick="BActualizar_Click" CssClass="hidet" />
                     </td>
                 </tr>
                 <tr>
@@ -180,7 +180,7 @@
                 <tr>
                     <td>CIE10<asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese un CIE10." ControlToValidate="TCIE10Id" Display="Dynamic">*</asp:RequiredFieldValidator></td>
                     <td><asp:TextBox ID="TCIE10" runat="server" CssClass="diagnostico"  Width="99%"></asp:TextBox>
-                            <asp:TextBox ID="TCIE10Id" runat="server" CssClass="hide"></asp:TextBox></td>
+                            <asp:TextBox ID="TCIE10Id" runat="server" CssClass="hidet"></asp:TextBox></td>
                 </tr>
                 <tr>
                     <td>Diagnostico

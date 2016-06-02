@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="devolucion.ascx.cs" Inherits="equipo_devolucion" %>
 <asp:Panel runat="server" ID="PDevolucion" Visible="false">
-    <div id="dDevolucion" class="hide" align="left" title="Devolución">
+    <div id="dDevolucion" class="hidet" align="left" title="Devolución">
         <table>
             <tr>
                 <td>Fecha<asp:RequiredFieldValidator ValidationGroup="devolucion" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>

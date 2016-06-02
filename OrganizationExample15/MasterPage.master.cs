@@ -35,7 +35,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
             Type t = Type.GetType("Mono.Runtime");
             if (t != null) // se esta ejecutando en mono
-                LMonoFix.Text += string.Format("<script type='text/javascript' src='{0}'></script>", ResolveClientUrl("~/js/mono.js"));
+                LMonoFix.Text += string.Format("<script type='text/javascript' src='{0}'></script>", HomeCareVersion.JSPath("mono.js"));
 
             lPropiedades.Visible=
             MModificaciones.Visible = Usuario.GetInstance().GetPermisosRaiz("~/modificaciones.ascx") > 0;
@@ -242,6 +242,10 @@ public partial class MasterPageI : System.Web.UI.MasterPage
                 _ImprimirClicked(this, evento);
             }
 
+            evento.Contenido = evento.Contenido
+                .Replace("~/css/", HomeCareVersion.CssPath(""))
+                .Replace("~/js/", HomeCareVersion.JSPath(""))
+                .Replace("~/", ResolveUrl("~/"));
             evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
             // agregamos el script para imprimir
 #if DEBUG
@@ -282,6 +286,11 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             {
                 _ImprimirClicked(this, evento);
             }
+
+            evento.Contenido = evento.Contenido
+                .Replace("~/css/", HomeCareVersion.CssPath(""))
+                .Replace("~/js/", HomeCareVersion.JSPath(""))
+                .Replace("~/", ResolveUrl("~/"));
 
             evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
 
@@ -377,7 +386,10 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
 
         evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
-        evento.Contenido = evento.Contenido.Replace("../archivo/firma.ashx", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/archivo/firma.ashx")))
+        evento.Contenido = evento.Contenido
+                .Replace("~/css/", Server.MapPath(HomeCareVersion.CssPath("")))
+                .Replace("~/js/", Server.MapPath(HomeCareVersion.JSPath("")))
+                .Replace("~/Image/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/Image/")))
                 .Replace("../", Server.MapPath("../"))
                 .Replace("~/", Server.MapPath("~/"));
 

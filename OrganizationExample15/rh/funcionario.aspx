@@ -2,6 +2,12 @@
 <%@ Register src="~/webcam/webcam.ascx" tagname="webcam" tagprefix="webcam" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <style type="text/css">
+        .firma img {
+            max-width: 300px;
+            max-height: 100px;
+        }
+    </style>
     <script type="text/javascript">
         var webfoto = "#<%= IFoto.ClientID %>";
         $(function() {
@@ -82,8 +88,6 @@
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
-        <asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label>
-        <asp:ValidationSummary ID="ValidationSummary1" runat="server" DisplayMode="List" />
         <div id="tabpersonal" style="min-width: 750px">
             <ul>
                 <li><a href="#tabs1">Datos Personales</a></li>
@@ -92,7 +96,7 @@
                 <li><a href="#tabs4">Info Laboral</a></li>
                 <li><a href="#tabs5">Sesiones programadas</a></li>
             </ul>
-            <div id="tabs1" class="hide">
+            <div id="tabs1" class="hidet">
                 <table>
                     <tr>
                         <td>
@@ -394,9 +398,22 @@
                             </asp:SqlDataSource>
                             </td>
                     </tr>
+                    <tr>
+                        <td colspan="4" class="GridHeader">Firma</td>
+                    </tr>
+                    <tr>
+                        <td class="tdl" colspan="2"><asp:HyperLink runat="server" CssClass="firma" ID="HFirma" Visible="false" NavigateUrl="~/Image/firmas/" ImageUrl="~/Image/firmas/" Target="_blank"></asp:HyperLink></td>
+                        <td class="tdr" colspan="2"><asp:HyperLink runat="server" CssClass="firma" ID="HSello" Visible="false" NavigateUrl="~/Image/sellos/" ImageUrl="~/Image/sellos/" Target="_blank"></asp:HyperLink></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="tdb tdl tdr">
+                            <asp:FileUpload runat="server" ID="FFirma" style="display: inline-block" />
+                            <asp:CustomValidator Display="Dynamic" ControlToValidate="FFirma" ID="CustomValidator2" runat="server" ClientValidationFunction="ValidateFileUploadJPG" ErrorMessage="Por favor seleccione una imagen en formato jpg" onservervalidate="OnValidaFileJPG">*</asp:CustomValidator>
+                        </td>
+                    </tr>
                 </table>
             </div>
-            <div id="tabs2" class="hide">
+            <div id="tabs2" class="hidet">
                 <table>
                     <tr><td colspan="4">
                         <asp:CheckBox runat="server" ID="CPazySalvo" Text="Paz y Salvo?" />
@@ -558,7 +575,7 @@
                         </tr>
                     </table>
             </div>
-            <div id="tabs3" class="hide">
+            <div id="tabs3" class="hidet">
                 <table>
                     <tr>
                         <td width=1>Profesión</td>
@@ -658,7 +675,7 @@
                                     </asp:SqlDataSource>
                 </fieldset>
             </div>
-            <div id="tabs4" class="hide">
+            <div id="tabs4" class="hidet">
             <table>
                     <tr>
                         <td>
@@ -716,7 +733,7 @@
                     </asp:SqlDataSource>
                 </fieldset>
             </div>
-            <div id="tabs5" class="hide">
+            <div id="tabs5" class="hidet">
                 <fieldset>
                     <legend>Fechas</legend>
                     <table>
@@ -773,10 +790,15 @@
             </asp:SqlDataSource>
             </div>
         </div>
+        <div>
+            <asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label>
+            <asp:ValidationSummary ID="ValidationSummary1" runat="server" DisplayMode="List" />
+        </div>
+    <br />
         <div style="text-align: right">
             <asp:HiddenField ID="HId" runat="server" />
             <asp:Button ID="BAceptar" runat="server" Text="Aceptar" 
-                onclick="BAceptar_Click" /><asp:Button ID="BCancelar" 
+                onclick="BAceptar_Click" /> <asp:Button ID="BCancelar" 
                 CausesValidation="false" runat="server" Text="Cancelar" 
                 onclick="BCancelar_Click" /></div>
 </asp:Content>

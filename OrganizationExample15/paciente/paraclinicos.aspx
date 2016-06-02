@@ -3,7 +3,7 @@
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<script type="text/javascript" src="<%=ResolveUrl("~/")%>js/tinymce.min.js"></script>
+<script type="text/javascript" src="<%= HomeCareVersion.JSPath("js/tinymce.min.js")%>"></script>
 <script type="text/javascript">
     function lim() {
         var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
@@ -82,7 +82,7 @@
                 <td colspan="4">
                 <asp:Panel ID="PParaclinicos" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LParaclinicos"></asp:Label></a></h3>
-                    <div class="hide">
+                    <div class="hidet">
                         <asp:GridView ID="GParaclinicos" runat="server" AutoGenerateColumns="False"
                             DataSourceID="SParaclinicos" Width="100%"
                             EmptyDataText="No se encontraron Paraclinicos de este paciente" 
@@ -139,7 +139,7 @@
             </tr>
             <tr>
                 <td>Plan de manejo</td>
-                <td colspan="3"><asp:TextBox ID="TPlanManejo" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hide"></asp:TextBox>
+                <td colspan="3"><asp:TextBox ID="TPlanManejo" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hidet"></asp:TextBox>
                 <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
                 </td>
             </tr>

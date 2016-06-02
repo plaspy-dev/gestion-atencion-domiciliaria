@@ -72,7 +72,7 @@
     <br />
     <asp:LinkButton Text="Enviar correo de felicitación" runat="server" ID="LEnviar" onclick="LEnviar_Click"></asp:LinkButton>
     <asp:Panel runat="server" ID="PEnviar" Visible="false">
-        <div id="dEnviar" title="Enviar correo" class="hide">
+        <div id="dEnviar" title="Enviar correo" class="hidet">
             <table>
                 <tr><td>Plantilla</td><td>
                     <asp:DropDownList ID="DPlantilla" runat="server" DataSourceID="SPlantilla" 

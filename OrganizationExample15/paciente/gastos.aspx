@@ -47,7 +47,7 @@
                             <td>
                                 <asp:TextBox ID="TFecha" CssClass="fecha" runat="server"></asp:TextBox>
                                 <asp:HiddenField ID="HIdHoja" runat="server" />
-                                <asp:Button ID="BFecha" runat="server" onclick="BFecha_Click" Text="-&gt;" CssClass="hide" />
+                                <asp:Button ID="BFecha" runat="server" onclick="BFecha_Click" Text="-&gt;" CssClass="hidet" />
                             </td>
                             <td>
                                 <asp:RequiredFieldValidator ControlToValidate="TFecha" SetFocusOnError="true" Display="Dynamic" ID="RequiredFieldValidator2" runat="server" ErrorMessage="Por favor ingrese una fecha."></asp:RequiredFieldValidator>

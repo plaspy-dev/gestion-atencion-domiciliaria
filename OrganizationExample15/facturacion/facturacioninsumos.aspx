@@ -129,7 +129,7 @@
             <td>Devolución<asp:RequiredFieldValidator ControlToValidate="TDevolucion" ErrorMessage="Por favor ingrese un fecha de devolución." ID="RequiredFieldValidator5" 
 	runat="server" Display="Dynamic" SetFocusOnError="true" ValidationGroup="devolucion">*</asp:RequiredFieldValidator></td>
             <td class="tdr"><asp:TextBox runat="server" ID="TDevolucion" CssClass="fecha rfecha"></asp:TextBox>
-            <asp:Button runat="server" ID="BD" CssClass="hide" OnClick="BD_OnClicked" CausesValidation="false" />
+            <asp:Button runat="server" ID="BD" CssClass="hidet" OnClick="BD_OnClicked" CausesValidation="false" />
             </td>
         </tr>
         <asp:PlaceHolder runat="server" ID="PDevolucion" Visible="false">

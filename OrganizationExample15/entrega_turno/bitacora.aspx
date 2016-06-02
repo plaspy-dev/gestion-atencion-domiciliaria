@@ -111,7 +111,7 @@
         </tr>
         <tr>
             <td>Paciente</td>
-            <td><asp:TextBox ID="TPaciente" runat="server" Width="98%"></asp:TextBox><asp:TextBox runat="server" ID="TPacienteID" CssClass="hide"></asp:TextBox></td>
+            <td><asp:TextBox ID="TPaciente" runat="server" Width="98%"></asp:TextBox><asp:TextBox runat="server" ID="TPacienteID" CssClass="hidet"></asp:TextBox></td>
         </tr>
         <tr>
             <td colspan="2" class="celdaTitulo">Seguimiento</td>
@@ -161,7 +161,7 @@
             <td align="right" colspan="2">
             <asp:Panel runat="server" ID="PMas" Visible="false">
                 <asp:HiddenField runat="server" ID="HMasId" />
-                <div id="dMas" title="Seguimiento" align="left" class="hide">
+                <div id="dMas" title="Seguimiento" align="left" class="hidet">
                 <table>
                     <tr>
                         <td colspan="2">

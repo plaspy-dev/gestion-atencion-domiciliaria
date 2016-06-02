@@ -75,24 +75,24 @@
     </HeaderTemplate>
     <ItemTemplate>
         <h3><a href="#"><asp:Label runat="server" ID="LT" Text='<%# Eval("nombre") %>'></asp:Label> (<asp:Label runat="server" ID="LC" Text='<%# Eval("c") %>'></asp:Label><asp:Label runat="server" ID="LCo" Text='<%# Eval("s", "{0:c}") %>'></asp:Label>)</a></h3>
-        <div class="hide">
+        <div class="hidet">
             <asp:UpdatePanel runat="server" ID="UD" UpdateMode="Conditional">
                 <ContentTemplate>
                     <asp:HiddenField runat="server" ID="HId" Value='<%# Eval("id") %>' />
                     <asp:Image runat="server" ID="IL" ImageUrl="~/css/ajax-loader.gif" />
-                    <asp:Button runat="server" ID="BA" OnClick="OnClickBA" CssClass="hide" />
+                    <asp:Button runat="server" ID="BA" OnClick="OnClickBA" CssClass="hidet" />
                     <asp:Repeater runat="server" ID="RH" DataSourceID="" Visible="false" onitemdatabound="RServicios_ItemDataBound">
                         <HeaderTemplate>
                             <div class="tmpacordeon">
                         </HeaderTemplate>
                         <ItemTemplate>
                             <h3><a href="#"><asp:Label runat="server" ID="LT" Text='<%# Eval("nombre") %>'></asp:Label> (<asp:Label runat="server" ID="LC" Text='<%# Eval("c") %>'></asp:Label><asp:Label runat="server" ID="LCo" Text='<%# Eval("s", "{0:c}") %>'></asp:Label>)</a></h3>
-                            <div class="hide">
+                            <div class="hidet">
                                 <asp:UpdatePanel runat="server" ID="UD" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:HiddenField runat="server" ID="HId2" Value='<%# Eval("id") %>' />
                                     <asp:Image runat="server" ID="IL2" ImageUrl="~/css/ajax-loader.gif" />
-                                    <asp:Button runat="server" ID="BA2" OnClick="OnClickBA" CssClass="hide" />
+                                    <asp:Button runat="server" ID="BA2" OnClick="OnClickBA" CssClass="hidet" />
                                     <asp:GridView runat="server" ID="GR" Visible="false" AutoGenerateColumns="False" DataSourceID="" AllowSorting="true" OnRowDataBound="GResultados_RowDataBound" Width="100%">
                                         <RowStyle CssClass="GridRow"></RowStyle>
                                         <FooterStyle CssClass="GridFooter"></FooterStyle>
