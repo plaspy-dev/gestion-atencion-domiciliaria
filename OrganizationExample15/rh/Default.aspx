@@ -95,8 +95,12 @@
                     SelectCommand="SELECT carId AS id,carDescripcion AS nombre FROM cargo ORDER BY nombre">
                 </asp:SqlDataSource>
             </td>
-            <td>
-                &nbsp;</td>
+            <td>Digitalización</td>
+            <td><asp:DropDownList runat="server" ID="DDigitalizacion">
+                <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+                <asp:ListItem Text="Con firma" Value="1"></asp:ListItem>
+                <asp:ListItem Text="Sin firma" Value="2"></asp:ListItem>
+                </asp:DropDownList></td>
         </tr>
         <tr>
             <td>
@@ -125,7 +129,8 @@
                     SelectCommand="SELECT mteId AS id,mteDescripcion AS nombre from motivo_retiro">
                 </asp:SqlDataSource>
             </td>
-            <td>
+            <td></td>
+            <td style="text-align: right">
                 <asp:Button ID="BBuscar" runat="server" Text="Buscar" />
             </td>
         </tr>
@@ -165,7 +170,12 @@
                 SortExpression="perFechaTermContrato" DataFormatString="{0:d}" >
             <ItemStyle HorizontalAlign="Right" />
             </asp:BoundField>
-            <asp:BoundField HeaderText="Motivo retiro" DataField="retiro" SortExpression="retiro"/>
+            <asp:BoundField HeaderText="Motivo retiro" DataField="retiro" SortExpression="retiro" ItemStyle-Wrap="false" />
+            <asp:TemplateField HeaderText="Digitalización" SortExpression="digitalizacion" ItemStyle-HorizontalAlign="Right">
+                <ItemTemplate>
+                    <asp:CheckBox runat="server" ID="C" Enabled="false" Checked='<%# Eval("digitalizacion")!=DBNull.Value %>' />
+                </ItemTemplate>
+            </asp:TemplateField>
         </Columns>
     </asp:GridView>
     <div style="text-align: right;">
@@ -177,13 +187,14 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT per.perId AS id,per.perDocumento AS documento, per.perNombre AS nombres,  per.perFechaContrato AS fechacontrato,  
                 per.perFechaTermContrato,cargo.carDescripcion AS cargo,motivo_retiro.mteDescripcion AS retiro,funcionario_estados.eEstDesc AS estado,
-                per.perCelular AS celular
+                per.perCelular AS celular, per.digitalizacion
                 FROM recurso_humano per  
                 LEFT JOIN cargo on per.carId = cargo.carId    
                 LEFT JOIN disponibilidad on disponibilidad.dispId = per.dispId    
                 LEFT JOIN motivo_retiro ON (motivo_retiro.mteId=per.mteId)  
                 LEFT JOIN funcionario_estados ON (funcionario_estados.eEstId=per.eEstId) 
                 WHERE (@estado=0 OR per.eEstId=@estado)  AND(@cargo=0 or per.carId=@cargo)   
+                AND (@digitalizacion=0 OR (@digitalizacion=1 AND per.digitalizacion IS NOT NULL) OR (@digitalizacion=2 AND per.digitalizacion IS NULL))
                 and (
                 (@fretiro=1 AND (@inicio=' ' OR perFechaTermContrato>=STR_TO_DATE(@inicio, '%d/%m/%Y')) and (@fin=' ' or perFechaTermContrato<=STR_TO_DATE(@fin, '%d/%m/%Y'))) OR
                 (@fretiro=0 AND (@inicio=' ' OR per.perFechaContrato>=STR_TO_DATE(@inicio, '%d/%m/%Y')) and (@fin=' ' or per.perFechaContrato<=STR_TO_DATE(@fin, '%d/%m/%Y')))
@@ -198,6 +209,7 @@
                     <asp:ControlParameter ControlID="TFin" Name="fin" DefaultValue=" " />
                     <asp:ControlParameter ControlID="TNombres" Name="nombres" PropertyName="Text" DefaultValue=" " />
                     <asp:ControlParameter ControlID="CRetiro" Name="fretiro" PropertyName="Checked" />
+                    <asp:ControlParameter ControlID="DDigitalizacion" PropertyName="SelectedValue" Name="digitalizacion" />
                  </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

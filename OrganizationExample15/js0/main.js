@@ -7,7 +7,7 @@ function imprimir() {
     var venImp = window.open("../imp.htm", "popup");
     var botones= $(":submit,:button").filter(":visible");
     botones.hide();
-    venImp.document.write("<html><head><link href='../css/estilo.css' rel='stylesheet' type='text/css' /><style type='text/css'>body{background: #FFFFFF;}</style></head><body>" + $("#dImprimir").html() + "</body></html>");
+    venImp.document.write("<html><head><link href='~/css/estilo.css' rel='stylesheet' type='text/css' /><style type='text/css'>body{background: #FFFFFF;}</style></head><body>" + $("#dImprimir").html() + "</body></html>");
     venImp.document.close();
     venImp.print();
     venImp.close();

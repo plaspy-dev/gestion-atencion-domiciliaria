@@ -485,9 +485,13 @@ public partial class rh_funcionario : System.Web.UI.Page
             query["fin_descanso"] = "";
         }
 
+        if (FFirma.HasFile) {
+            query["digitalizacion"] = 3;
+        }
+
         using (CConector conector = new CConector())
         {
-            // conector.StartTransaction();
+            conector.StartTransaction();
 
             if (HId.Value.Length > 0)
             {
@@ -640,10 +644,10 @@ public partial class rh_funcionario : System.Web.UI.Page
                 , HId.Value ) == -1)
                 return;
 
+            conector.Commit();
             Funcionario.RemoveFuncionario(HId.Value);
         }
 
-        // conector.Commit();
         ((MasterPageI)Master).SetResultado("Usuario " + TNombres.Text + " Editado.");
     }
 

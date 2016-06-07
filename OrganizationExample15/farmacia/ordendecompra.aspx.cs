@@ -534,7 +534,9 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
 
                     Contenido = Utilidades.ReplaceContenido(Page.Controls, Contenido)
                         .Replace("../imgs/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/imgs/")))
-                        .Replace("../css/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/css/")));
+                        .Replace("../css/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/css/")))
+                        .Replace("~/imgs/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/imgs/")))
+                        .Replace("~/css/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/css/")));
 
                     mail.Body = Contenido.Replace("$szVinculo$", string.Format("{0}{1}?k={3}&pdf=1", ConfigurationManager.AppSettings["servidor"], Request.Url.AbsolutePath, HId.Value, HttpUtility.UrlEncode(Crypt.EncriptarDES(HId.Value, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY"))))).ToString();
 

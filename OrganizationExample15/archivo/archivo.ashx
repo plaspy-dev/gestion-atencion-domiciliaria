@@ -87,7 +87,7 @@ public class archivo : IHttpHandler {
             }
 
             context.Response.Cache.SetCacheability(HttpCacheability.Public);
-            context.Response.Cache.SetLastModified(modificacion.ToLocalTime());
+            context.Response.Cache.SetLastModified(modificacion);
             context.Response.Flush();
     
             context.Response.WriteFile(archivo);

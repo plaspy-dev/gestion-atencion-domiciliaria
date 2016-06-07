@@ -11,7 +11,7 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2016-06-02.
+This cut records the home-care application as archived on 2016-06-06.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
@@ -20,6 +20,7 @@ The application keeps the records used to arrange visits and coordinate the peop
 
 - Open the batch admission screen to process patient admissions. `OrganizationExample15/admisiones/amasivas.aspx`.
 - Review the list of therapeutic progress notes. `OrganizationExample15/terapeutico/evoluciones.aspx`.
+- List discharges from the wound-care clinic. `OrganizationExample15/clinicaheridas/egresos.aspx`.
 - Record the wound assessment in the clinical record. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
 - Consult and maintain wound progression notes. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
 - Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
@@ -27,7 +28,6 @@ The application keeps the records used to arrange visits and coordinate the peop
 - View and maintain access groups. `OrganizationExample15/administrador/grupos.aspx`.
 - Manage the operator accounts used to sign in. `OrganizationExample15/administrador/usuario.aspx`.
 - List cases that are waiting to be scheduled. `OrganizationExample15/programacion/sinprogramar.aspx`.
-- Open purchase orders for pharmacy supplies. `OrganizationExample15/farmacia/ordendecompra.aspx`.
 
 ### Build and local use
 
@@ -37,7 +37,7 @@ The retained site entry is `OrganizationExample15/Default.aspx`. Use fictional a
 
 ### Archive notes
 
-The archive inventory counted 40 additions, 105 edits and 32 removals.
+The archive inventory counted 0 additions, 14 edits and 0 removals.
 
 ### Framework versions
 
@@ -79,7 +79,7 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2016-06-02.
+Este corte conserva la versión de atención domiciliaria archivada el 2016-06-06.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
@@ -88,6 +88,7 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `OrganizationExample15/admisiones/amasivas.aspx`.
 - Consulta el listado de notas de evolución terapéutica. `OrganizationExample15/terapeutico/evoluciones.aspx`.
+- Consulta los egresos de la clínica de heridas. `OrganizationExample15/clinicaheridas/egresos.aspx`.
 - Registra la valoración de heridas en la ficha clínica. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
 - Consulta y actualiza las notas de evolución de heridas. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
 - Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
@@ -95,7 +96,6 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 - Consulta y administra los grupos de acceso. `OrganizationExample15/administrador/grupos.aspx`.
 - Administra las cuentas de operador para ingresar. `OrganizationExample15/administrador/usuario.aspx`.
 - Consulta los casos pendientes de programación. `OrganizationExample15/programacion/sinprogramar.aspx`.
-- Abre las órdenes de compra de insumos de farmacia. `OrganizationExample15/farmacia/ordendecompra.aspx`.
 
 ### Compilación y uso local
 
@@ -105,7 +105,7 @@ La entrada conservada del sitio es `OrganizationExample15/Default.aspx`. Usa cue
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 40 adiciones, 105 cambios y 32 retiros.
+El inventario del respaldo registró 0 adiciones, 14 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 
@@ -138,14 +138,14 @@ Consulta el historial de commits para comparar esta copia y sus notas de reconst
 
 ## Recovered local build / Compilación local recuperada
 
-The recovered Web Forms site is in `OrganizationExample15`. Run `pwsh -NoProfile -File demo/Build.ps1 -Output <new-directory>` on Windows with .NET Framework 4.8 and the .NET SDK. The build recompiles the original shared library with its own activation optional and uses the sample Web.config in the copy.
+The recovered Web Forms site is in `OrganizationExample15`. Run `pwsh -NoProfile -File demo/Build.ps1 -Output <new-directory>` on Windows with .NET Framework 4.8 and the .NET SDK. The build compiles the compatible shared library from the recovered sources and uses the sample Web.config in the copy.
 
-El sitio Web Forms recuperado se encuentra en `OrganizationExample15`. Ejecuta `pwsh -NoProfile -File demo/Build.ps1 -Output <carpeta-nueva>` en Windows con .NET Framework 4.8 y el SDK de .NET. La compilación reconstruye la biblioteca propia con la activación opcional y usa Web.config de ejemplo en la copia.
+El sitio Web Forms recuperado se encuentra en `OrganizationExample15`. Ejecuta `pwsh -NoProfile -File demo/Build.ps1 -Output <carpeta-nueva>` en Windows con .NET Framework 4.8 y el SDK de .NET. La compilación compila la biblioteca propia compatible desde las fuentes recuperadas y usa Web.config de ejemplo en la copia.
 
 The build restores iTextSharp 5.4.4 from the official NuGet package and checks its SHA-256. Set `DOMICILIO_ITEXTSHARP_PACKAGE` to the same package for an offline build.
 
 La compilación restaura iTextSharp 5.4.4 desde el paquete oficial de NuGet y coteja su SHA-256. Indica una copia del mismo paquete en `DOMICILIO_ITEXTSHARP_PACKAGE` para compilar sin Internet.
 
-Restore the archived Query contracts for selecting a table, removing a field and formatting object values. Keep the dated connector and its quoting rules. Restore the checkbox state helper that the forms call under Mono.
+Build the later shared Web Forms library verified for this archived edition. It supplies the original printing interface with StringBuilderEx. The incompatible source overlay is excluded from the build, and the application sources in Git remain intact.
 
-Recupera los contratos archivados de Query para seleccionar una tabla, retirar un campo y dar formato a valores de objeto. Conserva el conector de la edición y sus reglas de comillas. Recupera el auxiliar de casillas que llaman los formularios bajo Mono.
+Compila la revisión posterior de la biblioteca compartida cotejada para esta edición. Aporta la interfaz de impresión con StringBuilderEx. La receta aparta la superposición incompatible y conserva los archivos de la aplicación en Git.
