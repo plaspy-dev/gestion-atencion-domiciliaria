@@ -117,6 +117,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                 query += "verificacionTitulos";
                 query += "laboraActualmente";
                 query += "origen_tp";
+                query += "cargos";
 
                 using (CConector conector = new CConector())
                 {
@@ -174,6 +175,11 @@ public partial class rh_funcionario : System.Web.UI.Page
                         CPazySalvo.Checked = reader["perPazySalvo"].ToString() == "True" ? true : false;
                         Utilidades.SelectInDropDown(DEstado, reader["eEstId"]);
                         Utilidades.SelectInDropDown(DCargo, reader["carId"]);
+                        LCargo.DataBind();
+                        string []cargos = reader["cargos"].ToString().Split(',');
+                        foreach (ListItem item in LCargo.Items) {
+                            item.Selected = cargos.Contains(item.Value);
+                        }
                         TFechaContrato.Text = Query.GetFromMySQLDate(reader["perFechaContrato"]);
                         Utilidades.SelectInDropDown(DArea, reader["areaId"]);
                         // DNivelComplejidad.SelectedValue = reader["nivCompId"].ToString();
@@ -355,7 +361,7 @@ public partial class rh_funcionario : System.Web.UI.Page
 
     public bool CheckFirmas(Bitmap firmaysello, bool rotate=true) {
 
-        int ystart = 400;
+        int ystart = 420;
         int xstart = 250;
         int width = 550;
         int height = 260;
@@ -376,7 +382,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                     }
                     return false;
                 }
-                string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "firmas");
+                string archivo = Path.Combine(HomeCareVersion.FilesPath, "firmas");
                 Directory.CreateDirectory(archivo);
                 archivo = Path.Combine(archivo, HId.Value + ".jpg");
                 firma.Save(archivo);
@@ -390,7 +396,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                 if (sello == null)
                     return false;
 
-                string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "sellos");
+                string archivo = Path.Combine(HomeCareVersion.FilesPath, "sellos");
                 Directory.CreateDirectory(archivo);
                 archivo = Path.Combine(archivo, HId.Value + ".jpg");
                 sello.Save(archivo);
@@ -405,8 +411,8 @@ public partial class rh_funcionario : System.Web.UI.Page
         if (!IsValid)
             return;
 
-        if(DEstado.SelectedItem.Text=="VACACIONES" || DEstado.SelectedItem.Text=="LICENCIA TEMPORAL") {
-            if(TInicioDescanso.Text.Length==0 || TFinDescanso.Text.Length==0) {
+        if (DEstado.SelectedItem.Text == "VACACIONES" || DEstado.SelectedItem.Text == "LICENCIA TEMPORAL") {
+            if (TInicioDescanso.Text.Length == 0 || TFinDescanso.Text.Length == 0) {
                 LMensaje.Text = "Por favor ingrese una fecha de inicio y fin del descanso";
                 TInicioDescanso.Focus();
                 return;
@@ -449,10 +455,10 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["perPazySalvo"] = CPazySalvo.Checked ? "1" : "0";
         query["eEstId"] = DEstado.SelectedValue;
         query["carId"] = DCargo.SelectedValue;
+        query["cargos"]= string.Join(",", LCargo.Items.Cast<ListItem>().Where(x => x.Selected).Select(x => x.Value));
         query["tipContId"] = DTipoContrato.SelectedValue;
         query["perFechaContrato"] = Query.GetMySQLDateFormat(TFechaContrato.Text);
         query["areaId"] = DArea.SelectedValue;
-        // query["nivCompId"] = DNivelComplejidad.SelectedValue;
         query["dispId"] = DDisponibilidad.SelectedValue;
         query["perNroCuenta"] = TCuenta.Text;
         query["banId"] = DBanco.SelectedValue;
@@ -485,9 +491,20 @@ public partial class rh_funcionario : System.Web.UI.Page
             query["fin_descanso"] = "";
         }
 
+        int digitalizacion = 0;
         if (FFirma.HasFile) {
-            query["digitalizacion"] = 3;
+            digitalizacion = 3;
         }
+        if (FFirmaO.HasFile) {
+            digitalizacion |= 1;
+        }
+        if (FSelloO.HasFile) {
+            digitalizacion |= 2;
+        }
+
+        if(digitalizacion>0)
+            query["digitalizacion"] = digitalizacion;
+
 
         using (CConector conector = new CConector())
         {
@@ -509,8 +526,8 @@ public partial class rh_funcionario : System.Web.UI.Page
             
             conector.InsertModificacion(HId.Value);
 
-            Directory.CreateDirectory(Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "rh"));
-            string foto = Path.Combine(Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "rh"), HId.Value + ".jpg");
+            Directory.CreateDirectory(Path.Combine(HomeCareVersion.FilesPath, "rh"));
+            string foto = Path.Combine(Path.Combine(HomeCareVersion.FilesPath, "rh"), HId.Value + ".jpg");
             
             if (IFoto.PostBackUrl.Length == 0)
             {
@@ -541,6 +558,24 @@ public partial class rh_funcionario : System.Web.UI.Page
                         return;
                     }
                 }
+            }
+
+            if (FFirmaO.HasFile) {
+                string archivo = Path.Combine(HomeCareVersion.FilesPath, "firmas");
+                Directory.CreateDirectory(archivo);
+                archivo = Path.Combine(archivo, HId.Value + ".jpg");
+                if (File.Exists(archivo))
+                    File.Delete(archivo);
+                FFirmaO.SaveAs(archivo);
+            }
+
+            if (FSelloO.HasFile) {
+                string archivo = Path.Combine(HomeCareVersion.FilesPath, "sellos");
+                Directory.CreateDirectory(archivo);
+                archivo = Path.Combine(archivo, HId.Value + ".jpg");
+                if (File.Exists(archivo))
+                    File.Delete(archivo);
+                FSelloO.SaveAs(archivo);
             }
 
             if (conector.QueryMod("DELETE FROM recurso_humano_documento WHERE perId=" + HId.Value) == -1)

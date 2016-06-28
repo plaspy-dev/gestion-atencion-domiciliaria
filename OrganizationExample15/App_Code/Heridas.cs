@@ -58,7 +58,7 @@ public class Heridas
 
     public static string GetTemporalPath(string pacienteId, string id, bool create, string tipo)
     {
-        string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo=="e" ? "evolucion" : "valoracion");
+        string archivo = Path.Combine(HomeCareVersion.FilesPath, tipo=="e" ? "evolucion" : "valoracion");
         if (create)
             Directory.CreateDirectory(archivo);
         archivo = Path.Combine(archivo, "temp");
@@ -76,7 +76,7 @@ public class Heridas
 
     public static string GetFinalPath(string id, string idHerida, bool create, string tipo)
     {
-        string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo == "e" ? "evolucion" : "valoracion");
+        string archivo = Path.Combine(HomeCareVersion.FilesPath, tipo == "e" ? "evolucion" : "valoracion");
         if (string.IsNullOrEmpty(id))
         {
             archivo = Path.Combine(Path.GetTempPath(), tipo == "e" ? "evolucion" : "valoracion");

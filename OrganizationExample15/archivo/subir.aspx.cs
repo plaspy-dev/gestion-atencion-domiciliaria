@@ -66,7 +66,7 @@ public partial class archivo_subir : System.Web.UI.Page
             if (FFactura.HasFile)
             {
                 string filename = TFactura.Text + "/" + FFactura.FileName;
-                string file = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "digitalizacion", filename);
+                string file = Path.Combine(HomeCareVersion.FilesPath, "digitalizacion", filename);
                 Directory.CreateDirectory(Path.GetDirectoryName(file));
                 FFactura.SaveAs(file);
                 query["factura_archivo"] = filename;
@@ -103,7 +103,7 @@ public partial class archivo_subir : System.Web.UI.Page
                 if (upload.HasFile)
                 {
                     string filename = factura + "/" + CCDetallePaciente.IdPaciente + "/" + upload.FileName;
-                    string file = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "digitalizacion", filename);
+                    string file = Path.Combine(HomeCareVersion.FilesPath, "digitalizacion", filename);
                     Directory.CreateDirectory(Path.GetDirectoryName(file));
                     upload.SaveAs(file);
                     query["archivo"] = filename;

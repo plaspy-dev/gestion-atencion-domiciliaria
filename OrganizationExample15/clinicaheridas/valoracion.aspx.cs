@@ -469,7 +469,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
 
         for (int j = 0; j < archivos.Count; j++)
         {
-            string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "valoracion");
+            string archivo = Path.Combine(HomeCareVersion.FilesPath, "valoracion");
             for (int i = 0; i < archivos.Count-j; i++)
             {
                 archivo = Path.Combine(archivo, archivos[i]);

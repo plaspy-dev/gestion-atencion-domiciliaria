@@ -237,7 +237,7 @@
                     (@personalID!=0 AND per.perId=@personalID) OR (
                     @personalID=0
                     AND (@id!=0 OR @estado=0 OR per.eEstId=@estado) 
-                    AND (@id!=0 OR @cargo=0 or per.carId=@cargo) 
+                    AND (@id!=0 OR @cargo=0 OR @cargo=per.carId OR FIND_IN_SET(@cargo, per.cargos)!=0) 
                     AND (@id!=0 OR @complejidad=0 OR per.nivCompId=@complejidad)
                     AND (@id!=0 OR @disponibilidad=0 OR per.dispId=@disponibilidad)
                     AND (@id!=0 OR @area=0 OR @area=per.areaId)

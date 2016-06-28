@@ -58,7 +58,7 @@ public class Archivo
                 break;
         }
         
-        archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], tipo);
+        archivo = Path.Combine(HomeCareVersion.FilesPath, tipo);
         if (temporal == "True")
         {
             archivo = Path.Combine(archivo, "temp");

@@ -152,6 +152,20 @@
                         </td>
                     </tr>
                     <tr>
+                        <td>Estado civil</td>
+                        <td><asp:DropDownList ID="DAcompanteEstadoCivil" runat="server" AppendDataBoundItems="true" 
+                                DataSourceID="SEstadoCivil" DataTextField="nombre" DataValueField="id">
+                                <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="SEstadoCivil" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT estCivilId id, estCivDescripcion nombre,estCivCompanero companero FROM estado_civil">
+                            </asp:SqlDataSource></td>
+                        <td>Ocupación</td>
+                        <td><asp:TextBox runat="server" ID="TAcompananteOcupacion"></asp:TextBox></td>
+                    </tr>
+                    <tr>
                         <td>Dirección</td>
                         <td><asp:TextBox runat="server" ID="TDireccion"></asp:TextBox></td>
                         <td>Barrio</td>
@@ -189,6 +203,16 @@
                         </td>
                     </tr>
                     <tr>
+                        <td>Ciudad</td>
+                        <td><asp:DropDownList ID="DCiudad" runat="server" DataSourceID="SCiudad" 
+                                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                                <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
+                            </asp:DropDownList>
+                            <asp:SqlDataSource ID="SCiudad" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=139 AND szReservado IS NULL ORDER BY nombre">
+                            </asp:SqlDataSource></td>
                         <td>Localidad</td>
                         <td>
                             <asp:DropDownList ID="DLocalidad" runat="server" 
@@ -202,6 +226,8 @@
                                 SelectCommand="SELECT locId id, locDescripcion nombre FROM localidad">
                             </asp:SqlDataSource>
                         </td>
+                    </tr>
+                    <tr>
                         <td>Estrato</td>
                         <td>
                             <asp:TextBox runat="server" ID="TEstrato" MaxLength="1" CssClass="entero" Width="25px"></asp:TextBox>
@@ -248,10 +274,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="celdaTitulo" colspan="4">
-                            <asp:Label ID="Label35" runat="server" SkinID="lblsubTitulo" 
-                                Text="Información Asegurador"></asp:Label>
-                        </td>
+                        <td class="celdaTitulo" colspan="4">Información Asegurador</td>
                     </tr>
                     <tr>
                         <td>
@@ -316,6 +339,19 @@
                                 SelectCommand="SELECT id,nombre FROM varios WHERE tipo=13 AND szReservado IS NULL">
                             </asp:SqlDataSource>
                             </td>
+                    </tr>
+                    <tr>
+                        <td class="celdaTitulo" colspan="4">Información acompañante</td>
+                    </tr>
+                    <tr>
+                        <td>Nombres</td>
+                        <td><asp:TextBox runat="server" ID="TAcompananteNombres"></asp:TextBox></td>
+                        <td>Teléfono</td>
+                        <td><asp:TextBox runat="server" ID="TAcompananteTelefono"></asp:TextBox></td>
+                    </tr>
+                    <tr>
+                        <td>Dirección</td>
+                        <td><asp:TextBox runat="server" ID="TAcompananateDireccion"></asp:TextBox></td>
                     </tr>
                     <tr>
                         <td class="celdaTitulo" colspan="4">

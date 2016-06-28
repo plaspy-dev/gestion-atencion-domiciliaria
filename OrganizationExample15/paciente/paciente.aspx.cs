@@ -94,6 +94,12 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 query += "categoria";
                 query += "diabetico";
                 query += "egresoClinicaHeridas";
+                query += "acompanante_nombres";
+                query += "acompanante_telefono";
+                query += "acompanante_ocupacion";
+                query += "acompanante_estadocivil";
+                query += "acompanante_direccion";
+                query += "ciudad";
 
                 using (CConector conector = new CConector())
                 {
@@ -153,6 +159,12 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         CDiabetico.Checked = reader["diabetico"].ToString() == "1";
                         Utilidades.SelectInDropDown(DCategoria, reader["categoria"]);
                         TFechaRetiroClinicaHeridas.Text = Query.GetFromMySQLDate(reader["egresoClinicaHeridas"]);
+                        TAcompananteNombres.Text = reader["acompanante_nombres"].ToString();
+                        TAcompananteTelefono.Text = reader["acompanante_telefono"].ToString();
+                        TAcompananteOcupacion.Text = reader["acompanante_ocupacion"].ToString();
+                        TAcompananateDireccion.Text = reader["acompanante_direccion"].ToString();
+                        Utilidades.SelectInDropDown(DAcompanteEstadoCivil, reader["acompanante_estadocivil"]);
+                        Utilidades.SelectInDropDown(DCiudad, reader["ciudad"]);
 
                         if (TFechaRetiroClinicaHeridas.Text.Length > 0) {
                             TFechaRetiroClinicaHeridas.ReadOnly = !usuario.CanAdmin();
@@ -293,6 +305,12 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         query["diabetico"] = CDiabetico.Checked ? "1" : "";
         query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
         query["pacNombres"] = JoinNames(new string[] {TPApellido.Text, TSApellido.Text, TPNombre.Text, TSNombre.Text });
+        query["acompanante_nombres"] = TAcompananteNombres.Text;
+        query["acompanante_telefono"] = TAcompananteTelefono.Text;
+        query["acompanante_ocupacion"] = TAcompananteOcupacion.Text;
+        query["acompanante_estadocivil"] = DAcompanteEstadoCivil.SelectedValue;
+        query["acompanante_direccion"] = TAcompananateDireccion.Text;
+        query["ciudad"] = DCiudad.SelectedValue;
 
         using (CConector conector = new CConector())
         {
@@ -318,8 +336,8 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 HId.Value = res.ToString();
             }
 
-            Directory.CreateDirectory(Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "paciente"));
-            string foto = Path.Combine(Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "paciente"), HId.Value + ".jpg");
+            Directory.CreateDirectory(Path.Combine(HomeCareVersion.FilesPath, "paciente"));
+            string foto = Path.Combine(Path.Combine(HomeCareVersion.FilesPath, "paciente"), HId.Value + ".jpg");
             if (IFoto.PostBackUrl.Length == 0)
             {
                 File.Delete(foto);

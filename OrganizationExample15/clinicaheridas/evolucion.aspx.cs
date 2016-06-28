@@ -744,7 +744,7 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
 
         for (int j = 0; j < archivos.Count; j++)
         {
-            string archivo = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "evolucion");
+            string archivo = Path.Combine(HomeCareVersion.FilesPath, "evolucion");
             for (int i = 0; i < archivos.Count - j; i++)
             {
                 archivo = Path.Combine(archivo, archivos[i]);

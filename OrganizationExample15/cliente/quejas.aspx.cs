@@ -364,7 +364,7 @@ public partial class cliente_quejas : System.Web.UI.Page
                 query["sqrId"] = conector.QueryString("(SELECT IFNULL(MAX(sqrId)+1,1) FROM queja_reclamo_seguimiento WHERE qrId=" + HIdQuejas.Value + ")");
                 if (FArchivo.HasFile)
                 {
-                    string ruta = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "pqr");
+                    string ruta = Path.Combine(HomeCareVersion.FilesPath, "pqr");
                     Directory.CreateDirectory(ruta);
                     ruta = Path.Combine(ruta, HIdQuejas.Value);
                     Directory.CreateDirectory(ruta);
@@ -556,7 +556,7 @@ public partial class cliente_quejas : System.Web.UI.Page
         {
             HyperLink enlace= (HyperLink)e.Row.FindControl("LArchivo");
             
-            string ruta = Path.Combine(ConfigurationManager.AppSettings["pathFiles"], "pqr");
+            string ruta = Path.Combine(HomeCareVersion.FilesPath, "pqr");
             ruta = Path.Combine(ruta, HIdQuejas.Value);
             ruta = Path.Combine(ruta, GSeguimiento.DataKeys[e.Row.RowIndex].Values["sqrId"].ToString());
             try

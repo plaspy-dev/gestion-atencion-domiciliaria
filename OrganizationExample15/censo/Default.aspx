@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Censo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="censo_Default" %>
+﻿<%@ Page Title="Censo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="censo_autorizacion" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
@@ -50,6 +50,7 @@
             <td>Actividad o CUPS</td>
             <td>Área</td>
             <td>Categoría</td>
+            <td>Ciudad</td>
             <td></td>
         </tr>
         <tr>
@@ -95,6 +96,15 @@
                 SelectCommand="SELECT CAST(GROUP_CONCAT(categoria_censo.hora) AS CHAR) AS id, nombre FROM varios LEFT JOIN categoria_censo ON (categoria_censo.categoria=varios.id) WHERE tipo=33 AND szReservado IS NULL GROUP BY varios.id ORDER BY nombre;">
             </asp:SqlDataSource>
             </td>
+            <td><asp:DropDownList ID="DCiudad" runat="server" DataSourceID="SCiudad" 
+                DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+            </asp:DropDownList>
+            <asp:SqlDataSource ID="SCiudad" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=139 AND szReservado IS NULL ORDER BY nombre">
+            </asp:SqlDataSource></td>
             <td><asp:Button runat="server" ID="BBuscar" Text="Buscar" /></td>
         </tr>
         </table>
@@ -112,7 +122,7 @@
             var data = google.visualization.arrayToDataTable([
              <asp:Repeater ID="RGrafica" DataSourceID="SDiario" runat="server">
                     <HeaderTemplate>['Día', 'Cantidad']</HeaderTemplate>
-                    <ItemTemplate>,['<%# Eval("fecha", "{0:d}")%>', <%# Eval("total")%>]</ItemTemplate>
+                    <ItemTemplate>,['<%# Eval("fecha")%>', <%# Eval("total")%>]</ItemTemplate>
                 </asp:Repeater>   
             ]
             );
@@ -203,10 +213,10 @@
                             ,asegurador.entNombre,paciente.pacFechaNac
                             ,localidad.locDescripcion
                             ,paciente.locId
-                            ,GROUP_CONCAT(DISTINCT CONCAT(medicamentos.nombre, ' (', IFNULL(autorizacion_detalle.autNumSesiones,0),'-',IFNULL(autorizacion_detalle.autSesionesDia,0),')') SEPARATOR '<br/>') AS detalles
-							,'' AS cie10
-                            FROM programacion
-                            LEFT JOIN autorizacion ON (programacion.autNumero=autorizacion.autNumero)
+                            ,GROUP_CONCAT(CONCAT(medicamentos.nombre, ' (', IFNULL(autorizacion_detalle.autNumSesiones,0),'-',IFNULL(autorizacion_detalle.autSesionesDia,0),')') SEPARATOR '<br/>') AS detalles
+							
+								,'' AS cie10
+                            FROM autorizacion
                             LEFT JOIN paciente ON (autorizacion.pacId=paciente.pacId)
                             LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
                             LEFT JOIN localidad ON (localidad.locId=paciente.locId) 
@@ -215,12 +225,14 @@
 							LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
 							LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
                             WHERE 
-                            DATE(programacion.prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
-                            AND programacion.prgActivo=1
-							AND ('@area'='0' OR programacion.actId IN (@area))
-							AND (@procedimiento=0 OR programacion.actId=@procedimiento)
-							AND ('@categoria'='0' OR programacion.actId IN (@categoria))
+                            (DATE(autorizacion.autfecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                                OR DATE(IFNULL(autorizacion.autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y'))
                             AND (@asegurador=0 OR paciente.entId=@asegurador)
+                            AND (@ciudad=0 OR @ciudad=paciente.ciudad)
+							AND autorizacion.pacId=paciente.pacId 
+							AND ('@area'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId IN (@area)))
+							AND (@procedimiento=0 OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId=@procedimiento))
+							AND ('@categoria'='0' OR EXISTS (SELECT 1 FROM autorizacion_detalle WHERE autorizacion_detalle.autNumero=autorizacion.autNumero AND autorizacion_detalle.actId IN (@categoria)))
 					        GROUP BY paciente.pacId
                             ORDER BY paciente.pacNombres">
                  <SelectParameters>
@@ -228,49 +240,59 @@
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
+                     <asp:ControlParameter ControlID="DCiudad" PropertyName="SelectedValue" Name="ciudad" />
                  </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SDiario" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT DATE(prgFechaProg) AS fecha,COUNT(DISTINCT programacion.pacId) AS total 
-                                FROM programacion 
-                                LEFT JOIN paciente ON (paciente.pacId=programacion.pacId)
-                                WHERE 
-                                prgFechaProg BETWEEN STR_TO_DATE(@inicio,'%d/%m/%Y') AND STR_TO_DATE(@fin,'%d/%m/%Y')
-                            AND programacion.prgActivo=1
-                                AND ('@area'='0' OR programacion.actId IN (@area))
-                                AND (@procedimiento=0 OR programacion.actId=@procedimiento)
-                                AND ('@categoria'='0' OR programacion.actId IN (@categoria))
-                                AND (@asegurador=0 OR paciente.entId=@asegurador)
-                                GROUP BY programacion.prgFechaProg ORDER BY programacion.prgFechaProg">
+                SelectCommand="SELECT @curRow:=@curRow+INTERVAL 1 DAY AS fecha
+                        ,(SELECT COUNT(DISTINCT autorizacion.pacId) FROM autorizacion 
+	                        LEFT JOIN paciente ON (autorizacion.pacId= paciente.pacId)
+                           LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+                           LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero = autorizacion.autNumero)
+	                        WHERE @curRow BETWEEN autFecha AND IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)
+                             AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
+                             AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                             AND ('@categoria'='0' OR autorizacion_detalle.actId IN (@categoria))
+		                        AND (@asegurador=0 OR paciente.entId=@asegurador)
+                            AND (@ciudad=0 OR @ciudad=paciente.ciudad)
+                        ) AS total
+                        FROM varios,(SELECT @curRow:=STR_TO_DATE(@inicio, '%d/%m/%Y')-INTERVAL 1 DAY) r
+                        WHERE @curRow<STR_TO_DATE(@fin, '%d/%m/%Y')">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
+                     <asp:ControlParameter ControlID="DCiudad" PropertyName="SelectedValue" Name="ciudad" />
                  </SelectParameters>
     </asp:SqlDataSource>
     <asp:SqlDataSource ID="SMensual" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT DATE(prgFechaProg) AS fecha,COUNT(DISTINCT programacion.pacId) AS total 
-                                FROM programacion 
-                                LEFT JOIN paciente ON (paciente.pacId=programacion.pacId)
-                                WHERE 
-                                prgFechaProg BETWEEN STR_TO_DATE(@inicio,'%d/%m/%Y') AND STR_TO_DATE(@fin,'%d/%m/%Y')
-                            AND programacion.prgActivo=1
-                                AND ('@area'='0' OR programacion.actId IN (@area))
-                                AND (@procedimiento=0 OR programacion.actId=@procedimiento)
-                                AND ('@categoria'='0' OR programacion.actId IN (@categoria))
-                                AND (@asegurador=0 OR paciente.entId=@asegurador)
-                                GROUP BY CONCAT(YEAR(prgFechaProg),LPAD(MONTH(prgFechaProg),2,'0')) 
-                                ORDER BY programacion.prgFechaProg">
+                SelectCommand="SELECT @curRow:=@curRow+INTERVAL 1 MONTH AS fecha
+                        ,(SELECT COUNT(DISTINCT autorizacion.pacId) FROM autorizacion 
+	                        LEFT JOIN paciente ON (autorizacion.pacId= paciente.pacId)
+                           LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)
+                           LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero = autorizacion.autNumero)
+	                        WHERE 
+	                        (CONCAT(YEAR(@curRow),LPAD(MONTH(@curRow),2,'0'))=CONCAT(YEAR(autFecha),LPAD(MONTH(autFecha),2,'0'))
+		                        OR CONCAT(YEAR(@curRow),LPAD(MONTH(@curRow),2,'0'))=CONCAT(YEAR(IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)),LPAD(MONTH(IFNULL(autFechaVenc,autorizacion.autfecha+INTERVAL 30 DAY)),2,'0')))
+                             AND ('@area'='0' OR autorizacion_detalle.actId IN (@area))
+                             AND (@procedimiento=0 OR autorizacion_detalle.actId=@procedimiento)
+                             AND ('@categoria'='0' OR autorizacion_detalle.actId IN (@categoria))
+		                        AND (@asegurador=0 OR paciente.entId=@asegurador)
+                            AND (@ciudad=0 OR @ciudad=paciente.ciudad)
+                        ) AS total
+                        FROM varios,(SELECT @curRow:=STR_TO_DATE(@inicio, '%d/%m/%Y')-INTERVAL 1 MONTH) r
+                        WHERE CONCAT(YEAR(@curRow),LPAD(MONTH(@curRow),2,'0'))<CONCAT(YEAR(STR_TO_DATE(@fin, '%d/%m/%Y')),LPAD(MONTH(STR_TO_DATE(@fin, '%d/%m/%Y')),2,'0'))">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
                     <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
                     <asp:ControlParameter ControlID="DAsegurador" PropertyName="SelectedValue" Name="asegurador" />
                     <asp:ControlParameter ControlID="TProcedimientoID" Name="procedimiento" PropertyName="Text" DefaultValue="0" />
+                     <asp:ControlParameter ControlID="DCiudad" PropertyName="SelectedValue" Name="ciudad" />
                  </SelectParameters>
     </asp:SqlDataSource>
 </asp:Content>

@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-public partial class censo_Default : System.Web.UI.Page
+public partial class censo_autorizacion : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -43,11 +43,11 @@ public partial class censo_Default : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            /*e.Row.Cells[12].Text = Procedimientos.ReplaceVarios(
+            e.Row.Cells[12].Text = Procedimientos.ReplaceVarios(
                                     Procedimientos.ReplaceProcedimientos(e.Row.Cells[12].Text))
                                     .Replace(",_", "<br/>");
 
-            e.Row.Cells[9].Text = e.Row.Cells[9].Text.Replace(",_", "<br/>");*/
+            e.Row.Cells[9].Text = e.Row.Cells[9].Text.Replace(",_", "<br/>");
 
             // calculamos la edad
             int years = 0;

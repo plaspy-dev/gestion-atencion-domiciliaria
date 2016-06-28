@@ -440,8 +440,7 @@ LIMIT 1)", Query.GetValor(usuario["personal"]));
         return lista;
     }
 
-    [WebMethod]
-    public List<CJSon> GetPersonalC(String q, String c, String s)
+    public List<CJSon> GetPersonalCA(String q, String c, String s, bool activo)
     {
         List<CJSon> lista = new List<CJSon>();
         using (CConector conector = new CConector())
@@ -454,15 +453,23 @@ LIMIT 1)", Query.GetValor(usuario["personal"]));
             {
                 if (s.Length == 0)
                     return lista;
-                using(CConector conectormy= new CConector()) 
+                using (CConector conectormy = new CConector())
                     c = conectormy.QueryString("SELECT GROUP_CONCAT(area) FROM medicamento_area WHERE medicamento=" + Query.GetValor(s.Trim()));
+            }
+
+            if (activo) {
+                query += " eEstId=1 AND ";
             }
 
             if (c != null)
             {
                 if (c.Length == 0)
                     return lista;
-                query += "carId IN (" + c.Trim() + ") AND ( ";
+                query += "(carId IN (" + c + ") ";
+                foreach (string cargo in c.Trim().Split(',')) {
+                    query += string.Format(" OR FIND_IN_SET('{0}', cargos)!=0", cargo);
+                }
+                query += ") AND ( ";
             }
 
             if (split.Length == 1)
@@ -495,6 +502,19 @@ LIMIT 1)", Query.GetValor(usuario["personal"]));
             }
         }
         return lista;
+    }
+
+
+    [WebMethod]
+    public List<CJSon> GetPersonalCA(String q, String c, String s) {
+
+        return GetPersonalCA(q, c, s, true);
+    }
+
+    [WebMethod]
+    public List<CJSon> GetPersonalC(String q, String c, String s)
+    {
+        return GetPersonalCA(q, c, s, true);
     }
 
     [WebMethod]

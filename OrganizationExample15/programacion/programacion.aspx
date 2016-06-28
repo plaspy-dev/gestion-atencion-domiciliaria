@@ -5,7 +5,7 @@
 <%@ Register src="~/programacion/novedad.ascx" tagname="novedad" tagprefix="uc3" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<style>.anchomaxcombo { max-width: 500px; }</style>
+<style type="text/css">.anchomaxcombo { max-width: 500px; }</style>
 <script type="text/javascript">
     addFunctionToStart(function() {
         $("#<%= DProgramaciones.ClientID %>").sortSelect();

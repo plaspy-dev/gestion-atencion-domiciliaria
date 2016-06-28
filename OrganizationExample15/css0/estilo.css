@@ -439,7 +439,7 @@ a
 {
     border-collapse: collapse;
 }
-.anchomaxcombo 
+.anchomaxcombo, .amc
 {
     max-width: 150px;
 }
@@ -468,4 +468,11 @@ label {
 legend {
     font-size: 15px;
     margin-bottom: 5px;
+}
+
+a.btn {
+    text-decoration: none;
+}
+.btn-submit {
+    border: 1px solid #337ab7;
 }

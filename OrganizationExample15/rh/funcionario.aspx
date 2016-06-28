@@ -2,15 +2,27 @@
 <%@ Register src="~/webcam/webcam.ascx" tagname="webcam" tagprefix="webcam" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <link rel="Stylesheet" type="text/css" href="<%=HomeCareVersion.CssPath("jquery.multiselect.css")%>" />
+    <link rel="Stylesheet" type="text/css" href="<%=HomeCareVersion.CssPath("jquery.multiselect.filter.css")%>" />
+    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery.multiselect.min.js")%>"></script>
+    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery.multiselect.filter.js")%>"></script>
     <style type="text/css">
         .firma img {
             max-width: 300px;
             max-height: 100px;
         }
+        .ui-multiselect {height: 2em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: normal !important;}
     </style>
     <script type="text/javascript">
         var webfoto = "#<%= IFoto.ClientID %>";
         $(function() {
+            $("#<%= LCargo.ClientID %>").multiselect({
+                noneSelectedText: "(Ninguno)",
+                checkAllText: "Todos",
+                uncheckAllText: "Ninguno",
+                selectedText: "# seleccionados",
+                selectedList: 1
+            }).multiselectfilter({ label: "Filtro", placeholder: "Buscar" });;
             var dates = $("#<%= TDesde.ClientID %>, #<%= THasta.ClientID %>").datepicker({
                 onSelect: function(selectedDate) {
                     var option = this.id == "<%= TDesde.ClientID %>" ? "minDate" : "maxDate",
@@ -402,11 +414,20 @@
                         <td colspan="4" class="GridHeader">Firma</td>
                     </tr>
                     <tr>
-                        <td class="tdl" colspan="2"><asp:HyperLink runat="server" CssClass="firma" ID="HFirma" Visible="false" NavigateUrl="~/Image/firmas/" ImageUrl="~/Image/firmas/" Target="_blank"></asp:HyperLink></td>
+                        <td class="tdl tdr" colspan="2"><asp:HyperLink runat="server" CssClass="firma" ID="HFirma" Visible="false" NavigateUrl="~/Image/firmas/" ImageUrl="~/Image/firmas/" Target="_blank"></asp:HyperLink></td>
                         <td class="tdr" colspan="2"><asp:HyperLink runat="server" CssClass="firma" ID="HSello" Visible="false" NavigateUrl="~/Image/sellos/" ImageUrl="~/Image/sellos/" Target="_blank"></asp:HyperLink></td>
                     </tr>
                     <tr>
-                        <td colspan="4" class="tdb tdl tdr">
+                        <td class="tdl tdr tdb" colspan="2"><asp:FileUpload runat="server" ID="FFirmaO" />
+                            <asp:CustomValidator Display="Dynamic" ControlToValidate="FFirmaO" ID="CustomValidator3" runat="server" ClientValidationFunction="ValidateFileUploadJPG" ErrorMessage="Por favor seleccione una imagen en formato jpg" onservervalidate="OnValidaFileJPG">*</asp:CustomValidator>
+                        </td>
+                        <td class="tdr tdb" colspan="2"><asp:FileUpload runat="server" ID="FSelloO" />
+                            <asp:CustomValidator Display="Dynamic" ControlToValidate="FSelloO" ID="CustomValidator4" runat="server" ClientValidationFunction="ValidateFileUploadJPG" ErrorMessage="Por favor seleccione una imagen en formato jpg" onservervalidate="OnValidaFileJPG">*</asp:CustomValidator>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tdl tdb">Firma y sello</td>
+                        <td colspan="3" class="tdb tdr">
                             <asp:FileUpload runat="server" ID="FFirma" style="display: inline-block" />
                             <asp:CustomValidator Display="Dynamic" ControlToValidate="FFirma" ID="CustomValidator2" runat="server" ClientValidationFunction="ValidateFileUploadJPG" ErrorMessage="Por favor seleccione una imagen en formato jpg" onservervalidate="OnValidaFileJPG">*</asp:CustomValidator>
                         </td>
@@ -415,10 +436,8 @@
             </div>
             <div id="tabs2" class="hidet">
                 <table>
-                    <tr><td colspan="4">
-                        <asp:CheckBox runat="server" ID="CPazySalvo" Text="Paz y Salvo?" />
-                    </td></tr>
-                    <tr><td>Estado</td><td>
+                    <tr>
+                        <td>Estado</td><td>
                             <asp:DropDownList ID="DEstado" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SEstado" DataTextField="nombre" DataValueField="id">
                             </asp:DropDownList>
@@ -427,16 +446,27 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                                 SelectCommand="SELECT eEstId id,eEstDesc nombre FROM funcionario_estados">
                             </asp:SqlDataSource>
-                        </td><td>Cargo</td><td>
-                            <asp:DropDownList ID="DCargo" runat="server" AppendDataBoundItems="true" 
-                                DataSourceID="SCargo" DataTextField="nombre" DataValueField="id">
+                        </td>
+                        <td></td>
+                        <td><asp:CheckBox runat="server" ID="CPazySalvo" Text="Paz y Salvo?" /></td>
+                    </tr>
+                    <tr>
+                        <td>Cargo principal</td>
+                        <td>
+                            <asp:DropDownList runat="server" ID="DCargo" AppendDataBoundItems="true" DataSourceID="SCargo" DataTextField="nombre" DataValueField="id" CssClass="amc">
+                                <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
                             </asp:DropDownList>
+                        </td>
+                        <td>Cargos adicionales</td>
+                        <td>
+                            <asp:ListBox runat="server" ID="LCargo" DataSourceID="SCargo" DataTextField="nombre" DataValueField="id" CssClass="amc" SelectionMode="Multiple" Height="20px"></asp:ListBox>
                             <asp:SqlDataSource ID="SCargo" runat="server" 
                                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                                 SelectCommand="SELECT carId id,carDescripcion nombre FROM cargo ORDER BY 2">
                             </asp:SqlDataSource>
-                        </td></tr>
+                        </td>
+                    </tr>
                         <tr class="descanso">
                             <td colspan="4" class="celdaTitulo" id="tdDescanso">Descanso</td>
                         </tr>
@@ -447,7 +477,7 @@
                             <td><asp:TextBox runat="server" ID="TFinDescanso" CssClass="fecha"></asp:TextBox></td>
                         </tr>
                     <tr><td>Tipo Contrato</td><td>
-                        <asp:DropDownList ID="DTipoContrato" runat="server" AppendDataBoundItems="true" 
+                        <asp:DropDownList ID="DTipoContrato" runat="server" AppendDataBoundItems="true" CssClass="amc" 
                                 DataSourceID="STipoContrato" DataTextField="nombre" DataValueField="id">
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="STipoContrato" runat="server" 

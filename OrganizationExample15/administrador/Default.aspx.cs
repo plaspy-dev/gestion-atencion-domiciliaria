@@ -81,6 +81,7 @@ public partial class administrador_Default : System.Web.UI.Page
 
             parent = Add("Pacientes");
             Add("Categoría de afiliación", 13, parent);
+            Add("Ciudad", 139, parent);
             // Add("Copagos", 14, parent);
 
             parent = Add("Encuesta de satisfacción al usuario");
@@ -234,7 +235,7 @@ public partial class administrador_Default : System.Web.UI.Page
             parent = Add("Archivo");
             Add("Tipo", 138, parent);
 
-            // disponible 139
+            // disponible 140
             // OrganizationExample16
             parent = Add("OrganizationExample16 - Programación");
             Add("Programa", 10017, parent);

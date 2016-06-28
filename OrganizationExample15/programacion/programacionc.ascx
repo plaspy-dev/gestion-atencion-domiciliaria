@@ -63,7 +63,7 @@
         $("#<%= TProfesional.ClientID %>").autocomplete({
             source: function(request, response) {
                 $.ajax({
-                    url: "../webservices/servicios.asmx/GetPersonalC",
+                    url: "../webservices/servicios.asmx/GetPersonalCA",
                     data: "{ 'q': '" + request.term + "', 's': '" + $("#<%= DActividad.ClientID %>").val() + "' }",
                     dataType: "json",
                     type: "POST",

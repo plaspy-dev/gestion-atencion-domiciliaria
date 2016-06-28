@@ -4,15 +4,16 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SDG.Componentes;
 
-public partial class censo_censo_old : System.Web.UI.Page
+public partial class censo_programacion : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
         {
-            TInicio.Text = DateTime.Now.AddDays(-30).ToShortDateString();
-            TFin.Text = DateTime.Now.ToShortDateString();
+            TInicio.Text = Query.GetFromMySQLDate(DateTime.Now.AddDays(-30));
+            TFin.Text = Query.GetFromMySQLDate(DateTime.Now);
         }
         SResultados.SelectCommand = SResultados.SelectCommand.Replace("@area", DArea.SelectedValue);
         SResultados.SelectCommand = SResultados.SelectCommand.Replace("@categoria", DCategoria.SelectedValue);
@@ -43,11 +44,11 @@ public partial class censo_censo_old : System.Web.UI.Page
     {
         if (e.Row.RowIndex != -1)
         {
-            e.Row.Cells[12].Text = Procedimientos.ReplaceVarios(
+            /*e.Row.Cells[12].Text = Procedimientos.ReplaceVarios(
                                     Procedimientos.ReplaceProcedimientos(e.Row.Cells[12].Text))
                                     .Replace(",_", "<br/>");
 
-            e.Row.Cells[9].Text = e.Row.Cells[9].Text.Replace(",_", "<br/>");
+            e.Row.Cells[9].Text = e.Row.Cells[9].Text.Replace(",_", "<br/>");*/
 
             // calculamos la edad
             int years = 0;
