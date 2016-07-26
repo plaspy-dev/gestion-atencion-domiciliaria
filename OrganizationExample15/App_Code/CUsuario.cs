@@ -87,12 +87,14 @@ public class CUsuario : Usuario
                     conector.Query("UPDATE usuario SET ingreso=SYSDATE() WHERE id='" + pUsuario.GetID() + "'");
 
                     // reconstruimos el directorio una vez al dia.
+#if DEBUG
+#else
                     if (HttpRuntime.Cache["directorio_date"]==null || (DateTime)HttpRuntime.Cache["directorio_date"] != DateTime.Now.Date)
                     {
                         if (Funcionario.RebuildDirectorio(conector)) 
                             HttpRuntime.Cache["directorio_date"] = DateTime.Now.Date;
                     }
-
+#endif
                     return pUsuario;
                 }
             }

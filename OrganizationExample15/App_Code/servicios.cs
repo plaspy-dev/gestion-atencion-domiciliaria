@@ -514,7 +514,7 @@ LIMIT 1)", Query.GetValor(usuario["personal"]));
     [WebMethod]
     public List<CJSon> GetPersonalC(String q, String c, String s)
     {
-        return GetPersonalCA(q, c, s, true);
+        return GetPersonalCA(q, c, s, false);
     }
 
     [WebMethod]

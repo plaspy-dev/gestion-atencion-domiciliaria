@@ -11,7 +11,7 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2016-06-28.
+This cut records the home-care application as archived on 2016-07-25.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
@@ -19,14 +19,14 @@ The application keeps the records used to arrange visits and coordinate the peop
 ### Features in the retained source
 
 - Review visit scheduling from the census. `OrganizationExample15/censo/censo_programacion.aspx`.
-- Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
-- Open the staff record for the care team. `OrganizationExample15/rh/funcionario.aspx`.
 - Start from the census to review cases recorded in the site. `OrganizationExample15/censo/Default.aspx`.
 - Open the batch admission screen to process patient admissions. `OrganizationExample15/admisiones/amasivas.aspx`.
 - Review the list of therapeutic progress notes. `OrganizationExample15/terapeutico/evoluciones.aspx`.
 - List discharges from the wound-care clinic. `OrganizationExample15/clinicaheridas/egresos.aspx`.
 - Record the wound assessment in the clinical record. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
 - Consult and maintain wound progression notes. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
+- Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
+- Open the staff record for the care team. `OrganizationExample15/rh/funcionario.aspx`.
 - View and maintain access groups. `OrganizationExample15/administrador/grupos.aspx`.
 
 ### Build and local use
@@ -37,7 +37,7 @@ The retained site entry is `OrganizationExample15/Default.aspx`. Use fictional a
 
 ### Archive notes
 
-The archive inventory counted 14 additions, 24 edits and 2 removals.
+The archive inventory counted 0 additions, 19 edits and 0 removals.
 
 ### Framework versions
 
@@ -79,7 +79,7 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2016-06-28.
+Este corte conserva la versión de atención domiciliaria archivada el 2016-07-25.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
@@ -87,14 +87,14 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 ### Funciones en el código conservado
 
 - Consulta la programación de visitas desde el censo. `OrganizationExample15/censo/censo_programacion.aspx`.
-- Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
-- Abre la ficha del personal del equipo de atención. `OrganizationExample15/rh/funcionario.aspx`.
 - Empieza en el censo para consultar los casos registrados en el sitio. `OrganizationExample15/censo/Default.aspx`.
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `OrganizationExample15/admisiones/amasivas.aspx`.
 - Consulta el listado de notas de evolución terapéutica. `OrganizationExample15/terapeutico/evoluciones.aspx`.
 - Consulta los egresos de la clínica de heridas. `OrganizationExample15/clinicaheridas/egresos.aspx`.
 - Registra la valoración de heridas en la ficha clínica. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
 - Consulta y actualiza las notas de evolución de heridas. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
+- Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
+- Abre la ficha del personal del equipo de atención. `OrganizationExample15/rh/funcionario.aspx`.
 - Consulta y administra los grupos de acceso. `OrganizationExample15/administrador/grupos.aspx`.
 
 ### Compilación y uso local
@@ -105,7 +105,7 @@ La entrada conservada del sitio es `OrganizationExample15/Default.aspx`. Usa cue
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 14 adiciones, 24 cambios y 2 retiros.
+El inventario del respaldo registró 0 adiciones, 19 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 

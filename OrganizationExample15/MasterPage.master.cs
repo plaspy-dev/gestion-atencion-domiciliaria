@@ -245,8 +245,9 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido = evento.Contenido
                 .Replace("~/css/", HomeCareVersion.CssPath(""))
                 .Replace("~/js/", HomeCareVersion.JSPath(""))
-                .Replace("~/", ResolveUrl("~/"));
-            evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
+                .Replace("~/", ResolveUrl("~/"))
+                .Replace("$SYSDATE()$", Query.GetMySQLDateFormat(DateTime.Now, true));
+
             // agregamos el script para imprimir
 #if DEBUG
             evento.Contenido= evento.Contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {}</script></body>");
@@ -255,10 +256,18 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido = evento.Contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () { if (window.print) { window.print(); setTimeout(function () { window.close(); }, 1); } }</script></body>");
             // contenido = contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {if(window.name=='popup')return;var venImp = window.open('../imp.htm', 'popup');venImp.document.write(document.documentElement.innerHTML);venImp.document.close();if(venImp.print) {venImp.print();venImp.close();}window.history.back();}</script></body>");
 #endif
+
+            Response.ContentType = "text/html";
+            Response.BufferOutput =
+            Response.Buffer = false;
+            RenderPage.Render(Response, cph.Controls, evento.Contenido.ToString());
+            // evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
+
+
             // llamamos a la pagina cliente
-            Response.Clear();
+            /*Response.Clear();
             Response.Write(evento.Contenido);
-            Response.End();
+            Response.End();*/
         }
     }
     
@@ -271,12 +280,20 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             {
                 _ExcelClicked(this, evento);
             }
-            GridUtils.ExportExcel(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title);
+            GridUtils.ExportExcelXML(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title, "Vida");
+            // GridUtils.ExportExcel(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title);
         }
         else if (ViewState["printfile"] != null)
         {
-
-            using (StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString())))
+            bool xml = false;
+            string file = Server.MapPath(ViewState["printfile"].ToString());
+            string filexml = file.Replace(".html", ".xml").Replace(".htm", ".xml");
+            if (File.Exists(filexml))
+            {
+                file = filexml;
+                xml = true;
+            }
+            using (StreamReader reader = new StreamReader(file))
             {
                 evento.Contenido = reader.ReadToEnd();
                 reader.Close();
@@ -290,16 +307,22 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido = evento.Contenido
                 .Replace("~/css/", HomeCareVersion.CssPath(""))
                 .Replace("~/js/", HomeCareVersion.JSPath(""))
-                .Replace("~/", ResolveUrl("~/"));
+                .Replace("~/", ResolveUrl("~/"))
+                .Replace("$SYSDATE()$", Query.GetMySQLDateFormat(DateTime.Now, true));
 
-            evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
+            // evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
 
             Response.Clear();
             Response.AddHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlPathEncode(Page.Title) + ".xls");
             Response.ContentType = "application/vnd.ms-excel";
             Response.ContentEncoding = System.Text.Encoding.GetEncoding("utf-8");
-            Response.Write(evento.Contenido);
-            Response.End();
+            Response.BufferOutput= 
+            Response.Buffer = false;
+            if (xml)
+                RenderPage.RenderXML(Response, cph.Controls, evento.Contenido.ToString());
+            else RenderPage.Render(Response, cph.Controls, evento.Contenido.ToString());
+            /*Response.Write(evento.Contenido);
+            Response.End();*/
         }
     }
 
@@ -391,7 +414,8 @@ public partial class MasterPageI : System.Web.UI.MasterPage
                 .Replace("~/js/", Server.MapPath(HomeCareVersion.JSPath("")))
                 .Replace("~/Image/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/Image/")))
                 .Replace("../", Server.MapPath("../"))
-                .Replace("~/", Server.MapPath("~/"));
+                .Replace("~/", Server.MapPath("~/"))
+                .Replace("$SYSDATE()$", Query.GetMySQLDateFormat(DateTime.Now, true));
 
         Directory.SetCurrentDirectory(Path.GetDirectoryName(Server.MapPath(Request.Url.LocalPath)));
 

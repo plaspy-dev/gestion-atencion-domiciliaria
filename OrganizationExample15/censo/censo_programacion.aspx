@@ -155,6 +155,7 @@
                 DataNavigateUrlFormatString="~/paciente/paciente.aspx?pid={0}" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre"/>
             <asp:BoundField HeaderText="Edad" DataField="pacFechaNac" SortExpression="pacFechaNac" ItemStyle-HorizontalAlign="Right" />
+            <asp:BoundField HeaderText="Genero" DataField="genero" SortExpression="genero" />
             <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion" ItemStyle-Wrap="false"/>
             <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio" ItemStyle-Wrap="false"/>
             <asp:TemplateField HeaderText="Localidad" InsertVisible="False" SortExpression="locDescripcion">
@@ -167,8 +168,8 @@
             <asp:BoundField HeaderText="Teléfono móvil" DataField="pacCelular" SortExpression="pacCelular" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Inicio programa" DataField="pacFecIngPrograma" SortExpression="pacFecIngPrograma" DataFormatString="{0:d}" />
             <asp:BoundField HeaderText="CIE10" DataField="cie10" SortExpression="cie10" ItemStyle-Wrap="false" HtmlEncode="false" />
-            <asp:BoundField HeaderText="Pago directo" DataField="pdirDescripcion" SortExpression="pdirDescripcion" />
-            <asp:BoundField HeaderText="Tipo evento" DataField="tipEDescripcion" SortExpression="tipEDescripcion" />
+            <asp:BoundField HeaderText="Pago directo" DataField="pdirDescripcion" SortExpression="pdirDescripcion" ItemStyle-Wrap="false" />
+            <asp:BoundField HeaderText="Tipo evento" DataField="tipEDescripcion" SortExpression="tipEDescripcion" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Actividades (Autorizadas)" DataField="detalles" SortExpression="detalles" ItemStyle-Wrap="false" HtmlEncode="false"/>
         </Columns>
     </asp:GridView>
@@ -216,7 +217,10 @@
                             ,localidad.locDescripcion
                             ,paciente.locId
                             ,GROUP_CONCAT(DISTINCT CONCAT(medicamentos.nombre, ' (', IFNULL(autorizacion_detalle.autNumSesiones,0),'-',IFNULL(autorizacion_detalle.autSesionesDia,0),')') SEPARATOR '<br/>') AS detalles
-							,'' AS cie10
+							,CASE sexoId WHEN 1 THEN 'F' WHEN 2 THEN 'M' END AS genero
+						    ,CONCAT(paciente.cieCodDx,'-',cie10.cirDescripcion
+                                    ,'<br />',paciente.cieCodDx_1,'-',cie102.cirDescripcion
+                                    ,'<br />',paciente.cieCodDx_2,'-',cie103.cirDescripcion) AS cie10
                             FROM programacion
                             LEFT JOIN autorizacion ON (programacion.autNumero=autorizacion.autNumero)
                             LEFT JOIN paciente ON (autorizacion.pacId=paciente.pacId)
@@ -226,6 +230,9 @@
 							LEFT JOIN tipo_evento ON (paciente.tipECod = tipo_evento.tipECod)
 							LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
 							LEFT JOIN medicamentos ON (medicamentos.id=autorizacion_detalle.actId)
+                            LEFT JOIN cie10 ON (cie10.cieCodDx=paciente.cieCodDx)
+                            LEFT JOIN cie10 AS cie102 ON (cie102.cieCodDx=paciente.cieCodDx_1)
+                            LEFT JOIN cie10 AS cie103 ON (cie103.cieCodDx=paciente.cieCodDx_2)
                             WHERE 
                             DATE(programacion.prgFechaProg) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
                             AND programacion.prgActivo=1

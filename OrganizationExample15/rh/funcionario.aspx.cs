@@ -135,11 +135,11 @@ public partial class rh_funcionario : System.Web.UI.Page
                         HId.Value = reader["perId"].ToString();
                         ((MasterPageI)Master).SetModificacion(HId.Value);
 
-                        HFirma.NavigateUrl += HId.Value + ".jpg";
-                        HSello.NavigateUrl += HId.Value + ".jpg";
+                        HFirma.NavigateUrl= ResolveClientUrl(HFirma.NavigateUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
+                        HSello.NavigateUrl= ResolveClientUrl(HSello.NavigateUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
 
-                        HFirma.ImageUrl += HId.Value + ".jpg";
-                        HSello.ImageUrl += HId.Value + ".jpg";
+                        HFirma.ImageUrl= ResolveClientUrl(HFirma.ImageUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
+                        HSello.ImageUrl= ResolveClientUrl(HSello.ImageUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
 
                         TApellidos.Text = reader["perApellidos"].ToString();
                         TNombres.Text = reader["perNombres"].ToString();
