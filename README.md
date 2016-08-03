@@ -11,16 +11,15 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2016-07-25.
+This cut records the home-care application as archived on 2016-08-02.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
 
 ### Features in the retained source
 
-- Review visit scheduling from the census. `OrganizationExample15/censo/censo_programacion.aspx`.
-- Start from the census to review cases recorded in the site. `OrganizationExample15/censo/Default.aspx`.
 - Open the batch admission screen to process patient admissions. `OrganizationExample15/admisiones/amasivas.aspx`.
+- Review visit scheduling from the census. `OrganizationExample15/censo/censo_programacion.aspx`.
 - Review the list of therapeutic progress notes. `OrganizationExample15/terapeutico/evoluciones.aspx`.
 - List discharges from the wound-care clinic. `OrganizationExample15/clinicaheridas/egresos.aspx`.
 - Record the wound assessment in the clinical record. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
@@ -28,6 +27,7 @@ The application keeps the records used to arrange visits and coordinate the peop
 - Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
 - Open the staff record for the care team. `OrganizationExample15/rh/funcionario.aspx`.
 - View and maintain access groups. `OrganizationExample15/administrador/grupos.aspx`.
+- Manage the operator accounts used to sign in. `OrganizationExample15/administrador/usuario.aspx`.
 
 ### Build and local use
 
@@ -37,7 +37,7 @@ The retained site entry is `OrganizationExample15/Default.aspx`. Use fictional a
 
 ### Archive notes
 
-The archive inventory counted 0 additions, 19 edits and 0 removals.
+The archive inventory counted 9 additions, 20 edits and 0 removals.
 
 ### Framework versions
 
@@ -48,7 +48,7 @@ The archived descriptors declare these .NET Framework versions.
 
 ### Usage
 
-Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/censo/censo_programacion.aspx` and the other routes above.
+Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/admisiones/amasivas.aspx` and the other routes above.
 
 The retained entry page is `OrganizationExample15/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
 
@@ -79,16 +79,15 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2016-07-25.
+Este corte conserva la versión de atención domiciliaria archivada el 2016-08-02.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
 
 ### Funciones en el código conservado
 
-- Consulta la programación de visitas desde el censo. `OrganizationExample15/censo/censo_programacion.aspx`.
-- Empieza en el censo para consultar los casos registrados en el sitio. `OrganizationExample15/censo/Default.aspx`.
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `OrganizationExample15/admisiones/amasivas.aspx`.
+- Consulta la programación de visitas desde el censo. `OrganizationExample15/censo/censo_programacion.aspx`.
 - Consulta el listado de notas de evolución terapéutica. `OrganizationExample15/terapeutico/evoluciones.aspx`.
 - Consulta los egresos de la clínica de heridas. `OrganizationExample15/clinicaheridas/egresos.aspx`.
 - Registra la valoración de heridas en la ficha clínica. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
@@ -96,6 +95,7 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 - Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
 - Abre la ficha del personal del equipo de atención. `OrganizationExample15/rh/funcionario.aspx`.
 - Consulta y administra los grupos de acceso. `OrganizationExample15/administrador/grupos.aspx`.
+- Administra las cuentas de operador para ingresar. `OrganizationExample15/administrador/usuario.aspx`.
 
 ### Compilación y uso local
 
@@ -105,7 +105,7 @@ La entrada conservada del sitio es `OrganizationExample15/Default.aspx`. Usa cue
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 0 adiciones, 19 cambios y 0 retiros.
+El inventario del respaldo registró 9 adiciones, 20 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 
@@ -116,7 +116,7 @@ Los descriptores archivados declaran estas versiones de .NET Framework.
 
 ### Uso
 
-Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/censo/censo_programacion.aspx` y las demás rutas de arriba.
+Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/admisiones/amasivas.aspx` y las demás rutas de arriba.
 
 La portada conservada es `OrganizationExample15/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
 
