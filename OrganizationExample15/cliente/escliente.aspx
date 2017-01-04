@@ -24,6 +24,9 @@
     background-color: #FF0000;
     color: #FFF;
 }
+.r1 input {
+    color: #000;
+}
 .r2 {
     background-color: #FFCC00;
 }
@@ -108,7 +111,7 @@
             $("#<%= HCalificacion.ClientID %>").val($("#promedio").val());
             if (total > 0 && total < 0.6)
                 total = 1;
-            total = Math.round(total);
+            total = Math.floor(total);
             $("#promedio").parent().parent().attr("class", GetColor(total));
                 // .css("background-color", GetColor(total));
         }).change();
@@ -131,7 +134,7 @@
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
         <table>
             <tr>
-                <td>
+                <td colspan="4">
                     <asp:Panel ID="PEncuestas" runat="server">
                         <h3><a href="#"><asp:Label runat="server" ID="LEncuestas"></asp:Label></a></h3>
                         <div class="hidet">
@@ -171,17 +174,20 @@
                 <asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <asp:RangeValidator ControlToValidate="TFecha" runat="server" ErrorMessage="Por favor ingrese una fecha valida." MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" Display="Dynamic" Type="Date">*</asp:RangeValidator>
                 </td>
+                <td>Encuestado<asp:RequiredFieldValidator ControlToValidate="TEncuestado" ErrorMessage="Por favor ingrese a quien encuestan." ID="R1" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td><asp:TextBox runat="server" ID="TEncuestado"></asp:TextBox></td>
             </tr>
             <tr>
-                <td class="celdaTitulo">Instrucciones</td>
+                <td class="celdaTitulo" colspan="4">Instrucciones</td>
             </tr>
             <tr>
-                <td>1-Diligencie según lo establecido en el procedimiento de aplicación y análisis de las encuestas de satisfacción al cliente externo<br />
+                <td colspan="4">1-Diligencie según lo establecido en el procedimiento de aplicación y análisis de las encuestas de satisfacción al cliente externo<br />
                     2-Marque con una X según corresponda teniendo en cuenta que (1 insatisfacho total  y 5 satisfacción). o <b>'-'</b> si no aplica aplica.<br />
                     3-Diligencie la totalidad de los items</td>
             </tr>
             <tr>
-                <td>
+                <td colspan="4">
                 <asp:Repeater ID="RGrupos" runat="server" DataSourceID="SGrupos">
                     <HeaderTemplate>
                         <table class="tabla">
@@ -215,7 +221,7 @@
                     </ItemTemplate>
                     <FooterTemplate>
                             <tr>
-                                <td align="right" colspan="2"><span id="sres" style="font-weight: bold"></span> <input id="promedio" type="text" readonly="readonly" style="width: 30px;" /></td>
+                                <td align="right" colspan="3"><span id="sres" style="font-weight: bold"></span> <input id="promedio" type="text" readonly="readonly" style="width: 30px;" /></td>
                             </tr>
                         </table>
                     </FooterTemplate>
@@ -228,7 +234,7 @@
                 </td>
             </tr>
             <tr>
-                <td align="right">
+                <td align="right" colspan="4">
                     <asp:ValidationSummary runat="server" ID="VSummary" />
                     <asp:Button ID="BAceptar" runat="server" Text="Aceptar" 
                         onclick="BAceptar_Click" />

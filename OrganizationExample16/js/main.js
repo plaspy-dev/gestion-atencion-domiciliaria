@@ -75,51 +75,41 @@ function obs() {
             retorno = this.ejecutar();
         else retorno = this.ejecutar.indexOf("return") == -1 ? eval(this.ejecutar) : eval("(function(){" + this.ejecutar + "})()");
     } else {
+        $(this).closest('div[role="dialog"]').modal('hide');
         return true;
     }
     if ((typeof retorno === 'undefined' || retorno) && (typeof Page_IsValid === 'undefined' || Page_IsValid || typeof this.ejecutar === 'undefined')) {
         hiddenButton = this;
         $(this).hide();
         $(this).after('<input type="button" id="dummybutton" disabled="disabled" value="' + $(this).val() + '" class="' + $(this).attr('class') + '" />');
+        $(this).closest('div[role="dialog"]').modal('hide');
     }
     return retorno;
 }
 
+$(function () {
+    $(document).on('shown.bs.modal', function (e, i) {
+        var $input = $(e.target).find(":input:first");
+        if ($input.attr("data-dismiss") == "modal")
+            $(e.target).find(":input:eq(1)").focus();
+        else $input.focus();
+    });
+});
+
 function inicio() {
 
     // todos los campos hora
-    $(".hora:not(.rhora)").mask("99:99").timepicker().addClass("rhora");
-
-
-        /*$(".hora").mask("99:99");
-        $(".hora").timeEntry({ show24Hours: true });
-        $(".hora").timepicker({ hourText: 'Horas',
-        minuteText: 'Minutos',
-        amPmText: ['AM', 'PM']
-        });
-        // todos los campos fecha
-        $(".fecha").mask("99/99/9999");*/
-        // $(".fecha").datepicker({ onSelect: function() { } });
-        /*$.datepicker.setDefaults($.datepicker.regional["es"]);
-        $(".fecha").datepicker();
-        $(".fechahora").datetimepicker();
-        $(".hora").timepicker();
-
-        // todos los campos entero
-        $('.entero').autoNumeric('init', { vMin: 0, mDec: 0, aSep: '' });
-
-        // todos los reales
-        $('.float').autoNumeric('init', { vMin: 0, aSep: '', mDec: 8, aPad: false });
-
-        // dinero
-        $('.dinero').autoNumeric('init', { vMin: 0, aSign: '$', aPad: false });*/
-        
+    $(".hora:not(.rhora)").wrap('<div class="form-inline wdt"><div class="form-group has-feedback"></div></div>')
+        .mask("99:99").datetimepicker({ locale: 'es', format: 'HH:mm', showTodayButton: true, showClear: true }).addClass("rhora")
+        .parent().append('<span class="glyphicon glyphicon-calendar form-control-feedback"></span>');
         
     // todos los campos fecha
-        $(".fecha:not(.rfecha)").mask("99/99/9999").
-        datepicker({ onSelect: function () { $(this).change(); } }).addClass("rfecha");
-    // $(".fecha").datepicker({ onSelect: function() { } });
-        $(".fechahora:not(.rfechahora)").datetimepicker({ hour: new Date().getHours(), minute: new Date().getMinutes(), onSelect: function () { $(this).change(); } }).addClass("rfechahora");
+    $(".fecha:not(.rfecha)").wrap('<div class="form-inline wdt"><div class="form-group has-feedback"></div></div>')
+        .mask("99/99/9999").datetimepicker({ locale: 'es', format: 'L', showTodayButton: true, showClear: true }).addClass("rfecha")
+        .parent().append('<span class="glyphicon glyphicon-calendar form-control-feedback"></span>');
+    $(".fechahora:not(.rfechahora)").wrap('<div class="form-inline wdt"><div class="form-group has-feedback"></div></div>')
+        .datetimepicker({ locale: 'es', format: 'DD/MM/YYYY HH:mm', showTodayButton: true, showClear: true }).addClass("rfechahora")
+        .parent().append('<span class="glyphicon glyphicon-calendar form-control-feedback"></span>');
     // todos los campos entero
     $('.entero:not(.rentero)').autoNumeric('init', { vMin: 0, mDec: 0, aSep: '' }).addClass("rentero");
 
@@ -150,7 +140,7 @@ function inicio() {
     });
     
     // todos los eliminar
-    $('input[src*="eliminar.gif"]').each(function(i) {
+    $('input[src*="eliminar.gif"],.btn-danger').each(function (i) {
         if (this.eliminar == undefined) {
             this.eliminar = $(this).attr("onclick");
             $(this).unbind('click').attr("onclick", "").click(function () {
@@ -173,33 +163,18 @@ function inicio() {
             this.ejecutar = $(this).attr("onclick");
             if (typeof this.ejecutar !== 'undefined' && this.ejecutar == "")
                 this.ejecutar = undefined;
-            //            if ($(this).data("events")) {
-            //                $.each($(this).data("events"), function(evento, event) {
-            //                    alert(evento);
-            //                    $.each(event, function(j, h) {
-            //                        alert(h.handler);
-            //                    });
-            //                });
-            //            }
-            $(this)
-            // .unbind('click')
-            .removeAttr("onclick").click(obs);
+            $(this).removeAttr("onclick").click(obs);
         }
     });
 
     for (var funcionInicio in funcionesInicio) {
         funcionesInicio[funcionInicio]();
     }
-    
-    // funcion propia de la pagina
-    /*if (typeof iniciopagina == "function") {
-        iniciopagina();
-    }*/
 
     // capturamos el enter
     $('input,select').keydown(function(event) { //event==Keyevent
         if (event.which == 13) {
-            var inputs = $(this).closest('form').find(':input:visible');
+            var inputs = $(this).closest('form').find(':input:visible[tabindex!="-1"]');
             if ($(this).attr('type') != 'button' &&
                 $(this).attr('type') != 'submit') {
                 inputs.eq(inputs.index(this) + 1).focus();
@@ -244,6 +219,19 @@ function ValidateFileUploadJPG(Source, args) {
         args.IsValid = Extension == "jpg" || Extension == "jpeg"; // Valid file type
     }
 }
+
+function ValidateFileUploadJPGPDF(Source, args) {
+
+    var FileUploadPath = args.Value;
+    if (FileUploadPath == '') {
+        // There is no file selected 
+        args.IsValid = false;
+    } else {
+        var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+        args.IsValid = Extension == "jpg" || Extension == "jpeg" || Extension=="pdf"; // Valid file type
+    }
+}
+
 function restoreSummit() {
 
     $("#dummybutton").remove();
@@ -251,27 +239,6 @@ function restoreSummit() {
     hiddenButton = null;
     return $(h).show();
 }
-
-/*function EndRequestHandler(sender, args) {
-    //if UpdatePanel error occurs...
-    if (args.get_error() != undefined) {
-        var Error = "[Code]:" +
-                    args.get_response().get_statusCode() + "  [Message]: " +
-                    args.get_error().message;
-        //Hide default ajax error popup
-        args.set_errorHandled(true);
-        //Show your custom popup or...
-        if (confirm("Se ha producido un error con el servidor, ¿desea reintentar?")) {
-            restoreSummit().click();
-        } else {
-            restoreSummit();
-        }
-    } else restoreSummit();
-}
-
-$(function() {
-    Sys.WebForms.PageRequestManager.getInstance().add_endRequest(EndRequestHandler);
-});*/
 
 $.fn.sortSelect = function() {
     var sel = this.val();

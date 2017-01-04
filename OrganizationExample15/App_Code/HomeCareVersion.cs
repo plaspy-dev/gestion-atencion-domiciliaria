@@ -9,8 +9,8 @@ using System.Web;
 /// </summary>
 public class HomeCareVersion
 {
-    public const string Number="1.852";
-    public const int VERSION_FILES = 0;
+    public const string Number="1.86";
+    public const int VERSION_FILES = 1;
     public static string FilesPath= ConfigurationManager.AppSettings["pathFiles"];
 
     public static string CssPath(string file)

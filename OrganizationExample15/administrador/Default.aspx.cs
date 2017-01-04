@@ -123,6 +123,7 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Estado productos", 34, parent);
             Add("Grupos", 35, parent);
             Add("Centro de costos", 83, parent);
+            Add("Zonas", 140, parent);
 
             parent = Add("Valoración de heridas");
             Add("Color del estoma", 42, parent);
@@ -235,7 +236,7 @@ public partial class administrador_Default : System.Web.UI.Page
             parent = Add("Archivo");
             Add("Tipo", 138, parent);
 
-            // disponible 140
+            // disponible 141
             // OrganizationExample16
             parent = Add("OrganizationExample16 - Programación");
             Add("Programa", 10017, parent);

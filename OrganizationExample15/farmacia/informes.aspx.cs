@@ -249,10 +249,10 @@ public partial class farmacia_informes : System.Web.UI.Page
             // para el filtro por usuarios.
             ViewState["entidades"] = usuario["entidades"];
             if (string.IsNullOrEmpty(Request.QueryString["d"]))
-                THasta.Text = DateTime.Now.ToShortDateString();
+                THasta.Text = Query.GetFromMySQLDate(DateTime.Now);
             else THasta.Text = Request.QueryString["d"];
             if (string.IsNullOrEmpty(Request.QueryString["f"]))
-                TDesde.Text = DateTime.Now.AddDays(-30).ToShortDateString();
+                TDesde.Text = Query.GetFromMySQLDate(DateTime.Now.AddDays(-30));
             else TDesde.Text = Request.QueryString["f"];
             if (!string.IsNullOrEmpty(Request.QueryString["p"]))
             {

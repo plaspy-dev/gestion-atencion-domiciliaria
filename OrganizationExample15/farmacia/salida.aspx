@@ -191,6 +191,19 @@
             <td colspan="3"><uc1:pacienteSimple runat="server" ID="UCPaciente" /></td>
         </tr>
         <tr>
+            <td>Zona<asp:RequiredFieldValidator ControlToValidate="DZona" ErrorMessage="Por favor seleccione una zona." ID="R1" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+            <td><asp:DropDownList ID="DZona" runat="server" DataSourceID="SZona" AppendDataBoundItems="true" 
+                    DataTextField="nombre" DataValueField="id">
+                    <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SZona" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                    ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT id, nombre FROM varios WHERE tipo=140 AND szReservado IS NULL ORDER BY nombre">
+                </asp:SqlDataSource></td>
+        </tr>
+        <tr>
             <td colspan="5" class="tdb">&nbsp;</td>
         </tr>
         <tr>

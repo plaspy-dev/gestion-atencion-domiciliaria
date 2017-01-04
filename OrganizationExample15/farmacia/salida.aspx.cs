@@ -94,6 +94,7 @@ public partial class farmacia_salida : System.Web.UI.Page
                     query += "paciente";
                     query += "estado";
                     query += "centro_costos";
+                    query += "zona";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["si"])));
                     if (reader != null && reader.Read())
@@ -106,6 +107,7 @@ public partial class farmacia_salida : System.Web.UI.Page
                         TEntrega.Text = Query.GetFromMySQLDate(reader["entrega"]);
                         PAnulado.Visible = reader["estado"].ToString() != "";
                         Utilidades.SelectInDropDown(DCCosto, reader["centro_costos"]);
+                        Utilidades.SelectInDropDown(DZona, reader["zona"]);
 
                         UCPaciente.IdPaciente= reader["paciente"].ToString();
                         ROrganizationExample15.Checked = string.IsNullOrEmpty(UCPaciente.IdPaciente);
@@ -309,6 +311,7 @@ public partial class farmacia_salida : System.Web.UI.Page
             query["entrega"] = Query.GetMySQLDateFormat(configuracion.bManejarEntrega ? TEntrega.Text : TFecha.Text);
             query["paciente"] = RPaciente.Checked ? UCPaciente.IdPaciente : "";
             query["centro_costos"] = DCCosto.SelectedValue;
+            query["zona"] = DZona.SelectedValue;
             if (sender == BAnular)
                 query["estado"] = "-1";
 

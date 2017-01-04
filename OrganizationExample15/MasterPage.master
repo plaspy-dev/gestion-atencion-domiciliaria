@@ -226,6 +226,7 @@
                             <asp:PostBackTrigger ControlID="lnkGuardar" />
                             <asp:PostBackTrigger ControlID="lnkPDF" />
                             <asp:PostBackTrigger ControlID="lnkExcel" />
+                            <asp:PostBackTrigger ControlID="lnkImp" />
                         </Triggers>
                     </asp:UpdatePanel>
                 </td>

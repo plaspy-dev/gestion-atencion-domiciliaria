@@ -69,8 +69,10 @@ public partial class paciente_barthel : System.Web.UI.Page
                         TFecha.Focus();
                         BAceptar.Enabled = usuario.CanInsert();
                         if (!string.IsNullOrEmpty(Request.QueryString["f"]))
+                        {
                             TFecha.Text = Query.GetFromMySQLDate(Query.GetFromMySQLDate(Request.QueryString["f"]), true);
-                        else TFecha.Text = Query.GetFromMySQLDate(DateTime.Now, true);
+                            TFecha.ReadOnly = !usuario.CanAdmin();
+                        } else TFecha.Text = Query.GetFromMySQLDate(DateTime.Now, true);
 
                         if (!string.IsNullOrEmpty(Request.QueryString["bid"]))
                         {
@@ -89,6 +91,7 @@ public partial class paciente_barthel : System.Web.UI.Page
 
                                 HIdIndice.Value = readermysql["id"].ToString();
                                 TFecha.Text = Query.GetFromMySQLDate(readermysql["fecha"], true);
+                                TFecha.ReadOnly = false;
                                 Utilidades.SelectInDropDown(DIndice, readermysql["tipo"]);
                                 DIndice_SelectedIndexChanged(sender, e);
 
@@ -123,6 +126,7 @@ public partial class paciente_barthel : System.Web.UI.Page
     {
         if (!IsValid)
             return;
+
         Query indice = new Query("indice_barthel");
         using (CConector conector = new CConector())
         {

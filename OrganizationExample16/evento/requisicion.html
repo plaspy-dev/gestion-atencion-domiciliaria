@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Requisición</title>
+<style>
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	border: 1px solid #ccc;
+}
+.tdb {
+	border-bottom: 1px solid #ccc;
+}
+.c {
+	text-align: center;
+}
+.r {
+	text-align: right;
+}
+.firma {
+	margin-right: 10px;
+	margin-left: 10px;
+	width: 200px;
+	display: inline-block;
+}
+.tgrid {
+	width: 100%;
+	border: 1px solid #ccc;
+	border-collapse: collapse;
+}
+.tgrid td, .tgrid tr {
+	border: 1px solid #ccc;
+}
+.tgrid tr td:not(:first-child) {
+	text-align: right;
+}
+</style>
+</head>
+<body>
+<table class="table">
+	<tr>
+    	<td><img src="~/img/OrganizationExample15.jpg" style="max-height: 50px" /></td>
+        <td colspan="2" style="text-align:center; font-size: 30px; font-weight: bold">REQUISICION INTERNA DE TRABAJO</td>
+        <td><img src="~/img/logo.png" style="max-height: 50px" /></td>
+    </tr>
+    <tr>
+    	<td></td>
+        <td colspan="2" style="text-align:center; font-size: 15px; font-weight: bold">EVENTO Y/O AGLOMERACIÓN DE PÚBLICO</td>
+        <td>No. $RequisicionId$</td>
+    </tr>
+    <tr>
+    	<td>Evento</td>
+        <td colspan="3">$TNombre$</td>
+    </tr>
+    <tr>
+    	<td>Fecha</td>
+        <td>$TRFecha$</td>
+        <td>Horario</td>
+        <td>$THDesde$-$THHasta$</td>
+    </tr>
+    <tr>
+    	<td>Tipo</td>
+        <td>$DTipo$</td>
+        <td>Productor</td>
+        <td>$TProductor$</td>
+    </tr>
+    <tr>
+    	<td>Empresario</td>
+        <td>$TEmpresario$</td>
+        <td>Responsable Pago</td>
+        <td>$TResponsable$</td>
+    </tr>
+    <tr>
+    	<td>Telefono</td>
+        <td>$TResponsableT$</td>
+        <td>Mail</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+    	<td>Facturar a</td>
+        <td class="tdb"></td>
+        <td>NIT</td>
+        <td class="tdb"></td>
+    </tr>
+    <tr>
+    	<td>Cotizacion NIT</td>
+        <td class="tdb"></td>
+        <td>Factura</td>
+        <td class="tdb"></td>
+    </tr>
+    <tr>
+	    <td colspan="4">&nbsp;</td>
+    </tr>
+    <tr>
+    	<td colspan="4">$GServicios$</td>
+    </tr>
+    <tr>
+    	<td></td>
+        <td></td>
+        <td>Total</td>
+        <td class="r">$TRTotal$</td>
+    </tr>
+    <tr>
+	    <td colspan="4">&nbsp;</td>
+    </tr>
+    <tr>
+    	<td colspan="4">NOTA: Se Aclara que ninguna requisición de trabajo será tenida en cuenta para programación sin una ORDEN DE TRABAJO expedida y firmada por el responsable del evento, así como la documentación requerida para la expedición de la factura.</td>
+    </tr>
+    <tr>
+	    <td colspan="4">&nbsp;</td>
+    </tr>
+    <tr>
+<td colspan="4">&nbsp;</td>
+    </tr>
+    <tr>
+<td colspan="4">&nbsp;</td>
+    </tr>
+    <tr>
+<td colspan="4">&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="2" class="c"><div class="tdb firma"></div></td>
+        <td colspan="2" class="c"><div class="tdb firma"></div></td>
+    </tr>
+    <tr>
+        <td colspan="2" class="c">Director evento Gestión de atención domiciliaria</td>
+        <td colspan="2" class="c">Aprobado Gerencia</td>
+    </tr>
+</table>
+</body>
+</html>

@@ -28,6 +28,7 @@ public partial class cliente_escliente : System.Web.UI.Page
                     query += "id";
                     query += "paciente";
                     query += "fecha";
+                    query += "encuestado";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["eid"])));
                     if (reader != null && reader.Read())
@@ -44,6 +45,7 @@ public partial class cliente_escliente : System.Web.UI.Page
 
                         HIdEncuesta.Value = reader["id"].ToString();
                         TFecha.Text = Query.GetFromMySQLDate(reader["fecha"]);
+                        TEncuestado.Text = reader["encuestado"].ToString();
 
                         ((MasterPageI)Master).SetModificacion(HIdEncuesta.Value);
                     }
@@ -83,6 +85,7 @@ public partial class cliente_escliente : System.Web.UI.Page
         {
 
             query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
+            query["encuestado"] = TEncuestado.Text;
             query["calificacion"] = HCalificacion.Value;
 
             if (HIdEncuesta.Value.Length == 0)

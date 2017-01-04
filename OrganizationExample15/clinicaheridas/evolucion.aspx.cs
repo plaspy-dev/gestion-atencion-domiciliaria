@@ -117,8 +117,10 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
                             LUltimaEvolucion.Text = Query.GetFromMySQLDate(reader["fecha"]);
                             id = reader["id"].ToString();
 
-                            TimeSpan ts = fecha - DateTime.Parse(LUltimaEvolucion.Text);
-                            LDiasEvolucion2.Text = ts.Days.ToString();
+                            try {
+                                TimeSpan ts = fecha - DateTime.Parse(LUltimaEvolucion.Text);
+                                LDiasEvolucion2.Text = ts.Days.ToString();
+                            } catch { }
 
                             query = new Query("evolucion_herida_herida");
                             condicion = "evolucion=" + Query.GetValor(id);

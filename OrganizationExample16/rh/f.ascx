@@ -1,0 +1,1 @@
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="f.ascx.cs" Inherits="rh_f" %>

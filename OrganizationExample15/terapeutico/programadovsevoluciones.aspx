@@ -89,7 +89,7 @@
                             AND (NOT EXISTS (SELECT 1 FROM evolucion_terapeutivo WHERE evolucion_terapeutivo.autorizacion=programacion.autNumero 
                                     AND evolucion_terapeutivo.tipo=programacion.actId
                                     AND DATE(evolucion_terapeutivo.fecha)=DATE(programacion.prgFechaProg) LIMIT 1
-                                ) OR NOT EXISTS (SELECT 1 FROM valoracionat WHERE valoracionat.autorizacion=programacion.autNumero 
+                                ) AND NOT EXISTS (SELECT 1 FROM valoracionat WHERE valoracionat.autorizacion=programacion.autNumero 
                                     AND valoracionat.tipo=programacion.actId
                                     AND DATE(valoracionat.inicio)=DATE(programacion.prgFechaProg) LIMIT 1
                                 ))

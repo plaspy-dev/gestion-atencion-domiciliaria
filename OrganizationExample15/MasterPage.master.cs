@@ -212,30 +212,23 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
     protected void lnkImp_Click(object sender, EventArgs e) {
 
+        PrintEventArgs evento = new PrintEventArgs();
+        bool close = true;
+
         if (ViewState["printgridview"] != null)
         {
-            GridView view = (GridView) Utilidades.FindControlForId(Controls,ViewState["printgridview"].ToString());
-            if (view != null)
-            {
-                bool paging = view.AllowPaging;
-                if (paging)
-                {
-                    view.AllowPaging = false;
-                    view.DataBind();
-                }
-                LAuxDiag.Text = "<script type='text/javascript'>\n";
-                LAuxDiag.Text += "$(function() { imprimir(); });\n";
-                LAuxDiag.Text += "</script>\n";
-            }
-        }
-        else if (ViewState["printfile"] != null)
-        {
-            PrintEventArgs evento = new PrintEventArgs();
+            // GridView view = (GridView) Utilidades.FindControlForId(Controls,ViewState["printgridview"].ToString());
+            evento.Contenido = string.Format("<html><body>${0}$</body></html>", ViewState["printgridview"]);
+            close = false;
+        } else if (ViewState["printfile"] != null) {
             using (StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString())))
             {
                 evento.Contenido = reader.ReadToEnd();
                 reader.Close();
             }
+        }
+
+        if (evento.Contenido.StringBuilder!=null && evento.Contenido.StringBuilder.Length != 0) {
 
             if (_ImprimirClicked != null)
             {
@@ -253,7 +246,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido= evento.Contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {}</script></body>");
             // contenido= contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {if(window.name=='popup')return;var venImp = window.open('../imp.htm', 'popup');venImp.document.write(document.documentElement.innerHTML);venImp.document.close();if(venImp.print) {venImp.print();}window.history.back();}</script></body>");
 #else
-            evento.Contenido = evento.Contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () { if (window.print) { window.print(); setTimeout(function () { window.close(); }, 1); } }</script></body>");
+            evento.Contenido = evento.Contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () { if (window.print) { window.print(); {0} } }</script></body>".Replace("{0}", close ? "setTimeout(function () { window.close(); }, 1);": ""));
             // contenido = contenido.Replace("</body>", "<script type='text/javascript'>window.onload = function () {if(window.name=='popup')return;var venImp = window.open('../imp.htm', 'popup');venImp.document.write(document.documentElement.innerHTML);venImp.document.close();if(venImp.print) {venImp.print();venImp.close();}window.history.back();}</script></body>");
 #endif
 
@@ -262,12 +255,6 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             Response.Buffer = false;
             RenderPage.Render(Response, cph.Controls, evento.Contenido.ToString());
             // evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
-
-
-            // llamamos a la pagina cliente
-            /*Response.Clear();
-            Response.Write(evento.Contenido);
-            Response.End();*/
         }
     }
     
@@ -326,61 +313,6 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         }
     }
 
-    private static void ErrorDataHandler(object sendingProcess, DataReceivedEventArgs errLine)
-    {
-        if (errLine.Data == null)
-            return;
-        Logs.WriteLog(errLine.Data);
-    }
-
-    private static void OutputDataHandler(object sendingProcess, DataReceivedEventArgs outputLine)
-    {
-        if (outputLine.Data == null)
-            return;
-        Logs.WriteLog(outputLine.Data);
-    }
-
-    public static int Execute(string ExeName, string arguments)
-    {
-
-        // Console.WriteLine(ExeName + " " + arguments);
-        // return 0;
-        // Prepare the process to run
-        ProcessStartInfo start = new ProcessStartInfo();
-        // Enter in the command line arguments, everything you would enter after the executable name itself
-        start.Arguments = arguments;
-        // Enter the executable to run, including the complete path
-        start.FileName = ExeName;
-        start.UseShellExecute = false;
-        start.RedirectStandardOutput = true;
-        start.RedirectStandardError = true;
-        // Do you want to show a console window?
-        start.WindowStyle = ProcessWindowStyle.Hidden;
-        start.CreateNoWindow = true;
-
-        int exitCode = -1;
-
-        // Run the external process & wait for it to finish
-        using (Process proc = Process.Start(start))
-        {
-            proc.ErrorDataReceived += ErrorDataHandler;
-            proc.OutputDataReceived += OutputDataHandler;
-
-            proc.BeginErrorReadLine();
-            proc.BeginOutputReadLine();
-
-            proc.WaitForExit();
-
-            // Retrieve the app's exit code
-            exitCode = proc.ExitCode;
-        }
-        if (exitCode != 0)
-        {
-            // Logs.WriteLog(DateTime.Now + " [PDF]: Error generando PDF");
-        }
-        return exitCode;
-    }
-
     protected void lnkPDF_Click(object sender, EventArgs e) {
 
         PrintEventArgs evento = new PrintEventArgs(true);
@@ -394,14 +326,6 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             evento.Contenido = reader.ReadToEnd();
             reader.Close();
         }
-
-        /*int pos = evento.Contenido.IndexOf("<head>");
-        if (pos != -1) {
-
-            int posf = evento.Contenido.IndexOf("</head>");
-            evento.Contenido = evento.Contenido.Substring(0, pos) + evento.Contenido.Substring(posf + "</head>".Length);
-            pos = posf;
-        }*/
 
         if (_ImprimirClicked != null)
         {
@@ -419,27 +343,9 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
         Directory.SetCurrentDirectory(Path.GetDirectoryName(Server.MapPath(Request.Url.LocalPath)));
 
-        string htmlFile = Path.GetTempPath() + Guid.NewGuid().ToString();
-        string pdfFile = htmlFile + ".pdf";
-        htmlFile += ".html";
-
-        File.WriteAllText(htmlFile, evento.Contenido.ToString());
-
-        /*
-        document.AddTitle(Page.Title);
-        document.AddSubject(Request.Url.ToString());
-        document.AddCreator("OrganizationExample15: " + HomeCareVersion.Number);
-        document.AddAuthor(Usuario.GetUsuario().GetNombre());
-        */
-        Execute(ConfigurationManager.AppSettings["PDF:GeneratorProgram"]
-            , string.Format("{0} \"{1}\" \"{2}\"", ConfigurationManager.AppSettings["PDF:ParamsProgram"], htmlFile, pdfFile));
-
         Response.Flush();
-        Response.WriteFile(pdfFile);
+        Response.BinaryWrite(PDFConverter.ConvertToPDFExe(evento.Contenido.ToString()));
         Response.Flush();
-
-        File.Delete(htmlFile);
-        File.Delete(pdfFile);
 
         Response.End();
     }
