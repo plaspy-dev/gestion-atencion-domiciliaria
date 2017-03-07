@@ -3,7 +3,7 @@
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<script type="text/javascript" src="<%= HomeCareVersion.JSPath("js/tinymce.min.js")%>"></script>
+<%= SDG.Componentes.HtmlUtil.RenderScript("~/js/tinymce.min.js") %>
 <script type="text/javascript">
     function lim() {
         var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));

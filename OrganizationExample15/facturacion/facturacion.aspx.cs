@@ -400,7 +400,7 @@ public partial class facturacion_facturacion : System.Web.UI.Page
 
             using (CConector conector = new CConector())
             {
-                string valor = conector.QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN autorizacion ON (autorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(autorizacion.autFecha)=YEAR(SYSDATE())");
+                string valor = conector.QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN autorizacion ON (autorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(autorizacion.autFecha)=YEAR(NOW())");
                 if (valor == "")
                     valor = "0";
                 maximo -= Convert.ToDouble(valor, culture.NumberFormat);

@@ -77,7 +77,8 @@ function obs() {
     } else {
         return true;
     }
-    if ((typeof retorno === 'undefined' || retorno) && (typeof Page_IsValid === 'undefined' || Page_IsValid || typeof this.ejecutar === 'undefined')) {
+    // mono fix validation_result
+    if ((typeof retorno === 'undefined' || retorno) && (((typeof Page_IsValid === 'undefined' || Page_IsValid) && (typeof validation_result === 'undefined' || validation_result)) || typeof this.ejecutar === 'undefined')) {
         hiddenButton = this;
         $(this).hide();
         $(this).after('<input type="button" id="dummybutton" disabled="disabled" value="' + $(this).val() + '" class="' + $(this).attr('class') + '" />');

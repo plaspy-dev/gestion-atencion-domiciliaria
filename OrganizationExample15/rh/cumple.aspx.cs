@@ -59,7 +59,7 @@ public partial class rh_cumple : System.Web.UI.Page
                             ((MasterPageI)Master).SetMensaje(ex.ToString());
                             return;
                         }
-                        if (conector.QueryMod("UPDATE admPersonalHS SET felicitacion=YEAR(SYSDATE()) WHERE perId=" + GResultados.DataKeys[i].Value.ToString()) == -1)
+                        if (conector.QueryMod("UPDATE admPersonalHS SET felicitacion=YEAR(NOW()) WHERE perId=" + GResultados.DataKeys[i].Value.ToString()) == -1)
                             return;
                     }
                 }

@@ -11,23 +11,23 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2017-01-03.
+This cut records the home-care application as archived on 2017-03-06.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
 
 ### Features in the retained source
 
-- Open the staff record for the care team. `OrganizationExample16/rh/funcionario.aspx`.
-- View and maintain access groups. `OrganizationExample16/administrador/grupos.aspx`.
-- Manage the operator accounts used to sign in. `OrganizationExample16/administrador/usuario.aspx`.
+- Record postpartum care and follow-up in the maternal care module. `OrganizationExample15/materna/postparto.aspx`.
+- Consult the maternal care report. `OrganizationExample15/materna/informe.aspx`.
+- Record the wound assessment in the clinical record. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
+- Consult and maintain wound progression notes. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
+- Open the staff record for the care team. `OrganizationExample15/rh/funcionario.aspx`.
+- Consult the pharmacy reports for this edition. `OrganizationExample15/farmacia/informes.aspx`.
 - Open the batch admission screen to process patient admissions. `OrganizationExample15/admisiones/amasivas.aspx`.
 - Review visit scheduling from the census. `OrganizationExample15/censo/censo_programacion.aspx`.
 - Review the list of therapeutic progress notes. `OrganizationExample15/terapeutico/evoluciones.aspx`.
 - List discharges from the wound-care clinic. `OrganizationExample15/clinicaheridas/egresos.aspx`.
-- Record the wound assessment in the clinical record. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
-- Consult and maintain wound progression notes. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
-- Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
 
 ### Build and local use
 
@@ -37,7 +37,7 @@ The retained site entry is `OrganizationExample15/Default.aspx`. Use fictional a
 
 ### Archive notes
 
-The archive inventory counted 175 additions, 12 edits and 43 removals.
+The archive inventory counted 58 additions, 32 edits and 43 removals.
 
 ### Framework versions
 
@@ -48,7 +48,7 @@ The archived descriptors declare these .NET Framework versions.
 
 ### Usage
 
-Use the documented local build with a fictional operator. The available screens include `OrganizationExample16/rh/funcionario.aspx` and the other routes above.
+Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/materna/postparto.aspx` and the other routes above.
 
 The retained entry page is `OrganizationExample15/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
 
@@ -79,23 +79,23 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2017-01-03.
+Este corte conserva la versión de atención domiciliaria archivada el 2017-03-06.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
 
 ### Funciones en el código conservado
 
-- Abre la ficha del personal del equipo de atención. `OrganizationExample16/rh/funcionario.aspx`.
-- Consulta y administra los grupos de acceso. `OrganizationExample16/administrador/grupos.aspx`.
-- Administra las cuentas de operador para ingresar. `OrganizationExample16/administrador/usuario.aspx`.
+- Registra la atención posparto y su seguimiento en el módulo materno. `OrganizationExample15/materna/postparto.aspx`.
+- Consulta el informe de atención materna. `OrganizationExample15/materna/informe.aspx`.
+- Registra la valoración de heridas en la ficha clínica. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
+- Consulta y actualiza las notas de evolución de heridas. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
+- Abre la ficha del personal del equipo de atención. `OrganizationExample15/rh/funcionario.aspx`.
+- Consulta los informes de farmacia de esta edición. `OrganizationExample15/farmacia/informes.aspx`.
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `OrganizationExample15/admisiones/amasivas.aspx`.
 - Consulta la programación de visitas desde el censo. `OrganizationExample15/censo/censo_programacion.aspx`.
 - Consulta el listado de notas de evolución terapéutica. `OrganizationExample15/terapeutico/evoluciones.aspx`.
 - Consulta los egresos de la clínica de heridas. `OrganizationExample15/clinicaheridas/egresos.aspx`.
-- Registra la valoración de heridas en la ficha clínica. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
-- Consulta y actualiza las notas de evolución de heridas. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
-- Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
 
 ### Compilación y uso local
 
@@ -105,7 +105,7 @@ La entrada conservada del sitio es `OrganizationExample15/Default.aspx`. Usa cue
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 175 adiciones, 12 cambios y 43 retiros.
+El inventario del respaldo registró 58 adiciones, 32 cambios y 43 retiros.
 
 ### Versiones de .NET Framework
 
@@ -116,7 +116,7 @@ Los descriptores archivados declaran estas versiones de .NET Framework.
 
 ### Uso
 
-Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample16/rh/funcionario.aspx` y las demás rutas de arriba.
+Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/materna/postparto.aspx` y las demás rutas de arriba.
 
 La portada conservada es `OrganizationExample15/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
 
@@ -146,6 +146,6 @@ The build restores iTextSharp 5.4.4 from the official NuGet package and checks i
 
 La compilación restaura iTextSharp 5.4.4 desde el paquete oficial de NuGet y coteja su SHA-256. Indica una copia del mismo paquete en `DOMICILIO_ITEXTSHARP_PACKAGE` para compilar sin Internet.
 
-Build the later shared Web Forms library verified for this archived edition. It supplies the original printing interface with StringBuilderEx. The incompatible source overlay is excluded from the build, and the application sources in Git remain intact.
+The 2026 reconstruction builds the later shared library verified for this archived edition. It supplies the original printing interface with StringBuilderEx. The local build uses the archived application sources in Git. The local Web.config imports System.Web.Optimization so the layout can resolve its existing Styles.Render and Scripts.Render calls.
 
-Compila la revisión posterior de la biblioteca compartida cotejada para esta edición. Aporta la interfaz de impresión con StringBuilderEx. La receta aparta la superposición incompatible y conserva los archivos de la aplicación en Git.
+La reconstrucción de 2026 compila la revisión posterior de la biblioteca compartida cotejada para esta edición. Aporta la interfaz de impresión con StringBuilderEx. La compilación local usa las fuentes archivadas de la aplicación en Git. El Web.config local importa System.Web.Optimization para resolver las llamadas existentes a Styles.Render y Scripts.Render en la plantilla.

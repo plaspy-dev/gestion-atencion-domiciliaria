@@ -96,12 +96,12 @@
     <asp:SqlDataSource ID="SResultados" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                SelectCommand="SELECT per.perId AS id,per.perNombre AS nombres,  per.perFechaNac,cargo.carDescripcion AS cargo,perCorreoElectronico,per.perCelular AS celular,YEAR(SYSDATE()) AS actual, per.felicitacion
+                SelectCommand="SELECT per.perId AS id,per.perNombre AS nombres,  per.perFechaNac,cargo.carDescripcion AS cargo,perCorreoElectronico,per.perCelular AS celular,YEAR(NOW()) AS actual, per.felicitacion
                 ,MONTH(perFechaNac)*100+DAY(perFechaNac) AS ordenardias
                 FROM recurso_humano per  
                 LEFT JOIN cargo on per.carId = cargo.carId    
 				WHERE per.eEstId=1 
-				AND perFechaNac+INTERVAL (YEAR(SYSDATE())-YEAR(per.perFechaNac)) YEAR BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+				AND perFechaNac+INTERVAL (YEAR(NOW())-YEAR(per.perFechaNac)) YEAR BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
 				ORDER BY ordenardias">
                  <SelectParameters>
                     <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />

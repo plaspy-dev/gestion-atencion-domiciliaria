@@ -1,9 +1,9 @@
 ﻿<%@ Page Title="Gestión documental" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Browser.aspx.cs" Inherits="archivo_Browser" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <link rel="stylesheet" href="<%= ResolveUrl("~/archivo/dropzone.css")%>" />
-    <script type="text/javascript" src="<%= ResolveUrl("~/archivo/dropzone.js") %>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery.updatepanel.js")%>"></script>
+    <%= SDG.Componentes.HtmlUtil.RenderStyle("~/archivo/dropzone.css") %>
+    <%= SDG.Componentes.HtmlUtil.RenderScript("~/archivo/dropzone.js") %>
+    <%= SDG.Componentes.HtmlUtil.RenderScript("~/js/jquery.updatepanel.js") %>
     <style type="text/css">
         #<%= GFiles.ClientID %> .fa {
             padding-top: 2px;

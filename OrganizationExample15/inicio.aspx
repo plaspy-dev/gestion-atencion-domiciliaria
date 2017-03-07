@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Inicio" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="inicio.aspx.cs" Inherits="inicio" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-<link href="<%= HomeCareVersion.CssPath("notas.css") %>"" type="text/css" rel="stylesheet" />
+<%= SDG.Componentes.HtmlUtil.RenderStyle("~/css/notas.css") %>
 <style type="text/css">
 .closebutton {
     position: absolute;
@@ -61,20 +61,20 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
     SelectCommand="SELECT per.perId AS id,per.perNombre AS nombres
 				,CASE DAY(perFechaNac) 
-				WHEN DAY(SYSDATE()) THEN 'Hoy' 
-				WHEN DAY(SYSDATE()-1) THEN 'Ayer'
-				WHEN DAY(SYSDATE()-2) THEN 'Anteayer'
-				WHEN DAY(SYSDATE()+1) THEN 'Mañana'
+				WHEN DAY(NOW()) THEN 'Hoy' 
+				WHEN DAY(NOW()-1) THEN 'Ayer'
+				WHEN DAY(NOW()-2) THEN 'Anteayer'
+				WHEN DAY(NOW()+1) THEN 'Mañana'
 				END AS dia
 				,cargo.carDescripcion AS cargo,perCorreoElectronico,per.perCelular AS celular
                 FROM recurso_humano per  
                 LEFT JOIN cargo on per.carId = cargo.carId    
 				WHERE per.eEstId=1 
-				AND MONTH(perFechaNac)=MONTH(SYSDATE())
-				AND (DAY(perFechaNac)=DAY(SYSDATE())
-				OR DAY(perFechaNac)=DAY(SYSDATE()-2)
-				OR DAY(perFechaNac)=DAY(SYSDATE()-1)
-				OR DAY(perFechaNac)=DAY(SYSDATE()+1)
+				AND MONTH(perFechaNac)=MONTH(NOW())
+				AND (DAY(perFechaNac)=DAY(NOW())
+				OR DAY(perFechaNac)=DAY(NOW()-2)
+				OR DAY(perFechaNac)=DAY(NOW()-1)
+				OR DAY(perFechaNac)=DAY(NOW()+1)
 				)
 				ORDER BY DAY(perFechaNac)*100+DAY(perFechaNac);">
 </asp:SqlDataSource>
@@ -88,7 +88,7 @@
         <div class="hidet">
             <asp:UpdatePanel runat="server" ID="UD" UpdateMode="Conditional">
                 <ContentTemplate>
-                    <asp:Image runat="server" ID="IL" ImageUrl="~/css/ajax-loader.gif" />
+                    <asp:Image runat="server" ID="IL" ImageUrl="~/imgs/ajax-loader.gif" />
                     <asp:Button runat="server" ID="BA" OnClick="OnClickBA" CssClass="hidet" />
                     <asp:LinkButton Visible="false" Text="" runat="server" ID="LA" CommandArgument='<%# Eval("Id") %>'></asp:LinkButton>
                     <asp:GridView ID="GAlertas" runat="server" AutoGenerateColumns="False" Visible="false" Width="100%"  OnRowDataBound="GAlertas_RowDataBound"

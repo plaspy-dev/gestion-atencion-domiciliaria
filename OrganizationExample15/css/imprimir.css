@@ -33,6 +33,30 @@ body {
     max-width: 200px;
     max-height: 66px;
 }
+.tc {
+    text-align: center;
+}
+.tr {
+    text-align: right;
+}
+table {
+    border-collapse: collapse;
+}
+.tda,.tdl {
+    border-left: 1px #AAA solid;
+}
+.tda,.tdr {
+    border-right: 1px #AAA solid;
+}
+.tda,.tdb {
+    border-bottom: 1px #AAA solid;
+}
+.tda,.tdt {
+    border-top: 1px #AAA solid;
+}
+.nw {
+    white-space: nowrap;
+}
 
 .anulado span{background:#FF0000;color:#fff;text-decoration:none;font-family:arial, sans-serif;text-align:center;font-weight:bold;padding:5px 40px;font-size:20px;line-height:2rem;position:relative;transition:0.5s;}
 .anulado span:hover{background:#006600;color:#fff;}

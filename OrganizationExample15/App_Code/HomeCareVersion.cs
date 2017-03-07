@@ -9,11 +9,11 @@ using System.Web;
 /// </summary>
 public class HomeCareVersion
 {
-    public const string Number="1.86";
+    public const string Number="1.87";
     public const int VERSION_FILES = 1;
     public static string FilesPath= ConfigurationManager.AppSettings["pathFiles"];
 
-    public static string CssPath(string file)
+    /*public static string CssPath(string file)
     {
         return VirtualPathUtility.ToAbsolute(string.Format("~/css{0}/{1}", VERSION_FILES, file));
     }
@@ -21,5 +21,5 @@ public class HomeCareVersion
     public static string JSPath(string file)
     {
         return VirtualPathUtility.ToAbsolute(string.Format("~/js{0}/{1}", VERSION_FILES, file));
-    }
+    }*/
 }

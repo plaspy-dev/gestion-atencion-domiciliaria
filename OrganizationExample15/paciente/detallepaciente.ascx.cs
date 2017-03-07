@@ -67,7 +67,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                         total = 0;
                     else total = Convert.ToDouble(sTotal);
                     // agregamos el valor formulado
-                    sTotal = conector.QueryString("SELECT SUM(medicamento_formulacion.costo*medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.paciente=" + IdPaciente + " AND fecha>DATE_ADD(DATE(SYSDATE()), INTERVAL -30 DAY);");
+                    sTotal = conector.QueryString("SELECT SUM(medicamento_formulacion.costo*medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.paciente=" + IdPaciente + " AND fecha>DATE_ADD(DATE(NOW()), INTERVAL -30 DAY);");
                     if (sTotal.Length == 0)
                         total = 0;
                     else total += Convert.ToDouble(sTotal);
@@ -100,7 +100,7 @@ public partial class phd_detallepaciente : System.Web.UI.UserControl
                         total = 0;
                     else total = Convert.ToDouble(sTotal);
                     // agregamos el valor formulado
-                    sTotal = conector.QueryString("SELECT SUM(medicamento_formulacion.costo*medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.asegurador='" + AsegurdadorID + "' AND fecha>DATE_ADD(DATE(SYSDATE()), INTERVAL -30 DAY);");
+                    sTotal = conector.QueryString("SELECT SUM(medicamento_formulacion.costo*medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.asegurador='" + AsegurdadorID + "' AND fecha>DATE_ADD(DATE(NOW()), INTERVAL -30 DAY);");
                     if (sTotal.Length == 0)
                         total = 0;
                     else total += Convert.ToDouble(sTotal);

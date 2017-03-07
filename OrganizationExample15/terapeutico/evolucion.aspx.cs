@@ -77,7 +77,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
                             if (reader != null && reader.Read())
                             {
                                 if (reader["paciente"].ToString() != Request.QueryString["pid"]) 
-                                    Response.Redirect(Request.Url.AbsolutePath + "?pid=" + reader["paciente"].ToString() + "&evtid=" + Request.QueryString["pid"]);
+                                    Response.Redirect(Request.Url.AbsolutePath + "?pid=" + reader["paciente"].ToString() + "&evtid=" + Request.QueryString["evtid"]);
 
                                 DTV.Enabled = false;
                                 BAceptar.Enabled = usuario.CanUpdate();

@@ -6,22 +6,8 @@
 <head runat="server">
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link href="<%= HomeCareVersion.CssPath("ui-lightness/jquery-ui-1.8.13.custom.css")%>" type="text/css" rel="Stylesheet" />
-    <link href="<%= HomeCareVersion.CssPath("ui-lightness/jquery-ui-numeric-min.css")%>" type="text/css" rel="Stylesheet" />
-    <link href="<%= HomeCareVersion.CssPath("bootstrap.min.css")%>" type="text/css" rel="stylesheet" />
-    <link href="<%= HomeCareVersion.CssPath("font-awesome.min.css")%>" type="text/css" rel="stylesheet" />
-    <link href="<%= HomeCareVersion.CssPath("estilo.css")%>" type="text/css" rel="stylesheet" />
-    <script type="text/javascript" src="<%= HomeCareVersion.JSPath("jquery-1.7.2.min.js") %>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery.cookie.js") %>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery-ui-1.8.13.custom.min.js") %>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery.ui.autocomplete.selectFirst.js") %>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery-ui-timepicker-addon.js") %>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery.ui.datepicker-es.js") %>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery.updatepanel.js") %>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery.maskedinput-1.3.min.js") %>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery.autonumeric.js") %>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("combo.js") %>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("main.js") %>"></script>
+    <%: Styles.Render("~/css/m") %>
+    <%: Scripts.Render("~/js/m") %>
     <link rel="shortcut icon" href="images/tema/favicon.ico" />
     <style type="text/css">
         #<%= headerm.ClientID %> {
@@ -408,6 +394,6 @@
     }
 </script>
 <asp:Literal runat="server" ID="LMonoFix"></asp:Literal>
-<script type="text/javascript" src="<%=HomeCareVersion.JSPath("FixFocus.js") %>"></script>
+<%= SDG.Componentes.HtmlUtil.RenderScript("~/js/FixFocus.js") %>
 </body>
 </html>

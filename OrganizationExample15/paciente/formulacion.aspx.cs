@@ -317,7 +317,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 // verificamos el acumulado de servicios formulados
                 using (CConector conector = new CConector())
                 {
-                    string formuladaanterior = conector.QueryString("SELECT SUM(medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.paciente=" + CCDetallePaciente.AsegurdadorID + " AND medicamento_formulacion.medicamento=" + Query.GetValor(TMedicamentoID.Text) + " AND fecha>DATE_ADD(DATE(SYSDATE()), INTERVAL -30 DAY);");
+                    string formuladaanterior = conector.QueryString("SELECT SUM(medicamento_formulacion.formulada) FROM formulacion LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id) WHERE formulacion.paciente=" + CCDetallePaciente.AsegurdadorID + " AND medicamento_formulacion.medicamento=" + Query.GetValor(TMedicamentoID.Text) + " AND fecha>DATE_ADD(DATE(NOW()), INTERVAL -30 DAY);");
                     if (formuladaanterior.Length != 0)
                         nuevacantidad += Convert.ToInt32(formuladaanterior);
                     if (maximo < nuevacantidad)

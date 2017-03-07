@@ -18,7 +18,7 @@
     text-decoration: line-through;
 }
 </style>
-<script type="text/javascript" src="<%= HomeCareVersion.JSPath("tinymce.min.js")%>"></script>
+<%= SDG.Componentes.HtmlUtil.RenderScript("~/js/tinymce.min.js") %>
 <script type="text/javascript">
     $inicio(function() {
 

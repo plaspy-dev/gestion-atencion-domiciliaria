@@ -3,7 +3,7 @@
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <script type="text/javascript" src="<%= HomeCareVersion.JSPath("tinymce.min.js")%>"></script>
+    <%= SDG.Componentes.HtmlUtil.RenderScript("~/js/tinymce.min.js") %>
 <script type="text/javascript">
     var editor = null;
     addFunctionToStart(function() {

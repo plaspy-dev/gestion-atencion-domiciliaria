@@ -169,7 +169,7 @@
                                 FROM programacion_evento 
                                 LEFT JOIN varios ON (varios.id=programacion_evento.lugar)
                                 WHERE 
-                                (@fecha=-1 AND DATE(SYSDATE()) BETWEEN inicio AND fin)
+                                (@fecha=-1 AND DATE(NOW()) BETWEEN inicio AND fin)
                                 OR (@fecha!=-1 AND STR_TO_DATE(@fecha, '%d/%m/%Y') BETWEEN inicio AND fin)
                                 ORDER BY nombre" >
                                 <SelectParameters>

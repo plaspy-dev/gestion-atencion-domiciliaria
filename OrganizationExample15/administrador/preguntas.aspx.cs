@@ -63,6 +63,7 @@ public partial class administrador_preguntas : System.Web.UI.Page
 
             GResultado.DataBind();
             Procedimientos.RemoveVarios(HId.Value);
+            Varios.Remove(HId.Value);
             ((MasterPageI)Master).SetTitulo(mensaje);
         }
         BCancelar_Click(sender, e);

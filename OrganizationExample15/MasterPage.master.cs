@@ -35,7 +35,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
             Type t = Type.GetType("Mono.Runtime");
             if (t != null) // se esta ejecutando en mono
-                LMonoFix.Text += string.Format("<script type='text/javascript' src='{0}'></script>", HomeCareVersion.JSPath("mono.js"));
+                LMonoFix.Text += string.Format("<script type='text/javascript' src='{0}'></script>", ResolveClientUrl("~/js/mono.js"));
 
             lPropiedades.Visible=
             MModificaciones.Visible = Usuario.GetInstance().GetPermisosRaiz("~/modificaciones.ascx") > 0;
@@ -236,8 +236,8 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             }
 
             evento.Contenido = evento.Contenido
-                .Replace("~/css/", HomeCareVersion.CssPath(""))
-                .Replace("~/js/", HomeCareVersion.JSPath(""))
+                .Replace("~/css/", ResolveClientUrl("~/css/"))
+                .Replace("~/js/", ResolveClientUrl("~/js/"))
                 .Replace("~/", ResolveUrl("~/"))
                 .Replace("$SYSDATE()$", Query.GetMySQLDateFormat(DateTime.Now, true));
 
@@ -292,8 +292,8 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             }
 
             evento.Contenido = evento.Contenido
-                .Replace("~/css/", HomeCareVersion.CssPath(""))
-                .Replace("~/js/", HomeCareVersion.JSPath(""))
+                .Replace("~/css/", ResolveClientUrl("~/css/"))
+                .Replace("~/js/", ResolveClientUrl("~/js/"))
                 .Replace("~/", ResolveUrl("~/"))
                 .Replace("$SYSDATE()$", Query.GetMySQLDateFormat(DateTime.Now, true));
 
@@ -334,8 +334,8 @@ public partial class MasterPageI : System.Web.UI.MasterPage
 
         evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
         evento.Contenido = evento.Contenido
-                .Replace("~/css/", Server.MapPath(HomeCareVersion.CssPath("")))
-                .Replace("~/js/", Server.MapPath(HomeCareVersion.JSPath("")))
+                .Replace("~/css/", Server.MapPath(ResolveClientUrl("~/css/")))
+                .Replace("~/js/", Server.MapPath(ResolveClientUrl("~/js/")))
                 .Replace("~/Image/", string.Format("{0}{1}", ConfigurationManager.AppSettings["servidor"], ResolveUrl("~/Image/")))
                 .Replace("../", Server.MapPath("../"))
                 .Replace("~/", Server.MapPath("~/"))

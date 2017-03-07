@@ -1,0 +1,467 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Dynamic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using MySql.Data.MySqlClient;
+using SDG.Componentes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+public partial class materna_seguimiento : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
+        if (!IsPostBack)
+        {
+            CUsuario usuario = (CUsuario)Usuario.GetUsuario();
+            BAceptar.Enabled = false;
+            TFecha.Text = Query.GetFromMySQLDate(DateTime.Now.Date, true);
+            UCFuncionario.IdFuncionario = usuario["personal"];
+            DTV.MinumunValue = DateTime.Now.AddDays(-2);
+            DTV.MaximunValue = DateTime.Now.AddMinutes(1);
+            DTV.Enabled = !usuario.CanUpdate();
+            /*TTA.Focus();*/
+
+            using (CConector conector = new CConector())
+            {
+                if (Request.QueryString["pid"] != null)
+                {
+                    CCDetallePaciente.IdPaciente = Request.QueryString["pid"];
+                    if (CCDetallePaciente.IdPaciente.Length == 0)
+                    {
+                        Response.Redirect(Request.Url.AbsolutePath);
+                    }
+                    else
+                    {
+                        ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
+                        SeleccionarPaciente.Documento = CCDetallePaciente.Documento;
+                        SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
+                        TFecha.Text = Query.GetFromMySQLDate(DateTime.Now.Date, true);
+
+                        if (Request.QueryString["npdf"] == "1")
+                            Title = CCDetallePaciente.Documento + " - " + CCDetallePaciente.Nombres.Replace("(Inactivo)", "");
+
+                        CCDetallePaciente.Visible =
+                        PD.Visible = true;
+
+                        BAceptar.Enabled = usuario.CanInsert();
+                        UCFuncionario.ReadOnly = !usuario.CanAdmin();
+
+                        UCH.Init(@"SELECT id,fecha,paciente,recurso_humano.perNombre AS funcionario 
+                                    FROM seguimiento_materno
+                                    LEFT JOIN recurso_humano ON (recurso_humano.perId=seguimiento_materno.funcionario)
+                                    WHERE paciente=@paciente AND tipo=1
+                                    ORDER BY fecha DESC"
+                            , "~/materna/seguimiento.aspx?pid={0}&emid={1}"
+                            , CCDetallePaciente.IdPaciente, "Seguimiento", "Seguimientos");
+
+                        if (!string.IsNullOrEmpty(Request.QueryString["emid"]))
+                        {
+                            Query query = new Query("seguimiento_materno");
+
+                            query += "id";
+                            query += "paciente";
+                            query += "fecha";
+                            query += "funcionario";
+                            query += "data";
+                            query += "tipo";
+
+                            MySqlDataReader reader = conector.Query(query.GetSelect("id={0}", null, Query.GetValor(Request.QueryString["emid"])));
+                            if (reader != null && reader.Read())
+                            {
+                                if (reader["paciente"].ToString() != Request.QueryString["pid"])
+                                    Response.Redirect(Request.Url.AbsolutePath + "?pid=" + reader["paciente"].ToString() + "&emid=" + Request.QueryString["emid"]);
+
+                                if (reader["tipo"].ToString() == "2")
+                                {
+                                    Response.Redirect(string.Format("~/materna/postparto.aspx?pid={0}&emid={1}", reader["paciente"].ToString(), Request.QueryString["emid"]));
+                                    return;
+                                }
+
+                                string id = reader["id"].ToString();
+                                DTV.Enabled = false;
+                                BAceptar.Enabled = usuario.CanUpdate();
+                                BEliminar.Visible = usuario.CanDelete();
+                                ((MasterPageI)Master).SetModificacion(id);
+                                ((MasterPageI)Master).Imprimir("seguimiento.html");
+
+                                ViewState["id"] = id;
+                                TFecha.Text = Query.GetFromMySQLDate(reader["fecha"], true);
+                                UCFuncionario.IdFuncionario = reader["funcionario"].ToString();
+                                JObject data= SerializeJSON.DesSerialize(Controls, reader["data"].ToString(), new Control[] { TFecha, UCFuncionario, SeleccionarPaciente, CIE10 });
+
+                                string cie10 = (string)data["cie10"];
+                                List<Miscelaneos> list = new List<Miscelaneos>();
+                                if (!string.IsNullOrEmpty(cie10)) {
+                                    foreach (string code in cie10.Split(',')) {
+                                        list.Add(new Miscelaneos(code, Procedimientos.GetCodigoCIE(code)));
+                                    }
+                                }
+                                CIE10.Codes = list;
+
+                                SetId(Controls, id);
+                            }
+                        }
+
+                        if (ViewState["id"] == null) {
+
+                            List<Miscelaneos> list = new List<Miscelaneos>();
+
+                            Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+                            for (int i = 0; i < paciente.cie10.Count; i++)
+                            {
+                                string codigo = paciente.cie10[i].ToString();
+                                list.Add(new Miscelaneos(codigo, Procedimientos.GetCodigoCIE(codigo)));
+                            }
+
+                            CIE10.Codes = list;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void SetId(ControlCollection controles, string id) {
+
+        foreach (Control info in controles) {
+
+            if (info is SqlDataSource) {
+                if(((SqlDataSource)info).SelectParameters["seguimiento"]!=null)
+                    ((SqlDataSource)info).SelectParameters["seguimiento"].DefaultValue = id;
+            } else {
+                if (info.HasControls())
+                    SetId(info.Controls, id);
+            }
+        }
+    }
+
+    public string RenderTextBlock(CConector conector, string id, int parametro, bool radio=false) {
+
+        StringBuilder text = new StringBuilder();
+
+        string query = string.Format(@"SELECT varios.nombre,seguimiento_materno_items.valor
+                            FROM varios 
+                            LEFT JOIN seguimiento_materno_items ON (seguimiento_materno_items.seguimiento={1} AND seguimiento_materno_items.tipo=varios.id)
+                            WHERE varios.tipo={0} AND varios.szReservado IS NULL 
+                            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(varios.nombre, ' ', 1),'.',-1)*1", parametro, id);
+
+        MySqlDataReader reader= conector.Query(query);
+        if (reader != null) {
+            while (reader.Read()) {
+                if(radio)
+                    text.AppendFormat("<div>{0}<b class='fr'>{1}</b></div>", HttpUtility.HtmlEncode(reader["nombre"].ToString()), reader["valor"].ToString()=="1" ? "SI" : "NO");
+                else text.AppendFormat("<div>{0}: {1}</div>", HttpUtility.HtmlEncode(reader["nombre"].ToString()), HttpUtility.HtmlEncode(reader["valor"].ToString()));
+            }
+        }
+
+        return text.ToString();
+    }
+
+    public string RenderRadioInline(CConector conector, string id, int parametro) {
+
+        return RenderMixed(conector, id, x=>x==parametro, x=>false, parametro);
+    }
+
+    public string RenderTextInline(CConector conector, string id, int parametro) {
+
+        return RenderMixed(conector, id, x=> false, x => x == parametro, parametro);
+    }
+
+    public string RenderMixed(CConector conector, string id, Func<int, bool> radiofunction, Func<int, bool> shortText, params int[] parametros)
+    {
+        StringBuilder text = new StringBuilder();
+
+        string query = string.Format(@"SELECT varios.nombre,varios.descripcion,seguimiento_materno_items.valor,seguimiento_materno_items.valor2,varios.tipo
+                            FROM varios 
+                            LEFT JOIN seguimiento_materno_items ON (seguimiento_materno_items.seguimiento={1} AND seguimiento_materno_items.tipo=varios.id)
+                            WHERE varios.tipo IN ({0}) AND varios.szReservado IS NULL 
+                            ORDER BY SUBSTRING_INDEX(SUBSTRING_INDEX(varios.nombre, ' ', 1),'.',-1)*1", string.Join(",", parametros), id);
+
+        MySqlDataReader reader = conector.Query(query);
+        if (reader != null)
+        {
+            while (reader.Read())
+            {
+                if (radiofunction(Convert.ToInt32(reader["tipo"])))
+                {
+                    if(string.IsNullOrEmpty(reader["descripcion"].ToString()))
+                        text.AppendFormat("<span class='insp'>{0} <b>{1}</b></span>", HttpUtility.HtmlEncode(reader["nombre"].ToString()), reader["valor"].ToString() == "1" ? "SI" : "NO");
+                    else text.AppendFormat("<span class='insp'>{0} <b>{1}</b> {2}: <b>{3}</b></span>"
+                        , HttpUtility.HtmlEncode(reader["nombre"].ToString()), reader["valor"].ToString() == "1" ? "SI" : "NO"
+                        , HttpUtility.HtmlEncode(reader["descripcion"].ToString()), HttpUtility.HtmlEncode(reader["valor2"].ToString())
+                        );
+                }
+                else if (shortText(Convert.ToInt32(reader["tipo"]))) {
+                    text.AppendFormat("<span class='insp'>{0} <b>{1}</b> {2}</span>", HttpUtility.HtmlEncode(reader["nombre"].ToString()), reader["valor"], reader["descripcion"]);
+                } else {
+                    text.AppendFormat("<div>{0}: <b>{1}</b></div>", HttpUtility.HtmlEncode(reader["nombre"].ToString()), reader["valor"]);
+                }
+            }
+        }
+
+        return text.ToString();
+    }
+
+    public void OnImprimir(object sender, EventArgs e)
+    {
+        PrintEventArgs evento = (PrintEventArgs)e;
+        using (CConector conector = new CConector()) {
+
+            Printing = true;
+
+            CIE10.Print = true;
+            GAObstetrica.DataBind();
+            GAObstetrica.DataSourceID = "";
+            GRLaboratorio.DataBind();
+            GRLaboratorio.DataSourceID = "";
+            GREcografias.DataBind();
+            GREcografias.DataSourceID = "";
+
+            string id = (string)ViewState["id"];
+            evento.Contenido.Replace("$grid2$", RenderTextBlock(conector, id, 141, true));
+            evento.Contenido.Replace("$grid3$", RenderTextBlock(conector, id, 142, true));
+            evento.Contenido.Replace("$gantecedentes$", RenderMixed(conector, id,x=>x==144, x => x == 143, 143,144,145));
+            // evento.Contenido.Replace("$gobstetrica$", RenderText(conector, id, ));
+            evento.Contenido.Replace("$grevision$", RenderRadioInline(conector, id, 148));
+            evento.Contenido.Replace("$gexamenfisico$", RenderTextInline(conector, id, 152));
+            evento.Contenido.Replace("$gabdomen$", RenderTextInline(conector, id, 153));
+            evento.Contenido.Replace("$gmiembrosinferiores$", RenderRadioInline(conector, id, 154));
+            evento.Contenido.Replace("$gplandemanejo$", RenderTextBlock(conector, id, 155, false)); // 155
+            evento.Contenido.Replace("$RPSicosocial$", RRPsicosocial.SelectedValue == "1" ? "ALTO" : "BAJO");
+            evento.Contenido.Replace("$RObstetrico$", RRObstetrico.SelectedValue == "1" ? "ALTO" : "BAJO");
+            string interconsultas = "";
+            string[] lines = TInterconsultas.Text.Split('\n');
+            for (int i = 0; i < lines.Length; i++) {
+                interconsultas += string.Format("{0}. {1}<br/>", i+1, HttpUtility.HtmlEncode(lines[i]));
+            }
+            evento.Contenido.Replace("$ginterconsultas$", interconsultas);
+
+            Paciente paciente= Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
+
+            evento.Contenido.Replace("$LNombres$", paciente.pNombre + " " + paciente.sNombre);
+            evento.Contenido.Replace("$LApellidos$", paciente.pApellido + " " + paciente.sApellido);
+            evento.Contenido.Replace("$TipoDoc$", paciente.tipoDocNombre);
+            evento.Contenido.Replace("$LDocumento$", paciente.documento);
+
+            Funcionario funcionario = Funcionario.GetFuncionario(UCFuncionario.IdFuncionario);
+
+            evento.Contenido.Replace("$FuncionarioNombre$", funcionario.Nombres);
+            evento.Contenido.Replace("$FuncionarioDocumento$", funcionario.Documento);
+            evento.Contenido.Replace("$szIdUsuario$", funcionario.Id.ToString());
+
+            evento.Contenido.Replace("$SYSDATE()$", Query.GetMySQLDateFormat(DateTime.Now, true));
+        }
+    }
+
+    protected void BEliminar_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void BAceptar_Click(object sender, EventArgs e)
+    {
+        if (!IsValid)
+            return;
+
+        using (CConector conector = new CConector())
+        {
+            conector.StartTransaction();
+            string id = (string)ViewState["id"];
+            Query query = new Query("seguimiento_materno");
+
+            query["fecha"] = Query.GetMySQLDateFormat(TFecha.Text, true);
+            query["paciente"] = CCDetallePaciente.IdPaciente;
+            query["funcionario"] = UCFuncionario.IdFuncionario;
+            query["tipo"] = "1";
+
+            List<Miscelaneos> codes = CIE10.Codes;
+
+            query["data"]= SerializeJSON.Serialize(Controls
+                , new Control[] { TFecha, UCFuncionario, SeleccionarPaciente, CIE10 }
+                , new Dictionary<string, JToken>() { { "cie10", string.Join(",", codes.Select(x => x.Id)) } }
+                );
+
+            if (string.IsNullOrEmpty(id))
+            {
+                int res = conector.QueryMod(query.GetInsert(), true);
+                if (res == -1) {
+                    LMensaje.Text=conector.LastError;
+                    return;
+                }
+                id = res.ToString();
+            } else {
+                if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(id)))==-1) {
+                    LMensaje.Text = conector.LastError;
+                    return;
+                }
+            }
+            if (conector.InsertModificacion(id) == -1) {
+                LMensaje.Text = conector.LastError;
+                return;
+            }
+
+            query = new Query("seguimiento_materno_items");
+
+            if (conector.QueryMod(query.GetDelete("seguimiento=" + Query.GetValor(id))) == -1) {
+                LMensaje.Text = conector.LastError;
+                return;
+            }
+
+            if(!SaveGriwRadio(conector, GMotivo, id)
+                || !SaveGriwRadio(conector, GRiesgo, id)
+                || !SaveRepeaterRadio(conector, RSistemas, id)
+                || !SaveRepeaterRadio(conector, RAntecendetes, id)
+                || !SaveRepeaterRadio(conector, RAntecendetes2, id)
+                || !SaveGriwRadio(conector, GAntecendentes3, id)
+                || !SaveRepeaterRadio(conector, REFisico, id)
+                || !SaveRepeaterRadio(conector, RAbdomen, id)
+                || !SaveRepeaterRadio(conector, RMInferiores, id)
+                || !SaveGriwRadio(conector, GAObstetrica, id)
+                || !SaveGriwRadio(conector, GRLaboratorio, id)
+                || !SaveGriwRadio(conector, GREcografias, id)
+                || !SaveGriwRadio(conector, GManejo, id)
+                ) { 
+                LMensaje.Text = conector.LastError;
+                return;
+            }
+
+            // actualizamos el cie10 del paciente
+            string cie10 = "", cie102 = "", cie103 = "";
+
+            for(int i=0; i< codes.Count; i++) {
+                switch (i) {
+                    case 0:
+                        cie10 = codes[i].Id;
+                        break;
+                    case 1:
+                        cie102 = codes[i].Id;
+                        break;
+                    case 2:
+                        cie103 = codes[i].Id;
+                        break;
+                }
+            }
+
+            if (conector.QueryMod("UPDATE paciente SET cieCodDx=" + Query.GetValor(cie10) + ",cieCodDx_1=" + Query.GetValor(cie102) + ",cieCodDx_2=" + Query.GetValor(cie103) + " WHERE pacId=" + CCDetallePaciente.IdPaciente) == -1)
+                return;
+
+            Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
+
+
+            conector.Commit();
+            ((MasterPageI)Master).SetResultado("Seguimiento de " + CCDetallePaciente.Nombres + " editado.");
+        }
+    }
+
+    public static bool SaveRepeaterRadio(Conector conector, Repeater repeater, string seguimientoid)
+    {
+        Query query = new Query("seguimiento_materno_items");
+
+        query["seguimiento"] = seguimientoid;
+
+        for (int i = 0; i < repeater.Items.Count; i++)
+        {
+            RadioButtonList radio = (RadioButtonList)repeater.Items[i].FindControl("R");
+            TextBox textbox = (TextBox)repeater.Items[i].FindControl("T");
+            HiddenField hidden = (HiddenField)repeater.Items[i].FindControl("H");
+            CheckBox checkbox = (CheckBox)repeater.Items[i].FindControl("C");
+
+            bool save = false;
+            query["tipo"] = hidden.Value;
+
+            if (radio!=null && radio.SelectedValue == "1")
+            {
+                save = true;
+                query["valor"] = "1";
+            }
+            if (checkbox != null && checkbox.Checked) {
+                save = true;
+                query["valor"] = "1";
+            }
+            if (textbox!=null && !string.IsNullOrEmpty(textbox.Text)) {
+                save = true;
+                query[radio == null ? "valor" : "valor2"] = textbox.Text;
+            }
+
+            if (save && conector.QueryMod(query.GetInsert()) == -1)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static bool SaveGriwRadio(Conector conector, GridView grid, string seguimientoid) {
+
+        Query query = new Query("seguimiento_materno_items");
+
+        query["seguimiento"] = seguimientoid;
+
+        for (int i = 0; i < grid.Rows.Count; i++)
+        {
+
+            RadioButtonList radio = (RadioButtonList)grid.Rows[i].FindControl("R");
+            TextBox textbox = (TextBox)grid.Rows[i].FindControl("T");
+            TextBox textbox2 = (TextBox)grid.Rows[i].FindControl("T2");
+            TextBox textbox3 = (TextBox)grid.Rows[i].FindControl("T3");
+
+            bool save = false;
+            query["tipo"] = grid.DataKeys[i].Values["id"].ToString();
+
+            if (radio != null && radio.SelectedValue == "1")
+            {
+                save = true;
+                query["valor"] = "1";
+            }
+            if (textbox != null && !string.IsNullOrEmpty(textbox.Text))
+            {
+                save = true;
+                query[radio == null ? "valor" : "valor2"] = textbox.Text;
+            }
+            if (textbox2 != null && !string.IsNullOrEmpty(textbox2.Text)) {
+                save = true;
+                query["valor2"] = textbox2.Text;
+            }
+            if (textbox3 != null && !string.IsNullOrEmpty(textbox3.Text))
+            {
+                save = true;
+                query["valor3"] = textbox3.Text;
+            }
+
+
+            if (save && conector.QueryMod(query.GetInsert()) == -1)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected void BCancelar_Click(object sender, EventArgs e)
+    {
+        Response.Redirect(Request.Url.AbsolutePath);
+    }
+
+    private bool Printing = false;
+    public static Regex regexHeader = new Regex(@"(\d+.?\d* )?(.+)",RegexOptions.Compiled);
+
+    protected string GetHeader(object row) {
+        if (row == null)
+            return null;
+        if (Printing)
+            return row.ToString();
+        string text = row.ToString();
+        Match match= regexHeader.Match(text);
+        if (match.Success)
+            return match.Groups[2].Value;
+        return text;
+    }
+}

@@ -20,7 +20,7 @@ public class Calificacion
         [Description("Escala Norton")]
         Norton= 79
     }
-    public static Calificacion[] IndiceBarthel = { new Calificacion(45, "Severa"), new Calificacion(60, "Grave"), new Calificacion(80, "Moderada"), new Calificacion(101, "Ligera") };
+    public static Calificacion[] IndiceBarthel = { new Calificacion(21, "Dependencia total"), new Calificacion(36, "Dependiencia severa"), new Calificacion(56, "Dependencia moderada"), new Calificacion(96, "Dependencia leve"), new Calificacion(101, "Independiencia") };
     public static Calificacion[] EscalaBraden = { new Calificacion(13, "Alto riesgo"), new Calificacion(15, "Riesgo moderado"), new Calificacion(17, "Bajo riesgo"), new Calificacion(50, "Sin riesgo") };
     public static Calificacion[] EscalaNorton = { new Calificacion(10,"Riesgo muy alto"),new Calificacion(13,"Riesgo alto"),new Calificacion(15,"Riesgo medio"),new Calificacion(50,"Riesgo mínimo")};
 

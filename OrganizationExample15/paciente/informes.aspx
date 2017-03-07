@@ -121,7 +121,7 @@
                                   tdocDescripcion,  
                                   pacDocumento,  
                                   pacNombres AS pacPNombre,  
-                                  year(SYSDATE()-pacFechaNac-1)-1900 AS edad,
+                                  year(NOW()-pacFechaNac-1)-1900 AS edad,
                                   pacBarrio,
                                   IFNULL(pacTelefono, '') + ' ' + IFNULL(pacTelefono1, '') AS telefono,
                                   pacCelular,

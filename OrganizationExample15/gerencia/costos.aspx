@@ -1,8 +1,8 @@
 ﻿<%@ Page Title="Costos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="costos.aspx.cs" Inherits="gerencia_costos" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <link rel="Stylesheet" type="text/css" href="<%= HomeCareVersion.CssPath("jquery.multiselect.css")%>" />
-    <script type="text/javascript" src="<%= HomeCareVersion.JSPath("jquery.multiselect.min.js")%>"></script>
+    <%= SDG.Componentes.HtmlUtil.RenderStyle("~/css/jquery.multiselect.css") %>
+<%= SDG.Componentes.HtmlUtil.RenderScript("~/js/jquery.multiselect.min.js") %>
     <style type="text/css">
         #<%= GResultados.ClientID %> td b {
             float: right;

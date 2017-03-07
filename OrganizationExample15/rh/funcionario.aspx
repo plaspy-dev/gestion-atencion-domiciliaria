@@ -2,10 +2,10 @@
 <%@ Register src="~/webcam/webcam.ascx" tagname="webcam" tagprefix="webcam" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <link rel="Stylesheet" type="text/css" href="<%=HomeCareVersion.CssPath("jquery.multiselect.css")%>" />
-    <link rel="Stylesheet" type="text/css" href="<%=HomeCareVersion.CssPath("jquery.multiselect.filter.css")%>" />
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery.multiselect.min.js")%>"></script>
-    <script type="text/javascript" src="<%=HomeCareVersion.JSPath("jquery.multiselect.filter.js")%>"></script>
+    <%= SDG.Componentes.HtmlUtil.RenderStyle("~/css/jquery.multiselect.css") %>
+    <%= SDG.Componentes.HtmlUtil.RenderStyle("~/css/jquery.multiselect.filter.css") %>
+    <%= SDG.Componentes.HtmlUtil.RenderScript("~/js/jquery.multiselect.min.js") %>
+    <%= SDG.Componentes.HtmlUtil.RenderScript("~/js/jquery.multiselect.filter.js") %>
     <style type="text/css">
         .firma img {
             max-width: 300px;

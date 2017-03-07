@@ -236,7 +236,31 @@ public partial class administrador_Default : System.Web.UI.Page
             parent = Add("Archivo");
             Add("Tipo", 138, parent);
 
-            // disponible 141
+            parent = Add("Seguimiento Materno");
+            Add("Motivo de consulta", 141, parent);
+            Add("Riesgo psicisocial", 142, parent);
+            Add("Antecedentes 1", 143, parent);
+            Add("Antecedentes 2", 144, parent);
+            Add("Antecedentes 3", 145, parent);
+            // Add("Formula obstetrica", 146, parent);
+            Add("Antecedentes obstetrica", 147, parent);
+            Add("Revisión por sistemas", 148, parent);
+            Add("Resultados laboratorios", 150, parent);
+            Add("Resultados ecografías", 151, parent);
+            Add("Examen físico", 152, parent);
+            Add("Abdomen", 153, parent);
+            Add("Miembros inferiores", 154, parent);
+            Add("Plan de manejo", 155, parent);
+
+            parent = Add("Seguimiento posparto");
+            Add("Motivo de consulta", 156, parent);
+            Add("Antecedentes 1", 157, parent);
+            Add("Antecedentes 2", 158, parent);
+            Add("Revisión por sistemas", 159, parent);
+            Add("Examen físico, senos", 160, parent);
+            Add("Examen físico, abdomen", 161, parent);
+
+            // disponible 162
             // OrganizationExample16
             parent = Add("OrganizationExample16 - Programación");
             Add("Programa", 10017, parent);
@@ -282,6 +306,7 @@ public partial class administrador_Default : System.Web.UI.Page
                 return;
 
             Procedimientos.RemoveVarios(HId.Value);
+            Varios.Remove(HId.Value);
 
             Session["szMensaje"] = mensaje;
             Response.Redirect(Request.Url.AbsolutePath + "?tipo=" + HTipo.Value);

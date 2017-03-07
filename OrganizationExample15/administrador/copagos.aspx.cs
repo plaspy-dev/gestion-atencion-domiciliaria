@@ -92,6 +92,7 @@ public partial class administrador_copagos : System.Web.UI.Page
                 return;
         }
         Procedimientos.RemoveVarios(HId.Value);
+        Varios.Remove(HId.Value);
         ((MasterPageI)Master).SetTitulo("Categoría " + LCategoria.SelectedItem.Text + " editada.");
     }
 

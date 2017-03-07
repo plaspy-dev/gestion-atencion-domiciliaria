@@ -90,19 +90,19 @@ public class Funcionario
 
         id= string.IsNullOrEmpty(id) ? "0=0" : string.Format("programacion.perId={0}", Query.GetValor(id));
         // -- ayer
-        if (conector.QueryMod("UPDATE directorio LEFT JOIN programacion ON (directorio.perId=programacion.perId) SET acta=actId WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(SYSDATE()-INTERVAL 1 DAY) AND prgActivo=1") == -1)
+        if (conector.QueryMod("UPDATE directorio LEFT JOIN programacion ON (directorio.perId=programacion.perId) SET acta=actId WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(NOW()-INTERVAL 1 DAY) AND prgActivo=1") == -1)
             return false;
-        if (conector.QueryMod("INSERT IGNORE directorio (perId,acta) SELECT perId,actId FROM programacion WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(SYSDATE()-INTERVAL 1 DAY) AND prgActivo=1 GROUP BY perId") == -1)
+        if (conector.QueryMod("INSERT IGNORE directorio (perId,acta) SELECT perId,actId FROM programacion WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(NOW()-INTERVAL 1 DAY) AND prgActivo=1 GROUP BY perId") == -1)
             return false;
         // -- manana
-        if (conector.QueryMod("UPDATE directorio LEFT JOIN programacion ON (directorio.perId=programacion.perId) SET actm=actId WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(SYSDATE()+INTERVAL 1 DAY) AND prgActivo=1") == -1)
+        if (conector.QueryMod("UPDATE directorio LEFT JOIN programacion ON (directorio.perId=programacion.perId) SET actm=actId WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(NOW()+INTERVAL 1 DAY) AND prgActivo=1") == -1)
             return false;
-        if (conector.QueryMod("INSERT IGNORE directorio (perId,actm) SELECT perId,actId FROM programacion WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(SYSDATE()+INTERVAL 1 DAY) AND prgActivo=1 GROUP BY perId") == -1)
+        if (conector.QueryMod("INSERT IGNORE directorio (perId,actm) SELECT perId,actId FROM programacion WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(NOW()+INTERVAL 1 DAY) AND prgActivo=1 GROUP BY perId") == -1)
             return false;
         // -- hoy
-        if (conector.QueryMod("UPDATE directorio LEFT JOIN programacion ON (directorio.perId=programacion.perId) SET pacienteh=pacId WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(SYSDATE()) AND prgActivo=1") == -1)
+        if (conector.QueryMod("UPDATE directorio LEFT JOIN programacion ON (directorio.perId=programacion.perId) SET pacienteh=pacId WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(NOW()) AND prgActivo=1") == -1)
             return false;
-        if (conector.QueryMod("INSERT IGNORE directorio (perId,pacienteh) SELECT perId,pacId AS pacId FROM programacion WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(SYSDATE()) AND prgActivo=1 GROUP BY perId") == -1)
+        if (conector.QueryMod("INSERT IGNORE directorio (perId,pacienteh) SELECT perId,pacId AS pacId FROM programacion WHERE " + id + " AND DATE(programacion.prgFechaProg)=DATE(NOW()) AND prgActivo=1 GROUP BY perId") == -1)
             return false;
         // -- futuro
         if (conector.QueryMod("UPDATE directorio LEFT JOIN programacion ON (directorio.perId=programacion.perId) SET fechaf=prgFechaProg,pacientef=pacId WHERE " + id + " AND  programacion.prgFechaProg>SYSDATE() AND prgActivo=1") == -1)

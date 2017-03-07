@@ -88,8 +88,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                         HIdEntidad.Value = reader["entId"].ToString();
                         TNumero.Text = reader["autNumero"].ToString();
                         TPaciente.Text = reader["pacId"].ToString();
-                        TFecha.Text = reader["autFecha"].ToString();
-                        TVencimiento.Text = reader["autFechaVenc"].ToString();
+                        TFecha.Text = Query.GetFromMySQLDate(reader["autFecha"]);
+                        TVencimiento.Text = Query.GetFromMySQLDate(reader["autFechaVenc"]);
                         TValor.Text = reader["total"].ToString();
                         TObservaciones.Text = reader["autObservaciones"].ToString();
                         if (reader["formulacion"].ToString().Length > 0)
@@ -347,7 +347,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
             if (conector.QueryMod(@"UPDATE paciente set estId=2
                 WHERE paciente.estId=1 
-                AND (SELECT MAX(IFNULL(autFechaVenc,autFecha+INTERVAL 1 MONTH)) FROM autorizacion WHERE pacId=paciente.pacId)<(SYSDATE()-INTERVAL 5 DAY)
+                AND (SELECT MAX(IFNULL(autFechaVenc,autFecha+INTERVAL 1 MONTH)) FROM autorizacion WHERE pacId=paciente.pacId)<(NOW()-INTERVAL 5 DAY)
                 AND CONCAT_WS(',', @uids, paciente.pacId)=(SELECT @uids := CONCAT_WS(',', @uids, paciente.pacId) )") == -1)
                 return;
 
@@ -435,7 +435,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
             using (CConector conector = new CConector())
             {
-                string valor = conector.QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN autorizacion ON (autorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(autorizacion.autFecha)=YEAR(SYSDATE())");
+                string valor = conector.QueryString("SELECT SUM(valor) FROM pago_autorizacion LEFT JOIN autorizacion ON (autorizacion.autNumero=pago_autorizacion.autNumero) WHERE pacId=" + HIdPaciente.Value + " AND YEAR(autorizacion.autFecha)=YEAR(NOW())");
                 if (valor == "")
                     valor = "0";
                 maximo -= Convert.ToDouble(valor, culture.NumberFormat);

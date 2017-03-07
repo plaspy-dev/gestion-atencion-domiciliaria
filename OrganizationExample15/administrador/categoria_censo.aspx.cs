@@ -58,6 +58,7 @@ public partial class administrador_categoria_censo : System.Web.UI.Page
                 return;
 
             Procedimientos.RemoveVarios(HId.Value);
+            Varios.Remove(HId.Value);
 
             if (conector.QueryMod("DELETE FROM categoria_censo WHERE categoria=" + Query.GetValor(HId.Value)) == -1)
                 return;

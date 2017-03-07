@@ -476,3 +476,6 @@ a.btn {
 .btn-submit {
     border: 1px solid #337ab7;
 }
+.stripped {
+    background-color: #f9f9f9;
+}
