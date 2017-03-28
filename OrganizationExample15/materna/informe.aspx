@@ -56,7 +56,6 @@
                     <asp:BoundField HeaderText="1. DATOS PERSONALES 1.10 DIRECCION DE RESIDENCIA" DataField="direccion" SortExpression="direccion"/>
                     <asp:BoundField HeaderText="1. DATOS PERSONALES 1.11 NIVEL DE ESCOLARIDAD" DataField="escolaridad" SortExpression="escolaridad"/>
                     <asp:TemplateField HeaderText="2. M C Y E A  2.1 Adolescentes menores de 15 años"><ItemTemplate><asp:Label runat="server" ID="L21" Text='<%# GetData(Eval("id").ToString(), "2.1")=="1" ? "SI" : "NO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
-                    <asp:TemplateField HeaderText="2. M C Y E A  2.1 Adolescentes menores de 15 años"><ItemTemplate><asp:Label runat="server" ID="L21" Text='<%# GetData(Eval("id").ToString(), "2.1")=="1" ? "SI" : "NO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:TemplateField HeaderText="2. M C Y E A   2.2 Adolescentes entre 15 y 19 años con 2 o mas gestaciones"><ItemTemplate><asp:Label runat="server" ID="L22" Text='<%# GetData(Eval("id").ToString(), "2.2")=="1" ? "SI" : "NO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:TemplateField HeaderText="2. M C Y E A   2.3 Mujeres Mayores de 35 años"><ItemTemplate><asp:Label runat="server" ID="L23" Text='<%# GetData(Eval("id").ToString(), "2.3")=="1" ? "SI" : "NO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:TemplateField HeaderText="2. M C Y E A   2.4 Mujeres con insuficiente control prenatal (según edad gestacional)"><ItemTemplate><asp:Label runat="server" ID="L24" Text='<%# GetData(Eval("id").ToString(), "2.4")=="1" ? "SI" : "NO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
@@ -174,7 +173,7 @@
                     <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.1  Verificacion y cumplimiento del plan de manejo de egreso hospitalario     "><ItemTemplate><asp:Label runat="server" ID="L101" Text='<%# GetData(Eval("id").ToString(), "10.1") %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.2  Plan de manejo de situaciones evidenciadas durante la visita      "><ItemTemplate><asp:Label runat="server" ID="L102" Text='<%# GetData(Eval("id").ToString(), "10.2") %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.3  Barreras de acceso  evidenciadas     "><ItemTemplate><asp:Label runat="server" ID="L103" Text='<%# GetData(Eval("id").ToString(), "10.3") %>'></asp:Label></ItemTemplate></asp:TemplateField>
-                    <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.4  Entrega de numeros telefonicos de contactos con la EPS        SI-NO     "><ItemTemplate><asp:Label runat="server" ID="L104" Text='<%# GetData(Eval("id").ToString(), "10.4") %>'></asp:Label></ItemTemplate></asp:TemplateField>
+                    <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.4  Entrega de numeros telefonicos de contactos con la EPS        SI-NO     "><ItemTemplate><asp:Label runat="server" ID="L104" Text='<%# GetData(Eval("id").ToString(), "10.4")=="1" ? "SI" : "NO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.5  Educacion en signos de alarma     "><ItemTemplate><asp:Label runat="server" ID="L105" Text='<%# GetData(Eval("id").ToString(), "10.5") %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:BoundField HeaderText="11. OBSERVACIONES GENERALES DE LA VISITA" DataField="obsgeneral" SortExpression="obsgeneral"/>
                     <asp:TemplateField HeaderText="12. VALORACION DEL RIESGO     12.1 Riesgo Psicosocial     Alto-Bajo"><ItemTemplate><asp:Label runat="server" ID="LR1" Text='<%# Eval("robstetrico").ToString()=="1" ? "ALTO" : "BAJO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
@@ -273,7 +272,6 @@
                     <asp:TemplateField HeaderText="8. E F         Miembros Inf                       8.18 Varices  SI-NO                  "><ItemTemplate><asp:Label runat="server" ID="LR3" Text='<%# GetData(Eval("id").ToString(), "8.18")=="1" ? "SI" : "NO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:BoundField HeaderText="9. DIAGNOSTICOS        9.1 Codigo      " DataField="cie10" SortExpression="cie10"/>
                     <asp:TemplateField HeaderText="9. DIAGNOSTICOS        9.2 Descripcion     "><ItemTemplate><asp:Label runat="server" ID="Lcie10" Text='<%# GetCIE10(Eval("cie10").ToString()) %>'></asp:Label></ItemTemplate></asp:TemplateField>
-
                     <asp:TemplateField HeaderText="9. DIAGNOSTICOS Resultado  Perinatal           9.3.1 Vivo"><ItemTemplate><asp:Label runat="server" ID="LRVivo" Text='<%# Eval("RVivo").ToString()=="1" ? "SI" : "NO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:TemplateField HeaderText="9. DIAGNOSTICOS Resultado  Perinatal             9.3.2 Muerto"><ItemTemplate><asp:Label runat="server" ID="LRVivo" Text='<%# Eval("RVivo").ToString()=="0" ? "SI" : "NO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:TemplateField HeaderText="9. DIAGNOSTICOS Resultado  Perinatal             9.3.3 En casa"><ItemTemplate><asp:Label runat="server" ID="LRUbicacion" Text='<%# Eval("RUbicacion").ToString()=="1" ? "SI" : "NO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
@@ -284,7 +282,7 @@
                     <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.1  Verificacion y cumplimiento del plan de manejo de egreso hospitalario     "><ItemTemplate><asp:Label runat="server" ID="L101" Text='<%# GetData(Eval("id").ToString(), "10.1") %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.2  Plan de manejo de situaciones evidenciadas durante la visita      "><ItemTemplate><asp:Label runat="server" ID="L102" Text='<%# GetData(Eval("id").ToString(), "10.2") %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.3  Barreras de acceso  evidenciadas     "><ItemTemplate><asp:Label runat="server" ID="L103" Text='<%# GetData(Eval("id").ToString(), "10.3") %>'></asp:Label></ItemTemplate></asp:TemplateField>
-                    <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.4  Entrega de numeros telefonicos de contactos con la EPS        SI-NO     "><ItemTemplate><asp:Label runat="server" ID="L104" Text='<%# GetData(Eval("id").ToString(), "10.4") %>'></asp:Label></ItemTemplate></asp:TemplateField>
+                    <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.4  Entrega de numeros telefonicos de contactos con la EPS        SI-NO     "><ItemTemplate><asp:Label runat="server" ID="L104" Text='<%# GetData(Eval("id").ToString(), "10.4")=="1" ? "SI" : "NO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:TemplateField HeaderText="10. PLAN DE MANEJO        10.5  Educacion en signos de alarma     "><ItemTemplate><asp:Label runat="server" ID="L105" Text='<%# GetData(Eval("id").ToString(), "10.5") %>'></asp:Label></ItemTemplate></asp:TemplateField>
                     <asp:BoundField HeaderText="11. OBSERVACIONES GENERALES DE LA VISITA" DataField="obsgeneral" SortExpression="obsgeneral"/>
                     <asp:TemplateField HeaderText="12. VALORACION DEL RIESGO      12.1 Alto-Medio-Bajo"><ItemTemplate><asp:Label runat="server" ID="LR1" Text='<%# Eval("RRiesgo").ToString()=="1" ? "ALTO" : Eval("RRiesgo").ToString()=="2" ? "MEDIO" : "BAJO" %>'></asp:Label></ItemTemplate></asp:TemplateField>
@@ -311,7 +309,7 @@
                             ,seguimiento_materno.data->>'$.TIPS' AS ips
                             ,CASE paciente.pacTipoAfiliado WHEN 2 THEN 'Beneficiario' WHEN 1 THEN 'Cotizante' END as tipoafiliacion
                             ,timestampdiff(YEAR, paciente.pacFechaNac, SYSDATE()) AS years
-                            ,CONCAT(paciente.pacTelefono, ' ', paciente.pacCelular) AS telefonos
+                            ,CONCAT(IFNULL(paciente.pacTelefono,''), ' ', IFNULL(paciente.pacCelular,'')) AS telefonos
                             ,paciente.pacDireccion AS direccion
                             ,seguimiento_materno.data->>'$.TEscolaridad' AS escolaridad
                             ,seguimiento_materno.data->>'$.TLaboratorio' AS TLaboratorio

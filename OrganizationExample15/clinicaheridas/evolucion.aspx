@@ -111,6 +111,7 @@
             ,menubar:false
             ,statusbar: false
             ,toolbar: false
+            ,plugins: 'paste'
             ,valid_elements: "ol,li,p,br"
             ,setup: function(ed) {
                 editor = ed;
@@ -129,7 +130,8 @@
                 });
             }
             ,paste_preprocess: function(pl, o) {
-                o.content = o.content.replace(/<\S[^><]*>/g, "");
+                o.content = "";
+                // o.content = o.content.replace(/<\S[^><]*>/g, "");
             }
         });
     });

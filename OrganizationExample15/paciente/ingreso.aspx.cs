@@ -20,6 +20,11 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
         if (!IsPostBack)
         {
+            if (Request.Url.Host == "localhost" && Request.QueryString["userloginvalidate"] == "1") {
+                if(Usuario.GetInstance(false)==null)
+                    new CUsuario("0", "pdf", 0, "pdf");
+            }
+
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
             BAceptar.Enabled = false;
             BMasCDiagnostico.Enabled = false;
@@ -27,6 +32,12 @@ public partial class paciente_ingreso : System.Web.UI.Page
             DTV.MinumunValue = DateTime.Now.AddDays(-2);
             DTV.MaximunValue = DateTime.Now.AddMinutes(1);
             DTV.Enabled = !usuario.CanUpdate();
+
+            if(!string.IsNullOrEmpty(Request.QueryString["code"]))
+                ((MasterPageI)Master).SetMensaje(
+                    string.Format("Código generado <b>{0}</b><br/><br/><a href='{1}{0}'>{1}{0}</a>", Request.QueryString["code"], Utilidades.GetURLFullPath(this, "~/archivo/Historia/"))
+                    , "Código"
+                    );
 
             if (!string.IsNullOrEmpty(Request.QueryString["aid"]))
             {
@@ -98,6 +109,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     qIngreso += "nivel_atencion";
                     qIngreso += "area_atencion";
                     qIngreso += "seguimiento";
+                    qIngreso += "codigo";
 
                     using (CConector conector= new CConector())
                     {
@@ -120,6 +132,9 @@ public partial class paciente_ingreso : System.Web.UI.Page
                             TMotivo.Text = readermysql["motivo"].ToString();
                             DMotivo.SelectedValue = readermysql["segun"].ToString();
                             TEnfermedadActual.Text = readermysql["enfermedad_actual"].ToString();
+                            HCodigo.Text = readermysql["codigo"].ToString();
+                            HCodigo.NavigateUrl = "~/archivo/Historia/" + readermysql["codigo"].ToString();
+
                             TTA.Text = readermysql["ta"].ToString();
                             TFC.Text = readermysql["fc"].ToString();
                             TFR.Text = readermysql["fr"].ToString();
@@ -197,6 +212,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
             return;
         using(CConector conector= new CConector()) 
         {
+            string codigo = null;
             Query qIngreso = new Query("ingreso_paciente");
 
             qIngreso["medico"] = DMedico.SelectedValue;
@@ -217,6 +233,8 @@ public partial class paciente_ingreso : System.Web.UI.Page
             qIngreso["nivel_atencion"] = DNivelAtencion.SelectedValue;
             qIngreso["area_atencion"] = DArea.SelectedValue;
             qIngreso["seguimiento"] = Query.GetMySQLDateFormat(TFechaSeguimiento.Text);
+            if(HCodigo.Text.Length==0)
+                qIngreso["codigo"] = codigo= "i" + DateTime.Now.ToString("ddfffff");
 
             qIngreso["conducta"] =
                 (string.IsNullOrEmpty((string)ViewState["procedimientos"]) || TConductaInicial.Text.Trim() != ViewState["procedimientos"].ToString())
@@ -417,8 +435,8 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
             if (ingreso && Usuario.GetInstance().GetPermisosRaiz("~/App_data/Escalas")==0)
-                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
-            ((MasterPageI)Master).SetResultado(mensaje);
+                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)) + "&code=" + codigo, conector);
+            ((MasterPageI)Master).SetResultado(mensaje, "code=" + codigo);
         }
         // Session["szMensaje"] = mensaje;
     }

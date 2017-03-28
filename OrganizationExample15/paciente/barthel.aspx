@@ -2,6 +2,7 @@
 <%@ Import Namespace="System.Data" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
+<%@ Register src="~/ctrl/sharehistory.ascx" tagname="ShareHistory" tagprefix="uc" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <style type="text/css">
@@ -88,6 +89,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <div id="dImprimir">
+    <uc:ShareHistory runat="server" ID="SH" />
 <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
     <asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional">
         <ContentTemplate>

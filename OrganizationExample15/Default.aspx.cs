@@ -4,13 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using MySql.Data.MySqlClient;
-using System.Web.Security;
-using System.Data.SqlClient;
 using SDG.Componentes;
-using System.Configuration;
 
-public partial class _Default : System.Web.UI.Page 
+public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -42,7 +38,6 @@ public partial class _Default : System.Web.UI.Page
             if (m_EUsuario.Text.Length > 0)
                 m_EContrasena.Focus();
             else m_EUsuario.Focus();
-            LVersion.Text = HomeCareVersion.Number;
         }
     }
 

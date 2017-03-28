@@ -69,8 +69,7 @@ public partial class administrador_barthel : System.Web.UI.Page
                 return;
             Procedimientos.RemoveVarios(HId.Value);
             Varios.Remove(HId.Value);
-            ((MasterPageI)Master).SetResultado(mensaje, false);
-            Response.Redirect(Request.Url.AbsolutePath + "?ioe=" + DIndice.SelectedValue + "&ig=" + DGrupo.SelectedValue);
+            ((MasterPageI)Master).SetResultado(mensaje, "ioe=" + DIndice.SelectedValue + "&ig=" + DGrupo.SelectedValue);
         }
     }
 

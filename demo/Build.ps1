@@ -31,6 +31,8 @@ Copy-Item -LiteralPath $pdfLibrary -Destination (Join-Path $site 'Bin')
 
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Web.config.example') -Destination (Join-Path $site 'Web.config') -Force
 $library = Join-Path $target 'componentes'
+python (Join-Path $PSScriptRoot 'exclude-missing-controls.py') $site
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 python (Join-Path $PSScriptRoot 'build-componentes.py') --output $library
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 Copy-Item -LiteralPath (Join-Path $library 'bin/SDG.Componentes.dll') -Destination (Join-Path $site 'Bin')

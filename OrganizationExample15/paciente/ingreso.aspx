@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Hoja de ingreso" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="ingreso.aspx.cs" Inherits="paciente_ingreso" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
+<%@ Register src="~/ctrl/sharehistory.ascx" tagname="ShareHistory" tagprefix="uc" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <%= SDG.Componentes.HtmlUtil.RenderScript("~/js/tinymce.min.js") %>
@@ -117,6 +118,7 @@
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
+    <uc:ShareHistory runat="server" ID="SH" />
     <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
     <asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional">
         <ContentTemplate>
@@ -149,7 +151,7 @@
                     Médico que atiende</td>
                 <td>
                     <asp:DropDownList ID="DMedico" runat="server" DataSourceID="SMedicos" 
-                DataTextField="perNombre" DataValueField="perId"> </asp:DropDownList>
+                DataTextField="perNombre" DataValueField="perId" CssClass="amc"> </asp:DropDownList>
             <asp:SqlDataSource ID="SMedicos" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
@@ -171,7 +173,7 @@
             <tr>
                 <td>Área encargada</td>
                 <td><asp:DropDownList ID="DArea" runat="server" DataSourceID="SArea" 
-                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true" CssClass="amc">
                     <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
                 </asp:DropDownList>
                 <asp:SqlDataSource ID="SArea" runat="server" 
@@ -183,8 +185,8 @@
                 <td><asp:TextBox runat="server" ID="TFechaSeguimiento" CssClass="fecha"></asp:TextBox></td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
+                <td>Código</td>
+                <td><asp:HyperLink runat="server" ID="HCodigo"></asp:HyperLink></td>
                 <td></td>
                 <td><asp:Button runat="server" ID="BActualizar" Text="Actualizar" CausesValidation="false" OnClick="BActualizar_Click" /></td>
             </tr>

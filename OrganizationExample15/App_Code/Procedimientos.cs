@@ -370,7 +370,7 @@ public class Procedimientos
         using (CConector conectormysql = new CConector())
         {
 
-            MySqlDataReader readermysql = conectormysql.Query("SELECT evolucion_paciente.id,codigo FROM evolucion_paciente"
+            MySqlDataReader readermysql = conectormysql.Query("SELECT evolucion_paciente.id,codigos_evolucion.codigo FROM evolucion_paciente"
             + " LEFT JOIN codigos_evolucion ON (codigos_evolucion.evolucion_paciente=evolucion_paciente.id) "
             + " WHERE evolucion_paciente.id=(SELECT id FROM evolucion_paciente WHERE evolucion_paciente.paciente="
             + paciente
@@ -386,7 +386,7 @@ public class Procedimientos
 
             if (lista.Count == 0)
             {
-                readermysql = conectormysql.Query("SELECT codigo FROM ingreso_paciente LEFT JOIN codigos_ingreso ON (codigos_ingreso.ingreso_paciente=ingreso_paciente.id) WHERE paciente=" + paciente);
+                readermysql = conectormysql.Query("SELECT ingreso_paciente.codigo FROM ingreso_paciente LEFT JOIN codigos_ingreso ON (codigos_ingreso.ingreso_paciente=ingreso_paciente.id) WHERE paciente=" + paciente);
                 if (readermysql != null)
                 {
                     while (readermysql.Read())

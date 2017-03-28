@@ -175,6 +175,7 @@ img[usemap], map area{
             ,statusbar: false
             ,toolbar: false
             ,valid_elements: "ol,li,p,br"
+            ,plugins: 'paste'
             ,setup: function(ed) {
                 editor = ed;
                 ed.on('submit', function(e) {
@@ -192,9 +193,11 @@ img[usemap], map area{
                 });
             }
             ,paste_preprocess: function(pl, o) {
-                o.content = o.content.replace(/<\S[^><]*>/g, "");
+                o.content="";
+                // o.content = o.content.replace(/<\S[^><]*>/g, "");
             }
         });
+        $("#<%= TPlanManejo.ClientID %>").disablePaste();
     });
 </script>
 </asp:Content>

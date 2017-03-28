@@ -14,21 +14,25 @@ function imprimir() {
     botones.show();
 }
 
-function addDialog(szPanel, szDialog, showclosebutton) {
+function addDialog(szPanel, szDialog, showclosebutton, opt, noaddglobal) {
 
     if ($(szDialog + " :submit").length || $(szDialog + " :button").length) {
         
         if (typeof showclosebutton === "undefined")
             showclosebutton = false;
         $(szDialog).show().removeClass("hide").removeClass("hidet");
-        g_OpenDialog = szDialog; // guardamos el dialogo abierto para validacion.
-        $(szDialog).dialog({
+        if (!noaddglobal)
+            g_OpenDialog = szDialog; // guardamos el dialogo abierto para validacion.
+        var options= {
             modal: true,
             autoOpen: true,
             width: 'auto',
             closeOnEscape: showclosebutton,
             open: function(event, ui) { if (!showclosebutton) $(".ui-dialog-titlebar-close").hide(); setTimeout("$('" + szDialog + " :input:first').focus();", 100); }
-        });
+        };
+        if (opt) 
+            options = $.extend(options, opt);
+        $(szDialog).dialog(options);
         if (szPanel!=null)
             $(szDialog).parent().appendTo(jQuery(szPanel));
         $(szDialog + " :submit").button();
@@ -369,3 +373,42 @@ function commaFormatted(amount) {
     amount = minus + amount;
     return amount;
 }
+
+$.fn.disablePaste = function () {
+    function isValidKey(e) {
+
+        return (e > 47 && e < 58) || // number keys
+                    e == 32 || e == 13 || // spacebar & return key(s) (if you want to allow carriage returns)
+                    (e > 64 && e < 91) || // letter keys
+                    (e > 95 && e < 112) || // numpad keys
+                    (e > 185 && e < 193) || // ;=,-./` (in order)
+                    (e > 218 && e < 223)   // [\]' (in order)
+        ;
+    }
+
+    return this.each(function () {
+        var count = 0;
+        function updateCount(ctrl) {
+            var text = $(ctrl).val();
+            if (text.length < count)
+                count = text.length;
+            else if (Math.abs(text.length - count) > 10) {
+                count = 0;
+                $(ctrl).val("");
+            }
+        }
+
+        $(this)
+            .bind("cut copy paste drop", function (e) { e.preventDefault(); return false; })
+            .on("keyup", function (e) {
+                if (count == -1)
+                    count = 0;
+                if (isValidKey(e.which))
+                    count++;
+                updateCount(this);
+            }).focusout(function () {
+                updateCount(this);
+            });
+        count = $(this).val().length;
+    });
+};

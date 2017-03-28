@@ -102,20 +102,22 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         MModificaciones.IdModificacion = idModificaciones;
     }
 
-    public void SetMensaje(String mensaje) {
+    public void SetMensaje(String mensaje, string titulo=null) {
 
+        if (string.IsNullOrEmpty(titulo))
+            dialog_message.Attributes["title"] = titulo;
         LMensaje.Text = mensaje;
     }
 
-    public void SetResultado(String titulo, bool redirect) {
+    public void SetResultado(String titulo, string parametros=null, bool redirect=true) {
 
         Session["szMensaje"] = titulo;
-        if(redirect)
-            Response.Redirect(Request.Url.AbsolutePath);
-    }
-    public void SetResultado(String titulo)
-    {
-        SetResultado(titulo, true);
+        if (redirect)
+        {
+            if(string.IsNullOrEmpty(parametros))
+                Response.Redirect(Request.Url.AbsolutePath);
+            else Response.Redirect(Request.Url.AbsolutePath + "?" + parametros);
+        }
     }
 
     public void SetAuxDiag(String titulo, String texto) {

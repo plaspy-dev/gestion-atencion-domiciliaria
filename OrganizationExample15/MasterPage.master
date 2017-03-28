@@ -54,7 +54,7 @@
                             }
                         }
                     });
-                    $(".ui-dialog-buttonpane button").attr('onclick', "$('#dialog-message').dialog('close'); $('#dialog_aux').dialog('close'); ");
+                    $(".ui-dialog-buttonpane button").attr('onclick', "$('#dialog_message').dialog('close'); $('#dialog_aux').dialog('close'); ");
                 }
             });
 
@@ -103,7 +103,7 @@
 
                 setTimeout(updateHeader, 1000);
                 if ($("#<%= LMensaje.ClientID %>").html().length > 0) {
-                    $("#dialog-message").dialog({
+                    $("#dialog_message").dialog({
                         modal: true,
                         width: 'auto',
                         buttons: {
@@ -112,7 +112,7 @@
                             }
                         }
                     });
-                    $(".ui-dialog-buttonpane button").attr('onclick', "$('#dialog-message').dialog('close'); $('#dialog_aux').dialog('close'); ");
+                    $(".ui-dialog-buttonpane button").attr('onclick', "$('#dialog_message').dialog('close'); $('#dialog_aux').dialog('close'); ");
                 }
             });
         });
@@ -311,7 +311,7 @@
     </asp:UpdatePanel>
     <asp:UpdatePanel ID="UMensaje" runat="server" UpdateMode="Always">
         <ContentTemplate>
-            <div id="dialog-message" title="Error" class="hidet">
+            <div id="dialog_message" title="Error" class="hidet" runat="server" clientidmode="Static">
                 <asp:Label ID="LMensaje" runat="server" Text=""></asp:Label>
             </div>
         </ContentTemplate>

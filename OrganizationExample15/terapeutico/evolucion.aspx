@@ -39,6 +39,7 @@
             setTimeout(function() {
                 uFechaFinal($("#<%= TFecha.ClientID%>")[0]);
             }, 1000);
+            $("#<%= TLogros.ClientID %>,#<%= TPlan.ClientID %>").disablePaste();
         });
     </script>
 </asp:Content>

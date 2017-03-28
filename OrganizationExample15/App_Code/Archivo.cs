@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using MySql.Data.MySqlClient;
 using SDG.Componentes;
@@ -88,5 +89,80 @@ public class Archivo
         }
 
         return archivo;
+    }
+
+
+    public static string GetLocalhost()
+    {
+        string url = "http://localhost";
+        if (HttpContext.Current.Request.Url.Port != 80)
+            url += ":" + HttpContext.Current.Request.Url.Port;
+        return url + "/";
+    }
+
+    public static string GetHistoryFromCode(string code) {
+
+        string funcionario = null;
+        string fecha = null;
+        return GetHistoryFromCode(code, out funcionario, out fecha);
+    }
+
+    public static string GetHistoryFromCode(string code, out string funcionario, out string fecha) {
+
+        funcionario = null;
+        fecha = null;
+        string url = "";
+        Query query = new Query("");
+
+        switch (code.ToLower()[0])
+        {
+            case 'i':
+                query.TableName = "ingreso_paciente";
+                url = "~/paciente/ingreso.aspx?pid={0}&userloginvalidate=1&pdf=1";
+                break;
+            case 'e':
+                query.TableName = "evolucion_paciente";
+                url = "~/paciente/evolucion.aspx?pid={0}&evolid={1}&userloginvalidate=1&pdf=1";
+                break;
+            default:
+                return null;
+        }
+
+        query += "id";
+        query += "paciente";
+        query += "medico";
+        query += "fecha";
+
+        using (CConector conector = new CConector())
+        {
+            string condicionfecha = "fecha>NOW()-INTERVAL 7 DAY AND ";
+            // condicionfecha = ""; // quitar tambien en share history
+            MySqlDataReader reader = conector.Query(query.GetSelect(condicionfecha + "codigo=" + Query.GetValor(code) + " ORDER BY id DESC"));
+
+            if (reader != null && reader.Read())
+            {
+
+                string id = reader["id"].ToString();
+                string paciente = reader["paciente"].ToString();
+                fecha = reader["fecha"].ToString();
+                Funcionario info= Funcionario.GetFuncionario(reader["medico"].ToString());
+                funcionario = info.Nombres;
+
+                string fileName = Path.GetTempFileName();
+                try
+                {
+                    using (WebClient client = new WebClient())
+                    {
+                        client.DownloadFile(GetLocalhost() + VirtualPathUtility.ToAbsolute(string.Format(url, paciente, id)), fileName);
+                        return fileName;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logs.Write(url + "\n" + ex.ToString());
+                }
+            }
+        }
+        return null;
     }
 }

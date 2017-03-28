@@ -257,6 +257,8 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
 
             conector.StartTransaction();
 
+            string autorizacion = HIdAutorizacion.Value;
+
             query["autNumero"] = TNumero.Text;
             query["pacId"] = HIdPaciente.Value;
             query["autFecha"] = Query.GetMySQLDateFormat(TFecha.Text);
@@ -268,7 +270,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             if (HFormula.Text.Length > 0) // es una autorizacion de DMGEN
                 query["autProvisional"] = "0";
 
-            if (HIdAutorizacion.Value.Length == 0)
+            if (string.IsNullOrEmpty(autorizacion))
             {
                 query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
                 query["segFechaIngreso"] = "SYSDATE()";
@@ -289,18 +291,27 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 if (res == -1)
                     return;
                 HId.Value = res.ToString();
-                HIdAutorizacion.Value = TNumero.Text;
+                autorizacion = TNumero.Text;
             }
             else
             {
                 query["segUsuarioModifica"] = Usuario.GetUsuario().GetLogin();
                 query["segFechaModifica"] = "SYSDATE()";
-                if (conector.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(HIdAutorizacion.Value))) == -1)
+                if (conector.QueryMod(query.GetUpdate("autNumero=" + Query.GetValor(autorizacion))) == -1)
+                    return;
+                autorizacion = TNumero.Text;
+                // Actualizamos la programacion
+                if (conector.QueryMod(string.Format("UPDATE pago_autorizacion SET autNumero={0} WHERE autNumero={1}", Query.GetValor(autorizacion), Query.GetValor(HIdAutorizacion.Value))) == -1)
+                    return;
+                if (conector.QueryMod(string.Format("UPDATE autorizacion_detalle SET autNumero={0} WHERE autNumero={1}", Query.GetValor(autorizacion), Query.GetValor(HIdAutorizacion.Value))) == -1)
+                    return;
+                if (conector.QueryMod(string.Format("UPDATE programacion SET autNumero={0} WHERE autNumero={1}", Query.GetValor(autorizacion), Query.GetValor(HIdAutorizacion.Value))) == -1)
                     return;
             }
-            using (CConector conectorm = new CConector())
-                if (conectorm.InsertModificacion(HId.Value) == -1)
-                    return;
+
+            if (conector.InsertModificacion(HId.Value) == -1)
+                return;
+
 
             if (GPagos.Rows.Count == 0)
             {
@@ -319,7 +330,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             }
 
             // limpiamos los servicioes anteriores
-            if (conector.QueryMod("DELETE FROM autorizacion_detalle WHERE autNumero=" + Query.GetValor(HIdAutorizacion.Value)) == -1)
+            if (conector.QueryMod("DELETE FROM autorizacion_detalle WHERE autNumero=" + Query.GetValor(autorizacion)) == -1)
                 return;
 
             string[] querys = SActividades.GetQuerys();
@@ -329,7 +340,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             {
                 for (int i = 0; i < querys.Length; i++)
                 {
-                    szQuery = querys[i].Replace("@autorizacion", Query.GetValor(HIdAutorizacion.Value));
+                    szQuery = querys[i].Replace("@autorizacion", Query.GetValor(autorizacion));
                     if (conector.QueryMod(szQuery) == -1)
                         return;
                 }
@@ -352,7 +363,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 return;
 
             string ids = conector.QueryString("SELECT @uids");
-            Autorizaciones.UpdateSesiones(conector, HIdAutorizacion.Value);
+            Autorizaciones.UpdateSesiones(conector, autorizacion);
             conector.Commit();
 
             foreach (string pacienteId in ids.Split(',')) 
