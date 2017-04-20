@@ -96,10 +96,17 @@
                 }
                 estadoiniciado = true;
             }).change();
+            $("#<%= CAlerta.ClientID %>").change(function() {
+                $("#<%= TAlerta.ClientID %>").toggle($(this).is(':checked'));
+                if($(this).is(':checked')) $("#<%= TAlerta.ClientID %>").focus();
+            }).change();
         });
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
+    <asp:Panel runat="server" ID="PAlerta" Visible="false" CssClass="alert alert-danger">
+        <i class="fa fa-2x fa-warning"></i> Alerta de servicios
+    </asp:Panel>
         <div id="tabpersonal" style="min-width: 750px">
             <ul>
                 <li><a href="#tabs1">Datos Personales</a></li>
@@ -449,6 +456,10 @@
                         </td>
                         <td></td>
                         <td><asp:CheckBox runat="server" ID="CPazySalvo" Text="Paz y Salvo?" /></td>
+                    </tr>
+                    <tr>
+                        <td><asp:CheckBox runat="server" ID="CAlerta" Text="Alerta de servicios" /></td>
+                        <td colspan="3"><asp:TextBox runat="server" ID="TAlerta" Width="100%"></asp:TextBox></td>
                     </tr>
                     <tr>
                         <td>Cargo principal</td>

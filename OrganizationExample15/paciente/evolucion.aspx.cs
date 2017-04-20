@@ -405,7 +405,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
             Paciente.RemovePaciente(CCDetallePaciente.IdPaciente);
 
             if (nuevaevolucion && Usuario.GetInstance().GetPermisosRaiz("~/App_data/Escalas")==0)
-                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)) + "&code=" + codigo, conector);
+                Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(TFecha.Text, true)), conector);
             ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
             ((MasterPageI)Master).SetResultado(mensaje, "code=" + codigo);
         }

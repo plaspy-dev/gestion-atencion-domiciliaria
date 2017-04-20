@@ -12,6 +12,8 @@ public partial class materna_informe : System.Web.UI.Page
 {
     public string CurrentSeguimiento = null;
     public Dictionary<string, string> cacheData = new Dictionary<string, string>();
+    public static Regex RegexNumers = new Regex("^\\d+\\.\\d+$", RegexOptions.Compiled);
+    public static Regex regexHeader = new Regex(@"(\d+.?\d*)(.+)", RegexOptions.Compiled);
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -25,8 +27,6 @@ public partial class materna_informe : System.Web.UI.Page
             BBuscar_Click(sender, e);
         }
     }
-
-    public static Regex regexHeader = new Regex(@"(\d+.?\d*)(.+)", RegexOptions.Compiled);
 
     protected string GetCode(string text)
     {
@@ -104,13 +104,12 @@ public partial class materna_informe : System.Web.UI.Page
 
         if (CurrentSeguimiento != idSeguimiento || cacheData == null) {
             FillData(idSeguimiento);
-            /*LMessage.Text = "";
-            foreach (var key in cacheData) {
-                LMessage.Text += string.Format("{0}={1}<br/>", key.Key, key.Value);
-            }*/
         }
         try {
-            return cacheData[code];
+            string value = cacheData[code];
+            if (!string.IsNullOrEmpty(value) && RegexNumers.IsMatch(value))
+                return value.Replace(".", ",");
+            return value;
         } catch { }
         return null;
     }

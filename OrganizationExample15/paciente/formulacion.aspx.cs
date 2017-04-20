@@ -175,7 +175,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                             GFormulacion.Columns[0].Visible = usuario.CanUpdate();
                             GFormulacion.Columns[1].Visible = usuario.CanDelete();
 
-                            HIdFormulacion.Value = readermysql["id"].ToString();
+                            ViewState["id"]= readermysql["id"].ToString();
                             if (readermysql["autorizacion"].ToString().Length > 0)
                             {
                                 HAutorizacion.Text = "Autorización " + readermysql["autorizacion"].ToString();
@@ -197,7 +197,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                             qmedicamentos["tiempo"] = "medicamento_formulacion.tiempo";
                             qmedicamentos["codigo"] = "IF(hoja_sola IS NULL, medicamentos.codigo, 'hoja_sola')";
 
-                            readermysql = conector.Query(qmedicamentos.GetSelect("formulacion=" + HIdFormulacion.Value + " ORDER BY medicamentos.hoja_sola IS NULL OR (codigo>900000 AND codigo<921100)"
+                            readermysql = conector.Query(qmedicamentos.GetSelect("formulacion=" + (string)ViewState["id"] + " ORDER BY medicamentos.hoja_sola IS NULL OR (codigo>900000 AND codigo<921100)"
                                 , "LEFT JOIN medicamentos ON (medicamentos.id=medicamento_formulacion.medicamento)"));
                             if (readermysql != null)
                             {
@@ -220,7 +220,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                             GFormulacion.DataSource = medicamentos;
                             GFormulacion.DataBind();
 
-                            ((MasterPageI)Master).SetModificacion(HIdFormulacion.Value);
+                            ((MasterPageI)Master).SetModificacion((string)ViewState["id"]);
                         }
                         else
                         {
@@ -250,7 +250,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
     protected bool AddMedicamento() {
 
         LMensajeMedicamento.Text = "";
-        if (TMedicamentoID.Text.Length == 0 && HIdFormulacion.Value.Length>0) // ya existe la formula y el medicamento esta en blanco
+        if (TMedicamentoID.Text.Length == 0 && !string.IsNullOrEmpty((string)ViewState["id"])) // ya existe la formula y el medicamento esta en blanco
             return true;
 
         Page.Validate("medicamento");
@@ -270,7 +270,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                     TCantidad.Focus();
                     return false;
                 }
-                using (CConector conector = new CConector())
+                /*using (CConector conector = new CConector())
                 {
                     string cantidad = conector.QueryString(string.Format("SELECT medicamento_formulacion.formulada FROM formulacion"
                         + " LEFT JOIN medicamento_formulacion ON (medicamento_formulacion.formulacion=formulacion.id)"
@@ -295,7 +295,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         }
                     }
                     catch { }
-                }
+                }*/
             }
             if (maximo > 0) // esta restringido
             {
@@ -480,12 +480,14 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
         string szQuery;
         string mensaje;
+        string parametros = null;
 
         using (CConector conector = new CConector())
         {
             conector.StartTransaction();
 
             DateTime fecha = Convert.ToDateTime(TFecha.Text);
+            string id = (string)ViewState["id"];
 
             formulacion["fecha"] = Query.GetMySQLDateFormat(TFecha.Text);
             formulacion["tipo"] = DTipo.SelectedValue;
@@ -495,7 +497,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
             /*query["autFecha"] = fecha.ToShortDateString();
             query["autFechaVenc"] = fecha.AddDays(30).ToShortDateString();*/
 
-            if (HIdFormulacion.Value.Length == 0)
+            if (string.IsNullOrEmpty(id))
             {
                 formulacion["paciente"] = CCDetallePaciente.IdPaciente;
                 /*if (DTipo.SelectedValue == idprocedimientos)
@@ -526,11 +528,11 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 int resultado = conector.QueryMod(szQuery, true);
                 if (resultado == -1)
                     return;
-                HIdFormulacion.Value = resultado.ToString();
+                id = resultado.ToString();
             }
             else
             {
-                szQuery = formulacion.GetUpdate("id='" + HIdFormulacion.Value + "'");
+                szQuery = formulacion.GetUpdate("id='" + id + "'");
                 mensaje = CCDetallePaciente.Nombres + " editado";
                 if (conector.QueryMod(szQuery) == -1)
                     return;
@@ -540,7 +542,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                         return;
                 }*/
             }
-            if (conector.InsertModificacion(HIdFormulacion.Value) == -1)
+            if (conector.InsertModificacion(id) == -1)
                 return;
             if (!string.IsNullOrEmpty((string)ViewState["autorizacion"]))
             {
@@ -565,7 +567,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
                 if (string.IsNullOrEmpty(info.Id))
                 {
-                    medicamento["formulacion"] = HIdFormulacion.Value;
+                    medicamento["formulacion"] = id;
                     if (conector.QueryMod(medicamento.GetInsert()) == -1)
                         return;
                 }
@@ -576,7 +578,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 }
             }
 
-            UpdateFormulacion(conector, HIdFormulacion.Value);
+            UpdateFormulacion(conector, id);
             /*if (!string.IsNullOrEmpty((string)ViewState["autorizacion"]))
             {
                 if (conector.QueryMod("DELETE FROM autorizacion_detalle WHERE autNumero=" + Query.GetValor(ViewState["autorizacion"].ToString())) == -1)
@@ -614,10 +616,21 @@ public partial class paciente_formulacion : System.Web.UI.Page
             }*/
 
             conector.Commit();
-        }
 
+            if (string.IsNullOrEmpty((string)ViewState["id"]))
+            {
+                parametros= conector.QueryString("(SELECT codigo FROM evolucion_paciente WHERE paciente={0} AND DATE(fecha)={1}) UNION (SELECT codigo FROM ingreso_paciente WHERE paciente={0} AND DATE(fecha)={1}) LIMIT 1;"
+                , Query.GetValor(CCDetallePaciente.IdPaciente)
+                , Query.GetValor(Query.GetMySQLDateFormat(TFecha.Text))
+                );
+                if (!string.IsNullOrEmpty(parametros)) {
+                    parametros = "code=" + parametros;
+                }
+            }
+        }
+        
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
-        ((MasterPageI)Master).SetResultado(mensaje);
+        ((MasterPageI)Master).SetResultado(mensaje, parametros);
     }
 
     protected void GFormulacion_SelectedIndexChanged(object sender, EventArgs e)
@@ -701,7 +714,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
         string url = HttpContext.Current.Request.Url.AbsolutePath.Replace(HttpContext.Current.Request.ApplicationPath, "~");
         using (CConector conector = new CConector())
         {
-            idmedico = conector.QueryString("SELECT usuario.personal FROM modificaciones LEFT JOIN usuario ON (usuario.id=modificaciones.usuario) WHERE modificaciones.id='" + HIdFormulacion.Value + "' AND modificaciones.url='" + url + "' ORDER BY modificaciones.fecha LIMIT 1");
+            idmedico = conector.QueryString("SELECT usuario.personal FROM modificaciones LEFT JOIN usuario ON (usuario.id=modificaciones.usuario) WHERE modificaciones.id='" + ViewState["id"] + "' AND modificaciones.url='" + url + "' ORDER BY modificaciones.fecha LIMIT 1");
 
             Query query = new Query("recurso_humano");
 
@@ -779,7 +792,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                 else numero_medicamentos = UnaSolaHoja(i * numero_medicamentos) ? 1 : total_medicamentos;
 
                 contenido += contenidoreal.Replace("$szFormulacion$", RenderPage(inicial, numero_medicamentos))
-                    .Replace("$szConsecutivo$", HIdFormulacion.Value + "-" + (i+1));
+                    .Replace("$szConsecutivo$", ViewState["id"] + "-" + (i+1));
                 inicial += numero_medicamentos;
             }
             evento.Contenido= evento.Contenido.Insert(posf + 6, contenido);
@@ -789,7 +802,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
         else numero_medicamentos = UnaSolaHoja(0) ? 1 : total_medicamentos;
         // aqui modificamos la primera pagina.
         evento.Contenido = evento.Contenido.Replace("$szFormulacion$", RenderPage(0, numero_medicamentos))
-            .Replace("$szConsecutivo$", HIdFormulacion.Value + "-1");
+            .Replace("$szConsecutivo$", ViewState["id"] + "-1");
     }
 
     protected bool UnaSolaHoja(int posicion) {

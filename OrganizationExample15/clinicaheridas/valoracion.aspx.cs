@@ -135,10 +135,9 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                             CSignosInfeccion.Checked= reader["signos_infeccion"].ToString()=="1";
                             TCAfluente.Text = Utilidades.TryConverToDoubleInvariantCulture(reader["cantidad_afluente"]);
                             TObservacionPulso.Text = reader["observacion_pulso"].ToString();
-                            
                             TPlanManejo.Text = reader["manejo"].ToString();
 
-                            if (TPlanManejo.Text.Length == 0)
+                            /*if (TPlanManejo.Text.Length == 0)
                             {
                                 string procedimientos = Procedimientos.GetPlanDeManejo(conector, CCDetallePaciente.IdPaciente, TFecha.Text);
                                 if (procedimientos.Length > 0)
@@ -146,7 +145,7 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
                                     ViewState["procedimientos"] = procedimientos;
                                     TPlanManejo.Text = procedimientos;
                                 }
-                            }
+                            }*/
 
                             query = new Query("valoracion_herida_herida");
 

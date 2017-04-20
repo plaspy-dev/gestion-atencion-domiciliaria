@@ -268,7 +268,7 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
             if (reader != null && reader.Read())
             {
                 TNumero.Text = reader["sesion"].ToString();
-                TPlan.Text = reader["plan"].ToString();
+                // TPlan.Text = reader["plan"].ToString();
             }
 
             if (TNumero.Text.Length == 0)

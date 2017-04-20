@@ -197,7 +197,6 @@ img[usemap], map area{
                 // o.content = o.content.replace(/<\S[^><]*>/g, "");
             }
         });
-        $("#<%= TPlanManejo.ClientID %>").disablePaste();
     });
 </script>
 </asp:Content>

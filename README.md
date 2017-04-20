@@ -11,7 +11,7 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2017-03-27.
+This cut records the home-care application as archived on 2017-04-20.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
@@ -20,14 +20,14 @@ The application keeps the records used to arrange visits and coordinate the peop
 
 - Consult the maternal care report. `OrganizationExample15/materna/informe.aspx`.
 - Record the wound assessment in the clinical record. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
-- Consult and maintain wound progression notes. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
+- Open the staff record for the care team. `OrganizationExample15/rh/funcionario.aspx`.
 - Record postpartum care and follow-up in the maternal care module. `OrganizationExample15/materna/postparto.aspx`.
 - Open the batch admission screen to process patient admissions. `OrganizationExample15/admisiones/amasivas.aspx`.
 - Review visit scheduling from the census. `OrganizationExample15/censo/censo_programacion.aspx`.
 - Review the list of therapeutic progress notes. `OrganizationExample15/terapeutico/evoluciones.aspx`.
 - List discharges from the wound-care clinic. `OrganizationExample15/clinicaheridas/egresos.aspx`.
+- Consult and maintain wound progression notes. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
 - Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
-- Open the staff record for the care team. `OrganizationExample15/rh/funcionario.aspx`.
 
 ### Build and local use
 
@@ -38,7 +38,7 @@ The retained site entry is `OrganizationExample15/Default.aspx`. Use fictional a
 
 ### Archive notes
 
-The archive inventory counted 9 additions, 19 edits and 0 removals.
+The archive inventory counted 0 additions, 18 edits and 2 removals.
 
 ### Framework versions
 
@@ -80,7 +80,7 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2017-03-27.
+Este corte conserva la versión de atención domiciliaria archivada el 2017-04-20.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
@@ -89,14 +89,14 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 
 - Consulta el informe de atención materna. `OrganizationExample15/materna/informe.aspx`.
 - Registra la valoración de heridas en la ficha clínica. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
-- Consulta y actualiza las notas de evolución de heridas. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
+- Abre la ficha del personal del equipo de atención. `OrganizationExample15/rh/funcionario.aspx`.
 - Registra la atención posparto y su seguimiento en el módulo materno. `OrganizationExample15/materna/postparto.aspx`.
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `OrganizationExample15/admisiones/amasivas.aspx`.
 - Consulta la programación de visitas desde el censo. `OrganizationExample15/censo/censo_programacion.aspx`.
 - Consulta el listado de notas de evolución terapéutica. `OrganizationExample15/terapeutico/evoluciones.aspx`.
 - Consulta los egresos de la clínica de heridas. `OrganizationExample15/clinicaheridas/egresos.aspx`.
+- Consulta y actualiza las notas de evolución de heridas. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
 - Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
-- Abre la ficha del personal del equipo de atención. `OrganizationExample15/rh/funcionario.aspx`.
 
 ### Compilación y uso local
 
@@ -107,7 +107,7 @@ La entrada conservada del sitio es `OrganizationExample15/Default.aspx`. Usa cue
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 9 adiciones, 19 cambios y 0 retiros.
+El inventario del respaldo registró 0 adiciones, 18 cambios y 2 retiros.
 
 ### Versiones de .NET Framework
 
@@ -148,22 +148,6 @@ The build restores iTextSharp 5.4.4 from the official NuGet package and checks i
 
 La compilación restaura iTextSharp 5.4.4 desde el paquete oficial de NuGet y coteja su SHA-256. Indica una copia del mismo paquete en `DOMICILIO_ITEXTSHARP_PACKAGE` para compilar sin Internet.
 
-The 2026 reconstruction adds the archived Web Forms dependencies and rebuilds the shared library from its retained 2017 source. The local build sets aside four pages that require missing shared-history or patient-detail controls. The source of those pages remains in Git. The fictional MySQL test confirms the account lookup and sign-in. Those four workflows require separate tests.
+The 2026 reconstruction restores archived Web Forms inputs and builds a later matching copy of the owned shared library. The recipe excludes tracked views with missing patient controls from its disposable build. The fictional MySQL test verified sign-in and the protected home page with the historical grouping mode.
 
-La reconstrucción de 2026 agrega las dependencias Web Forms archivadas y recompila la biblioteca propia desde su fuente conservada de 2017. La compilación local aparta cuatro páginas que requieren controles de historia compartida o ficha de paciente que faltan. Las páginas siguen en Git. La prueba con MySQL ficticio confirma la consulta de cuenta y el registro de ingreso. Esos cuatro recorridos requieren pruebas aparte.
-
-## Web Forms sign-in demo / Demo de ingreso Web Forms
-
-In addition to the build tools above, install Python 3, Playwright with a local Chromium
-browser, IIS Express and Docker. Load the MySQL and SQL Server Developer images pinned by
-the script. Run `python demo/run-local-webforms.py` from this edition. The local test writes
-the fictional sign-in to MySQL and opens the protected home page. It uses empty visit
-schedule and task tables. The disposable MySQL container applies the grouping mode expected
-by this historical query. See the [MySQL 5.7 compatibility notes](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/upgrading-from-previous-series.html).
-
-Además de las herramientas de compilación, instala Python 3, Playwright con un navegador
-Chromium local, IIS Express y Docker. Carga antes las imágenes MySQL y SQL Server Developer
-fijadas por el script. Ejecuta `python demo/run-local-webforms.py` en esta edición. La prueba
-registra el ingreso ficticio en MySQL y abre la portada protegida. Usa tablas vacías de agenda
-de visitas y tareas. El contenedor desechable de MySQL aplica el modo de agrupación que espera
-la consulta histórica. Consulta las [notas de compatibilidad de MySQL 5.7](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/upgrading-from-previous-series.html).
+La reconstrucción de 2026 recupera insumos archivados de Web Forms y compila una revisión posterior compatible de la biblioteca propia. La receta aparta de la copia desechable las vistas que requieren controles de paciente ausentes. La prueba con MySQL ficticio verificó el ingreso y la portada protegida con el modo histórico de agrupación.

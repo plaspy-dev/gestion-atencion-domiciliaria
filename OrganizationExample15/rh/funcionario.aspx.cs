@@ -118,6 +118,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                 query += "laboraActualmente";
                 query += "origen_tp";
                 query += "cargos";
+                query += "alerta";
 
                 using (CConector conector = new CConector())
                 {
@@ -172,7 +173,12 @@ public partial class rh_funcionario : System.Web.UI.Page
                         Utilidades.SelectInDropDown(DFOP, reader["entIdAFP"]);
                         Utilidades.SelectInDropDown(DARP, reader["entIdARP"]);
                         Utilidades.SelectInDropDown(DLocalidad, reader["locId"]);
-                        CPazySalvo.Checked = reader["perPazySalvo"].ToString() == "True" ? true : false;
+                        CPazySalvo.Checked = reader["perPazySalvo"].ToString() == "True";
+                        TAlerta.Text= reader["alerta"].ToString();
+                        PAlerta.Visible = CAlerta.Checked = TAlerta.Text.Length > 0;
+                        if (CAlerta.Checked) 
+                            TObservaciones.Text += " " + TAlerta.Text;
+
                         Utilidades.SelectInDropDown(DEstado, reader["eEstId"]);
                         Utilidades.SelectInDropDown(DCargo, reader["carId"]);
                         LCargo.DataBind();
@@ -453,6 +459,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["entIdARP"] = DARP.SelectedValue;
         query["locId"] = DLocalidad.SelectedValue;
         query["perPazySalvo"] = CPazySalvo.Checked ? "1" : "0";
+        query["alerta"] = CAlerta.Checked ? TAlerta.Text : "";
         query["eEstId"] = DEstado.SelectedValue;
         query["carId"] = DCargo.SelectedValue;
         query["cargos"]= string.Join(",", LCargo.Items.Cast<ListItem>().Where(x => x.Selected).Select(x => x.Value));

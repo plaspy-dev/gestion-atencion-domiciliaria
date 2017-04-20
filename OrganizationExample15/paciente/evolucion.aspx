@@ -156,7 +156,7 @@
         <table style="border-collapse: collapse">
             <tr>
                 <td colspan="4">
-                <uc6:Digitalizacion ID="DArchivo" runat="server" Tipo="Historia Clínica,Laboratorio Clínico,Concurrencia" />
+                <uc6:Digitalizacion ID="DArchivo" runat="server" Tipo="Historia Clínica,Laboratorio Clínico,Concurrencia,Ingreso PHD" />
                 <asp:Panel ID="PEvoluciones" runat="server">
                     <h3><a href="#"><asp:Label runat="server" ID="LEvoluciones"></asp:Label></a></h3>
                     <div class="hidet">

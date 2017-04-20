@@ -142,7 +142,6 @@
                             ,autorizacion_detalle.autNumSesiones AS autorizadas
                             ,IFNULL(COUNT(evolucion_terapeutivo.id),0)+IFNULL(COUNT(valoracionat.id),0) AS realizadas
                             ,(IFNULL(COUNT(evolucion_terapeutivo.id),0)+IFNULL(COUNT(valoracionat.id),0))/autorizacion_detalle.autNumSesiones AS porcentaje
-                            ,NULL as realizadas
                             FROM autorizacion
                             LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
                             LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)

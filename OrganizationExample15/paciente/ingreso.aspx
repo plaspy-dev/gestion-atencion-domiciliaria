@@ -2,6 +2,7 @@
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register src="~/ctrl/sharehistory.ascx" tagname="ShareHistory" tagprefix="uc" %>
+<%@ Register Src="~/archivo/digitalizacionc.ascx" TagName="Digitalizacion" TagPrefix="uc6" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <%= SDG.Componentes.HtmlUtil.RenderScript("~/js/tinymce.min.js") %>
@@ -124,6 +125,7 @@
         <ContentTemplate>
         <asp:HiddenField ID="HIdIngreso" runat="server" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
+        <uc6:Digitalizacion ID="DArchivo" runat="server" Tipo="Ingreso PHD" />
         <table width="100%" style="border-collapse: collapse">
         	<tr>
                 <td colspan="4" class="celdaTitulo">Información de atención básica</td>

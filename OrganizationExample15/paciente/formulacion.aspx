@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="Orden médica" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="formulacion.aspx.cs" Inherits="paciente_formulacion" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
+<%@ Register src="~/ctrl/sharehistory.ascx" tagname="ShareHistory" tagprefix="uc" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
@@ -55,10 +56,10 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
 <div id="dImprimir">
+<uc:ShareHistory runat="server" ID="SH" />
 <uc5:SeleccionarPaciente ID="SeleccionarPaciente" runat="server" />
     <asp:UpdatePanel runat="server" id="PDatos" Visible="false" UpdateMode="Conditional">
         <ContentTemplate>
-        <asp:HiddenField ID="HIdFormulacion" runat="server" />
         <uc4:detallepaciente ID="CCDetallePaciente" runat="server" />
         <table>
             <tr>
@@ -172,7 +173,9 @@
                 </td>
             </tr>
             <tr>
-                <td>Cantidad<asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TCantidad" ErrorMessage="Por favor ingrese una cantidad." ID="RCantidad" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                <td>Cantidad<asp:RequiredFieldValidator ValidationGroup="medicamento" ControlToValidate="TCantidad" ErrorMessage="Por favor ingrese una cantidad." ID="RCantidad" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                    <asp:RangeValidator ValidationGroup="medicamento" ControlToValidate="TCantidad" ErrorMessage="Por favor ingrese un valor valido" ID="RR" runat="server" Display="Dynamic" SetFocusOnError="true" Type="Integer" MinimumValue="1" MaximumValue="999999">*</asp:RangeValidator>
+                </td>
                                     <td><asp:TextBox runat="server" ID="TCantidad" Width="50px" CssClass="entero"></asp:TextBox>
                                 </td>
                                 <td><asp:Label runat="server" ID="LPosologia" Text="Posología"></asp:Label></td>

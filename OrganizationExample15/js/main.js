@@ -387,16 +387,30 @@ $.fn.disablePaste = function () {
     }
 
     return this.each(function () {
+
         var count = 0;
         function updateCount(ctrl) {
-            var text = $(ctrl).val();
-            if (text.length < count)
-                count = text.length;
-            else if (Math.abs(text.length - count) > 10) {
+            var length = $(ctrl).val().length;
+            if (length < count)
+                count = length;
+            else if (Math.abs(length - count) > 10) {
                 count = 0;
                 $(ctrl).val("");
             }
         }
+        var This = this;
+        setInterval(function () {
+            var ctrl = This;
+            var length = $(ctrl).val().length;
+            if (length < count)
+                count = length;
+            else if (Math.abs(length - count) < 10) {
+                count = length;
+            } else if (Math.abs(length - count) > 10) {
+                count = 0;
+                $(ctrl).val("");
+            }
+        }, 100);
 
         $(this)
             .bind("cut copy paste drop", function (e) { e.preventDefault(); return false; })
