@@ -146,7 +146,7 @@ public partial class cliente_escliente : System.Web.UI.Page
 
     protected void IIr_Click(object sender, EventArgs e)
     {
-        Response.Redirect("~/cliente/escliente.aspx?eid=" + ((ImageButton)sender).CommandArgument);
+        Response.Redirect("~/cliente/escliente.aspx?eid=" + ((LinkButton)sender).CommandArgument);
     }
 
     public void OnImprimir(object sender, EventArgs e)

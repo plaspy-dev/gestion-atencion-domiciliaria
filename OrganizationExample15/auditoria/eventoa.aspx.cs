@@ -182,7 +182,7 @@ public partial class auditoria_eventoa : System.Web.UI.Page
 
     protected void IIr_Click(object sender, EventArgs e)
     {
-        Response.Redirect("~/auditoria/eventoa.aspx?eaid=" + ((ImageButton)sender).CommandArgument);
+        Response.Redirect("~/auditoria/eventoa.aspx?eaid=" + ((LinkButton)sender).CommandArgument);
     }
     protected void BEliminar_Click(object sender, EventArgs e)
     {

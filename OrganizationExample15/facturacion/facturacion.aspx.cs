@@ -409,9 +409,9 @@ public partial class facturacion_facturacion : System.Web.UI.Page
         }
     }
 
-    protected void IIr_Click(object sender, ImageClickEventArgs e)
+    protected void IIr_Click(object sender, EventArgs e)
     {
-        Response.Redirect("~/facturacion/facturacion.aspx?aut=" + ((ImageButton)sender).CommandArgument);
+        Response.Redirect("~/facturacion/facturacion.aspx?aut=" + ((LinkButton)sender).CommandArgument);
     }
 
     protected void GDevoluciones_SelectedIndexChanged(object sender, EventArgs e) {

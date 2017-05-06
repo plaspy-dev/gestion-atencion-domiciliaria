@@ -123,6 +123,9 @@ public class Autorizaciones
 
     public static bool UpdateSesiones(CConector conector, string autorizacion) {
 
+        if (string.IsNullOrEmpty(autorizacion))
+            return false;
+
         string query= string.Format("UPDATE autorizacion_detalle SET sesiones_programadas=(SELECT SUM(programacion.prgNumSesion)"
                             + " FROM programacion"
                             + " WHERE"
@@ -141,6 +144,11 @@ public class Autorizaciones
         
         if (conector.QueryMod(query) == -1)
             return false;
+
+        query = string.Format("UPDATE autorizacion SET pago=(SELECT SUM(valor) FROM pago_autorizacion WHERE pago_autorizacion.autNumero=autorizacion.autNumero) WHERE autNumero={0}", Query.GetValor(autorizacion));
+        if (conector.QueryMod(query) == -1)
+            return false;
+
         return true;
     }
 }

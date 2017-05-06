@@ -494,7 +494,9 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                             <asp:BoundField DataField="Nombre" HeaderText="Localización" ItemStyle-Wrap="false" ItemStyle-Width="100%" />
                         </Columns>
                     </asp:GridView>

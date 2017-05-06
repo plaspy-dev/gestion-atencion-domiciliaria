@@ -1,40 +1,7 @@
 ﻿<%@ Page Title="Admisiones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="autorizaciones.aspx.cs" Inherits="admisiones_autorizaciones" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
-    function Calcular() {
-    
-        try {
-            total = $("#<%= TValor.ClientID %>").autoNumeric('get');
-        }  catch (ex) {return;}
-        var abono = $("#<%= TAbono.ClientID %>").autoNumeric('get');
-
-        $("#vpagado").each(function() {
-            temp = parseFloat($(this).text().replace(/\./g, "").replace(/\$/g, "").replace(/,/g, "."));
-            if (isNaN(temp))
-                temp = 0;
-            abono += temp;
-        });
-
-        $("#<%= LVPagado.ClientID %>").text(currencyFormatted(abono.toString()));
-    }
-    
     addFunctionToStart(function() {
-        
-        /*$("#<%= TValor.ClientID %>").change(function() {
-
-            var total = $(this).autoNumeric('get');
-            $("#vpagado").each(function() {
-                temp = parseFloat($(this).text().replace(/\./g, "").replace(/\$/g, "").replace(/,/g, "."));
-                if (isNaN(temp))
-                    temp = 0;
-                total -= temp;
-            });
-            $("#<%= TAbono.ClientID %>").val(total);
-            $("#<%= TAbono.ClientID %>").autoNumeric('set', total);
-            Calcular();
-        });*/
-        $("#<%= TAbono.ClientID %>").change(Calcular);
-        Calcular();
 
         $("#<%= CGenerar.ClientID %>").change(function() {
             if ($(this).is(":checked")) {
@@ -265,9 +232,7 @@
                             <Columns>
                                 <asp:TemplateField>
                                     <ItemTemplate>
-                                        <asp:ImageButton CommandArgument='<%# Eval("autNumero") %>' ID="IIr" 
-                                            runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" 
-                                            onclick="IIr_Click"/>
+                                        <asp:LinkButton onclick="IIr_Click" runat="server" CommandArgument='<%# Eval("autNumero") %>' ID="IIr" CssClass="btn btn-success btn-xs" CausesValidation="False" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="autNumero" HeaderText="Autorización" ItemStyle-Wrap="false" />
@@ -321,82 +286,22 @@
             </td>
         </tr>
         <tr>
-            <td style="white-space: nowrap">
-                Valor autorización</td>
+            <td style="white-space: nowrap">Valor CM/UPD/CP<asp:RequiredFieldValidator ControlToValidate="TValor" ErrorMessage="Por favor ingrese un valor de la autorización." ID="RV" 
+	            runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td>
                 <asp:TextBox ID="TValor" CssClass="dinero" runat="server"></asp:TextBox>
             </td>
-            <td>
-                </td>
-            <td>
-                </td>
-        </tr>
-        <tr>
-            <td class="celdaTitulo" colspan="4">
-                Copagos
-                </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-            <asp:GridView ID="GPagos" runat="server" AutoGenerateColumns="False"  Width="100%"
-                DataKeyNames="id" DataSourceID="SPagos" EmptyDataText="No hay pagos" 
-                    onselectedindexchanged="GPagos_SelectedIndexChanged" >
-                    <RowStyle CssClass="GridRow"></RowStyle>
-                    <FooterStyle CssClass="GridFooter"></FooterStyle>
-                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-                    <Columns>
-                        <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                        <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                        <asp:BoundField DataField="recibo" HeaderText="Recibo" ItemStyle-Width="100%" />
-                        <asp:TemplateField HeaderText="Valor">
-                            <ItemTemplate>
-                                <span id="vpagado"><%# Eval("valor", "{0:c}") %></span>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                    </Columns>
-                </asp:GridView>
-                <asp:SqlDataSource ID="SPagos" runat="server" 
-                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                    SelectCommand="SELECT id,valor,recibo FROM pago_autorizacion WHERE autNumero=@autorizacion"
-                    DeleteCommand="DELETE FROM pago_autorizacion WHERE id=@id">
-                    <SelectParameters>
-                        <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="" />
-                    </SelectParameters>
-                </asp:SqlDataSource>
-            </td>
-            <td valign="bottom" nowrap="nowrap">
-                Valor pagado</td>
-            <td valign="bottom">
-                <asp:Label runat="server" Text="" ID="LVPagado"></asp:Label></td>
-        </tr>
-        <tr>
-            <td>Número recibo</td>
-            <td>
-                <asp:TextBox ID="TRecibo" ValidationGroup="abono" runat="server"></asp:TextBox>
-            </td>
-            <td>
-                Valor recibo</td>
-            <td>
-                <asp:TextBox ID="TAbono" ValidationGroup="abono" CssClass="dinero" runat="server"></asp:TextBox>Max: <asp:Label runat="server" ID="LMaximo"></asp:Label>
-            </td>
-        </tr>
-        <tr>
-            <td align="right" colspan="4">
-                <asp:Button ID="BAgregar" ValidationGroup="abono" runat="server" Text="Agregar" onclick="BAgregar_Click" />
-            </td>
+            <td>Valor recibido</td>
+            <td class="tar"><asp:Label runat="server" ID="LRecibido"></asp:Label></td>
         </tr>
         <tr>
             <td class="celdaTitulo" colspan="4">Servicios</td>
         </tr>
         <tr>
             <td colspan="4">
-                <asp:GridView ID="GActivades" runat="server" DataSourceID="SActividades"  Width="100%"
-                    AutoGenerateColumns="False" DataKeyNames="id" 
-                    onselectedindexchanged="GActivades_SelectedIndexChanged" >
+                <asp:GridView ID="GActivades" runat="server" Width="100%"
+                    AutoGenerateColumns="False" DataKeyNames="Id" 
+                    onselectedindexchanged="GActivades_SelectedIndexChanged" OnRowDeleting="GActivades_RowDeleting" >
                     <RowStyle CssClass="GridRow"></RowStyle>
                     <FooterStyle CssClass="GridFooter"></FooterStyle>
                     <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
@@ -404,24 +309,17 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                            <asp:BoundField DataField="proc_id" HeaderText="idMedicamento" ItemStyle-CssClass="hidet" HeaderStyle-CssClass="hidet" />
-                            <asp:BoundField DataField="procedimiento" HeaderText="Actividad" ItemStyle-Width="100%" />
-                            <asp:BoundField DataField="numerosesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />
-                            <asp:BoundField DataField="sesionesdia" HeaderText="Ses./día" ItemStyle-HorizontalAlign="Right" />
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+                            <asp:BoundField DataField="Actividad" HeaderText="Actividad" ItemStyle-Width="100%" />
+                            <asp:BoundField DataField="NumeroSesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />
+                            <asp:BoundField DataField="SesionesPorDia" HeaderText="Ses./día" ItemStyle-HorizontalAlign="Right" />
                         </Columns>
                     </asp:GridView>
-                    <sdg:CustomDataSource ID="SActividades" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                            SelectCommand="SELECT id,nombre AS procedimiento,id AS proc_id,id AS sesionesdia,id AS numerosesiones,nombre AS verificacion FROM varios WHERE id IS NULL"
-                            DeleteCommand="DELETE FROM autorizacion_detalle WHERE autNumero=@autorizacion AND actId=@id"
-                            InsertCommand="INSERT INTO autorizacion_detalle (autNumero,actId,autNumSesiones,autSesionesDia, verificacion) VALUES (@autorizacion,@proc_id,@numerosesiones,@sesionesdia, @verificacion)"
-                            UpdateCommand="UPDATE autorizacion_detalle SET actId=@proc_id,autNumSesiones=@numerosesiones,autSesionesDia=@sesionesdia WHERE id=@id"
-                            >
-                            <SelectParameters>
-                                <asp:ControlParameter ControlID="HIdAutorizacion" PropertyName="Value" Name="autorizacion" DefaultValue="-1" />
-                            </SelectParameters>
-                    </sdg:CustomDataSource>
             </td>
         </tr>
         <tr>

@@ -35,7 +35,7 @@ public class Paciente
     public string Categoria { get; set; }
     public DateTime FechaDefuncion { get; set; }
     public string TipoAfiliacion { get; set; }
-    public ArrayList cie10 { get; set; }
+    public List<string> cie10 { get; set; }
     public bool Activo { get { return estado == "1"; } }
     public string NombreCompleto { get {
         string Nombres = pApellido +

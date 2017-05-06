@@ -67,8 +67,12 @@
                                     <asp:CheckBox runat="server" ID="CSeleccionar" />
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:CommandField HeaderText="Edit" ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                            <asp:CommandField HeaderText="Elim" ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                             <asp:CommandField HeaderText="Novedad" ButtonType="Link" EditText="Novedad" ShowEditButton="true" />
                             <asp:BoundField DataField="prgFechaProg" HeaderText="Fecha" SortExpression="prgFechaProg"   DataFormatString="{0:d}" />
                             <asp:BoundField DataField="perNombre" HeaderText="Profesional" SortExpression="perNombre" ItemStyle-Wrap="false">

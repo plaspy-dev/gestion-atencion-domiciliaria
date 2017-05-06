@@ -51,7 +51,7 @@ addFunctionToStart(function() {
                             <Columns>
                                 <asp:TemplateField>
                                     <ItemTemplate>
-                                        <asp:ImageButton CommandArgument='<%# Eval("fecha") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
+                                        <asp:LinkButton CommandArgument='<%# Eval("fecha") %>' ID="IIr" onclick="IIr_Click" runat="server" CssClass="btn btn-success btn-xs" CausesValidation="False" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
@@ -91,8 +91,12 @@ addFunctionToStart(function() {
                             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                             <SelectedRowStyle CssClass="selecteditem" />
                         <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                             <asp:BoundField DataField="Nombre" HeaderText="Principio activo" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="Posologia" HeaderText="Posología" />
                             <asp:BoundField DataField="Dosis" HeaderText="Dosis/Día" />
@@ -150,8 +154,12 @@ addFunctionToStart(function() {
                             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                             <SelectedRowStyle CssClass="selecteditem" />
                         <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                             <asp:BoundField DataField="Nombre" HeaderText="Principio activo" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="Posologia" HeaderText="Posología" />
                             <asp:BoundField DataField="Dosis" HeaderText="Dosis/Día" />
@@ -213,8 +221,12 @@ addFunctionToStart(function() {
                             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                             <SelectedRowStyle CssClass="selecteditem" />
                         <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                             <asp:BoundField DataField="Nombre" HeaderText="Nombre del medicamento" />
                             <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" ItemStyle-HorizontalAlign="Right" />
                             <asp:BoundField DataField="Tiempo" HeaderText="Tiempo de utilización" />

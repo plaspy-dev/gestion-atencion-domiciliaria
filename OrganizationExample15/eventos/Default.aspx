@@ -56,8 +56,12 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
-                    <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                    <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                    <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                     <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" ItemStyle-Width="100%" />
                     <asp:BoundField DataField="cargo" HeaderText="Cargo" SortExpression="cargo" />
                     <asp:BoundField DataField="direccion" HeaderText="Organización" SortExpression="direccion" />

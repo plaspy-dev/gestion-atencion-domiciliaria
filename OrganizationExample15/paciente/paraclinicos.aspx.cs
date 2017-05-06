@@ -145,9 +145,9 @@ public partial class paciente_paraclinicos : System.Web.UI.Page
         }
     }
 
-    protected void IIr_Click(object sender, ImageClickEventArgs e)
+    protected void IIr_Click(object sender, EventArgs e)
     {
-        Response.Redirect("~/paciente/paraclinicos.aspx?pid=" + CCDetallePaciente.IdPaciente + "&idpar=" + ((ImageButton)sender).CommandArgument);
+        Response.Redirect("~/paciente/paraclinicos.aspx?pid=" + CCDetallePaciente.IdPaciente + "&idpar=" + ((LinkButton)sender).CommandArgument);
     }
 
     protected void GParaclinicos_RowDataBound(object sender, GridViewRowEventArgs e)

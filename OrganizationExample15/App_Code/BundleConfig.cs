@@ -31,7 +31,7 @@ public class BundleConfig
             , "~/css/estilo.css"
             ));
 
-        BundleTable.EnableOptimizations = true;
+        // BundleTable.EnableOptimizations = true;
         /*
         bundles.Add(new ScriptBundle("~/js/m").Include(
                     "~/js/"

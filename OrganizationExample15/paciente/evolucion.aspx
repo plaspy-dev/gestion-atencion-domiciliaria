@@ -3,6 +3,7 @@
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register Src="~/archivo/digitalizacionc.ascx" TagName="Digitalizacion" TagPrefix="uc6" %>
 <%@ Register src="~/ctrl/sharehistory.ascx" tagname="ShareHistory" tagprefix="uc" %>
+<%@ Register src="~/paciente/cie10list.ascx" tagname="CIE10" tagprefix="uc6" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <%= SDG.Componentes.HtmlUtil.RenderScript("~/js/tinymce.min.js") %>
@@ -45,35 +46,6 @@
             },
             search: function(event, ui) {
                 $("#<%= TIdFuncionario.ClientID %>").val("");
-            }
-        });
-        $("#<%= TCIE10.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
-                    data: "{}",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.Name, label: item.Name
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 2,
-            select: function(event, ui) {
-            },
-            search: function(event, ui) {
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
             }
         });
         $("#<%= PEvoluciones.ClientID %>").accordion({
@@ -172,7 +144,7 @@
                             <Columns>
                                 <asp:TemplateField>
                                     <ItemTemplate>
-                                        <asp:ImageButton CommandArgument='<%# Eval("id") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
+                                        <asp:LinkButton CommandArgument='<%# Eval("id") %>' ID="IIr" onclick="IIr_Click" runat="server" CssClass="btn btn-success btn-xs" CausesValidation="False" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" />
@@ -455,40 +427,8 @@ evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) 
                 </tr>
                 <tr>
                     <td colspan="4">
-                        <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" Width="100%"
-                            AutoGenerateColumns="False" DataKeyNames="id"
-                            onselectedindexchanged="GCDiagnostico_SelectedIndexChanged" >
-                            <RowStyle CssClass="GridRow"></RowStyle>
-                    <FooterStyle CssClass="GridFooter"></FooterStyle>
-                    <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-                    <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-                    <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-                    <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-                            <Columns>
-                                <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                                <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                                <asp:BoundField DataField="codigo" HeaderText="Código" />
-                                <asp:BoundField DataField="descripcion" HeaderText="Descripción" ItemStyle-Width="100%" />
-                            </Columns>
-                            <SelectedRowStyle CssClass="selecteditem" />
-                        </asp:GridView>
-                        <sdg:CustomDataSource ID="SCDiagnostico" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                                            SelectCommand="SELECT id,codigo,descripcion FROM codigos_evolucion WHERE evolucion_paciente=@ingreso"
-                                            DeleteCommand="DELETE FROM codigos_evolucion WHERE id=@id"
-                                            InsertCommand="INSERT INTO codigos_evolucion(evolucion_paciente,codigo,descripcion) VALUES (@ingreso, @codigo, @descripcion)"
-                                            UpdateCommand="UPDATE codigos_evolucion SET codigo=@codigo,descripcion=@descripcion WHERE id=@id" 
-                                            >
-                                            <SelectParameters>
-                                                <asp:ControlParameter ControlID="HIdEvolucion" DefaultValue="0" PropertyName="Value" Name="ingreso" />
-                                            </SelectParameters>
-                        </sdg:CustomDataSource>
+                        <uc6:CIE10 runat="server" ID="CIE10" />
                     </td>
-                </tr>
-                <tr>
-                    <td>CIE10</td>
-                  <td colspan="3" nowrap="nowrap"><asp:TextBox runat="server" Width="90%" ID="TCIE10"></asp:TextBox>
-                    <asp:RequiredFieldValidator ControlToValidate="TCIE10" ValidationGroup="cie10" ErrorMessage="Por favor ingrese un CIE10." ID="RequiredFieldValidator14" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
-                    <asp:Button ID="BMasCDiagnostico" runat="server" OnClick="BMasCDiagnostico_Click" Text="+" ValidationGroup="cie10" /></td>
                 </tr>
             </asp:PlaceHolder>
             <tr>

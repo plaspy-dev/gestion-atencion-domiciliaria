@@ -344,7 +344,7 @@ public class Procedimientos
         return descripcion;
     }
 
-    static public ArrayList AddCIE10(ArrayList listaactual, string nuevo_codigo) {
+    static public List<string> AddCIE10(List<string> listaactual, string nuevo_codigo) {
 
         if (!string.IsNullOrEmpty(nuevo_codigo))
         {
@@ -364,13 +364,13 @@ public class Procedimientos
         return listaactual;
     }
 
-    static public ArrayList GetCodigosCIE10(string paciente) {
+    static public List<string> GetCodigosCIE10(string paciente) {
 
-        ArrayList lista = new ArrayList();
+        List<string> lista = new List<string>();
         using (CConector conectormysql = new CConector())
         {
 
-            MySqlDataReader readermysql = conectormysql.Query("SELECT evolucion_paciente.id,codigos_evolucion.codigo FROM evolucion_paciente"
+            MySqlDataReader readermysql = conectormysql.Query("SELECT codigos_evolucion.codigo FROM evolucion_paciente"
             + " LEFT JOIN codigos_evolucion ON (codigos_evolucion.evolucion_paciente=evolucion_paciente.id) "
             + " WHERE evolucion_paciente.id=(SELECT id FROM evolucion_paciente WHERE evolucion_paciente.paciente="
             + paciente

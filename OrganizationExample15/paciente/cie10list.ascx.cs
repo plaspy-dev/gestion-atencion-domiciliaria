@@ -45,6 +45,17 @@ public partial class paciente_cie10list : System.Web.UI.UserControl
         return "";
     }
 
+    public void FillFromPaciente(string idPaciente) {
+
+        List<Miscelaneos> list = new List<Miscelaneos>();
+        Paciente paciente = Paciente.GetPaciente(idPaciente);
+        for (int i = 0; i < paciente.cie10.Count; i++)
+        {
+            list.Add(new Miscelaneos(paciente.cie10[i], Procedimientos.GetCodigoCIE(paciente.cie10[i])));
+        }
+        Codes = list;
+    }
+
     protected void BMasCDiagnostico_Click(object sender, EventArgs e)
     {
         Page.Validate("cie10");

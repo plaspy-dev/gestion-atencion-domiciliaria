@@ -479,3 +479,17 @@ a.btn {
 .stripped {
     background-color: #f9f9f9;
 }
+.tar {
+    text-align: right;
+}
+.GridSelRow a.btn-success {
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+.GridSelRow a.btn-danger {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+a.btn-success {
+    color: #fff;
+}

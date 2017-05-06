@@ -219,7 +219,9 @@
                         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
-                            <asp:CommandField ButtonType="Image" ShowEditButton="true" EditImageUrl="~/imgs/edit.gif" />
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                             <asp:TemplateField HeaderText="Acciones pendientes" ItemStyle-Width="100%">
                                 <ItemTemplate>
                                     <asp:LinkButton runat="server" ID="LDetalle" CommandName="Edit" Text='<%# Eval("sqrPendiente") %>'></asp:LinkButton>

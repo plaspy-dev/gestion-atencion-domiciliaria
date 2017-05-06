@@ -25,7 +25,6 @@ public partial class paciente_evolucion : System.Web.UI.Page
             }
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
             BAceptar.Enabled = false;
-            BMasCDiagnostico.Enabled = false;
             PEvoluciones.Visible = false;
 
             DTV.MinumunValue = DateTime.Now.AddDays(-2);
@@ -75,7 +74,6 @@ public partial class paciente_evolucion : System.Web.UI.Page
                     PDatos.Visible = true;
 
                     BAceptar.Enabled = usuario.CanInsert();
-                    BMasCDiagnostico.Enabled = usuario.CanInsert();
                     using (CConector conector = new CConector())
                     {
                         TFuncionario.Enabled = usuario.CanAdmin();
@@ -129,11 +127,7 @@ public partial class paciente_evolucion : System.Web.UI.Page
                             BActualizar.Visible = usuario.CanInsert();
 
                             BAceptar.Enabled = usuario.CanUpdate();
-                            BMasCDiagnostico.Enabled = usuario.CanUpdate();
                             ((MasterPageI)Master).Imprimir("evolucion.html");
-
-                            GCDiagnostico.Columns[0].Visible = usuario.CanUpdate();
-                            GCDiagnostico.Columns[1].Visible = usuario.CanDelete();
 
                             HIdEvolucion.Value = readermysql["id"].ToString();
                             TIdFuncionario.Text = readermysql["medico"].ToString();
@@ -170,22 +164,28 @@ public partial class paciente_evolucion : System.Web.UI.Page
                             TPlanManejo.ReadOnly = !usuario.CanAdmin();
                             BEliminar.Visible = usuario.CanDelete();
 
+                            qIngreso = new Query("codigos_evolucion");
+
+                            qIngreso += "codigo";
+
+                            readermysql = conector.Query(qIngreso.GetSelect("evolucion_paciente={0}", null, Query.GetValor(HIdEvolucion.Value)));
+                            if (readermysql != null)
+                            {
+                                List<Miscelaneos> list = new List<Miscelaneos>();
+                                while (readermysql.Read())
+                                {
+                                    string id = readermysql["codigo"].ToString();
+                                    list.Add(new Miscelaneos(id, Procedimientos.GetCodigoCIE(id)));
+                                }
+                                CIE10.Codes = list;
+                            }
+
+
                             ((MasterPageI)Master).SetModificacion(HIdEvolucion.Value);
                         }
                         else
                         {
-
-                            GCDiagnostico.DataBind();
-                            if (GCDiagnostico.Rows.Count == 0)
-                            { // no se encontraron diagnosticos
-
-                                Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
-                                for (int i = 0; i < paciente.cie10.Count; i++)
-                                {
-                                    TCIE10.Text = Procedimientos.GetCodigoCIE(paciente.cie10[i].ToString());
-                                    BMasCDiagnostico_Click(sender, e);
-                                }
-                            }
+                            CIE10.FillFromPaciente(CCDetallePaciente.IdPaciente);
                             TPlanManejo.ReadOnly = !usuario.CanAdmin();
                             // TPlanManejo.Text = conectormysql.QueryString("SELECT plan_manejo FROM evolucion_paciente WHERE paciente=" + CCDetallePaciente.IdPaciente + " ORDER BY fecha DESC LIMIT 1");
                         }
@@ -363,15 +363,20 @@ public partial class paciente_evolucion : System.Web.UI.Page
                 conector.QueryMod(id);
             }
 
-            string[] querys = SCDiagnostico.GetQuerys();
-            if (querys != null)
+            Query query = new Query("codigos_evolucion");
+
+            if (conector.QueryMod(query.GetDelete("evolucion_paciente={0}", Query.GetValor(HIdEvolucion.Value))) == -1)
             {
-                for (int i = 0; i < querys.Length; i++)
-                {
-                    szQuery = querys[i].Replace("@ingreso", Query.GetValor(HIdEvolucion.Value));
-                    if (conector.QueryMod(szQuery) == -1)
-                        return;
-                }
+                return;
+            }
+
+            query["evolucion_paciente"] = HIdEvolucion.Value;
+
+            foreach (Miscelaneos info in CIE10.Codes)
+            {
+                query["codigo"] = info.Id;
+                if (conector.QueryMod(query.GetInsert()) == -1)
+                    return;
             }
 
 
@@ -425,60 +430,6 @@ public partial class paciente_evolucion : System.Web.UI.Page
             return text.Substring(0, pos).Trim();
         }
         return "";
-    }
-
-    protected void BMasCDiagnostico_Click(object sender, EventArgs e)
-    {
-        string codigo = GetCodigoCIE(TCIE10.Text);
-
-        using (CConector conector = new CConector())
-        {
-
-            string descripcion = conector.QueryString("SELECT cirDescripcion FROM cie10 WHERE cieCodDx='" + codigo + "'");
-            if (descripcion.Length > 0)
-            {  // si existe el codigo
-
-                IOrderedDictionary data = new OrderedDictionary();
-                data.Add("codigo", codigo);
-                data.Add("descripcion", descripcion);
-
-                if (GCDiagnostico.SelectedIndex == -1)
-                {
-                    SCDiagnostico.GetView().Insert(data, OnDataSourceOperationComplete);
-                }
-                else
-                {
-                    data.Add("id", GCDiagnostico.DataKeys[GCDiagnostico.SelectedIndex].Value);
-
-                    IOrderedDictionary dataold = new OrderedDictionary();
-                    dataold.Add("codigo", HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[2].Text).Trim());
-                    dataold.Add("descripcion", HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[3].Text).Trim());
-                    dataold.Add("id", GCDiagnostico.DataKeys[GCDiagnostico.SelectedIndex].Value);
-
-                    SCDiagnostico.GetView().Update(data, data, dataold, OnDataSourceOperationComplete);
-                }
-                GCDiagnostico.SelectedIndex = -1;
-                GCDiagnostico.DataBind();
-
-                TCIE10.Text = "";
-                TCIE10.Focus();
-            }
-        }
-    }
-
-    private bool OnDataSourceOperationComplete(int count, Exception e)
-    {
-        if (e != null)
-        {
-            throw e;
-        }
-        return false;
-    }
-
-    protected void GCDiagnostico_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        TCIE10.Text = HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[2].Text).Trim();
-        TCIE10.Text += " - " + HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[3].Text).Trim();
     }
 
     protected static string ImprimirGridTipo1(GridView grid) {
@@ -593,9 +544,9 @@ public partial class paciente_evolucion : System.Web.UI.Page
         evento.Contenido = evento.Contenido.Replace(" (Inactivo)", "");
     }
 
-    protected void IIr_Click(object sender, ImageClickEventArgs e)
+    protected void IIr_Click(object sender, EventArgs e)
     {
-        Response.Redirect("~/paciente/evolucion.aspx?pid=" + CCDetallePaciente.IdPaciente + "&evolid=" + ((ImageButton)sender).CommandArgument);
+        Response.Redirect("~/paciente/evolucion.aspx?pid=" + CCDetallePaciente.IdPaciente + "&evolid=" + ((LinkButton)sender).CommandArgument);
     }
 
     protected void BEliminar_Click(object sender, EventArgs e)

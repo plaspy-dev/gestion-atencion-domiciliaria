@@ -9,7 +9,7 @@ using System.Web;
 /// </summary>
 public class HomeCareVersion
 {
-    public const string Number="1.87";
+    public const string Number="1.88";
     public const int VERSION_FILES = 1;
     public static string FilesPath= ConfigurationManager.AppSettings["pathFiles"];
 

@@ -136,8 +136,7 @@
                             <webcam:webcam runat="server" ID="WebCam" />
                             <br />
                             <asp:FileUpload runat="server" ID="FFoto" Width="100px" />
-                            <asp:ImageButton runat="server" ID="IEliminar" ImageUrl="~/imgs/eliminar.gif" 
-                                onclick="IEliminar_Click" />
+                            <asp:LinkButton runat="server"  ID="IEliminar" onclick="IEliminar_Click" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton>
                                 <asp:CustomValidator Display="Dynamic" ControlToValidate="FFoto" ID="CustomValidator1" runat="server" ClientValidationFunction="ValidateFileUploadJPG" ErrorMessage="Por favor seleccione una imagen en formato jpg" onservervalidate="OnValidaFileJPG">*</asp:CustomValidator>
                             <br />
                             <asp:Label ID="Label40" runat="server" Text="Observaciones"></asp:Label>

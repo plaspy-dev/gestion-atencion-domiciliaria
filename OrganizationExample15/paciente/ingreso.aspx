@@ -3,6 +3,7 @@
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register src="~/ctrl/sharehistory.ascx" tagname="ShareHistory" tagprefix="uc" %>
 <%@ Register Src="~/archivo/digitalizacionc.ascx" TagName="Digitalizacion" TagPrefix="uc6" %>
+<%@ Register src="~/paciente/cie10list.ascx" tagname="CIE10" tagprefix="uc6" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <%= SDG.Componentes.HtmlUtil.RenderScript("~/js/tinymce.min.js") %>
@@ -12,35 +13,6 @@
 
         editor = null;
         $("#<%= TTA.ClientID %>").mask("999/999");
-        $("#<%= TCIE10.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
-                    data: "{}",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.Name, label: item.Name
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 2,
-            select: function(event, ui) {
-            },
-            search: function(event, ui) {
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
-            }
-        });
         if ($("#<%= PMujer.ClientID %>").length == 0) {
             $("#tmujer").remove();
             $("#tfisico").attr("colspan", "4").attr("width", "100%");
@@ -405,43 +377,8 @@
             </tr>
             <tr>
                 <td colspan="4">
-                    <asp:GridView ID="GCDiagnostico" runat="server" DataSourceID="SCDiagnostico" Width="100%"
-                        AutoGenerateColumns="False" DataKeyNames="id"
-                        onselectedindexchanged="GCDiagnostico_SelectedIndexChanged" >
-                        <RowStyle CssClass="GridRow"></RowStyle>
-                            <FooterStyle CssClass="GridFooter"></FooterStyle>
-                            <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
-                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
-                            <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
-                            <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
-                        <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
-                            <asp:BoundField DataField="codigo" HeaderText="Código" />
-                            <asp:BoundField DataField="descripcion" HeaderText="Descripción" ItemStyle-Width="100%" />
-                            <asp:BoundField DataField="observaciones" HeaderText="Observaciones" />
-                        </Columns>
-                        <SelectedRowStyle CssClass="selecteditem" />
-                    </asp:GridView>
-                    <sdg:CustomDataSource ID="SCDiagnostico" runat="server" ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                                        SelectCommand="SELECT id,codigo,descripcion,observaciones FROM codigos_ingreso WHERE ingreso_paciente=@ingreso"
-                                        DeleteCommand="DELETE FROM codigos_ingreso WHERE id=@id"
-                                        InsertCommand="INSERT INTO codigos_ingreso(ingreso_paciente,codigo,descripcion,observaciones) VALUES (@ingreso, @codigo, @descripcion, @observaciones)"
-                                        UpdateCommand="UPDATE codigos_ingreso SET codigo=@codigo,descripcion=@descripcion,observaciones=@observaciones WHERE id=@id" 
-                                        >
-                                        <SelectParameters>
-                                            <asp:ControlParameter ControlID="HIdIngreso" DefaultValue="0" PropertyName="Value" Name="ingreso" />
-                                        </SelectParameters>
-                    </sdg:CustomDataSource>
+                    <uc6:CIE10 runat="server" ID="CIE10" />
                 </td>
-            </tr>
-            <tr>
-                <td colspan="2">CIE10<asp:RequiredFieldValidator ControlToValidate="TCIE10" ValidationGroup="cie10" ErrorMessage="Por favor ingrese un CIE10." ID="RequiredFieldValidator14" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-                <td colspan="2">Observaciones</td>
-            </tr>
-            <tr>
-                <td colspan="2"><asp:TextBox runat="server" Width="98%" ID="TCIE10"></asp:TextBox></td>
-                <td colspan="2"><asp:TextBox runat="server" Width="98%" ID="TObservacionesCIE10"></asp:TextBox></td>
             </tr>
             <tr>
                 <td>Tipo diagnóstico</td>
@@ -455,8 +392,7 @@
                         SelectCommand="SELECT id, nombre FROM varios WHERE tipo=20 AND szReservado IS NULL">
                     </asp:SqlDataSource>
                 </td>
-                <td align="right">
-                <asp:Button ID="BMasCDiagnostico" runat="server" OnClick="BMasCDiagnostico_Click" Text="+" ValidationGroup="cie10" /></td>
+                <td align="right"></td>
             </tr>
             <tr>
                 <td colspan="4" class="celdaTitulo">

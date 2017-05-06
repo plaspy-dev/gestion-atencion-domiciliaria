@@ -360,12 +360,13 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Tipo de Evento</td>
+                        <td>Tipo de Evento<asp:RequiredFieldValidator ControlToValidate="DTipoEvento" ErrorMessage="Por favor seleccione un tipo de evento." ID="RTE" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:DropDownList ID="DTipoEvento" runat="server" 
                                             DataSourceID="STipoEvento" DataTextField="nombre" 
                                             DataValueField="id" AppendDataBoundItems="true">
-                                            <asp:ListItem Text="" Value=""></asp:ListItem>
+                                            <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
                                             </asp:DropDownList>
                             <asp:SqlDataSource ID="STipoEvento" runat="server" 
                                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -414,8 +415,8 @@
                         <td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <td>CIE 10<asp:RequiredFieldValidator ControlToValidate="TCIE1" ErrorMessage="Por favor ingrese un CIE10." ID="R12" 
-	                        runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                        <td>CIE 10<asp:RequiredFieldValidator ControlToValidate="TCIE1" ErrorMessage="Por favor ingrese un CIE10." ID="RCIE" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td colspan="3">
                             <asp:TextBox runat="server" Width="98%" ID="TCIE1"></asp:TextBox>
                         </td>
@@ -443,8 +444,7 @@
                     </tr>
                     <tr>
                         <td class="tdb"><asp:FileUpload runat="server" ID="FFoto" Width="100px" />
-                            <asp:ImageButton runat="server" ID="IEliminar" ImageUrl="~/imgs/eliminar.gif" 
-                                onclick="IEliminar_Click" />
+                            <asp:LinkButton runat="server"  ID="IEliminar" onclick="IEliminar_Click" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton>
                                 <asp:CustomValidator Display="Dynamic" ControlToValidate="FFoto" ID="CustomValidator1" runat="server" ClientValidationFunction="ValidateFileUploadJPG" ErrorMessage="Por favor seleccione una imagen en formato jpg" onservervalidate="OnValidaFileJPG">*</asp:CustomValidator></td>
                     </tr>
                     <tr>

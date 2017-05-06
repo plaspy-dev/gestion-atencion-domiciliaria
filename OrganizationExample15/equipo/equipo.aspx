@@ -59,8 +59,12 @@
                 onrowdatabound="GPrestamos_RowDataBound" onselectedindexchanged="GPrestamos_SelectedIndexChanged" onrowdeleting="GPrestamos_RowDeleting"
                 EmptyDataText="No se encontraron prestamos" AllowPaging="True" PageSize="50" AllowSorting="True" >
                 <Columns>
-                    <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                    <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                    <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                     <asp:BoundField HeaderText="Paciente" DataField="NombrePaciente" SortExpression="NombrePaciente" ItemStyle-Wrap="false" />
                     <asp:BoundField HeaderText="Funcionario" DataField="NombreFuncionario" SortExpression="NombreFuncionario" ItemStyle-Wrap="false" />
                     <asp:BoundField HeaderText="Desde" DataField="Fecha" SortExpression="Fecha" DataFormatString="{0:d}" />

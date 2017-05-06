@@ -91,7 +91,9 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
-                        <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                        <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                         <asp:BoundField DataField="NombreCompleto" HeaderText="Paciente" ItemStyle-Width="100%" />
                         <asp:BoundField DataField="NombreEntidad" HeaderText="Entidad" ItemStyle-Wrap="false" />
                     </Columns>
@@ -145,8 +147,12 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                            <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                             <asp:BoundField DataField="proc_id" HeaderText="idMedicamento" ItemStyle-CssClass="hidet" HeaderStyle-CssClass="hidet" />
                             <asp:BoundField DataField="procedimiento" HeaderText="Actividad" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="numerosesiones" HeaderText="Núm. ses." ItemStyle-HorizontalAlign="Right" />

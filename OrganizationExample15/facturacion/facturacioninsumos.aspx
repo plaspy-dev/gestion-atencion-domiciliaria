@@ -197,8 +197,12 @@
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
-                        <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                        <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                        <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+                        <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                         <asp:BoundField HeaderText="Radicación" SortExpression="antigua_radicacion" DataField="antigua_radicacion" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" />
                         <asp:BoundField HeaderText="Devolución" SortExpression="devolucion" DataField="devolucion" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" />
                         <asp:BoundField HeaderText="Valor" SortExpression="valor" DataField="valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" />

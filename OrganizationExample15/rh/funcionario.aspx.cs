@@ -714,7 +714,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         GEmpresas.DataBind();
     }
 
-    protected void IEliminar_Click(object sender, ImageClickEventArgs e)
+    protected void IEliminar_Click(object sender, EventArgs e)
     {
         IFoto.PostBackUrl = "";
         IFoto.ImageUrl = "";

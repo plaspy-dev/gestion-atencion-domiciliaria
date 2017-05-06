@@ -39,7 +39,7 @@
                     <asp:TemplateField>
                         <ItemTemplate>
                             <asp:HyperLink runat="server" ID="L" NavigateUrl='<%# string.Format("~/paciente/epicrisis.aspx?pid={0}&epid={1}", Eval("paciente"), Eval("id")) %>'>
-                                <asp:Image runat="server" ID="I" ImageUrl="~/imgs/edit.gif" />
+                                <i class="fa fa-edit"></i>
                             </asp:HyperLink>
                         </ItemTemplate>
                     </asp:TemplateField>

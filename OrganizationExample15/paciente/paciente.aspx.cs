@@ -411,7 +411,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         Paciente.RemovePaciente(HId.Value);
         ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Editado.");
     }
-    protected void IEliminar_Click(object sender, ImageClickEventArgs e)
+    protected void IEliminar_Click(object sender, EventArgs e)
     {
         IFoto.PostBackUrl = "";
         IFoto.ImageUrl = "";

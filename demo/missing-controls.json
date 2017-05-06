@@ -1,10 +1,12 @@
 {
-  "paciente/ingreso.aspx": "a8ae435165b648d4f09648642918a601c68a7b44fecdb4da067fa7a8eea418a8",
-  "paciente/ingreso.aspx.cs": "1453fc99daeda8392e9ccb3130fde7b9d2b009a943071bf66c6bb01fd1439bb7",
-  "paciente/evolucion.aspx": "5cb4fb6f63368f2bc1e80d0e1edeed59b96145b98323a1bbfac4b7543618cd82",
-  "paciente/evolucion.aspx.cs": "66f82c289906f34db21d81c6ac53835d8f1718095f9dd9fdb0b23bbb107d6bb2",
+  "paciente/ingreso.aspx": "f21d08739a6eaa175d85b1c0d3dbbf832b281c25c718bba470582955e46ae03f",
+  "paciente/ingreso.aspx.cs": "9ee93928f817a9a408711b988abb9d6aec4786d851bdb3e7246ff1679252e917",
+  "paciente/evolucion.aspx": "4d10c7d520abb848403c3c16d1a84dcb515dff5c357aff59d2209cfeb98e8e92",
+  "paciente/evolucion.aspx.cs": "ae729e238d9b83dcec568ffe27bf11ab1ddf7d9c60e3a4e2b892b851576188b9",
   "archivo/subir.aspx": "6911491cba31b15d04ea472d21126be3757409632436186e8fa58c3162a372fd",
   "archivo/subir.aspx.cs": "4b294a7569964014875b5d8ca1398588997de5260ddcef539210f57c286fe8ca",
-  "paciente/formulacion.aspx": "10b8881c007c27569901390366462be28f48b91927c1ec880980593eae8359f1",
-  "paciente/formulacion.aspx.cs": "0a6a04f32b9accbc76d330763b455effb440274f185f04aa4e5189feaaa0bedb"
+  "paciente/formulacion.aspx": "61f6474912942a896cee6e99d471cf1e72dfda74e4bdae3d82562086061daa5e",
+  "paciente/formulacion.aspx.cs": "a96b5c94039012350f132903bfa5df70f0024974727193837676fb69ed832999",
+  "admisiones/recibos.aspx": "b26ea3d59dd6ab80543182a677a1233018ba4599b4ea59e9b36ebffb90f578aa",
+  "admisiones/recibos.aspx.cs": "44d0d30ae0726f99ee238a2c27d6db2430cd258899344010e00c94e4f7dc2509"
 }

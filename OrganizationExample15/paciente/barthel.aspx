@@ -112,7 +112,7 @@
                             <Columns>
                                 <asp:TemplateField>
                                     <ItemTemplate>
-                                        <asp:ImageButton CommandArgument='<%# Eval("id") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
+                                        <asp:LinkButton onclick="IIr_Click" CommandArgument='<%# Eval("id") %>' ID="IIr" runat="server" CssClass="btn btn-success btn-xs" CausesValidation="False" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton>
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:dd/MM/yyyy HH:mm}" ItemStyle-Wrap="false" />

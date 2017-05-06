@@ -748,9 +748,9 @@ public partial class paciente_formatoctc : System.Web.UI.Page
         }
     }
 
-    protected void IIr_Click(object sender, ImageClickEventArgs e)
+    protected void IIr_Click(object sender, EventArgs e)
     {
-        Response.Redirect("~/paciente/formatoctc.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + string.Format("{0:d}", Convert.ToDateTime(((ImageButton)sender).CommandArgument)));
+        Response.Redirect("~/paciente/formatoctc.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + string.Format("{0:d}", Convert.ToDateTime(((LinkButton)sender).CommandArgument)));
     }
 
     protected void GFormulacion_RowDeleting(object sender, GridViewDeleteEventArgs e)

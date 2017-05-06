@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SDG.Componentes;
 
 public partial class programacion_sinprogramar : System.Web.UI.Page
 {
@@ -17,8 +18,8 @@ public partial class programacion_sinprogramar : System.Web.UI.Page
         
         if (!IsPostBack)
         {
-            TFin.Text = DateTime.Now.ToShortDateString();
-            TInicio.Text = DateTime.Now.AddDays(-30).ToShortDateString();
+            TFin.Text = Query.GetFromMySQLDate(DateTime.Now);
+            TInicio.Text = Query.GetFromMySQLDate(DateTime.Now.AddDays(-30));
         }
         GResultados.DataBind();
         if (GResultados.Rows.Count > 0)

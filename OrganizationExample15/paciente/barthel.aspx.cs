@@ -230,9 +230,9 @@ public partial class paciente_barthel : System.Web.UI.Page
             }
         }
     }
-    protected void IIr_Click(object sender, ImageClickEventArgs e)
+    protected void IIr_Click(object sender, EventArgs e)
     {
-        Response.Redirect(Request.Url.AbsolutePath + "?pid=" + CCDetallePaciente.IdPaciente + "&bid=" + ((ImageButton)sender).CommandArgument);
+        Response.Redirect(Request.Url.AbsolutePath + "?pid=" + CCDetallePaciente.IdPaciente + "&bid=" + ((LinkButton)sender).CommandArgument);
     }
 
     protected void GHistorial_RowDataBound(object sender, GridViewRowEventArgs e)

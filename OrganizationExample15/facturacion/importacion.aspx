@@ -35,7 +35,9 @@
             <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
             <Columns>
-                <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                 <asp:BoundField DataField="_Documento" HeaderText="Factura" ItemStyle-HorizontalAlign="Right" />
                 <asp:BoundField DataField="_Fecha" HeaderText="Fecha" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right" />
                 <asp:BoundField DataField="_NIT" HeaderText="NIT" ItemStyle-HorizontalAlign="Right" />

@@ -17,18 +17,15 @@ using System.Configuration;
 
 public partial class admisiones_autorizaciones : System.Web.UI.Page
 {
-    public class Procedimiento {
+    [Serializable]
+    public class Servicio {
+        public int Id { get; set; }
+        public string ActividadId { get; set; }
+        public string Actividad { get; set; }
+        public int? NumeroSesiones { get; set; }
+        public int? SesionesPorDia { get; set; }
 
-        public string procedimiento;
-        public string key;
-        public string profesional;
-
-        public Procedimiento(string prof, string procid, string k) {
-            
-            procedimiento= procid;
-            key = k;
-            profesional = prof;
-        }
+        public Servicio() { }
     }
 
     protected void Page_Load(object sender, EventArgs e)
@@ -38,10 +35,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             PPaciente.Visible = false;
             TNumero.Focus();
             BEliminar.Visible= PAutorizaciones.Visible = false;
-            GPagos.Visible = false;
-            BAgregar.Visible = false;
             BSuspender.Visible = false;
-            GActivades.DataBind();
 
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
             ViewState["entidades"] = usuario["entidades"];
@@ -65,21 +59,17 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     query += "autFechaSuspension";
                     query += "id";
                     query += "formulacion";
+                    query += "pago";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("autNumero=" + Query.GetValor(Request.QueryString["aut"])));
                     if (reader != null && reader.Read())
                     {
 
                         CGenerar.Visible = false;
-                        GPagos.Visible = true;
-                        BAgregar.Visible = usuario.CanInsert();
                         BAceptar.Enabled = usuario.CanUpdate();
                         BEliminar.Visible = usuario.CanDelete();
                         BSuspender.Visible = usuario.CanDelete();
                         TFSuspender.Text = DateTime.Now.ToShortDateString();
-
-                        GPagos.Columns[0].Visible = usuario.CanUpdate();
-                        GPagos.Columns[1].Visible = usuario.CanDelete();
 
                         HIdAutorizacion.Value = Request.QueryString["aut"];
                         HId.Value = reader["id"].ToString();
@@ -91,6 +81,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                         TFecha.Text = Query.GetFromMySQLDate(reader["autFecha"]);
                         TVencimiento.Text = Query.GetFromMySQLDate(reader["autFechaVenc"]);
                         TValor.Text = reader["total"].ToString();
+                        LRecibido.Text = string.Format("{0:C}", reader["pago"]);
                         TObservaciones.Text = reader["autObservaciones"].ToString();
                         if (reader["formulacion"].ToString().Length > 0)
                         {
@@ -127,22 +118,22 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                             );
                         if (reader != null)
                         {
-
+                            List<Servicio> servicios = new List<Servicio>();
                             while (reader.Read())
                             {
+                                Servicio info = new Servicio();
+                                info.ActividadId = reader["actId"].ToString();
+                                info.Actividad = reader["nombre"].ToString();
+                                try { info.NumeroSesiones = Convert.ToInt32(reader["autNumSesiones"]); } catch { }
+                                try { info.SesionesPorDia = Convert.ToInt32(reader["autSesionesDia"]); } catch { }
 
-                                IOrderedDictionary data = new OrderedDictionary();
-
-                                // data.Add("id", TProcedimientoID.Text);
-
-                                data.Add("procedimiento", Procedimientos.GetProcedimiento(reader["actId"].ToString()));
-                                data.Add("sesionesdia", reader["autSesionesDia"].ToString().Length == 0 ? null : reader["autSesionesDia"].ToString());
-                                data.Add("numerosesiones", reader["autNumSesiones"].ToString());
-                                data.Add("proc_id", reader["actId"].ToString());
-                                data.Add("verificacion", Crypt.GetMD5("JuHU" + DateTime.Now.ToString() + "H0m3s4lud"));
-
-                                SActividades.GetView().Insert(data, OnDataSourceOperationComplete);
+                                servicios.Add(info);
                             }
+
+                            int index = 0;
+                            servicios.ForEach(x => x.Id = index++);
+                            ViewState["services"] = servicios;
+                            GActivades.DataSource = servicios;
                             GActivades.DataBind();
                         }
                         BIr_Click(sender, e);
@@ -150,39 +141,6 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 }
             }
 
-        }
-    }
-    protected void BAgregar_Click(object sender, EventArgs e)
-    {
-        using (CConector conector = new CConector())
-        {
-
-            string temp = TAbono.Text.Replace(",", "").Replace("$", "");
-            if (temp.Length != 0 && Convert.ToDouble(temp) > 0) // verificamos que tenga algun valor
-            {
-                Query pago = new Query("pago_autorizacion");
-
-                pago["autNumero"] = TNumero.Text;
-                pago["valor"] = temp;
-                pago["recibo"] = TRecibo.Text;
-
-                if (GPagos.SelectedIndex == -1)
-                {
-                    if (conector.QueryMod(pago.GetInsert()) == -1)
-                        return;
-                }
-                else
-                {
-                    if (conector.QueryMod(pago.GetUpdate("id=" + GPagos.SelectedDataKey.Value.ToString())) == -1)
-                        return;
-                }
-                using(CConector conectorm= new CConector()) 
-                    if (conectorm.InsertModificacion(HId.Value) == -1)
-                        return;
-                GPagos.DataBind();
-            }
-
-            BAgregar.Text = "Agregar";
         }
     }
 
@@ -207,17 +165,6 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 TPaciente.Focus();
                 LError.Text = "Por favor ingrese un paciente.";
                 return;
-            }
-            string temp = TAbono.Text.Replace(",", "").Replace("$", "");
-            if (temp.Length != 0 && Convert.ToDouble(temp) > 0) // verificamos que tenga algun valor
-            {
-                if (TRecibo.Text.Length == 0)
-                {
-
-                    TRecibo.Focus();
-                    LError.Text = "Por favor ingrese un numero de recibo.";
-                    return;
-                }
             }
             if (GActivades.Rows.Count == 0)
             {
@@ -312,36 +259,27 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             if (conector.InsertModificacion(HId.Value) == -1)
                 return;
 
-
-            if (GPagos.Rows.Count == 0)
-            {
-                temp = TAbono.Text.Replace(",", "").Replace("$", "");
-                if (temp.Length != 0 && Convert.ToDouble(temp) > 0) // verificamos que tenga algun valor
-                {
-                    Query pago = new Query("pago_autorizacion");
-
-                    pago["autNumero"] = TNumero.Text;
-                    pago["valor"] = temp;
-                    pago["recibo"] = TRecibo.Text;
-
-                    if (conector.QueryMod(pago.GetInsert()) == -1)
-                        return;
-                }
-            }
-
             // limpiamos los servicioes anteriores
             if (conector.QueryMod("DELETE FROM autorizacion_detalle WHERE autNumero=" + Query.GetValor(autorizacion)) == -1)
                 return;
 
-            string[] querys = SActividades.GetQuerys();
-            string szQuery;
+            query = new Query("autorizacion_detalle");
 
-            if (querys != null)
-            {
-                for (int i = 0; i < querys.Length; i++)
-                {
-                    szQuery = querys[i].Replace("@autorizacion", Query.GetValor(autorizacion));
-                    if (conector.QueryMod(szQuery) == -1)
+            if (conector.QueryMod(query.GetDelete("autNumero={0}", Query.GetValor(autorizacion))) == -1)
+                return;
+
+            query["autNumero"] = autorizacion;
+
+            List<Servicio> servicios = ViewState["services"] as List<Servicio>;
+            if (servicios != null) {
+
+                foreach (Servicio info in servicios) {
+
+                    query["actId"] = info.ActividadId;
+                    query["autNumSesiones"] = info.NumeroSesiones;
+                    query["autSesionesDia"] = info.SesionesPorDia;
+
+                    if (conector.QueryMod(query.GetInsert()) == -1)
                         return;
                 }
             }
@@ -451,20 +389,14 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     valor = "0";
                 maximo -= Convert.ToDouble(valor, culture.NumberFormat);
                 LAcumulado.Text = string.Format("{0:c}", Convert.ToDouble(valor, culture.NumberFormat));
-                LMaximo.Text = string.Format("{0:c}", maximo);
+                // LMaximo.Text = string.Format("{0:c}", maximo);
             }
         }
     }
 
-    protected void GPagos_SelectedIndexChanged(object sender, EventArgs e)
+    protected void IIr_Click(object sender, EventArgs e)
     {
-        TRecibo.Text= HttpUtility.HtmlDecode(GPagos.SelectedRow.Cells[2].Text);
-        TAbono.Text = HttpUtility.HtmlDecode(GPagos.SelectedRow.Cells[3].Text.Replace(",", "").Replace("$", ""));
-        BAgregar.Text = "Editar";
-    }
-    protected void IIr_Click(object sender, ImageClickEventArgs e)
-    {
-        Response.Redirect("~/admisiones/autorizaciones.aspx?aut=" + ((ImageButton)sender).CommandArgument);
+        Response.Redirect("~/admisiones/autorizaciones.aspx?aut=" + ((LinkButton)sender).CommandArgument);
     }
 
     protected void BEliminar_Click(object sender, EventArgs e)
@@ -534,42 +466,34 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 return;
         }
 
-        for(int i=0; i<GActivades.Rows.Count; i++) { // verificamos que el servicio no se encuentre duplicado
-            if (GActivades.Rows[i].Cells[2].Text == TProcedimientoID.Text && GActivades.SelectedIndex != i)
-            {
-                LMensaje.Text = "Ya existe este procedimiento";
-                TProcedimiento.Focus();
-                return;
-            }
+        List<Servicio> servicios = ViewState["services"] as List<Servicio> ?? new List<Servicio>();
+
+        if(GActivades.SelectedIndex==-1 && servicios.Exists(x=>x.ActividadId==TProcedimientoID.Text)) {
+            LMensaje.Text = "Ya existe este procedimiento";
+            TProcedimiento.Focus();
+            return;
         }
 
-        IOrderedDictionary data = new OrderedDictionary();
-        data.Add("procedimiento", TProcedimiento.Text);
-        data.Add("sesionesdia", TSesionesDia.Text.Length==0 ? null : TSesionesDia.Text);
-        data.Add("numerosesiones", TNumeroSesiones.Text);
-        data.Add("proc_id", TProcedimientoID.Text);
-        data.Add("verificacion", Crypt.GetMD5("JuHU" + DateTime.Now.ToString() + "H0m3s4lud"));
-        if (sender != BProcedimiento) 
-            data.Add("id", TProcedimientoID.Text);
+        
+        Servicio info = GActivades.SelectedIndex==-1 ? null : servicios.Find(x => x.Id.ToString() == GActivades.SelectedDataKey.Values["Id"].ToString());
 
-        if (GActivades.SelectedIndex == -1)
-        {
-            SActividades.GetView().Insert(data, OnDataSourceOperationComplete);
+        if (info == null) {
+            info = new Servicio();
+            servicios.Add(info);
         }
-        else
-        {
-            data.Add("id", GActivades.DataKeys[GActivades.SelectedIndex].Value);
 
-            IOrderedDictionary dataold = new OrderedDictionary();
-            dataold.Add("procedimiento", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim());
-            dataold.Add("numerosesiones", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim());
-            dataold.Add("sesionesdia", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim());            
-            dataold.Add("proc_id", HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim());
-            dataold.Add("id", GActivades.DataKeys[GActivades.SelectedIndex].Value);
+        info.Actividad= TProcedimiento.Text;
+        info.ActividadId = TProcedimientoID.Text;
+        info.SesionesPorDia = null;
+        info.NumeroSesiones = null;
+        try { info.SesionesPorDia = Convert.ToInt32(TSesionesDia.Text); } catch { }
+        try { info.NumeroSesiones = Convert.ToInt32(TNumeroSesiones.Text); } catch { }
 
-            SActividades.GetView().Update(data, data, dataold, OnDataSourceOperationComplete);
-        }
         GActivades.SelectedIndex = -1;
+        int index = 0;
+        servicios.ForEach(x => x.Id = index++);
+        ViewState["services"] = servicios;
+        GActivades.DataSource = servicios;
         GActivades.DataBind();
 
         LMensaje.Text= TProcedimientoID.Text = TProcedimiento.Text = TSesionesDia.Text = TNumeroSesiones.Text = "";
@@ -577,23 +501,35 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
         TProcedimiento.Focus();
     }
 
-    private bool OnDataSourceOperationComplete(int count, Exception e)
-    {
-        if (e != null)
-        {
-            throw e;
-        }
-        return false;
-    }
-
     protected void GActivades_SelectedIndexChanged(object sender, EventArgs e)
     {
-        TProcedimiento.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[3].Text).Trim();
-        TNumeroSesiones.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[4].Text).Trim();
-        TSesionesDia.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[5].Text).Trim();
-        TProcedimientoID.Text = HttpUtility.HtmlDecode(GActivades.SelectedRow.Cells[2].Text).Trim();
+        List<Servicio> servicios = ViewState["services"] as List<Servicio> ?? new List<Servicio>();
+        Servicio info = servicios.Find(x => x.Id.ToString() == GActivades.SelectedDataKey.Values["Id"].ToString());
+        if(info!=null)
+        {
+            TProcedimiento.Text = info.Actividad;
+            TProcedimientoID.Text = info.ActividadId;
+            TNumeroSesiones.Text = info.NumeroSesiones==null ? "" : info.NumeroSesiones.ToString();
+            TSesionesDia.Text = info.SesionesPorDia==null ? "" : info.SesionesPorDia.ToString();
+        }        
 
         BProcedimiento.Text = "Editar";
         TProcedimiento.Focus();
+    }
+
+    protected void GActivades_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        List<Servicio> servicios = ViewState["services"] as List<Servicio> ?? new List<Servicio>();
+
+        servicios.RemoveAll(x => x.Id.ToString() == e.Keys["Id"].ToString());
+
+        GActivades.SelectedIndex = -1;
+        int index = 0;
+        servicios.ForEach(x => x.Id = index++);
+        ViewState["services"] = servicios;
+        GActivades.DataSource = servicios;
+        GActivades.DataBind();
+
+        e.Cancel = true;
     }
 }

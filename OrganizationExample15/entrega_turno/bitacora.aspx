@@ -130,8 +130,12 @@
                 <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                 <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
-		            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                        <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+		            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+                        <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                         <asp:BoundField DataField="fecha" HeaderText="Fecha" SortExpression="fecha" ItemStyle-Wrap="false" />
                         <asp:BoundField DataField="tpaDescripcion" HeaderText="Área" SortExpression="tpaDescripcion" ItemStyle-Wrap="false" />
                         <asp:BoundField DataField="objeto" HeaderText="Objeto" SortExpression="objeto" ItemStyle-Width="100%" />

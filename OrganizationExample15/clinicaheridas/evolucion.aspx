@@ -154,7 +154,7 @@
             <Columns>
                 <asp:TemplateField>
                     <ItemTemplate>
-                        <asp:ImageButton CommandArgument='<%# Eval("id") %>' ID="IIr" runat="server" CausesValidation="False" ImageUrl="~/imgs/edit.gif" onclick="IIr_Click"/>
+                        <asp:LinkButton CommandArgument='<%# Eval("id") %>' ID="IIr" onclick="IIr_Click" runat="server" CssClass="btn btn-success btn-xs" CausesValidation="False" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:BoundField DataField="fecha" HeaderText="Fecha" DataFormatString="{0:d}" ItemStyle-Wrap="false" />
@@ -246,7 +246,9 @@
                         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                         <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                             <asp:BoundField DataField="Nombre" HeaderText="Localización" ItemStyle-Wrap="false" ItemStyle-Width="100%" />
                         </Columns>
                     </asp:GridView>

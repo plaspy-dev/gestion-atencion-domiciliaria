@@ -27,17 +27,10 @@ public partial class paciente_ingreso : System.Web.UI.Page
 
             CUsuario usuario = (CUsuario) Usuario.GetUsuario();
             BAceptar.Enabled = false;
-            BMasCDiagnostico.Enabled = false;
 
             DTV.MinumunValue = DateTime.Now.AddDays(-2);
             DTV.MaximunValue = DateTime.Now.AddMinutes(1);
             DTV.Enabled = !usuario.CanUpdate();
-
-            if(!string.IsNullOrEmpty(Request.QueryString["code"]))
-                ((MasterPageI)Master).SetMensaje(
-                    string.Format("Código generado <b>{0}</b><br/><br/><a href='{1}{0}'>{1}{0}</a>", Request.QueryString["code"], Utilidades.GetURLFullPath(this, "~/archivo/Historia/"))
-                    , "Código"
-                    );
 
             if (!string.IsNullOrEmpty(Request.QueryString["aid"]))
             {
@@ -74,8 +67,6 @@ public partial class paciente_ingreso : System.Web.UI.Page
                     PMujer.Visible = CCDetallePaciente.Sexo != "M";
 
                     BAceptar.Enabled = usuario.CanInsert();
-                    BMasCDiagnostico.Enabled = usuario.CanInsert();
-
                     DMedico.Enabled = usuario.CanAdmin();
                     if (!usuario.CanAdmin())
                     {
@@ -120,11 +111,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                             PNivelAtencion.Visible = true;
                             BActualizar.Visible = usuario.CanInsert();
                             BAceptar.Enabled = usuario.CanUpdate();
-                            BMasCDiagnostico.Enabled = usuario.CanUpdate();
                             ((MasterPageI)Master).Imprimir("ingreso.html");
-
-                            GCDiagnostico.Columns[0].Visible = usuario.CanUpdate();
-                            GCDiagnostico.Columns[1].Visible = usuario.CanDelete();
 
                             HIdIngreso.Value = readermysql["id"].ToString();
                             conector.SelectInDropDown(DMedico, readermysql["medico"], "SELECT perNombre FROM recurso_humano WHERE perId={0}");
@@ -159,6 +146,20 @@ public partial class paciente_ingreso : System.Web.UI.Page
                                 }
                             }
 
+                            qIngreso = new Query("codigos_ingreso");
+
+                            qIngreso += "codigo";
+
+                            readermysql = conector.Query(qIngreso.GetSelect("ingreso_paciente={0}",null, Query.GetValor(HIdIngreso.Value)));
+                            if (readermysql != null) {
+                                List<Miscelaneos> list = new List<Miscelaneos>();
+                                while (readermysql.Read()) {
+                                    string id = readermysql["codigo"].ToString();
+                                    list.Add(new Miscelaneos(id, Procedimientos.GetCodigoCIE(id)));
+                                }
+                                CIE10.Codes = list;
+                            }
+
                             TConductaInicial.ReadOnly = !usuario.CanAdmin();
                             BEliminar.Visible = usuario.CanDelete();
 
@@ -166,18 +167,7 @@ public partial class paciente_ingreso : System.Web.UI.Page
                         }
                         else
                         {
-                            GCDiagnostico.DataBind();
-                            if (GCDiagnostico.Rows.Count == 0)
-                            { // no se encontraron diagnosticos
-
-                                Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
-
-                                for (int i = 0; i < paciente.cie10.Count; i++)
-                                {
-                                    TCIE10.Text = Procedimientos.GetCodigoCIE(paciente.cie10[i].ToString());
-                                    BMasCDiagnostico_Click(sender, e);
-                                }
-                            }
+                            CIE10.FillFromPaciente(CCDetallePaciente.IdPaciente);
                             TConductaInicial.ReadOnly = !usuario.CanAdmin();
                         }
                     }
@@ -395,17 +385,19 @@ public partial class paciente_ingreso : System.Web.UI.Page
                 }
             }
 
-            string[] querys = SCDiagnostico.GetQuerys();
-            if (querys != null)
-            {
-                for (int i = 0; i < querys.Length; i++)
-                {
-                    szQuery = querys[i].Replace("@ingreso", Query.GetValor(HIdIngreso.Value));
-                    if (conector.QueryMod(szQuery) == -1)
-                        return;
-                }
+            Query query = new Query("codigos_ingreso");
+
+            if (conector.QueryMod(query.GetDelete("ingreso_paciente={0}", Query.GetValor(HIdIngreso.Value))) == -1) {
+                return;
             }
 
+            query["ingreso_paciente"] = HIdIngreso.Value;
+
+            foreach (Miscelaneos info in CIE10.Codes) {
+                query["codigo"] = info.Id;
+                if(conector.QueryMod(query.GetInsert())==-1) 
+                    return;
+            }
 
             // actualizamos el cie10 del paciente
             string cie10 = "", cie102 = "", cie103 = "";
@@ -455,67 +447,6 @@ public partial class paciente_ingreso : System.Web.UI.Page
             return text.Substring(0, pos).Trim();
         }
         return "";
-    }
-
-    protected void BMasCDiagnostico_Click(object sender, EventArgs e)
-    {
-        Validate("cie10");
-        if (!IsValid)
-            return;
-
-        string codigo = GetCodigoCIE(TCIE10.Text);
-
-        using (CConector conector = new CConector())
-        {
-            string descripcion = conector.QueryString("SELECT cirDescripcion FROM cie10 WHERE cieCodDx='" + codigo + "'");
-            if (descripcion.Length > 0)
-            {  // si existe el codigo
-
-                IOrderedDictionary data = new OrderedDictionary();
-                data.Add("codigo", codigo);
-                data.Add("descripcion", descripcion);
-                data.Add("observaciones", TObservacionesCIE10.Text);
-
-                if (GCDiagnostico.SelectedIndex == -1)
-                {
-                    SCDiagnostico.GetView().Insert(data, OnDataSourceOperationComplete);
-                }
-                else
-                {
-                    data.Add("id", GCDiagnostico.DataKeys[GCDiagnostico.SelectedIndex].Value);
-
-                    IOrderedDictionary dataold = new OrderedDictionary();
-                    dataold.Add("codigo", HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[2].Text).Trim());
-                    dataold.Add("descripcion", HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[3].Text).Trim());
-                    dataold.Add("observaciones", HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[4].Text).Trim());
-                    dataold.Add("id", GCDiagnostico.DataKeys[GCDiagnostico.SelectedIndex].Value);
-
-                    SCDiagnostico.GetView().Update(data, data, dataold, OnDataSourceOperationComplete);
-                }
-                GCDiagnostico.SelectedIndex = -1;
-                GCDiagnostico.DataBind();
-
-                TCIE10.Text = "";
-                TObservacionesCIE10.Text = "";
-                TCIE10.Focus();
-            }
-        }
-    }
-
-    private bool OnDataSourceOperationComplete(int count, Exception e)
-    {
-        if (e != null)
-        {
-            throw e;
-        }
-        return false;
-    }
-
-    protected void GCDiagnostico_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        TCIE10.Text = HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[2].Text).Trim();
-        TCIE10.Text+= " - " + HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[3].Text).Trim();
-        TObservacionesCIE10.Text = HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[4].Text).Trim();
     }
 
     protected string RenderGrid(GridView grid, bool pdf) {

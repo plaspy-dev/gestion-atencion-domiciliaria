@@ -155,7 +155,7 @@ function inicio() {
     });
     
     // todos los eliminar
-    $('input[src*="eliminar.gif"]').each(function(i) {
+    $('input[src*="eliminar.gif"],.btn-danger').each(function (i) {
         if (this.eliminar == undefined) {
             this.eliminar = $(this).attr("onclick");
             $(this).unbind('click').attr("onclick", "").click(function () {

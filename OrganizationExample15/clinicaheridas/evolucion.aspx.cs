@@ -774,9 +774,9 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
         ScriptManager.RegisterStartupScript(FFoto, typeof(string), "registro", "$('html, body').animate({scrollTop: $('#registrofotografico').offset().top}, 0);", true);
     }
 
-    protected void IIr_Click(object sender, ImageClickEventArgs e)
+    protected void IIr_Click(object sender, EventArgs e)
     {
-        Response.Redirect(Request.Url.AbsolutePath + "?pid=" + CCDetallePaciente.IdPaciente + "&ehid=" + ((ImageButton)sender).CommandArgument);
+        Response.Redirect(Request.Url.AbsolutePath + "?pid=" + CCDetallePaciente.IdPaciente + "&ehid=" + ((LinkButton)sender).CommandArgument);
     }
 
     protected void GHistorial_RowDataBound(object sender, GridViewRowEventArgs e)

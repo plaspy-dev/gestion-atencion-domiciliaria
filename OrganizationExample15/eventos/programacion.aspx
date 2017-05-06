@@ -231,8 +231,12 @@
                             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                             <SelectedRowStyle CssClass="selecteditem" />
                         <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-                            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                             <asp:BoundField DataField="idpersonal" HeaderText="idpersonal" ItemStyle-CssClass="hidet" HeaderStyle-CssClass="hidet" />
                             <asp:BoundField DataField="personal" HeaderText="Personal" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="chaqueta" HeaderText="No." ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Right" />
@@ -298,7 +302,9 @@
                             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                             <SelectedRowStyle CssClass="selecteditem" />
                         <Columns>
-                            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/eliminar.gif" />
+                            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
                             <asp:BoundField DataField="Codigo" HeaderText="Código" ItemStyle-Width="100%" />
                             <asp:BoundField DataField="Empresa" HeaderText="Empresa" ItemStyle-Wrap="false" />
                             <asp:BoundField DataField="Tipo" HeaderText="Tipo" ItemStyle-Wrap="false" />
@@ -341,8 +347,12 @@
             <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
             <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         <Columns>
-            <asp:CommandField ButtonType="Image" ShowSelectButton="True" SelectImageUrl="~/imgs/edit.gif" />
-            <asp:CommandField ButtonType="Image" DeleteImageUrl="~/imgs/eliminar.gif" ShowDeleteButton="True" />
+            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
+            <asp:TemplateField ItemStyle-CssClass="px">
+	                    <ItemTemplate><asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton></ItemTemplate>
+                    </asp:TemplateField>
             <asp:BoundField DataField="nombre" HeaderText="Nombre" SortExpression="nombre" ItemStyle-Width="100%" />
             <asp:BoundField DataField="inicio" HeaderText="Inicio" SortExpression="inicio" DataFormatString="{0:d}" />
             <asp:BoundField DataField="fin" HeaderText="Fin" SortExpression="fin" DataFormatString="{0:d}" />

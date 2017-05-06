@@ -295,9 +295,9 @@ public partial class paciente_valoracionat : System.Web.UI.Page
         ((MasterPageI)Master).SetParametros("?pid=" + CCDetallePaciente.IdPaciente);
         ((MasterPageI)Master).SetResultado(mensaje);
     }
-    protected void IIr_Click(object sender, ImageClickEventArgs e)
+    protected void IIr_Click(object sender, EventArgs e)
     {
-        Response.Redirect(Request.Url.AbsolutePath + "?pid=" + CCDetallePaciente.IdPaciente + "&vatid=" + ((ImageButton)sender).CommandArgument);
+        Response.Redirect(Request.Url.AbsolutePath + "?pid=" + CCDetallePaciente.IdPaciente + "&vatid=" + ((LinkButton)sender).CommandArgument);
     }
 
     public void OnImprimir(object sender, EventArgs e)
