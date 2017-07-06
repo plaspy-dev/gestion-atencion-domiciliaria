@@ -80,9 +80,9 @@
                             ,paciente.pacDocumento,paciente.pacNombres,paciente.pacDireccion,paciente.pacId
                             ,paciente.pacTelefono
                             ,asegurador.entNombre
-                            ,total AS valor
-                            ,pago_autorizacion.valor AS pagado
-                            ,total-pago_autorizacion.valor AS saldo
+                            ,IFNULL(total,0) AS valor
+                            ,IFNULL(pago_autorizacion.valor,0) AS pagado
+                            ,IFNULL(total,0)-IFNULL(pago_autorizacion.valor,0) AS saldo
                             FROM autorizacion
                             LEFT JOIN paciente ON (paciente.pacId=autorizacion.pacId)
                             LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)

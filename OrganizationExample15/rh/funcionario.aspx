@@ -819,6 +819,7 @@
                             LEFT JOIN paciente ON (paciente.pacId=programacion.pacId) 
                             LEFT JOIN medicamentos ON (medicamentos.id=programacion.actId)
                             WHERE programacion.perId=@perId 
+                            AND programacion.prgActivo=1
                             AND (@desde=' ' OR programacion.prgFechaProg>=STR_TO_DATE(@desde, '%d/%m/%Y'))
                             AND (@hasta=' ' OR programacion.prgFechaProg<=STR_TO_DATE(@hasta, '%d/%m/%Y'))
                             ORDER BY programacion.prgFechaProg DESC">

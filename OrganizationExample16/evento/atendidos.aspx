@@ -10,6 +10,7 @@
         <td class="px">Final</td>
         <td class="px">Evento</td>
         <td class="px">Estado</td>
+        <td class="px">Seguimiento</td>
         <td></td>
     </tr>
     <tr>
@@ -21,6 +22,15 @@
                 <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
                 <asp:ListItem Text="Remitidos" Value="1"></asp:ListItem>
                 <asp:ListItem Text="Sin remitir" Value="2"></asp:ListItem>
+            </asp:DropDownList>
+        </td>
+        <td>
+            <asp:DropDownList ID="DSeguimiento" runat="server" CssClass="amc">
+                <asp:ListItem Text="(Todos)" Value="0"></asp:ListItem>
+                <asp:ListItem Text="Sin seguimiento" Value="1"></asp:ListItem>
+                <asp:ListItem Text="Con seguimiento" Value="2"></asp:ListItem>
+                <asp:ListItem Text="Seguimiento sin completar" Value="3"></asp:ListItem>
+                <asp:ListItem Text="Seguimiento completo" Value="4"></asp:ListItem>
             </asp:DropDownList>
         </td>
         <td><asp:Button runat="server" ID="BActualizar" Text="Actualizar" CssClass="btn btn-submit" OnClick="BActualizar_Click" /></td>
@@ -65,6 +75,12 @@ ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>"
         DATE(paciente.fecha) BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
         AND (@evento=0 OR @evento=paciente.evento)
         AND (@estado=0 OR (@estado=1 AND paciente.ipsremision IS NOT NULL) OR (@estado=2 AND paciente.ipsremision IS NULL))
+        AND (@seguimiento=0 
+                OR (@seguimiento=1 AND paciente.atributos&1!=1)
+                OR (@seguimiento=2 AND paciente.atributos&1=1)
+                OR (@seguimiento=2 AND paciente.atributos&1=1 AND paciente.seguimiento IS NULL)
+                OR (@seguimiento=2 AND paciente.atributos&1=1 AND paciente.seguimiento IS NOT NULL)
+            )
         ORDER BY nombre
         ">
         <SelectParameters>
@@ -72,6 +88,7 @@ ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>"
             <asp:ControlParameter ControlID="TFin" PropertyName="Text" Name="fin" />
             <asp:ControlParameter ControlID="UCEvento" PropertyName="IdEvento" Name="evento" DefaultValue="0" />
             <asp:ControlParameter ControlID="DEstado" PropertyName="SelectedValue" Name="estado" />
+            <asp:ControlParameter ControlID="DSeguimiento" PropertyName="SelectedValue" Name="seguimiento" />
         </SelectParameters>
 </asp:SqlDataSource>
 </asp:Content>

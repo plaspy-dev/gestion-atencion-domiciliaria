@@ -219,8 +219,23 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         }
     }
 
+    protected void EnableValidators() {
+
+        RCA.Enabled=
+        RLF.Enabled = CFistulas.Checked;
+
+        RRT.Enabled =
+            RTU.Enabled =
+            RDC.Enabled =
+            RDE.Enabled =
+            RDCo.Enabled =
+            RDEP.Enabled = COstomias.Checked;
+    }
+
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        EnableValidators();
+
         if (!IsValid)
             return;
 
@@ -506,6 +521,9 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
     
     protected void BAgregar_Click(object sender, EventArgs e)
     {
+        RTBP.Enabled= RTBU.Enabled= CBolsillo.Checked;
+        Validate("herida");
+
         if (!IsValid)
             return;
         if (TUbicacionEspecifica.Text.Length == 0)
@@ -552,10 +570,10 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         }
 
         info.query["localizacion"] = DLocalizacion.SelectedValue;
-        info.query["localizacion2"] = RLocalizacion2.SelectedValue;
-        info.query["localizacion3"] = RLocalizacion3.SelectedValue;
-        info.query["mi"] = RMI.SelectedValue;
-        info.query["pies"] = RPies.SelectedValue;
+        info.query["localizacion2"] = RLocalizacion2.SelectedValue=="0" ? "" : RLocalizacion2.SelectedValue;
+        info.query["localizacion3"] = RLocalizacion3.SelectedValue=="0" ? "" : RLocalizacion3.SelectedValue;
+        info.query["mi"] = RMI.SelectedValue=="0" ? "" : RMI.SelectedValue;
+        info.query["pies"] = RPies.SelectedValue=="0" ? "" : RPies.SelectedValue;
         info.query["ubicacion_especifica"] = TUbicacionEspecifica.Text;
         info.query["etiologia"] = DEtiologia.SelectedValue;
         info.query["etiologia_otro"] = TOtroEtiologia.Text;
@@ -694,6 +712,10 @@ public partial class clinicaheridas_valoracion : System.Web.UI.Page
         ViewState["idherida"] = info.Id;
 
         Utilidades.SelectInDropDown(DLocalizacion, info.query["localizacion"]);
+        RLocalizacion2.SelectedValue = "0";
+        RLocalizacion3.SelectedValue = "0";
+        RMI.SelectedValue = "0";
+        RPies.SelectedValue = "0";
         try { RLocalizacion2.SelectedValue = info.query["localizacion2"].ToString(); } catch { }
         try { RLocalizacion3.SelectedValue = info.query["localizacion3"].ToString(); } catch { }
         try { RMI.SelectedValue = info.query["mi"].ToString(); } catch { }

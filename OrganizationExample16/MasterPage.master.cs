@@ -263,16 +263,21 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             {
                 _ExcelClicked(this, evento);
             }
-            GridUtils.ExportExcelXML(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title, "Vida");
+
+            GridUtils.ExportExcelXLSX(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Server.MapPath("~/xlsx/"), Page.Title, "Vida");
+            // GridUtils.ExportExcelXML(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title, "Vida");
             // GridUtils.ExportExcel(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title);
         }
         else if (ViewState["printfile"] != null)
         {
             bool xml = false;
+            bool xlsx = false;
             string file = Server.MapPath(ViewState["printfile"].ToString());
             string filexml = file.Replace(".html", ".xml").Replace(".htm", ".xml");
-            if (File.Exists(filexml))
-            {
+            if (File.Exists(file.Replace(".html", ".xlsx.xml"))) {
+                xlsx = true;
+                file = file.Replace(".html", ".xlsx.xml").Replace(".htm", ".xlsx.xml");
+            } else if (File.Exists(filexml)) {
                 file = filexml;
                 xml = true;
             }
@@ -301,7 +306,9 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             Response.ContentEncoding = System.Text.Encoding.GetEncoding("utf-8");
             Response.BufferOutput= 
             Response.Buffer = false;
-            if (xml)
+            if(xlsx)
+                RenderPage.RenderXLSX(Response, Page.Controls, Server.MapPath("~/xlsx/"), evento.Contenido.ToString(), Page.Title, CUsuario.GetInstance().Nombre);
+            else if (xml)
                 RenderPage.RenderXML(Response, cph.Controls, evento.Contenido.ToString());
             else RenderPage.Render(Response, cph.Controls, evento.Contenido.ToString());
             /*Response.Write(evento.Contenido);

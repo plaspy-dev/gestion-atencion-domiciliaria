@@ -492,6 +492,10 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
         ViewState["idherida"] = info.Id;
 
         Utilidades.SelectInDropDown(DLocalizacion, info.query["localizacion"]);
+        RLocalizacion2.SelectedValue="0";
+        RLocalizacion3.SelectedValue = "0";
+        RMI.SelectedValue = "0";
+        RPies.SelectedValue = "0";
         try { RLocalizacion2.SelectedValue = info.query["localizacion2"].ToString(); } catch { }
         try { RLocalizacion3.SelectedValue = info.query["localizacion3"].ToString(); } catch { }
         try { RMI.SelectedValue = info.query["mi"].ToString(); } catch { }
@@ -620,6 +624,8 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
     {
         /*if (string.IsNullOrEmpty((string)ViewState["idherida"])) // no se pueden agregar heridas, solo editar
             return;*/
+        RTBP.Enabled = RTBU.Enabled = CBolsillo.Checked;
+        Validate("herida");
 
         if (!IsValid)
             return;
@@ -672,10 +678,10 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
         }
 
         info.query["localizacion"] = DLocalizacion.SelectedValue;
-        info.query["localizacion2"] = RLocalizacion2.SelectedValue;
-        info.query["localizacion3"] = RLocalizacion3.SelectedValue;
-        info.query["mi"] = RMI.SelectedValue;
-        info.query["pies"] = RPies.SelectedValue;
+        info.query["localizacion2"] = RLocalizacion2.SelectedValue=="0" ? "" : RLocalizacion2.SelectedValue;
+        info.query["localizacion3"] = RLocalizacion3.SelectedValue == "0" ? "" : RLocalizacion3.SelectedValue;
+        info.query["mi"] = RMI.SelectedValue == "0" ? "" : RMI.SelectedValue;
+        info.query["pies"] = RPies.SelectedValue == "0" ? "" : RPies.SelectedValue;
         info.query["ubicacion_especifica"] = TUbicacionEspecifica.Text;
         // info.query["etiologia"] = DEtiologia.SelectedValue;
         // info.query["etiologia_otro"] = TOtroEtiologia.Text;

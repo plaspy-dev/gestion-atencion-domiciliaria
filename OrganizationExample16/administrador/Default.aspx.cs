@@ -105,6 +105,9 @@ public partial class administrador_Default : System.Web.UI.Page
             if (conector.InsertModificacion(HId.Value) == -1)
                 return;
 
+            Varios.Remove(HId.Value);
+            Varios.Remove((Varios.Tipos)Convert.ToInt32(HTipo.Value));
+
             Session["szMensaje"] = mensaje;
             Response.Redirect(Request.Url.AbsolutePath + "?tipo=" + HTipo.Value);
         }

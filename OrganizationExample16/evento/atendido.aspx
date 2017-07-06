@@ -25,6 +25,11 @@
         <td><uc:Evento runat="server" ID="UCEvento" /></td>
     </tr>
     <tr>
+        <td>Documento</td>
+        <td><asp:TextBox runat="server" ID="TDocumento"></asp:TextBox></td>
+        <td colspan="2"><asp:CheckBox runat="server" ID="CNoInforma" Text="No informa datos" /></td>
+    </tr>
+    <tr>
         <td>Nombres<asp:RequiredFieldValidator ControlToValidate="TNombres" ErrorMessage="Por favor ingrese un nombre." ID="R3" 
 	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
         <td><asp:TextBox runat="server" ID="TNombres"></asp:TextBox></td>
@@ -36,42 +41,46 @@
         <td>Edad<asp:RequiredFieldValidator ControlToValidate="TEdad" ErrorMessage="Por favor ingrese una edad." ID="R5" 
 	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
         <td><asp:TextBox runat="server" ID="TEdad" CssClass="entero"></asp:TextBox></td>
-        <td></td>
-        <td></td>
+        <td>Asegurador</td>
+        <td><asp:TextBox runat="server" ID="TAsegurador"></asp:TextBox></td>
     </tr>
     <tr>
-        <td colspan="4" class="well">Familiar menor de edad</td>
-    </tr>
-    <tr>
-        <td class="tdl">Documento</td>
-        <td><asp:TextBox runat="server" ID="TFDocumento"></asp:TextBox></td>
-        <td>Nombres</td>
-        <td class="tdr"><asp:TextBox runat="server" ID="TFNombres"></asp:TextBox></td>
+        <td>Número de contacto</td>
+        <td><asp:TextBox runat="server" ID="TContacto"></asp:TextBox></td>
     </tr>
     <tr>
         <td>Diagnostico</td>
         <td colspan="3"><asp:TextBox runat="server" ID="TDiagnostico" Width="100%"></asp:TextBox></td>
     </tr>
     <tr>
+        <td colspan="4" class="well">Acompañante o familiar menor de edad</td>
+    </tr>
+    <tr class="tdl tdr">
+        <td>Documento</td>
+        <td><asp:TextBox runat="server" ID="TFDocumento"></asp:TextBox></td>
+        <td>Nombres</td>
+        <td><asp:TextBox runat="server" ID="TFNombres"></asp:TextBox></td>
+    </tr>
+    <tr class="tdl tdr">
+        <td>Numero de contacto</td>
+        <td><asp:TextBox runat="server" ID="TFContacto"></asp:TextBox></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
         <td colspan="4" class="well"><asp:CheckBox runat="server" ID="CRemisicion" Text="Remitido" /></td>
     </tr>
-    <tr class="remision">
-        <td class="tdl">Asegurador</td>
-        <td><asp:TextBox runat="server" ID="TAsegurador"></asp:TextBox></td>
+    <tr class="remision tdl tdr">
         <td>IPS</td>
-        <td class="tdr"><asp:TextBox runat="server" ID="TIPS"></asp:TextBox></td>
-    </tr>
-    <tr class="remision">
-        <td class="tdl">Documento</td>
-        <td><asp:TextBox runat="server" ID="TDocumento"></asp:TextBox></td>
-        <td>Código caso</td>
-        <td class="tdr"><asp:TextBox runat="server" ID="TCodigo"></asp:TextBox></td>
+        <td><asp:TextBox runat="server" ID="TIPS"></asp:TextBox></td>
+        <td>Código SDS</td>
+        <td><asp:TextBox runat="server" ID="TCodigo"></asp:TextBox></td>
     </tr>
     <tr class="remision">
         <td class="tdl">Causa</td>
         <td class="tdr" colspan="3"><asp:TextBox runat="server" ID="TCausa" Width="100%"></asp:TextBox></td>
     </tr>
-    <tr class="remision">
+    <tr class="remision tdl tdr">
         <td class="tdl">Ambulancia</td>
         <td><asp:DropDownList ID="DAmbulancia" runat="server" DataSourceID="SAmbulancia" CssClass="amc" 
                     DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
@@ -82,8 +91,12 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT id, nombre FROM varios WHERE tipo=13 AND eliminado IS NULL ORDER BY nombre">
             </asp:SqlDataSource></td>
+        <td class="nw"><asp:CheckBox runat="server" ID="CCadena" Text="Cadena de custodia" /></td>
+        <td><asp:CheckBox runat="server" ID="CDesistimiento" Text="Desistimiento" /></td>
+    </tr>
+    <tr class="remision tdr tdl">
         <td><asp:CheckBox runat="server" ID="CSeguimiento" Text="Seguimiento" /></td>
-        <td class="tdr"><asp:CheckBox runat="server" ID="CCadena" Text="Cadena de custodia" /></td>
+        <td colspan="3"><asp:TextBox runat="server" ID="TSeguimiento" Width="100%"></asp:TextBox></td>
     </tr>
     <tr>
         <td colspan="4"><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label> <asp:ValidationSummary runat="server" ID="V" /></td>

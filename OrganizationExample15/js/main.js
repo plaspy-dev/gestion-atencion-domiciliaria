@@ -374,6 +374,15 @@ function commaFormatted(amount) {
     return amount;
 }
 
+$.fn.enableValidator = function (enable) {
+    return this.each(function () {
+        var focusOnError = this.focusOnError;
+        this.focusOnError = "";
+        try { ValidatorEnable(this, enable); } catch (e) { }
+        this.focusOnError = focusOnError;
+    });
+};
+
 $.fn.disablePaste = function () {
     function isValidKey(e) {
 

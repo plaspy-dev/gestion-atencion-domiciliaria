@@ -50,6 +50,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                     query += "terminacion";
                     query += "terminacion_motivo";
                     query += "digitalizacion";
+                    query += "contrato";
 
                     MySqlDataReader reader= conector.Query(query.GetSelect("id=" + Query.GetValor(id)));
                     if (reader != null && reader.Read()) {
@@ -69,6 +70,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                         TDireccion.Text = reader["direccion"].ToString();
                         TBarrio.Text = reader["barrio"].ToString();
                         TTelefonos.Text = reader["telefonos"].ToString();
+                        CContrato.Checked = reader["contrato"].ToString()=="1";
                         TCelular.Text = reader["celular"].ToString();
                         DEstadoCivil.SelectedValue = reader["estado_civil"].ToString();
                         TConyugue.Text = reader["conyugue"].ToString();
@@ -131,6 +133,7 @@ public partial class rh_funcionario : System.Web.UI.Page
             query["fop"] = DFOP.SelectedValue;
             query["terminacion"] = Query.GetMySQLDateFormat(TTerminacion.Text);
             query["terminacion_motivo"] = DTerminacion.SelectedValue;
+            query["contrato"] = CContrato.Checked ? "1" : "";
 
             int digitalizacion = ViewState["digitalizacion"] as int? ?? 0;
             if (FSello.HasFile)
@@ -176,7 +179,7 @@ public partial class rh_funcionario : System.Web.UI.Page
 
                 FileUpload file = (FileUpload)row.FindControl("F");
                 if (file.HasFile) {
-                    string extension = Path.GetExtension(file.FileName);
+                    string extension = Path.GetExtension(file.FileName).ToLower();
                     file.SaveAs(Files.GetFilePath(Files.Directorys.RHDocumentos, true, id, idDocumento + extension));
                     query["archivo"] = extension;
                 }
@@ -186,6 +189,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                     LMensaje.Text = conector.LastError;
                     return;
                 }
+                query.RemoveCampo("archivo");
             }
 
             conector.Commit();
@@ -221,5 +225,29 @@ public partial class rh_funcionario : System.Web.UI.Page
                 }
             }
         }
+    }
+
+    protected void GDocumentos_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        e.Cancel = true;
+        string id = (string)ViewState["id"];
+        string idDocumento = e.Keys["id"].ToString();
+        if (string.IsNullOrEmpty(id))
+            return;
+
+        Query query = new Query("rh_documento");
+
+        using (CConector conector = new CConector())
+        {
+            if (conector.QueryMod(query.GetDelete("funcionario={0} AND documento={1}", id, idDocumento)) == -1)
+            {
+                LMensaje.Text = conector.LastError;
+                return;
+            }
+        }
+        try { File.Delete(Files.GetFilePath(Files.Directorys.RHDocumentos, true, id, idDocumento + ".jpg")); } catch { }
+        try { File.Delete(Files.GetFilePath(Files.Directorys.RHDocumentos, true, id, idDocumento + ".pdf")); } catch { }
+
+        GDocumentos.DataBind();
     }
 }

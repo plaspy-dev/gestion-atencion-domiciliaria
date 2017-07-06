@@ -17,6 +17,7 @@ public partial class evento_atendido : System.Web.UI.Page
                 TFecha.Text = Request.QueryString["f"] + " " + Query.GetFromMySQLDate(DateTime.Now, true).Split(' ')[1];
             else TFecha.Text = Query.GetFromMySQLDate(DateTime.Now, true);
             TFecha.Focus();
+            TSeguimiento.Visible = false;
 
             BAceptar.Enabled = usuario.CanInsert();
 
@@ -42,6 +43,10 @@ public partial class evento_atendido : System.Web.UI.Page
                     query += "causa";
                     query += "atributos";
                     query += "ambulancia";
+                    query += "noinforma";
+                    query += "contacto";
+                    query += "fcontacto";
+                    query += "seguimiento";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("id=" + Query.GetValor(Request.QueryString["pid"])));
                     if (reader != null && reader.Read()) {
@@ -65,11 +70,17 @@ public partial class evento_atendido : System.Web.UI.Page
                         TDocumento.Text = reader["documento"].ToString();
                         TCodigo.Text = reader["codigo_caso"].ToString();
                         TCausa.Text = reader["causa"].ToString();
+                        CNoInforma.Checked = reader["noinforma"].ToString() == "1";
+                        TSeguimiento.Text = reader["seguimiento"].ToString();
                         Utilidades.SelectInDropDown(DAmbulancia, reader["ambulancia"]);
+                        TContacto.Text = reader["contacto"].ToString();
+                        TFContacto.Text = reader["fcontacto"].ToString();
                         int atributos = 0;
                         try { atributos = Convert.ToInt32(reader["atributos"]); } catch { }
                         CCadena.Checked = (atributos & 1) == 1;
                         CSeguimiento.Checked = (atributos & 2) == 2;
+                        CDesistimiento.Checked = (atributos & 4) == 4;
+                        TSeguimiento.Visible = true;
 
                         CRemisicion.Checked = TIPS.Text.Length > 0;
 
@@ -120,18 +131,24 @@ public partial class evento_atendido : System.Web.UI.Page
             query["familiar_documento"] =TFDocumento.Text;
             query["familiar_nombres"] =TFNombres.Text;
             query["diagnostico"] =TDiagnostico.Text;
-            query["ipsremision"] = CRemisicion.Checked ? TIPS.Text : null;
+            query["documento"] = TDocumento.Text;
+            query["asegurador"] = TAsegurador.Text;
+            query["noinforma"] = CNoInforma.Checked ? "1" : "";
+            query["contacto"] = TContacto.Text;
+            query["fcontacto"] = TFContacto.Text;
 
-            query["asegurador"] = CRemisicion.Checked ? TAsegurador.Text : null;
-            query["documento"] = CRemisicion.Checked? TDocumento.Text : null;
+            query["ipsremision"] = CRemisicion.Checked ? TIPS.Text : null;
             query["codigo_caso"] = CRemisicion.Checked? TCodigo.Text : null;
             query["causa"] = CRemisicion.Checked? TCausa.Text : null;
             query["ambulancia"] = CRemisicion.Checked ? DAmbulancia.SelectedValue : null;
+            query["seguimiento"] = CRemisicion.Checked ? TSeguimiento.Text : null;
             int atributos = 0;
             if (CCadena.Checked)
                 atributos += 1;
             if(CSeguimiento.Checked)
                 atributos += 2;
+            if (CDesistimiento.Checked)
+                atributos += 4;
             query["atributos"] = CRemisicion.Checked? atributos.ToString() : null;
 
             if (string.IsNullOrEmpty(id)) {

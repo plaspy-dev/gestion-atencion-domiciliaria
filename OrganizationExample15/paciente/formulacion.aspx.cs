@@ -876,7 +876,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
 
     protected void IIr_Click(object sender, EventArgs e)
     {
-        Response.Redirect("~/paciente/formulacion.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + string.Format("{0:d}", Convert.ToDateTime(((LinkButton)sender).CommandArgument)) + "&tf=" + ((ImageButton)sender).CommandName);
+        Response.Redirect("~/paciente/formulacion.aspx?pid=" + CCDetallePaciente.IdPaciente + "&f=" + string.Format("{0:d}", Convert.ToDateTime(((LinkButton)sender).CommandArgument)) + "&tf=" + ((LinkButton)sender).CommandName);
     }
 
     protected void GFormulacion_RowDeleting(object sender, GridViewDeleteEventArgs e)

@@ -29,6 +29,66 @@
         <asp:BoundField DataField="telefonos" HeaderText="Teléfonos" SortExpression="telefonos" />
         <asp:BoundField DataField="celular" HeaderText="Celular" SortExpression="celular" />
         <asp:BoundField DataField="ingreso" HeaderText="Ingreso" SortExpression="ingreso" DataFormatString="{0:d}" />
+        <asp:TemplateField HeaderText="Acta de grado" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C0" Enabled="false" Checked='<%# HasDocument(Eval("id"), "Acta de grado") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Afiliación" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C1" Enabled="false" Checked='<%# HasDocument(Eval("id"), "Afiliación") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Capacitación BLS" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C2" Enabled="false" Checked='<%# HasDocument(Eval("id"), "Capacitación BLS") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Diploma profesional" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C3" Enabled="false" Checked='<%# HasDocument(Eval("id"), "Diploma profesional") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Fotocopia cédula ciudadanía" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C4" Enabled="false" Checked='<%# HasDocument(Eval("id"), "Fotocopia cédula ciudadanía") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Fotocopia Libreta militar" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C5" Enabled="false" Checked='<%# HasDocument(Eval("id"), "Fotocopia Libreta militar") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Hoja de vida" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C6" Enabled="false" Checked='<%# HasDocument(Eval("id"), "Hoja de vida") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Otros" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C7" Enabled="false" Checked='<%# HasDocument(Eval("id"), "Otros") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Resolución" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C8" Enabled="false" Checked='<%# HasDocument(Eval("id"), "Resolución") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="RUT" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C9" Enabled="false" Checked='<%# HasDocument(Eval("id"), "RUT") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Tarjeta profesional" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C10" Enabled="false" Checked='<%# HasDocument(Eval("id"), "Tarjeta profesional") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Vacunación" ItemStyle-CssClass="r">
+            <ItemTemplate>
+                <asp:CheckBox runat="server" ID="C11" Enabled="false" Checked='<%# HasDocument(Eval("id"), "Vacunación") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
     </Columns>
 </asp:GridView>
     <asp:Label runat="server" ID="LTotal" CssClass="pull-right"></asp:Label>

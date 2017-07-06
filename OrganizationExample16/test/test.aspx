@@ -114,4 +114,5 @@
     </div>
     <asp:TextBox runat="server" ID="TPrueba"></asp:TextBox>
     <asp:TextBox runat="server" ID="TPruebaId"></asp:TextBox>
+    <asp:Button runat="server" ID="BTEst" Text="Test" OnClick="BTEst_Click" />
 </asp:Content>

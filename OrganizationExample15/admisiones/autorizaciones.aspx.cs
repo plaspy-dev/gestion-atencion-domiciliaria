@@ -171,6 +171,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                 LError.Text = "Por favor ingrese por lo menos una actividad.";
                 return;
             }
+            TNumero.Text= TNumero.Text.Trim();
             if (HIdAutorizacion.Value.Length == 0 && TNumero.Text.Length > 0)
             {
                 if (conector.QueryString("SELECT autNumero FROM autorizacion WHERE autNumero='" + TNumero.Text + "'").Length != 0)

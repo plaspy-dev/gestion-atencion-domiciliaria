@@ -39,6 +39,7 @@
         
         $("#<%= CBolsillo.ClientID %>").change(function() {
             $(".bolsillo").toggle($(this).is(':checked'));
+            $("span.bolsillo").enableValidator($(this).is(':checked'));
         }).change();
     
         $('.cms:not(.rcms)')
@@ -201,11 +202,13 @@
                 <td class="tdl">FR<asp:RequiredFieldValidator ControlToValidate="TFR" ErrorMessage="Por favor ingrese una frecuencia respiratoria." ID="RequiredFieldValidator10" 
 	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox></td>
-                <td>T</td>
+                <td>T<asp:RequiredFieldValidator ControlToValidate="TT" ErrorMessage="Por favor ingrese una temperatura." ID="RTT" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td class="tdr"><asp:TextBox ID="TT" runat="server" CssClass="float"></asp:TextBox></td>
             </tr>
             <tr>
-                <td class="tdl nw">Pulsos distales</td>
+                <td class="tdl nw">Pulsos distales<asp:RequiredFieldValidator ControlToValidate="RPDistales" ErrorMessage="Por favor seleccione unos pulsos distales." ID="RRPD" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td nowrap="nw">
                 <asp:RadioButtonList runat="server" ID="RPDistales" RepeatColumns="2">
                     <asp:ListItem Text="Presentes" Value="1"></asp:ListItem>
@@ -265,7 +268,11 @@
                         <td colspan="4" class="celdaTitulo tdr tdl">Valoración de heridas - Localización</td>
                     </tr>
                     <tr>
-                        <td class="tdl">Localización</td>
+                        <td class="tdl">Localización<asp:RequiredFieldValidator ControlToValidate="RLocalizacion2" ErrorMessage="Por favor seleccione una localización." ID="RRL2" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                            <asp:RequiredFieldValidator ControlToValidate="RLocalizacion3" ErrorMessage="Por favor seleccione una localización." ID="RRL3" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                        </td>
                         <td colspan="3" class="tdr" nowrap=nowrap>
                         <table cellpadding=0 cellspacing=0 width="100%">
                             <tr>
@@ -281,7 +288,7 @@
                                 </td>
                                 <td>
                                     <asp:RadioButtonList runat="server" ID="RLocalizacion2" RepeatColumns="3" DataSourceID="SLocalizacion2" DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                                        <asp:ListItem Text="No aplica" Value=""></asp:ListItem>
+                                        <asp:ListItem Text="No aplica" Value="0"></asp:ListItem>
                                     </asp:RadioButtonList>
                                     <asp:SqlDataSource ID="SLocalizacion2" runat="server" 
                                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -291,7 +298,7 @@
                                 </td>
                                 <td>
                                     <asp:RadioButtonList runat="server" ID="RLocalizacion3" RepeatColumns="3" DataSourceID="SLocalizacion3" DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                                        <asp:ListItem Text="No aplica" Value=""></asp:ListItem>
+                                        <asp:ListItem Text="No aplica" Value="0"></asp:ListItem>
                                     </asp:RadioButtonList>
                                     <asp:SqlDataSource ID="SLocalizacion3" runat="server" 
                                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -309,20 +316,22 @@
                         <td class="tdr"></td>
                     </tr>
                     <tr>
-                        <td class="tdl">MI</td>
+                        <td class="tdl">MI<asp:RequiredFieldValidator ControlToValidate="RMI" ErrorMessage="Por favor seleccione un valor para miembros inferiores." ID="RRMI" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td nowrap="nowrap">
                         <asp:RadioButtonList runat="server" ID="RMI" RepeatColumns="3" DataSourceID="SMI" DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                            <asp:ListItem Text="No aplica" Value=""></asp:ListItem>
+                            <asp:ListItem Text="No aplica" Value="0"></asp:ListItem>
                         </asp:RadioButtonList>
                         <asp:SqlDataSource ID="SMI" runat="server" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT id, nombre FROM varios WHERE tipo=72 AND szReservado IS NULL ORDER BY nombre">
                         </asp:SqlDataSource></td>
-                        <td>Pies</td>
+                        <td>Pies<asp:RequiredFieldValidator ControlToValidate="RPies" ErrorMessage="Por favor seleccione un valor para pies." ID="RRP" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr" nowrap="nowrap">
                         <asp:RadioButtonList runat="server" ID="RPies" RepeatColumns="3" DataSourceID="SPies" DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                            <asp:ListItem Text="No aplica" Value=""></asp:ListItem>
+                            <asp:ListItem Text="No aplica" Value="0"></asp:ListItem>
                         </asp:RadioButtonList>
                         <asp:SqlDataSource ID="SPies" runat="server" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -343,26 +352,31 @@
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT id, nombre FROM varios WHERE tipo=53 AND szReservado IS NULL ORDER BY nombre">
                         </asp:SqlDataSource></td>
-                        <td>Factores de riesgo determinante</td>
+                        <td>Factores de riesgo determinante<asp:RequiredFieldValidator ControlToValidate="TFactoresRiesgo" ErrorMessage="Por favor ingrese un factor de riesgo." ID="RTFR" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TFactoresRiesgo"></asp:TextBox></td>
                     </tr>
                     <tr>
                         <td colspan="4" class="celdaSubTitulo tdr tdl">Tamaño</td>
                     </tr>
                     <tr>
-                        <td class="tdl">Longitud</td>
+                        <td class="tdl">Longitud<asp:RequiredFieldValidator ControlToValidate="TLongitud" ErrorMessage="Por favor ingrese una longitud." ID="RTL" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TLongitud" CssClass="cms"></asp:TextBox></td>
-                        <td>Anchura</td>
+                        <td>Anchura<asp:RequiredFieldValidator ControlToValidate="TAnchura" ErrorMessage="Por favor ingrese una anchura." ID="RTA" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TAnchura" CssClass="cms"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td class="tdl">Profundidad</td>
+                        <td class="tdl">Profundidad<asp:RequiredFieldValidator ControlToValidate="TProfunidad" ErrorMessage="Por favor ingrese una profunidad." ID="RTP" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TProfunidad" CssClass="cms"></asp:TextBox></td>
                         <td><asp:CheckBox runat="server" Text="Tunelización" ID="CTunelizacion" /></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TTunelizacion" CssClass="cms"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td class="tdl">Cavidad</td>
+                        <td class="tdl">Cavidad<asp:RequiredFieldValidator ControlToValidate="TCavidad" ErrorMessage="Por favor ingrese una cavidad." ID="RTC" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TCavidad" CssClass="cms"></asp:TextBox></td>
                         <td></td>
                         <td class="tdr"></td>
@@ -371,36 +385,46 @@
                         <td colspan="4" class="tdl tdr celdaSubTitulo"><asp:CheckBox runat="server" ID="CBolsillo" Text="Bolsillo" /></td>
                     </tr>
                     <tr class="bolsillo hidet">
-                        <td class="tdl">Profunidad</td>
+                        <td class="tdl">Profunidad<asp:RequiredFieldValidator ControlToValidate="TBolsilloProfundidad" ErrorMessage="Por favor ingrese una profunidad." ID="RTBP" CssClass="bolsillo" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TBolsilloProfundidad" CssClass="cms"></asp:TextBox></td>
-                        <td>Ubicación</td>
+                        <td>Ubicación<asp:RequiredFieldValidator ControlToValidate="TBolsilloUbicacion" ErrorMessage="Por favor ingrese una ubicación." ID="RTBU" ValidationGroup="herida" CssClass="bolsillo"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TBolsilloUbicacion" CssClass="entero"></asp:TextBox></td>
                     </tr>
                     <tr>
                         <td colspan="4" class="celdaSubTitulo tdr tdl">Porcentaje de tejido</td>
                     </tr>
                     <tr>
-                        <td class="tdl">Compacto</td>
+                        <td class="tdl">Compacto<asp:RequiredFieldValidator ControlToValidate="TCompacto" ErrorMessage="Por favor ingrese un porcentaje para compacto." ID="RTCo" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TCompacto" CssClass="porcentaje"></asp:TextBox></td>
-                        <td>De fibrina</td>
+                        <td>De fibrina<asp:RequiredFieldValidator ControlToValidate="TDeFibrina" ErrorMessage="Por favor ingrese un porcentaje para fibrina." ID="RTDF" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TDeFibrina" CssClass="porcentaje"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td class="tdl">Epitelización</td>
+                        <td class="tdl">Epitelización<asp:RequiredFieldValidator ControlToValidate="TEpitelizacion" ErrorMessage="Por favor ingrese un porcetaje para epitelización." ID="RTE" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TEpitelizacion" CssClass="porcentaje"></asp:TextBox></td>
-                        <td>Esfacelo</td>
+                        <td>Esfacelo<asp:RequiredFieldValidator ControlToValidate="TEscara" ErrorMessage="Por favor ingrese un porcentaje para esfacelo." ID="RTEs" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TEscara" CssClass="porcentaje"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td class="tdl">Granulación</td>
+                        <td class="tdl">Granulación<asp:RequiredFieldValidator ControlToValidate="TGranulacion" ErrorMessage="Por favor ingrese un porcentaje para granulación." ID="RTG" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TGranulacion" CssClass="porcentaje"></asp:TextBox></td>
-                        <td>Hipergranulación</td>
+                        <td>Hipergranulación<asp:RequiredFieldValidator ControlToValidate="THipergranulacion" ErrorMessage="Por favor ingrese un porcentaje para hipergranulacion." ID="RTHG" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="THiperGranulacion" CssClass="porcentaje"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td class="tdl" nowrap="nowrap">Limpio pero no granulado</td>
+                        <td class="tdl" nowrap="nowrap">Limpio pero no granulado<asp:RequiredFieldValidator ControlToValidate="TLimpio" ErrorMessage="Por favor ingrese un porcentaje para limpio." ID="RTLi" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TLimpio" CssClass="porcentaje"></asp:TextBox></td>
-                        <td>Necrosis profunda</td>
+                        <td>Necrosis profunda<asp:RequiredFieldValidator ControlToValidate="TNecrosis" ErrorMessage="Por favor ingrese un porcentaje para necrosis." ID="RTN" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TNecrosis" CssClass="porcentaje"></asp:TextBox></td>
                     </tr>
                     <tr>
@@ -479,7 +503,8 @@
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT id, nombre FROM varios WHERE tipo=65 AND szReservado IS NULL ORDER BY nombre">
                         </asp:SqlDataSource></td>
-                        <td>Signos de infección</td>
+                        <td>Signos de infección<asp:RequiredFieldValidator ControlToValidate="TSignosInfeccion" ErrorMessage="Por favor ingrese un signo de infección." ID="RTSI" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TSignosInfeccion"></asp:TextBox></td>
                     </tr>
                     <tr>
@@ -529,7 +554,8 @@
             <tr>
                 <td colspan="4" class="celdaSubTitulo tdr tdl">Plan de manejo</td>
             </tr>
-            <td class="tdl" valign="top">Manejo</td>
+            <td class="tdl" valign="top">Manejo<asp:RequiredFieldValidator ControlToValidate="TPlanManejo" ErrorMessage="Por favor ingrese un plan de manejo." ID="RTPM" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td colspan="3"><asp:TextBox ID="TPlanManejo" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hidet"></asp:TextBox>
                 <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
             </td>

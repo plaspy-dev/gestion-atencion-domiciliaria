@@ -79,15 +79,19 @@ img[usemap], map area{
     
         $("#<%= COstomias.ClientID %>").change(function() {
             $(".ostomia").toggle($(this).is(':checked'));
+            $("span.ostomia").enableValidator($(this).is(':checked'));
         }).change();
         $("#<%= CBolsillo.ClientID %>").change(function() {
             $(".bolsillo").toggle($(this).is(':checked'));
+            $("span.bolsillo").enableValidator($(this).is(':checked'));
         }).change();
         $("#<%= CFistulas.ClientID %>").change(function() {
             $(".fistula").toggle($(this).is(':checked'));
+            $("span.fistula").enableValidator($(this).is(':checked'));
         }).change();
         $("#<%= CDispositivosMedicos.ClientID %>").change(function() {
             $(".dispositivos").toggle($(this).is(':checked'));
+            $("span.dispositivos").enableValidator($(this).is(':checked'));
             $("#<%= DFuncional.ClientID %>").change();
         }).change();
         
@@ -245,11 +249,13 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 <td class="tdl">FR<asp:RequiredFieldValidator ControlToValidate="TFR" ErrorMessage="Por favor ingrese una frecuencia respiratoria." ID="RequiredFieldValidator10" 
 	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:TextBox ID="TFR" runat="server" CssClass="likenumber"></asp:TextBox></td>
-                <td>T</td>
+                <td>T<asp:RequiredFieldValidator ControlToValidate="TT" ErrorMessage="Por favor ingrese una temperatura." ID="RT" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td class="tdr"><asp:TextBox ID="TT" runat="server" CssClass="likenumber"></asp:TextBox></td>
             </tr>
             <tr>
-                <td class="tdl nw">Pulsos distales</td>
+                <td class="tdl nw">Pulsos distales<asp:RequiredFieldValidator ControlToValidate="RPDistales" ErrorMessage="Por favor seleccione los pulsos distales." ID="RD" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td class="nw">
                 <asp:RadioButtonList runat="server" ID="RPDistales" RepeatColumns="2">
                     <asp:ListItem Text="Presentes" Value="1"></asp:ListItem>
@@ -269,9 +275,11 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
-                        <asp:TemplateField HeaderText="Antecedentes">
+                        <asp:TemplateField HeaderText="Antecedentes" ItemStyle-CssClass="nw">
                             <ItemTemplate>
                                 <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
+                                <asp:RequiredFieldValidator ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese unas observaciones." ID="R" 
+	                                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                             </ItemTemplate>
                             <ItemStyle Wrap="false" />
                         </asp:TemplateField>
@@ -310,9 +318,11 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                     <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                     <Columns>
-                        <asp:TemplateField HeaderText="Riesgo">
+                        <asp:TemplateField HeaderText="Riesgo" ItemStyle-CssClass="nw">
                             <ItemTemplate>
                                 <asp:CheckBox ID="CSi" runat="server" Checked='<%# Eval("estado").ToString()=="1" ? true : false %>' Text='<%# Eval("nombre") %>' />
+                                <asp:RequiredFieldValidator ControlToValidate="TObservaciones" ErrorMessage="Por favor ingrese unas observaciones." ID="R" 
+	                                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                             </ItemTemplate>
                             <ItemStyle Wrap="false" />
                         </asp:TemplateField>
@@ -351,13 +361,15 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 <td colspan="4" class="tdl tdr celdaSubTitulo"><asp:CheckBox runat="server" ID="CFistulas" Text="Fístulas" /></td>
             </tr>
             <tr class="hidet fistula">
-                <td class="tdl">Localización</td>
+                <td class="tdl">Localización<asp:RequiredFieldValidator ControlToValidate="TLocalizacionFistula" ErrorMessage="Por favor ingrese una localización." CssClass="fistula" ID="RLF" 
+	                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:TextBox runat="server" ID="TLocalizacionFistula"></asp:TextBox></td>
                 <td></td>
                 <td class="tdr"></td>
             </tr>
             <tr class="hidet fistula">
-                <td class="tdl">Cantidad afluente</td>
+                <td class="tdl">Cantidad afluente<asp:RequiredFieldValidator ControlToValidate="TCAfluente" ErrorMessage="Por favor ingrese una cantidad afluente." ID="RCA" CssClass="fistula"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:TextBox runat="server" ID="TCAfluente" CssClass="cms"></asp:TextBox></td>
                 <td class="tdr" colspan="2"><asp:CheckBox runat="server" ID="CSignosInfeccion" Text="Signos de infección" /></td>
             </tr>
@@ -365,17 +377,20 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 <td colspan="4" class="tdl tdr celdaSubTitulo"><asp:CheckBox runat="server" ID="COstomias" Text="Ostomías" /></td>
             </tr>
             <tr class="hidet ostomia">
-                <td class="tdl">Tipo</td>
+                <td class="tdl">Tipo<asp:RequiredFieldValidator ControlToValidate="RTipo" ErrorMessage="Por favor seleccione un tipo." ID="RRT" CssClass="ostomia"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td nowrap="nowrap">
                 <asp:RadioButtonList runat="server" ID="RTipo" RepeatColumns="2">
                     <asp:ListItem Text="Temporal" Value="0"></asp:ListItem>
                     <asp:ListItem Text="Definitiva" Value="1"></asp:ListItem>
                 </asp:RadioButtonList>
-                <td>Ubicación del estoma</td>
+                <td>Ubicación del estoma<asp:RequiredFieldValidator ControlToValidate="TUbicacion" ErrorMessage="Por favor ingrese una ubicación." ID="RTU" CssClass="ostomia"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td class="tdr"><asp:TextBox runat="server" ID="TUbicacion"></asp:TextBox></td>
             </tr>
             <tr class="hidet ostomia">
-                <td class="tdl" nowrap="nowrap">Color del estoma</td>
+                <td class="tdl" nowrap="nowrap">Color del estoma<asp:RequiredFieldValidator ControlToValidate="DColor" ErrorMessage="Por favor seleccione un color." ID="RDC" CssClass="ostomia"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:DropDownList ID="DColor" runat="server" DataSourceID="SColor" 
                         DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                         <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
@@ -385,7 +400,8 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                         ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                         SelectCommand="SELECT id, nombre FROM varios WHERE tipo=42 AND szReservado IS NULL ORDER BY nombre">
                     </asp:SqlDataSource></td>
-                <td nowrap="nowrap">Estoma a nivel de la piel</td>
+                <td nowrap="nowrap">Estoma a nivel de la piel<asp:RequiredFieldValidator ControlToValidate="DEstoma" ErrorMessage="Por favor seleccione un estoma." ID="RDE" CssClass="ostomia"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td class="tdr"><asp:DropDownList ID="DEstoma" runat="server" DataSourceID="SEstoma" 
                     DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                         <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
@@ -397,7 +413,8 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 </asp:SqlDataSource></td>
             </tr>
             <tr class="hidet ostomia">
-                <td class="tdl">Complicaciones</td>
+                <td class="tdl">Complicaciones<asp:RequiredFieldValidator ControlToValidate="DComplicacion" ErrorMessage="Por favor seleccione una complicación." ID="RDCo" CssClass="ostomia"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td><asp:DropDownList ID="DComplicacion" runat="server" DataSourceID="SComplicacion" 
                     DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                         <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
@@ -407,7 +424,8 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT id, nombre FROM varios WHERE tipo=44 AND szReservado IS NULL ORDER BY nombre">
                 </asp:SqlDataSource></td>
-                <td>Estado de la piel</td>
+                <td>Estado de la piel<asp:RequiredFieldValidator ControlToValidate="DEstadoPiel" ErrorMessage="Por favor seleccione un estado de piel." ID="RDEP" CssClass="ostomia"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td class="tdr"><asp:DropDownList ID="DEstadoPiel" runat="server" DataSourceID="SEstadoPiel" 
                     DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
                         <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
@@ -509,7 +527,11 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                         <td colspan="4" class="celdaTitulo tdr tdl">Valoración de heridas - Localización</td>
                     </tr>
                     <tr>
-                        <td class="tdl">Localización</td>
+                        <td class="tdl">Localización<asp:RequiredFieldValidator ControlToValidate="RLocalizacion2" ErrorMessage="Por favor seleccione una localización." ID="RL2" ValidationGroup="herida"
+	                                    runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                            <asp:RequiredFieldValidator ControlToValidate="RLocalizacion3" ErrorMessage="Por favor selecione una localización." ID="RL3" ValidationGroup="herida"
+	                                            runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                        </td>
                         <td colspan="3" class="tdr" nowrap=nowrap>
                         <table cellpadding=0 cellspacing=0 width="100%">
                             <tr>
@@ -525,7 +547,7 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                                 </td>
                                 <td>
                                     <asp:RadioButtonList runat="server" ID="RLocalizacion2" RepeatColumns="3" DataSourceID="SLocalizacion2" DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                                        <asp:ListItem Text="No aplica" Value=""></asp:ListItem>
+                                        <asp:ListItem Text="No aplica" Value="0"></asp:ListItem>
                                     </asp:RadioButtonList>
                                     <asp:SqlDataSource ID="SLocalizacion2" runat="server" 
                                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -535,7 +557,7 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                                 </td>
                                 <td>
                                     <asp:RadioButtonList runat="server" ID="RLocalizacion3" RepeatColumns="3" DataSourceID="SLocalizacion3" DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                                        <asp:ListItem Text="No aplica" Value=""></asp:ListItem>
+                                        <asp:ListItem Text="No aplica" Value="0"></asp:ListItem>
                                     </asp:RadioButtonList>
                                     <asp:SqlDataSource ID="SLocalizacion3" runat="server" 
                                         ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -553,20 +575,22 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                         <td class="tdr"></td>
                     </tr>
                     <tr>
-                        <td class="tdl">MI</td>
+                        <td class="tdl">MI<asp:RequiredFieldValidator ControlToValidate="RMI" ErrorMessage="Por favor seleccione miembros inferiores." ID="RRMI" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                         <asp:RadioButtonList runat="server" ID="RMI" RepeatColumns="3" DataSourceID="SMI" DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                            <asp:ListItem Text="No aplica" Value=""></asp:ListItem>
+                            <asp:ListItem Text="No aplica" Value="0"></asp:ListItem>
                         </asp:RadioButtonList>
                         <asp:SqlDataSource ID="SMI" runat="server" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT id, nombre FROM varios WHERE tipo=72 AND szReservado IS NULL ORDER BY nombre">
                         </asp:SqlDataSource></td>
-                        <td>Pies</td>
+                        <td>Pies<asp:RequiredFieldValidator ControlToValidate="RPies" ErrorMessage="Por favor seleccione pies." ID="RRPies" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr" nowrap="nowrap">
                         <asp:RadioButtonList runat="server" ID="RPies" RepeatColumns="3" DataSourceID="SPies" DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                            <asp:ListItem Text="No aplica" Value=""></asp:ListItem>
+                            <asp:ListItem Text="No aplica" Value="0"></asp:ListItem>
                         </asp:RadioButtonList>
                         <asp:SqlDataSource ID="SPies" runat="server" 
                             ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
@@ -639,7 +663,8 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                             ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                             SelectCommand="SELECT id, nombre FROM varios WHERE tipo=53 AND szReservado IS NULL ORDER BY nombre">
                         </asp:SqlDataSource></td>
-                        <td>Factores de riesgo determinante</td>
+                        <td>Factores de riesgo determinante<asp:RequiredFieldValidator ControlToValidate="TFactoresRiesgo" ErrorMessage="Por favor ingrese unos factores de riesgo." ID="RTFR" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TFactoresRiesgo"></asp:TextBox></td>
                     </tr>
                     <tr>
@@ -649,19 +674,23 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                         <td colspan="4" class="celdaSubTitulo tdr tdl">Tamaño</td>
                     </tr>
                     <tr>
-                        <td class="tdl">Longitud</td>
+                        <td class="tdl">Longitud<asp:RequiredFieldValidator ControlToValidate="TLongitud" ErrorMessage="Por favor ingrese una longitud." ID="RTL" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TLongitud" CssClass="cms"></asp:TextBox></td>
-                        <td>Anchura</td>
+                        <td>Anchura<asp:RequiredFieldValidator ControlToValidate="TAnchura" ErrorMessage="Por favor ingrese una anchura." ID="RTA" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TAnchura" CssClass="cms"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td class="tdl">Profundidad</td>
+                        <td class="tdl">Profundidad<asp:RequiredFieldValidator ControlToValidate="TProfunidad" ErrorMessage="Por favor ingrese una profundidad." ID="RTP" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TProfunidad" CssClass="cms"></asp:TextBox></td>
                         <td><asp:CheckBox runat="server" Text="Tunelización" ID="CTunelizacion" /></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TTunelizacion" CssClass="cms"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td class="tdl">Cavidad</td>
+                        <td class="tdl">Cavidad<asp:RequiredFieldValidator ControlToValidate="TCavidad" ErrorMessage="Por favor ingrese una cavidad." ID="RTC" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TCavidad" CssClass="cms"></asp:TextBox></td>
                         <td></td>
                         <td class="tdr"></td>
@@ -670,9 +699,11 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                         <td colspan="4" class="tdl tdr celdaSubTitulo"><asp:CheckBox runat="server" ID="CBolsillo" Text="Bolsillo" /></td>
                     </tr>
                     <tr class="bolsillo hidet">
-                        <td class="tdl">Profunidad</td>
+                        <td class="tdl">Profunidad<asp:RequiredFieldValidator ControlToValidate="TBolsilloProfundidad" ErrorMessage="Por favor ingrese una profundidad." ID="RTBP" ValidationGroup="herida" CssClass="bolsillo"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TBolsilloProfundidad" CssClass="cms"></asp:TextBox></td>
-                        <td>Ubicación</td>
+                        <td>Ubicación<asp:RequiredFieldValidator ControlToValidate="TBolsilloUbicacion" ErrorMessage="Por favor ingrese una ubicación." ID="RTBU" ValidationGroup="herida" CssClass="bolsillo"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TBolsilloUbicacion" CssClass="entero"></asp:TextBox></td>
                     </tr>
                     <tr>
@@ -682,7 +713,8 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                         <td colspan="4" class="celdaSubTitulo tdr tdl">Lecho de la herida</td>
                     </tr>
                     <tr>
-                        <td class="tdl">Tejido necrótico</td>
+                        <td class="tdl">Tejido necrótico<asp:RequiredFieldValidator ControlToValidate="RTipoTejido" ErrorMessage="Por favor seleccione un tipo de tejido." ID="RRTT" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td colspan="3" class="tdr"><asp:RadioButtonList runat="server" ID="RTipoTejido" RepeatColumns="2">
                             <asp:ListItem Text="menor al 25%" Value="0"></asp:ListItem>
                             <asp:ListItem Text="mayor al 25%" Value="1"></asp:ListItem>
@@ -692,27 +724,35 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                         <td colspan="4" class="celdaSubTitulo tdr tdl">Porcentaje de tejido</td>
                     </tr>
                     <tr>
-                        <td class="tdl">Compacto</td>
+                        <td class="tdl">Compacto<asp:RequiredFieldValidator ControlToValidate="TCompacto" ErrorMessage="Por favor ingrese un porcentaje para compacto." ID="RTCo" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TCompacto" CssClass="porcentaje"></asp:TextBox></td>
-                        <td>De fibrina</td>
+                        <td>De fibrina<asp:RequiredFieldValidator ControlToValidate="TDeFibrina" ErrorMessage="Por favor ingrese un porcentaje para fibrina." ID="RTDF" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TDeFibrina" CssClass="porcentaje"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td class="tdl">Epitelización</td>
+                        <td class="tdl">Epitelización<asp:RequiredFieldValidator ControlToValidate="TEpitelizacion" ErrorMessage="Por favor ingrese un porcentaje para epitelización." ID="RTEp" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TEpitelizacion" CssClass="porcentaje"></asp:TextBox></td>
-                        <td>Esfacelo</td>
+                        <td>Esfacelo<asp:RequiredFieldValidator ControlToValidate="TEscara" ErrorMessage="Por favor ingrese un porcentaje para Esfacelo." ID="RTEs" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TEscara" CssClass="porcentaje"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td class="tdl">Granulación</td>
+                        <td class="tdl">Granulación<asp:RequiredFieldValidator ControlToValidate="TGranulacion" ErrorMessage="Por favor ingrese un porcentaje para granulación." ID="RTG" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TGranulacion" CssClass="porcentaje"></asp:TextBox></td>
-                        <td>Hipergranulación</td>
+                        <td>Hipergranulación<asp:RequiredFieldValidator ControlToValidate="THiperGranulacion" ErrorMessage="Por favor ingrese un porcentaje para hipergranulación." ID="RTHG" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="THiperGranulacion" CssClass="porcentaje"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td class="tdl">Limpio pero no granulado</td>
+                        <td class="tdl">Limpio pero no granulado<asp:RequiredFieldValidator ControlToValidate="TLimpio" ErrorMessage="Por favor ingrese un porcentaje para no granulado." ID="RTLi" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TLimpio" CssClass="porcentaje"></asp:TextBox></td>
-                        <td>Necrosis profunda</td>
+                        <td>Necrosis profunda<asp:RequiredFieldValidator ControlToValidate="TNecrosis" ErrorMessage="Por favor ingrese un porcentaje para necrosis." ID="RTNe" ValidationGroup="herida"
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td class="tdr"><asp:TextBox runat="server" ID="TNecrosis" CssClass="porcentaje"></asp:TextBox></td>
                     </tr>
                     <tr>
@@ -866,11 +906,13 @@ Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecil
                 <td colspan="3" class="tdr"><asp:Label runat="server" ID="LTipo"></asp:Label></td>
             </tr>
             <tr>
-                <td class="tdl">Periodicidad</td>
+                <td class="tdl">Periodicidad<asp:RequiredFieldValidator ControlToValidate="TPeriodicidad" ErrorMessage="Por favor ingrese una periodocidad." ID="RP" 
+	                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td colspan="3" class="tdr"><asp:TextBox runat="server" Width="99%" ID="TPeriodicidad"></asp:TextBox></td>
             </tr>
             <tr>
-                <td class="tdl" valign="top">Manejo</td>
+                <td class="tdl" valign="top">Manejo<asp:RequiredFieldValidator ControlToValidate="TPlanManejo" ErrorMessage="Por favor ingrese un plan de manejo." ID="RPM" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                 <td colspan="3"><asp:TextBox ID="TPlanManejo" ReadOnly="true" runat="server" Height="200px" TextMode="MultiLine" Width="99%" CssClass="hidet"></asp:TextBox>
                 <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
                 </td>

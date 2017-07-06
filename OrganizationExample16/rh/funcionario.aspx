@@ -42,7 +42,9 @@
         </tr>
         <tr>
             <td>Ingreso</td>
-            <td><asp:TextBox runat="server" ID="TIngreso" CssClass="fecha"></asp:TextBox></td>
+            <td class="nw"><asp:TextBox runat="server" ID="TIngreso" CssClass="fecha"></asp:TextBox>
+                <asp:CheckBox runat="server" ID="CContrato" Text="Contrato" />
+            </td>
             <td>Nacimiento</td>
             <td><asp:TextBox runat="server" ID="TNacimiento" CssClass="fecha"></asp:TextBox></td>
         </tr>
@@ -149,7 +151,7 @@
         <tr>
             <td colspan="4" class="tdr tdl" style="padding: 0">
                 <asp:GridView ID="GDocumentos" runat="server" AutoGenerateColumns="False" DataSourceID="SDocumentos" EmptyDataText="No se encontraron documentos" 
-                    CssClass="table table-condensed table-bordered table-hover table-striped" DataKeyNames="id">
+                    CssClass="table table-condensed table-bordered table-hover table-striped" DataKeyNames="id" OnRowDeleting="GDocumentos_RowDeleting">
                 <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
                 <Columns>
                     <asp:TemplateField ItemStyle-Width="1px">
@@ -159,7 +161,8 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Documento" ItemStyle-Width="100%">
                         <ItemTemplate>
-                            <asp:HyperLink runat="server" ID="H" Text='<%# Eval("nombre") %>' NavigateUrl='<%# Eval("archivo")==DBNull.Value ? "" : Files.GetURL(Files.Directorys.RHDocumentos, Files.ContentDisposition.Attachment, ViewState["id"], Eval("id"), Eval("Nombre").ToString() + Eval("archivo")) %>'></asp:HyperLink>
+                            <asp:Label runat="server" ID="L" Visible='<%# Eval("archivo") == DBNull.Value %>' Text='<%# Eval("nombre") %>'></asp:Label>
+                            <asp:HyperLink runat="server" Visible='<%# Eval("archivo") != DBNull.Value %>' ID="H" Text='<%# Eval("nombre") %>' NavigateUrl='<%# Eval("archivo")==DBNull.Value ? "" : Files.GetURL(Files.Directorys.RHDocumentos, Files.ContentDisposition.Attachment, ViewState["id"], Eval("id"), Eval("Nombre").ToString() + Eval("archivo")) %>'></asp:HyperLink>
                             <asp:CustomValidator Display="Dynamic" ControlToValidate="F" ID="C" runat="server" ClientValidationFunction="ValidateFileUploadJPGPDF" ErrorMessage="Por favor seleccione una imagen en formato jpg o un archivo PDF" onservervalidate="OnValidaFileJPGPDF">*</asp:CustomValidator>
                         </ItemTemplate>
                     </asp:TemplateField>
