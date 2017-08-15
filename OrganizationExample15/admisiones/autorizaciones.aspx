@@ -295,9 +295,13 @@
             <td class="tar"><asp:Label runat="server" ID="LRecibido"></asp:Label></td>
         </tr>
         <tr>
-            <td class="celdaTitulo" colspan="4">Servicios</td>
+            <td></td>
+            <td><asp:CheckBox runat="server" ID="CCopia" Text="Autorización en copia" /></td>
         </tr>
         <tr>
+            <td class="celdaTitulo" colspan="4">Servicios</td>
+        </tr>
+        <tr class="tdr tdl">
             <td colspan="4">
                 <asp:GridView ID="GActivades" runat="server" Width="100%"
                     AutoGenerateColumns="False" DataKeyNames="Id" 
@@ -322,17 +326,17 @@
                     </asp:GridView>
             </td>
         </tr>
-        <tr>
+        <tr class="tdr tdl">
             <td>Procedimiento<asp:RequiredFieldValidator ValidationGroup="procedimiento" ControlToValidate="TProcedimientoID" ErrorMessage="Por favor ingrese un procedimiento." ID="RProcedimiento" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td colspan="3"><asp:TextBox Width="99%" runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hidet"></asp:TextBox></td>
         </tr>
-        <tr>
+        <tr class="tdr tdl">
             <td>Número de sesiones<asp:RequiredFieldValidator ValidationGroup="procedimiento" ControlToValidate="TNumeroSesiones" ErrorMessage="Por favor ingrese un número." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td><asp:TextBox runat="server" ID="TNumeroSesiones" CssClass="entero"></asp:TextBox></td>
             <td>Sesiones por día</td>
             <td><asp:TextBox runat="server" ID="TSesionesDia" CssClass="entero"></asp:TextBox></td>
         </tr>
-        <tr>
+        <tr class="tdr tdl tdb">
             <td align="right" colspan="4"><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label><asp:Button runat="server" ID="BProcedimiento" ValidationGroup="procedimiento" onclick="BProcedimiento_Click" Text="Agregar" /></td>
         </tr>
         <tr>
@@ -350,7 +354,7 @@
         </tr>
         <tr>
             <td colspan="2">
-            <asp:Button ID="BSuspender" runat="server" Text="Suspender" CausesValidation="false" />
+            <asp:Button ID="BSuspender" runat="server" Text="Suspender" CausesValidation="false" />&nbsp;
             <asp:Button CausesValidation="false" runat="server" Text="Eliminar" ID="BEliminar" 
                     onclick="BEliminar_Click" OnClientClick="confirm('Esta acción eliminara la autorización, esta acción no se puede deshacer. ¿Esta seguro de continuar?');" />
             </td>

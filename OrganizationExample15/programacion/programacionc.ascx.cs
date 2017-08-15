@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.Globalization;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
+using System.Collections.Specialized;
 
 public partial class phd_programacionc : System.Web.UI.UserControl
 {
@@ -30,8 +31,10 @@ public partial class phd_programacionc : System.Web.UI.UserControl
         get { return HId.Value; }
         set { 
             HId.Value = value;
+            LModification.Visible = false;
             if (HId.Value.Length > 0)
             {
+                LModification.Visible = true;
                 Query query = new Query("programacion");
 
                 query += "prgFechaProg";
@@ -351,5 +354,12 @@ public partial class phd_programacionc : System.Web.UI.UserControl
             if (DActividad.Items[i].Text.Length == 0)
                 DActividad.Items[i].Text = Procedimientos.GetProcedimiento(DActividad.Items[i].Value);
         }
+    }
+
+    protected void LModification_Click(object sender, EventArgs e)
+    {
+        NameValueCollection values= HttpUtility.ParseQueryString(Request.Url.Query);
+        values["modid"] = HId.Value;
+        Response.Redirect(Request.Url.AbsolutePath + "?" + values.ToString());
     }
 }

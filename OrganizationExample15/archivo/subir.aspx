@@ -37,9 +37,11 @@
         <asp:Repeater runat="server" ID="RArchivo" DataSourceID="SArchivo">
             <ItemTemplate>
                 <tr>
-                    <td><%# Eval("nombre") %><asp:HiddenField runat="server" ID="HI" Value='<%# Eval("id") %>' /></td>
+                    <td class="nw"><%# Eval("nombre") %><asp:HiddenField runat="server" ID="HI" Value='<%# Eval("id") %>' /></td>
                     <td colspan="3"><asp:FileUpload runat="server" ID="FHistoria" Enabled='<%# string.IsNullOrEmpty(Eval("archivo").ToString()) || CUsuario.GetInstance().CanUpdate() %>' /></td>
-                    <td><asp:HyperLink runat="server" ID="HHistoria" NavigateUrl='<%# string.Format("~/archivo/archivo.ashx?n={0}&t=d", Eval("archivo")) %>' Text='<%# Eval("archivo") %>' Visible='<%# !string.IsNullOrEmpty(Eval("archivo").ToString()) %>'></asp:HyperLink></td>
+                    <td style="width: 100%">
+                        <asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" OnClick="D_Click" CommandArgument='<%# Eval("archivo") %>' CommandName='<%# Eval("id") %>' ToolTip="Eliminar" Visible='<%# CUsuario.GetInstance().CanDelete() && Eval("archivo")!=DBNull.Value %>'><i class="fa fa-trash-o"></i></asp:LinkButton>
+                        <asp:HyperLink runat="server" ID="HHistoria" NavigateUrl='<%# string.Format("~/archivo/archivo.ashx?n={0}&t=d", Eval("archivo")) %>' Text='<%# Eval("archivo") %>' Visible='<%# !string.IsNullOrEmpty(Eval("archivo").ToString()) %>'></asp:HyperLink></td>
                 </tr>
             </ItemTemplate>
         </asp:Repeater>

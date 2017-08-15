@@ -100,6 +100,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 query += "acompanante_estadocivil";
                 query += "acompanante_direccion";
                 query += "ciudad";
+                query += "ips_remitente";
 
                 using (CConector conector = new CConector())
                 {
@@ -140,9 +141,6 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         TFResponsable.Text = reader["pacFamilarResponsable"].ToString();
                         TParentesco.Text = reader["pacParentesco"].ToString();
                         conector.SelectInDropDown(DPago, reader["pdirId"], "SELECT pdirDescripcion FROM paciente_tipo_pago WHERE pdirId={0}");
-                        TCarnet.Text = reader["pacCarne"].ToString();
-                        TZona.Text = reader["pacZona"].ToString();
-                        CSuministros.Checked = reader["pacEntregaSuministros"].ToString() == "1" ? true : false;
                         conector.SelectInDropDown(DAsegurador, reader["entId"], "SELECT entNombre FROM asegurador WHERE entId={0}");
                         conector.SelectInDropDown(DMedico, reader["megId"], "SELECT perNombre FROM recurso_humano WHERE perId={0}");
                         TFechaIngresoAsegurador.Text = Query.GetFromMySQLDate(reader["pacFecIngAsegurador"]);
@@ -151,7 +149,6 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         conector.SelectInDropDown(DTipoEvento, reader["tipECod"], "SELECT tipEDescripcion FROM tipo_evento WHERE tipECod={0}");
                         TFechaIngreso.Text = Query.GetFromMySQLDate(reader["pacFecIngPrograma"]);
                         conector.SelectInDropDown(DEstado, reader["estId"], "SELECT estDesc FROM paciente_estado WHERE estId={0}");
-                        TNumeroETB.Text = reader["pacNumeroETB"].ToString();
                         TIntensidadTerapias.Text = reader["pacIntensidadTerapias"].ToString();
                         TCIE1.Text = reader["cieCodDx"].ToString();
                         TCIE2.Text = reader["cieCodDx_1"].ToString();
@@ -165,6 +162,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         TAcompananateDireccion.Text = reader["acompanante_direccion"].ToString();
                         Utilidades.SelectInDropDown(DAcompanteEstadoCivil, reader["acompanante_estadocivil"]);
                         Utilidades.SelectInDropDown(DCiudad, reader["ciudad"]);
+                        Utilidades.SelectInDropDown(DIPS, reader["ips_remitente"]);
 
                         if (TFechaRetiroClinicaHeridas.Text.Length > 0) {
                             TFechaRetiroClinicaHeridas.ReadOnly = !usuario.CanAdmin();
@@ -260,6 +258,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        RIPS.Enabled = DAsegurador.SelectedItem.Text.ToLower().Contains("compensar");
         if (!IsValid)
             return;
         Query query = new Query("paciente");
@@ -285,9 +284,6 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         query["pacFamilarResponsable"] = TFResponsable.Text;
         query["pacParentesco"] = TParentesco.Text;
         query["pdirId"] = DPago.SelectedValue;
-        query["pacCarne"] = TCarnet.Text;
-        query["pacZona"] = TZona.Text;
-        query["pacEntregaSuministros"] = CSuministros.Checked ? "1" : "0";
         query["entId"] = DAsegurador.SelectedValue;
         query["megId"] = DMedico.SelectedValue;
         query["pacFecIngAsegurador"] = Query.GetMySQLDateFormat(TFechaIngresoAsegurador.Text);
@@ -296,7 +292,6 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         query["tipECod"] = DTipoEvento.Text;
         query["pacFecIngPrograma"] = Query.GetMySQLDateFormat(TFechaIngreso.Text);
         query["estId"] = DEstado.SelectedValue;
-        query["pacNumeroETB"] = TNumeroETB.Text;
         query["pacIntensidadTerapias"] = TIntensidadTerapias.Text;
         query["cieCodDx"] = GetCodigoCIE(TCIE1.Text);
         query["cieCodDx_1"] = GetCodigoCIE(TCIE2.Text);
@@ -311,6 +306,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         query["acompanante_estadocivil"] = DAcompanteEstadoCivil.SelectedValue;
         query["acompanante_direccion"] = TAcompananateDireccion.Text;
         query["ciudad"] = DCiudad.SelectedValue;
+        query["ips_remitente"] = DIPS.SelectedValue;
 
         using (CConector conector = new CConector())
         {

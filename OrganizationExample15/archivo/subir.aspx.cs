@@ -197,4 +197,37 @@ public partial class archivo_subir : System.Web.UI.Page
     protected void TFecha_TextChanged(object sender, EventArgs e)
     {
     }
+
+    protected void D_Click(object sender, EventArgs e)
+    {
+        LinkButton link= (LinkButton)sender;
+        string tipo = link.CommandName;
+        string file = link.CommandArgument;
+
+
+        using (CConector conector = new CConector())
+        {
+
+            conector.StartTransaction();
+            string factura = TFactura.Text;
+            if (string.IsNullOrEmpty(factura))
+                factura = "0";
+
+            Query query = new Query("digitalizacion");
+
+            if (conector.QueryMod(query.GetDelete("factura={0} AND paciente={1} AND fecha={2} AND tipo={3}", factura, CCDetallePaciente.IdPaciente, Query.GetValor(Query.GetMySQLDateFormat(TFecha.Text)), tipo)) == -1) {
+                LMensaje.Text = conector.LastError;
+                return;
+            }
+
+            try {
+                File.Delete(Path.Combine(HomeCareVersion.FilesPath, "digitalizacion", file));
+            } catch { }
+
+            conector.Commit();
+
+            RArchivo.DataBind();
+            LMensaje.Text = "Archivo " + file + " eliminado";
+        }
+    }
 }

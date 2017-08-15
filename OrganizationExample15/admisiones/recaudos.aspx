@@ -66,6 +66,11 @@
             <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion"/>
             <asp:BoundField HeaderText="Teléfono" DataField="pacTelefono" SortExpression="pacTelefono"/>
             <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre"/>
+            <asp:TemplateField HeaderText="copia" SortExpression="copia" ItemStyle-CssClass="r">
+                <ItemTemplate>
+                    <asp:CheckBox Enabled="false" runat="server" Checked='<%# Eval("copia").ToString()=="1" %>' ID="C" />
+                </ItemTemplate>
+            </asp:TemplateField>
             <asp:BoundField HeaderText="Observaciones" DataField="autObservaciones" SortExpression="autObservaciones"/>
             <asp:BoundField HeaderText="Valor" DataField="valor" SortExpression="valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" />
             <asp:BoundField HeaderText="Cancelado" DataField="pagado" SortExpression="pagado" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" />
@@ -78,6 +83,7 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT autorizacion.autNumero,autorizacion.autFecha,autorizacion.autFechaVenc,autorizacion.autObservaciones
                             ,paciente.pacDocumento,paciente.pacNombres,paciente.pacDireccion,paciente.pacId
+                            ,autorizacion.copia
                             ,paciente.pacTelefono
                             ,asegurador.entNombre
                             ,IFNULL(total,0) AS valor

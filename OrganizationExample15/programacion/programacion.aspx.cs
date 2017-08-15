@@ -41,6 +41,18 @@ public partial class programacion_programacion : System.Web.UI.Page
                     SeleccionarPaciente.Nombre = CCDetallePaciente.Nombres;
 
                     ((MasterPageI)Master).SetModificacion(CCDetallePaciente.IdPaciente);
+                    string modid= Request.QueryString["modid"];
+                    if (!string.IsNullOrEmpty(modid)) {
+                        ((MasterPageI)Master).SetModificacion(modid);
+                        try { GProgramacion.PageIndex = Convert.ToInt32(Request.QueryString["pi"]); } catch { }
+                        GProgramacion.DataBind();
+                        for (int i = 0; i < GProgramacion.Rows.Count; i++) {
+                            if (GProgramacion.DataKeys[i].Values["prgId"].ToString()== modid) {
+                                GProgramacion.SelectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }

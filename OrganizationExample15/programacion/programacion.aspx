@@ -10,6 +10,11 @@
     addFunctionToStart(function() {
         $("#<%= DProgramaciones.ClientID %>").sortSelect();
     });
+    <% if(!string.IsNullOrEmpty(Request.QueryString["modid"])) {%>
+    $(function () {
+        $("#ctl00_lPropiedades a").click();
+    })
+    <% } %>
 </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
@@ -86,6 +91,11 @@
                                 ItemStyle-Width="100%" ItemStyle-HorizontalAlign="Left"/>
                             <asp:CheckBoxField DataField="prgActivo" HeaderText="Activo?" />
                             <asp:BoundField DataField="actId" HeaderText="ActividadId" SortExpression="actId" ItemStyle-CssClass="hidet" HeaderStyle-CssClass="hidet" />
+                            <asp:TemplateField>
+                                <ItemTemplate>
+                                    <a class="btn btn-default btn-xs" href="<%# string.Format("{0}?pid={1}&modid={2}&pi={3}", Request.Url.AbsolutePath, Request.QueryString["pid"], Eval("prgId"), GProgramacion.PageIndex) %>"><i class="fa fa-list-alt"></i></a>
+                                </ItemTemplate>
+                            </asp:TemplateField>
                         </Columns>
                     </asp:GridView>
                     <asp:SqlDataSource ID="SProgramacion" runat="server" 

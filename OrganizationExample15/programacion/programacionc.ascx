@@ -265,7 +265,7 @@
         <td align="left" colspan="2"><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label></td>
     </tr>
     <tr>
-        <td></td>
+        <td><asp:LinkButton runat="server" ID="LModification" Visible="false" OnClick="LModification_Click"><i class="fa fa-list-alt"></i> Modificaciones</asp:LinkButton></td>
         <td align="right"><asp:Button ValidationGroup="CProgramacion" ID="BAceptar" runat="server" Text="Aceptar" 
                 onclick="BAceptar_Click" /><asp:Button ID="BCancelar" runat="server" 
                 Text="Cancelar" CausesValidation="false" onclick="BCancelar_Click" />

@@ -222,7 +222,8 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             // GridView view = (GridView) Utilidades.FindControlForId(Controls,ViewState["printgridview"].ToString());
             evento.Contenido = string.Format("<html><body>${0}$</body></html>", ViewState["printgridview"]);
             close = false;
-        } else if (ViewState["printfile"] != null) {
+        }
+        else if (ViewState["printfile"] != null) {
             using (StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString())))
             {
                 evento.Contenido = reader.ReadToEnd();
@@ -269,8 +270,10 @@ public partial class MasterPageI : System.Web.UI.MasterPage
             {
                 _ExcelClicked(this, evento);
             }
-            GridUtils.ExportExcelXML(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title, "Vida");
+            // GridUtils.ExportExcelXML(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title, "Vida");
             // GridUtils.ExportExcel(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Page.Title);
+            GridUtils.ExportExcelXLSX(Response, (GridView)Utilidades.FindControlForId(Controls, ViewState["excelgridview"].ToString()), Server.MapPath("~/xlsx/"), Page.Title, CUsuario.GetInstance().Nombre);
+            return;
         }
         else if (ViewState["printfile"] != null)
         {

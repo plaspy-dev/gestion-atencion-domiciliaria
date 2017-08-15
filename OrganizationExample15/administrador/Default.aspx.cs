@@ -82,6 +82,7 @@ public partial class administrador_Default : System.Web.UI.Page
             parent = Add("Pacientes");
             Add("Categoría de afiliación", 13, parent);
             Add("Ciudad", 139, parent);
+            Add("IPS", 162, parent);
             // Add("Copagos", 14, parent);
 
             parent = Add("Encuesta de satisfacción al usuario");
@@ -114,6 +115,7 @@ public partial class administrador_Default : System.Web.UI.Page
             parent = Add("Bitácoras");
             Add("Novedad administrativa", 27, parent);
             Add("Novedad del servicio prestado", 28, parent);
+            Add("Estado", 163, parent);
 
             parent = Add("Gestión archivo");
             Add("Tipo archivo", 36, parent);
@@ -260,7 +262,7 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Examen físico, senos", 160, parent);
             Add("Examen físico, abdomen", 161, parent);
 
-            // disponible 162
+            // disponible 164
             // OrganizationExample16
             parent = Add("OrganizationExample16 - Programación");
             Add("Programa", 10017, parent);

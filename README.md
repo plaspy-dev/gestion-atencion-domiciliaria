@@ -11,15 +11,14 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2017-07-06.
+This cut records the home-care application as archived on 2017-08-15.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
 
 ### Features in the retained source
 
-- Record the wound assessment in the clinical record. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
-- Consult and maintain wound progression notes. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
+- Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
 - Open the staff record for the care team. `OrganizationExample15/rh/funcionario.aspx`.
 - Record postpartum care and follow-up in the maternal care module. `OrganizationExample15/materna/postparto.aspx`.
 - Consult the maternal care report. `OrganizationExample15/materna/informe.aspx`.
@@ -27,7 +26,8 @@ The application keeps the records used to arrange visits and coordinate the peop
 - Review visit scheduling from the census. `OrganizationExample15/censo/censo_programacion.aspx`.
 - Review the list of therapeutic progress notes. `OrganizationExample15/terapeutico/evoluciones.aspx`.
 - List discharges from the wound-care clinic. `OrganizationExample15/clinicaheridas/egresos.aspx`.
-- Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
+- Record the wound assessment in the clinical record. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
+- Consult and maintain wound progression notes. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
 
 ### Build and local use
 
@@ -38,7 +38,7 @@ The retained site entry is `OrganizationExample15/Default.aspx`. Use fictional a
 
 ### Archive notes
 
-The archive inventory counted 0 additions, 20 edits and 0 removals.
+The archive inventory counted 0 additions, 38 edits and 0 removals.
 
 ### Framework versions
 
@@ -49,7 +49,7 @@ The archived descriptors declare these .NET Framework versions.
 
 ### Usage
 
-Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/clinicaheridas/valoracion.aspx` and the other routes above.
+Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/paciente/paciente.aspx` and the other routes above.
 
 The retained entry page is `OrganizationExample15/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
 
@@ -80,15 +80,14 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2017-07-06.
+Este corte conserva la versión de atención domiciliaria archivada el 2017-08-15.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
 
 ### Funciones en el código conservado
 
-- Registra la valoración de heridas en la ficha clínica. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
-- Consulta y actualiza las notas de evolución de heridas. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
+- Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
 - Abre la ficha del personal del equipo de atención. `OrganizationExample15/rh/funcionario.aspx`.
 - Registra la atención posparto y su seguimiento en el módulo materno. `OrganizationExample15/materna/postparto.aspx`.
 - Consulta el informe de atención materna. `OrganizationExample15/materna/informe.aspx`.
@@ -96,7 +95,8 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 - Consulta la programación de visitas desde el censo. `OrganizationExample15/censo/censo_programacion.aspx`.
 - Consulta el listado de notas de evolución terapéutica. `OrganizationExample15/terapeutico/evoluciones.aspx`.
 - Consulta los egresos de la clínica de heridas. `OrganizationExample15/clinicaheridas/egresos.aspx`.
-- Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
+- Registra la valoración de heridas en la ficha clínica. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
+- Consulta y actualiza las notas de evolución de heridas. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
 
 ### Compilación y uso local
 
@@ -107,7 +107,7 @@ La entrada conservada del sitio es `OrganizationExample15/Default.aspx`. Usa cue
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 0 adiciones, 20 cambios y 0 retiros.
+El inventario del respaldo registró 0 adiciones, 38 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 
@@ -118,7 +118,7 @@ Los descriptores archivados declaran estas versiones de .NET Framework.
 
 ### Uso
 
-Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/clinicaheridas/valoracion.aspx` y las demás rutas de arriba.
+Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/paciente/paciente.aspx` y las demás rutas de arriba.
 
 La portada conservada es `OrganizationExample15/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
 

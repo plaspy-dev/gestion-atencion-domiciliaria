@@ -39,11 +39,12 @@
                     return false;
                 }
             });
+            <% if(!CUsuario.GetInstance().CanAdmin()) { %>
             $("#<%= TDocumento.ClientID %>").change(function() {
                 if($("#<%= HId.ClientID %>").val().length!=0)
                     $.goURL("doc=" + $(this).val() + "&tdoc=" + $("#<%= DDocumento.ClientID %>").val());
             });
-
+            <%} %>
             $("#<%= TCIE1.ClientID %>,#<%= TCIE2.ClientID %>,#<%= TCIE3.ClientID %>").autocomplete({
                 source: function(request, response) {
                     $.ajax({
@@ -73,6 +74,10 @@
                     // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
                 }
             });
+
+            $("#<%= DAsegurador.ClientID %>").change(function () {
+                $("#<%= RIPS.ClientID %>").enableValidator($(this).find("option:selected").text().toLowerCase().indexOf("compensar")!=-1);
+            }).change();
 
             function calcularEdad() {
                 var fecha = $("#<%= TNacimiento.ClientID %>").datepicker("getDate");
@@ -136,9 +141,11 @@
                         <td><asp:TextBox runat="server" ID="TSNombre"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td>Sexo</td>
+                        <td>Genero<asp:RequiredFieldValidator ControlToValidate="DSexo" ErrorMessage="Por favor seleccione un genero." ID="RG" 
+                            runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:DropDownList ID="DSexo" runat="server">
+                                <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
                                 <asp:ListItem Text="F" Value="1"></asp:ListItem>
                                 <asp:ListItem Text="M" Value="2"></asp:ListItem>
                                 </asp:DropDownList>
@@ -152,7 +159,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Estado civil</td>
+                        <td>Estado civil<asp:RequiredFieldValidator ControlToValidate="DAcompanteEstadoCivil" ErrorMessage="Por favor selecione un estado civil." ID="REC" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:DropDownList ID="DAcompanteEstadoCivil" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SEstadoCivil" DataTextField="nombre" DataValueField="id">
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
@@ -162,38 +170,43 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                                 SelectCommand="SELECT estCivilId id, estCivDescripcion nombre,estCivCompanero companero FROM estado_civil">
                             </asp:SqlDataSource></td>
-                        <td>Ocupación</td>
+                        <td>Ocupación<asp:RequiredFieldValidator ControlToValidate="TAcompananteOcupacion" ErrorMessage="Por favor ingrese una ocupación." ID="RO" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TAcompananteOcupacion"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td>Dirección</td>
+                        <td>Dirección<asp:RequiredFieldValidator ControlToValidate="TDireccion" ErrorMessage="Por favor ingrese una dirección." ID="RD" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TDireccion"></asp:TextBox></td>
-                        <td>Barrio</td>
+                        <td>Barrio<asp:RequiredFieldValidator ControlToValidate="TBarrio" ErrorMessage="Por favor ingrese un barrio." ID="RB" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox runat="server" ID="TBarrio"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
                         <td>Teléfono
-                            <asp:RequiredFieldValidator ControlToValidate="TTelefono" ErrorMessage="Por favor ingrese un teléfono." ID="RequiredFieldValidator8" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                            <asp:RequiredFieldValidator ControlToValidate="TTelefono" ErrorMessage="Por favor ingrese un teléfono." ID="RT" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox runat="server" ID="TTelefono"></asp:TextBox>
                         </td>
-                        <td>Teléfono1</td>
+                        <td>Teléfono 2<asp:RequiredFieldValidator ControlToValidate="TTelefono1" ErrorMessage="Por favor ingrese un segundo telefono." ID="RT2" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox runat="server" ID="TTelefono1"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
-                        <td>Celular</td>
+                        <td>Celular<asp:RequiredFieldValidator ControlToValidate="TMovil" ErrorMessage="Por favor ingrese un celular." ID="RC" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TMovil"></asp:TextBox></td>
-                        <td>Correo</td>
-                        <td>
-                            <asp:TextBox runat="server" ID="TEMail"></asp:TextBox>
+                        <td>Correo
                             <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" 
                                             ErrorMessage="Por favor ingrese un correo electrónico valido." 
                                             SetFocusOnError="True" ControlToValidate="TEMail" Display="Dynamic" Text="*" 
-                                            ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"></asp:RegularExpressionValidator>
+                                            ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"></asp:RegularExpressionValidator></td>
+                        <td>
+                            <asp:TextBox runat="server" ID="TEMail"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
@@ -203,17 +216,19 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Ciudad</td>
+                        <td>Ciudad<asp:RequiredFieldValidator ControlToValidate="DCiudad" ErrorMessage="Por favor seleccione una ciudad." ID="RCi" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:DropDownList ID="DCiudad" runat="server" DataSourceID="SCiudad" 
                                 DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
-                                <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
+                                <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SCiudad" runat="server" 
                                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                                 SelectCommand="SELECT id, nombre FROM varios WHERE tipo=139 AND szReservado IS NULL ORDER BY nombre">
                             </asp:SqlDataSource></td>
-                        <td>Localidad</td>
+                        <td>Localidad<asp:RequiredFieldValidator ControlToValidate="DLocalidad" ErrorMessage="Por favor selecione una localidad." ID="RL" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:DropDownList ID="DLocalidad" runat="server" 
                                             DataSourceID="SLocalidad" DataTextField="nombre"
@@ -228,17 +243,20 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Estrato</td>
+                        <td>Estrato<asp:RequiredFieldValidator ControlToValidate="TEstrato" ErrorMessage="Por favor ingrese un estrato." ID="RE" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox runat="server" ID="TEstrato" MaxLength="1" CssClass="entero" Width="25px"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
-                        <td>Familiar Responsable</td>
+                        <td>Familiar Responsable<asp:RequiredFieldValidator ControlToValidate="TFResponsable" ErrorMessage="Por favor ingrese un familiar responsable." ID="RFR" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox runat="server" ID="TFResponsable"></asp:TextBox>
                         </td>
-                        <td>Parentesco</td>
+                        <td>Parentesco<asp:RequiredFieldValidator ControlToValidate="TParentesco" ErrorMessage="Por favor ingrese un parentesco." ID="RP" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox runat="server" ID="TParentesco"></asp:TextBox>
                         </td>
@@ -258,20 +276,8 @@
                                 SelectCommand="SELECT pdirId id,pdirDescripcion nombre FROM paciente_tipo_pago WHERE pdirActivo=1">
                             </asp:SqlDataSource>
                         </td>
-                        <td>Carné</td>
-                        <td>
-                            <asp:TextBox runat="server" ID="TCarnet"></asp:TextBox>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Zona</td>
-                        <td>
-                            <asp:TextBox runat="server" ID="TZona"></asp:TextBox>
-                        </td>
-                        <td>&nbsp;</td>
-                        <td>
-                            <asp:CheckBox runat="server" ID="CSuministros" Text="Entregar Suministros" />
-                        </td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td class="celdaTitulo" colspan="4">Información Asegurador</td>
@@ -319,7 +325,8 @@
                         </td>
                     </tr>
                     <tr ID="trDatosAsegurador">
-                        <td>Tipo de afiliado</td>
+                        <td>Tipo de afiliado<asp:RequiredFieldValidator ControlToValidate="DTipoAfiliado" ErrorMessage="Por favor seleccione un tipo afiliado." ID="RTA" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:DropDownList ID="DTipoAfiliado" runat="server" AppendDataBoundItems="true">
                                 <asp:ListItem Text="" Value=""></asp:ListItem>
@@ -341,16 +348,34 @@
                             </td>
                     </tr>
                     <tr>
+                        <td>IPS Que remite<asp:RequiredFieldValidator ControlToValidate="DIPS" ErrorMessage="Por favor seleccione una IPS." ID="RIPS" 
+	                        runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                        <td><asp:DropDownList runat="server" ID="DIPS"  CssClass="anchomaxcombo"
+                                    DataSourceID="SIPS" DataTextField="nombre" 
+                                    DataValueField="id" AppendDataBoundItems="true">
+                            <asp:ListItem Text="(Ninguna)" Value=""></asp:ListItem>
+                        </asp:DropDownList>
+                            <asp:SqlDataSource ID="SIPS" runat="server" 
+                                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                SelectCommand="SELECT id,nombre FROM varios WHERE tipo=162 AND szReservado IS NULL">
+                            </asp:SqlDataSource>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="celdaTitulo" colspan="4">Información acompañante</td>
                     </tr>
                     <tr>
-                        <td>Nombres</td>
+                        <td>Nombres<asp:RequiredFieldValidator ControlToValidate="TAcompananteNombres" ErrorMessage="Por favor ingrese un nombre." ID="RAN" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TAcompananteNombres"></asp:TextBox></td>
-                        <td>Teléfono</td>
+                        <td>Teléfono<asp:RequiredFieldValidator ControlToValidate="TAcompananteTelefono" ErrorMessage="Por favor ingrese un número de teléfono." ID="RAT" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TAcompananteTelefono"></asp:TextBox></td>
                     </tr>
                     <tr>
-                        <td>Dirección</td>
+                        <td>Dirección<asp:RequiredFieldValidator ControlToValidate="TAcompananateDireccion" ErrorMessage="Por favor ingrese una dirección." ID="RAD" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td><asp:TextBox runat="server" ID="TAcompananateDireccion"></asp:TextBox></td>
                     </tr>
                     <tr>
@@ -393,18 +418,10 @@
                                 SelectCommand="SELECT estId id,estDesc nombre FROM paciente_estado">
                             </asp:SqlDataSource>
                         </td>
-                        <td>Numero ETB</td>
-                        <td>
-                            <asp:TextBox runat="server" ID="TNumeroETB" CssClass="entero"></asp:TextBox>
-                        </td>
-                    </tr>
-                    <tr>
                         <td>Intensidad Terapias</td>
                         <td>
                             <asp:TextBox runat="server" ID="TIntensidadTerapias"></asp:TextBox>
                         </td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
                     </tr>
                     <tr>
                         <td>&nbsp;</td>
@@ -616,7 +633,7 @@
     <div style="text-align: right">
         <asp:HiddenField ID="HId" runat="server" />
         <asp:Button ID="BAceptar" runat="server" Text="Aceptar" 
-            onclick="BAceptar_Click" /><asp:Button ID="BCancelar"
+            onclick="BAceptar_Click" /> <asp:Button ID="BCancelar"
             runat="server" Text="Cancelar" CausesValidation="false" 
             onclick="BCancelar_Click" /></div>
 </asp:Content>

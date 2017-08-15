@@ -37,6 +37,8 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
                     query += "bitacora_turno.NAdministrativa";
                     query += "bitacora_turno.NServicio";
                     query += "bitacora_turno.pacId";
+                    query += "segUsuarioRegistro";
+                    query += "estado";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("bitId=" + Query.GetValor(Request.QueryString["bid"])));
                     if (reader != null && reader.Read())
@@ -50,6 +52,8 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
                         TPaciente.Text = Paciente.GetPaciente(TPacienteID.Text).NombreCompleto;
                         Utilidades.SelectInDropDown(DNAdministrativa, reader["NAdministrativa"]);
                         Utilidades.SelectInDropDown(DNServicio, reader["NServicio"]);
+                        Utilidades.SelectInDropDown(DEstado, reader["estado"]);
+                        LFuncionario.Text = reader["segUsuarioRegistro"].ToString();
 
                         CCDetallePaciente.IdPaciente = TPacienteID.Text;
                         CCDetallePaciente.Visible = TPacienteID.Text.Length > 0;
@@ -57,6 +61,8 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
                         BMas.Visible = true;
                         BMas.Enabled = usuario.CanInsert();
                         BAceptar.Enabled = usuario.CanUpdate();
+
+                        ((MasterPageI)Master).SetModificacion(HBitacora.Value);
                     }
                 }
                 ((MasterPageI)Master).Excel(GResultados);
@@ -95,13 +101,14 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
             query["NAdministrativa"] = DNAdministrativa.SelectedValue;
             query["NServicio"] = DNServicio.SelectedValue;
             query["pacId"] = TPacienteID.Text;
+            query["estado"] = DEstado.SelectedValue;
 
             if (string.IsNullOrEmpty(HBitacora.Value))
             {
                 query["segUsuarioRegistro"] = Usuario.GetUsuario().GetLogin();
                 query["segFechaRegistro"] = "SYSDATE()";
 
-                int res = conector.QueryMod(query.GetInsert());
+                int res = conector.QueryMod(query.GetInsert(), true);
                 if (res == -1)
                     return;
                 HBitacora.Value = res.ToString();
@@ -111,9 +118,8 @@ public partial class entrega_turno_bitacora : System.Web.UI.Page
                 if (conector.QueryMod(query.GetUpdate("bitId=" + HBitacora.Value)) == -1)
                     return;
             }
-            using(CConector conectorm= new CConector()) 
-                if (conectorm.InsertModificacion(HBitacora.Value) == -1)
-                    return;
+            if (conector.InsertModificacion(HBitacora.Value) == -1)
+                return;
 
             conector.Commit();
         }

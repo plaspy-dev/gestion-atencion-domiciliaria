@@ -166,7 +166,7 @@
                     <asp:TextBox ID="TFC" runat="server" CssClass="entero"></asp:TextBox>Lat/min</td>
                     <td>FR<asp:RequiredFieldValidator ControlToValidate="TFR" ErrorMessage="Por favor ingrese una frecuencia respiratoria." ID="RequiredFieldValidator10" 
 	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-                <td class="tdr">
+                <td class="tdr nw">
                     <asp:TextBox ID="TFR" runat="server" CssClass="entero"></asp:TextBox>
                     Min</td>
                 </tr>

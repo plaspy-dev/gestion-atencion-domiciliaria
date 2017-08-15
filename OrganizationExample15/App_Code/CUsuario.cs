@@ -91,8 +91,9 @@ public class CUsuario : Usuario
 #else
                     if (HttpRuntime.Cache["directorio_date"]==null || (DateTime)HttpRuntime.Cache["directorio_date"] != DateTime.Now.Date)
                     {
-                        if (Funcionario.RebuildDirectorio(conector)) 
-                            HttpRuntime.Cache["directorio_date"] = DateTime.Now.Date;
+                        HttpRuntime.Cache["directorio_date"] = DateTime.Now.Date;
+                        if (!Funcionario.RebuildDirectorio(conector))
+                            HttpRuntime.Cache.Remove("directorio_date");
                     }
 #endif
                     return pUsuario;

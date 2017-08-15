@@ -386,7 +386,7 @@ public class Procedimientos
 
             if (lista.Count == 0)
             {
-                readermysql = conectormysql.Query("SELECT ingreso_paciente.codigo FROM ingreso_paciente LEFT JOIN codigos_ingreso ON (codigos_ingreso.ingreso_paciente=ingreso_paciente.id) WHERE paciente=" + paciente);
+                readermysql = conectormysql.Query("SELECT codigos_ingreso.codigo FROM ingreso_paciente LEFT JOIN codigos_ingreso ON (codigos_ingreso.ingreso_paciente=ingreso_paciente.id) WHERE paciente=" + paciente);
                 if (readermysql != null)
                 {
                     while (readermysql.Read())

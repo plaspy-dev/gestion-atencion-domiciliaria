@@ -30,8 +30,8 @@ public class CConfiguracion
     public bool bEstado = false;
 
     // configuracion productos
-    public int nProductoLote = 2;
-    public int nProductoVence = 2;
+    public int nProductoLote = 1;
+    public int nProductoVence = 1;
     public int nProductoSerial = 2;
     public int nProductoEstado = 2;
 

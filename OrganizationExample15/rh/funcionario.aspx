@@ -417,7 +417,8 @@
                             </td>
                     </tr>
                     <tr>
-                        <td colspan="4" class="GridHeader">Firma</td>
+                        <td colspan="2" class="GridHeader">Firma</td>
+                        <td colspan="2" class="GridHeader">Sello</td>
                     </tr>
                     <tr>
                         <td class="tdl tdr" colspan="2"><asp:HyperLink runat="server" CssClass="firma" ID="HFirma" Visible="false" NavigateUrl="~/Image/firmas/" ImageUrl="~/Image/firmas/" Target="_blank"></asp:HyperLink></td>

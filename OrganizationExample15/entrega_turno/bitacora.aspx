@@ -114,6 +114,24 @@
             <td><asp:TextBox ID="TPaciente" runat="server" Width="98%"></asp:TextBox><asp:TextBox runat="server" ID="TPacienteID" CssClass="hidet"></asp:TextBox></td>
         </tr>
         <tr>
+            <td>Estado</td>
+            <td>
+                <asp:DropDownList ID="DEstado" runat="server" AutoPostBack="true" 
+                    DataSourceID="SEstado" 
+                    DataTextField="nombre" DataValueField="id" AppendDataBoundItems="true">
+                    <asp:ListItem Text="(Ninguno)" Value="0"></asp:ListItem>
+                </asp:DropDownList>
+                <asp:SqlDataSource ID="SEstado" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT id, nombre FROM varios WHERE tipo=163 AND szReservado IS NULL ORDER BY nombre">
+            </asp:SqlDataSource></td>
+        </tr>
+        <tr>
+            <td>Funcionario</td>
+            <td><asp:Label runat="server" ID="LFuncionario"></asp:Label></td>
+        </tr>
+        <tr>
             <td colspan="2" class="celdaTitulo">Seguimiento</td>
         </tr>
         <asp:UpdatePanel runat="server" ID="UMas" UpdateMode="Conditional"><ContentTemplate>
