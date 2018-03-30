@@ -25,7 +25,7 @@ $(function () {
             <Columns>
                 <asp:TemplateField ItemStyle-Width="1px">
                     <ItemTemplate>
-                        <asp:HyperLink runat="server" ID="L" NavigateUrl='<%# string.Format(GetURL(), Eval("paciente"), Eval("id")) %>'>
+                        <asp:HyperLink runat="server" ID="L" CssClass="btn btn-success btn-xs" NavigateUrl='<%# string.Format(GetURL(), Eval("paciente"), Eval("id")) %>'>
                             <i class="fa fa-edit"></i>
                         </asp:HyperLink>
                     </ItemTemplate>

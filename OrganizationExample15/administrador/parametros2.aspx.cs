@@ -61,19 +61,37 @@ public partial class administrador_parametros2 : System.Web.UI.Page
             parent = Add("Bitácoras");
             Add("Tipo", "tipo_actividad", parent, "tpaId,tpaDescripcion");
 
+            parent = Add("Recursos humanos");
+            Add("Documentos entregados a Atención Domiciliaria", "funcionario_documentos:1", parent, "docId,docDesc,docTipoEntrega=1");
+            Add("Documentos entregados al contratista", "funcionario_documentos:2", parent, "docId,docDesc,docTipoEntrega=2");
+
             if (HTipo.Value.Length == 0)
                 Response.Redirect(Request.Url.AbsolutePath + "?tipo=cargo");
         }
 
         string[] parametros = ViewState["parametros"].ToString().Split(',');
 
-        Query query = new Query(HTipo.Value);
+        Query query = new Query(HTipo.Value.Split(':')[0]);
 
         query["id"] = parametros[0];
         query["nombre"] = parametros[1];
         query.AddCampo("descripcion", "''", false);
 
-        SResultado.SelectCommand = query.GetSelect("", "ORDER BY " + parametros[1]);
+        string condicion = "";
+        string left = " ORDER BY " + parametros[1];
+
+        if (parametros.Length > 2) {
+            for (int i = 2; i < parametros.Length; i++)
+            {
+                if (i > 2)
+                    condicion += "AND ";
+                condicion += parametros[i];
+            }
+            condicion += left;
+            left = "";
+        }
+
+        SResultado.SelectCommand = query.GetSelect(condicion, left);
         SResultado.DeleteCommand = query.GetDelete(parametros[0] + "=@id");
     }
 
@@ -81,13 +99,20 @@ public partial class administrador_parametros2 : System.Web.UI.Page
     {
         if (!IsValid)
             return;
-        Query query = new Query(HTipo.Value);
+        Query query = new Query(HTipo.Value.Split(':')[0]);
         using (CConector conector = new CConector())
         {
             string mensaje;
 
             string[] parametros = ViewState["parametros"].ToString().Split(',');
             query[parametros[1]] = TNombre.Text;
+
+            if (parametros.Length > 2) {
+                for (int i = 2; i < parametros.Length; i++) {
+                    string[] values = parametros[i].Split('=');
+                    query[values[0]] = values[1];
+                }
+            }
 
             if (HId.Value.Length == 0)
             {
@@ -119,7 +144,7 @@ public partial class administrador_parametros2 : System.Web.UI.Page
     {
         HId.Value = GResultado.SelectedDataKey.Value.ToString();
         TNombre.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[2].Text).Trim();
-        TDescripcion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[3].Text).Trim();
+        // TDescripcion.Text = HttpUtility.HtmlDecode(GResultado.SelectedRow.Cells[3].Text).Trim();
 
         ((MasterPageI)Master).SetModificacion(HId.Value);
     }

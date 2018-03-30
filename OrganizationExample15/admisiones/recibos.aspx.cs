@@ -26,6 +26,7 @@ public partial class admisiones_recibos : System.Web.UI.Page
                     query += "autFechaVenc";*/
                     query += "total";
                     query += "pago";
+                    query += "exonerado";
                     /*query += "autObservaciones";
                     query += "entId";
                     query += "autActivo";
@@ -47,6 +48,7 @@ public partial class admisiones_recibos : System.Web.UI.Page
                         CCDetallePaciente.IdPaciente= reader["pacId"].ToString();
                         LValor.Text = string.Format("{0:C}", total);
                         LPagado.Text = string.Format("{0:C}", pagado);
+                        CExonerado.Checked = reader["exonerado"].ToString() == "1";
 
                         SPagos.SelectParameters["autorizacion"].DefaultValue = TNumero.Text;
 

@@ -98,7 +98,7 @@ public partial class farmacia_estado : System.Web.UI.Page
             // ubicacion
             TUbicacion.Visible = TUbicacionID.Visible = LUbicacion.Visible = configuracion.nUbicacion != 0;
 
-            if (!string.IsNullOrEmpty(Request.QueryString["pid"]))
+            if (!string.IsNullOrEmpty(Request.QueryString["prid"]))
             { // Kardex
 
                 GKardex.GetGridColumn("Costo U.E.").Visible =
@@ -118,7 +118,7 @@ public partial class farmacia_estado : System.Web.UI.Page
 
                 PKardex.Visible = true;
                 PBuscar.Visible = false;
-                Page.Title = "Kardex de " + Producto.GetProducto(Request.QueryString["pid"]).nombre;
+                Page.Title = "Kardex de " + Producto.GetProducto(Request.QueryString["prid"]).nombre;
 
                 BActualizar_Click(sender, e);
             }
@@ -248,7 +248,7 @@ public partial class farmacia_estado : System.Web.UI.Page
 
         Decimal saldoa = 0, costosaldoa = 0;
 
-        if (new Producto(Request.QueryString["pid"]).GetAcumulado(m_nAlmacen.ToString(), Query.GetMySQLDateFormat(TDesde.Text)
+        if (new Producto(Request.QueryString["prid"]).GetAcumulado(m_nAlmacen.ToString(), Query.GetMySQLDateFormat(TDesde.Text)
             , ref costosaldoa, ref saldoa, ref costop))
         {
             int index = GKardex.Rows.Count - 1;

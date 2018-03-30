@@ -108,7 +108,9 @@
                                 ,SUM(varios.descripcion) AS barthel
                                 ,ingreso_paciente.paciente
                                 FROM ingreso_paciente 
-                                LEFT JOIN indice_barthel ON (indice_barthel.paciente=ingreso_paciente.paciente)
+                                LEFT JOIN 
+                                (SELECT indice_barthel.paciente,MAX(id) id FROM indice_barthel WHERE indice_barthel.tipo=8 GROUP BY indice_barthel.paciente) indice_barthel 
+                                    ON (indice_barthel.paciente=ingreso_paciente.paciente)
                                 LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id)
                                 LEFT JOIN varios ON (varios.id=analisis_barthel.resultado)
                                 WHERE 
@@ -128,7 +130,9 @@
                                 ,SUM(varios.descripcion) AS barthel
                                 ,evolucion_paciente.paciente
                                 FROM evolucion_paciente 
-                                LEFT JOIN indice_barthel ON (indice_barthel.paciente=evolucion_paciente.paciente)
+                                LEFT JOIN 
+                                (SELECT indice_barthel.paciente,MAX(id) id FROM indice_barthel WHERE indice_barthel.tipo=8 GROUP BY indice_barthel.paciente) indice_barthel 
+                                    ON (indice_barthel.paciente=evolucion_paciente.paciente)
                                 LEFT JOIN analisis_barthel ON (analisis_barthel.indice_barthel=indice_barthel.id)
                                 LEFT JOIN varios ON (varios.id=analisis_barthel.resultado)
                                 WHERE 

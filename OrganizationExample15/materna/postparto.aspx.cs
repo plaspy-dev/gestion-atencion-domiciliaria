@@ -150,7 +150,29 @@ public partial class materna_postparto : System.Web.UI.Page
 
     protected void BEliminar_Click(object sender, EventArgs e)
     {
+        using (CConector conector = new CConector())
+        {
+            conector.StartTransaction();
+            string id = (string)ViewState["id"];
+            Query query = new Query("seguimiento_materno");
 
+            if (conector.QueryMod(query.GetDelete("id=" + Query.GetValor(id))) == -1)
+            {
+                LMensaje.Text = conector.LastError;
+                return;
+            }
+
+            query = new Query("seguimiento_materno_items");
+
+            if (conector.QueryMod(query.GetDelete("seguimiento=" + Query.GetValor(id))) == -1)
+            {
+                LMensaje.Text = conector.LastError;
+                return;
+            }
+
+            conector.Commit();
+            Response.Redirect(Request.Url.AbsolutePath);
+        }
     }
 
 

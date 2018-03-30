@@ -11,15 +11,15 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2017-08-15.
+This cut records the home-care application as archived on 2018-03-30.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
 
 ### Features in the retained source
 
-- Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
 - Open the staff record for the care team. `OrganizationExample15/rh/funcionario.aspx`.
+- Manage the operator accounts used to sign in. `OrganizationExample15/administrador/usuario.aspx`.
 - Record postpartum care and follow-up in the maternal care module. `OrganizationExample15/materna/postparto.aspx`.
 - Consult the maternal care report. `OrganizationExample15/materna/informe.aspx`.
 - Open the batch admission screen to process patient admissions. `OrganizationExample15/admisiones/amasivas.aspx`.
@@ -38,7 +38,7 @@ The retained site entry is `OrganizationExample15/Default.aspx`. Use fictional a
 
 ### Archive notes
 
-The archive inventory counted 0 additions, 38 edits and 0 removals.
+The archive inventory counted 11 additions, 39 edits and 0 removals.
 
 ### Framework versions
 
@@ -49,7 +49,7 @@ The archived descriptors declare these .NET Framework versions.
 
 ### Usage
 
-Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/paciente/paciente.aspx` and the other routes above.
+Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/rh/funcionario.aspx` and the other routes above.
 
 The retained entry page is `OrganizationExample15/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
 
@@ -80,15 +80,15 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2017-08-15.
+Este corte conserva la versión de atención domiciliaria archivada el 2018-03-30.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
 
 ### Funciones en el código conservado
 
-- Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
 - Abre la ficha del personal del equipo de atención. `OrganizationExample15/rh/funcionario.aspx`.
+- Administra las cuentas de operador para ingresar. `OrganizationExample15/administrador/usuario.aspx`.
 - Registra la atención posparto y su seguimiento en el módulo materno. `OrganizationExample15/materna/postparto.aspx`.
 - Consulta el informe de atención materna. `OrganizationExample15/materna/informe.aspx`.
 - Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `OrganizationExample15/admisiones/amasivas.aspx`.
@@ -107,7 +107,7 @@ La entrada conservada del sitio es `OrganizationExample15/Default.aspx`. Usa cue
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 0 adiciones, 38 cambios y 0 retiros.
+El inventario del respaldo registró 11 adiciones, 39 cambios y 0 retiros.
 
 ### Versiones de .NET Framework
 
@@ -118,7 +118,7 @@ Los descriptores archivados declaran estas versiones de .NET Framework.
 
 ### Uso
 
-Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/paciente/paciente.aspx` y las demás rutas de arriba.
+Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/rh/funcionario.aspx` y las demás rutas de arriba.
 
 La portada conservada es `OrganizationExample15/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
 

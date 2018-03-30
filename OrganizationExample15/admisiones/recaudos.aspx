@@ -72,6 +72,11 @@
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField HeaderText="Observaciones" DataField="autObservaciones" SortExpression="autObservaciones"/>
+            <asp:TemplateField HeaderText="Exonerado" SortExpression="exonerado" ItemStyle-CssClass="r">
+                <ItemTemplate>
+                    <asp:CheckBox Enabled="false" runat="server" Checked='<%# Eval("exonerado").ToString()=="1" %>' ID="E" />
+                </ItemTemplate>
+            </asp:TemplateField>
             <asp:BoundField HeaderText="Valor" DataField="valor" SortExpression="valor" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" />
             <asp:BoundField HeaderText="Cancelado" DataField="pagado" SortExpression="pagado" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" />
             <asp:BoundField HeaderText="Saldo" DataField="saldo" SortExpression="saldo" DataFormatString="{0:C0}" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" FooterStyle-Wrap="false" FooterStyle-HorizontalAlign="Right" />
@@ -84,6 +89,7 @@
                 SelectCommand="SELECT autorizacion.autNumero,autorizacion.autFecha,autorizacion.autFechaVenc,autorizacion.autObservaciones
                             ,paciente.pacDocumento,paciente.pacNombres,paciente.pacDireccion,paciente.pacId
                             ,autorizacion.copia
+                            ,IF(autorizacion.exonerado=1, 'Si', NULL) exonerado
                             ,paciente.pacTelefono
                             ,asegurador.entNombre
                             ,IFNULL(total,0) AS valor

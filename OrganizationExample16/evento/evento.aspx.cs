@@ -7,6 +7,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
+using System.IO;
 
 public partial class evento_evento : System.Web.UI.Page
 {
@@ -52,6 +53,42 @@ public partial class evento_evento : System.Web.UI.Page
         }
 
         public static string GetNextID(List<Factura> listado)
+        {
+            int i = -(listado.Count + 1);
+            while (true)
+            {
+                if (!listado.Exists(x => x.Id == i.ToString()))
+                {
+                    return i.ToString();
+                }
+                i--;
+            }
+        }
+    }
+
+    [Serializable]
+    public class Ambulancia {
+
+        public string Id { get; set; }
+        public bool Eliminada { get; set; }
+        public string IdAmbulancia {get;set;}
+        public string NombreAmbulancia {get;set;}
+        public string Ubicacion { get; set; }
+        public string DMedico {get;set;}
+        public string NMedico {get;set;}
+        public string DAuxiliar {get;set;}
+        public string NAuxiliar {get;set;}
+        public string DConductor {get;set;}
+        public string NConductor {get;set;}
+
+        public Ambulancia(string id = null)
+        {
+            Id = id;
+        }
+        public Ambulancia(List<Ambulancia> listado) : this(GetNextID(listado)) {
+        }
+
+        public static string GetNextID(List<Ambulancia> listado)
         {
             int i = -(listado.Count + 1);
             while (true)
@@ -137,9 +174,11 @@ public partial class evento_evento : System.Web.UI.Page
     {
         if (!IsPostBack) {
 
+            CUsuario usuario = (CUsuario)CUsuario.GetInstance();
             GServicios.DataSource = new Requisicion().Servicios;
             GServicios.DataBind();
-
+            TNombre.Focus();
+            BAceptar.Enabled = usuario.CanInsert();
             string id = Request.QueryString["eid"];
             if (!string.IsNullOrEmpty(id)) {
 
@@ -155,7 +194,9 @@ public partial class evento_evento : System.Web.UI.Page
                     query += "complejidad";
                     query += "plan";
                     query += "aforo";
-                    query += "productor_nombre";
+                    query += "empresario";
+                    query += "productor";
+                    /*query += "productor_nombre";
                     query += "productor_telefono";
                     query += "productor_contacto";
                     query += "productor_movil";
@@ -164,19 +205,23 @@ public partial class evento_evento : System.Web.UI.Page
                     query += "empresario_telefono";
                     query += "empresario_contacto";
                     query += "empresario_apellidos";
-                    query += "empresario_movil";
+                    query += "empresario_movil";*/
                     query += "pago_nombre";
                     query += "pago_telefono";
                     query += "pago_forma";
                     query += "recursos_otros";
                     query += "ubicacion";
                     query += "descripcion";
+                    query += "bitacora";
 
                     MySqlDataReader reader= conector.Query(query.GetSelect("id=" + Query.GetValor(id)));
                     if (reader != null && reader.Read()) {
 
-                        ViewState["id"]= id= reader["id"].ToString();
+                        BAceptar.Enabled = usuario.CanUpdate();
+                        ViewState["id"]= 
+                            id= reader["id"].ToString();
                         ((MasterPageI)Master).SetModificacion(id);
+                        GDocumentos.Columns[0].Visible = usuario.CanDelete();
 
                         TNombre.Text= reader["nombre"].ToString();
                         DateTime date = (DateTime)reader["inicio"];
@@ -190,8 +235,10 @@ public partial class evento_evento : System.Web.UI.Page
                         DPlan.SelectedValue = reader["plan"].ToString();
                         TAforo.Text = reader["aforo"].ToString();
                         TDescripcion.Text = reader["descripcion"].ToString();
-                        TUbicacion.Text = reader["ubicacion"].ToString();
-                        TProductor.Text = reader["productor_nombre"].ToString();
+                        TUbicacionId.Text = reader["ubicacion"].ToString();
+                        TEmpresarioId.Text = reader["empresario"].ToString();
+                        TProductorId.Text = reader["productor"].ToString();
+                        /*TProductor.Text = reader["productor_nombre"].ToString();
                         TProductorT.Text = reader["productor_telefono"].ToString();
                         TProductorC.Text = reader["productor_contacto"].ToString();
                         TProductorA.Text = reader["productor_apellidos"].ToString();
@@ -200,15 +247,64 @@ public partial class evento_evento : System.Web.UI.Page
                         TEmpresarioT.Text = reader["empresario_telefono"].ToString();
                         TEmpresarioC.Text = reader["empresario_contacto"].ToString();
                         TEmpresarioA.Text = reader["empresario_apellidos"].ToString();
-                        TEmpresarioM.Text = reader["empresario_movil"].ToString();
+                        TEmpresarioM.Text = reader["empresario_movil"].ToString();*/
                         TResponsable.Text = reader["pago_nombre"].ToString();
                         TResponsableT.Text = reader["pago_telefono"].ToString();
                         DPago.SelectedValue = reader["pago_forma"].ToString();
                         TOtros.Text = reader["recursos_otros"].ToString();
+                        TBitacora.Text = reader["bitacora"].ToString();
 
                         SRecursos.SelectParameters["evento"].DefaultValue = id;
                         RRecursos.DataBind();
 
+                        SDocumentos.SelectParameters["evento"].DefaultValue = id;
+                        GDocumentos.DataBind();
+
+
+                        if(!string.IsNullOrEmpty(TUbicacionId.Text))
+                            TUbicacion.Text= conector.QueryString("SELECT nombre FROM ubicacion WHERE id={0}", Query.GetValor(TUbicacionId.Text));
+
+                        BEmpresario_Click(null, null);
+                        BProductor_Click(null, null);
+
+                        query = new Query("evento_ambulancia");
+
+                        query += "evento_ambulancia.id";
+                        query += "evento_ambulancia.ambulancia";
+                        query += "ubicacion";
+                        query += "documento_medico";
+                        query += "nombre_medico";
+                        query += "documento_auxiliar";
+                        query += "nombre_auxiliar";
+                        query += "documento_conductor";
+                        query += "nombre_conductor";
+                        query["nombre"] = "CONCAT(ambulancia.placa, ' - ', empresa.nombre)";
+
+                        reader = conector.Query(query.GetSelect("evento_ambulancia.evento=" + Query.GetValor(id), "LEFT JOIN ambulancia ON (ambulancia.id=evento_ambulancia.ambulancia) LEFT JOIN empresa ON (empresa.id=ambulancia.empresa)"));
+                        if (reader != null)
+                        {
+                            List<Ambulancia> listado = new List<Ambulancia>();
+                            while (reader.Read())
+                            {
+                                Ambulancia info = new Ambulancia(reader["id"].ToString());
+
+                                info.Ubicacion = reader["ubicacion"].ToString();
+                                info.IdAmbulancia = reader["ambulancia"].ToString();
+                                info.DMedico = reader["documento_medico"].ToString();
+                                info.NMedico = reader["nombre_medico"].ToString();
+                                info.DAuxiliar = reader["documento_auxiliar"].ToString();
+                                info.NAuxiliar = reader["nombre_auxiliar"].ToString();
+                                info.DConductor = reader["documento_conductor"].ToString();
+                                info.NConductor = reader["nombre_conductor"].ToString();
+                                info.NombreAmbulancia = reader["nombre"].ToString();
+
+                                listado.Add(info);
+                            }
+
+                            ViewState["ambulancias"] = listado;
+                            GA.DataSource = listado.Where(x => !x.Eliminada);
+                            GA.DataBind();
+                        }
 
                         query = new Query("evento_cotizacion");
 
@@ -327,7 +423,6 @@ public partial class evento_evento : System.Web.UI.Page
                             string requisicionid = Request.QueryString["rid"];
                             if (!string.IsNullOrEmpty(requisicionid))
                             {
-
                                 for (int i = 0; i < GRequisiciones.Rows.Count; i++)
                                 {
                                     if (GRequisiciones.DataKeys[i].Values["Id"].ToString() == requisicionid)
@@ -440,7 +535,9 @@ public partial class evento_evento : System.Web.UI.Page
             query["plan"] = DPlan.SelectedValue;
             query["aforo"] = TAforo.Text;
             query["descripcion"] = TDescripcion.Text;
-            query["productor_nombre"] = TProductor.Text;
+            query["productor"] = TProductorId.Text;
+            query["empresario"] = TEmpresarioId.Text;
+            /*query["productor_nombre"] = TProductor.Text;
             query["productor_telefono"] = TProductorT.Text;
             query["productor_contacto"] = TProductorC.Text;
             query["productor_movil"] = TProductorM.Text;
@@ -449,12 +546,13 @@ public partial class evento_evento : System.Web.UI.Page
             query["empresario_telefono"] = TEmpresarioT.Text;
             query["empresario_contacto"] = TEmpresarioC.Text;
             query["empresario_movil"] = TEmpresarioM.Text;
-            query["empresario_apellidos"] = TEmpresarioA.Text;
+            query["empresario_apellidos"] = TEmpresarioA.Text;*/
             query["pago_nombre"] = TResponsable.Text;
             query["pago_telefono"] = TResponsableT.Text;
             query["pago_forma"] = DPago.SelectedValue;
-            query["ubicacion"] = TUbicacion.Text;
+            query["ubicacion"] = TUbicacionId.Text;
             query["recursos_otros"] = TOtros.Text;
+            query["bitacora"] = TBitacora.Text;
 
             if (string.IsNullOrEmpty(id))
             {
@@ -477,6 +575,33 @@ public partial class evento_evento : System.Web.UI.Page
                 LMensaje.Text = conector.LastError;
                 return;
             }
+
+
+            query = new Query("evento_documento");
+            query["evento"] = id;
+
+            foreach (GridViewRow row in GDocumentos.Rows)
+            {
+                string idDocumento = GDocumentos.DataKeys[row.RowIndex].Values["id"].ToString();
+                query["documento"] = idDocumento;
+
+                FileUpload file = (FileUpload)row.FindControl("F");
+                if (file.HasFile)
+                {
+                    string extension = Path.GetExtension(file.FileName).ToLower();
+                    file.SaveAs(Files.GetFilePath(Files.Directorys.EventoDocumentos, true, id, idDocumento + extension));
+                    query["archivo"] = extension;
+                }
+
+                if (conector.QueryMod(query.GetInsertUpdate()) == -1)
+                {
+
+                    LMensaje.Text = conector.LastError;
+                    return;
+                }
+                query.RemoveCampo("archivo");
+            }
+
 
             query = new Query("evento_recursos");
 
@@ -525,6 +650,48 @@ public partial class evento_evento : System.Web.UI.Page
                         return;
                     }
                 } else if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(cotizacion.Id))) == -1) {
+                    LMensaje.Text = conector.LastError;
+                    return;
+                }
+            }
+
+
+            query = new Query("evento_ambulancia");
+            query["evento"] = id;
+
+            List<Ambulancia> ambulancias = ViewState["ambulancias"] as List<Ambulancia> ?? new List<Ambulancia>();
+
+            foreach (Ambulancia ambulancia in ambulancias)
+            {
+                if (ambulancia.Eliminada)
+                {
+                    if (conector.QueryMod(query.GetDelete("id=" + Query.GetValor(ambulancia.Id))) == -1)
+                    {
+                        LMensaje.Text = conector.LastError;
+                        return;
+                    }
+                    continue;
+                }
+
+                query["ubicacion"] = ambulancia.Ubicacion;
+                query["ambulancia"] = ambulancia.IdAmbulancia;
+                query["documento_medico"] = ambulancia.DMedico;
+                query["nombre_medico"] = ambulancia.NMedico;
+                query["documento_auxiliar"] = ambulancia.DAuxiliar;
+                query["nombre_auxiliar"] = ambulancia.NAuxiliar;
+                query["documento_conductor"] = ambulancia.DConductor;
+                query["nombre_conductor"] = ambulancia.NConductor;
+
+                if (ambulancia.Id.StartsWith("-"))
+                {
+                    if (conector.QueryMod(query.GetInsert()) == -1)
+                    {
+                        LMensaje.Text = conector.LastError;
+                        return;
+                    }
+                }
+                else if (conector.QueryMod(query.GetUpdate("id=" + Query.GetValor(ambulancia.Id))) == -1)
+                {
                     LMensaje.Text = conector.LastError;
                     return;
                 }
@@ -827,5 +994,187 @@ public partial class evento_evento : System.Web.UI.Page
         GServicios.DataSource = new Requisicion().Servicios;
         GServicios.DataBind();
         ViewState["idr"] = null;
+    }
+
+    protected void GA_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        List<Ambulancia> listado = ViewState["ambulancias"] as List<Ambulancia> ?? new List<Ambulancia>();
+        Ambulancia info = listado.Find(x => x.Id == GA.SelectedValue.ToString());
+        if (info == null)
+            return;
+        ViewState["ambulancia"] = info.Id;
+
+        TDConductor.Text = info.DConductor;
+        TDMedico.Text = info.DMedico;
+        TNAuxiliar.Text = info.NAuxiliar;
+        TNMedico.Text = info.NMedico;
+        TNConductor.Text = info.NConductor;
+        TUbicacionA.Text = info.Ubicacion;
+        TAmbulancia.Text = info.NombreAmbulancia;
+        TIdAmbulancia.Text = info.IdAmbulancia;
+        TDAuxiliar.Text = info.DAuxiliar;
+
+        ScriptManager.RegisterStartupScript(UA, UA.GetType(), "ambulancia", "$('#bAmbulancia').click();", true);
+    }
+
+    protected void GA_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        List<Ambulancia> listado = ViewState["ambulancias"] as List<Ambulancia> ?? new List<Ambulancia>();
+
+        Ambulancia info = listado.Find(x => x.Id == e.Keys["Id"].ToString());
+        if (info.Id.StartsWith("-"))
+            listado.Remove(info);
+        else info.Eliminada = true;
+
+        ViewState["ambulancias"] = listado;
+        GA.DataSource = listado.Where(x => !x.Eliminada);
+        GA.DataBind();
+        e.Cancel = true;
+    }
+
+    protected void BAmbulanciaA_Click(object sender, EventArgs e)
+    {
+        string id = (string)ViewState["ambulancia"];
+        List<Ambulancia> listado = ViewState["ambulancias"] as List<Ambulancia> ?? new List<Ambulancia>();
+        Ambulancia info = null;
+        if (string.IsNullOrEmpty(id))
+        {
+            info = new Ambulancia(listado);
+            listado.Add(info);
+        }
+        else info = listado.Find(x => x.Id == id);
+
+        info.DConductor= TDConductor.Text;
+        info.DMedico= TDMedico.Text;
+        info.NAuxiliar= TNAuxiliar.Text;
+        info.NMedico= TNMedico.Text;
+        info.NConductor= TNConductor.Text;
+        info.Ubicacion= TUbicacionA.Text;
+        info.NombreAmbulancia= TAmbulancia.Text;
+        info.IdAmbulancia= TIdAmbulancia.Text;
+        info.DAuxiliar= TDAuxiliar.Text;
+
+        ViewState["ambulancias"] = listado;
+        GA.DataSource = listado.Where(x => !x.Eliminada);
+        GA.DataBind();
+        BAmbulanciaC_Click(sender, e);
+    }
+
+    protected void BAmbulanciaC_Click(object sender, EventArgs e)
+    {
+        TDConductor.Text=
+            TDMedico.Text=
+            TNAuxiliar.Text= 
+            TNMedico.Text= 
+            TNConductor.Text=
+            TUbicacionA.Text=
+            TAmbulancia.Text=
+            TIdAmbulancia.Text=
+        TDAuxiliar.Text = "";
+
+        GA.SelectedIndex = -1;
+        ViewState["ambulancia"] = null;
+    }
+
+    protected void GDocumentos_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        e.Cancel = true;
+        string id = (string)ViewState["id"];
+        string idDocumento = e.Keys["id"].ToString();
+        if (string.IsNullOrEmpty(id))
+            return;
+
+        Query query = new Query("evento_documento");
+
+        using (CConector conector = new CConector())
+        {
+            if (conector.QueryMod(query.GetDelete("evento={0} AND documento={1}", id, idDocumento)) == -1)
+            {
+                LMensaje.Text = conector.LastError;
+                return;
+            }
+        }
+        try { File.Delete(Files.GetFilePath(Files.Directorys.EventoDocumentos, true, id, idDocumento + ".jpg")); } catch { }
+        try { File.Delete(Files.GetFilePath(Files.Directorys.EventoDocumentos, true, id, idDocumento + ".pdf")); } catch { }
+
+        GDocumentos.DataBind();
+    }
+
+    public void OnValidaFileJPGPDF(object sender, ServerValidateEventArgs e)
+    {
+        Files.OnValidaFileJPGPDF(sender, e);
+    }
+
+    protected void BProductor_Click(object sender, EventArgs e)
+    {
+        TProductorT.Text =
+            TProductorM.Text =
+            TProductorA.Text =
+            TProductorC.Text = "";
+        HProductor.Visible = false;
+
+        if (!string.IsNullOrEmpty(TProductorId.Text)) {
+            using (CConector conector = new CConector()) {
+                Query query = new Query("empresario");
+
+                query += "nombre";
+                query += "documento";
+                query += "telefono";
+                query += "celular";
+                query += "nombres";
+                query += "apellidos";
+                query += "eliminado";
+
+                MySqlDataReader reader = conector.Query(query.GetSelect("id={0}", null, Query.GetValor(TProductorId.Text)));
+                if (reader != null && reader.Read())
+                {
+                    HProductor.Visible = true;
+                    HProductor.NavigateUrl = "~/evento/empresario.aspx?emid=" + TProductorId.Text;
+                    TProductor.Text = reader["documento"].ToString() + " - " + reader["nombre"].ToString();
+                    TProductorT.Text = reader["telefono"].ToString();
+                    TProductorM.Text = reader["celular"].ToString();
+                    TProductorC.Text = reader["nombres"].ToString();
+                    TProductorA.Text = reader["apellidos"].ToString();
+                }
+            }
+        }
+    }
+
+    protected void BEmpresario_Click(object sender, EventArgs e)
+    {
+        TEmpresarioT.Text =
+               TEmpresarioM.Text =
+               TEmpresarioA.Text =
+               TEmpresarioC.Text = "";
+        HEmpresario.Visible = false;
+
+        if (!string.IsNullOrEmpty(TEmpresarioId.Text))
+        {
+            using (CConector conector = new CConector())
+            {
+                Query query = new Query("empresario");
+
+                query += "nombre";
+                query += "documento";
+                query += "telefono";
+                query += "celular";
+                query += "nombres";
+                query += "apellidos";
+                query += "eliminado";
+
+                MySqlDataReader reader = conector.Query(query.GetSelect("id={0}", null, Query.GetValor(TEmpresarioId.Text)));
+                if (reader != null && reader.Read())
+                {
+                    HEmpresario.Visible = true;
+                    HEmpresario.NavigateUrl = "~/evento/empresario.aspx?emid=" + TEmpresarioId.Text;
+                    TEmpresario.Text = reader["documento"].ToString() + " - " + reader["nombre"].ToString();
+                    TEmpresarioT.Text = reader["telefono"].ToString();
+                    TEmpresarioM.Text = reader["celular"].ToString();
+                    TEmpresarioC.Text = reader["nombres"].ToString();
+                    TEmpresarioA.Text = reader["apellidos"].ToString();
+                }
+            }
+        }
+
     }
 }

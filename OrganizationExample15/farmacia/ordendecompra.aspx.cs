@@ -291,23 +291,6 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
         ScriptManager.RegisterStartupScript(TProducto, typeof(String), "pregunta", "window.onbeforeunload = function() { return '¿Ha realizado cambios, esta seguro de abandonar la pagina?'; };", true);
     }
 
-    public static bool IsValidEmail(string strIn)
-    {
-        if (String.IsNullOrEmpty(strIn))
-            return false;
-
-        // Return true if strIn is in valid e-mail format. 
-        try
-        {
-            return Regex.IsMatch(strIn,
-                  @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
-                  @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9]{2,24}))$",
-                  RegexOptions.IgnoreCase);
-        } catch {
-            return false;
-        }
-    }
-
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         if (!IsValid)
@@ -495,7 +478,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
 
                     MailMessage mail = new MailMessage();
                     mail.From = new MailAddress("demo@example.invalid", "Compras OrganizationExample15");
-                    if (IsValidEmail(tecero.Email))
+                    if (CUsuario.IsValidEmail(tecero.Email))
                     { // no le enviamos correo al proveedor
                         mail.To.Add(tecero.Email);
 #if DEBUG
@@ -542,7 +525,7 @@ public partial class farmacia_ordendecompra : System.Web.UI.Page
 
                     SmtpClient client = new SmtpClient();
                     client.EnableSsl = client.Port == 587 || client.Port == 465;
-                    if (IsValidEmail(tecero.Email)) // no le enviamos correo al proveedor
+                    if (CUsuario.IsValidEmail(tecero.Email)) // no le enviamos correo al proveedor
                         client.Send(mail);
 
                     // esta es la copia del correo

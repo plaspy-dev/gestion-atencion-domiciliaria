@@ -235,6 +235,9 @@
             </td>
         </tr>
         <tr>
+            <td colspan="3"><asp:Label runat="server" ID="LMessage" ForeColor="Red"></asp:Label></td>
+        </tr>
+        <tr>
             <td>
             </td>
             <td>

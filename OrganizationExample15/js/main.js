@@ -238,17 +238,6 @@ $.extend({
     }
 });
 
-function ValidateFileUploadJPG(Source, args) {
-
-    var FileUploadPath = args.Value;
-    if (FileUploadPath == '') {
-        // There is no file selected 
-        args.IsValid = false;
-    } else {
-        var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
-        args.IsValid = Extension == "jpg" || Extension == "jpeg"; // Valid file type
-    }
-}
 function restoreSummit() {
 
     $("#dummybutton").remove();
@@ -435,3 +424,27 @@ $.fn.disablePaste = function () {
         count = $(this).val().length;
     });
 };
+
+function ValidateFileUploadJPG(Source, args) {
+
+    var FileUploadPath = args.Value;
+    if (FileUploadPath == '') {
+        // There is no file selected 
+        args.IsValid = false;
+    } else {
+        var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+        args.IsValid = Extension == "jpg" || Extension == "jpeg"; // Valid file type
+    }
+}
+
+function ValidateFileUploadJPGPDF(Source, args) {
+
+    var FileUploadPath = args.Value;
+    if (FileUploadPath == '') {
+        // There is no file selected 
+        args.IsValid = false;
+    } else {
+        var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+        args.IsValid = Extension == "jpg" || Extension == "jpeg" || Extension == "pdf"; // Valid file type
+    }
+}

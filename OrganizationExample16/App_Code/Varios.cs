@@ -27,6 +27,9 @@ public class Varios
         CapacidadAmbulancias=13,
         AtributosAmbulancias=14,
         ServiciosRequisicion=15,
+        DocumentosEvento=16,
+        DocumentosEmpresarios=17,
+        DocumentosUbicaciónEvento= 18,
     }
 
     public string Id { get; set; }

@@ -168,10 +168,12 @@
                 DataNavigateUrlFields="id" 
                 DataNavigateUrlFormatString="~/rh/Default.aspx?fid={0}" SortExpression="nombres" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Cargo" DataField="cargo" SortExpression="cargo" ItemStyle-Wrap="false"/>
-            <asp:BoundField HeaderText="Teléfono móvil" DataField="celular" 
-                SortExpression="celular">
+            <asp:BoundField HeaderText="Teléfono móvil" DataField="celular" SortExpression="celular">
             <ItemStyle HorizontalAlign="Right" />
             </asp:BoundField>
+            <asp:BoundField HeaderText="Dirección" DataField="perDireccion" SortExpression="perDireccion" ItemStyle-CssClass="nw" />
+            <asp:BoundField HeaderText="Localidad" DataField="localidadv" SortExpression="localidadv" ItemStyle-CssClass="nw" />
+            <asp:BoundField HeaderText="Localidad T" DataField="localidadt" SortExpression="localidadt" ItemStyle-CssClass="nw" />
             <asp:BoundField HeaderText="Ingreso" DataField="fechacontrato" 
                 SortExpression="fechacontrato" DataFormatString="{0:d}" >
             <ItemStyle HorizontalAlign="Right" />
@@ -201,11 +203,16 @@
                 per.perFechaTermContrato,cargo.carDescripcion AS cargo,motivo_retiro.mteDescripcion AS retiro,funcionario_estados.eEstDesc AS estado,
                 per.perCelular AS celular, per.digitalizacion
                 ,dispDescripcion
+                ,per.perDireccion
+        ,localidadt.locDescripcion localidadt
+,localidadv.locDescripcion localidadv
                 FROM recurso_humano per  
                 LEFT JOIN cargo on per.carId = cargo.carId    
                 LEFT JOIN disponibilidad on disponibilidad.dispId = per.dispId    
                 LEFT JOIN motivo_retiro ON (motivo_retiro.mteId=per.mteId)  
                 LEFT JOIN funcionario_estados ON (funcionario_estados.eEstId=per.eEstId) 
+        LEFT JOIN localidad localidadt ON (localidadt.locId=per.locId)
+LEFT JOIN localidad localidadv ON (localidadv.locId=per.residencialocId)
                 WHERE (@estado=0 OR per.eEstId=@estado)  AND (@cargo=0 or per.carId=@cargo OR FIND_IN_SET(@cargo, per.cargos)!=0)   
                 AND (@digitalizacion=0 OR (@digitalizacion=1 AND per.digitalizacion IS NOT NULL) OR (@digitalizacion=2 AND per.digitalizacion IS NULL))
                 AND (@disponibilidad=0 OR @disponibilidad=per.dispId)

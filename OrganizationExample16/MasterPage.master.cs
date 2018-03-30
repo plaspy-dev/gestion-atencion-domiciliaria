@@ -24,7 +24,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         LMonoFix.Text="<style type='text/css'>.red{background-color: Red;}</style>";
 #endif
         CUsuario usuario = (CUsuario) Usuario.GetUsuario();
-        if(usuario.GetForceURL().Length!=0) {
+        if(!string.IsNullOrEmpty(usuario.GetForceURL())) {
             if (HttpContext.Current.Request.Url.ToString().ToLower().IndexOf(HttpUtility.UrlDecode(ResolveClientUrl(usuario.GetForceURL()).ToLower()).Replace(" ", "+")) == -1)
             {// es la misma
                 Response.Redirect(usuario.GetForceURL());

@@ -65,9 +65,9 @@ public partial class administrador_Default : System.Web.UI.Page
     }
 
     public static Regex RegexUpperCase= new Regex(@"
-                (?<=[A-Z])(?=[A-Z][a-z]) |
-                 (?<=[^A-Z])(?=[A-Z]) |
-                 (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+                (?<=[A-ZÁÉÍÓÚ])(?=[A-ZÁÉÍÓÚ][a-záéíóú]) |
+                 (?<=[^A-ZÁÉÍÓÚ])(?=[A-ZÁÉÍÓÚ]) |
+                 (?<=[A-Za-zÁÉÍÓÚáéíóú])(?=[^A-Za-zÁÉÍÓÚáéíóú])", RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
     public static string GetHumanName(string name) {
         return RegexUpperCase.Replace(name, " ");

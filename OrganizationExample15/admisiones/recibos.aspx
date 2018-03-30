@@ -45,7 +45,7 @@
                 <td width=1>
                     <asp:TextBox ID="TNumero" runat="server"></asp:TextBox>
                 </td>
-                <td colspan="2"></td>
+                <td colspan="2"><asp:CheckBox runat="server" ID="CExonerado" Text="Exonerado" Enabled="false" /></td>
             </tr>
         <asp:PlaceHolder runat="server" ID="PD" Visible="false">
             <tr>

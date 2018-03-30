@@ -16,6 +16,9 @@
     <script type="text/javascript">
         var webfoto = "#<%= IFoto.ClientID %>";
         $(function() {
+            $(".fdocument").change(function() {
+                $(this).closest("tr").find(":checkbox").prop("checked", true);
+            });
             $("#<%= LCargo.ClientID %>").multiselect({
                 noneSelectedText: "(Ninguno)",
                 checkAllText: "Todos",
@@ -107,28 +110,26 @@
     <asp:Panel runat="server" ID="PAlerta" Visible="false" CssClass="alert alert-danger">
         <i class="fa fa-2x fa-warning"></i> Alerta de servicios
     </asp:Panel>
-        <div id="tabpersonal" style="min-width: 750px">
+        <div id="tabpersonal" style="min-width: 850px">
             <ul>
                 <li><a href="#tabs1">Datos Personales</a></li>
                 <li><a href="#tabs2">Detalles de Contrato</a></li>
                 <li><a href="#tabs3">Info Profesional</a></li>
                 <li><a href="#tabs4">Info Laboral</a></li>
+                <li><a href="#tabdyo">Descuentos y otros</a></li>
                 <li><a href="#tabs5">Sesiones programadas</a></li>
             </ul>
             <div id="tabs1" class="hidet">
                 <table>
                     <tr>
                         <td>
-                            Apellidos</td>
+                            Apellidos<asp:RequiredFieldValidator ControlToValidate="TApellidos" ErrorMessage="Por favor ingrese un apellido." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox ID="TApellidos" runat="server" ></asp:TextBox>
-                            <asp:RequiredFieldValidator ControlToValidate="TApellidos" ErrorMessage="Por favor ingrese un apellido." ID="RequiredFieldValidator1" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         </td>
-                        <td>
-                            Nombres</td>
+                        <td>Nombres<asp:RequiredFieldValidator ControlToValidate="TNombres" ErrorMessage="Por favor ingrese un nombre." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox ID="TNombres" runat="server"></asp:TextBox>
-                            <asp:RequiredFieldValidator ControlToValidate="TNombres" ErrorMessage="Por favor ingrese un nombre." ID="RequiredFieldValidator2" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         </td>
                         <td rowspan="15" valign="top">
                             <asp:ImageButton runat="server" ID="IFoto" CausesValidation="false" />
@@ -138,33 +139,30 @@
                             <asp:FileUpload runat="server" ID="FFoto" Width="100px" />
                             <asp:LinkButton runat="server"  ID="IEliminar" onclick="IEliminar_Click" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton>
                                 <asp:CustomValidator Display="Dynamic" ControlToValidate="FFoto" ID="CustomValidator1" runat="server" ClientValidationFunction="ValidateFileUploadJPG" ErrorMessage="Por favor seleccione una imagen en formato jpg" onservervalidate="OnValidaFileJPG">*</asp:CustomValidator>
-                            <br />
-                            <asp:Label ID="Label40" runat="server" Text="Observaciones"></asp:Label>
-                            <br />
-                            <asp:TextBox ID="TObservaciones" TextMode="MultiLine" runat="server" Width="100px" Height="100px"></asp:TextBox>
                         </td>                        
                     </tr>
                     <tr><td>
-                    Fecha de Ingreso</td>
-                    <td>
-                        <asp:TextBox ID="TFIngreso" CssClass="fecha" runat="server"></asp:TextBox>
+                    Fecha de Ingreso
                         <asp:RequiredFieldValidator ControlToValidate="TFIngreso" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator3" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         <asp:RangeValidator MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator1" runat="server" ErrorMessage="Por favor ingrese una fecha valida." Display="Dynamic" ControlToValidate="TFIngreso" Type="Date">*</asp:RangeValidator>
+                        </td>
+                    <td>
+                        <asp:TextBox ID="TFIngreso" CssClass="fecha" runat="server"></asp:TextBox>
                     </td>
                     </tr>
                     <tr>
                         <td>
-                            Documento</td>
-                        <td>
-                            <asp:TextBox ID="TDocumento" runat="server"></asp:TextBox>
-                            <asp:RequiredFieldValidator ControlToValidate="TDocumento" ErrorMessage="Por favor ingrese un documento." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                            Documento<asp:RequiredFieldValidator ControlToValidate="TDocumento" ErrorMessage="Por favor ingrese un documento." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                             <asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" 
                                 ErrorMessage="Por favor ingrese un numero valido." Display="Dynamic" 
                                 SetFocusOnError="true" ControlToValidate="TDocumento" 
-                                ValidationExpression="[0-9]{0,20}">*</asp:RegularExpressionValidator>
+                                ValidationExpression="[0-9]{0,20}">*</asp:RegularExpressionValidator></td>
+                        <td>
+                            <asp:TextBox ID="TDocumento" runat="server"></asp:TextBox>
                         </td>
                         <td>
-                           Lugar Expedición</td>
+                           Lugar Expedición<asp:RequiredFieldValidator ControlToValidate="TLExpedicion" ErrorMessage="Por favor ingrese un lugar de expedición." ID="R1" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox ID="TLExpedicion" runat="server"></asp:TextBox>
                         </td>
@@ -182,17 +180,11 @@
                         </td>
                     </tr>
                     <tr>
-                        <td nowrap="nowrap">
-                            Pasado Judicial Num.
-                        </td>
-                        <td>
-                            <asp:TextBox ID="TPasadoJudicial" runat="server"></asp:TextBox>
-                        </td>
-                        <td>
-                            Pasado Judicial</td>
-                        <td>
-                            <asp:TextBox ID="TFPasadoJudicial" runat="server" CssClass="fecha"></asp:TextBox>
-                        </td>
+                        <td>Pasado Judicial<asp:RequiredFieldValidator ControlToValidate="TFPasadoJudicial" ErrorMessage="Por favor ingrese una fecha del pasado judicial." ID="R2" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                        <td><asp:TextBox ID="TFPasadoJudicial" runat="server" CssClass="fecha"></asp:TextBox></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td style="white-space: nowrap">
@@ -216,20 +208,20 @@
                         </td>
                     </tr>
                     <tr>
+                        <td>Grupo Sanguíneo<asp:RequiredFieldValidator ControlToValidate="TGrupoSanguineo" ErrorMessage="Por favor ingrese un grupo sanguineo." ID="R3" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
-                            Grupo Sanguíneo</td>
-                        <td>
-                            <asp:TextBox ID="TGrupoSanguineo" runat="server" Width="38px"></asp:TextBox>
+                            <asp:TextBox ID="TGrupoSanguineo" MaxLength="2" runat="server" Width="38px"></asp:TextBox>
                         </td>
+                        <td>RH<asp:RequiredFieldValidator ControlToValidate="TRH" ErrorMessage="Por favor ingrese un RH." ID="R4" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
-                            RH</td>
-                        <td>
-                            <asp:TextBox ID="TRH" runat="server" Width="38px"></asp:TextBox>
+                            <asp:TextBox ID="TRH" runat="server" MaxLength="1" Width="38px"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            Género</td>
+                        <td>Género<asp:RequiredFieldValidator ControlToValidate="DSexo" ErrorMessage="Por favor seleccione un genero." ID="R5" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:DropDownList ID="DSexo" runat="server">
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
@@ -237,21 +229,22 @@
                                 <asp:ListItem Text="M" Value="2"></asp:ListItem>
                             </asp:DropDownList>
                         </td>
-                        <td>
-                            Fecha Nacimiento</td>
+                        <td>Fecha Nacimiento<asp:RequiredFieldValidator ControlToValidate="TFechaNacimiento" ErrorMessage="Por favor ingrese una fecha de nacimiento." ID="R6" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                            <asp:RangeValidator MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" runat="server" ErrorMessage="Por favor ingrese una fecha valida." Display="Dynamic" ControlToValidate="TFechaNacimiento" Type="Date">*</asp:RangeValidator>
+                        </td>
                         <td>
                             <asp:TextBox ID="TFechaNacimiento" CssClass="fecha" runat="server"></asp:TextBox>
-                            <asp:RangeValidator MinimumValue="01/01/1930" MaximumValue="01/01/2100" ID="RangeValidator3" runat="server" ErrorMessage="Por favor ingrese una fecha valida." Display="Dynamic" ControlToValidate="TFechaNacimiento" Type="Date">*</asp:RangeValidator>
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            Dirección</td>
+                        <td>Dirección<asp:RequiredFieldValidator ControlToValidate="TDireccion" ErrorMessage="Por favor ingrese una dirección." ID="R7" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox ID="TDireccion" runat="server"></asp:TextBox>
                         </td>
-                        <td>
-                            Barrio</td>
+                        <td>Barrio<asp:RequiredFieldValidator ControlToValidate="TBarrio" ErrorMessage="Por favor ingrese un barrio." ID="R8" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td colspan="2">
                             <asp:TextBox ID="TBarrio" runat="server"></asp:TextBox>
                         </td>
@@ -262,7 +255,8 @@
                         <td>
                             &nbsp;</td>
                         <td>
-                            Localidad</td>
+                            Localidad<asp:RequiredFieldValidator ControlToValidate="DLocalidadVivienda" ErrorMessage="Por favor seleccione una localidad." ID="R9" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td colspan="2">
                             <asp:DropDownList ID="DLocalidadVivienda" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SLocalidad" DataTextField="nombre" DataValueField="id">
@@ -282,25 +276,24 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            Celular</td>
+                        <td>Celular<asp:RequiredFieldValidator ControlToValidate="TMovil" ErrorMessage="Por favor ingrese un teléfono movil." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox runat="server" ID="TMovil" ></asp:TextBox>
-                            <asp:RequiredFieldValidator ControlToValidate="TMovil" ErrorMessage="Por favor ingrese un teléfono movil." ID="RequiredFieldValidator5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         </td>
-                        <td>
-                            Correo electrónico</td>
-                        <td>
-                            <asp:TextBox runat="server" ID="TEMail"></asp:TextBox>
+                        <td>Correo electrónico<asp:RequiredFieldValidator ControlToValidate="TEmail" ErrorMessage="Por favor ingrese una dirección de correo." ID="R10" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                             <asp:RegularExpressionValidator ID="RegularExpressionValidator1" runat="server" 
                                 ErrorMessage="Por favor ingrese un correo electrónico valido." 
                                 SetFocusOnError="True" ControlToValidate="TEMail" Display="Dynamic" Text="*" 
                                 ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"></asp:RegularExpressionValidator>
                         </td>
+                        <td>
+                            <asp:TextBox runat="server" ID="TEMail"></asp:TextBox>
+                        </td>
                     </tr>
                     <tr>
-                        <td>
-                            Estado Civil</td>
+                        <td class="nw">Estado Civil<asp:RequiredFieldValidator ControlToValidate="DEstadoCivil" ErrorMessage="Por favor seleccione un estado civil." ID="R11" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></t>
                         <td>
                             <asp:DropDownList ID="DEstadoCivil" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SEstadoCivil" DataTextField="nombre" DataValueField="id">
@@ -312,6 +305,8 @@
                                 SelectCommand="SELECT estCivilId id, estCivDescripcion nombre,estCivCompanero companero FROM estado_civil">
                             </asp:SqlDataSource>
                             <asp:Label ID="Label21" runat="server" Text="Num. Hijos"></asp:Label>
+                            <asp:RequiredFieldValidator ControlToValidate="THijos" ErrorMessage="Por favor ingrese un número de hijos." ID="R12" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                             <asp:TextBox runat="server" ID="THijos" CssClass="entero" Width="30px" MaxLength="2"></asp:TextBox>
                             <script type="text/javascript">
                                 $(function () {
@@ -336,21 +331,21 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            Persona Contacto</td>
+                        <td>Persona Contacto<asp:RequiredFieldValidator ControlToValidate="TContacto" ErrorMessage="Por favor ingrese una persona de contacto." ID="R13" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox runat="server" ID="TContacto"></asp:TextBox>
                         </td>
-                        <td nowrap="nowrap">
-                            Tel Persona Contacto
+                        <td nowrap="nowrap">Tel Persona Contacto<asp:RequiredFieldValidator ControlToValidate="TTelefonoContacto" ErrorMessage="Por favor ingrese un teléfono de contacto." ID="R14" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         </td>
                         <td colspan="2">
                             <asp:TextBox runat="server" ID="TTelefonoContacto"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            Parentesco contacto</td>
+                        <td class="nw">Parentesco contacto<asp:RequiredFieldValidator ControlToValidate="TParentesco" ErrorMessage="Por favor ingrese un parentesco." ID="R15" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:TextBox ID="TParentesco" runat="server"></asp:TextBox>
                         </td>
@@ -361,10 +356,11 @@
                     </tr>
                     <tr>
                         <td>
-                            EPS</td>
+                            EPS<asp:RequiredFieldValidator ControlToValidate="DEPS" ErrorMessage="Por favor seleccione una EPS." ID="R16" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:DropDownList ID="DEPS" runat="server" AppendDataBoundItems="true" 
-                                DataSourceID="SEPS" DataTextField="nombre" DataValueField="id">
+                                DataSourceID="SEPS" DataTextField="nombre" DataValueField="id" CssClass="amc">
                                 <asp:ListItem Selected="True" Text="" Value=""></asp:ListItem>
                             </asp:DropDownList>
                             <asp:SqlDataSource ID="SEPS" runat="server" 
@@ -374,7 +370,8 @@
                             </asp:SqlDataSource>
                         </td>
                         <td>
-                            FOP
+                            FOP<asp:RequiredFieldValidator ControlToValidate="DFOP" ErrorMessage="Por favor seleccione un FOP." ID="R17" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                         </td>
                         <td>
                             <asp:DropDownList ID="DFOP" runat="server" AppendDataBoundItems="true" 
@@ -390,7 +387,8 @@
                     </tr>
                     <tr>
                         <td>
-                            ARP</td>
+                            ARP<asp:RequiredFieldValidator ControlToValidate="DARP" ErrorMessage="Por favor seleccione una ARP." ID="R18" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
                             <asp:DropDownList ID="DARP" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SARP" DataTextField="nombre" DataValueField="id">
@@ -402,8 +400,7 @@
                                 SelectCommand="SELECT entId id,entNombre nombre FROM asegurador WHERE entARP=1 ORDER BY 2">
                             </asp:SqlDataSource>
                             </td>
-                        <td>Localidad Trabajo
-                            </td>
+                        <td>Localidad Trabajo</td>
                         <td>
                             <asp:DropDownList ID="DLocalidad" runat="server" AppendDataBoundItems="true" 
                                 DataSourceID="SLocalidad" DataTextField="nombre" DataValueField="id">
@@ -415,6 +412,12 @@
                                 SelectCommand="SELECT locId id, locDescripcion nombre FROM localidad">
                             </asp:SqlDataSource>
                             </td>
+                    </tr>
+                    <tr>
+                        <td class="tat">Observaciones</td>
+                        <td colspan="3">
+                            <asp:TextBox ID="TObservaciones" TextMode="MultiLine" runat="server" Width="100%" Height="40px"></asp:TextBox>
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="2" class="GridHeader">Firma</td>
@@ -551,24 +554,53 @@
                         <asp:TextBox runat="server" ID="TFechaTerminacion" CssClass="fecha"></asp:TextBox>
                         </td></tr>
                         <tr>
-                            <td colspan="2">
+                            <td colspan="4">
                             <fieldset>
                                 <legend>Documentos Entregados a Atención Domiciliaria</legend>
                                 <table>
                                     <tr>
                                         <td>
-                                            <asp:DataList ID="DDocumentos" runat="server" RepeatColumns="2" DataSourceID="SDocumentos"
-                                                ShowFooter="False" ShowHeader="False" DataKeyField="docId">                
-                                                <ItemTemplate>
-                                                    <asp:CheckBox ID="CDocumentos" runat="server" Text='<%#bind("docDesc") %>' Checked='<%# Eval("sel").ToString()=="1" %>' />
-                                                </ItemTemplate>
-                                            </asp:DataList>
+                                            <asp:GridView ID="GDocumentos" runat="server" AutoGenerateColumns="False" DataSourceID="SDocumentos" EmptyDataText="No se encontraron documentos" 
+                                                CssClass="table table-condensed table-bordered table-hover table-striped" DataKeyNames="id,archivo" OnRowDeleting="GDocumentos_RowDeleting">
+                                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                                            <Columns>
+                                                <asp:TemplateField ItemStyle-Width="1px">
+                                                    <ItemTemplate>
+                                                        <asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton>
+                                                    </ItemTemplate>
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="" ItemStyle-CssClass="px">
+                                                    <ItemTemplate>
+                                                        <asp:CheckBox runat="server" ID="E" Enabled="false" Checked='<%# Eval("ex").ToString()!="" %>' />
+                                                    </ItemTemplate>
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Documento" ItemStyle-Width="100%">
+                                                    <ItemTemplate>
+                                                        <asp:Label runat="server" ID="L" Visible='<%# Eval("archivo") == DBNull.Value %>' Text='<%# Eval("nombre") %>'></asp:Label>
+                                                        <asp:HyperLink runat="server" Visible='<%# Eval("archivo") != DBNull.Value %>' ID="H" Text='<%# Eval("nombre") %>' NavigateUrl='<%# Eval("archivo")==DBNull.Value ? "" : Files.GetURL(Files.Directorys.RHDocumentos, Files.ContentDisposition.Attachment, HId.Value, Eval("id"), Eval("Nombre").ToString() + Eval("archivo")) %>'></asp:HyperLink>
+                                                        <asp:CustomValidator Display="Dynamic" ControlToValidate="F" ID="C" runat="server" ClientValidationFunction="ValidateFileUploadJPGPDF" ErrorMessage="Por favor seleccione una imagen en formato jpg o un archivo PDF" onservervalidate="OnValidaFileJPGPDF">*</asp:CustomValidator>
+                                                    </ItemTemplate>
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Archivo">
+                                                    <ItemTemplate>
+                                                        <asp:FileUpload runat="server" ID="F" CssClass="fdocument" />
+                                                    </ItemTemplate>
+                                                </asp:TemplateField>
+                                                <asp:TemplateField HeaderText="Vencimiento">
+                                                    <ItemTemplate>
+                                                        <asp:TextBox runat="server" ID="T" CssClass="fecha" Text='<%# SDG.Componentes.Query.GetFromMySQLDate(Eval("vencimiento")) %>'></asp:TextBox>
+                                                    </ItemTemplate>
+                                                </asp:TemplateField>
+                                            </Columns>
+                                        </asp:GridView>
                                              <asp:SqlDataSource ID="SDocumentos" runat="server" 
                                                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
-                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
-                                                SelectCommand="SELECT funcionario_documentos.docId,
-		                                            docDesc,
-		                                            CASE WHEN recurso_humano_documento.docId IS NULL THEN 0 ELSE 1 END AS Sel		
+                                                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                                                SelectCommand="SELECT funcionario_documentos.docId id,
+		                                            docDesc nombre,
+		                                            recurso_humano_documento.docId ex,
+                                                    recurso_humano_documento.archivo,
+                                                    recurso_humano_documento.vencimiento
 		                                            FROM funcionario_documentos
 			                                        LEFT JOIN  recurso_humano_documento ON recurso_humano_documento.docId = funcionario_documentos.docId AND perId = @perId
 			                                        WHERE docTipoEntrega=1
@@ -582,13 +614,15 @@
                                 </table>
                                 </fieldset>
                             </td>
-                            <td colspan="2" style="vertical-align:top;">
+                            </tr>
+                    <tr>
+                            <td colspan="4" style="vertical-align:top;">
                                 <fieldset>
                                 <legend>Documentos Entregados al Contratista</legend>
                                 <table>
                                     <tr>
                                         <td>
-                                            <asp:DataList ID="DDocumentosContratista" runat="server" RepeatColumns="2" DataSourceID="SDocumentosContratista"
+                                            <asp:DataList ID="DDocumentosContratista" runat="server" RepeatColumns="4" DataSourceID="SDocumentosContratista"
                                                 ShowFooter="False" ShowHeader="False" DataKeyField="docId">
                                                 <ItemTemplate>
                                                     <asp:CheckBox ID="CDocumentos" runat="server" Text='<%#bind("docDesc") %>' Checked='<%# Eval("sel").ToString()=="1" %>' />
@@ -773,6 +807,45 @@
                             WHERE tipo=80 AND szReservado IS NULL ORDER BY nombre">
                     </asp:SqlDataSource>
                 </fieldset>
+            </div>
+            <div id="tabdyo" class="hidet">
+                <asp:UpdatePanel runat="server" ID="UDO">
+                    <ContentTemplate>
+                        <asp:GridView ID="GDO" runat="server" AutoGenerateColumns="False" EmptyDataText="No se encontraron documentos" 
+                                CssClass="table table-condensed table-bordered table-hover table-striped" DataKeyNames="Index,Id" OnRowDeleting="GDO_RowDeleting">
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                            <Columns>
+                                <asp:TemplateField ItemStyle-Width="1px">
+                                    <ItemTemplate>
+                                        <asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="Fecha" ItemStyle-CssClass="nw">
+                                    <ItemTemplate>
+                                        <asp:Label runat="server" ID="L" Visible='<%# Eval("Archivo") == null %>' Text='<%# Eval("Fecha") %>'></asp:Label>
+                                        <asp:HyperLink runat="server" Visible='<%# Eval("Archivo") != null %>' ID="H" Text='<%# Eval("Fecha") %>' NavigateUrl='<%# Eval("Archivo")==DBNull.Value ? "" : Files.GetURL(Files.Directorys.RHDocumentos, Files.ContentDisposition.Attachment, HId.Value, "descuentos", Eval("Id"), Eval("Archivo")) %>'></asp:HyperLink>
+                                        <asp:CustomValidator Display="Dynamic" ControlToValidate="F" ID="C" runat="server" ClientValidationFunction="ValidateFileUploadJPGPDF" ErrorMessage="Por favor seleccione una imagen en formato jpg o un archivo PDF" onservervalidate="OnValidaFileJPGPDF">*</asp:CustomValidator>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="Archivo">
+                                    <ItemTemplate>
+                                        <asp:FileUpload runat="server" ID="F" />
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                                <asp:TemplateField HeaderText="Observaciones" ItemStyle-CssClass="w100">
+                                    <ItemTemplate>
+                                        <asp:TextBox runat="server" ID="T" Text='<%# Eval("Observaciones") %>' CssClass="w100"></asp:TextBox>
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
+                        <div class="r">
+                            <asp:LinkButton runat="server" ID="BADO" CssClass="btn btn-primary" OnClick="BADO_Click" CausesValidation="false">
+                                <i class="fa fa-plus"></i>
+                            </asp:LinkButton>
+                        </div>
+                    </ContentTemplate>
+                </asp:UpdatePanel>
             </div>
             <div id="tabs5" class="hidet">
                 <fieldset>

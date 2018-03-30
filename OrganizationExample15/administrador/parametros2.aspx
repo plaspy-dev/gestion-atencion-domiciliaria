@@ -29,6 +29,7 @@
           <tr>
             <td>Nombre</td>
             <td>
+                <asp:HiddenField ID="HId" runat="server" />
                 <asp:TextBox ID="TNombre" runat="server"></asp:TextBox>
               </td>
             <td>
@@ -37,15 +38,13 @@
                     ErrorMessage="Por favor ingrese un nombre." SetFocusOnError="True"></asp:RequiredFieldValidator>
               </td>
           </tr>
-          <tr>
+          <!--<tr>
             <td>Descripción</td>
             <td>
                 <asp:TextBox ID="TDescripcion" runat="server" EnableViewState="False"></asp:TextBox>
               </td>
-            <td align="right">
-                <asp:HiddenField ID="HId" runat="server" />
-              </td>
-          </tr>
+            <td align="right"></td>
+          </tr>-->
           <tr>
             <td>&nbsp;</td>
             <td align="right">

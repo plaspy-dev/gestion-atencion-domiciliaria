@@ -61,6 +61,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                     query += "formulacion";
                     query += "pago";
                     query += "copia";
+                    query += "exonerado";
 
                     MySqlDataReader reader = conector.Query(query.GetSelect("autNumero=" + Query.GetValor(Request.QueryString["aut"])));
                     if (reader != null && reader.Read())
@@ -85,6 +86,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
                         LRecibido.Text = string.Format("{0:C}", reader["pago"]);
                         TObservaciones.Text = reader["autObservaciones"].ToString();
                         CCopia.Checked = reader["copia"].ToString() == "1";
+                        CExonerado.Checked = reader["exonerado"].ToString() == "1";
                         if (reader["formulacion"].ToString().Length > 0)
                         {
                             HFormula.Text = "Orden médica";
@@ -217,6 +219,7 @@ public partial class admisiones_autorizaciones : System.Web.UI.Page
             query["autObservaciones"] = TObservaciones.Text;
             query["entId"] = HIdEntidad.Value;
             query["copia"] = CCopia.Checked ? "1" : "";
+            query["exonerado"] = CExonerado.Checked ? "1" : "";
             query["autActivo"] = "1";
             if (HFormula.Text.Length > 0) // es una autorizacion de DMGEN
                 query["autProvisional"] = "0";

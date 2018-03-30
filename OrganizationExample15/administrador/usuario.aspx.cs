@@ -86,6 +86,7 @@ public partial class administrador_usuario : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        LMessage.Text = "";
         if (!IsValid)
             return;
         Query query = new Query("usuario");
@@ -140,6 +141,12 @@ public partial class administrador_usuario : System.Web.UI.Page
 
             if (HId.Value.Length == 0)
             {
+                if (!string.IsNullOrEmpty(conector.QueryString("SELECT id FROM usuario WHERE usuario={0}", Query.GetValor(TUsuario.Text)))) {
+
+                    LMessage.Text = "Usuario " + TUsuario.Text + " existente por favor edite el usuario.";
+                    return;
+                }
+
                 szQuery = query.GetInsert();
                 mensaje = TNombres.Text + " ingresado";
             }

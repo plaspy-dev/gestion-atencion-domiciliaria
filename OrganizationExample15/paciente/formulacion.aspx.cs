@@ -182,7 +182,7 @@ public partial class paciente_formulacion : System.Web.UI.Page
                                 HAutorizacion.NavigateUrl = "~/admisiones/autorizaciones.aspx?aut=" + readermysql["autorizacion"].ToString();
                                 ViewState["autorizacion"] = readermysql["autorizacion"].ToString();
                             }
-                            TFecha.Text = ((DateTime)readermysql["fecha"]).ToShortDateString();
+                            TFecha.Text = Query.GetFromMySQLDate(readermysql["fecha"]);
                             ViewState["profesional"] = readermysql["profesional"].ToString();
 
                             List<Medicamento> medicamentos = new List<Medicamento>();

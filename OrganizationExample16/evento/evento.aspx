@@ -6,16 +6,58 @@
         padding-top: 1px;
         padding-bottom: 1px;
     }
+    .afile {
+        position: absolute;
+        margin-left: 5px;
+    }
+    .tdinnertable {
+        padding: 0 !important;
+    }
+    .tdinnertable > div > table {
+        margin: 0 !important;
+    }
 </style>
 <script type="text/javascript">
+    function updateUbicacion(id) {
+        if(id)
+            $("#aubicacion").removeClass("hide").attr("href", "<%= ResolveUrl("~/evento/ubicacion.aspx") %>?ubid=" + id);
+    }
     autoComplete({ controlId: "<%= TNombre.ClientID %>", queryURL: "<%= ResolveUrl("~/webservices/servicios.asmx/Evento")%>", selectURL: "<%= Request.Url.AbsolutePath + "?eid=" %>" });
+    autoComplete({ controlId: "<%= TAmbulancia.ClientID %>", queryURL: "<%= ResolveUrl("~/webservices/servicios.asmx/Ambulancia")%>", controlDataId: "<%= TIdAmbulancia.ClientID %>", autoSelect: true });
+    autoComplete({
+        controlId: "<%= TUbicacion.ClientID %>", queryURL: "<%= ResolveUrl("~/webservices/servicios.asmx/Ubicacion")%>", controlDataId: "<%= TUbicacionId.ClientID %>", autoSelect: true
+        , onSelect: function (id, nombre) {
+            updateUbicacion(id);
+        }
+        , onClear: function () {
+            $("#aubicacion").addClass("hide");
+        }
+    });
+    autoComplete({ controlId: "<%= TProductor.ClientID %>", queryURL: "<%= ResolveUrl("~/webservices/servicios.asmx/Empresario")%>", controlDataId: "<%= TProductorId.ClientID %>", autoSelect: true
+        , onSelect: function (id, nombre) {
+            $("#<%= BProductor.ClientID %>").click();
+        }
+        , onClear: function () {
+            $("#<%= BProductor.ClientID %>").click();
+        }
+    });
+    autoComplete({ controlId: "<%= TEmpresario.ClientID %>", queryURL: "<%= ResolveUrl("~/webservices/servicios.asmx/Empresario")%>", controlDataId: "<%= TEmpresarioId.ClientID %>", autoSelect: true
+        , onSelect: function (id, nombre) {
+            $("#<%= BEmpresario.ClientID %>").click();
+        }
+        , onClear: function () {
+            $("#<%= BEmpresario.ClientID %>").click();
+        }
+    });
+
     $inicio(function () {
+        updateUbicacion($("#<%= TUbicacionId.ClientID %>").val());
         $("#<%= THDesde.ClientID %>,#<%= THHasta.ClientID %>,#<%= TInicio.ClientID %>,#<%= TFinal.ClientID %>").on("dp.change", function () {
             var final = $("#<%= TFinal.ClientID %>").data("DateTimePicker").date();
             var inicio = $("#<%= TInicio.ClientID %>").data("DateTimePicker").date();
             var horai = $("#<%= THDesde.ClientID %>").data("DateTimePicker").date();
             var horaf = $("#<%= THHasta.ClientID %>").data("DateTimePicker").date();
-            if (!final || !inicio)
+            if (!final || !inicio || !horaf || !horai)
                 return;
 
             var duration= moment.duration(final.diff(inicio));
@@ -23,8 +65,10 @@
 
             duration = moment.duration(horaf.diff(horai));
             var hours = duration.asHours();
+            if (hours < 0)
+                hours += 24;
             
-            $("#<%= LDuracion.ClientID %>").html(days * hours + " horas");
+            $("#<%= LDuracion.ClientID %>").html(Math.round(days * hours) + " horas");
         }).trigger("dp.change");
         $(".tc,.th,.tuh").change(function () {
             var $parent = $(this).closest("tr");
@@ -107,7 +151,13 @@
         <td>Aforo estimado</td>
         <td><asp:TextBox runat="server" ID="TAforo" CssClass="entero"></asp:TextBox></td>
         <td>Ubicación</td>
-        <td><asp:TextBox runat="server" ID="TUbicacion"></asp:TextBox></td>
+        <td>
+            <asp:TextBox runat="server" ID="TUbicacion"></asp:TextBox>
+            <asp:TextBox runat="server" ID="TUbicacionId" CssClass="hide"></asp:TextBox>
+            <a id="aubicacion" target="_blank" href="#" class="btn btn-default btn-xs hide afile">
+                <i class="fa fa-files-o"></i>
+            </a>
+        </td>
     </tr>
     <tr>
         <td>Descripción</td>
@@ -117,39 +167,72 @@
         <td colspan="4" class="well">Productor</td>
     </tr>
     <tr>
-        <td class="tdl">Nombre</td>
-        <td colspan="3" class="tdr"><asp:TextBox runat="server" ID="TProductor" Width="100%"></asp:TextBox></td>
-    </tr>
-    <tr>
-        <td class="tdl">Teléfono</td>
-        <td><asp:TextBox runat="server" ID="TProductorT"></asp:TextBox></td>
-        <td>Celular</td>
-        <td class="tdr"><asp:TextBox runat="server" ID="TProductorM"></asp:TextBox></td>
-    </tr>
-    <tr>
-        <td class="tdl">Nombres</td>
-        <td><asp:TextBox runat="server" ID="TProductorC"></asp:TextBox></td>
-        <td>Apellidos</td>
-        <td class="tdr"><asp:TextBox runat="server" ID="TProductorA"></asp:TextBox></td>
+        <td colspan="4" class="tdinnertable">
+            <asp:UpdatePanel runat="server" UpdateMode="Conditional" ID="UP">
+                <ContentTemplate>
+                    <table class="table table-striped table-condensed">
+                        <tr>
+                            <td class="tdl">Nombre</td>
+                            <td colspan="3" class="tdr">
+                                <asp:TextBox runat="server" ID="TProductor"></asp:TextBox>
+                                <asp:HyperLink runat="server" ID="HProductor" Target="_blank" CssClass="btn btn-xs btn-default afile" Visible="false">
+                                    <i class="fa fa-files-o"></i>
+                                </asp:HyperLink>
+                                <asp:TextBox runat="server" ID="TProductorId" CssClass="hide"></asp:TextBox>
+                                <asp:Button runat="server" ID="BProductor" CausesValidation="false" CssClass="hide" OnClick="BProductor_Click" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdl">Teléfono</td>
+                            <td><asp:TextBox runat="server" ReadOnly="true" ID="TProductorT"></asp:TextBox></td>
+                            <td>Celular</td>
+                            <td class="tdr"><asp:TextBox ReadOnly="true" runat="server" ID="TProductorM"></asp:TextBox></td>
+                        </tr>
+                        <tr>
+                            <td class="tdl">Nombres</td>
+                            <td><asp:TextBox runat="server" ReadOnly="true" ID="TProductorC"></asp:TextBox></td>
+                            <td>Apellidos</td>
+                            <td class="tdr"><asp:TextBox ReadOnly="true" runat="server" ID="TProductorA"></asp:TextBox></td>
+                        </tr>
+                    </table>
+                </ContentTemplate>
+            </asp:UpdatePanel>
+        </td>
     </tr>
     <tr>
         <td colspan="4" class="well">Empresario</td>
     </tr>
     <tr>
-        <td class="tdl">Nombre</td>
-        <td class="tdr" colspan="3"><asp:TextBox runat="server" ID="TEmpresario" Width="100%"></asp:TextBox></td>
-    </tr>
-    <tr>
-        <td class="tdl">Teléfono</td>
-        <td><asp:TextBox runat="server" ID="TEmpresarioT"></asp:TextBox></td>
-        <td>Celular</td>
-        <td class="tdr"><asp:TextBox runat="server" ID="TEmpresarioM"></asp:TextBox></td>
-    </tr>
-    <tr>
-        <td class="tdl">Nombres</td>
-        <td><asp:TextBox runat="server" ID="TEmpresarioC"></asp:TextBox></td>
-        <td>Apellidos</td>
-        <td class="tdr"><asp:TextBox runat="server" ID="TEmpresarioA"></asp:TextBox></td>
+        <td colspan="4" class="tdinnertable">
+            <asp:UpdatePanel runat="server" ID="UE" UpdateMode="Conditional">
+                <ContentTemplate>
+                    <table class="table table-striped table-condensed">
+                        <tr>
+                            <td class="tdl">Nombre</td>
+                            <td class="tdr" colspan="3"><asp:TextBox runat="server" ID="TEmpresario"></asp:TextBox>
+                                <asp:HyperLink runat="server" ID="HEmpresario" Target="_blank" CssClass="btn btn-xs btn-default afile" Visible="false">
+                                    <i class="fa fa-files-o"></i>
+                                </asp:HyperLink>
+                                <asp:TextBox runat="server" ID="TEmpresarioId" CssClass="hide"></asp:TextBox>
+                                <asp:Button runat="server" ID="BEmpresario" CausesValidation="false" CssClass="hide" OnClick="BEmpresario_Click" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdl">Teléfono</td>
+                            <td><asp:TextBox runat="server" ReadOnly="true" ID="TEmpresarioT"></asp:TextBox></td>
+                            <td>Celular</td>
+                            <td class="tdr"><asp:TextBox ReadOnly="true" runat="server" ID="TEmpresarioM"></asp:TextBox></td>
+                        </tr>
+                        <tr>
+                            <td class="tdl">Nombres</td>
+                            <td><asp:TextBox runat="server" ReadOnly="true" ID="TEmpresarioC"></asp:TextBox></td>
+                            <td>Apellidos</td>
+                            <td class="tdr"><asp:TextBox runat="server" ReadOnly="true" ID="TEmpresarioA"></asp:TextBox></td>
+                        </tr>
+                    </table>
+                </ContentTemplate>
+            </asp:UpdatePanel>
+        </td>
     </tr>
     <tr>
         <td colspan="4" class="well">Responsable Pago</td>
@@ -199,6 +282,48 @@
             <div class="row">
                 <div class="col-sm-3">Descripción Otros</div><div class="col-sm-9"><asp:TextBox runat="server" ID="TOtros" Width="100%"></asp:TextBox></div>
             </div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="well">Ambulancias</td>
+    </tr>
+    <tr>
+        <td colspan="4" class="tdr tdl">
+            <asp:UpdatePanel runat="server" ID="UA" UpdateMode="Conditional">
+                <ContentTemplate>
+                    <asp:GridView ID="GA" runat="server" AutoGenerateColumns="False" EmptyDataText="No se encontraron ambulancias" 
+	                    CssClass="table table-condensed table-bordered table-hover table-striped" DataKeyNames="Id"
+                        OnSelectedIndexChanged="GA_SelectedIndexChanged" OnRowDeleting="GA_RowDeleting">
+                            <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                        <Columns>
+                            <asp:TemplateField ItemStyle-Width="1px">
+                                <ItemTemplate>
+                                    <asp:LinkButton runat="server" ID="S" CssClass="btn btn-success btn-xs" CausesValidation="False" CommandName="Select" ToolTip="Editar"><i class="fa fa-edit"></i></asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField ItemStyle-Width="1px">
+                                <ItemTemplate>
+                                    <asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton>
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:BoundField HeaderText="Ambulancia" DataField="NombreAmbulancia" />
+                            <asp:BoundField HeaderText="Medico" DataField="NMedico" />
+                            <asp:BoundField HeaderText="Auxiliar" DataField="NAuxiliar" />
+                            <asp:BoundField HeaderText="Conductor" DataField="NConductor" />
+                            <asp:BoundField HeaderText="Ubicación" DataField="Ubicacion" />
+                        </Columns>
+                    </asp:GridView>
+                </ContentTemplate>
+                <Triggers>
+                    <asp:AsyncPostBackTrigger ControlID="BAmbulanciaA" />
+                    <asp:AsyncPostBackTrigger ControlID="BAmbulanciaC" />
+                </Triggers>
+            </asp:UpdatePanel>
+        </td>
+    </tr>
+    <tr>
+        <td class="tdr tdl r" colspan="4">
+            <button type="button" id="bAmbulancia" class="btn btn-submit" data-toggle="modal" data-target="#dlgAmbulancia"><i class="fa fa-plus"></i></button>
         </td>
     </tr>
     <tr>
@@ -332,6 +457,55 @@
     </tr>
     <tr>
         <td class="tdr tdl r" colspan="4"><button type="button" id="bRequisicion" class="btn btn-submit" data-toggle="modal" data-target="#dlgRequisicion"><i class="fa fa-plus"></i></button></td>
+    </tr>
+    <tr>
+        <td colspan="4" class="well">Documentos</td>
+    </tr>
+    <tr>
+        <td colspan="4">
+                <asp:GridView ID="GDocumentos" runat="server" AutoGenerateColumns="False" DataSourceID="SDocumentos" EmptyDataText="No se encontraron documentos" 
+                    CssClass="table table-condensed table-bordered table-hover table-striped" DataKeyNames="id" OnRowDeleting="GDocumentos_RowDeleting" ShowHeader="false">
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <Columns>
+                    <asp:TemplateField ItemStyle-Width="1px">
+                        <ItemTemplate>
+                            <asp:LinkButton runat="server" ID="D" CssClass="btn btn-danger btn-xs" CausesValidation="False" CommandName="Delete" ToolTip="Eliminar"><i class="fa fa-trash-o"></i></asp:LinkButton>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Documento" ItemStyle-Width="100%">
+                        <ItemTemplate>
+                            <asp:Label runat="server" ID="L" Visible='<%# Eval("archivo") == DBNull.Value %>' Text='<%# Eval("nombre") %>'></asp:Label>
+                            <asp:HyperLink runat="server" Visible='<%# Eval("archivo") != DBNull.Value %>' ID="H" Text='<%# Eval("nombre") %>' NavigateUrl='<%# Eval("archivo")==DBNull.Value ? "" : Files.GetURL(Files.Directorys.EventoDocumentos, Files.ContentDisposition.Attachment, ViewState["id"], Eval("id"), Eval("Nombre").ToString() + Eval("archivo")) %>'></asp:HyperLink>
+                            <asp:CustomValidator Display="Dynamic" ControlToValidate="F" ID="C" runat="server" ClientValidationFunction="ValidateFileUploadJPGPDF" ErrorMessage="Por favor seleccione una imagen en formato jpg o un archivo PDF" onservervalidate="OnValidaFileJPGPDF">*</asp:CustomValidator>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Archivo">
+                        <ItemTemplate>
+                            <asp:FileUpload runat="server" ID="F" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
+                <asp:SqlDataSource ID="SDocumentos" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                    SelectCommand="SELECT varios.id, varios.nombre,evento_documento.archivo
+                        FROM varios 
+                        LEFT JOIN evento_documento ON (evento_documento.evento=@evento AND evento_documento.documento=varios.id)
+                        WHERE varios.tipo=16 AND varios.eliminado IS NULL ORDER BY nombre">
+                      <SelectParameters>
+                          <asp:Parameter Name="evento" DefaultValue="0" />
+                      </SelectParameters>
+                </asp:SqlDataSource>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="well">Bitácora</td>
+    </tr>
+    <tr class="tdl tdr tdb">
+        <td colspan="4">
+            <asp:TextBox runat="server" ID="TBitacora" TextMode="MultiLine" Width="100%"></asp:TextBox>
+        </td>
     </tr>
         <tr>
             <td colspan="4"><asp:Label runat="server" ID="LMensaje" ForeColor="Red"></asp:Label>
@@ -487,4 +661,68 @@
             <asp:AsyncPostBackTrigger ControlID="GRequisiciones" />
         </Triggers>
     </asp:UpdatePanel>
+
+
+<asp:UpdatePanel runat="server" ID="UDA" UpdateMode="Conditional">
+    <ContentTemplate>
+        <div id="dlgAmbulancia" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                <h4 class="modal-title">Ambulancia</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped table-condensed">
+                        <tr>
+                            <td>Ambulancia<asp:RequiredFieldValidator ControlToValidate="TIdAmbulancia" ValidationGroup="ambulancia" ErrorMessage="Por favor seleccione una ambulancia." ID="R15" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
+                            <td>
+                                <asp:TextBox runat="server" ID="TAmbulancia"></asp:TextBox>
+                                <asp:TextBox runat="server" ID="TIdAmbulancia" CssClass="hide"></asp:TextBox>
+                            </td>
+                            <td>Ubicación</td>
+                            <td><asp:TextBox runat="server" ID="TUbicacionA"></asp:TextBox></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="well">Medico</td>
+                        </tr>
+                        <tr class="tdr tdl">
+                            <td>Documento</td>
+                            <td><asp:TextBox runat="server" ID="TDMedico"></asp:TextBox></td>
+                            <td>Nombre</td>
+                            <td><asp:TextBox runat="server" ID="TNMedico"></asp:TextBox></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="well">Auxiliar</td>
+                        </tr>
+                        <tr class="tdr tdl">
+                            <td>Documento</td>
+                            <td><asp:TextBox runat="server" ID="TDAuxiliar"></asp:TextBox></td>
+                            <td>Nombre</td>
+                            <td><asp:TextBox runat="server" ID="TNAuxiliar"></asp:TextBox></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="well">Conductor</td>
+                        </tr>
+                        <tr class="tdr tdl tdb">
+                            <td>Documento</td>
+                            <td><asp:TextBox runat="server" ID="TDConductor"></asp:TextBox></td>
+                            <td>Nombre</td>
+                            <td><asp:TextBox runat="server" ID="TNConductor"></asp:TextBox></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <asp:Button runat="server" ID="BAmbulanciaA" ValidationGroup="ambulancia" Text="Aceptar" CssClass="btn btn-submit" OnClick="BAmbulanciaA_Click" />
+                    <asp:Button runat="server" ID="BAmbulanciaC" Text="Cancelar" CssClass="btn btn-default" CausesValidation="false" OnClick="BAmbulanciaC_Click" />
+                </div>
+            </div>
+            </div>
+        </div>
+    </ContentTemplate>
+    <Triggers>
+        <asp:AsyncPostBackTrigger ControlID="GA" />
+    </Triggers>
+</asp:UpdatePanel>
 </asp:Content>

@@ -630,7 +630,8 @@ LIMIT 1)", Query.GetValor(usuario["personal"]));
                 while (reader.Read())
                 {
                     Producto info = new Producto(reader["id"].ToString());
-                    info.GetCosto(p);
+                    if(!string.IsNullOrEmpty(p))
+                        info.GetCosto(p);
                     lista.Add(info);
                 }
                 reader.Close();

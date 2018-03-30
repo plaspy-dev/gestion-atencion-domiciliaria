@@ -35,6 +35,19 @@ public partial class rh_funcionario : System.Web.UI.Page
         }
     }
 
+    [Serializable]
+    public class DescuentosOtros {
+        public int Index { get; set; }
+        public string Id { get; set; }
+        public bool Deleted { get; set; }
+        public DateTime Fecha { get; set; }
+        public string Archivo { get; set; }
+        public string Observaciones { get; set; }
+        public DescuentosOtros() {
+            Fecha = DateTime.Now;
+        }
+    }
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
@@ -60,6 +73,10 @@ public partial class rh_funcionario : System.Web.UI.Page
             BAceptar.Enabled = usuario.CanInsert();
             lnkAgInfoLab.Visible = usuario.CanInsert();
             IEliminar.Visible = false;
+            GDocumentos.Columns[0].Visible = usuario.CanDelete();
+            GDO.Columns[0].Visible = usuario.CanDelete();
+
+            List<DescuentosOtros> descuentos = new List<DescuentosOtros>();
 
             if (Request.QueryString["fid"] != null && Request.QueryString["fid"].Length > 0)
             {
@@ -119,6 +136,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                 query += "origen_tp";
                 query += "cargos";
                 query += "alerta";
+                query += "descuentos";
 
                 using (CConector conector = new CConector())
                 {
@@ -136,11 +154,11 @@ public partial class rh_funcionario : System.Web.UI.Page
                         HId.Value = reader["perId"].ToString();
                         ((MasterPageI)Master).SetModificacion(HId.Value);
 
-                        HFirma.NavigateUrl= ResolveClientUrl(HFirma.NavigateUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
-                        HSello.NavigateUrl= ResolveClientUrl(HSello.NavigateUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
+                        HFirma.NavigateUrl = ResolveClientUrl(HFirma.NavigateUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
+                        HSello.NavigateUrl = ResolveClientUrl(HSello.NavigateUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
 
-                        HFirma.ImageUrl= ResolveClientUrl(HFirma.ImageUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
-                        HSello.ImageUrl= ResolveClientUrl(HSello.ImageUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
+                        HFirma.ImageUrl = ResolveClientUrl(HFirma.ImageUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
+                        HSello.ImageUrl = ResolveClientUrl(HSello.ImageUrl + HId.Value) + ".jpg?d=" + Query.GetMySQLDateFormat(DateTime.Now, true);
 
                         TApellidos.Text = reader["perApellidos"].ToString();
                         TNombres.Text = reader["perNombres"].ToString();
@@ -150,7 +168,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                         TLExpedicion.Text = reader["perLugarExpedicion"].ToString();
                         TLMilitar.Text = reader["perNumLibretaMil"].ToString();
                         TDMilitar.Text = reader["perDistritoMil"].ToString();
-                        TPasadoJudicial.Text = reader["perNumPasadoJudicial"].ToString();
+                        // TPasadoJudicial.Text = reader["perNumPasadoJudicial"].ToString();
                         TFPasadoJudicial.Text = Query.GetFromMySQLDate(reader["perFechaPasadoJudicial"]);
                         CTarjetaProfesional.Checked = reader["perTarjetaProfesional"].ToString() == "True" ? true : false;
                         TTarjetaNumero.Text = reader["perNumeroTP"].ToString();
@@ -174,15 +192,15 @@ public partial class rh_funcionario : System.Web.UI.Page
                         Utilidades.SelectInDropDown(DARP, reader["entIdARP"]);
                         Utilidades.SelectInDropDown(DLocalidad, reader["locId"]);
                         CPazySalvo.Checked = reader["perPazySalvo"].ToString() == "True";
-                        TAlerta.Text= reader["alerta"].ToString();
+                        TAlerta.Text = reader["alerta"].ToString();
                         PAlerta.Visible = CAlerta.Checked = TAlerta.Text.Length > 0;
-                        if (CAlerta.Checked) 
+                        if (CAlerta.Checked)
                             TObservaciones.Text += " " + TAlerta.Text;
 
                         Utilidades.SelectInDropDown(DEstado, reader["eEstId"]);
                         Utilidades.SelectInDropDown(DCargo, reader["carId"]);
                         LCargo.DataBind();
-                        string []cargos = reader["cargos"].ToString().Split(',');
+                        string[] cargos = reader["cargos"].ToString().Split(',');
                         foreach (ListItem item in LCargo.Items) {
                             item.Selected = cargos.Contains(item.Value);
                         }
@@ -201,7 +219,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                         TVerificacionTitulos.Text = Query.GetFromMySQLDate(reader["verificacionTitulos"]);
                         Utilidades.SelectInDropDown(DOrigenTarjeta, reader["origen_tp"]);
 
-                        string[] actualmente= reader["laboraActualmente"].ToString().Split(',');
+                        string[] actualmente = reader["laboraActualmente"].ToString().Split(',');
 
                         CLaboraActualmente.DataBind();
                         foreach (ListItem item in CLaboraActualmente.Items) {
@@ -211,7 +229,7 @@ public partial class rh_funcionario : System.Web.UI.Page
                             }
                         }
 
-                        IFoto.ImageUrl = "~/archivo/imagen.ashx?w=120&t=r&n=" + HId.Value +".jpg";
+                        IFoto.ImageUrl = "~/archivo/imagen.ashx?w=120&t=r&n=" + HId.Value + ".jpg";
                         IFoto.PostBackUrl = "~/archivo/imagen.ashx?t=r&n=" + HId.Value + ".jpg";
                         IEliminar.Visible = usuario.CanDelete();
 
@@ -241,6 +259,27 @@ public partial class rh_funcionario : System.Web.UI.Page
                         GEmpresas.DataSource = lista;
                         GEmpresas.DataBind();
 
+                        query = new Query("recurso_humano_descuentos");
+
+                        query += "id";
+                        query += "fecha";
+                        query += "archivo";
+                        query += "observaciones";
+
+                        reader = conector.Query(query.GetSelect("paciente={0}", null, Query.GetValor(HId.Value)));
+                        if (reader != null) {
+                            while (reader.Read()) {
+
+                                DescuentosOtros info = new DescuentosOtros();
+
+                                info.Fecha = (DateTime)reader["fecha"];
+                                info.Archivo = reader["archivo"].ToString();
+                                info.Observaciones = reader["observaciones"].ToString();
+                                info.Id = reader["id"].ToString();
+
+                                descuentos.Add(info);
+                            }
+                        }
 
                         GResultados.AllowPaging = false;
                         GResultados.DataBind();
@@ -250,6 +289,15 @@ public partial class rh_funcionario : System.Web.UI.Page
                     }
                 }
             }
+
+            descuentos.Add(new DescuentosOtros());
+
+            int index = 0;
+            descuentos.ForEach(x => x.Index = index++);
+
+            GDO.DataSource = descuentos;
+            GDO.DataBind();
+            ViewState["descuentos"] = descuentos;
         }
     }
 
@@ -435,7 +483,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         query["perLugarExpedicion"] = TLExpedicion.Text;
         query["perNumLibretaMil"] = TLMilitar.Text;
         query["perDistritoMil"] = TDMilitar.Text;
-        query["perNumPasadoJudicial"] = TPasadoJudicial.Text;
+        // query["perNumPasadoJudicial"] = TPasadoJudicial.Text;
         query["perFechaPasadoJudicial"] = Query.GetMySQLDateFormat(TFPasadoJudicial.Text);
         query["perTarjetaProfesional"] = CTarjetaProfesional.Checked ? "1" : "0";
         query["perNumeroTP"] = TTarjetaNumero.Text;
@@ -512,12 +560,13 @@ public partial class rh_funcionario : System.Web.UI.Page
         if(digitalizacion>0)
             query["digitalizacion"] = digitalizacion;
 
+        string id = HId.Value;
 
         using (CConector conector = new CConector())
         {
             conector.StartTransaction();
 
-            if (HId.Value.Length > 0)
+            if (!string.IsNullOrEmpty(id))
             {
                 if (conector.QueryMod(query.GetUpdate("perId='" + HId.Value + "'")) == -1)
                     return;
@@ -528,13 +577,13 @@ public partial class rh_funcionario : System.Web.UI.Page
                 int res = conector.QueryMod(query.GetInsert(), true);
                 if (res == -1)
                     return;
-                HId.Value = res.ToString();
+                id = res.ToString();
             }
             
-            conector.InsertModificacion(HId.Value);
+            conector.InsertModificacion(id);
 
             Directory.CreateDirectory(Path.Combine(HomeCareVersion.FilesPath, "rh"));
-            string foto = Path.Combine(Path.Combine(HomeCareVersion.FilesPath, "rh"), HId.Value + ".jpg");
+            string foto = Path.Combine(Path.Combine(HomeCareVersion.FilesPath, "rh"), id + ".jpg");
             
             if (IFoto.PostBackUrl.Length == 0)
             {
@@ -570,7 +619,7 @@ public partial class rh_funcionario : System.Web.UI.Page
             if (FFirmaO.HasFile) {
                 string archivo = Path.Combine(HomeCareVersion.FilesPath, "firmas");
                 Directory.CreateDirectory(archivo);
-                archivo = Path.Combine(archivo, HId.Value + ".jpg");
+                archivo = Path.Combine(archivo, id + ".jpg");
                 if (File.Exists(archivo))
                     File.Delete(archivo);
                 FFirmaO.SaveAs(archivo);
@@ -579,28 +628,47 @@ public partial class rh_funcionario : System.Web.UI.Page
             if (FSelloO.HasFile) {
                 string archivo = Path.Combine(HomeCareVersion.FilesPath, "sellos");
                 Directory.CreateDirectory(archivo);
-                archivo = Path.Combine(archivo, HId.Value + ".jpg");
+                archivo = Path.Combine(archivo, id + ".jpg");
                 if (File.Exists(archivo))
                     File.Delete(archivo);
                 FSelloO.SaveAs(archivo);
             }
 
-            if (conector.QueryMod("DELETE FROM recurso_humano_documento WHERE perId=" + HId.Value) == -1)
+            if (conector.QueryMod("DELETE FROM recurso_humano_documento WHERE perId=" + id) == -1)
                 return;
 
             Query documentos = new Query("recurso_humano_documento");
-            documentos["perId"] = HId.Value;
+            documentos["perId"] = id;
 
-            for (int i = 0; i < DDocumentos.Items.Count; i++)
+            foreach (GridViewRow row in GDocumentos.Rows)
             {
+                string extension = GDocumentos.DataKeys[row.RowIndex].Values["archivo"] as string;
+                // bool _checked= ((CheckBox)row.FindControl("E")).Checked;
+                bool _checked = false;
+                string vencimiento = Query.GetMySQLDateFormat(((TextBox)row.FindControl("T")).Text);
 
-                CheckBox check = (CheckBox)DDocumentos.Items[i].FindControl("CDocumentos");
-                if (check.Checked)
+                string idDocumento = GDocumentos.DataKeys[row.RowIndex].Values["id"].ToString();
+                documentos["docId"] = idDocumento;
+                documentos["vencimiento"] = vencimiento;
+                
+                FileUpload file = (FileUpload)row.FindControl("F");
+                if (file.HasFile)
                 {
-                    documentos["docId"] = DDocumentos.DataKeys[i].ToString();
-                    if (conector.QueryMod(documentos.GetInsert()) == -1)
-                        return;
+                    _checked = true;
+                    extension = Path.GetExtension(file.FileName).ToLower();
+                    file.SaveAs(Files.GetFilePath(Files.Directorys.RHDocumentos, true, id, idDocumento + extension));
                 }
+
+                if (!_checked && string.IsNullOrEmpty(extension) && string.IsNullOrEmpty(vencimiento))
+                    continue;
+
+                documentos["archivo"] = extension;
+                if (conector.QueryMod(documentos.GetInsertUpdate()) == -1)
+                {
+                    LMensaje.Text = conector.LastError;
+                    return;
+                }
+                documentos.RemoveCampo("archivo");
             }
 
             for (int i = 0; i < DDocumentosContratista.Items.Count; i++)
@@ -614,11 +682,63 @@ public partial class rh_funcionario : System.Web.UI.Page
                 }
             }
 
-            if (conector.QueryMod("DELETE FROM recurso_humano_formacion WHERE perId=" + HId.Value) == -1)
+
+            List<DescuentosOtros> descuentos = ViewState["descuentos"] as List<DescuentosOtros>;
+            if (descuentos == null)
+                descuentos = new List<DescuentosOtros>();
+
+            foreach (DescuentosOtros info in descuentos.Where(x => x.Deleted))
+            {
+                if (conector.QueryMod(documentos.GetDelete("id={0}", Query.GetValor(info.Id))) == -1)
+                    return;
+            }
+
+            foreach (GridViewRow row in GDO.Rows)
+            {
+                documentos = new Query("recurso_humano_descuentos");
+
+                string Id = GDO.DataKeys[row.RowIndex].Values["Id"] as string;
+                string obsevaciones = ((TextBox)row.FindControl("T")).Text;
+
+                documentos["observaciones"] = obsevaciones;
+
+                FileUpload file = (FileUpload)row.FindControl("F");
+                if (file.HasFile)
+                {
+                    documentos["archivo"] = file.FileName;
+                }
+                else if (string.IsNullOrEmpty(Id))
+                { // Omitimos los que no tienen archivo
+                    continue;
+                }
+
+                if (string.IsNullOrEmpty(Id))
+                {
+                    documentos["fecha"] = "NOW()";
+                    documentos["paciente"] = id;
+
+                    int res = conector.QueryMod(documentos.GetInsert());
+                    if (res == -1)
+                        return;
+                    Id = res.ToString();
+                }
+                else
+                {
+                    if (conector.QueryMod(documentos.GetUpdate("id={0}", Query.GetValor(Id))) == -1)
+                        return;
+                }
+
+                if (file.HasFile)
+                {
+                    file.SaveAs(Files.GetFilePath(Files.Directorys.RHDocumentos, true, id, "descuentos", Id, file.FileName));
+                }
+            }
+
+            if (conector.QueryMod("DELETE FROM recurso_humano_formacion WHERE perId=" + id) == -1)
                 return;
 
             Query informacion = new Query("recurso_humano_formacion");
-            informacion["perId"] = HId.Value;
+            informacion["perId"] = id;
 
             for (int i = 0; i < GInformacionProfesional.Rows.Count; i++)
             {
@@ -640,11 +760,11 @@ public partial class rh_funcionario : System.Web.UI.Page
                 }
             }
 
-            if (conector.QueryMod("DELETE FROM recurso_humano_info_laboral WHERE perId=" + HId.Value) == -1)
+            if (conector.QueryMod("DELETE FROM recurso_humano_info_laboral WHERE perId=" + id) == -1)
                 return;
 
             Query empresa = new Query("recurso_humano_info_laboral");
-            empresa["perId"] = HId.Value;
+            empresa["perId"] = id;
 
             for (int i = 0; i < GEmpresas.Rows.Count; i++)
             {
@@ -661,11 +781,11 @@ public partial class rh_funcionario : System.Web.UI.Page
                     return;
             }
 
-            if (conector.QueryMod("DELETE FROM recurso_humano_curso WHERE funcionario=" + HId.Value) == -1)
+            if (conector.QueryMod("DELETE FROM recurso_humano_curso WHERE funcionario=" + id) == -1)
                 return;
 
             Query curso= new Query("recurso_humano_curso");
-            curso["funcionario"] = HId.Value;
+            curso["funcionario"] = id;
 
             for (int i = 0; i < GCursos.Rows.Count; i++) {
 
@@ -683,11 +803,11 @@ public partial class rh_funcionario : System.Web.UI.Page
             if (conector.QueryMod("UPDATE usuario SET estado={0} WHERE personal={1} AND (estado IS NULL OR estado!=-1)"
                 , false
                 , DEstado.SelectedValue=="1" ? "NULL" : "0"
-                , HId.Value ) == -1)
+                , id ) == -1)
                 return;
 
             conector.Commit();
-            Funcionario.RemoveFuncionario(HId.Value);
+            Funcionario.RemoveFuncionario(id);
         }
 
         ((MasterPageI)Master).SetResultado("Usuario " + TNombres.Text + " Editado.");
@@ -727,5 +847,67 @@ public partial class rh_funcionario : System.Web.UI.Page
             string Extension = e.Value.Substring(e.Value.LastIndexOf(".") + 1).ToLower();
             e.IsValid = Extension == "jpg" || Extension == "jpeg"; // Valid file type
         }
+    }
+
+    protected void GDocumentos_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        e.Cancel = true;
+        string id = HId.Value;
+        string idDocumento = e.Keys["id"].ToString();
+        if (string.IsNullOrEmpty(id))
+            return;
+
+        Query query = new Query("recurso_humano_documento");
+
+        using (CConector conector = new CConector())
+        {
+            if (conector.QueryMod(query.GetDelete("perId={0} AND docId={1}", id, idDocumento)) == -1)
+            {
+                LMensaje.Text = conector.LastError;
+                return;
+            }
+        }
+        try { File.Delete(Files.GetFilePath(Files.Directorys.RHDocumentos, true, id, idDocumento + ".jpg")); } catch { }
+        try { File.Delete(Files.GetFilePath(Files.Directorys.RHDocumentos, true, id, idDocumento + ".pdf")); } catch { }
+
+        GDocumentos.DataBind();
+    }
+
+    public void OnValidaFileJPGPDF(object sender, ServerValidateEventArgs e)
+    {
+
+        Files.OnValidaFileJPGPDF(sender, e);
+    }
+
+    protected void GDO_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        e.Cancel = true;
+        List<DescuentosOtros> descuentos = ViewState["descuentos"] as List<DescuentosOtros>;
+        if (descuentos == null)
+            descuentos = new List<DescuentosOtros>();
+
+        DescuentosOtros info= descuentos.Find(x=>x.Index== (int)e.Keys["Index"]);
+        if (string.IsNullOrEmpty(info.Id)) {
+            descuentos.Remove(info);
+            int index = 0;
+            descuentos.ForEach(x => x.Index = index++);
+        } else info.Deleted = true;
+
+        GDO.DataSource = descuentos.Where(x=>!x.Deleted);
+        GDO.DataBind();
+        ViewState["descuentos"] = descuentos;
+    }
+
+    protected void BADO_Click(object sender, EventArgs e)
+    {
+        List<DescuentosOtros> descuentos = ViewState["descuentos"] as List<DescuentosOtros>;
+        if (descuentos == null)
+            descuentos = new List<DescuentosOtros>();
+
+        descuentos.Add(new DescuentosOtros() { Index = descuentos.Count });
+
+        GDO.DataSource = descuentos.Where(x => !x.Deleted);
+        GDO.DataBind();
+        ViewState["descuentos"] = descuentos;
     }
 }

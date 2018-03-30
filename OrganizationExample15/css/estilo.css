@@ -499,3 +499,15 @@ a.btn-success {
 .r {
     text-align: right;
 }
+.btn-danger {
+    color: white !important;
+}
+.tat {
+    vertical-align: top;
+}
+.w100 {
+    width: 100%;
+}
+.btn-primary {
+    color: white !important;
+}

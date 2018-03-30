@@ -13,7 +13,10 @@ public class Files
 {
     public enum Directorys {
         RHDocumentos,
-        Ambulancia
+        Ambulancia,
+        EventoDocumentos,
+        UbicacionDocumentos,
+        EmpresarioDocumentos
     }
 
     public enum ContentDisposition {

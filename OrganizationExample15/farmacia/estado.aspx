@@ -83,8 +83,8 @@
         <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
         <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
         <Columns>
-            <asp:HyperLinkField HeaderText="Código" DataNavigateUrlFormatString="~/farmacia/estado.aspx?pid={0}" DataNavigateUrlFields="producto" DataTextField="codigo" SortExpression="codigo" ItemStyle-HorizontalAlign="Right" />
-            <asp:HyperLinkField HeaderText="Producto" DataNavigateUrlFormatString="~/farmacia/estado.aspx?pid={0}" DataNavigateUrlFields="producto" DataTextField="nombre" SortExpression="nombre" ItemStyle-Wrap="false" ItemStyle-Width="100%" />
+            <asp:HyperLinkField HeaderText="Código" DataNavigateUrlFormatString="~/farmacia/estado.aspx?prid={0}" DataNavigateUrlFields="producto" DataTextField="codigo" SortExpression="codigo" ItemStyle-HorizontalAlign="Right" />
+            <asp:HyperLinkField HeaderText="Producto" DataNavigateUrlFormatString="~/farmacia/estado.aspx?prid={0}" DataNavigateUrlFields="producto" DataTextField="nombre" SortExpression="nombre" ItemStyle-Wrap="false" ItemStyle-Width="100%" />
             <asp:BoundField HeaderText="Lote" DataField="lote" SortExpression="lote" />
             <asp:BoundField HeaderText="Vence" DataField="vence" SortExpression="vence" DataFormatString="{0:d}" ItemStyle-Wrap="false" />
             <asp:BoundField HeaderText="Cantidad" DataField="cantidad" SortExpression="cantidad" ItemStyle-HorizontalAlign="Right" ItemStyle-Wrap="false" />
@@ -302,7 +302,7 @@
                 )
                 ORDER BY ingreso DESC;">
          <SelectParameters>
-            <asp:QueryStringParameter Name="producto" QueryStringField="pid" />
+            <asp:QueryStringParameter Name="producto" QueryStringField="prid" />
             <asp:ControlParameter ControlID="TDesde" Name="desde" PropertyName="Text" />
             <asp:ControlParameter ControlID="THasta" Name="hasta" PropertyName="Text" />
          </SelectParameters>

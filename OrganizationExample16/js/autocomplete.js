@@ -4,6 +4,8 @@ queryURL
 controlDataId
 selectURL
 autoSelect
+onSelect
+onClear
 */
 function autoComplete(options) {
     var dataSource = new Bloodhound({
@@ -35,9 +37,13 @@ function autoComplete(options) {
     });
 
     var currentText = "";
+    if (options.controlDataId) 
+        currentText= $("#" + options.controlDataId).val();
 
     $inicio(function () {
-        $('#' + options.controlId).typeahead({
+        var $element = $('#' + options.controlId);
+        var hasfocus = $element.is(":focus");
+        $element.typeahead({
             hint: true,
             highlight: true,
             minLength: 3,
@@ -48,8 +54,11 @@ function autoComplete(options) {
             source: dataSource
         }).change(function () {
             if (options.controlDataId) {
-                if ($(this).val() != currentText)
+                if ($(this).val() != currentText) {
                     $("#" + options.controlDataId).val("");
+                    if (options.onClear)
+                        options.onClear.call(this);
+                }
             }
         }).on('typeahead:select', function (e, datum) {
             currentText = datum.Nombre;
@@ -57,6 +66,10 @@ function autoComplete(options) {
                 $("#" + options.controlDataId).val(datum.Id);
             else if (options.selectURL)
                 window.location = options.selectURL + datum.Id;
+            if (options.onSelect)
+                options.onSelect.call(this, datum.Id, datum.Nombre);
         });
+        if (hasfocus)
+            $element.focus();
     });
 }

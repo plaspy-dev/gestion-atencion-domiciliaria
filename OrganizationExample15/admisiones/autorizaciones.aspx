@@ -297,6 +297,8 @@
         <tr>
             <td></td>
             <td><asp:CheckBox runat="server" ID="CCopia" Text="Autorización en copia" /></td>
+            <td></td>
+            <td><asp:CheckBox runat="server" ID="CExonerado" Text="Exonerado" /></td>
         </tr>
         <tr>
             <td class="celdaTitulo" colspan="4">Servicios</td>

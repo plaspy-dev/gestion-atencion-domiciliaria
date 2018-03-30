@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using SDG.Componentes;
 using MySql.Data.MySqlClient;
+using System.Text.RegularExpressions;
 
 /// <summary>
 /// Descripción breve de CUsuario
@@ -49,6 +50,25 @@ public class CUsuario : Usuario
             return ValidateUser(usuario, Crypt.DesencriptarDES(contrasena, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4")));
         } catch { }
         return null;
+    }
+
+    public static bool IsValidEmail(string strIn)
+    {
+        if (String.IsNullOrEmpty(strIn))
+            return false;
+
+        // Return true if strIn is in valid e-mail format. 
+        try
+        {
+            return Regex.IsMatch(strIn,
+                  @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
+                  @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9]{2,24}))$",
+                  RegexOptions.IgnoreCase);
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     override protected Usuario ValidateUser(string usuario, string passwd)

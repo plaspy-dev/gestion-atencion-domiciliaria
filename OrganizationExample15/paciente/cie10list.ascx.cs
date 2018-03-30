@@ -28,9 +28,9 @@ public partial class paciente_cie10list : System.Web.UI.UserControl
     {
         if (!IsPostBack) {
             CUsuario usuario = (CUsuario)CUsuario.GetInstance();
-            GCDiagnostico.Columns[0].Visible = usuario.CanUpdate();
-            GCDiagnostico.Columns[1].Visible = usuario.CanDelete();
-            BMasCDiagnostico.Enabled = usuario.CanUpdate();
+            GCDiagnostico.Columns[0].Visible = usuario.CanInsert();
+            GCDiagnostico.Columns[1].Visible = usuario.CanInsert();
+            BMasCDiagnostico.Enabled = usuario.CanInsert();
         }
     }
 
