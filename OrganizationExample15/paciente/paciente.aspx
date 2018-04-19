@@ -12,71 +12,30 @@
                 active: false
             });
 
-            $("#<%= TPApellido.ClientID %>,#<%= TPNombre.ClientID %>,#<%= TDocumento.ClientID %>").autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "../webservices/servicios.asmx/GetPacienteI",
-                        data: "{ 'q': '" + request.term + "', 'e': '<%= ViewState["entidades"].ToString() %>' }",
-                        dataType: "json",
-                        type: "POST",
-                        contentType: "application/json; charset=utf-8",
-                        dataFilter: function(data) { return data; },
-                        success: function(data) {
-                            response($.map(data.d, function(item) {
-                                return {
-                                    value: item.value, label: item.item
-                                }
-                            }))
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {
-                            alert(textStatus);
-                        }
-                    });
-                },
-                minLength: 3,
-                select: function(event, ui) {
-                    $.goURL("pid=" + ui.item.value);
-                    return false;
-                }
-            });
+            $("#<%= TPApellido.ClientID %>,#<%= TPNombre.ClientID %>,#<%= TDocumento.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPacienteI",
+            data: { 'e': '<%= ViewState["entidades"].ToString() %>' },
+			redirectURL: "<%= Request.Url.AbsolutePath + "?pid=" %>"
+        });
+
             <% if(!CUsuario.GetInstance().CanAdmin()) { %>
             $("#<%= TDocumento.ClientID %>").change(function() {
                 if($("#<%= HId.ClientID %>").val().length!=0)
                     $.goURL("doc=" + $(this).val() + "&tdoc=" + $("#<%= DDocumento.ClientID %>").val());
             });
             <%} %>
-            $("#<%= TCIE1.ClientID %>,#<%= TCIE2.ClientID %>,#<%= TCIE3.ClientID %>").autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
-                        data: "{}",
-                        data: "{ 'q': '" + request.term + "' }",
-                        dataType: "json",
-                        type: "POST",
-                        contentType: "application/json; charset=utf-8",
-                        dataFilter: function(data) { return data; },
-                        success: function(data) {
-                            response($.map(data.d, function(item) {
-                                return {
-                                    value: item.Name, label: item.Name
-                                }
-                            }))
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {
-                            alert(textStatus);
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function(event, ui) {
-                },
-                search: function(event, ui) {
-                    // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
-                }
-            });
+            $("#<%= TCIE1.ClientID %>,#<%= TCIE2.ClientID %>,#<%= TCIE3.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
+                data: { t: 173 },
+            map: function (item) {
+                item.label = item.Name;
+                item.value = item.Value;
+                return item;
+            }
+        });
 
             $("#<%= DAsegurador.ClientID %>").change(function () {
-                $("#<%= RIPS.ClientID %>").enableValidator($(this).find("option:selected").text().toLowerCase().indexOf("compensar")!=-1);
+                $("#<%= RIPS.ClientID %>,#<%= RFP.ClientID %>").enableValidator($(this).find("option:selected").text().toLowerCase().indexOf("compensar")!=-1);
             }).change();
 
             function calcularEdad() {
@@ -361,6 +320,13 @@
                                 SelectCommand="SELECT id,nombre FROM varios WHERE tipo=162 AND szReservado IS NULL">
                             </asp:SqlDataSource>
                         </td>
+                        <td>Presentación
+                            <asp:RequiredFieldValidator ControlToValidate="TPresentacion" ErrorMessage="Por favor ingrese una fecha de presentación." ID="RFP" 
+	runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                            <asp:RegularExpressionValidator ID="R16" ControlToValidate="TPresentacion" ErrorMessage="Por favor ingrese una hora valida" Display="Dynamic" 
+                            SetFocusOnError="true" ValidationExpression="^((?!00:00).)*$" runat="server" >*</asp:RegularExpressionValidator>
+                        </td>
+                        <td><asp:TextBox runat="server" ID="TPresentacion" CssClass="fechahora"></asp:TextBox></td>
                     </tr>
                     <tr>
                         <td class="celdaTitulo" colspan="4">Información acompañante</td>

@@ -2,35 +2,16 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
-    $(function() {
-        $("#<%= TIdentificacion.ClientID %>,#<%= TNombre.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetTercero",
-                    data: "{ 'q': '" + request.term + "', tipo: 1 }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            item.label = item.Documento + " " + item.Nombre;
-                            return item;
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus + ":" + errorThrown);
-                    }
-                });
+    $(function () {
+        $("#<%= TIdentificacion.ClientID %>,#<%= TNombre.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetTercero",
+            data: { tipo: 1 },
+            map: function (item) {
+                item.label = item.Documento + " " + item.Nombre;
+                item.value = item.Id;
+                return item;
             },
-            autoFocus: true,
-            minLength: 3,
-            select: function(event, ui) {
-
-                $(this).val(ui.item.label);
-                $.goURL("ti=" + ui.item.Id);
-                return false;
-            }
+			redirectURL: "<%= Request.Url.AbsolutePath + "?ti=" %>"
         });
     });
 </script>

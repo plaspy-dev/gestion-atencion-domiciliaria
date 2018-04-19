@@ -18,6 +18,7 @@
             data: { 'e': '<%= ViewState["entidades"].ToString() %>' },
             onSelect: function () { $("#<%= BIr.ClientID %>").click(); },
             label: function (item) {
+                return item.value;
             }
         });
         $("#<%= TNumero.ClientID %>")._autoComplete({

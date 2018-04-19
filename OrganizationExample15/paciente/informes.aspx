@@ -3,32 +3,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
     addFunctionToStart(function() {
-        $("#<%= TNombres.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPacienteI",
-                    data: "{ 'q': '" + request.term + "', 'e': '<%= ViewState["entidades"].ToString() %>' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $.goURL("i=" + ui.item.value);
-                return false;
-            }
+        $("#<%= TNombres.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPacienteI",
+            data: { 'e': '<%= ViewState["entidades"].ToString() %>' },
+			redirectURL: "<%= Request.Url.AbsolutePath + "?i=" %>"
         });
     });
 </script>
@@ -100,7 +78,11 @@
                     <ItemStyle Wrap="False" />
                 </asp:BoundField>
                 <asp:CheckBoxField HeaderText="Suministros" SortExpression="pacEntregaSuministros" DataField="pacEntregaSuministros" />
-                <asp:CheckBoxField HeaderText="Activo" SortExpression="estId" DataField="estId" />
+                <asp:TemplateField HeaderText="Activo" SortExpression="estId">
+                    <ItemTemplate>
+                        <asp:CheckBox runat="server" ID="C" Enabled="false" Checked='<%# Eval("estId").ToString()=="1" %>' />
+                    </ItemTemplate>
+                </asp:TemplateField>
             </Columns>
             <RowStyle CssClass="GridRow"></RowStyle>
             <FooterStyle CssClass="GridFooter"></FooterStyle>
@@ -126,11 +108,11 @@
                                   IFNULL(pacTelefono, '') + ' ' + IFNULL(pacTelefono1, '') AS telefono,
                                   pacCelular,
                                   pacEntregaSuministros,
-                                  CAST(CASE WHEN estId=1 THEN 1 ELSE 0 END AS bit) AS estId
+                                  estId
                                  FROM paciente  
                                  INNER JOIN tipo_documento ON paciente.tdocId =tipo_documento.tdocId  
                                  where (@id=0 OR @id=pacId) AND 
-                                        (@pacPNombre=' ' or (pacNombres like '%'+REPLACE(@pacPNombre,' ','%')+'%' or pacDocumento = @pacPNombre))
+                                        (@pacPNombre=' ' or (pacNombres like CONCAT('%',REPLACE(@pacPNombre,' ','%'),'%') or pacDocumento = @pacPNombre))
 		                                and (@pacTerapias=0 or (pacTerapiaFisica=1 or pacTerapiaResp=1 or pacTerapiaOcup=1 or pacTerapiaLenguaje=1))
 		                                and (@pacEnfermeria=0 or (pacEnfermeria_12=1 or pacEnfermeria_24=1))
 		                                and(@estado=0 or estId=@estado)
