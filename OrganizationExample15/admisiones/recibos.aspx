@@ -4,34 +4,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <script type="text/javascript">
         $(function () {
-        $("#<%= TNumero.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetAutorizaciones",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-
-                $.goURL("aut=" + ui.item.value);
-                return false;
-            }
-        });
+            $("#<%= TNumero.ClientID %>")._autoComplete({
+                url: "../webservices/servicios.asmx/GetAutorizaciones",
+			    redirectURL: "<%= Request.Url.AbsolutePath + "?aut=" %>"
+            });
         });
     </script>
 </asp:Content>

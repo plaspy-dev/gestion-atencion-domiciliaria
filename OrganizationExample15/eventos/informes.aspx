@@ -3,36 +3,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
     $(function() {
-        $("#<%= TEvento.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetEventos",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.item, label: item.value
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $('#<%= TEvento.ClientID %>').val(ui.item.label);
-                $('#<%= TEventoID.ClientID %>').val(ui.item.value);
-                return false;
-            },
-            search: function(event, ui) {
-                $('#<%= TEventoID.ClientID %>').val("");
-            }
+        $("#<%= TEvento.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetEventos",
+            idField: "<%= TEventoID.ClientID %>"
         });
     });
 </script>

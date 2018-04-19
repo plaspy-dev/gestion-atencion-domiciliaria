@@ -9,39 +9,12 @@
     addFunctionToStart(function() {
         addDialog("#<%= PMas.ClientID %>", "#dMas");
     });
-    $(function() {
-        $("#<%= TPaciente.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPacienteI",
-                    data: "{ 'q': '" + request.term + "', 'e': '<%= ViewState["entidades"].ToString() %>' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-
-                $("#<%= TPaciente.ClientID %>").val(ui.item.label);
-                $("#<%= TPacienteID.ClientID %>").val(ui.item.value);
-                $("#<%= BBuscar.ClientID %>").click();
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TPacienteID.ClientID %>").val("");
-            }
+    $(function () {
+        $("#<%= TPaciente.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPacienteI",
+            data: { 'e': '<%= ViewState["entidades"].ToString() %>' },
+            idField: "<%= TPacienteID.ClientID %>",
+            onSelect: function () { $("#<%= BBuscar.ClientID %>").click();}
         });
         $("#<%= TFecha.ClientID %>").change(function() {
             $("#<%= BBuscar.ClientID %>").click();

@@ -175,95 +175,6 @@ public partial class materna_postparto : System.Web.UI.Page
         }
     }
 
-
-    public static bool SaveRepeaterRadio(Conector conector, Repeater repeater, string seguimientoid)
-    {
-        Query query = new Query("seguimiento_materno_items");
-
-        query["seguimiento"] = seguimientoid;
-
-        for (int i = 0; i < repeater.Items.Count; i++)
-        {
-            RadioButtonList radio = (RadioButtonList)repeater.Items[i].FindControl("R");
-            TextBox textbox = (TextBox)repeater.Items[i].FindControl("T");
-            HiddenField hidden = (HiddenField)repeater.Items[i].FindControl("H");
-            CheckBox checkbox = (CheckBox)repeater.Items[i].FindControl("C");
-
-            bool save = false;
-            query["tipo"] = hidden.Value;
-
-            if (radio != null && radio.SelectedValue == "1")
-            {
-                save = true;
-                query["valor"] = "1";
-            }
-            if (checkbox != null && checkbox.Checked)
-            {
-                save = true;
-                query["valor"] = "1";
-            }
-            if (textbox != null && !string.IsNullOrEmpty(textbox.Text))
-            {
-                save = true;
-                query[radio == null ? "valor" : "valor2"] = textbox.Text;
-            }
-
-            if (save && conector.QueryMod(query.GetInsert()) == -1)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static bool SaveGriwRadio(Conector conector, GridView grid, string seguimientoid)
-    {
-
-        Query query = new Query("seguimiento_materno_items");
-
-        query["seguimiento"] = seguimientoid;
-
-        for (int i = 0; i < grid.Rows.Count; i++)
-        {
-
-            RadioButtonList radio = (RadioButtonList)grid.Rows[i].FindControl("R");
-            TextBox textbox = (TextBox)grid.Rows[i].FindControl("T");
-            TextBox textbox2 = (TextBox)grid.Rows[i].FindControl("T2");
-            TextBox textbox3 = (TextBox)grid.Rows[i].FindControl("T3");
-
-            bool save = false;
-            query["tipo"] = grid.DataKeys[i].Values["id"].ToString();
-
-            if (radio != null && radio.SelectedValue == "1")
-            {
-                save = true;
-                query["valor"] = "1";
-            }
-            if (textbox != null && !string.IsNullOrEmpty(textbox.Text))
-            {
-                save = true;
-                query[radio == null ? "valor" : "valor2"] = textbox.Text;
-            }
-            if (textbox2 != null && !string.IsNullOrEmpty(textbox2.Text))
-            {
-                save = true;
-                query["valor2"] = textbox2.Text;
-            }
-            if (textbox3 != null && !string.IsNullOrEmpty(textbox3.Text))
-            {
-                save = true;
-                query["valor3"] = textbox3.Text;
-            }
-
-
-            if (save && conector.QueryMod(query.GetInsert()) == -1)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
     protected void BAceptar_Click(object sender, EventArgs e)
     {
         if (!IsValid)
@@ -319,18 +230,18 @@ public partial class materna_postparto : System.Web.UI.Page
                 return;
             }
 
-            if (!SaveGriwRadio(conector, GMotivo, id)
-                || !SaveGriwRadio(conector, GRiesgo, id)
-                || !SaveRepeaterRadio(conector, RSistemas, id)
-                || !SaveRepeaterRadio(conector, RAntecendetes, id)
-                || !SaveRepeaterRadio(conector, RAntecendetes2, id)
-                || !SaveGriwRadio(conector, GAntecendentes3, id)
-                || !SaveRepeaterRadio(conector, REFisico, id)
-                || !SaveRepeaterRadio(conector, RSenos, id)
-                || !SaveRepeaterRadio(conector, RAbdomen, id)
-                || !SaveRepeaterRadio(conector, RMInferiores, id)
-                || !SaveGriwRadio(conector, GAObstetrica, id)
-                || !SaveGriwRadio(conector, GManejo, id)
+            if (!SerializeJSON.SaveGriwRadio(conector, GMotivo, "seguimiento_materno_items", "seguimiento", id)
+                || !SerializeJSON.SaveGriwRadio(conector, GRiesgo, "seguimiento_materno_items", "seguimiento", id)
+                || !SerializeJSON.SaveRepeaterRadio(conector, RSistemas, "seguimiento_materno_items", "seguimiento", id)
+                || !SerializeJSON.SaveRepeaterRadio(conector, RAntecendetes, "seguimiento_materno_items", "seguimiento", id)
+                || !SerializeJSON.SaveRepeaterRadio(conector, RAntecendetes2, "seguimiento_materno_items", "seguimiento", id)
+                || !SerializeJSON.SaveGriwRadio(conector, GAntecendentes3, "seguimiento_materno_items", "seguimiento", id)
+                || !SerializeJSON.SaveRepeaterRadio(conector, REFisico, "seguimiento_materno_items", "seguimiento", id)
+                || !SerializeJSON.SaveRepeaterRadio(conector, RSenos, "seguimiento_materno_items", "seguimiento", id)
+                || !SerializeJSON.SaveRepeaterRadio(conector, RAbdomen, "seguimiento_materno_items", "seguimiento", id)
+                || !SerializeJSON.SaveRepeaterRadio(conector, RMInferiores, "seguimiento_materno_items", "seguimiento", id)
+                || !SerializeJSON.SaveGriwRadio(conector, GAObstetrica, "seguimiento_materno_items", "seguimiento", id)
+                || !SerializeJSON.SaveGriwRadio(conector, GManejo, "seguimiento_materno_items", "seguimiento", id)
                 )
             {
                 LMensaje.Text = conector.LastError;

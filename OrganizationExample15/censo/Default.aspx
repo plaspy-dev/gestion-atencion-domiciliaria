@@ -6,37 +6,11 @@
         addDialog('#<%= PLocalidad.ClientID%>', "#dLocalidad");
     });
     $(function() {
-        $("#<%= TProcedimiento.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetMedicamentos",
-                    data: "{ 'q': '" + request.term + "', 't': '173' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
-                $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TProcedimientoID.ClientID %>").val("");
-            }
-        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
+        $("#<%= TProcedimiento.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetMedicamentos",
+            data: { t: 173 },
+            idField: "<%= TProcedimientoID.ClientID %>"
+        });
     });
 </script>
 </asp:Content>

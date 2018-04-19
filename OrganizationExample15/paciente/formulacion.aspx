@@ -7,39 +7,13 @@
 <script type="text/javascript">
     addFunctionToStart(function() {
 
-        $("#<%= TMedicamento.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetMedicamentos",
-                    data: "{}",
-                    data: "{ 'q': '" + request.term + "', 't': '" + $("#<%= DTipo.ClientID %>").val() + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
+        $("#<%= TMedicamento.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetMedicamentos",
+            data: function () {
+                return { t: $("#<%= DTipo.ClientID %>").val() };
             },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#<%= TMedicamentoID.ClientID %>").val(ui.item.value);
-                $("#<%= TMedicamento.ClientID %>").val(ui.item.label);
-                $("#<%= TMedicamentoID.ClientID %>").change();
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TMedicamentoID.ClientID %>").val("");
-            }
-        }).change(function() { if ($(this).val() == "") $("#<%= TMedicamentoID.ClientID %>").val(""); });
+            idField: "<%= TMedicamentoID.ClientID %>"
+        });
 
         $("#<%= TFecha.ClientID %>").datepicker({
             onClose: function(dateText, inst) { if ($.getUrlVar('f') != $(this).val()) $("#<%=BFecha.ClientID %>").click(); }

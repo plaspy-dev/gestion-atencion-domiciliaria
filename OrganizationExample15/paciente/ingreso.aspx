@@ -17,77 +17,8 @@
             $("#tmujer").remove();
             $("#tfisico").attr("colspan", "4").attr("width", "100%");
         }
-        /*if (!$.browser.msie || $.browser.version > 8)
-            $("input[name*=TObservaciones]").width("98%");*/
-        var length = tinyMCE.editors.length;
-        for (var i=length; i>0; i--) {
-            tinyMCE.editors[i-1].remove();
-        };
-        tinyMCE.init({
-            mode: "exact"
-            ,selector: '#elm1' 
-            ,readonly: <%= TConductaInicial.ReadOnly ? "true" : "false" %>
-            ,menubar:false
-            ,statusbar: false
-            ,toolbar: false
-            ,valid_elements: "ol,li,p,br"
-            ,setup: function(ed) {
-                editor = ed;
-                ed.on('submit', function(e) {
-                    lim();
-                });
-                ed.on('init', function(ed) {
-                    var completa = $("#<%= TConductaInicial.ClientID %>").val();
-                    completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
-                    editor.setContent(completa);
-                    $("#elm1").remove();
-                });
-                ed.on('blur', function(e) {
-                    tinyMCE.triggerSave();
-                    lim();
-                });
-            }
-            ,paste_preprocess: function(pl, o) {
-                o.content = o.content.replace(/<\S[^><]*>/g, "");
-            }
-        });
+        $("#<%= TConductaInicial.ClientID %>")._tinyMCE({ idMirrorTextArea: "elm1", readonly: <%= TConductaInicial.ReadOnly ? "true" : "false" %>});
     });
-    /*$(function() {
-        $(window).resize(function() {
-            $("input[name*=TObservaciones]").each(function() {
-                $(this).width($(this).parent().width() - 15);
-            });
-            $("input[name*=TObservaciones]").each(function() {
-                $(this).width($(this).parent().width() - 15);
-            });
-        });
-    });*/
-    function rel(text) {
-        text = text.replace(/\r/gi, '');
-        text = text.replace(/&nbsp;/gi, '');
-        while (text[0] == '\n') {
-            text = text.substring(1);
-        }
-        text = text.split('\n');
-        var szfinal = "";
-        for (x = 0; x < text.length; x++) {
-            text[x]=text[x].trim();
-            if (text[x].match(/[\S]/g) != null) {
-                if (szfinal.length)
-                    szfinal += "\n";
-                szfinal += text[x];
-            }
-        }
-        // text = text.join('\n').replace(/\n{2,}/g, '\n');
-        return szfinal;
-    }
-
-    function lim() {
-        var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
-        $("#<%= TConductaInicial.ClientID %>").val(limpio);
-        var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
-        editor.setContent(completa);
-    }
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="cph" Runat="Server">
@@ -106,6 +37,8 @@
                 <td>Fecha
                 <asp:RequiredFieldValidator ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha." ID="RequiredFieldValidator4" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
                 <sdg:DateTimeValidator runat="server" ID="DTV" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha valida." Display="Dynamic" SetFocusOnError="true">*</sdg:DateTimeValidator>
+                <asp:RegularExpressionValidator ID="R16" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una hora valida" Display="Dynamic" 
+                        SetFocusOnError="true" ValidationExpression="^((?!00:00).)*$" runat="server" >*</asp:RegularExpressionValidator>
                 <asp:RegularExpressionValidator ID="RegularExpressionValidator1" ControlToValidate="TFecha" ErrorMessage="Por favor ingrese una fecha valida" Display="Dynamic" SetFocusOnError="true" ValidationExpression="^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))) (0[0-9]|1\d|2[0-3]):([0-5]\d)$" runat="server" >*</asp:RegularExpressionValidator>
                 </td>
                 <td><asp:TextBox runat="server" ID="TFecha" CssClass="fechahora"></asp:TextBox></td>

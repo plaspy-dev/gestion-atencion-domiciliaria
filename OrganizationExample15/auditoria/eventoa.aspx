@@ -4,33 +4,12 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
-    $(function() {
-        $("#<%= TProfesional.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPersonal",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#<%= TProfesionalID.ClientID %>").val(ui.item.value);
+    $(function () {
+        $("#<%= TProfesional.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPersonal",
+            idField: "<%= TProfesionalID.ClientID %>",
+            onSelect: function () {
                 $("#<%= BProfesional.ClientID %>").click();
-                return false;
             }
         });
         $("#<%= PEventos.ClientID %>").accordion({

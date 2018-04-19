@@ -36,40 +36,16 @@
 
     addFunctionToStart(function() {
 
-        $("#<%= TFuncionario.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPersonal",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                var nombre = ui.item.label;
+        $("#<%= TFuncionario.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPersonal",
+            idField: "<%= TIdFuncionario.ClientID %>",
+            label: function (item) {
+                var nombre = item.label;
                 var pos = nombre.indexOf(" - ");
                 if (pos != -1) {
                     nombre = nombre.substring(pos + 3);
                 }
-                $("#<%= TFuncionario.ClientID %>").val(nombre);
-                $("#<%= TIdFuncionario.ClientID %>").val(ui.item.value);
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TIdFuncionario.ClientID %>").val("");
+                return nombre;
             }
         });
     

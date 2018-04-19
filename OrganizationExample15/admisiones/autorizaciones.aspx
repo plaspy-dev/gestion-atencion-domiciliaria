@@ -13,63 +13,18 @@
             }
         }).change();
 
-        $("#<%= TPaciente.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPacienteI",
-                    data: "{ 'q': '" + request.term + "', 'e': '<%= ViewState["entidades"].ToString() %>' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-
-                $("#<%= TPaciente.ClientID %>").val(ui.item.value);
-                $("#<%= BIr.ClientID %>").click();
-                return false;
+        $("#<%= TPaciente.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPacienteI",
+            data: { 'e': '<%= ViewState["entidades"].ToString() %>' },
+            onSelect: function () { $("#<%= BIr.ClientID %>").click(); },
+            label: function (item) {
             }
         });
-        $("#<%= TNumero.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetAutorizaciones",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-
-                $.goURL("aut=" + ui.item.value);
-                return false;
-            }
+        $("#<%= TNumero.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetAutorizaciones",
+			redirectURL: "<%= Request.Url.AbsolutePath + "?aut=" %>"
         });
+
         $("#<%= PAutorizaciones.ClientID %>").accordion({
             autoHeight: false,
             collapsible: true,
@@ -97,38 +52,12 @@
                 $("#tsuspender").hide();
             }
         });
-        
-        $("#<%= TProcedimiento.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetMedicamentos",
-                    data: "{ 'q': '" + request.term + "', 't': '173' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
-                $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TProcedimientoID.ClientID %>").val("");
-            }
-        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
+
+        $("#<%= TProcedimiento.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetMedicamentos",
+            data: { t: 173 },
+            idField: "<%= TProcedimientoID.ClientID %>"
+        });
     });
 </script>
 </asp:Content>

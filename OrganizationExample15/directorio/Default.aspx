@@ -2,42 +2,13 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
-    addFunctionToStart(function() {
-        $("#<%= TNombres.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPersonal",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-
-                $("#<%= TNombres.ClientID %>").val(ui.item.label);
-                $("#<%= TNombreID.ClientID %>").val(ui.item.value);
+    addFunctionToStart(function () {
+        $("#<%= TNombres.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPersonal",
+            idField: "<%= TNombreID.ClientID %>",
+            onSelect: function () {
                 $("#<%= BBuscar.ClientID %>").click();
-                return false;
-            },
-            search: function () {
-                $("#<%= TNombreID.ClientID %>").val("");
             }
-        }).change(function () {
-            if ($(this).val().length == 0)
-                $("#<%= TNombreID.ClientID %>").val("");
         });
         $("#dResultados").attr("title", $("#ctl00_cph_DeDisponibilidad_LNombres").html());
         $("#ctl00_cph_DeDisponibilidad_LNombres").hide();

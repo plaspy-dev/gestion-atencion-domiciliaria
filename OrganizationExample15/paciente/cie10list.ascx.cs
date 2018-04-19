@@ -66,9 +66,13 @@ public partial class paciente_cie10list : System.Web.UI.UserControl
         string codigo = GetCodigoCIE(TCIE10.Text);
         if (!list.Exists(x => x.Id == codigo))
         {
-            list.Add(new Miscelaneos(codigo, Procedimientos.GetCodigoCIE(codigo)));
-            Codes = list;
+            if (GCDiagnostico.SelectedIndex != -1)
+            {
+                list.RemoveAt(GCDiagnostico.SelectedIndex);
+                list.Insert(GCDiagnostico.SelectedIndex, new Miscelaneos(codigo, Procedimientos.GetCodigoCIE(codigo)));
+            } else list.Add(new Miscelaneos(codigo, Procedimientos.GetCodigoCIE(codigo)));
         }
+        Codes = list;
 
         GCDiagnostico.SelectedIndex = -1;
         GCDiagnostico.DataBind();
@@ -79,8 +83,9 @@ public partial class paciente_cie10list : System.Web.UI.UserControl
 
     protected void GCDiagnostico_SelectedIndexChanged(object sender, EventArgs e)
     {
-        TCIE10.Text = HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[2].Text).Trim();
-        TCIE10.Text += " - " + HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[3].Text).Trim();
+        /*TCIE10.Text = HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[2].Text).Trim();
+        TCIE10.Text += " - " + HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[3].Text).Trim();*/
+        TCIE10.Text = HttpUtility.HtmlDecode(GCDiagnostico.SelectedRow.Cells[3].Text).Trim();
     }
 
     protected void GCDiagnostico_RowDeleting(object sender, GridViewDeleteEventArgs e)

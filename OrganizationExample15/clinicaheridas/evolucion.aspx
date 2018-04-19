@@ -71,70 +71,7 @@
         });
         FullRowSelect("#<%= GHistorial.ClientID %>");
         
-        
-        
-        
-        function rel(text) {
-            text = text.replace(/\r/gi, '');
-            text = text.replace(/&nbsp;/gi, '');
-            while (text[0] == '\n') {
-                text = text.substring(1);
-            }
-            text = text.split('\n');
-            var szfinal = "";
-            for (x = 0; x < text.length; x++) {
-                text[x] = text[x].trim();
-                if (text[x].match(/[\S]/g) != null) {
-                    if (szfinal.length)
-                        szfinal += "\n";
-                    szfinal += text[x];
-                }
-            }
-            // text = text.join('\n').replace(/\n{2,}/g, '\n');
-            return szfinal;
-        }
-
-        function lim() {
-            var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
-            $("#<%= TPlanManejo.ClientID %>").val(limpio);
-            var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
-            editor.setContent(completa);
-        }
-        
-        var length = tinyMCE.editors.length;
-        for (var i=length; i>0; i--) {
-            tinyMCE.editors[i-1].remove();
-        };
-        tinyMCE.init({
-            mode: "exact"
-            ,selector: '#elm1' 
-            ,readonly: <%= TPlanManejo.ReadOnly ? "true" : "false" %>
-            ,menubar:false
-            ,statusbar: false
-            ,toolbar: false
-            ,plugins: 'paste'
-            ,valid_elements: "ol,li,p,br"
-            ,setup: function(ed) {
-                editor = ed;
-                ed.on('submit', function(e) {
-                    lim();
-                });
-                ed.on('init', function(ed) {
-                    var completa = $("#<%= TPlanManejo.ClientID %>").val();
-                    completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
-                    editor.setContent(completa);
-                    $("#elm1").remove();
-                });
-                ed.on('blur', function(e) {
-                    tinyMCE.triggerSave();
-                    lim();
-                });
-            }
-            ,paste_preprocess: function(pl, o) {
-                o.content = "";
-                // o.content = o.content.replace(/<\S[^><]*>/g, "");
-            }
-        });
+        $("#<%= TPlanManejo.ClientID %>")._tinyMCE({ idMirrorTextArea: "elm1", readonly: <%= TPlanManejo.ReadOnly ? "true" : "false" %>});
     });
 </script>
 </asp:Content>

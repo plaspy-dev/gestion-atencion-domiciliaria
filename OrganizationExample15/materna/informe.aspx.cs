@@ -40,8 +40,9 @@ public partial class materna_informe : System.Web.UI.Page
         CurrentSeguimiento = idSeguimiento;
         cacheData = new Dictionary<string, string>();
         using (CConector conector = new CConector()) {
+            bool neonato = DTipo.SelectedValue == "3";
 
-            Query query = new Query("seguimiento_materno_items");
+            Query query = new Query(neonato ? "seguimiento_neonato_items" : "seguimiento_materno_items");
 
             query += "tipo";
             query += "valor";
@@ -52,39 +53,47 @@ public partial class materna_informe : System.Web.UI.Page
             if (reader != null) {
                 while (reader.Read()) {
                     Varios varios= Varios.Get(reader["tipo"].ToString());
-                    switch (varios.tipo) {
-                        case 154:
-                        case 141: // radio
-                        case 142:
-                        case 143: // text
-                        case 145:
-                        case 152:
-                        case 153:
-                        case 155:
-                        case 144: // radio and text
-                        case 148:
-                        case 156: // postparto radio
-                        case 157: // postparto text
-                        case 158: // postparto radio and text
-                        case 159:
-                        case 160:
-                        case 161:
-                            cacheData[GetCode(varios.Nombre)] = reader["valor"].ToString();
-                            if(!string.IsNullOrEmpty(varios.Descripcion))
-                                cacheData[GetCode(varios.Descripcion)] = reader["valor2"].ToString();
-                            break;
-                        case 147: // twotext
-                            cacheData[GetCode(varios.Nombre)] = reader["valor"].ToString();
-                            cacheData[GetCode(varios.Nombre) + "_2"] = reader["valor2"].ToString();
-                            break;
-                        case 150: // 3 text
-                        case 151:
-                            cacheData[GetCode(varios.Nombre)] = reader["valor"].ToString();
-                            cacheData[GetCode(varios.Nombre) + "_2"] = reader["valor2"].ToString();
-                            cacheData[GetCode(varios.Nombre) + "_3"] = reader["valor3"].ToString();
-                            break;
-                        default:
-                            break;
+                    if (neonato)
+                    {
+                        cacheData[varios.Nombre] = reader["valor"].ToString();
+                    }
+                    else
+                    {
+                        switch (varios.tipo)
+                        {
+                            case 154:
+                            case 141: // radio
+                            case 142:
+                            case 143: // text
+                            case 145:
+                            case 152:
+                            case 153:
+                            case 155:
+                            case 144: // radio and text
+                            case 148:
+                            case 156: // postparto radio
+                            case 157: // postparto text
+                            case 158: // postparto radio and text
+                            case 159:
+                            case 160:
+                            case 161:
+                                cacheData[GetCode(varios.Nombre)] = reader["valor"].ToString();
+                                if (!string.IsNullOrEmpty(varios.Descripcion))
+                                    cacheData[GetCode(varios.Descripcion)] = reader["valor2"].ToString();
+                                break;
+                            case 147: // twotext
+                                cacheData[GetCode(varios.Nombre)] = reader["valor"].ToString();
+                                cacheData[GetCode(varios.Nombre) + "_2"] = reader["valor2"].ToString();
+                                break;
+                            case 150: // 3 text
+                            case 151:
+                                cacheData[GetCode(varios.Nombre)] = reader["valor"].ToString();
+                                cacheData[GetCode(varios.Nombre) + "_2"] = reader["valor2"].ToString();
+                                cacheData[GetCode(varios.Nombre) + "_3"] = reader["valor3"].ToString();
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
@@ -105,23 +114,60 @@ public partial class materna_informe : System.Web.UI.Page
         if (CurrentSeguimiento != idSeguimiento || cacheData == null) {
             FillData(idSeguimiento);
         }
-        try {
-            string value = cacheData[code];
-            if (!string.IsNullOrEmpty(value) && RegexNumers.IsMatch(value))
-                return value.Replace(".", ",");
-            return value;
-        } catch { }
+        bool neonato = DTipo.SelectedValue == "3";
+        if (neonato)
+        {
+            foreach (var info in cacheData) {
+                if (info.Key.ToLower().Contains(code.ToLower())) {
+                    return info.Value;
+                }
+            }
+        }
+        else {
+            try
+            {
+                string value = cacheData[code];
+                if (!string.IsNullOrEmpty(value) && RegexNumers.IsMatch(value))
+                    return value.Replace(".", ",");
+                return value;
+            }
+            catch { }
+        }
         return null;
+    }
+
+    protected GridView GetCurrentGrid() {
+
+        switch (DTipo.SelectedValue)
+        {
+            case "1":
+                return GGestante;
+            case "3":
+                return GNeonato;
+            default:
+                return GPosParto;
+        }
     }
 
     protected void BBuscar_Click(object sender, EventArgs e)
     {
         if (sender == BBuscar && !IsValid)
             return;
+        GNeonato.Visible=
         GPosParto.Visible=
         GGestante.Visible = false;
-        GridView grid = DTipo.SelectedValue == "1" ? GGestante : GPosParto;
-        Title= DTipo.SelectedValue == "1" ? "Informe Gestante" : "Informe Posparto";
+        GridView grid = GetCurrentGrid();
+        switch (DTipo.SelectedValue) {
+            case "1":
+                Title = "Informe Gestante";
+                break;
+            case "3":
+                Title = "Informe Neonatos";
+                break;
+            default:
+                Title = "Informe Posparto";
+                break;
+        }
         grid.Visible = true;
         if (GridUtils.GetRowsCount(grid, LTotal) > 0)
         {
@@ -138,7 +184,7 @@ public partial class materna_informe : System.Web.UI.Page
     public void OnImprimir(object sender, EventArgs e)
     {
         PrintEventArgs evento = (PrintEventArgs)e;
-        GridView grid = DTipo.SelectedValue == "1" ? GGestante : GPosParto;
+        GridView grid = GetCurrentGrid();
         grid.Visible = true;
         grid.DataBind();
         grid.DataSourceID = "";

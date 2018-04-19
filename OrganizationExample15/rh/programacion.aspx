@@ -3,71 +3,16 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
     $(function() {
-        $("#<%= TProcedimiento.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetMedicamentos",
-                    data: "{ 'q': '" + request.term + "', 't': '173' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
-                $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TProcedimientoID.ClientID %>").val("");
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
-            }
-        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
+        $("#<%= TProcedimiento.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetMedicamentos",
+            data: { t: 173 },
+            idField: "<%= TProcedimientoID.ClientID %>"
+        });
 
-        $("#<%= TPersonal.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPersonal",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-            $("#<%= TPersonalID.ClientID %>").val(ui.item.value);
-            $("#<%= TPersonal.ClientID %>").val(ui.item.label);
-                return false;
-            },
-            search: function(event, ui) {
-            $("#<%= TPersonalID.ClientID %>").val("");
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
-            }
-        }).change(function() { if ($(this).val() == "") $("#<%= TPersonalID.ClientID %>").val(""); });
+        $("#<%= TPersonal.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPersonal",
+            idField: "<%= TPersonalID.ClientID %>"
+        });
     });
 </script>
 </asp:Content>

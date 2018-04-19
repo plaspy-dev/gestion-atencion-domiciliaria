@@ -97,40 +97,36 @@ public class servicios : System.Web.Services.WebService
         return lista;
     }
 
-    /*[WebMethod(EnableSession = true)]
-    public List<CJSon> GetIntensidad(String q, string proc)
+    [WebMethod(EnableSession = true)]
+    public List<CJSon> GetVarios(String q, int t)
     {
         List<CJSon> lista = new List<CJSon>();
-        if (!string.IsNullOrEmpty(proc) && Procedimientos.HasIntensidad(proc))
+        using (CConector conector = new CConector())
         {
-            using (CConector conector = new CConector())
-            {
-                string query = "SELECT id FROM varios WHERE tipo=21 AND estado IS NULL AND parametro1=" + Query.GetValor(proc);
-                string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
+            string query = "SELECT id,nombre FROM varios WHERE tipo=" + Query.GetValor(t) + " AND estado IS NULL";
+            string[] split = q.Trim().Split(new Char[] { ' ', '\0' });
 
-                for (int i = 0; i < split.Length; i++)
-                {
-                    if (split[i].Length > 0)
-                    { // verificamos que no este vacio
-                        query += String.Format(" AND nombre LIKE '%{0}%' ", split[i]);
-                    }
+            for (int i = 0; i < split.Length; i++)
+            {
+                if (split[i].Length > 0)
+                { // verificamos que no este vacio
+                    query += String.Format(" AND nombre LIKE '%{0}%' ", split[i]);
                 }
-                query += " ORDER BY nombre LIMIT 10;";
-                MySqlDataReader reader = conector.Query(query);
-                if (reader != null)
+            }
+            query += " ORDER BY nombre LIMIT 10;";
+            MySqlDataReader reader = conector.Query(query);
+            if (reader != null)
+            {
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        string id = reader["id"].ToString();
-                        CJSon info = new CJSon(Procedimientos.GetVarios(id), id);
-                        lista.Add(info);
-                    }
-                    reader.Close();
+                    CJSon info = new CJSon(reader["nombre"].ToString(), reader["id"].ToString());
+                    lista.Add(info);
                 }
+                reader.Close();
             }
         }
         return lista;
-    }*/
+    }
 
     [WebMethod(EnableSession = true)]
     public List<CJSon> GetUbicacion(String q, string a)

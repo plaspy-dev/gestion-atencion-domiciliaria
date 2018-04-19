@@ -262,7 +262,28 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Examen físico, senos", 160, parent);
             Add("Examen físico, abdomen", 161, parent);
 
-            // disponible 164
+            parent = Add("MIPRES");
+            Add("Servicios", 164, parent);
+
+            parent = Add("Neonatos");
+
+            Add("Cuidados del recien nacido", 173, parent);
+            Add("Lactancia materna", 174, parent);
+            Add("Antecedentes para el embarazo", 175, parent);
+            Add("Antecedentes", 176, parent);
+            Add("Antecedentes transfuncionales", 177, parent);
+
+            Add("Valoración de la madre", 165, parent);
+            Add("Sintomas de vasos espasmo", 166, parent);
+            Add("Senos", 167, parent);
+            Add("Abdomen", 168, parent);
+            Add("Miembros inferiores", 169, parent);
+            Add("Valoración del recien nacido", 170, parent);
+            Add("Antecedentes del recien nacido", 171, parent);
+            Add("Controles", 172, parent);
+
+            // disponible 178
+
             // OrganizationExample16
             parent = Add("OrganizationExample16 - Programación");
             Add("Programa", 10017, parent);

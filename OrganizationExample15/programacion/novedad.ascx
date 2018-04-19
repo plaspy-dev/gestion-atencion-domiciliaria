@@ -9,72 +9,17 @@
             }
         });
         addDialog("#dParentNovedad", "#dNovedad");
+        $("#<%= TProfesional.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPersonalC",
+            data: {'s': '<%= HIdServicio.Value %>'},
+            idField: "<%= TProfesionalID.ClientID %>"
+        });
 
-        $("#<%= TProfesional.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPersonalC",
-                    data: "{ 'q': '" + request.term + "', 's': '<%= HIdServicio.Value %>' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#<%= TProfesionalID.ClientID %>").val(ui.item.value);
-                $("#<%= TProfesional.ClientID %>").val(ui.item.label);
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TProfesionalID.ClientID %>").val("");
-            }
-        }).change(function() { if ($(this).val() == "") $("#<%= TProfesionalID.ClientID %>").val(""); });
-
-
-        $("#<%= TProcedimiento.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetMedicamentos",
-                    data: "{ 'q': '" + request.term + "', 't': '173' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#<%= TProcedimientoID.ClientID %>").val(ui.item.value);
-                $("#<%= TProcedimiento.ClientID %>").val(ui.item.label);
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TProcedimientoID.ClientID %>").val("");
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
-            }
-        }).change(function() { if ($(this).val() == "") $("#<%= TProcedimientoID.ClientID %>").val(""); });
+        $("#<%= TProcedimiento.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetMedicamentos",
+            data: { t: 173 },
+            idField: "<%= TProcedimientoID.ClientID %>"
+        });
     });
 </script>
 </div>

@@ -374,6 +374,7 @@ a
 }
 
 .tableborder {
+    border-collapse: collapse;
 }
 
 .tda,.tdr,.tableborder>tbody>tr>td:last-child

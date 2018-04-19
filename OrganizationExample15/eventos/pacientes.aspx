@@ -22,37 +22,9 @@
                     $("#<%= BActualizar.ClientID %>").click();
                 }
             });
-            $("#<%= TCIE10.ClientID %>").autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
-                        data: "{ 'q': '" + request.term + "' }",
-                        dataType: "json",
-                        type: "POST",
-                        contentType: "application/json; charset=utf-8",
-                        dataFilter: function(data) { return data; },
-                        success: function(data) {
-                            response($.map(data.d, function(item) {
-                                return {
-                                    value: item.Value, label: item.Name
-                                }
-                            }))
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {
-                            alert(textStatus);
-                        }
-                    });
-                },
-                minLength: 3,
-                select: function(event, ui) {
-
-                    $("#<%= TCIE10Id.ClientID %>").val(ui.item.value);
-                    $("#<%= TCIE10.ClientID %>").val(ui.item.label);
-                    return false;
-                },
-                search: function(event, ui) {
-                    $("#<%= TCIE10Id.ClientID %>").val("");
-                }
+            $("#<%= TCIE10.ClientID %>")._autoComplete({
+                url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
+                idField: "<%= TCIE10Id.ClientID %>"
             });
         });
     });

@@ -1,0 +1,163 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link href="~/css/imprimir.css" type="text/css" rel="stylesheet" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Seguimiento domiciliario neonatos alto riesgo</title>
+<style type="text/css">
+	body {
+	font-size: 12px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	}
+	.fr {
+		float:right;
+	}
+	.insp {
+		white-space: nowrap;
+		display: inline-block;
+		padding-right: 20px;
+	}
+	.pl50 {
+		padding-left: 50px;
+	}
+	.pr50 {
+		padding-right: 50px;
+	}
+	#GAObstetrica,	#GRLaboratorio, #GREcografias, #GCDiagnostico { margin: 0 auto;}
+</style>
+</head>
+<body>
+<img src="~/materna/compensar.jpg" alt="logo" style="margin-left: 30px; position: absolute; width: 150px" />
+<div class="tc">
+  <h3>SEGUIMIENTO DOMICILIARIO NEONATOS ALTO RIESGO</h3></div>
+<div class="tda">
+<div class="tc"><h4>1. DATOS PERSONALES</h4></div>
+<div class="tr">FECHA: $TFecha$</div>
+</div>
+<div class="tda">
+<table style="width: 100%">
+	<tr>
+    	<td>NOMBRES</td>
+        <td colspan="2">$LNombres$</td>
+        <td>APELLIDOS</td>
+        <td colspan="2">$LApellidos$</td>
+    </tr>
+    <tr>
+    	<td>TIPO DE DOCUMENTO</td>
+        <td>$TipoDoc$</td>
+        <td>N°:</td>
+        <td>$LDocumento$</td>
+    </tr>
+    <tr>
+      <td>TIPO DE AFILIACION</td>
+      <td>$LTipoPago$</td>
+      <td>EDAD</td>
+      <td>$LEdad$</td>
+      <td>TELEFONOS</td>
+      <td>$LTelefono$</td>
+    </tr>
+    <tr>
+      <td>DIRECCION DE RESIDENCIA</td>
+      <td colspan="5">$LDireccion$</td>
+    </tr>
+    <tr>
+        <td>Hijo/a de</td>
+        <td colspan="3">$TMadreN$</td>
+        <td>No. identificación</td>
+        <td>$TMadreI$</td>
+    </tr>
+</table>
+</div>
+<br/>
+<table width="100%">
+<tr>
+    <td class="tda" style="width:50%; vertical-align: top">
+        <div class="tc"><h4>1. CUIDADOS DEL RECIEN NACIDO</h4></div>
+        $RCuidados$
+    </td>
+    <td class="tda" style="vertical-align: top">
+        <div class="tc"><h4>LACTANCIA MATERNA</h4></div>
+        $RLactancia$
+    </td>
+</tr>
+    <tr>
+        <td><b>Observaciones</b></td>
+        <td><b>Observaciones</b></td>
+    </tr>
+    <tr>
+        <td>$TOCuidados$</td>
+        <td>$TOLactancia$</td>
+    </tr>
+</table>
+<br/>
+<div class="tda">
+    <div class="tc"><h4>4. ANTECEDENTES PARA EL EMBARAZO</h4></div>
+    $RAntecedentesE$
+    $GAntecedentes1$
+    $RAntecedentesT$
+</div>
+<br/>
+<div class="tda">
+    <div class="tc"><h4>5. FORMULA OBSTETRICA</h4></div>
+    $GAObstetrica$
+</div>
+<br/>
+<div class="tda">
+    <div class="tc"><h4>VALORACION DE LA MADRE Y EL RECIEN NACIDO</h4></div>
+    <b>1. VALORACION DE LA MADRE</b><br />
+    $RValoracion$<br />
+    <b>SINTOMAS DE VASOS ESPASMO:</b> $RSintomasVE$<br />
+    <b>SENOS:</b> $RSenos$<br />
+    <b>ABDOMEN:</b> $RAbdomen$<br />
+    <b>MIEMBROS INFERIORES:</b> $RMInferiores$<br />
+</div>
+<br/>
+<div class="tda">
+    <div class="tc"><h4>2. VALORACIÓN DEL RECIÉN NACIDO</h4></div>
+    PESO AL NACER <b>$TPeso$</b> gramos.<br />
+    $GCDiagnostico$
+    $RValoracionRN$
+    $GAntecedentes$
+    $RPrevencion$
+</div>
+<br/>
+<div class="tda">
+	<div class="tc"><h4>13. INTERCONSULTAS</h4></div>
+    $ginterconsultas$
+    <br/>
+    <p class="tc">
+    "Estoy de acuerdo y he sido informada acerca de esta visita domiciliaria que recibí, no reemplaza ninguna de mis obligaciones que tengo de asistir a las citas medicas programadas o examenes complementarios"</p>
+    <table style="width: 100%">
+    	<tr>
+        	<td style="width: 50%;" class="tc pl50 pr50">
+            </td>
+            <td class="tc pl50 pr50">
+            <br/>
+            <img src="~/Image/firmas/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><img src="~/Image/sellos/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" />
+            <hr/>
+            FIRMA MEDICO
+            </td>
+        </tr>
+        <tr>
+        	<td class="pl50 pr50">
+            </td>
+            <td class="pl50 pr50">
+            	<table style="width: 100%">
+                	<tr>
+                    	<td style="width: 1px">Nombre:</td>
+			            <td class="tdb">$FuncionarioNombre$</td>
+                    </tr>
+                    <tr>
+                    	<td>RM</td>
+                        <td>$FuncionarioDocumento$</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

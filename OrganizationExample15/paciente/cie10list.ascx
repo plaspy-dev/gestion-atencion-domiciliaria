@@ -1,33 +1,12 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="cie10list.ascx.cs" Inherits="paciente_cie10list" %>
 <script type="text/javascript">
     $inicio(function () {
-        $("#<%= TCIE10.ClientID %>").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
-                    data: "{}",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function (data) { return data; },
-                    success: function (data) {
-                        response($.map(data.d, function (item) {
-                            return {
-                                value: item.Name, label: item.Name
-                            }
-                        }))
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 2,
-            select: function (event, ui) {
-            },
-            search: function (event, ui) {
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
+        $("#<%= TCIE10.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
+            map: function (item) {
+                item.label = item.Name;
+                item.value = item.Value;
+                return item;
             }
         });
     });

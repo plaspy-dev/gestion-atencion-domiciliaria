@@ -40,6 +40,6 @@ public partial class rh_funcionarioSimple : System.Web.UI.UserControl
     {
         if (!Page.ClientScript.IsClientScriptIncludeRegistered("funcionarioSimple"))
             Page.ClientScript.RegisterClientScriptInclude("funcionarioSimple", ResolveUrl("~/rh/funcionarioSimple.ascx.js"));
-        Page.ClientScript.RegisterClientScriptBlock(typeof(string), "funcionarioSimpleI", "initFuncionario('" + TFuncionario.ClientID + "', '" + TFuncionarioID.ClientID + "');", true);
+        Page.ClientScript.RegisterClientScriptBlock(typeof(string), "fs" + ID, "initFuncionario('" + TFuncionario.ClientID + "', '" + TFuncionarioID.ClientID + "');", true);
     }
 }

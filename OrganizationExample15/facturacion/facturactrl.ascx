@@ -2,36 +2,12 @@
     <tr>
         <td>
             <script type="text/javascript">
-                addFunctionToStart(function() {
-                    $("#<%= TAutorizacion.ClientID %>").autocomplete({
-                        source: function(request, response) {
-                            $.ajax({
-                                url: "../webservices/servicios.asmx/GetAutorizacionesOPaciente",
-                                data: "{ 'q': '" + request.term + "' }",
-                                dataType: "json",
-                                type: "POST",
-                                contentType: "application/json; charset=utf-8",
-                                dataFilter: function(data) { return data; },
-                                success: function(data) {
-                                    response($.map(data.d, function(item) {
-                                        return {
-                                            value: item.value, label: item.item
-                                        }
-                                    }))
-                                },
-                                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                                    alert(textStatus);
-                                }
-                            });
-                        },
-                        minLength: 3,
-                        search: function() {
-                            $("#<%= TAutorizacionID.ClientID %>").val("");
-                        },
-                        select: function(event, ui) {
-                            $("#<%= TAutorizacionID.ClientID %>").val(ui.item.value);
-                        }
+                addFunctionToStart(function () {
+                    $("#<%= TAutorizacion.ClientID %>")._autoComplete({
+                        url: "../webservices/servicios.asmx/GetAutorizacionesOPaciente",
+                        idField: "<%= TAutorizacionID.ClientID %>"
                     });
+
                     $("#<%= TDevolucion.ClientID %>,#<%= TPago.ClientID %>").datepicker({
                         onSelect: function () {
                         $("#<%= BD.ClientID %>").click();

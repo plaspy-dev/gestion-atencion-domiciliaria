@@ -275,6 +275,138 @@ $.fn.sortSelect = function() {
     })
     return this.empty().append(op).val(sel);
 }
+/*
+ * url
+ * data
+ * idField
+ * redirectURL
+ * label
+ */ 
+$.fn._autoComplete = function (options) {
+    options = options || {};
+    this.autocomplete({
+        source: function (request, response) {
+            var data = options.data || {};
+            if (typeof (data) == "function")
+                data = data();
+            data.q = request.term;
+            $.ajax({
+                url: options.url,
+                data: JSON.stringify(data),
+                dataType: "json",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataFilter: function (data) { return data; },
+                success: function (data) {
+                    response($.map(data.d, function (item) {
+                        if (options.map) 
+                            return options.map(item);
+                        return {
+                            value: item.value, label: item.item
+                        }
+                    }))
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+                }
+            });
+        },
+        minLength: 3,
+        search: function () {
+            if (options.idField)
+                $("#" + options.idField).val("");
+        },
+        select: function (event, ui) {
+            if (options.idField) {
+                $("#" + options.idField).val(ui.item.value);
+            }
+            if (options.label)
+                $(this).val(options.label(ui.item));
+            else $(this).val(ui.item.label);
+            if (options.redirectURL)
+                window.location = options.redirectURL + ui.item.value;
+            if (options.onSelect)
+                options.onSelect(ui.item);
+            return false;
+        }
+    }).change(function () {
+        if (options.idField && $(this).val().length == 0)
+            $("#" + options.idField).val("");
+    });
+    return this;
+}
+
+/*
+ * readonly
+ * idMirrorTextArea
+ */ 
+$.fn._tinyMCE = function (options) {
+
+    options = options || {};
+    var length = tinyMCE.editors.length;
+    for (var i = length; i > 0; i--) {
+        tinyMCE.editors[i - 1].remove();
+    };
+    var ctrlid = "#" + this.attr("id");
+
+    function rel(text) {
+        text = text.replace(/\r/gi, '');
+        text = text.replace(/&nbsp;/gi, '');
+        while (text[0] == '\n') {
+            text = text.substring(1);
+        }
+        text = text.split('\n');
+        var szfinal = "";
+        for (x = 0; x < text.length; x++) {
+            text[x] = text[x].trim();
+            if (text[x].match(/[\S]/g) != null) {
+                if (szfinal.length)
+                    szfinal += "\n";
+                szfinal += text[x];
+            }
+        }
+        // text = text.join('\n').replace(/\n{2,}/g, '\n');
+        return szfinal;
+    }
+
+    function lim() {
+        var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
+        $(ctrlid).val(limpio);
+        var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
+        editor.setContent(completa);
+    }
+
+    tinyMCE.init({
+        mode: "exact"
+        , selector: "#" + options.idMirrorTextArea
+        , readonly: options.readonly
+        , menubar: false
+        , statusbar: false
+        , toolbar: false
+        , valid_elements: "ol,li,p,br"
+        , setup: function (ed) {
+            editor = ed;
+            ed.on('submit', function (e) {
+                lim();
+            });
+            ed.on('init', function (ed) {
+                var completa = $(ctrlid).val();
+                completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
+                editor.setContent(completa);
+                $("#" + options.idMirrorTextArea).remove();
+            });
+            ed.on('blur', function (e) {
+                tinyMCE.triggerSave();
+                lim();
+            });
+        }
+        , paste_preprocess: function (pl, o) {
+            o.content = o.content.replace(/<\S[^><]*>/g, "");
+        }
+    });
+
+    return this;
+}
 
 function $inicio(funcion) {
     funcionesInicio.push(funcion);

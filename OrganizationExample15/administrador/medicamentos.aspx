@@ -9,32 +9,10 @@
             collapsible: true,
             active: false
         });
-        $("#<%= TCodigo.ClientID%>,#<%= TNombre.ClientID %> ").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetMedicamentos",
-                    data: "{ 'q': '" + request.term + "', 't': " + $("#<%= LTipos.ClientID %>").val() + " }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $.goURL("imp=" + ui.item.value);
-                return false;
-            }
+        $("#<%= TCodigo.ClientID%>,#<%= TNombre.ClientID %> ")._autoComplete({
+            url: "../webservices/servicios.asmx/GetMedicamentos",
+            data: function() { return { t: $("#<%= LTipos.ClientID %>").val() }},
+            redirectURL: "<%= Request.Url.AbsolutePath + "?imp=" %>"
         });
     });
     </script>

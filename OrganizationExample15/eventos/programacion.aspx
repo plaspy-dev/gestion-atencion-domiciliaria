@@ -23,64 +23,15 @@
 	}
 </style>
 <script type="text/javascript">
-    $inicio(function() {
-        $("#<%= TNombre.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetEventos",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.item, label: item.value
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
-                $.goURL("id=" + ui.item.value);
-                return false;
-            }
+    $inicio(function () {
+        $("#<%= TNombre.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetEventos",
+			redirectURL: "<%= Request.Url.AbsolutePath + "?id=" %>"
         });
-        $("#<%= TPersonal.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPersonalOrganizationExample16",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 2,
-            select: function(event, ui) {
-                $('#<%= TPersonal.ClientID %>').val(ui.item.label);
-                $('#<%= TIdPersonal.ClientID %>').val(ui.item.value);
-                return false;
-            },
-            search: function(event, ui) {
-                $('#<%= TIdPersonal.ClientID %>').val("");
-            }
+
+        $("#<%= TPersonal.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPersonalOrganizationExample16",
+            idField: "<%= TIdPersonal.ClientID %>"
         });
     });
 </script>

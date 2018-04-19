@@ -43,33 +43,11 @@
                     expires: 1
                 }
             });
-            $("#<%= TApellidos.ClientID %>,#<%= TNombres.ClientID %>,#<%= TDocumento.ClientID %>").autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "../webservices/servicios.asmx/GetPersonal",
-                        data: "{ 'q': '" + request.term + "' }",
-                        dataType: "json",
-                        type: "POST",
-                        contentType: "application/json; charset=utf-8",
-                        dataFilter: function(data) { return data; },
-                        success: function(data) {
-                            response($.map(data.d, function(item) {
-                                return {
-                                    value: item.value, label: item.item
-                                }
-                            }))
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {
-                            alert(textStatus);
-                        }
-                    });
-                },
-                minLength: 3,
-                select: function(event, ui) {
-                    $.goURL("fid=" + ui.item.value);
-                    return false;
-                }
-            });
+            $("#<%= TApellidos.ClientID %>,#<%= TNombres.ClientID %>,#<%= TDocumento.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPersonal",
+			redirectURL: "<%= Request.Url.AbsolutePath + "?fid=" %>"
+        });
+            
             $("#<%= DTipoContrato.ClientID %>").change(function() {
                 var texto;
                 if ($("#<%= DTipoContrato.ClientID %>").val() == "1")
@@ -625,7 +603,7 @@
                                             <asp:DataList ID="DDocumentosContratista" runat="server" RepeatColumns="4" DataSourceID="SDocumentosContratista"
                                                 ShowFooter="False" ShowHeader="False" DataKeyField="docId">
                                                 <ItemTemplate>
-                                                    <asp:CheckBox ID="CDocumentos" runat="server" Text='<%#bind("docDesc") %>' Checked='<%# Eval("sel").ToString()=="1" %>' />
+                                                    <asp:CheckBox ID="CDocumentos" runat="server" Text='<%# Bind("docDesc") %>' Checked='<%# Eval("sel").ToString()=="1" %>' />
                                                 </ItemTemplate>
                                             </asp:DataList>
                                             <asp:SqlDataSource ID="SDocumentosContratista" runat="server" 

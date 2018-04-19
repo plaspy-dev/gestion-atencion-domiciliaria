@@ -101,6 +101,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 query += "acompanante_direccion";
                 query += "ciudad";
                 query += "ips_remitente";
+                query += "presentacion";
 
                 using (CConector conector = new CConector())
                 {
@@ -163,6 +164,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         Utilidades.SelectInDropDown(DAcompanteEstadoCivil, reader["acompanante_estadocivil"]);
                         Utilidades.SelectInDropDown(DCiudad, reader["ciudad"]);
                         Utilidades.SelectInDropDown(DIPS, reader["ips_remitente"]);
+                        TPresentacion.Text = Query.GetFromMySQLDate(reader["presentacion"], true);
 
                         if (TFechaRetiroClinicaHeridas.Text.Length > 0) {
                             TFechaRetiroClinicaHeridas.ReadOnly = !usuario.CanAdmin();
@@ -258,9 +260,14 @@ public partial class seguimiento_paciente : System.Web.UI.Page
 
     protected void BAceptar_Click(object sender, EventArgs e)
     {
+        RFP.Enabled=
         RIPS.Enabled = DAsegurador.SelectedItem.Text.ToLower().Contains("compensar");
+        Validate("");
         if (!IsValid)
+        {
+            Logs.Write("Invalid page");
             return;
+        }
         Query query = new Query("paciente");
 
         query["tdocId"] = DDocumento.SelectedValue;
@@ -307,6 +314,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         query["acompanante_direccion"] = TAcompananateDireccion.Text;
         query["ciudad"] = DCiudad.SelectedValue;
         query["ips_remitente"] = DIPS.SelectedValue;
+        query["presentacion"] = Query.GetMySQLDateFormat(TPresentacion.Text, true);
 
         using (CConector conector = new CConector())
         {

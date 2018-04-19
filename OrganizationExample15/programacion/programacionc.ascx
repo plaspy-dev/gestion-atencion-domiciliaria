@@ -60,38 +60,13 @@
         if (!addDialog("#<%= PConfirmar.ClientID %>", "#dConfirmar"))
             addDialog("#dParentProgramacion", "#dProgramacion");
 
-        $("#<%= TProfesional.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPersonalCA",
-                    data: "{ 'q': '" + request.term + "', 's': '" + $("#<%= DActividad.ClientID %>").val() + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
+        $("#<%= TProfesional.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPersonalCA",
+            data: function () {
+                return { s: $("#<%= DActividad.ClientID %>").val() };
             },
-            minLength: 3,
-            select: function(event, ui) {
-                $("#<%= TProfesionalID.ClientID %>").val(ui.item.value);
-                $("#<%= TProfesional.ClientID %>").val(ui.item.label);
-                return false;
-            },
-            search: function(event, ui) {
-                $("#<%= TProfesionalID.ClientID %>").val("");
-                // $('#ctl00_cph_DCDiagnostico_TDescripcion').val("");
-            }
-        }).change(function() { if ($(this).val() == "") $("#<%= TProfesionalID.ClientID %>").val(""); });
+            idField: "<%= TProfesionalID.ClientID %>"
+        });
     });
 </script></div>
 <div id="dParentProgramacion">

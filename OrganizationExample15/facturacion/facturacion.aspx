@@ -10,64 +10,19 @@ addFunctionToStart(function() {
                 total+=parseInt($(this).autoNumeric('get')) || 0;
             });
             $("#<%= LVFactura.ClientID %>").html(currencyFormatted(valor_factura+total));
-        }).change();
-        $("#<%= TPaciente.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetPacienteI",
-                    data: "{ 'q': '" + request.term + "', 'e': '<%= ViewState["entidades"].ToString() %>' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
+    }).change();
+    $("#<%= TPaciente.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetPacienteI",
+            data: { 'e': '<%= ViewState["entidades"].ToString() %>' },
+        label: function (item) { return item.value; },
+            onSelect: function () { $("#<%= BIr.ClientID %>").click();}
+    });
 
-                $("#<%= TPaciente.ClientID %>").val(ui.item.value);
-                $("#<%= BIr.ClientID %>").click();
-                return false;
-            }
-        });
-        $("#<%= TNumero.ClientID %>").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../webservices/servicios.asmx/GetAutorizaciones",
-                    data: "{ 'q': '" + request.term + "' }",
-                    dataType: "json",
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataFilter: function(data) { return data; },
-                    success: function(data) {
-                        response($.map(data.d, function(item) {
-                            return {
-                                value: item.value, label: item.item
-                            }
-                        }))
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(textStatus);
-                    }
-                });
-            },
-            minLength: 3,
-            select: function(event, ui) {
+    $("#<%= TNumero.ClientID %>")._autoComplete({
+            url: "../webservices/servicios.asmx/GetAutorizaciones",
+			redirectURL: "<%= Request.Url.AbsolutePath + "?aut=" %>"
+    });
 
-                $.goURL("aut=" + ui.item.value);
-                return false;
-            }
-        });
         $("#<%= PAutorizaciones.ClientID %>").accordion({
             autoHeight: false,
             collapsible: true,

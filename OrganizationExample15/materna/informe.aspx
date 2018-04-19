@@ -23,6 +23,7 @@
             <td><asp:DropDownList runat="server" ID="DTipo">
                 <asp:ListItem Text="Gestante" Value="1"></asp:ListItem>
                 <asp:ListItem Text="Posparto" Value="2"></asp:ListItem>
+                <asp:ListItem Text="NeoNato" Value="3"></asp:ListItem>
                 </asp:DropDownList></td>
             <td>
                 <asp:Button runat="server" ID="BBuscar" Text="Actualizar" OnClick="BBuscar_Click" />
@@ -289,11 +290,119 @@
                     <asp:BoundField HeaderText="13. INTERCONSULTAS  13.1 N°                     13.2 Descripcion" DataField="tinterconsultas" SortExpression="tinterconsultas"/>
                 </Columns>
             </asp:GridView>
+
+
+            <asp:GridView ID="GNeonato" Visible="false" runat="server" DataSourceID="SNeonato" 
+                AutoGenerateColumns="False" EmptyDataText="No se encontraron seguimientos"
+                AllowPaging="True" PageSize="50" AllowSorting="false">
+                <RowStyle CssClass="GridRow"></RowStyle>
+                <FooterStyle CssClass="GridFooter"></FooterStyle>
+                <PagerStyle CssClass="GridPager" ForeColor="White"></PagerStyle>
+                <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
+                <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
+                <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
+                <Columns>
+                    <asp:BoundField HeaderText="#" DataField="" SortExpression=""/>
+<asp:BoundField HeaderText="MES" DataField="mes" SortExpression="mes"/>
+<asp:BoundField HeaderText="1 NOMBRE" DataField="pacPNombre" SortExpression="pacPNombre"/>
+<asp:BoundField HeaderText="2 NOMBRE" DataField="pacSNombre" SortExpression="pacSNombre"/>
+<asp:BoundField HeaderText="1 APELLIDO" DataField="pacPApellido" SortExpression="pacPApellido"/>
+<asp:BoundField HeaderText="2 APELLIDO" DataField="pacSApellido" SortExpression="pacSApellido"/>
+<asp:BoundField HeaderText="TIPIDE" DataField="tipodocumento" SortExpression="tipodocumento"/>
+<asp:BoundField HeaderText="NUMIDE" DataField="pacDocumento" SortExpression="pacDocumento"/>
+<asp:BoundField HeaderText="CUMPLE CRITERIO VISITA" DataField="" SortExpression=""/>
+<asp:BoundField HeaderText="AFILIACION" DataField="tipoafiliacion" SortExpression="tipoafiliacion"/>
+<asp:BoundField HeaderText="DIRECCION" DataField="direccion" SortExpression="direccion"/>
+<asp:BoundField HeaderText="TELEFONOS" DataField="telefonos" SortExpression="telefonos"/>
+<asp:BoundField HeaderText="IPS HOSPITALARIA" DataField="ips" SortExpression="ips"/>
+<asp:BoundField HeaderText="FECHA REMISION" DataField="" SortExpression=""/>
+<asp:BoundField HeaderText="DIAGNOSTICO" DataField="cie10" SortExpression="cie10"/>
+<asp:BoundField HeaderText="CRITERIO DE PRIORIZACION" DataField="" SortExpression=""/>
+<asp:BoundField HeaderText="USUARIO CONTACTADO" DataField="" SortExpression=""/>
+<asp:BoundField HeaderText="SE REALIZA VISITA" DataField="" SortExpression=""/>
+<asp:HyperLinkField HeaderText="FECHA DE LA VISITA" DataTextField="fecha" SortExpression="fecha" DataNavigateUrlFields="id,paciente" Target="_blank" DataNavigateUrlFormatString="~/materna/neonato.aspx?pid={1}&snid={0}" />
+<asp:BoundField HeaderText="OBSERVACIONES" DataField="" SortExpression=""/>
+                    <asp:TemplateField HeaderText="Recomendaciones en Puericultura">
+                        <ItemTemplate>
+                            <asp:Label runat="server" ID="L1" Text='<%# GetData(Eval("id").ToString(),"puericultura") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Consejeria en Lactancia Materna">
+                        <ItemTemplate>
+                            <asp:Label runat="server" ID="L2" Text='<%# GetData(Eval("id").ToString(),"consejería") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Deteccion de signos de alarma">
+                        <ItemTemplate>
+                            <asp:Label runat="server" ID="L3" Text='<%# GetData(Eval("id").ToString(),"alarma") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Prevencion de enfermedad respiratoria">
+                        <ItemTemplate>
+                            <asp:Label runat="server" ID="L4" Text='<%# GetData(Eval("id").ToString(),"respiratoria")=="1" ? "SI" :"NO" %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Ingreso Programa Madre Canguro">
+                        <ItemTemplate>
+                            <asp:Label runat="server" ID="L5" Text='<%# GetData(Eval("id").ToString(),"canguro")=="1" ? "SI" :"NO" %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Control con Pediatria Crecimiento y Desarrollo">
+                        <ItemTemplate>
+                            <asp:Label runat="server" ID="L6" Text='<%# GetData(Eval("id").ToString(),"crecimiento")=="1" ? "SI" :"NO" %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:BoundField HeaderText="Interconsulta con especialista y/o remision" SortExpression="interconsultas" DataField="interconsultas" />
+                    <asp:TemplateField HeaderText="Resumen acciones realizadas">
+                        <ItemTemplate>
+                            <asp:Label runat="server" ID="L8" Text='<%# GetData(Eval("id").ToString(),"resumen") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
+
         </ContentTemplate>
     </asp:UpdatePanel>
     <div style="text-align: right;">
         <asp:Label ID="LTotal" runat="server" Text=""></asp:Label>
     </div>
+    <asp:SqlDataSource ID="SNeonato" runat="server" 
+                ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
+                ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
+                SelectCommand="SELECT 
+                            seguimiento_neonato.id
+                            ,MONTH(seguimiento_neonato.fecha) mes
+                            ,seguimiento_neonato.paciente
+                            ,paciente.pacPNombre
+                            ,paciente.pacSNombre
+                            ,paciente.pacPApellido
+                            ,paciente.pacSApellido
+                            ,tipo_documento.tdocDescripcion AS tipodocumento
+                            ,paciente.pacDocumento
+                            ,paciente.pacDireccion AS direccion
+                            ,CONCAT(IFNULL(paciente.pacTelefono,''), ' ', IFNULL(paciente.pacCelular,'')) AS telefonos
+                            ,CASE paciente.pacTipoAfiliado WHEN 2 THEN 'Beneficiario' WHEN 1 THEN 'Cotizante' END as tipoafiliacion
+                            ,ips.nombre ips
+                            ,seguimiento_neonato.fecha
+                            ,seguimiento_neonato.data->>'$.cie10' AS cie10
+                            ,seguimiento_neonato.data->>'$.TInterconsultas' interconsultas
+
+                            FROM seguimiento_neonato
+                            LEFT JOIN paciente ON (paciente.pacId=seguimiento_neonato.paciente)
+                            LEFT JOIN tipo_documento ON (tipo_documento.tdocId=paciente.tdocId)
+                            LEFT JOIN recurso_humano ON (recurso_humano.perId=seguimiento_neonato.funcionario)
+                            LEFT JOIN paciente_tipo_pago ON (paciente_tipo_pago.pdirId=paciente.pdirId)
+                            LEFT JOIN varios ips ON (paciente.ips_remitente=ips.id)
+                            WHERE 
+                            seguimiento_neonato.fecha BETWEEN STR_TO_DATE(@inicio, '%d/%m/%Y') AND STR_TO_DATE(@fin, '%d/%m/%Y')
+                            ORDER BY seguimiento_neonato.fecha;">
+                 <SelectParameters>
+                    <asp:ControlParameter ControlID="TInicio" Name="inicio" PropertyName="Text" />
+                    <asp:ControlParameter ControlID="TFin" Name="fin" PropertyName="Text" />
+                    <asp:ControlParameter ControlID="DTipo" Name="tipo" PropertyName="SelectedValue" />
+                 </SelectParameters>
+    </asp:SqlDataSource>
+
     <asp:SqlDataSource ID="SResultados" runat="server" 
                 ConnectionString="<%$ ConnectionStrings:MySQLConnectionString %>" 
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
