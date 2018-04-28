@@ -111,8 +111,7 @@
                                     <asp:ListItem Value="0" Text="No"></asp:ListItem>
                                 </asp:RadioButtonList>
                                 <span><%# GetHeader(Eval("Nombre")) %>
-                                    <asp:RequiredFieldValidator ControlToValidate="R" ErrorMessage="Por favor seleccione un valor." ID="V" 
-	                                    runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                    <asp:RequiredFieldValidator runat="server" ID="E" Display="Dynamic" SetFocusOnError="true" ControlToValidate="R" ErrorMessage='<%# string.Format("Por favor seleccione un valor para {0}", Eval("Nombre")) %>'>*</asp:RequiredFieldValidator>
                                 </span>
                             </ItemTemplate>
                         </asp:TemplateField>
@@ -142,8 +141,7 @@
                                     <asp:ListItem Value="0" Text="No"></asp:ListItem>
                                 </asp:RadioButtonList>
                                 <span><%# GetHeader(Eval("Nombre")) %>
-                                    <asp:RequiredFieldValidator ControlToValidate="R" ErrorMessage="Por favor seleccione un valor." ID="V" 
-	                                    runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                    <asp:RequiredFieldValidator runat="server" ID="E" Display="Dynamic" SetFocusOnError="true" ControlToValidate="R" ErrorMessage='<%# string.Format("Por favor seleccione un valor para {0}", Eval("Nombre")) %>'>*</asp:RequiredFieldValidator>
                                 </span>
                             </ItemTemplate>
                         </asp:TemplateField>
@@ -171,7 +169,10 @@
                     <ItemTemplate>
                         <asp:HiddenField runat="server" ID="H" Value='<%# Eval("id") %>' />
                         <div class="dant">
-                            <span><%# GetHeader(Eval("Nombre")) %></span><asp:TextBox runat="server" ID="T" Text='<%# Eval("Value") %>'></asp:TextBox>
+                            <span><%# GetHeader(Eval("Nombre")) %>
+                                <asp:RequiredFieldValidator runat="server" ID="R" Display="Dynamic" SetFocusOnError="true" ControlToValidate="T" ErrorMessage='<%# string.Format("Por favor ingrese un valor para {0}", Eval("Nombre")) %>'>*</asp:RequiredFieldValidator>
+                            </span>
+                            <asp:TextBox runat="server" ID="T" Text='<%# Eval("Value") %>'></asp:TextBox>
                         </div>
                     </ItemTemplate>
                 </asp:Repeater>
@@ -204,8 +205,7 @@
                                 <asp:ListItem Value="0" Text="No"></asp:ListItem>
                             </asp:RadioButtonList>
                             <span><%# GetHeader(Eval("Nombre")) %>
-                                <asp:RequiredFieldValidator ControlToValidate="R" ErrorMessage="Por favor seleccione un valor." ID="V" 
-	                                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                <asp:RequiredFieldValidator runat="server" ID="E" Display="Dynamic" SetFocusOnError="true" ControlToValidate="R" ErrorMessage='<%# string.Format("Por favor seleccione un valor para {0}", Eval("Nombre")) %>'>*</asp:RequiredFieldValidator>
                             </span>
                         </div>
                     </ItemTemplate>
@@ -231,7 +231,9 @@
                     <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
                     <Columns>
                         <asp:TemplateField>
-                            <ItemTemplate><%# GetHeader(Eval("Nombre")) %></ItemTemplate>
+                            <ItemTemplate><%# GetHeader(Eval("Nombre")) %>
+                                <asp:RequiredFieldValidator runat="server" ID="R" Display="Dynamic" SetFocusOnError="true" ControlToValidate="T" ErrorMessage='<%# string.Format("Por favor ingrese un valor para {0}", Eval("Nombre")) %>'>*</asp:RequiredFieldValidator>
+                            </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField ItemStyle-Width="100%">
                             <ItemTemplate>
@@ -264,7 +266,10 @@
                     <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
                     <Columns>
                         <asp:TemplateField HeaderText="Concepto">
-                            <ItemTemplate><asp:Label runat="server" ID="L" Text='<%# GetHeader(Eval("Nombre")) %>'></asp:Label></ItemTemplate>
+                            <ItemTemplate><asp:Label runat="server" ID="L" Text='<%# GetHeader(Eval("Nombre")) %>'></asp:Label>
+                                <asp:RequiredFieldValidator runat="server" ID="R" Display="Dynamic" SetFocusOnError="true" ControlToValidate="T" ErrorMessage='<%# string.Format("Por favor ingrese un valor para {0}", Eval("Nombre")) %>'>*</asp:RequiredFieldValidator>
+                                <asp:RequiredFieldValidator runat="server" ID="E" Display="Dynamic" SetFocusOnError="true" ControlToValidate="T2" ErrorMessage='<%# string.Format("Por favor ingrese un valor para {0}", Eval("Nombre")) %>'>*</asp:RequiredFieldValidator>
+                            </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Numero">
                             <ItemTemplate>
@@ -310,8 +315,7 @@
                                 <asp:ListItem Value="0" Text="No"></asp:ListItem>
                             </asp:RadioButtonList>
                             <span><%# GetHeader(Eval("Nombre")) %>
-                                <asp:RequiredFieldValidator ControlToValidate="R" ErrorMessage="Por favor seleccione un valor." ID="V" 
-	                                runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator>
+                                <asp:RequiredFieldValidator runat="server" ID="E" Display="Dynamic" SetFocusOnError="true" ControlToValidate="T" ErrorMessage='<%# string.Format("Por favor ingrese un valor para {0}", Eval("Nombre")) %>'>*</asp:RequiredFieldValidator>
                             </span>
                         </div>
                     </ItemTemplate>
@@ -497,7 +501,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="4" class="celdaTitulo">Diagnostico</td>
+            <td colspan="4" class="celdaTitulo">Diagnóstico</td>
         </tr>
         <tr class="stripped">
             <td colspan="4">
@@ -505,11 +509,11 @@
             </td>
         </tr>
         <tr>
-            <td>PATOLOGIA(S) ASOCIADAS (Al egreso)</td>
+            <td>PATOLOGIA(S) ASOCIADAS (Al egreso)<asp:RequiredFieldValidator ControlToValidate="TPatologiasEgreso" ErrorMessage="Por favor ingrese una patología de egreso." ID="R5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td colspan="3"><asp:TextBox runat="server" ID="TPatologiasEgreso" TextMode="MultiLine" Width="100%" Height="50px"></asp:TextBox></td>
         </tr>
         <tr class="stripped">
-            <td>PATOLOGIAS IDENTIFICADAS (En la visita)</td>
+            <td>PATOLOGIAS IDENTIFICADAS (En la visita)<asp:RequiredFieldValidator ControlToValidate="TPatologiaVisita" ErrorMessage="Por favor ingrese una patología visita." ID="R6" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td colspan="3"><asp:TextBox runat="server" ID="TPatologiaVisita" TextMode="MultiLine" Width="100%" Height="50px"></asp:TextBox></td>
         </tr>
         <tr>
@@ -522,7 +526,9 @@
                     <SelectedRowStyle CssClass="GridSelRow"></SelectedRowStyle>
                     <Columns>
                         <asp:TemplateField ItemStyle-Width="30%">
-                            <ItemTemplate><%# GetHeader(Eval("Nombre")) %></ItemTemplate>
+                            <ItemTemplate><%# GetHeader(Eval("Nombre")) %>
+                                <asp:RequiredFieldValidator runat="server" ID="R" Display="Dynamic" SetFocusOnError="true" ControlToValidate="T" ErrorMessage='<%# string.Format("Por favor ingrese un valor para {0}", Eval("Nombre")) %>'>*</asp:RequiredFieldValidator>
+                            </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
@@ -559,7 +565,7 @@
             <td colspan="4" class="celdaTitulo">Valoración del riesgo psicosocial</td>
         </tr>
         <tr class="stripped">
-            <td colspan="2">Valoración del riesgo psicosocial</td>
+            <td colspan="2">Valoración del riesgo psicosocial<asp:RequiredFieldValidator ControlToValidate="RRPsicosocial" ErrorMessage="Por favor seleccione un riesgo psicosocial." ID="R7" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td colspan="2">
                 <asp:RadioButtonList runat="server" ID="RRPsicosocial" RepeatColumns="2">
                     <asp:ListItem Text="Alto" Value="1"></asp:ListItem>
@@ -568,7 +574,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2">Valoración del riesgo obstetrico</td>
+            <td colspan="2">Valoración del riesgo obstetrico<asp:RequiredFieldValidator ControlToValidate="RRObstetrico" ErrorMessage="Por favor seleccione un riesgo obstetrico." ID="R8" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
             <td colspan="2">
                 <asp:RadioButtonList runat="server" ID="RRObstetrico" RepeatColumns="2">
                     <asp:ListItem Text="Alto" Value="1"></asp:ListItem>
@@ -577,7 +583,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="4" class="celdaTitulo">Interconsultas</td>
+            <td colspan="4" class="celdaTitulo">Interconsultas<asp:RequiredFieldValidator ControlToValidate="TInterconsultas" ErrorMessage="Por favor ingrese unas interconsultas." ID="R9" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
         </tr>
         <tr>
             <td colspan="4">

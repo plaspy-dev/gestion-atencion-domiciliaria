@@ -22,7 +22,11 @@ public partial class terapeutico_evolucion : System.Web.UI.Page
             TFecha.Text = Query.GetFromMySQLDate(DateTime.Now.Date, true);
             UCFuncionario.IdFuncionario = usuario["personal"];
             TTA.Focus();
-            DTV.MinumunValue = DateTime.Now.AddDays(-2);
+            if (DateTime.Now.DayOfWeek == DayOfWeek.Monday)
+                DTV.MinumunValue = DateTime.Now.Date;
+            else if (DateTime.Now.DayOfWeek == DayOfWeek.Tuesday)
+                DTV.MinumunValue = DateTime.Now.AddDays(-1).Date;
+            else DTV.MinumunValue = DateTime.Now.AddDays(-2);
             // DTV.MinumunValue = DateTime.Now.AddMonths(-1);
 
             DTV.MaximunValue = DateTime.Now.AddMinutes(1);

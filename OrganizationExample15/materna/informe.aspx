@@ -302,8 +302,8 @@
                 <HeaderStyle CssClass="GridHeader" ForeColor="White"></HeaderStyle>
                 <AlternatingRowStyle CssClass="GridAltRow"></AlternatingRowStyle>
                 <Columns>
-                    <asp:BoundField HeaderText="#" DataField="" SortExpression=""/>
-<asp:BoundField HeaderText="MES" DataField="mes" SortExpression="mes"/>
+                    <asp:BoundField HeaderText="#" DataField="row" SortExpression="row"/>
+<asp:BoundField HeaderText="MES" DataField="fecha" SortExpression="fecha" DataFormatString="{0:MMMM}" />
 <asp:BoundField HeaderText="1 NOMBRE" DataField="pacPNombre" SortExpression="pacPNombre"/>
 <asp:BoundField HeaderText="2 NOMBRE" DataField="pacSNombre" SortExpression="pacSNombre"/>
 <asp:BoundField HeaderText="1 APELLIDO" DataField="pacPApellido" SortExpression="pacPApellido"/>
@@ -329,7 +329,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Consejeria en Lactancia Materna">
                         <ItemTemplate>
-                            <asp:Label runat="server" ID="L2" Text='<%# GetData(Eval("id").ToString(),"consejería") %>'></asp:Label>
+                            <asp:Label runat="server" ID="L2" Text='<%# GetData(Eval("id").ToString(),"consejeria") %>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Deteccion de signos de alarma">
@@ -371,8 +371,8 @@
                 ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                 SelectCommand="SELECT 
                             seguimiento_neonato.id
-                            ,MONTH(seguimiento_neonato.fecha) mes
                             ,seguimiento_neonato.paciente
+                            ,@row:=@row+1 row
                             ,paciente.pacPNombre
                             ,paciente.pacSNombre
                             ,paciente.pacPApellido
@@ -384,10 +384,10 @@
                             ,CASE paciente.pacTipoAfiliado WHEN 2 THEN 'Beneficiario' WHEN 1 THEN 'Cotizante' END as tipoafiliacion
                             ,ips.nombre ips
                             ,seguimiento_neonato.fecha
-                            ,seguimiento_neonato.data->>'$.cie10' AS cie10
+                            ,(SELECT GROUP_CONCAT(CONCAT(cie10.cieCodDx,'-',cie10.cirDescripcion)) FROM cie10 WHERE cie10.cieCodDx=CONVERT(seguimiento_neonato.data->>'$.cie10' USING latin1)) cie10
                             ,seguimiento_neonato.data->>'$.TInterconsultas' interconsultas
-
                             FROM seguimiento_neonato
+                            JOIN (SELECT @row:=0) r
                             LEFT JOIN paciente ON (paciente.pacId=seguimiento_neonato.paciente)
                             LEFT JOIN tipo_documento ON (tipo_documento.tdocId=paciente.tdocId)
                             LEFT JOIN recurso_humano ON (recurso_humano.perId=seguimiento_neonato.funcionario)
