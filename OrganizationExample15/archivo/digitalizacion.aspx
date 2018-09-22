@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Digitalización" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="digitalizacion.aspx.cs" Inherits="archivo_digitalizacion" %>
+﻿<%@ Page Title="Digitalización" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="archivo_digitalizacion" Codebehind="digitalizacion.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Bitácora" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="bitacora.aspx.cs" Inherits="entrega_turno_bitacora" %>
+﻿<%@ Page Title="Bitácora" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="entrega_turno_bitacora" Codebehind="bitacora.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">

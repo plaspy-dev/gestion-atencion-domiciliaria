@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Autorizaciones masivas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="amasivas.aspx.cs" Inherits="admisiones_amasivas" %>
+﻿<%@ Page Title="Autorizaciones masivas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="admisiones_amasivas" Codebehind="amasivas.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">

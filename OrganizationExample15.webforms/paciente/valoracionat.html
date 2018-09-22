@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/imprimir.css" type="text/css" rel="stylesheet" />
+<title>Valoración</title>
+<style type="text/css">
+	body {
+	font-size: 12px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	}
+</style>
+</head>
+<body>
+<table width="100%" border="0"><!-- datospaciente -->
+  <tr>
+    <td colspan="5"><table width="100%" border="0">
+      <tr>
+        <td><p><strong>VALORACIÓN</strong></p>
+          <p><strong>OrganizationExample15 SAS</strong><br />
+          NIT. 000.000.015-0</p></td>
+        <td valign="bottom"><p>&nbsp;</p>          </td>
+        <td align="right" valign="middle"><br />
+          <img src="../imgs/Logo.jpg" width="170" height="60" alt="logo" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr bgcolor="#FFFFFF">
+    <td colspan="5"><fieldset>
+    <strong>
+    <legend></legend>
+      </strong>
+    <table width="100%">
+      <tr>
+        <td width="11%">Documento</td>
+        <td width="19%"><strong>$TPaciente$</strong></td>
+        <td width="13%">Nombre</td>
+        <td width="38%" nowrap="nowrap"><strong>$LPaciente$</strong></td>
+        <td width="10%" nowrap="nowrap">Sexo</td>
+        <td width="9%" nowrap="nowrap">$LSexo$ </td>
+      </tr>
+      <tr>
+        <td>Nacimiento</td>
+        <td class="nw">$LFechaNacimiento$ <span style="float: right">$LEdad$</span></td>
+        <td>Asegurador</td>
+        <td>$LAsegurador$</td>
+        <td>Categoría</td>
+        <td>$szCategoria$</td>
+      </tr>
+      <tr>
+        <td>Barrio</td>
+        <td>$LBarrio$</td>
+        <td>Direcci&oacute;n</td>
+        <td colspan="3">$LDireccion$</td>
+      </tr>
+      <tr>
+        <td>Tel&eacute;fono</td>
+        <td>$LTelefono$</td>
+        <td>Familiar</td>
+        <td>$LFamiliar$</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>Parentesco</td>
+        <td>$LParentesco$</td>
+        <td>Tipo de Afiliaci&oacute;n</td>
+        <td>$szTipoAfiliacion$</td>
+        <td>Pago directo</td>
+        <td>$LTipoPago$</td>
+      </tr>
+      <tr>
+        <td colspan="6"><strong>$LCIE10$</strong></td>
+      </tr>
+    </table>
+    </fieldset></td>
+  </tr><!-- datospacienteEnd -->
+  <tr>
+    <td><strong>Funcionario</strong></td>
+    <td colspan="2">$TFuncionario$</td>
+    <td><strong>Fecha</strong></td>
+    <td nowrap="nowrap">$TInicio$-$LFinal$</td>    
+  </tr>
+  <tr>
+    <td><strong>Tipo</strong></td>
+    <td colspan="2">$DTipo$</td>
+    <td>Sesiones</td>
+    <td>$LNumeroTerapias$</td>
+  </tr>
+  <tr>
+  	<td><strong>Signos vitales</strong></td>
+    <td colspan="4"><strong>FC</strong>: $TFC$ Lat/min, <strong>TA</strong>:$TTA$ mm/Hg, <strong>FR</strong>: $TFR$ Min.</td>
+  </tr>
+  </table>
+<p align="justify">
+<b>Revisión del patrón alterado</b>: $TPatron$<br />
+<b>Actividades realizadas</b>: $TActividades$<br />
+<b>Resultado diagnostico</b>: $TResultados$<br />
+<b>Observaciones</b>: $TObservaciones$
+</p>
+<!-- PRespiratoria -->
+<p align="justify">
+<b>TERAPIAS RESPIRATORIAS</b><br />
+<b>OXIGENO DEPENDIENTE</b><br />
+$GOxigeno$
+<b>$COxigeno$ Efectos secundarios del oxigeno</b>: $TOxigeno$<br />
+<b>$CLatrogenia$ Iatrogenia por uso de dispositivos</b>: $TLatrogenia$
+</p>
+<!-- PRespiratoriaEnd -->
+
+<!-- PFisica -->
+<p align="justify">
+<b>TERAPIAS FÍSICAS</b>
+$GFuerza$
+<b>Objetivo terapéutico</b>: $TJustificacion$
+</p>
+<!-- PFisicaEnd -->
+<!-- POcupacional -->
+<p align="justify">
+<b>$LTerapiaOcupacional$</b><br />
+<strong>$CPresentoEA$Se presento EA</strong>: $TPresentoEA$<br />
+<strong>Que medidas se realizarón</strong>: $TMedidas$<br />
+<strong>Observaciones</strong>: $TObservaciones$</p>
+<!-- POcupacionalEnd -->
+<p align="justify"><img src="~/Image/firmas/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><img src="~/Image/sellos/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><br />
+______________________________<br/>
+        <strong>$TFuncionario$</strong><br />
+        Registro médico $szProfesional$ <br />
+$szCargo$</p>
+</body>
+</html>

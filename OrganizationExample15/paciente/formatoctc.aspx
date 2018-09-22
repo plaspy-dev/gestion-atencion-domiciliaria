@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Formato CTC" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="formatoctc.aspx.cs" Inherits="paciente_formatoctc" %>
+﻿<%@ Page Title="Formato CTC" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="paciente_formatoctc" Codebehind="formatoctc.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 

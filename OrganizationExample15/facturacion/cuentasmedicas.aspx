@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Cuentas médicas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="cuentasmedicas.aspx.cs" Inherits="facturacion_cuentasmedicas" %>
+﻿<%@ Page Title="Cuentas médicas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="facturacion_cuentasmedicas" Codebehind="cuentasmedicas.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">

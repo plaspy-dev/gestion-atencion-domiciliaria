@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Evaluación y evolución servicio terapeutico" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="evolucion.aspx.cs" Inherits="terapeutico_evolucion" %>
+﻿<%@ Page Title="Evaluación y evolución servicio terapeutico" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="terapeutico_evolucion" Codebehind="evolucion.aspx.cs" %>
 <%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
@@ -63,7 +63,7 @@
                 <Columns>
                     <asp:TemplateField>
                         <ItemTemplate>
-                            <asp:HyperLink runat="server" ID="L" NavigateUrl='<%# string.Format("~/terapeutico/evolucion.aspx?pid={0}&evtid={1}", Eval("paciente"), Eval("id")) %>'>
+                            <asp:HyperLink runat="server" ID="L" CssClass="btn btn-default btn-xs" NavigateUrl='<%# string.Format("~/terapeutico/evolucion.aspx?pid={0}&evtid={1}", Eval("paciente"), Eval("id")) %>'>
                                 <i class="fa fa-edit"></i>
                             </asp:HyperLink>
                         </ItemTemplate>
@@ -142,7 +142,7 @@
                             </SelectParameters>
                         </asp:SqlDataSource>
                     </td>
-                    <td>Sesión No.<asp:RequiredFieldValidator ControlToValidate="TNumero" ErrorMessage="Por favor ingrese un número de sesion." ID="RequiredFieldValidator3" 
+                    <td class="nw">Sesión No.<asp:RequiredFieldValidator ControlToValidate="TNumero" ErrorMessage="Por favor ingrese un número de sesion." ID="RequiredFieldValidator3" 
 	                    runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                     <td>
                         <asp:UpdatePanel runat="server" ID="US" UpdateMode="Conditional">

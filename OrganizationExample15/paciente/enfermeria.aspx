@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Hoja de enfermería" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="enfermeria.aspx.cs" Inherits="paciente_enfermeria" %>
+﻿<%@ Page Title="Hoja de enfermería" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="paciente_enfermeria" Codebehind="enfermeria.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register Src="~/archivo/digitalizacionc.ascx" TagName="Digitalizacion" TagPrefix="uc6" %>

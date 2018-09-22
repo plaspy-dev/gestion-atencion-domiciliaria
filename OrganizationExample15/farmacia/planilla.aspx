@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Planilla" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="planilla.aspx.cs" Inherits="farmacia_planilla" %>
+﻿<%@ Page Title="Planilla" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="farmacia_planilla" Codebehind="planilla.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

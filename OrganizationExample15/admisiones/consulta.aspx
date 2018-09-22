@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Consulta autorizaciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="consulta.aspx.cs" Inherits="admisiones_consulta" %>
+﻿<%@ Page Title="Consulta autorizaciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="admisiones_consulta" Codebehind="consulta.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">

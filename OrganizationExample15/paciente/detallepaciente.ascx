@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="detallepaciente.ascx.cs" Inherits="phd_detallepaciente" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="phd_detallepaciente" Codebehind="detallepaciente.ascx.cs" %>
 <%@ Register src="~/paciente/autorizaciones.ascx" tagname="autorizaciones" tagprefix="uc1" %>
 <asp:HiddenField ID="HIdPaciente" runat="server" />
 <table style="width: 100%; border-collapse: collapse;" cellpadding="0" cellspacing="0">

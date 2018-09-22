@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Informe de cumplimiento" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="autorizadovsrealizado.aspx.cs" Inherits="auditoria_autorizadovsrealizado" %>
+﻿<%@ Page Title="Informe de cumplimiento" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="auditoria_autorizadovsrealizado" Codebehind="autorizadovsrealizado.aspx.cs" %>
 <%@ Register Src="~/control/actividad.ascx" TagName="actividad" TagPrefix="uc" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">

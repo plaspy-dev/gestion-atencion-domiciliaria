@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="novedad.ascx.cs" Inherits="phd_novedad" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="phd_novedad" Codebehind="novedad.ascx.cs" %>
 <div id="dscriptNovedad" class="hidet">
 <script type="text/javascript">
     addFunctionToStart(function() {

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Entrada" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="entrada.aspx.cs" Inherits="farmacia_entrada" %>
+﻿<%@ Page Title="Entrada" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="farmacia_entrada" Codebehind="entrada.aspx.cs" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <style type="text/css">
     .tlote {width: 100px;}

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Cumplimiento" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="cumplimiento.aspx.cs" Inherits="admisiones_cumplimiento" %>
+﻿<%@ Page Title="Cumplimiento" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="admisiones_cumplimiento" Codebehind="cumplimiento.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>

@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/imprimir.css" type="text/css" rel="stylesheet" />
+<title>$DIndice$</title>
+<style type="text/css">
+	body {
+	font-size: 12px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	}
+</style>
+</head>
+<body>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td colspan="3"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td><img src="../imgs/Logo.jpg" width="170" height="60" alt="logo" /></td>
+        <td valign="bottom"><strong>$DIndice$</strong></td>
+        <td align="right" valign="middle"><strong>OrganizationExample15 SAS</strong><br />
+          NIT. 000.000.015-0<br />
+          Dirección de demostración<br />
+000 000 0101</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr bgcolor="#FFFFFF">
+    <td colspan="3"><fieldset>
+    <strong>
+    <legend>Datos Paciente</legend>
+      </strong>
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>Documento</td>
+        <td><strong>$TPaciente$</strong></td>
+        <td>Nombre</td>
+        <td nowrap="nowrap"><strong>$LPaciente$</strong></td>
+      </tr>
+      <tr>
+        <td>Nacimiento</td>
+        <td class="nw">$LFechaNacimiento$ <span style="float: right">$LEdad$</span></td>
+        <td>Sexo</td>
+        <td>$LSexo$ </td>
+      </tr>
+      <tr>
+        <td>Asegurador</td>
+        <td>$LAsegurador$</td>
+        <td>Tipo de Afiliaci&oacute;n</td>
+        <td>$szTipoAfiliacion$</td>
+      </tr>
+      <tr>
+        <td>Direcci&oacute;n</td>
+        <td>$LDireccion$</td>
+        <td>Barrio</td>
+        <td>$LBarrio$</td>
+      </tr>
+      <tr>
+        <td>Pago directo</td>
+        <td>$LTipoPago$</td>
+        <td>Tel&eacute;fono</td>
+        <td>$LTelefono$</td>
+      </tr>
+      <tr>
+        <td>Familiar</td>
+        <td>$LFamiliar$</td>
+        <td>Parentesco</td>
+        <td>$LParentesco$</td>
+      </tr>
+      <tr>
+        <td>Fecha </td>
+        <td>$TFecha$</td>
+        <td>Categoria</td>
+        <td>$szCategoria$</td>
+      </tr>
+      <tr>
+        <td colspan="4">$LCIE10$</td>
+      </tr>
+    </table>
+    </fieldset></td>
+  </tr>
+  <tr>
+    <td colspan="3">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="left">$LIncapacidad$ <b>$LResultado$</b></td>
+    <td align="right">Puntación: <b>$TTotal$</b></td>
+  </tr>
+  <tr>
+    <td colspan="3" valign="top">$GDetalle$</td>
+  </tr>
+  <tr>
+    <td colspan="3" align="right"><p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p><img src="~/Image/firmas/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><img src="~/Image/sellos/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><br />______________________________<br/>
+        <strong>$TFuncionario$</strong><br />
+      Registro médico $szProfesional$ <br />
+      $szCargo$<br />
+    </p></td>
+  </tr>
+  </table>
+</body>
+</html>

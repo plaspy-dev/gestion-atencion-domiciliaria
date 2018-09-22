@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Copagos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="copagos.aspx.cs" Inherits="administrador_copagos" %>
+﻿<%@ Page Title="Copagos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="administrador_copagos" Codebehind="copagos.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

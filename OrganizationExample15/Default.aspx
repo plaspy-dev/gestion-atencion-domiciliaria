@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Ingreso a OrganizationExample15" Language="C#" MasterPageFile="~/nologin.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+﻿<%@ Page Title="Ingreso a OrganizationExample15" Language="C#" MasterPageFile="~/nologin.master" AutoEventWireup="true" Inherits="_Default" Codebehind="Default.aspx.cs" %>
 
 <asp:Content ID="h" ContentPlaceHolderID="h" Runat="Server">
     <script type="text/javascript">

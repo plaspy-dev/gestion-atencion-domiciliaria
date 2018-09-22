@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Consulta gestión ambiental" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="consulta.aspx.cs" Inherits="rutasanitaria_consulta" %>
+﻿<%@ Page Title="Consulta gestión ambiental" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="rutasanitaria_consulta" Codebehind="consulta.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

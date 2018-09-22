@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="funcionarioc.ascx.cs" Inherits="rh_funcionarioc" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="rh_funcionarioc" Codebehind="funcionarioc.ascx.cs" %>
 <script type="text/javascript">
     $(function () {
         $("#<%= TFuncionario.ClientID %>")._autoComplete({

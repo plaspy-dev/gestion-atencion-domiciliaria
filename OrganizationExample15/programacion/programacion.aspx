@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Programación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="programacion.aspx.cs" Inherits="programacion_programacion" %>
+﻿<%@ Page Title="Programación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="programacion_programacion" Codebehind="programacion.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register src="~/programacion/programacionc.ascx" tagname="programacion" tagprefix="uc2" %>

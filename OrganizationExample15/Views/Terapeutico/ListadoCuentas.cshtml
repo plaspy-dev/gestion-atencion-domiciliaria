@@ -1,0 +1,164 @@
+﻿@model OrganizationExample15.Models.terapeutico.ListadoCuentas
+@{
+    ViewBag.Title = "Listado Cuentas";
+    Layout = "~/Views/_Shared/_LayoutPage.cshtml";
+    CUsuario user = (CUsuario)CUsuario.GetInstance();
+}
+
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-accent-theme">
+                <div class="card-body">
+                    <div id="fquery">
+                        @using (Html.BeginForm())
+                        {
+                            <table class="table table-sm">
+                                <tr>
+                                    <td>Fechas</td>
+                                    <td>Funcionario</td>
+                                    <td>Estado</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @Html.HiddenFor(x => x._gk)
+                                        <div class="reportrange" id="reportrange">
+                                            <i class="fa fa-calendar"></i>&nbsp;<span></span> <i class="fa fa-caret-down"></i>
+                                        </div>
+                                        <div class="hide">
+                                            @Html.TextBoxFor(x => x.Desde) @Html.TextBoxFor(x => x.Hasta)
+                                        </div>
+                                    </td>
+                                    <td>@Html.Partial("~/Views/_Shared/Funcionario.cshtml", Model.Funcionario, HomeCareVersion.GetPrefixPartial("Funcionario"))</td>
+                                    <td>@Html.DropDownListFor(x => x.Estado, Varios.Get(Varios.Tipo.EstadoCuenta).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Todos)", new { @class = "amc" })</td>
+                                    <td class="r w100"><a href="#" class="btn btn-submit" onclick="return onUpdate()">Actualizar</a></td>
+                                </tr>
+                            </table>
+                        }
+                    </div>
+                    <table id="gpe" class="table table-sm table-bordered table-hover table-striped table-bootgrid">
+                        <thead>
+                            <tr>
+                                <th data-column-id="n" data-order="asc" data-formatter="link" data-header-css-class="w100" data-css-class="nw">Funcionario</th>
+                                <th data-column-id="f" data-align="right" data-formatter="link" data-css-class="nw">Fecha</th>
+                                <th data-column-id="h" data-align="right" data-css-class="nw">Final</th>
+                                <th data-column-id="e" data-css-class="nw">Estado</th>
+                                <th data-column-id="c" data-align="right">Servicios</th>
+                                <th data-column-id="t" data-align="right" data-formatter="currency">Total</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <!-- end card-body -->
+            </div>
+            <!-- end card -->
+        </div>
+        <!-- end col -->
+    </div>
+    <!-- end row -->
+</div>
+@section scripts {
+    <link rel="stylesheet" href="~/lib/jquery.bootgrid/jquery.bootgrid.css">
+    <link rel="stylesheet" href="~/lib/bootstrap-multiselect/css/bootstrap-multiselect.css" />
+    <link rel="stylesheet" href="~/lib/daterangepicker/daterangepicker.css">
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.js"></script>
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.fa.js"></script>
+    <script src="~/lib/daterangepicker/daterangepicker.js"></script>
+    <style>
+        .bootgrid-header .search {
+            display: none;
+        }
+
+        .saveExcel {
+            display: none;
+        }
+    </style>
+    <script>
+        function onSaveExcel() {
+            $('#fquery').find("form").submit();
+            return false;
+        }
+        function onUpdate() {
+            $(".saveExcel").hide();
+            $("#gpe").bootgrid("reload");
+            return false;
+        }
+        $(function () {
+            var localstoragename = "gderc";
+            var rowCount = [10, 25, 50, -1];
+            if (localStorage[localstoragename] && localStorage[localstoragename] != rowCount[0])
+                rowCount.splice(0, 0, localStorage[localstoragename]);
+            $("#gpe").bootgrid({
+                ajax: true,
+                rowCount: rowCount,
+                labels: $.gridLabels,
+                url: rootPath + "Terapeutico/__ListadoCuentas",
+                statusMapping: {
+                    4: "expired"
+                },
+                maxSpan: {
+                    days: 31
+                },
+                post: function () {
+                    return $('#fquery').find("form").serializeArray().reduce(function (obj, item) {
+                        if (obj[item.name]) {
+                            if (Array.isArray(obj[item.name])) {
+                                obj[item.name].push(item.value);
+                            } else {
+                                var tmp = obj[item.name];
+                                obj[item.name] = [];
+                                obj[item.name].push(tmp);
+                                obj[item.name].push(item.value);
+                            }
+                        } else obj[item.name] = item.value;
+                        return obj;
+                    }, {});
+                },
+                formatters: {
+                    "link": function (column, row) {
+                        return '<a href="' + rootPath + 'terapeutico/Cuentas?fid=' + row["i"] + '&ds=' + encodeURIComponent(row["f"]) + '" target="_blank">' + row[column.id] + '</a>';
+                    },
+                    currency: function (column, row) {
+                        if (row[column.id])
+                            return (+row[column.id]).formatCurrency();
+                        return row[column.id];
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function () {
+                localStorage[localstoragename] = $(this).bootgrid('getRowCount');
+                $(this).next("#" + $(this).attr("id") + "-footer").toggle($(this).bootgrid("getTotalPageCount") > 1);
+                $(".saveExcel").toggle($(this).bootgrid("getTotalRowCount") > 0);
+                $(window).resize();
+            });
+
+
+            var start = moment($("#Desde").val());
+            var end = moment($("#Hasta").val());
+            var $reportrange = $('#reportrange');
+
+            function cb(start, end) {
+                $("#Desde").val(start.format("YYYY-MM-DD"));
+                $("#Hasta").val(end.format("YYYY-MM-DD"));
+                if ($reportrange.data('daterangepicker').chosenLabel != daterangepickerlocale.customRangeLabel)
+                    $reportrange.find("span").html($reportrange.data('daterangepicker').chosenLabel);
+                else $('#reportrange span').html(start.locale("es").format('D [de] MMMM [de] YYYY') + ' - ' + end.locale("es").format('D [de] MMMM [de] YYYY'));
+            }
+
+            $reportrange.daterangepicker({
+                locale: daterangepickerlocale,
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 días': [moment().subtract(30, 'days'), moment()],
+                    'Mes actual': [moment().startOf('month'), moment().endOf('month')],
+                    'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb).data('daterangepicker').calculateChosenLabel();
+            cb(start, end);
+        });
+    </script>
+}

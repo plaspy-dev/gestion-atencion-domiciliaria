@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="digitalizacionc.ascx.cs" Inherits="archivo_digitalizacionc" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="archivo_digitalizacionc" Codebehind="digitalizacionc.ascx.cs" %>
 <asp:UpdatePanel runat="server" ID="UA" UpdateMode="Conditional" Visible="false">
     <ContentTemplate>
         <h3><a href="#"><asp:Label runat="server" ID="LArchivo"></asp:Label></a></h3>

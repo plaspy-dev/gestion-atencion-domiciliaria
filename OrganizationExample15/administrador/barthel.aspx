@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Índices o escalas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="barthel.aspx.cs" Inherits="administrador_barthel" %>
+﻿<%@ Page Title="Índices o escalas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="administrador_barthel" Codebehind="barthel.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

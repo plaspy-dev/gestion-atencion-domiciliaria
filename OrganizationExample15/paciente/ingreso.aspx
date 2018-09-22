@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Hoja de ingreso" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="ingreso.aspx.cs" Inherits="paciente_ingreso" %>
+﻿<%@ Page Title="Hoja de ingreso" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="paciente_ingreso" Codebehind="ingreso.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register src="~/ctrl/sharehistory.ascx" tagname="ShareHistory" tagprefix="uc" %>
@@ -18,6 +18,7 @@
             $("#tfisico").attr("colspan", "4").attr("width", "100%");
         }
         $("#<%= TConductaInicial.ClientID %>")._tinyMCE({ idMirrorTextArea: "elm1", readonly: <%= TConductaInicial.ReadOnly ? "true" : "false" %>});
+        $("input:text,textarea").disablePaste();
     });
     </script>
 </asp:Content>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Facturación autorización" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="facturacion.aspx.cs" Inherits="facturacion_facturacion" %>
+﻿<%@ Page Title="Facturación autorización" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="facturacion_facturacion" Codebehind="facturacion.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">

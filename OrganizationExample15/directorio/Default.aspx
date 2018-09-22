@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Directorio" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="directorio_Default" %>
+﻿<%@ Page Title="Directorio" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="directorio_Default" Codebehind="Default.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Informe de recaudos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="recaudos.aspx.cs" Inherits="admisiones_recaudos" %>
+﻿<%@ Page Title="Informe de recaudos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="admisiones_recaudos" Codebehind="recaudos.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

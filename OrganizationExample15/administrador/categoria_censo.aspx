@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Categoría censo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="categoria_censo.aspx.cs" Inherits="administrador_categoria_censo" %>
+﻿<%@ Page Title="Categoría censo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="administrador_categoria_censo" Codebehind="categoria_censo.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">

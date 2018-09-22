@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Subir" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="subir.aspx.cs" Inherits="archivo_subir" %>
+﻿<%@ Page Title="Subir" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="archivo_subir" Codebehind="subir.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 

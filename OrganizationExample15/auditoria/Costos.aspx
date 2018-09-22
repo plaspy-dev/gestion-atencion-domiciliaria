@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Informe de costos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Costos.aspx.cs" Inherits="auditoria_Costos" %>
+﻿<%@ Page Title="Informe de costos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="auditoria_Costos" Codebehind="Costos.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">

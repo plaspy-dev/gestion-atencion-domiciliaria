@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Informes" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="informes.aspx.cs" Inherits="farmacia_informes" %>
+﻿<%@ Page Title="Informes" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="farmacia_informes" Codebehind="informes.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <%= SDG.Componentes.HtmlUtil.RenderStyle("~/css/jquery.multiselect.css") %>

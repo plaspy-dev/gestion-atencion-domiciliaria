@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="devolucion.ascx.cs" Inherits="equipo_devolucion" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="equipo_devolucion" Codebehind="devolucion.ascx.cs" %>
 <asp:Panel runat="server" ID="PDevolucion" Visible="false">
     <div id="dDevolucion" class="hidet" align="left" title="Devolución">
         <table>

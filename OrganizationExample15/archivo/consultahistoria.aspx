@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Consulta Historia" Language="C#" MasterPageFile="~/nologin.master" AutoEventWireup="true" CodeFile="consultahistoria.aspx.cs" Inherits="archivo_consultahistoria" %>
+﻿<%@ Page Title="Consulta Historia" Language="C#" MasterPageFile="~/nologin.master" AutoEventWireup="true" Inherits="archivo_consultahistoria" Codebehind="consultahistoria.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="h" Runat="Server">
 </asp:Content>

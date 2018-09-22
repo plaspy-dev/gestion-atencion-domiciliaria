@@ -324,7 +324,6 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         Response.Clear();
         Response.ContentType = "application/pdf";
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
-        Response.AddHeader("content-disposition", "attachment;filename=" + HttpUtility.UrlPathEncode(Page.Title) + ".pdf");
 
         using (StreamReader reader = new StreamReader(Server.MapPath(ViewState["printfile"].ToString())))
         {
@@ -336,6 +335,8 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         {
             _ImprimirClicked(this, evento);
         }
+
+        Response.AddHeader("content-disposition", "attachment;filename=" + HttpUtility.UrlPathEncode(Page.Title) + ".pdf");
 
         evento.Contenido = Utilidades.ReplaceContenido(cph.Controls, evento.Contenido);
         evento.Contenido = evento.Contenido

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Orden de producción" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="ordenproducccion.aspx.cs" Inherits="farmacia_ordenproducccion" %>
+﻿<%@ Page Title="Orden de producción" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="farmacia_ordenproducccion" Codebehind="ordenproducccion.aspx.cs" %>
 <%@ Register Src="~/paciente/pacienteSimple.ascx" TagName="pacienteSimple" TagPrefix="uc1" %>
 <%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>
 

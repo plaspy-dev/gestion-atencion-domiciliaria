@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Grupos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="grupos.aspx.cs" Inherits="administrador_grupos" %>
+﻿<%@ Page Title="Grupos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="administrador_grupos" Codebehind="grupos.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">    

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="autorizaciones.ascx.cs" Inherits="paciente_autorizaciones" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="paciente_autorizaciones" Codebehind="autorizaciones.ascx.cs" %>
 <style type="text/css">
     #tdMas {cursor: pointer;}
     #tdMas:hover { text-decoration: underline; }

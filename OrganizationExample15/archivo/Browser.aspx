@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Gestión documental" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Browser.aspx.cs" Inherits="archivo_Browser" %>
+﻿<%@ Page Title="Gestión documental" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="archivo_Browser" Codebehind="Browser.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <%= SDG.Componentes.HtmlUtil.RenderStyle("~/archivo/dropzone.css") %>

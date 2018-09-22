@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Personal" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="funcionario.aspx.cs" Inherits="rh_funcionario" %>
+﻿<%@ Page Title="Personal" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="rh_funcionario" Codebehind="funcionario.aspx.cs" %>
 <%@ Register src="~/webcam/webcam.ascx" tagname="webcam" tagprefix="webcam" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Consulta complicaciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="consultacomplicaciones.aspx.cs" Inherits="auditoria_consultacomplicaciones" %>
+﻿<%@ Page Title="Consulta complicaciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="auditoria_consultacomplicaciones" Codebehind="consultacomplicaciones.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <style type="text/css">.ancho { min-width: 400px; }</style>

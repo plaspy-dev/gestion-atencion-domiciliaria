@@ -1,4 +1,4 @@
-﻿<%@ Page Title="SEGUIMIENTO DOMICILIARIO POSPARTO" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="postparto.aspx.cs" Inherits="materna_postparto" %>
+﻿<%@ Page Title="SEGUIMIENTO DOMICILIARIO POSPARTO" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="materna_postparto" Codebehind="postparto.aspx.cs" %>
 <%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>

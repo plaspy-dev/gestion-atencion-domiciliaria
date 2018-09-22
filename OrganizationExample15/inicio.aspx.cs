@@ -6,6 +6,10 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
 using System.Configuration;
+using System.Web.Configuration;
+using System.Web.WebPages.Razor.Configuration;
+using System.Web.WebPages.Razor;
+using System.Web.Compilation;
 
 public partial class inicio : System.Web.UI.Page
 {

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Valoración apoyo terapéutico" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="valoracionat.aspx.cs" Inherits="paciente_valoracionat" %>
+﻿<%@ Page Title="Valoración apoyo terapéutico" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="paciente_valoracionat" Codebehind="valoracionat.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>

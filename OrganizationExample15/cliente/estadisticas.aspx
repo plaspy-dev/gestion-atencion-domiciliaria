@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Estadísticas encuestas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="estadisticas.aspx.cs" Inherits="cliente_estadisticas" %>
+﻿<%@ Page Title="Estadísticas encuestas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="cliente_estadisticas" Codebehind="estadisticas.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="history.ascx.cs" Inherits="ctrl_history" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="ctrl_history" Codebehind="history.ascx.cs" %>
 <script type="text/javascript">
 $(function () {
     $("#<%= PH.ClientID %>").accordion({

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Evolución" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="evolucion.aspx.cs" Inherits="paciente_evolucion" %>
+﻿<%@ Page Title="Evolución" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="paciente_evolucion" Codebehind="evolucion.aspx.cs" ValidateRequest="false" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register Src="~/archivo/digitalizacionc.ascx" TagName="Digitalizacion" TagPrefix="uc6" %>
@@ -32,6 +32,7 @@
 
         FullRowSelect("#<%= GEvoluciones.ClientID %>");
         $("#<%= TPlanManejo.ClientID %>")._tinyMCE({ idMirrorTextArea: "elm1", readonly: <%= TPlanManejo.ReadOnly ? "true" : "false" %>});
+        $("input:text,textarea").disablePaste();
     });
     </script>
 </asp:Content>
@@ -240,7 +241,8 @@
                                 ,IFNULL(antecedentes_evolucion.observaciones,antecedentes_paciente.observaciones) AS observaciones
                                 FROM varios 
                                 LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=@idingreso AND antecedentes_evolucion.motivo=varios.id) 
-                                LEFT JOIN antecedentes_paciente ON (antecedentes_paciente.paciente=@paciente AND antecedentes_paciente.motivo=varios.id)
+                                -- LEFT JOIN antecedentes_paciente ON (antecedentes_paciente.paciente=@paciente AND antecedentes_paciente.motivo=varios.id)
+                                LEFT JOIN antecedentes_paciente ON (antecedentes_paciente.paciente=0 AND antecedentes_paciente.motivo=varios.id)
                                 WHERE varios.tipo=2 AND varios.szReservado IS NULL
                                 ;" >
                 <SelectParameters>
@@ -330,7 +332,7 @@
                                 LEFT JOIN ingreso_riesgos ON (ingreso_riesgos.ingreso_paciente=ingreso_paciente.id AND ingreso_riesgos.motivo=varios.id)
                                 LEFT JOIN (
 SELECT estado,observaciones,evolucion_riesgos.motivo FROM evolucion_paciente LEFT JOIN evolucion_riesgos ON (evolucion_riesgos.evolucion_paciente=evolucion_paciente.id) WHERE
-evolucion_paciente.paciente=@paciente AND evolucion_paciente.id=(SELECT MAX(id) FROM evolucion_paciente WHERE paciente=@paciente)
+evolucion_paciente.paciente=0 AND evolucion_paciente.id=(SELECT MAX(id) FROM evolucion_paciente WHERE paciente=0)
                                 ) AS antigua ON (antigua.motivo=varios.id)
                                 WHERE varios.tipo=38 AND varios.szReservado IS NULL
                                 ;" >

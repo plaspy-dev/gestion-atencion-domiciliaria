@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPageI" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" Inherits="MasterPageI" Codebehind="MasterPage.master.cs" %>
 <%@ Register src="~/modificaciones.ascx" TagName="modificaciones" TagPrefix="uc1" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -42,7 +42,7 @@
 
             $('#<%= UPDiagAux.ClientID %>').panelUpdated(function() {
 
-                if ($("#ctl00_titulo_aux").attr("title").length > 0) {
+                if ($("#ctl00_titulo_aux").length>0 && $("#ctl00_titulo_aux").attr("title").length > 0) {
                     $("#dialog_aux").dialog({
                         modal: true,
                         autoOpen: true,

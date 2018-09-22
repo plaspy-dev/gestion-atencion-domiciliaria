@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Valoración de heridas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="valoracion.aspx.cs" Inherits="clinicaheridas_valoracion" %>
+﻿<%@ Page Title="Valoración de heridas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="clinicaheridas_valoracion" Codebehind="valoracion.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register Src="~/rh/funcionarioSimple.ascx" TagName="Funcionario" TagPrefix="uc6" %>

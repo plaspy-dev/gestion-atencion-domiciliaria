@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Confirmar autorizaciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="confirmara.aspx.cs" Inherits="admisiones_confirmara" %>
+﻿<%@ Page Title="Confirmar autorizaciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="admisiones_confirmara" Codebehind="confirmara.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

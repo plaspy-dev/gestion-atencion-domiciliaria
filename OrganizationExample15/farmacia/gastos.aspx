@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Informe de gastos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="gastos.aspx.cs" Inherits="farmacia_gastos" %>
+﻿<%@ Page Title="Informe de gastos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="farmacia_gastos" Codebehind="gastos.aspx.cs" %>
 <%@ Register Src="~/paciente/pacienteSimple.ascx" TagName="pacienteSimple" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Indicadores" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="indicadores.aspx.cs" Inherits="auditoria_indicadores" %>
+﻿<%@ Page Title="Indicadores" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="auditoria_indicadores" Codebehind="indicadores.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>

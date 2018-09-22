@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Formulación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="medicamentos.aspx.cs" Inherits="administrador_medicamentos" %>
+﻿<%@ Page Title="Formulación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="administrador_medicamentos" Codebehind="medicamentos.aspx.cs" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 
     <script type="text/javascript">
@@ -114,6 +114,10 @@
                 <asp:ListItem Text="(Ninguno)" Value=""></asp:ListItem>
                 </asp:DropDownList></td>
         </tr>
+            <tr>
+                <td>Precio</td>
+                <td><asp:TextBox runat="server" ID="TPrecio" CssClass="dinero"></asp:TextBox></td>
+            </tr>
           <tr>
             <td>Precio regulado</td>
             <td><asp:TextBox runat="server" ID="TPrecioRegulado" CssClass="dinero"></asp:TextBox></td>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Cumpleaños" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="cumple.aspx.cs" Inherits="rh_cumple" %>
+﻿<%@ Page Title="Cumpleaños" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="rh_cumple" Codebehind="cumple.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Servicios por facturar" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="porfacturar.aspx.cs" Inherits="facturacion_porfacturar" %>
+﻿<%@ Page Title="Servicios por facturar" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="facturacion_porfacturar" Codebehind="porfacturar.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

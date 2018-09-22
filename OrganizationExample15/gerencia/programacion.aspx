@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Informe servicios prestados" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="programacion.aspx.cs" Inherits="gerencia_programacion" %>
+﻿<%@ Page Title="Informe servicios prestados" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="gerencia_programacion" Codebehind="programacion.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>

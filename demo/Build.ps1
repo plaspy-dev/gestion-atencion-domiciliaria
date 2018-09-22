@@ -1,7 +1,7 @@
 param([Parameter(Mandatory)][string]$Output)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$siteSource = [IO.Path]::GetFullPath((Join-Path $root 'OrganizationExample15'))
+$siteSource = [IO.Path]::GetFullPath((Join-Path $root 'OrganizationExample15.webforms'))
 $target = [IO.Path]::GetFullPath($Output)
 if (Test-Path -LiteralPath $target) { throw 'Use a new output directory.' }
 if ($target.StartsWith($root + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="MME Gestante" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="informe.aspx.cs" Inherits="materna_informe" %>
+﻿<%@ Page Title="MME Gestante" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="materna_informe" Codebehind="informe.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

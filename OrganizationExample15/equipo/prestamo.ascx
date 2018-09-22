@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="prestamo.ascx.cs" Inherits="equipo_prestamo" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="equipo_prestamo" Codebehind="prestamo.ascx.cs" %>
 <%@ Register Src="~/paciente/pacienteSimple.ascx" TagName="pacienteSimple" TagPrefix="uc1" %>
 <%@ Register Src="~/rh/funcionarioSimple.ascx" TagName="funcionarioSimple" TagPrefix="uc1" %>
 <asp:Panel runat="server" ID="PPrestamo" Visible="false">

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Inventario mantenimiento" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="informe.aspx.cs" Inherits="equipo_informe" %>
+﻿<%@ Page Title="Inventario mantenimiento" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="equipo_informe" Codebehind="informe.aspx.cs" %>
 <%@ Register src="~/equipo/prestamo.ascx" tagname="prestamo" tagprefix="uc1" %>
 <%@ Register src="~/equipo/devolucion.ascx" tagname="devolucion" tagprefix="uc1" %>
 

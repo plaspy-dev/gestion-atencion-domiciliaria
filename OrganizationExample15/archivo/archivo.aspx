@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Gestión archivo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="archivo.aspx.cs" Inherits="archivo_archivo" %>
+﻿<%@ Page Title="Gestión archivo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="archivo_archivo" Codebehind="archivo.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <style type="text/css">

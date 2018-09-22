@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Devoluciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="devolucion.aspx.cs" Inherits="farmacia_devolucion" %>
+﻿<%@ Page Title="Devoluciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="farmacia_devolucion" Codebehind="devolucion.aspx.cs" %>
 <%@ Register Src="~/paciente/pacienteSimple.ascx" TagName="pacienteSimple" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <style type="text/css">
@@ -70,7 +70,7 @@
             source: function(request, response) {
                 $.ajax({
                     url: "../webservices/servicios.asmx/GetProducto",
-                    data: "{ 'q': '" + request.term + "' }",
+                    data: "{ 'q': '" + request.term + "', 'p': null }",
                     dataType: "json",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Evoluciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="evoluciones.aspx.cs" Inherits="terapeutico_evoluciones" %>
+﻿<%@ Page Title="Evoluciones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="terapeutico_evoluciones" Codebehind="evoluciones.aspx.cs" %>
 <%@ Register src="~/paciente/pacienteSimple.ascx" tagname="PacienteSimple" tagprefix="uc5" %>
 <%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Registro PQR" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="quejas.aspx.cs" Inherits="cliente_quejas" %>
+﻿<%@ Page Title="Registro PQR" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="cliente_quejas" Codebehind="quejas.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register Src="~/rh/funcionarioc.ascx" TagName="FuncionarioC" TagPrefix="uc6" %>

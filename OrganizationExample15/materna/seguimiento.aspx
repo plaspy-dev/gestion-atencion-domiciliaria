@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Seguimiento domiciliario MME Gestante" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="seguimiento.aspx.cs" Inherits="materna_seguimiento" %>
+﻿<%@ Page Title="Seguimiento domiciliario MME Gestante" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="materna_seguimiento" Codebehind="seguimiento.aspx.cs" %>
 <%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
@@ -315,7 +315,7 @@
                                 <asp:ListItem Value="0" Text="No"></asp:ListItem>
                             </asp:RadioButtonList>
                             <span><%# GetHeader(Eval("Nombre")) %>
-                                <asp:RequiredFieldValidator runat="server" ID="E" Display="Dynamic" SetFocusOnError="true" ControlToValidate="T" ErrorMessage='<%# string.Format("Por favor ingrese un valor para {0}", Eval("Nombre")) %>'>*</asp:RequiredFieldValidator>
+                                <asp:RequiredFieldValidator runat="server" ID="E" Display="Dynamic" SetFocusOnError="true" ControlToValidate="R" ErrorMessage='<%# string.Format("Por favor ingrese un valor para {0}", Eval("Nombre")) %>'>*</asp:RequiredFieldValidator>
                             </span>
                         </div>
                     </ItemTemplate>
@@ -334,7 +334,7 @@
             </td>
         </tr>
         <tr class="stripped">
-            <td>OBSERVACIONES DE LA REVISION POR SISITEMAS</td>
+            <td>OBSERVACIONES DE LA REVISION POR SISTEMAS</td>
             <td colspan="3">
                 <asp:TextBox runat="server" ID="TSistemasObservaciones" TextMode="MultiLine" Width="100%" Height="50px"></asp:TextBox>
             </td>

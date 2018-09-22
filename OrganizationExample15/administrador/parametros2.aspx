@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Parámetros" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="parametros2.aspx.cs" Inherits="administrador_parametros2" %>
+﻿<%@ Page Title="Parámetros" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="administrador_parametros2" Codebehind="parametros2.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

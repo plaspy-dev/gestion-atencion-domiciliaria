@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Recibo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="recibos.aspx.cs" Inherits="admisiones_recibos" %>
+﻿<%@ Page Title="Recibo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="admisiones_recibos" Codebehind="recibos.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
@@ -6,7 +6,7 @@
         $(function () {
             $("#<%= TNumero.ClientID %>")._autoComplete({
                 url: "../webservices/servicios.asmx/GetAutorizaciones",
-			    redirectURL: "<%= Request.Url.AbsolutePath + "?aut=" %>"
+	            redirectURL: "<%= Request.Url.AbsolutePath + "?aut=" %>"
             });
         });
     </script>

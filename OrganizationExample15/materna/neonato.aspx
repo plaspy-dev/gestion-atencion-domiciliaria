@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Seguimiento domiciliario neonatos alto riesgo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="neonato.aspx.cs" Inherits="materna_neonato" %>
+﻿<%@ Page Title="Seguimiento domiciliario neonatos alto riesgo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="materna_neonato" Codebehind="neonato.aspx.cs" %>
 <%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>

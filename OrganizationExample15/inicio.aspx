@@ -1,4 +1,5 @@
-﻿<%@ Page Title="Inicio" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="inicio.aspx.cs" Inherits="inicio" %>
+﻿
+<%@ Page Title="Inicio" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="inicio" Codebehind="inicio.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <%= SDG.Componentes.HtmlUtil.RenderStyle("~/css/notas.css") %>

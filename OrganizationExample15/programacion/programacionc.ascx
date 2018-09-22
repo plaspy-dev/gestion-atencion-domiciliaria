@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="programacionc.ascx.cs" Inherits="phd_programacionc" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="phd_programacionc" Codebehind="programacionc.ascx.cs" %>
 <div id="dscriptProgramacion">
 <script type="text/javascript">
     function copyfecha(elemento) {
@@ -63,7 +63,7 @@
         $("#<%= TProfesional.ClientID %>")._autoComplete({
             url: "../webservices/servicios.asmx/GetPersonalCA",
             data: function () {
-                return { s: $("#<%= DActividad.ClientID %>").val() };
+                return { s: $("#<%= DActividad.ClientID %>").val(), c: null };
             },
             idField: "<%= TProfesionalID.ClientID %>"
         });

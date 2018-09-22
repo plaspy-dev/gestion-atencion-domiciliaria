@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="facturactrl.ascx.cs" Inherits="facturacion_facturactrl" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="facturacion_facturactrl" Codebehind="facturactrl.ascx.cs" %>
     <tr>
         <td>
             <script type="text/javascript">

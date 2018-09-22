@@ -1,0 +1,14 @@
+﻿@model OrganizationExample15.Models.MPaciente
+@Html.TextBoxFor(x=>x.Nombre, new { @class="_mpaciente", placeholder="Buscar" })@Html.TextBoxFor(x=>x.Id, new { @class="hidet" })
+<script>
+    $(function () {
+        var options = $.extend(window._mpacienteoptions || {}, {
+            queryURL: rootPath + "webservices/servicios.asmx/GetPacienteI",
+            controlDataId: $("._mpaciente").next("input").attr("id"),
+            displayName: "item",
+            data: { e: '@ViewBag.User["entidades"]' },
+            idField: "value"
+        });
+        $("._mpaciente").THAutoComplete(options);
+    });
+</script>

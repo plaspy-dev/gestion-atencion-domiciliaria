@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="webcam.ascx.cs" Inherits="webcam_webcam" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="webcam_webcam" Codebehind="webcam.ascx.cs" %>
 <script type="text/javascript" src="<%=ResolveUrl("~/")%>webcam/jquery.webcam.js"></script>
 <style type="text/css">
 .foto 

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Valoración enfermería" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="enfermeria.aspx.cs" Inherits="valoracion_enfermeria" %>
+﻿<%@ Page Title="Valoración enfermería" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="valoracion_enfermeria" Codebehind="enfermeria.aspx.cs" %>
 <%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>

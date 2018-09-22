@@ -282,7 +282,10 @@ public partial class administrador_Default : System.Web.UI.Page
             Add("Antecedentes del recien nacido", 171, parent);
             Add("Controles", 172, parent);
 
-            // disponible 178
+            parent = Add("Apoyo Terapeutico");
+            Add("Estado cuenta", 178, parent);
+
+            // disponible 179
 
             // OrganizationExample16
             parent = Add("OrganizationExample16 - Programación");
@@ -330,6 +333,7 @@ public partial class administrador_Default : System.Web.UI.Page
 
             Procedimientos.RemoveVarios(HId.Value);
             Varios.Remove(HId.Value);
+            Varios.Remove((Varios.Tipo)Convert.ToInt32(HTipo.Value));
 
             Session["szMensaje"] = mensaje;
             Response.Redirect(Request.Url.AbsolutePath + "?tipo=" + HTipo.Value);

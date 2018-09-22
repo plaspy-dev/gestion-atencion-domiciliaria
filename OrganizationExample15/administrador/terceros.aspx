@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Terceros" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="terceros.aspx.cs" Inherits="administrador_terceros" %>
+﻿<%@ Page Title="Terceros" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="administrador_terceros" Codebehind="terceros.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">

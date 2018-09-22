@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Evento adverso o incidente en la IPS" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="eventoa.aspx.cs" Inherits="auditoria_eventoa" %>
+﻿<%@ Page Title="Evento adverso o incidente en la IPS" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="auditoria_eventoa" Codebehind="eventoa.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 

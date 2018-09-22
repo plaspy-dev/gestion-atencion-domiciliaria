@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Paciente" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="paciente.aspx.cs" Inherits="seguimiento_paciente" %>
+﻿<%@ Page Title="Paciente" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="seguimiento_paciente" Codebehind="paciente.aspx.cs" %>
 <%@ Register src="autorizaciones.ascx" tagname="autorizaciones" tagprefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
@@ -221,6 +221,8 @@
                         </td>
                     </tr>
                     <tr>
+                        <td>Teléfono</td>
+                        <td><asp:TextBox runat="server" Id="TTelefonoFamiliar"></asp:TextBox></td>
                         <td>Pago directo<asp:RequiredFieldValidator ControlToValidate="DPago" ErrorMessage="Por favor seleccione un tipo de pago." ID="R11" 
 	            runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
                         <td>
@@ -235,8 +237,6 @@
                                 SelectCommand="SELECT pdirId id,pdirDescripcion nombre FROM paciente_tipo_pago WHERE pdirActivo=1">
                             </asp:SqlDataSource>
                         </td>
-                        <td></td>
-                        <td></td>
                     </tr>
                     <tr>
                         <td class="celdaTitulo" colspan="4">Información Asegurador</td>

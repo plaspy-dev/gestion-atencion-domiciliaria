@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="SeleccionarPaciente.ascx.cs" Inherits="paciente_SeleccionarPaciente" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="paciente_SeleccionarPaciente" Codebehind="SeleccionarPaciente.ascx.cs" %>
 <script type="text/javascript">
     if (typeof jQuery != 'undefined')
         $(function () {

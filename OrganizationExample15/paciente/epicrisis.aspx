@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Epicrisis apoyo terapeútico" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="epicrisis.aspx.cs" Inherits="paciente_epicrisis" %>
+﻿<%@ Page Title="Epicrisis apoyo terapeútico" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="paciente_epicrisis" Codebehind="epicrisis.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 <%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>

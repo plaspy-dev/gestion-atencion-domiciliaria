@@ -1,0 +1,493 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Text;
+using System.IO;
+using SDG.Componentes;
+using MySql.Data.MySqlClient;
+using System.Configuration;
+
+public partial class seguimiento_paciente : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if(!IsPostBack) {
+
+            PReactivar.Visible = false;
+            TFechaIngreso.Text = DateTime.Now.ToShortDateString();
+            if (!string.IsNullOrEmpty(Request.QueryString["ip"]))
+            {
+                Response.Redirect(Request.Url.AbsolutePath + "?pid=" + Crypt.DesencriptarDES(Request.QueryString["ip"]));
+                Response.End();
+                return;
+            }
+            TDocumento.Focus();
+            if (!string.IsNullOrEmpty(Request.QueryString["doc"]) && !string.IsNullOrEmpty(Request.QueryString["tdoc"]))
+            {
+                using (CConector conector = new CConector())
+                {
+                    TDocumento.Text = Request.QueryString["doc"];
+                    Utilidades.SelectInDropDown(DDocumento, Request.QueryString["tdoc"]);
+
+                    string id = conector.QueryString("SELECT pacId FROM paciente WHERE pacDocumento=" + Query.GetValor(TDocumento.Text) + " AND tdocId=" + Query.GetValor(DDocumento.SelectedValue));
+                    if (id.Length != 0)
+                    {
+                        Response.Redirect(Request.Url.AbsolutePath + "?pid=" + id);
+                        Response.End();
+                        return;
+                    }
+                    TPApellido.Focus();
+                }
+            }
+
+            CUsuario usuario = (CUsuario) Usuario.GetUsuario();
+            ViewState["entidades"] = usuario["entidades"];
+            BAceptar.Enabled = usuario.CanInsert();
+            IEliminar.Visible = false;
+
+            if (!string.IsNullOrEmpty(Request.QueryString["pid"]))
+            {
+                Query query = new Query("paciente");
+
+                query += "pacId";
+                query += "tdocId";
+                query += "pacDocumento";
+                query += "pacPApellido";
+                query += "pacObservaciones";
+                query += "pacSApellido";
+                query += "pacPNombre";
+                query += "pacSNombre";
+                query += "sexoId";
+                query += "pacFechaNac";
+                query += "pacDireccion";
+                query += "pacBarrio";
+                query += "pacTelefono";
+                query += "pacTelefono1";
+                query += "pacCelular";
+                query += "pacCorreo";
+                query += "pacEspecLlegada";
+                query += "locId";
+                query += "pacEstrato";
+                query += "pacFamilarResponsable";
+                query += "pacParentesco";
+                query += "pdirId";
+                query += "pacCarne";
+                query += "pacZona";
+                query += "pacEntregaSuministros";
+                query += "entId";
+                query += "megId";
+                query += "pacFecIngAsegurador";
+                query += "pacGrado";
+                query += "pacTipoAfiliado";
+                query += "tipECod";
+                query += "pacFecIngPrograma";
+                query += "estId";
+                query += "pacNumeroETB";
+                query += "pacIntensidadTerapias";
+                query += "cieCodDx";
+                query += "cieCodDx_1";
+                query += "cieCodDx_2";
+                query += "categoria";
+                query += "diabetico";
+                query += "egresoClinicaHeridas";
+                query += "acompanante_nombres";
+                query += "acompanante_telefono";
+                query += "acompanante_ocupacion";
+                query += "acompanante_estadocivil";
+                query += "acompanante_direccion";
+                query += "ciudad";
+                query += "ips_remitente";
+                query += "presentacion";
+                query += "familiar_telefono";
+
+                using (CConector conector = new CConector())
+                {
+
+                    MySqlDataReader reader = conector.Query(query.GetSelect("pacId=" + Query.GetValor(Request.QueryString["pid"]) + ""));
+
+                    if (reader != null && reader.Read())
+                    {
+                        if (!usuario.CheckEntidad(reader["entId"].ToString()))
+                            return;
+
+                        ((MasterPageI)Master).SetParametros("?pid=" + Request.QueryString["pid"]);
+
+                        BAceptar.Enabled = usuario.CanUpdate();
+                        ((MasterPageI)Master).Imprimir();
+
+                        UCAutorizaciones.Value = HId.Value = reader["pacId"].ToString();
+                        ((MasterPageI)Master).SetModificacion(HId.Value);
+
+                        Utilidades.SelectInDropDown(DDocumento, reader["tdocId"]);
+                        TDocumento.Text = reader["pacDocumento"].ToString();
+                        TPApellido.Text = reader["pacPApellido"].ToString();
+                        TObservaciones.Text = reader["pacObservaciones"].ToString();
+                        TSApellido.Text = reader["pacSApellido"].ToString();
+                        TPNombre.Text = reader["pacPNombre"].ToString();
+                        TSNombre.Text = reader["pacSNombre"].ToString();
+                        Utilidades.SelectInDropDown(DSexo, reader["sexoId"]);
+                        TNacimiento.Text = Query.GetFromMySQLDate(reader["pacFechaNac"]);
+                        TDireccion.Text = reader["pacDireccion"].ToString();
+                        TBarrio.Text = reader["pacBarrio"].ToString();
+                        TTelefono.Text = reader["pacTelefono"].ToString();
+                        TTelefono1.Text = reader["pacTelefono1"].ToString();
+                        TMovil.Text = reader["pacCelular"].ToString();
+                        TEMail.Text = reader["pacCorreo"].ToString();
+                        TLlegada.Text = reader["pacEspecLlegada"].ToString();
+                        conector.SelectInDropDown(DLocalidad, reader["locId"], "SELECT locDescripcion FROM localidad WHERE locId={0}");
+                        TEstrato.Text = reader["pacEstrato"].ToString();
+                        TFResponsable.Text = reader["pacFamilarResponsable"].ToString();
+                        TParentesco.Text = reader["pacParentesco"].ToString();
+                        conector.SelectInDropDown(DPago, reader["pdirId"], "SELECT pdirDescripcion FROM paciente_tipo_pago WHERE pdirId={0}");
+                        conector.SelectInDropDown(DAsegurador, reader["entId"], "SELECT entNombre FROM asegurador WHERE entId={0}");
+                        conector.SelectInDropDown(DMedico, reader["megId"], "SELECT perNombre FROM recurso_humano WHERE perId={0}");
+                        TFechaIngresoAsegurador.Text = Query.GetFromMySQLDate(reader["pacFecIngAsegurador"]);
+                        TGrado.Text = reader["pacGrado"].ToString();
+                        Utilidades.SelectInDropDown(DTipoAfiliado, reader["pacTipoAfiliado"]);
+                        conector.SelectInDropDown(DTipoEvento, reader["tipECod"], "SELECT tipEDescripcion FROM tipo_evento WHERE tipECod={0}");
+                        TFechaIngreso.Text = Query.GetFromMySQLDate(reader["pacFecIngPrograma"]);
+                        conector.SelectInDropDown(DEstado, reader["estId"], "SELECT estDesc FROM paciente_estado WHERE estId={0}");
+                        TIntensidadTerapias.Text = reader["pacIntensidadTerapias"].ToString();
+                        TCIE1.Text = reader["cieCodDx"].ToString();
+                        TCIE2.Text = reader["cieCodDx_1"].ToString();
+                        TCIE3.Text = reader["cieCodDx_2"].ToString();
+                        CDiabetico.Checked = reader["diabetico"].ToString() == "1";
+                        Utilidades.SelectInDropDown(DCategoria, reader["categoria"]);
+                        TFechaRetiroClinicaHeridas.Text = Query.GetFromMySQLDate(reader["egresoClinicaHeridas"]);
+                        TAcompananteNombres.Text = reader["acompanante_nombres"].ToString();
+                        TAcompananteTelefono.Text = reader["acompanante_telefono"].ToString();
+                        TAcompananteOcupacion.Text = reader["acompanante_ocupacion"].ToString();
+                        TAcompananateDireccion.Text = reader["acompanante_direccion"].ToString();
+                        Utilidades.SelectInDropDown(DAcompanteEstadoCivil, reader["acompanante_estadocivil"]);
+                        Utilidades.SelectInDropDown(DCiudad, reader["ciudad"]);
+                        Utilidades.SelectInDropDown(DIPS, reader["ips_remitente"]);
+                        TPresentacion.Text = Query.GetFromMySQLDate(reader["presentacion"], true);
+                        TTelefonoFamiliar.Text = reader["familiar_telefono"].ToString();
+
+                        if (TFechaRetiroClinicaHeridas.Text.Length > 0) {
+                            TFechaRetiroClinicaHeridas.ReadOnly = !usuario.CanAdmin();
+                            BAceptarClinica.Enabled = usuario.CanAdmin();
+                        }
+
+                        IFoto.ImageUrl = "~/archivo/imagen.ashx?w=120&t=p&n=" + HId.Value + ".jpg";
+                        IFoto.PostBackUrl = "~/archivo/imagen.ashx?t=p&n=" + HId.Value + ".jpg";
+                        IEliminar.Visible = usuario.CanDelete();
+
+                        TCIE1.Text = Procedimientos.GetCodigoCIE(TCIE1.Text);
+                        TCIE2.Text = Procedimientos.GetCodigoCIE(TCIE2.Text);
+                        TCIE3.Text = Procedimientos.GetCodigoCIE(TCIE3.Text);
+
+                        PReactivar.Visible = true;
+
+                        if (DEstado.SelectedValue == "1")
+                        {
+                            SMotivo.SelectCommand = "SELECT cegId id,cegDescripcion nombre FROM causa_egreso WHERE cegId!=1 ORDER BY 2;";
+                            LReactivar.Text = "Inactivar";
+                            BRetiro.Text = "Inactivar";
+                        }
+
+                        reader = conector.Query("SELECT egrFecha,egrObs,expedidoHS FROM paciente_egreso WHERE pacId=" + HId.Value + " AND cegId=1 ORDER BY egrFecha DESC LIMIT 1;");
+                        if (reader != null && reader.Read())
+                        {
+                            TFechaDefuncion.Text = Query.GetFromMySQLDate(reader["egrFEcha"]);
+                            TObservacionesDefuncion.Text = reader["egrObs"].ToString();
+                            CExpedidaOrganizationExample15.Checked = reader["expedidoHS"].ToString() == "1";
+                            BAceptarDefuncion.Enabled = usuario.CanUpdate();
+                        }
+                        else
+                        {
+                            BAceptarDefuncion.Enabled = usuario.CanInsert();
+                        }
+
+                        if (TFechaRetiroClinicaHeridas.Text.Length == 0)
+                        {
+                            if (!string.IsNullOrEmpty(conector.QueryString("SELECT 1 FROM valoracion_herida WHERE paciente={0} LIMIT 1", Query.GetValor(HId.Value))))
+                            { // solo se activa cuando el paciente ha estado en clinica de heridas
+                                PClinicaHeridas.Visible = true;
+                            }
+                        } else { // ya fue retirado, ahora buscamos una nueva valoracion en el futuro
+                            PClinicaHeridas.Visible = true;
+                            if (!string.IsNullOrEmpty(conector.QueryString("SELECT 1 FROM valoracion_herida WHERE paciente={0} AND fecha>{1} LIMIT 1"
+                                , Query.GetValor(HId.Value)
+                                , Query.GetValor(Query.GetMySQLDateFormat(TFechaRetiroClinicaHeridas.Text))
+                                )))
+                            { // solo se activa si el paciente
+                                BAceptarClinica.Enabled = usuario.CanUpdate();
+                                TFechaRetiroClinicaHeridas.ReadOnly = !usuario.CanUpdate();
+                                LClinica.Text += ", último retiro el " + TFechaRetiroClinicaHeridas.Text;
+                            } else {
+                                LClinica.Text += ", egresado el " + TFechaRetiroClinicaHeridas.Text;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected string GetCodigoCIE(string text) {
+        int pos= text.IndexOf('-');
+        if(pos!=-1) {
+            string resultado = text.Substring(0, pos);
+            return text.Substring(0, pos).Trim();
+        }
+        return "";
+    }
+
+    protected string GetCleanDoc(string texto) {
+
+        for (int i = 0; i < texto.Length; i++)
+        {
+            if (!char.IsNumber(texto[i]) && !char.IsLetter(texto[i]))
+            {
+                texto= texto.Replace(texto[i].ToString(), "");
+                i--;
+            }
+        }
+        return texto;
+    }
+
+    public string JoinNames(string[] nombres) {
+        string resultado = "";
+        foreach (string nombre in nombres) {
+            resultado += " " + nombre.Trim();
+            resultado.Trim();
+        }
+        return resultado;
+    }
+
+    protected void BAceptar_Click(object sender, EventArgs e)
+    {
+        RFP.Enabled=
+        RIPS.Enabled = DAsegurador.SelectedItem.Text.ToLower().Contains("compensar");
+        Validate("");
+        if (!IsValid)
+        {
+            Logs.Write("Invalid page");
+            return;
+        }
+        Query query = new Query("paciente");
+
+        query["tdocId"] = DDocumento.SelectedValue;
+        query["pacDocumento"] = GetCleanDoc(TDocumento.Text);
+        query["pacPApellido"] = TPApellido.Text;
+        query["pacObservaciones"] = TObservaciones.Text;
+        query["pacSApellido"] = TSApellido.Text;
+        query["pacPNombre"] = TPNombre.Text;
+        query["pacSNombre"] = TSNombre.Text;
+        query["sexoId"] = DSexo.SelectedValue;
+        query["pacFechaNac"] = Query.GetMySQLDateFormat(TNacimiento.Text);
+        query["pacDireccion"] = TDireccion.Text;
+        query["pacBarrio"] = TBarrio.Text;
+        query["pacTelefono"] = TTelefono.Text;
+        query["pacTelefono1"] = TTelefono1.Text;
+        query["pacCelular"] = TMovil.Text;
+        query["pacCorreo"] = TEMail.Text;
+        query["pacEspecLlegada"] = TLlegada.Text;
+        query["locId"] = DLocalidad.SelectedValue;
+        query["pacEstrato"] = TEstrato.Text;
+        query["pacFamilarResponsable"] = TFResponsable.Text;
+        query["pacParentesco"] = TParentesco.Text;
+        query["pdirId"] = DPago.SelectedValue;
+        query["entId"] = DAsegurador.SelectedValue;
+        query["megId"] = DMedico.SelectedValue;
+        query["pacFecIngAsegurador"] = Query.GetMySQLDateFormat(TFechaIngresoAsegurador.Text);
+        query["pacGrado"] = TGrado.Text;
+        query["pacTipoAfiliado"] = DTipoAfiliado.SelectedValue;
+        query["tipECod"] = DTipoEvento.Text;
+        query["pacFecIngPrograma"] = Query.GetMySQLDateFormat(TFechaIngreso.Text);
+        query["estId"] = DEstado.SelectedValue;
+        query["pacIntensidadTerapias"] = TIntensidadTerapias.Text;
+        query["cieCodDx"] = GetCodigoCIE(TCIE1.Text);
+        query["cieCodDx_1"] = GetCodigoCIE(TCIE2.Text);
+        query["cieCodDx_2"] = GetCodigoCIE(TCIE3.Text);
+        query["categoria"] = DCategoria.SelectedValue;
+        query["diabetico"] = CDiabetico.Checked ? "1" : "";
+        query["segUsuarioIngreso"] = Usuario.GetUsuario().GetLogin();
+        query["pacNombres"] = JoinNames(new string[] {TPApellido.Text, TSApellido.Text, TPNombre.Text, TSNombre.Text });
+        query["acompanante_nombres"] = TAcompananteNombres.Text;
+        query["acompanante_telefono"] = TAcompananteTelefono.Text;
+        query["acompanante_ocupacion"] = TAcompananteOcupacion.Text;
+        query["acompanante_estadocivil"] = DAcompanteEstadoCivil.SelectedValue;
+        query["acompanante_direccion"] = TAcompananateDireccion.Text;
+        query["ciudad"] = DCiudad.SelectedValue;
+        query["ips_remitente"] = DIPS.SelectedValue;
+        query["presentacion"] = Query.GetMySQLDateFormat(TPresentacion.Text, true);
+        query["familiar_telefono"]= TTelefonoFamiliar.Text;
+
+        using (CConector conector = new CConector())
+        {
+
+            if (HId.Value.Length > 0)
+            {
+                if (conector.QueryMod(query.GetUpdate("pacId='" + HId.Value + "'")) == -1)
+                    return;
+            }
+            else
+            {
+                string id = conector.QueryString("SELECT pacId FROM paciente WHERE tdocId=" + DDocumento.SelectedValue + " AND pacDocumento='" + GetCleanDoc(TDocumento.Text) + "'");
+                if (id.Length > 0)
+                {
+
+                    ((MasterPageI)Master).SetMensaje("Ya existe un paciente con este documento.");
+                    return;
+                }
+
+                int res = conector.QueryMod(query.GetInsert(), true);
+                if (res == -1)
+                    return;
+                HId.Value = res.ToString();
+            }
+
+            Directory.CreateDirectory(Path.Combine(HomeCareVersion.FilesPath, "paciente"));
+            string foto = Path.Combine(Path.Combine(HomeCareVersion.FilesPath, "paciente"), HId.Value + ".jpg");
+            if (IFoto.PostBackUrl.Length == 0)
+            {
+                File.Delete(foto);
+            }
+            if (FFoto.HasFile)
+            {
+                File.Delete(foto);
+                FFoto.SaveAs(foto);
+            }
+        }
+
+        using(CConector conectorm= new CConector()) 
+            conectorm.InsertModificacion(HId.Value);
+
+        Paciente.RemovePaciente(HId.Value);
+
+        ((MasterPageI)Master).SetParametros("?pid=" + HId.Value);
+        ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Editado.");
+    }
+
+    protected void BCancelar_Click(object sender, EventArgs e)
+    {
+        Response.Redirect(Request.Url.AbsolutePath);
+    }
+    
+    protected void BRetiro_Click(object sender, EventArgs e)
+    {
+        using (CConector conector = new CConector())
+        {
+            conector.StartTransaction();
+            if (LReactivar.Text == "Reactivar")
+            {
+                // reingreso paciente
+                if (conector.QueryMod("UPDATE paciente set estId=1 WHERE pacId=" + HId.Value) == -1)
+                    return;
+                if (conector.QueryMod("INSERT INTO paciente_reingreso(pacId,cingId,rinFecha,rinObs,segUsuarioIngreso) VALUES(" + HId.Value + "," + DMotivo.SelectedValue + ",'" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "','" + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "')") == -1)
+                    return;
+                if (conector.QueryMod("insert into paciente_auditoria_servicios(pacId,audIngreso,audUsuario,audFecha,audObs,segFechaIngreso) values(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "','" + TObservacionesRetiro.Text + "',SYSDATE())") == -1)
+                    return;
+                if (conector.QueryMod("DELETE programacion_novedad FROM programacion_novedad,programacion WHERE programacion.pacId=" + HId.Value + " AND programacion.prgId=programacion_novedad.prgId AND programacion.prgFechaProg>='" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' AND programacion.prgActivo=0") == -1)
+                    return;
+                if (conector.QueryMod("UPDATE programacion set prgActivo=1 where pacId=" + HId.Value + " and prgFechaProg>='" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=0") == -1)
+                    return;
+                if (conector.QueryMod("UPDATE autorizacion set autActivo=1 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and autActivo=0") == -1)
+                    return;
+            }
+            else
+            { // retiro paciente
+                if (conector.QueryMod("UPDATE paciente set estId=2,pacCuraciones = 0,pacAdmPuntual = 0,pacTerapiaFisica = 0,pacTerapiaResp = 0,pacTerapiaOcup = 0,pacTerapiaLenguaje = 0,pacValNutricional = 0,pacValMedica = 0,pacEnfermeria_12 = 0,pacEnfermeria_24 = 0,pacEntregaSuministros = 0 WHERE pacId=" + HId.Value) == -1)
+                    return;
+                if (conector.QueryMod("INSERT INTO paciente_egreso(pacId,cegId,egrObs,egrFecha,segUsuarioIngreso) VALUES(" + HId.Value + "," + DMotivo.SelectedValue + ",'" + TObservacionesRetiro.Text + "','" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "','" + Usuario.GetUsuario().GetLogin() + "')") == -1)
+                    return;
+                if (conector.QueryMod("INSERT INTO paciente_auditoria_servicios(pacId,audEgreso,audUsuario,audFecha,cegId,audObs,segFechaIngreso) VALUES(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "'," + DMotivo.SelectedValue + ",'" + TObservacionesRetiro.Text + "',SYSDATE())") == -1)
+                    return;
+                string cnoId = conector.QueryString("SELECT cnoId FROM causa_egreso WHERE cegId=" + DMotivo.SelectedValue);
+                if (cnoId.Length == 0)
+                    cnoId = "NULL";
+                if (conector.QueryMod("DELETE programacion_novedad FROM programacion_novedad,programacion WHERE programacion.pacId=" + HId.Value + " AND programacion.prgId=programacion_novedad.prgId AND programacion.prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' AND programacion.prgActivo=1") == -1)
+                    return;
+                if (conector.QueryMod("INSERT INTO programacion_novedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesRetiro.Text + "','" + Usuario.GetUsuario().GetLogin() + "',SYSDATE() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=1") == -1)
+                    return;
+                if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and prgActivo=1") == -1)
+                    return;
+                if (conector.QueryMod("UPDATE autorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + Query.GetMySQLDateFormat(TFechaRetiro.Text) + "' and autActivo=1") == -1)
+                    return;
+            }
+            conector.InsertModificacion(HId.Value);
+            conector.Commit();
+        }
+        
+        Paciente.RemovePaciente(HId.Value);
+        ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Editado.");
+    }
+    protected void IEliminar_Click(object sender, EventArgs e)
+    {
+        IFoto.PostBackUrl = "";
+        IFoto.ImageUrl = "";
+        IEliminar.Visible = false;
+    }
+    protected void OnValidaFileJPG(object sender, ServerValidateEventArgs e)
+    {
+        e.IsValid = false;
+        if (e.Value.Length != 0)
+        {
+            string Extension = e.Value.Substring(e.Value.LastIndexOf(".") + 1).ToLower();
+            e.IsValid = Extension == "jpg" || Extension == "jpeg"; // Valid file type
+        }
+    }
+    protected void GProgramacion_RowDataBound(object sender, GridViewRowEventArgs e)
+    {
+        if (e.Row.RowIndex != -1)
+        {
+            if (HttpUtility.HtmlDecode(e.Row.Cells[2].Text).Trim().Length == 0)
+            {
+                e.Row.Cells[2].Text = HttpUtility.HtmlEncode(Procedimientos.GetProcedimiento(HttpUtility.HtmlDecode(e.Row.Cells[4].Text).Trim()));
+            }
+        }
+    }
+
+    protected void BAceptarDefuncion_Click(object sender, EventArgs e)
+    {
+
+        using (CConector conector = new CConector())
+        {
+            if (conector.QueryMod("UPDATE paciente set estId=2,pacCuraciones = 0,pacAdmPuntual = 0,pacTerapiaFisica = 0,pacTerapiaResp = 0,pacTerapiaOcup = 0,pacTerapiaLenguaje = 0,pacValNutricional = 0,pacValMedica = 0,pacEnfermeria_12 = 0,pacEnfermeria_24 = 0,pacEntregaSuministros = 0 WHERE pacId=" + HId.Value) == -1)
+                return;
+            if (conector.QueryMod("INSERT INTO paciente_egreso(pacId,cegId,egrObs,egrFecha,segUsuarioIngreso,expedidoHS) VALUES(" + HId.Value + "," + 1 + ",'" + TObservacionesDefuncion.Text + "','" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "','" + Usuario.GetUsuario().GetLogin() + "'," + (CExpedidaOrganizationExample15.Checked ? "1" : "0") + ")") == -1)
+                return;
+            if (conector.QueryMod("INSERT INTO paciente_auditoria_servicios(pacId,audEgreso,audUsuario,audFecha,cegId,audObs,segFechaIngreso) VALUES(" + HId.Value + ",1,'" + Usuario.GetUsuario().GetLogin() + "','" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "'," + 1 + ",'" + TObservacionesDefuncion.Text + "',SYSDATE())") == -1)
+                return;
+            string cnoId = conector.QueryString("SELECT cnoId FROM causa_egreso WHERE cegId=" + 1);
+            if (cnoId.Length == 0)
+                cnoId = "NULL";
+            if (conector.QueryMod("DELETE programacion_novedad FROM programacion_novedad,programacion WHERE programacion.pacId=" + HId.Value + " AND programacion.prgId=programacion_novedad.prgId AND programacion.prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "' AND programacion.prgActivo=1") == -1)
+                return;
+            if (conector.QueryMod("INSERT INTO programacion_novedad(prgId,prgTipo,novId,novTipo,cnoId,perIdAnt,perId,novObs,segUsuarioRegistro,segFechaRegistro) SELECT prgId,1,1,1," + cnoId + ",perId,null,'GENERADA AUTOMATICAMENTE POR INACTIVACION DEL PACIENTE: " + TObservacionesDefuncion.Text + "','" + Usuario.GetUsuario().GetLogin() + "',SYSDATE() FROM programacion WHERE pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "' and prgActivo=1") == -1)
+                return;
+            if (conector.QueryMod("UPDATE programacion set prgActivo=0 WHERE pacId=" + HId.Value + " and prgFechaProg>'" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "' and prgActivo=1") == -1)
+                return;
+            if (conector.QueryMod("UPDATE autorizacion set autActivo=0 WHERE pacId=" + HId.Value + " and autFechaVenc>='" + Query.GetMySQLDateFormat(TFechaDefuncion.Text) + "' and autActivo=1") == -1)
+                return;
+        }
+
+        using(CConector conectormysql = new CConector()) 
+            conectormysql.InsertModificacion(HId.Value);
+
+        Paciente.RemovePaciente(HId.Value);
+
+        ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Inactivado.");
+    }
+
+    protected void BAceptarClinica_Clicked(object sender, EventArgs e) {
+
+        using (CConector conector = new CConector()) {
+
+            Query query = new Query("paciente");
+
+            query["egresoClinicaHeridas"] = Query.GetMySQLDateFormat(TFechaRetiroClinicaHeridas.Text);
+
+            if (conector.QueryMod(query.GetUpdate("pacId={0}", Query.GetValor(HId.Value))) == -1)
+                return;
+
+            ((MasterPageI)Master).SetResultado("Usuario " + TPNombre.Text + " " + TPApellido.Text + " Egresado de clínica de heridas.");
+        }
+    }
+}

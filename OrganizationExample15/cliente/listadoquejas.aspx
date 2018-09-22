@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Listado PQR" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="listadoquejas.aspx.cs" Inherits="cliente_listadoquejas" %>
+﻿<%@ Page Title="Listado PQR" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="cliente_listadoquejas" Codebehind="listadoquejas.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <style type="text/css">.GridHeader th {width: auto !important;}</style>

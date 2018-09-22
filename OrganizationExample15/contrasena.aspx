@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Contraseña" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="contrasena.aspx.cs" Inherits="contrasena" %>
+﻿<%@ Page Title="Contraseña" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="contrasena" Codebehind="contrasena.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <style type="text/css">

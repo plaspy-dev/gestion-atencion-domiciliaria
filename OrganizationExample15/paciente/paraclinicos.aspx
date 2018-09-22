@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Paraclínicos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="paraclinicos.aspx.cs" Inherits="paciente_paraclinicos" %>
+﻿<%@ Page Title="Paraclínicos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="paciente_paraclinicos" Codebehind="paraclinicos.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Estadísticas PQR" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="estadisticas2.aspx.cs" Inherits="cliente_estadisticas2" %>
+﻿<%@ Page Title="Estadísticas PQR" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="cliente_estadisticas2" Codebehind="estadisticas2.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>

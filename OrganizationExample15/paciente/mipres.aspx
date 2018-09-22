@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Actas MIPRES" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="mipres.aspx.cs" Inherits="paciente_mipres" %>
+﻿<%@ Page Title="Actas MIPRES" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="paciente_mipres" Codebehind="mipres.aspx.cs" %>
 <%@ Register src="~/rh/funcionarioSimple.ascx" tagname="funcionario" tagprefix="uc1" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Factura" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="factura.aspx.cs" Inherits="facturacion_factura" %>
+﻿<%@ Page Title="Factura" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="facturacion_factura" Codebehind="factura.aspx.cs" %>
 <%@ Register Src="~/facturacion/facturactrl.ascx" TagPrefix="uc" TagName="Factura" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">

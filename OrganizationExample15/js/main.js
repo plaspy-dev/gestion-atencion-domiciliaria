@@ -518,6 +518,9 @@ $.fn.disablePaste = function () {
 
     return this.each(function () {
 
+        if ($(this).hasClass("ui-autocomplete-input") || $(this).data("can-paste"))
+            return;
+
         var count = 0;
         function updateCount(ctrl) {
             var length = $(ctrl).val().length;

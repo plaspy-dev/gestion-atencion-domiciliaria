@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Encuesta de satisfacción al usuario" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="preguntas.aspx.cs" Inherits="administrador_preguntas" %>
+﻿<%@ Page Title="Encuesta de satisfacción al usuario" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="administrador_preguntas" Codebehind="preguntas.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

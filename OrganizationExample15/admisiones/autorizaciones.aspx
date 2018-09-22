@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Admisiones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="autorizaciones.aspx.cs" Inherits="admisiones_autorizaciones" %>
+﻿<%@ Page Title="Admisiones" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="admisiones_autorizaciones" Codebehind="autorizaciones.aspx.cs" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <script type="text/javascript">
     addFunctionToStart(function() {

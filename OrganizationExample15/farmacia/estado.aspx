@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Stock mínimo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="estado.aspx.cs" Inherits="farmacia_estado" %>
+﻿<%@ Page Title="Stock mínimo" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="farmacia_estado" Codebehind="estado.aspx.cs" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     <style type="text/css">.GridHeader th {width: auto;} .anchomax { width: 150px; }</style>
     <script type="text/javascript">

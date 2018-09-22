@@ -1,8 +1,8 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="cie10list.ascx.cs" Inherits="paciente_cie10list" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="paciente_cie10list" Codebehind="cie10list.ascx.cs" %>
 <script type="text/javascript">
     $inicio(function () {
         $("#<%= TCIE10.ClientID %>")._autoComplete({
-            url: "../webservices/servicios.asmx/GetCodigoDiagnosticos",
+            url: "<%= ResolveClientUrl("~/webservices/servicios.asmx/GetCodigoDiagnosticos") %>",
             map: function (item) {
                 item.label = item.Name;
                 item.value = item.Value;
@@ -36,7 +36,7 @@
 <table style="width: 100%">
     <tr>
         <td class="nowrap">CIE10<asp:RequiredFieldValidator ControlToValidate="TCIE10" ValidationGroup="cie10" ErrorMessage="Por favor ingrese un CIE10." ID="R5" runat="server" Display="Dynamic" SetFocusOnError="true">*</asp:RequiredFieldValidator></td>
-        <td style="width: 100%"><asp:TextBox runat="server" Width="100%" ID="TCIE10"></asp:TextBox></td>
+        <td style="width: 100%"><asp:TextBox data-can-paste="true" runat="server" Width="100%" ID="TCIE10"></asp:TextBox></td>
         <td><asp:Button ID="BMasCDiagnostico" runat="server" OnClick="BMasCDiagnostico_Click" Text="+" ValidationGroup="cie10" /></td>
     </tr>
 </table>

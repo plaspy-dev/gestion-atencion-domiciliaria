@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Índice y escalas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="barthel.aspx.cs" Inherits="paciente_barthel" %>
+﻿<%@ Page Title="Índice y escalas" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="paciente_barthel" Codebehind="barthel.aspx.cs" %>
 <%@ Import Namespace="System.Data" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>

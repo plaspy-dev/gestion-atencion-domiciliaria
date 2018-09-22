@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Orden de compra" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="ordendecompra.aspx.cs" Inherits="farmacia_ordendecompra" %>
+﻿<%@ Page Title="Orden de compra" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="farmacia_ordendecompra" Codebehind="ordendecompra.aspx.cs" %>
 <%@ Register Src="~/paciente/pacienteSimple.ascx" TagName="pacienteSimple" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <style type="text/css">

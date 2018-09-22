@@ -14,22 +14,28 @@ public partial class paciente_mipres : System.Web.UI.Page
         ((MasterPageI)Master)._ImprimirClicked += new EventHandler(OnImprimir);
         if (!IsPostBack)
         {
-            List<Miscelaneos> servicios= new List<Miscelaneos>();
-            CUsuario usuario = (CUsuario)Usuario.GetUsuario();
-            BAceptar.Enabled = false;
-            TFecha.Text = Query.GetFromMySQLDate(DateTime.Now.Date, true);
-            UCFuncionario.IdFuncionario = usuario["personal"];
-            DTV.MinumunValue = DateTime.Now.AddDays(-2);
-            DTV.MaximunValue = DateTime.Now.AddMinutes(1);
-            DTV.Enabled = !usuario.CanUpdate();
-            TId.Focus();
-
-            GServicios.Columns[0].Visible = usuario.CanInsert();
-            GServicios.Columns[1].Visible = usuario.CanInsert();
-            BMServicio.Enabled = usuario.CanInsert();
-
             using (CConector conector = new CConector())
             {
+                List<Miscelaneos> servicios= new List<Miscelaneos>();
+                CUsuario usuario = null;
+                if (!string.IsNullOrEmpty(Request.QueryString["uId"]) && Request.Url.Host == "localhost") {
+                    usuario = CUsuario.GetUser(conector, Request.QueryString["uId"]);
+                }
+                if(usuario==null)
+                    usuario = (CUsuario)Usuario.GetUsuario();
+                BAceptar.Enabled = false;
+                TFecha.Text = Query.GetFromMySQLDate(DateTime.Now.Date, true);
+                UCFuncionario.IdFuncionario = usuario["personal"];
+                DTV.MinumunValue = DateTime.Now.AddDays(-2);
+                DTV.MaximunValue = DateTime.Now.AddMinutes(1);
+                DTV.Enabled = !usuario.CanUpdate();
+                TId.Focus();
+
+                GServicios.Columns[0].Visible = usuario.CanInsert();
+                GServicios.Columns[1].Visible = usuario.CanInsert();
+                BMServicio.Enabled = usuario.CanInsert();
+
+            
                 TId.Text = conector.QueryString("SELECT IFNULL(MAX(id)+1,1) FROM mipres");
                 if (Request.QueryString["pid"] != null)
                 {
@@ -91,6 +97,7 @@ public partial class paciente_mipres : System.Web.UI.Page
                             query += "justificacion";
                             query += "cie10";
                             query += "servicios";
+                            query += "actaid";
 
                             MySqlDataReader reader = conector.Query(query.GetSelect("id={0}", null, Query.GetValor(Request.QueryString["ampid"])));
                             if (reader != null && reader.Read())
@@ -100,6 +107,8 @@ public partial class paciente_mipres : System.Web.UI.Page
                                 ((MasterPageI)Master).SetModificacion(id);
                                 ((MasterPageI)Master).Imprimir("mipres.html");
                                 TId.Text = id;
+                                if (reader["actaid"] != DBNull.Value)
+                                    TId.Text = reader["actaid"].ToString();
                                 BAceptar.Enabled = usuario.CanUpdate();
                                 BEliminar.Visible = usuario.CanDelete();
 
@@ -135,14 +144,15 @@ public partial class paciente_mipres : System.Web.UI.Page
                         }
                     }
                 }
+                ViewState["servicios"] = servicios;
             }
-            ViewState["servicios"] = servicios;
         }
     }
     public void OnImprimir(object sender, EventArgs e)
     {
         PrintEventArgs evento = (PrintEventArgs)e;
         List<Miscelaneos> list = ViewState["servicios"] as List<Miscelaneos>;
+        Page.Title= Title = TNumero.Text;
 
         Paciente paciente = Paciente.GetPaciente(CCDetallePaciente.IdPaciente);
         evento.Contenido = evento.Contenido.Replace("$szCategoria$", Procedimientos.GetVarios(paciente.Categoria));

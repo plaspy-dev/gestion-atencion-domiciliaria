@@ -11,7 +11,7 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2018-04-27.
+This cut records the home-care application as archived on 2018-09-22.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
@@ -34,24 +34,25 @@ The application keeps the records used to arrange visits and coordinate the peop
 The local build precompiles the remaining Web Forms pages. The build recipe excludes pages that depend on archived controls that have not survived. The runtime test only checks local sign-in with a fictional account. It does not exercise the excluded pages, clinical forms, or external integrations. The 10 file exclusions in `demo/missing-controls.json` include `paciente/ingreso.aspx`, `paciente/ingreso.aspx.cs`, `paciente/evolucion.aspx`, `paciente/evolucion.aspx.cs`.
 On Windows, build the recovered Web Forms copy with `pwsh -NoProfile -File demo/Build.ps1 -Output <new-temp-folder>`. Use IIS Express and a separate MySQL instance for fictional data.
 
-The retained site entry is `OrganizationExample15/Default.aspx`. Use fictional accounts and a disposable database on loopback.
+The retained site entry is `OrganizationExample15.webforms/Default.aspx`. Use fictional accounts and a disposable database on loopback.
 
 ### Archive notes
 
-The archive inventory counted 0 additions, 7 edits and 0 removals.
+The archive inventory counted 582 additions, 146 edits and 29 removals.
 
 ### Framework versions
 
 The archived descriptors declare these .NET Framework versions.
 
-- .NET Framework 4.5 in `OrganizationExample15.sln`, `OrganizationExample16.sln`
+- .NET Framework 4.5 in `OrganizationExample15.webforms.sln`, `OrganizationExample16.sln`
 - .NET Framework 4.5.2 in `movil.sln`
+- .NET Framework 4.6 in `OrganizationExample15/OrganizationExample15.csproj`
 
 ### Usage
 
 Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/materna/postparto.aspx` and the other routes above.
 
-The retained entry page is `OrganizationExample15/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
+The retained entry page is `OrganizationExample15.webforms/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
 
 ### License
 
@@ -80,7 +81,7 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2018-04-27.
+Este corte conserva la versión de atención domiciliaria archivada el 2018-09-22.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
@@ -101,26 +102,27 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 ### Compilación y uso local
 
 La compilación local precompila las páginas Web Forms disponibles. La receta excluye las páginas que dependen de controles históricos que no se conservaron. La prueba de ejecución cubre solo el ingreso local con una cuenta ficticia. Quedan sin probar las páginas excluidas, los formularios clínicos y las integraciones externas. Las 10 exclusiones de archivos de `demo/missing-controls.json` incluyen `paciente/ingreso.aspx`, `paciente/ingreso.aspx.cs`, `paciente/evolucion.aspx`, `paciente/evolucion.aspx.cs`.
-Los insumos conservados incluyen `OrganizationExample15.sln`, `OrganizationExample16.sln`, `movil.sln`. Abre la solución o el proyecto en un entorno de desarrollo de Visual Studio y .NET Framework compatible con el corte. Recupera las referencias compartidas, los paquetes y la configuración de ASP.NET de esta edición antes de usar MSBuild.
+Los insumos conservados incluyen `OrganizationExample15.sln`, `OrganizationExample15.webforms.sln`, `OrganizationExample16.sln`, `movil.sln`, `OrganizationExample15/OrganizationExample15.csproj`. Abre la solución o el proyecto en un entorno de desarrollo de Visual Studio y .NET Framework compatible con el corte. Recupera las referencias compartidas, los paquetes y la configuración de ASP.NET de esta edición antes de usar MSBuild.
 
-La entrada conservada del sitio es `OrganizationExample15/Default.aspx`. Usa cuentas ficticias y una base desechable en la interfaz local.
+La entrada conservada del sitio es `OrganizationExample15.webforms/Default.aspx`. Usa cuentas ficticias y una base desechable en la interfaz local.
 
 ### Notas del respaldo
 
-El inventario del respaldo registró 0 adiciones, 7 cambios y 0 retiros.
+El inventario del respaldo registró 582 adiciones, 146 cambios y 29 retiros.
 
 ### Versiones de .NET Framework
 
 Los descriptores archivados declaran estas versiones de .NET Framework.
 
-- .NET Framework 4.5 en `OrganizationExample15.sln`, `OrganizationExample16.sln`
+- .NET Framework 4.5 en `OrganizationExample15.webforms.sln`, `OrganizationExample16.sln`
 - .NET Framework 4.5.2 en `movil.sln`
+- .NET Framework 4.6 en `OrganizationExample15/OrganizationExample15.csproj`
 
 ### Uso
 
 Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/materna/postparto.aspx` y las demás rutas de arriba.
 
-La portada conservada es `OrganizationExample15/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
+La portada conservada es `OrganizationExample15.webforms/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
 
 ### Licencia
 
@@ -140,9 +142,9 @@ Consulta el historial de commits para comparar esta copia y sus notas de reconst
 
 ## Recovered local build / Compilación local recuperada
 
-The recovered Web Forms site is in `OrganizationExample15`. Run `pwsh -NoProfile -File demo/Build.ps1 -Output <new-directory>` on Windows with .NET Framework 4.8 and the .NET SDK. The build compiles the compatible shared library from the recovered sources and uses the sample Web.config in the copy.
+The recovered Web Forms site is in `OrganizationExample15.webforms`. Run `pwsh -NoProfile -File demo/Build.ps1 -Output <new-directory>` on Windows with .NET Framework 4.8 and the .NET SDK. The build compiles the compatible shared library from the recovered sources and uses the sample Web.config in the copy.
 
-El sitio Web Forms recuperado se encuentra en `OrganizationExample15`. Ejecuta `pwsh -NoProfile -File demo/Build.ps1 -Output <carpeta-nueva>` en Windows con .NET Framework 4.8 y el SDK de .NET. La compilación compila la biblioteca propia compatible desde las fuentes recuperadas y usa Web.config de ejemplo en la copia.
+El sitio Web Forms recuperado se encuentra en `OrganizationExample15.webforms`. Ejecuta `pwsh -NoProfile -File demo/Build.ps1 -Output <carpeta-nueva>` en Windows con .NET Framework 4.8 y el SDK de .NET. La compilación compila la biblioteca propia compatible desde las fuentes recuperadas y usa Web.config de ejemplo en la copia.
 
 The build restores iTextSharp 5.4.4 from the official NuGet package and checks its SHA-256. Set `DOMICILIO_ITEXTSHARP_PACKAGE` to the same package for an offline build.
 

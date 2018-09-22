@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Gestión ambiental" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="gestionambiental.aspx.cs" Inherits="rutasanitaria_gestionambiental" %>
+﻿<%@ Page Title="Gestión ambiental" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="rutasanitaria_gestionambiental" Codebehind="gestionambiental.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/SeleccionarPaciente.ascx" tagname="SeleccionarPaciente" tagprefix="uc5" %>
 

@@ -102,6 +102,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                 query += "ciudad";
                 query += "ips_remitente";
                 query += "presentacion";
+                query += "familiar_telefono";
 
                 using (CConector conector = new CConector())
                 {
@@ -165,6 +166,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
                         Utilidades.SelectInDropDown(DCiudad, reader["ciudad"]);
                         Utilidades.SelectInDropDown(DIPS, reader["ips_remitente"]);
                         TPresentacion.Text = Query.GetFromMySQLDate(reader["presentacion"], true);
+                        TTelefonoFamiliar.Text = reader["familiar_telefono"].ToString();
 
                         if (TFechaRetiroClinicaHeridas.Text.Length > 0) {
                             TFechaRetiroClinicaHeridas.ReadOnly = !usuario.CanAdmin();
@@ -315,6 +317,7 @@ public partial class seguimiento_paciente : System.Web.UI.Page
         query["ciudad"] = DCiudad.SelectedValue;
         query["ips_remitente"] = DIPS.SelectedValue;
         query["presentacion"] = Query.GetMySQLDateFormat(TPresentacion.Text, true);
+        query["familiar_telefono"]= TTelefonoFamiliar.Text;
 
         using (CConector conector = new CConector())
         {

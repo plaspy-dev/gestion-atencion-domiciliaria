@@ -1,2 +1,2 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="actividad.ascx.cs" Inherits="control_actividad" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="control_actividad" Codebehind="actividad.ascx.cs" %>
 <asp:TextBox runat="server" ID="TProcedimiento"></asp:TextBox><asp:TextBox runat="server" ID="TProcedimientoID" CssClass="hide"></asp:TextBox>

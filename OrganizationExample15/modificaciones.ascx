@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="modificaciones.ascx.cs" Inherits="modificaciones" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="modificaciones" Codebehind="modificaciones.ascx.cs" %>
 <asp:Panel runat="server" ID="PModificaciones">
 <table style="border-collapse: collapse; ">
     <tr class="GridRow">

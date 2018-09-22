@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Dotación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="equipo.aspx.cs" Inherits="equipo_equipo" %>
+﻿<%@ Page Title="Dotación" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="equipo_equipo" Codebehind="equipo.aspx.cs" %>
 <%@ Register src="~/equipo/prestamo.ascx" tagname="prestamo" tagprefix="uc1" %>
 <%@ Register src="~/equipo/devolucion.ascx" tagname="devolucion" tagprefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">

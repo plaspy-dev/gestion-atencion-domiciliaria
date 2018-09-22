@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Autorizaciones sin programar" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="sinprogramar.aspx.cs" Inherits="programacion_sinprogramar" %>
+﻿<%@ Page Title="Autorizaciones sin programar" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="programacion_sinprogramar" Codebehind="sinprogramar.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 <style type="text/css">.GridHeader th {width: auto !important;}</style>
