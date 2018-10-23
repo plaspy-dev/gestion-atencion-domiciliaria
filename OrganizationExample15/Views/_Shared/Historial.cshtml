@@ -1,0 +1,72 @@
+﻿@model OrganizationExample15.Models.Shared.Historial
+@using Newtonsoft.Json;
+@if (Model.Numero>0)
+{
+<div class="text-section-title"><h5><a href="#" id="ahistorialctrl" data-toggle="collapse" data-target="#historialctrl">@Model.Numero @Model.Titulo <i class="fa fa-chevron-down pull-right"></i></a></h5></div>
+<div id="historialctrl" class="collapse historialctrl">
+    <table id="ghistorial" class="table table-sm table-bordered table-hover table-striped table-bootgrid">
+        <thead>
+            <tr>
+                @foreach (var column in Model.Columns)
+                {
+                    <th data-column-id="@column.Data" data-header-css-class="@column.HeaderCssClass" data-css-class="@column.CssClass" data-order="@column.DataOrder" data-align="@column.Align" data-formatter="@column.Formatter">@column.Titulo</th>
+                }
+            </tr>
+        </thead>
+    </table>
+</div>
+<script>
+    var historialctrl = {
+        urlquery: "@Url.Content(Model.URLQuery)",
+        urllink: "@Url.Content(Model.URLLink)",
+        post: @Html.Raw(Model.QueryParams == null ? "{}" : JsonConvert.SerializeObject(Model.QueryParams, HomeCareVersion.JsonSerializerSettingsCamelCase))
+    };
+    $(function () {
+        var $ghistorial=$("#ghistorial");
+        function initHistorial() {
+            if ($ghistorial[0]._bootgrid)
+                return false;
+            $ghistorial[0]._bootgrid = true;
+            var localstoragename = "gderc";
+            var rowCount = [10, 25, 50, -1];
+            if (localStorage[localstoragename] && localStorage[localstoragename] != rowCount[0])
+                rowCount.splice(0, 0, localStorage[localstoragename]);
+            $ghistorial.bootgrid({
+                ajax: true,
+                rowCount: rowCount,
+                labels: $.gridLabels,
+                navigation: 2,
+                url: historialctrl.urlquery,
+                statusMapping: { 4: "expired" },
+                post: function () {
+                    return historialctrl.post;
+                },
+                formatters: {
+                    link: function (column, row) {
+                        var url = historialctrl.urllink;
+                        for (var i in row) {
+                            url = url.replace("{" + i + "}", row[i]);
+                        }
+                        return '<a href="' + url + '" target="_blank">' + row[column.id] + '</a>';
+                    },
+                    currency: function (column, row) {
+                        if (row[column.id])
+                            return (+row[column.id]).formatCurrency();
+                        return row[column.id];
+                    }, check: function (column, row) {
+                        var check = (row[column.id] == "True" || row[column.id] == "true" || row[column.id] == "1")
+                        return '<input type="checkbox" class="pull-right" disabled="disabled" ' + (check ? 'checked="checked"' : "") + '/>';
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function () {
+                localStorage[localstoragename] = $(this).bootgrid('getRowCount');
+                $(this).next("#" + $(this).attr("id") + "-footer").toggle($(this).bootgrid("getTotalPageCount") > 1);
+                $(window).resize();
+            });
+        }
+        $("#ahistorialctrl").click(function () {
+            initHistorial();
+        });
+    });
+</script>
+}

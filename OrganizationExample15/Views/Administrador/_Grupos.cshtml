@@ -1,0 +1,118 @@
+﻿@model OrganizationExample15.Models.Administrador.Grupo
+@{
+    CUsuario user = ViewBag.User;
+    int indexEspeciales = Model.Privileges.IndexOf(Model.Privileges.Find(x => x.Title == "Permisos_Especiales"));
+}
+@using SDG.Componentes
+<div id="PP" style="display: none;" class="bkdlg modal fade" role="dialog">
+    <form method="post" action="@Request.Url.AbsolutePath">
+        <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">@(Model.Nombre ?? "Nuevo")</h4>
+                    <a href="#" class="close" onclick="$('#PP').modal('hide'); return false;">&times;</a>
+                </div>
+                <div class="modal-body">
+                    @Html.HiddenFor(x=>x.Id)
+                    <table class="table table-condensed table-sm table-striped">
+                        <tr>
+                            <td class="px">Nombre @Html.ValidationMessageFor(x => x.Nombre, "*")</td>
+                            <td class="w100">@Html.TextBoxFor(x => x.Nombre)</td>
+                        </tr>
+                        <tr>
+                            <td class="nw">Descripción</td>
+                            <td>@Html.TextBoxFor(x => x.Descripcion)</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                @for (int i=0; i<Model.Privileges[indexEspeciales].Childrens.Count; i++) {
+                                    <div>@Html.HiddenFor(x=>x.Privileges[indexEspeciales].Childrens[i].URL)
+                                @Html.CheckBoxFor(x => x.Privileges[indexEspeciales].Childrens[i].Read) @Html.LabelFor(x => x.Privileges[indexEspeciales].Childrens[i].Read, Model.Privileges[indexEspeciales].Childrens[i].Title)</div>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                @for (int i = 0; i < Model.Privileges.Count; i++)
+                                {
+                                    if (i != indexEspeciales)
+                                    {
+                                        <div class="card">
+                                            <div class="card-header" role="tab">
+                                                <h6 class="mb-0">
+                                                    <a href="#" data-toggle="collapse" data-target="@string.Format(".cp{0}", i)" aria-expanded="false">
+                                                        @Model.Privileges[i].Title
+                                                        @Html.HiddenFor(x=>x.Privileges[i].Title)
+                                                    </a>
+                                                </h6>
+                                            </div>
+                                            <div class="child collapse @string.Format("cp{0}", i)">
+                                                <div class="card-body">
+                                                    <table class="w100">
+                                                        <tr>
+                                                            <th>Todos</th>
+                                                            <th>Título</th>
+                                                            <th>Admin</th>
+                                                            <th>Eliminar</th>
+                                                            <th>Modificar</th>
+                                                            <th>Insertar</th>
+                                                            <th>Imprimir</th>
+                                                            <th>Lectura</th>
+                                                        </tr>
+                                                        @for (int j = 0; j < Model.Privileges[i].Childrens.Count; j++)
+                                                        {
+                                                            <tr>
+                                                                <td class="r">@Html.CheckBoxFor(x=>x.Privileges[i].Childrens[j].All, new { @class="call" })</td>
+                                                                <td class="w100">
+                                                                    @Html.HiddenFor(x=>x.Privileges[i].Childrens[j].URL)
+                                                                    @Model.Privileges[i].Childrens[j].Title
+                                                                </td>
+                                                                <td class="r">@Html.CheckBoxFor(x =>x.Privileges[i].Childrens[j].Admin)</td>
+                                                                <td class="r">@Html.CheckBoxFor(x =>x.Privileges[i].Childrens[j].Delete)</td>
+                                                                <td class="r">@Html.CheckBoxFor(x =>x.Privileges[i].Childrens[j].Update)</td>
+                                                                <td class="r">@Html.CheckBoxFor(x =>x.Privileges[i].Childrens[j].Insert)</td>
+                                                                <td class="r">@Html.CheckBoxFor(x =>x.Privileges[i].Childrens[j].Print)</td>
+                                                                <td class="r">@Html.CheckBoxFor(x =>x.Privileges[i].Childrens[j].Read)</td>
+                                                  </tr>
+                                                        }
+                                                    </table>
+                                                </div>
+                                            </div>    
+                                        </div>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                @Html.ValidationSummary()
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    @if ((user.CanInsert() && string.IsNullOrEmpty(Model.Id)) || (user.CanUpdate() && !string.IsNullOrEmpty(Model.Id)))
+                    {
+                        @Html.HiddenFor(x=>x._gk)
+                        <input type="submit" value="Aceptar" class="btn btn-submit" />
+                    }
+                    <a href="#" onclick="$('#PP').modal('hide'); return false" class="btn btn-default">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>$(function () {
+            $(".call").change(function () {
+                $(this).closest("tr").find(":checkbox:not(.call)")
+                    .prop("checked", $(this).prop("checked"))
+            }).each(function () {
+                var $otros = $(this).closest("tr").find(":checkbox:not(.call)");
+                var $call = $(this).closest("tr").find(":checkbox.call");
+                $otros.change(function () {
+                    $call.prop("checked", $otros.filter(":not(:checked)").length == 0);
+                });
+            });
+        });</script>
+</div>

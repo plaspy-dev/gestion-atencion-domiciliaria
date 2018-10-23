@@ -187,7 +187,7 @@ public partial class MasterPageI : System.Web.UI.MasterPage
         {
             string estado=HttpUtility.UrlEncode(Crypt.EncriptarDES(Utilidades.SaveState(cph.Controls), System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_2")));
             lnkImp.Attributes["s"] = estado;
-            lnkPDF.PostBackUrl = Request.Url.ToString();
+            lnkPDF.PostBackUrl = Request.Url.AbsolutePath + Request.Url.Query;
             if (Request.Url.Query.Length == 0)
                 lnkPDF.PostBackUrl += "?";
             else lnkPDF.PostBackUrl += "&";

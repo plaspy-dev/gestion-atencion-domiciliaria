@@ -1,0 +1,303 @@
+﻿@using OrganizationExample15.Models
+@using OrganizationExample15.Models.Administrador
+@model OrganizationExample15.Models.ClinicaHeridas.Valoracion
+@{
+    ViewBag.Title = "Valoración de heridas";
+    Layout = "~/Views/_Shared/_LayoutPagePrint.cshtml";
+    CUsuario usuario = ViewBag.User;
+    Paciente paciente = Paciente.GetPaciente(Model.Paciente.Id);
+    Funcionario funcionario = Funcionario.GetFuncionario(Model.Funcionario.Id);
+
+    string GetTejido(string name, string valor) {
+        if (string.IsNullOrEmpty(valor) || valor == "0")
+            return null;
+        return string.Format("<b>{0}</b> {1}%", Html.Encode(name), valor);
+    }
+
+    IHtmlString GetTejidos(OrganizationExample15.Models.ClinicaHeridas.Herida herida) {
+
+        List<string> tejidos = new List<string>();
+
+        tejidos.Add(GetTejido("Compacto", herida.TejidoCompacto));
+        tejidos.Add(GetTejido("De fibrina", herida.TejidoFibrina));
+        tejidos.Add(GetTejido("Epitelización", herida.TejidoEpitelizacion));
+        tejidos.Add(GetTejido("Esfacelo", herida.TejidoEsfacelo));
+        tejidos.Add(GetTejido("Granulación", herida.TejidoGranulacion));
+        tejidos.Add(GetTejido("Hipergranulación", herida.TejidoHiperGranulacion));
+        tejidos.Add(GetTejido("Limpio pero no granulado", herida.TejidoLimpioNoGranulado));
+        tejidos.Add(GetTejido("Necrosis profunda", herida.TejidoNecrosis));
+
+        return new HtmlString(string.Join(", ", tejidos.Where(x=>!string.IsNullOrEmpty(x))));
+    }
+}
+
+<table class="w100" border="0">
+    <tr>
+        <td colspan="5">
+            <table class="w100" border="0">
+                <tr>
+                    <td>
+                        <p><strong>VALORACIÓN DE HERIDAS</strong></p>
+                        <p>
+                            <strong>OrganizationExample15 SAS</strong><br />
+                            NIT. 000.000.015-0
+                        </p>
+                    </td>
+                    <td valign="bottom"><img src="~/clinicaheridas/casa.jpg" /></td>
+                    <td align="right" valign="middle">
+                        <br />
+                        <img src="~/imgs/Logo.jpg" width="170" height="60" alt="logo" />
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr><!-- datospaciente -->
+    <tr bgcolor="#FFFFFF">
+        <td colspan="5">
+            <fieldset>
+                <table class="w100">
+                    <tr>
+                        <td width="11%">Documento</td>
+                        <td width="19%"><strong>@paciente.documento</strong></td>
+                        <td width="13%">Nombre</td>
+                        <td width="38%" nowrap="nowrap"><strong>@paciente.NombreCompleto</strong></td>
+                        <td width="10%" nowrap="nowrap">Sexo</td>
+                        <td width="9%" nowrap="nowrap">@(paciente.sexoId == "1" ? "F" : "M")</td>
+                    </tr>
+                    <tr>
+                        <td>Nacimiento</td>
+                        <td class="nw">@paciente.FechaNac.Split(' ')[0] <span style="float: right">@paciente.Edad años</span></td>
+                        <td>Asegurador</td>
+                        <td>@paciente.NombreEntidad</td>
+                        <td>Categoría</td>
+                        <td>@paciente.Categoria</td>
+                    </tr>
+                    <tr>
+                        <td>Barrio</td>
+                        <td>@paciente.Barrio</td>
+                        <td>Direcci&oacute;n</td>
+                        <td colspan="3">@paciente.Barrio</td>
+                    </tr>
+                    <tr>
+                        <td>Tel&eacute;fono</td>
+                        <td>@paciente.Telefono</td>
+                        <td>Familiar</td>
+                        <td>@paciente.FamiliarResponsable</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>Parentesco</td>
+                        <td>@paciente.parentesco</td>
+                        <td>Tipo de Afiliaci&oacute;n</td>
+                        <td>@paciente.TipoAfiliacion</td>
+                        <td>Pago directo</td>
+                        <td>@paciente.tipopago</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6"><strong>@Html.Raw(string.Join("<br/>", paciente.cie10.Select(x => Html.Encode(Procedimientos.GetCodigoCIE(x)))))</strong></td>
+                    </tr>
+                </table>
+            </fieldset>
+        </td>
+    </tr><!-- datospacienteEnd -->
+    <tr>
+        <td><strong>Fecha</strong></td>
+        <td colspan="2">@Model.Fecha</td>
+        <td>&nbsp;</td>
+        <td nowrap="nowrap">&nbsp;</td>
+    </tr>
+    <tr>
+        <td><strong>Signos vitales</strong></td>
+        <td colspan="4"><strong>T</strong>: @Model.T °, <strong>FC</strong>: @Model.FC Lat/min, <strong>TA</strong>:@Model.TA, <strong>FR</strong>: @Model.FR Min, <strong>Pulsos: </strong>@Model.PulsosDistales @Model.ObservacionesPulso.</td>
+    </tr>
+    <tr>
+        <td><strong>Índice de Barthel</strong></td>
+        <td>@Calificacion.GetCalificacionYDescripcion(Model.Paciente.Id, Model.Fecha, Calificacion.Escalas.Barthel)</td>
+        <td><strong>Escala de Braden</strong></td>
+        <td>@Calificacion.GetCalificacionYDescripcion(Model.Paciente.Id, Model.Fecha, Calificacion.Escalas.Braden)</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td><strong>Escala Norton</strong></td>
+        <td>@Calificacion.GetCalificacionYDescripcion(Model.Paciente.Id, Model.Fecha, Calificacion.Escalas.Norton)</td>
+        <td><strong>Escala Cruz Roja</strong></td>
+        <td>@Calificacion.GetCalificacionYDescripcion(Model.Paciente.Id, Model.Fecha, Calificacion.Escalas.CruzRoja)</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="4" align="justify">
+            <strong>Antecedentes</strong>: @Html.Raw(string.Join(", ", Model.Antecendentes.Where(x => !string.IsNullOrEmpty(x.Text)).Select(x => string.Format("<b>{0}</b>: {1}", Html.Encode(x.Name), Html.Encode(x.Text)))))
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" align="justify">
+            <strong>Riesgos</strong>: @Html.Raw(string.Join(", ", Model.Riesgos.Where(x => !string.IsNullOrEmpty(x.Text)).Select(x => string.Format("<b>{0}</b>: {1}", Html.Encode(x.Name), Html.Encode(x.Text)))))
+        </td>
+    </tr>
+    @if (Model.Fistulas)
+    {
+        <tr>
+            <td colspan="4"><b>Fístulas</b></td>
+        </tr>
+        <tr class="fistula">
+            <td>Localización</td>
+            <td>@Model.LocalizacionFistula</td>
+            <td></td>
+            <td class="tdr"></td>
+        </tr>
+        <tr class="fistula">
+            <td>Cantidad afluente</td>
+            <td>@Model.CantidadAfluente</td>
+            @if (Model.SignosDeInfeccion)
+            {
+                <td colspan="2">Signos de infección</td>
+            }
+        </tr>
+    }
+    @if (Model.Ostomias)
+    {
+        <tr>
+            <td colspan="4"><b>Ostomías</b></td>
+        </tr>
+        <tr class="ostomia">
+            <td>Tipo</td>
+            <td nowrap="nowrap">@(Model.TipoOstomia=="1" ? "Definitiva" : "Temporal")</td>
+            <td>Ubicación del estoma</td>
+            <td>@Model.UbicacionEstoma</td>
+        </tr>
+        <tr class="ostomia">
+            <td nowrap="nowrap">Color del estoma</td>
+            <td>@MVarios.GetItem(Model.ColorEstoma).Nombre</td>
+            <td nowrap="nowrap">Estoma a nivel de la piel</td>
+            <td>@MVarios.GetItem(Model.EstomaNivelPiel).Nombre</td>
+        </tr>
+        <tr class="ostomia">
+            <td>Complicaciones</td>
+            <td>@MVarios.GetItem(Model.EstomaComplicaciones).Nombre</td>
+            <td>Estado de la piel</td>
+            <td>@MVarios.GetItem(Model.EstadoPiel).Nombre</td>
+        </tr>
+    }
+    @if (Model.DispositivosMedicosInsertados)
+    {
+        <tr>
+            <td colspan="4"><b>Dispositivos médicos insertados</b></td>
+        </tr>
+        <tr class="dispositivos">
+            <td>Tipo</td>
+            <td>@MVarios.GetItem(Model.TipoDispositivo).Nombre</td>
+            <td>Funcional</td>
+            <td>@MVarios.GetItem(Model.FuncionalParametro).Nombre</td>
+        </tr>
+        if (MVarios.GetItem(Model.FuncionalParametro).Nombre?.ToLower() == "obstruido")
+        {
+            <tr class="obstruido">
+                <td class="tdl"></td>
+                <td></td>
+                <td>Descripción</td>
+                <td class="tdr">@Model.FuncionalDescripcion</td>
+            </tr>
+        }
+    }
+    <tr>
+        <td colspan="4">Datos subjetivos</td>
+    </tr>
+    <tr>
+        <td>Escala de dolor</td>
+        <td>@MVarios.GetItem(Model.EscalaDolor).Nombre - @MVarios.GetItem(Model.EscalaDolor).Descripcion</td>
+        <td colspan="2"><img src="@Url.Content(string.Format("~/clinicaheridas/escalas/e{0}.jpg", MVarios.GetItem(Model.EscalaDolor).Nombre))" /></td>
+    </tr>
+    @foreach (var herida in Model.Heridas) {
+    <tr>
+        <td colspan="4"><hr /></td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Herida @herida.UbicacionEspecifica</strong></td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Valoración de heridas - Localización: </strong>@MVarios.GetItem(herida.Localizacion).Nombre, @(MVarios.GetItem(herida.Localizacion2).Nombre ?? "No aplica"), @(MVarios.GetItem(herida.Localizacion3).Nombre ?? "No aplica"), <strong>MI: </strong>@(MVarios.GetItem(herida.MiembrosInferiores).Nombre ?? "No aplica"), <strong>Pies:</strong> @(MVarios.GetItem(herida.Pies).Nombre ?? "No aplica")</td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Etiología: </strong>@MVarios.GetItem(herida.Etiologia).Nombre, @if(herida.Etiologia==0) { <strong>Otro: </strong><span>@herida.OtroEtiologia</span>}</td>
+    </tr>
+    if ((MVarios.GetItem(herida.Etiologia).Nombre?.ToLower())=="ulcera por presión") {
+    <tr class="etiologiam">
+        <td colspan="4"><strong>Evolución: Tiempo de evolución de la úlcera: </strong>@herida.TiempoEvolucionUlcera,<strong> Tejido profundo sospechoso:</strong> <span>@MVarios.GetItem(herida.TejidoProfundoSospechoso).Nombre, <strong>Lugar donde se originó la úlcera:</strong> @MVarios.GetItem(herida.LugarOrigen).Nombre, 
+            @if (MVarios.GetItem(herida.LugarOrigen).Nombre?.ToLower().StartsWith("hogar ge")==true)
+            {
+            <strong>Hogar geriatrico: </strong> 
+                @herida.HogarGeriatrico
+            }
+            </span>
+        </td>
+    </tr>
+    }
+    <tr>
+        <td colspan="4"><strong>Categoría</strong></td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Clasificación: </strong>@MVarios.GetItem(herida.Clasificacion).Nombre, <strong>Factores de riesgo determinante: </strong>@herida.FactoresRiesgo</td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Medición</strong></td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Tamaño</strong>: Longitud @(herida.Longitud ?? "0") cms., Anchura @(herida.Anchura ?? "0") cms., Profundidad @(herida.Profundidad ?? "0") cms., 
+        @if (herida.Tunelizacion)
+        {
+            <span>Tunelización @(herida.TunelizacionParametro ?? "0") cms.,</span>
+        } 
+        Cavidad @(herida.Cavidad ?? "0") cms.@if (herida.Bolsillo) { <span><strong>
+    Bolsillo: Profunidad:</strong> @(herida.BolsilloProfundidad ?? "0") cms., Ubicación: <span class="tdr">@MVarios.GetItem(herida.BolsilloUbicacion).Nombre</span>
+                            </span>}
+</td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Evaluación</strong></td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Lecho de la herida: </strong>Tipo de tejido observados: @MVarios.GetItem(herida.ExudadoTipo).Nombre.</td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Porcentaje de tejido:</strong> @GetTejidos(herida), <strong>Exposición</strong> @MVarios.GetItem(herida.TejidoExposicion).Nombre</td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Exudado: </strong>@MVarios.GetItem(herida.Exudado).Nombre, <strong>Tipo:</strong> @MVarios.GetItem(herida.ExudadoTipo).Nombre, <strong>Piel circundante:</strong> @MVarios.GetItem(herida.ExudadoPiel).Nombre, <strong>Bordes de la herida:</strong> @MVarios.GetItem(herida.ExudadoBordes).Nombre, <strong>Olor:</strong> @MVarios.GetItem(herida.ExudadoOlor).Nombre, <strong>Descripción:</strong> @herida.ExudadoDescripcion, <strong>Signos y síntomas:</strong> @MVarios.GetItem(herida.ExudadoSignos).Nombre.</td>
+    </tr>
+    if (herida.ExudadoComplicaciones)
+    {
+    <tr>
+        <td colspan="4" nowrap="nowrap"><strong>Complicaciones: </strong>@herida.ExudadodComplicacionesParametro, Clasificación: @MVarios.GetItem(herida.ExudadoClasificacion).Nombre</td>
+    </tr>
+        }
+        if (herida.Galeria.Files?.Count > 0) {
+    <tr>
+        <td colspan="4"><strong>Registro fotográfico</strong></td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            @foreach (var foto in herida.Galeria.Files) {
+                <img src="@FileStorage.AddParams(foto , "mw=150&mh=150")" />
+            }
+        </td>
+    </tr>
+        }
+    }
+    <tr>
+        <td colspan="4"><hr /></td>
+    </tr>
+</table>
+<p align="justify"><strong>Periodicidad</strong>: @Model.Periodicidad</p>
+<strong>Plan de manejo</strong>:@Model.Manejo
+<p align="justify"><strong>Plan educativo</strong>: @string.Join(",", Model.ComponenteEducativo.Where(x=>x.Check).Select(x=>x.Name))</p>
+<p>
+    <img src="@Url.Content(FileStorage.GetPublicURLPath(FileStorage.Types.firmas, funcionario.Id + ".jpg"))" class="firma" />
+    <img src="@Url.Content(FileStorage.GetPublicURLPath(FileStorage.Types.sellos, funcionario.Id + ".jpg"))" class="firma" />
+    <br />
+    ______________________________<br />
+    <strong>@funcionario.Nombres</strong><br />
+    Registro médico @funcionario.Documento <br />
+    Enfermera Jefe
+</p>
+

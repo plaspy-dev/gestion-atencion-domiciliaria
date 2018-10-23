@@ -1,0 +1,40 @@
+﻿@model OrganizationExample15.Models.Galeria
+<div class="gallery" ng-controller="Gallery as controller" ng-cloak>
+    <div class="gallery-item" ng-repeat="file in controller.galeria.files">
+        <a href="{{ controller.getFilePath(file) }}">
+            <img ng-src="{{ controller.getFilePath(file, 'mw=150&mh=150') }}" class="lazy img-thumbnail" />
+        </a>
+        <div class="gallery-item-name">
+            <a href="{{ controller.getFilePath(file) }}" class="gallery-item-text">{{controller.getFileName(file)}}</a>
+            @if (Model.CanDelete)
+            {
+                <a href="#" class="btn btn-danger btn-xs" ng-click="controller.onDelete(file)" onclick="return false"><i class="fa fa-trash"></i></a>
+            }
+        </div>
+    </div>
+    <div class="hide">
+        <input type="text" id="jsongallery" ng-change="controller.onChangeJSON()" ng-model="controller.json" ng-init="controller.init('jsongallery')" />
+    </div>
+</div>
+@if (Model.CanUpload)
+{
+    <div id="dZUpload" class="dropzone dropzone-sm">
+        <div class="dz-default dz-message">Para agregar archivos por favor seleccionelos haciendo clic sobre este mensaje o arrastrelos sobre el mensaje</div>
+    </div>
+    <script>
+        $(function () {
+            Dropzone.autoDiscover = false;
+            var galeryangulardropzoneoptions = window.galeryangulardropzoneoptions || {};
+            $(".dropzone")._dropZone($.extend({
+                url: "@Url.Content("~/Files/Upload")",
+                acceptedFiles: "@Model.FileMimeTypes",
+                params: {
+                    p: "@Model.Params"
+                },
+                addRemoveLinks: true,
+                _success: angulargaleriasuccess,
+                _removedfile: angulargaleriaremovefile
+            }, galeryangulardropzoneoptions));
+        });
+    </script>
+}

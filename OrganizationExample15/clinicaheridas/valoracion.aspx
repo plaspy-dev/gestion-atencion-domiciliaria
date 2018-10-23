@@ -82,7 +82,7 @@ img[usemap], map area{
         }).change();
         $("#<%= DEtiologia.ClientID %>").change(function() {
             $(".etiologia").toggle($(this).val() == "0");
-            $(".etiologiam").toggle($(this).find('option:selected').text() == "Por Presión");
+            $(".etiologiam").toggle($(this).find('option:selected').text().toLowerCase() == "ulcera por presión");
         }).change();
         
         $("#<%= RPDistales.ClientID %>_0").change(function() {

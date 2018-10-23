@@ -28,7 +28,10 @@
             // Get element value. Classic genre has value '0'.
             var elements = params.split(',');
             for (var i = 0; i < elements.length; i++) {
-                var fieldvalue = jQuery.validator._getFormElement(element.form, element, elements[i]).val();
+                var $element = jQuery.validator._getFormElement(element.form, element, elements[i]);
+                var fieldvalue = $element.val();
+                if ($element.prop("type") == "checkbox")
+                    fieldvalue= $element.is(":checked");
                 if (fieldvalue) {
                     return !!value;
                 }
@@ -46,6 +49,81 @@
             options.rules['requiredif'] = options.params.fields;
             if (options.message)
                 options.messages['requiredif'] = options.message;
+        });
+
+    jQuery.validator.addMethod('requiredifnot',
+        function (value, element, params) {
+            // Get element value. Classic genre has value '0'.
+            var elements = params.split(',');
+            for (var i = 0; i < elements.length; i++) {
+                var $element = jQuery.validator._getFormElement(element.form, element, elements[i]);
+                var fieldvalue = $element.val();
+                if ($element.prop("type") == "checkbox")
+                    fieldvalue = $element.is(":checked");
+                if (!fieldvalue) {
+                    return !!value;
+                }
+            }
+            return true;
+        });
+
+    jQuery.validator.unobtrusive.adapters.add('requiredifnot',
+        ['fields'],
+        function (options) {
+            /*var prefix = getModelPrefix(options.element.name),
+                other = options.params.field,
+                fullOtherName = appendModelPrefix(other, prefix),
+                element = $(options.form).find(":input").filter("[name='" + escapeAttributeValue(fullOtherName) + "']")[0];*/
+            options.rules['requiredifnot'] = options.params.fields;
+            if (options.message)
+                options.messages['requiredifnot'] = options.message;
+        });
+
+    jQuery.validator.addMethod('fileextensions',
+        function (value, element, params) {
+            // Get element value. Classic genre has value '0'.
+            if (element.files.length == 0)
+                return true;
+            var extensions = params.split(',');
+            for (var i = 0; i < element.files.length; i++) {
+                var fileName = element.files[i].name.toLowerCase();
+                var found= extensions.find(function (x) {
+                    return fileName.endsWith(x);
+                });
+                if (!found)
+                    return false;
+            }
+            return true;
+        });
+
+    jQuery.validator.unobtrusive.adapters.add('fileextensions',
+        ['extensions'],
+        function (options) {
+            options.rules['fileextensions'] = options.params.extensions;
+            if (options.message)
+                options.messages['fileextensions'] = options.message;
+        });
+
+
+    jQuery.validator.addMethod('maxfilesize',
+        function (value, element, params) {
+            // Get element value. Classic genre has value '0'.
+            if (element.files.length == 0)
+                return true;
+            var size = params*1024;
+            for (var i = 0; i < element.files.length; i++) {
+                if (element.files[i].size > size)
+                    return false;
+            }
+            return true;
+        });
+
+    jQuery.validator.unobtrusive.adapters.add('maxfilesize',
+        ['size'],
+        function (options) {
+            options.rules['maxfilesize'] = options.params.size;
+            if (options.message)
+                options.messages['maxfilesize'] = options.message.replace("{0}", options.params.size);
         });
 
     /*

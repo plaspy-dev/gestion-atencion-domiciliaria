@@ -11,7 +11,7 @@
         addDialog("#dParentNovedad", "#dNovedad");
         $("#<%= TProfesional.ClientID %>")._autoComplete({
             url: "../webservices/servicios.asmx/GetPersonalC",
-            data: {'s': '<%= HIdServicio.Value %>'},
+            data: {'s': '<%= HIdServicio.Value %>', c: null },
             idField: "<%= TProfesionalID.ClientID %>"
         });
 

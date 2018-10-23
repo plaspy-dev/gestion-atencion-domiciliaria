@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Grupos";
+    Layout = "~/Views/_Shared/_LayoutPage.cshtml";
+    CUsuario user = ViewBag.User;
+}
+
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-accent-theme">
+                <div class="card-body">
+                    <table id="gpe" class="table table-sm table-bordered table-hover table-striped table-bootgrid">
+                        <thead>
+                            <tr>
+                                <th data-column-id="id" data-formatter="select" data-sortable="false" data-visible-in-selection="false"></th>
+                                @if (user.CanDelete())
+                                {
+                                    <th data-column-id="id" data-formatter="delete" data-sortable="false" data-visible-in-selection="false"></th>
+                                }
+                                <th data-column-id="n" data-css-class="nw" data-order="asc">Nombre</th>
+                                <th data-column-id="d" data-header-css-class="w100">Descripción</th>
+                                <th data-column-id="c" data-align="right">Usuarios</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="dcplusbtn">
+                        <div>
+                            <a href="#" id="addg" onclick="return editRow();" class="btn btn-submit btn-circle btn-xl pull-right" style="padding-top: 18px; padding-left: 18px">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- end card-body -->
+            </div>
+            <!-- end card -->
+        </div>
+        <!-- end col -->
+    </div>
+    <!-- end row -->
+</div>
+@section scripts {
+    <link rel="stylesheet" href="~/lib/jquery.bootgrid/jquery.bootgrid.css">
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.js"></script>
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.fa.js"></script>
+    <script src="~/js/gridlistadd.js"></script>
+    <script src="~/js/gridedit.js"></script>
+    <style></style>
+    <script>
+        var url = "@Request.Url.AbsolutePath";
+    </script>
+}

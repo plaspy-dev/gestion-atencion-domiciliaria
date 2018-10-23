@@ -25,6 +25,11 @@ public class CUsuario : Usuario
         return "hs";
     }
 
+    public override void SetForceURL(string url, Conector conector) {
+        base.SetForceURL(url, conector);
+        CleanUser(Id);
+    }
+
     public bool CheckEntidad(string entidad)
     {
         if (!string.IsNullOrEmpty(this["entidades"]))
@@ -71,35 +76,47 @@ public class CUsuario : Usuario
         }
     }
 
+    public static void CleanUser(string userId) {
+        HttpContext.Current.Cache.Remove("usr_" + userId);
+    }
+
     public static CUsuario GetUser(Conector conector, string userId) {
 
-        MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,cargos,entidades,cumpleanos FROM usuario WHERE id=" + Query.GetValor(userId));
-        if (reader != null && reader.Read())
+        CUsuario pUsuario = HttpContext.Current.Cache.Get("usr_" + userId) as CUsuario;
+        if (pUsuario == null)
         {
-            CUsuario pUsuario = new CUsuario(reader["id"].ToString(), reader["nombre"].ToString(), Convert.ToInt32(reader["grupo"].ToString()), reader["usuario"].ToString());
-            pUsuario["personal"] = reader["personal"].ToString();
-            pUsuario["cargos"] = reader["cargos"].ToString();
-            pUsuario["entidades"] = reader["entidades"].ToString();
-            pUsuario["cumpleanos"] = reader["cumpleanos"].ToString();
-            pUsuario.SetForceURL(reader["forceurl"].ToString());
-
-            if (pUsuario["cargos"].Length > 0)
-                pUsuario["procedimientos"] = conector.QueryString("SELECT GROUP_CONCAT(DISTINCT medicamento) FROM medicamento_area WHERE area IN (" + pUsuario["cargos"] + ")");
-
-            if (pUsuario.GetGrupo() > 0)
+            MySqlDataReader reader = conector.Query("SELECT id,nombre,grupo,usuario,forceurl,personal,cargos,entidades,cumpleanos FROM usuario WHERE id=" + Query.GetValor(userId));
+            if (reader != null)
             {
-                reader = conector.Query("SELECT url,permiso FROM permisos WHERE grupo='" + pUsuario.GetGrupo() + "'");
-                if (reader != null)
+                pUsuario = new CUsuario();
+                if (reader.Read())
                 {
-                    while (reader.Read())
+                    pUsuario = new CUsuario(reader["id"].ToString(), reader["nombre"].ToString(), Convert.ToInt32(reader["grupo"].ToString()), reader["usuario"].ToString());
+                    pUsuario["personal"] = reader["personal"].ToString();
+                    pUsuario["cargos"] = reader["cargos"].ToString();
+                    pUsuario["entidades"] = reader["entidades"].ToString();
+                    pUsuario["cumpleanos"] = reader["cumpleanos"].ToString();
+                    pUsuario.SetForceURL(reader["forceurl"].ToString());
+
+                    if (pUsuario["cargos"].Length > 0)
+                        pUsuario["procedimientos"] = conector.QueryString("SELECT GROUP_CONCAT(DISTINCT medicamento) FROM medicamento_area WHERE area IN (" + pUsuario["cargos"] + ")");
+
+                    if (pUsuario.GetGrupo() > 0)
                     {
-                        pUsuario.SetPermiso(reader["url"].ToString(), Convert.ToInt32(reader["permiso"]));
+                        reader = conector.Query("SELECT url,permiso FROM permisos WHERE grupo='" + pUsuario.GetGrupo() + "'");
+                        if (reader != null)
+                        {
+                            while (reader.Read())
+                            {
+                                pUsuario.SetPermiso(reader["url"].ToString(), Convert.ToInt32(reader["permiso"]));
+                            }
+                        }
                     }
                 }
+                HttpContext.Current.Cache.Insert("usr_" + userId, pUsuario);
             }
-            return pUsuario;
         }
-        return null;
+        return pUsuario;
     }
 
     override protected Usuario ValidateUser(string usuario, string passwd)

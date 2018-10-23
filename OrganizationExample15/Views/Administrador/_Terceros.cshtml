@@ -1,0 +1,61 @@
+﻿@model OrganizationExample15.Models.Administrador.MTercero
+@{
+    CUsuario user = ViewBag.User;
+}
+@using SDG.Componentes
+<div id="PP" style="display: none;" class="bkdlg modal fade" role="dialog">
+    <form method="post" action="@Request.Url.AbsolutePath">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">@(Model.Nombre ?? "Nuevo")</h4>
+                    <a href="#" class="close" onclick="$('#PP').modal('hide'); return false;">&times;</a>
+                </div>
+                <div class="modal-body">
+                    @Html.HiddenFor(x=>x.Id)
+                    <table class="table table-condensed table-sm table-striped">
+                        <tr>
+                            <td class="nw">Identificación  @Html.ValidationMessageFor(x => x.Identificacion, "*")</td>
+                            <td>@Html.TextBoxFor(x => x.Identificacion)</td>
+                        </tr>
+                        <tr>
+                            <td class="px">Nombre @Html.ValidationMessageFor(x => x.Nombre, "*")</td>
+                            <td class="w100">@Html.TextBoxFor(x => x.Nombre)</td>
+                        </tr>
+                        <tr>
+                            <td class="nw">Descripción</td>
+                            <td>@Html.TextBoxFor(x => x.Descripcion)</td>
+                        </tr>
+                        <tr>
+                            <td class="nw">Dirección</td>
+                            <td>@Html.TextBoxFor(x => x.Direccion)</td>
+                        </tr>
+                        <tr>
+                            <td class="nw">Teléfono</td>
+                            <td>@Html.TextBoxFor(x => x.Telefono)</td>
+                        </tr>
+                        <tr>
+                            <td class="nw">E-mail</td>
+                            <td>@Html.TextBoxFor(x => x.EMail)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                @Html.ValidationSummary()
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    @if ((user.CanInsert() && string.IsNullOrEmpty(Model.Id)) || (user.CanUpdate() && !string.IsNullOrEmpty(Model.Id)))
+                    {
+                        @Html.HiddenFor(x=>x._gk)
+                        <input type="submit" value="Aceptar" class="btn btn-submit" />
+                    }
+                    <a href="#" onclick="$('#PP').modal('hide'); return false" class="btn btn-default">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script></script>
+</div>

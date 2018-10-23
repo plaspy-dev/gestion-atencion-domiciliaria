@@ -1,8 +1,10 @@
-﻿@model OrganizationExample15.Models.terapeutico.Cuentas
+﻿@using OrganizationExample15.Models
+@model OrganizationExample15.Models.terapeutico.Cuentas
 @{
     ViewBag.Title = "Cuentas";
     Layout = "~/Views/_Shared/_LayoutPage.cshtml";
     CUsuario usuario = ViewBag.User;
+    bool showOK = (usuario.CanInsert() && string.IsNullOrEmpty(Model.ProtectedFields["id"])) || (usuario.CanUpdate() && !string.IsNullOrEmpty(Model.ProtectedFields["id"]));
 }
 <div class="animated fadeIn">
     <div class="row">
@@ -11,71 +13,95 @@
                 <div class="card-body">
                     <form autocomplete="off" method="post" action="@(Request.Url.AbsolutePath + Request.Url.Query)">
                         @Html.AntiForgeryToken()
-                        <table class="table table-sm table-striped" ng-app="OrganizationExample15App">
+                        <table class="table table-sm table-striped">
                             <tr>
                                 <td class="px">Funcionario</td>
                                 <td class="px">@Html.Partial("~/Views/_Shared/Funcionario.cshtml", Model?.Funcionario, HomeCareVersion.GetPrefixPartial("Funcionario"))</td>
-                                <td class="px">Estado</td>
-                                <td class="w100">
-                                @if (usuario.CanAdmin())
+                                @if (!string.IsNullOrEmpty(Model.ProtectedFields["fid"]))
                                 {
-                                    @Html.DropDownListFor(x => x.Estado, Varios.Get(Varios.Tipo.EstadoCuenta).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Ninguno)", new { @class = "amc" })
-                                } else {
-                                    @Varios.Get(Model.Estado?.ToString()).Nombre
+                                    <td class="px">Estado</td>
+                                    <td class="w100">
+                                        @if (usuario.CanAdmin())
+                                        {
+                                            @Html.DropDownListFor(x => x.Estado, Varios.Get(Varios.Tipo.EstadoCuenta).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Ninguno)", new { @class = "amc" })
+                                        }
+                                        else
+                                        {
+                                            @Varios.Get(Model.Estado?.ToString()).Nombre
+                                        }
+                                    </td>
                                 }
-                                </td>
                             </tr>
-                            <tr>
-                                <td>Desde @Html.ValidationMessageFor(x => x.Inicio, "*")</td>
-                                <td>@Html.TextBoxFor(x => x.Inicio, new { @class = "_date", id = "inicio" })</td>
-                                <td>Hasta @Html.ValidationMessageFor(x => x.Fin, "*")</td>
-                                <td>@Html.TextBoxFor(x => x.Fin, new { @class = "_date" })</td>
-                            </tr>
-                            <tr>
-                                <td colspan="5" class="text-section-title"><h4>Servicios @Html.ValidationMessageFor(x => x._Servicios, "*")</h4></td>
-                            </tr>
-                            <tr>
-                                <td colspan="5" ng-controller="GridList as controller">
-                                    <table class="table table-sm table-striped table-bordered" ng-show="controller.list.length">
-                                        <tr>
-                                            <td></td>
-                                            <td>Paciente</td>
-                                            <td>Servicio</td>
-                                            <td>Cantidad</td>
-                                        </tr>
-                                        <tr ng-repeat="row in controller.list">
-                                            <td>
-                                                <a href="#" ng-click="controller.onDelete(row)" onclick="return false;" class="btn btn-xs btn-danger">
-                                                    <i class="fa fa-trash"></i>
-                                                </a>
-                                            </td>
-                                            <td class="w100 nw">{{row.pacienteIdLabel}}</td>
-                                            <td class="nw">{{row.servicioIdLabel}}</td>
-                                            <td class="r">{{row.cantidad}}</td>
-                                        </tr>
-                                    </table>
-                                    <div ng-hide="controller.list.length" class="card">
-                                        <div class="card bg-light p-2">
-                                            <p class="mb-0">Por favor agregue un servicio</p>
+                            @if (!string.IsNullOrEmpty(Model.ProtectedFields["fid"]))
+                            {
+                                <tr>
+                                    <td>Desde @Html.ValidationMessageFor(x => x.Inicio, "*")</td>
+                                    <td>@Html.TextBoxFor(x => x.Inicio, new { @class = "_date", id = "inicio" })</td>
+                                    <td>Hasta @Html.ValidationMessageFor(x => x.Fin, "*")</td>
+                                    <td>@Html.TextBoxFor(x => x.Fin, new { @class = "_date" })</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="text-section-title"><h4>Servicios @Html.ValidationMessageFor(x => x._Servicios, "*")</h4></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" ng-controller="GridList as controller" ng-cloak>
+                                        <table class="table table-sm table-striped table-bordered" ng-show="controller.list.length">
+                                            <tr>
+                                                <td></td>
+                                                <td>Paciente</td>
+                                                <td>Servicio</td>
+                                                <td>Cantidad</td>
+                                                <td>Total</td>
+                                            </tr>
+                                            <tr ng-repeat="row in controller.list">
+                                                <td>
+                                                    <a href="#" ng-click="controller.onDelete(row)" onclick="return false;" class="btn btn-xs btn-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                                <td class="w100 nw">{{row.pacienteIdLabel}}</td>
+                                                <td class="nw">{{row.servicioIdLabel}}</td>
+                                                <td class="r">{{row.cantidad}}</td>
+                                                <td class="r">{{row.cantidad*row.valor | currency : "$" : 0 }}</td>
+                                            </tr>
+                                        </table>
+                                        <div ng-hide="controller.list.length" class="card">
+                                            <div class="card bg-light p-2">
+                                                <p class="mb-0">Por favor agregue un servicio</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="r p-1">
-                                        <div class="hide">
-                                            @Html.TextBoxFor(x => x._Servicios, new { ng_model = "controller.result", ng_init = "controller.init('zServicios')", id = "zServicios", @class = "validate" })
-                                            <input type="text" id="jsonlist" ng-model="controller.json" />
-                                            <a href="#" id="listadd" ng-click="controller.onAdd()" onclick="return false;"></a>
+                                        <div class="r p-1">
+                                            <div class="hide">
+                                                @Html.TextBoxFor(x => x._Servicios, new { ng_model = "controller.result", ng_init = "controller.init('zServicios')", id = "zServicios", @class = "validate" })
+                                                <input type="text" id="jsonlist" ng-model="controller.json" />
+                                                <a href="#" id="listadd" ng-click="controller.onAdd()" onclick="return false;"></a>
+                                            </div>
+                                            <a href="#" class="btn btn-primary" onclick="return onAdd()"><i class="fa fa-plus"></i></a>
                                         </div>
-                                        <a href="#" class="btn btn-primary" onclick="return onAdd()"><i class="fa fa-plus"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="text-section-title"><h4>Planilla de firmas @Html.ValidationMessageFor(x => x._Servicios, "*")</h4></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">
+                                        @Html.Partial("~/Views/_Shared/Galeria.cshtml", Model?.Galeria, HomeCareVersion.GetPrefixPartial("Galeria"))
+                                    </td>
+                                </tr>
+                            }
                         </table>
-                        <div>@Html.ValidationSummary()</div>
-                        <div class="r">
-                            @Html.HiddenFor(x => x._gk)
-                            <button type="submit" class="btn btn-submit">Aceptar</button>
-                            <a href="@Request.Url.AbsolutePath" class="btn btn-default">Cancelar</a>
-                        </div>
+                        @if (!string.IsNullOrEmpty(Model.ProtectedFields["fid"]))
+                        {
+                            <div>@Html.ValidationSummary()</div>
+                            <div class="r">
+                                @if (showOK)
+                                {
+                                    @Html.HiddenFor(x => x._gk)
+                                    <button type="submit" class="btn btn-submit">Aceptar</button>
+                                }
+                                <a href="@Request.Url.AbsolutePath" class="btn btn-default">Cancelar</a>
+                            </div>
+                        }
                     </form>
                 </div>
             </div>
@@ -86,12 +112,16 @@
 @Html.Partial("CuentasServicio")
 
 @section scripts {
+    <link rel="stylesheet" href="~/lib/dropzone/dropzone.css" />
     <script type="text/javascript" src="~/lib/angular-1.7.2/angular.js"></script>
+    <script src="~/js/angulargridctrl.js"></script>
+    <script src="~/lib/dropzone/dropzone.js"></script>
     @if (!string.IsNullOrEmpty(Model.ProtectedFields["id"]))
     {
         <script>var __id = @Model.ProtectedFields["id"];</script>
     }
     <script>
+        Dropzone.autoDiscover = false;
         var _mtercerooptions = {
             selectURL: docPath + "?fid="
         };
@@ -99,39 +129,6 @@
             $("#mservicio").modal("show");
             return false;
         }
-
-        angular.module('OrganizationExample15App', [])
-            .controller('GridList', function () {
-                var controller = this;
-                controller.list = [];
-
-                function update() {
-                    controller.result = JSON.stringify(controller.list);
-                }
-
-                controller.init = function (ctrlid) {
-                    try {
-                        controller.list = JSON.parse($("#" + ctrlid).val());
-                        for (var i = 0; i < controller.list.length; i++) {
-                            controller.list[i]["$$hashKey"] = null;
-                        }
-                    } catch (e) { }
-                    update();
-                };
-                controller.onAdd = function () {
-                    controller.list.push(JSON.parse(controller.json));
-                    controller.json = "";
-                    update();
-                };
-                controller.onDelete = function (row) {
-                    if (!confirm("¿Está seguro de eliminar esta línea?"))
-                        return;
-                    var index = controller.list.indexOf(row);
-                    if (index > -1)
-                        controller.list.splice(index, 1);
-                    update();
-                };
-            });
 
         function validateCantidad(value, element, form) {
 
@@ -179,6 +176,7 @@
         }
 
         $(function () {
+            Dropzone.autoDiscover = false;
             $("._mtercero").focus();
             $("#inicio").on("dp.change", function () {
                 location.href = docPath + "?fid=" + $("._mhtercero").val() + "&ds=" + encodeURIComponent($(this).val());
@@ -188,7 +186,7 @@
                 if (!$(this).valid()) {
                     return false;
                 }
-                var values = getJSONForm(this);
+                var values = getFormValues(this);
 
                 $("#jsonlist").val(JSON.stringify(values)).change();
                 $("#listadd").click();
@@ -204,6 +202,7 @@
             }
             var $info = $form.find("#serviceinfo");
             var $servicios = $form.find('[name="_Servicio.ServicioId"]');
+            var $valor = $form.find('[name="_Servicio.Valor"]');
             $pacientes.change(function () {
                 var paciente = $(this).val();
                 $servicios.find("option").remove();
@@ -220,17 +219,18 @@
                 var info = pacs.l.find(function (x) { return x.servicioId == servicio && x.pacienteId == paciente; });
                 if (info && info.cantidad) {
                     validateServicios($("#zServicios").val());
-                    $info.html(info._cantidad + " servicios");
+                    $info.html(info._cantidad + " servicios por $" + info.valor.formatCurrency() + " ");
+                    $valor.val(info.valor);
+                } else {
+                    $info.html("");
+                    $valor.val("");
                 }
-                else $info.html("");
             });
-
-            if (typeof (__id) != "undefined") {
-                $.setDocumentProperties(docPath, __id);
-            }
 
             if ($.getUrlParameter("er") == "1") {
                 toastr.success("Cuenta editada");
+            } else if ($.getUrlParameter("du") == "1") {
+                toastr.success("Documentos actualizados");
             }
         });
     </script>

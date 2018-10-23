@@ -48,6 +48,17 @@ if (jQuery.validator && jQuery.validator.setDefaults) {
     });
 }
 
+function getSafeAngularModule() {
+    try {
+        return angular.module('OrganizationExample15App');
+    } catch (e) { }
+    return angular.module('OrganizationExample15App', []);
+}
+
+if (window.angular) {
+    angular.module('OrganizationExample15App', []);
+}
+
 var normalize = function (input) {
 
     /*var charMap = {
@@ -88,6 +99,17 @@ $.expr[":"].ContainsN = $.expr.createPseudo(function (arg) {
     };
 });
 
+function removeFile(ahref, filename) {
+    if (confirm("¿Esta seguro de eliminar el archivo " + filename + "?")) {
+        var $deletedfiles = $(ahref).closest(".gallery").find("input.deletedfiles");
+        var value = $deletedfiles.val() || "";
+        value += "," + filename;
+        $deletedfiles.val(value);
+        $(ahref).closest(".gallery-item").remove();
+    }
+    return false;
+}
+
 function onSubmitList(form, event, list) {
     if (list && list.length > 0) {
         var index = 0;
@@ -115,7 +137,53 @@ $.fn.catchEnter = function (event) {
             } else $(this).find("input:submit,button:submit").first().focus().click();//give your submit an ID
         }
     });
-    return this;
+};
+
+$.fn._dropZone= function (options) {
+
+    var _options = {
+        maxFilesize: 2, // MB
+        enqueueForUpload: true,
+        dictDefaultMessage: "Arrastre sus archivos para subir",
+        dictFallbackMessage: "Su navegador no soporta arrastrar archivos.",
+        dictFallbackText: "Por favor use el formulario para subir los archivos.",
+        dictFileTooBig: "El archivo es muy grande ({{filesize}}MiB). Tamaño máximo: {{maxFilesize}}MiB.",
+        dictInvalidFileType: "No se pueden subir archivos de este tipo.",
+        dictResponseError: "El servidor repondio con el código {{statusCode}}.",
+        dictCancelUpload: "Cancelar subida",
+        dictCancelUploadConfirmation: "¿Está seguro de cancelar esta subida?",
+        dictRemoveFile: "Eliminar archivo",
+        dictRemoveFileConfirmation: "¿Está seguro de eliminar este archivo?",
+        dictMaxFilesExceeded: "No se pueden subir mas archivos."
+        /*, accept: function (file, done) {
+            var regex = /^\d+.*$/i;
+            if (!regex.test(file.name)) {
+                done("Por favor seleccione un archivo que comience por el numero de una ODS.");
+            } else { done(); }
+            done();
+        }*/, success: function (file, response) {
+            if (options._success)
+                options._success.call(this, file, response);
+            if (response.error) {
+                _ref = file.previewElement.querySelectorAll("[data-dz-errormessage]");
+                _results = [];
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    node = _ref[_i];
+                    _results.push(node.textContent = response.message);
+                }
+                return file.previewElement.classList.add("dz-error");
+            }
+            file._fileName = response.fileName;
+            return file.previewElement.classList.add("dz-success");
+        },
+        removedfile: function (file) {
+            var parent = file.previewElement.parentNode;
+            parent.removeChild(file.previewElement);
+            if (options._removedfile)
+                options._removedfile.call(this, file);
+        }
+    };
+    return this.dropzone($.extend(_options, options));
 };
 
 $.fn.catchEnterTab = function () {
@@ -233,6 +301,22 @@ $.fn.THAutoComplete = function (options) {
         options.displayName = options.displayName || "name";
         options.idField = options.idField || "id";
 
+        if (options.controlDataId && $(this).val() && $("#" + options.controlDataId).val()) {
+            currentText = $(this).val();
+        }
+
+        function onKillFocus () {
+            if (options.controlDataId) {
+                if (!$(this).val() || $(this).val() != currentText) {
+                    if ($("#" + options.controlDataId).val()) {
+                        $("#" + options.controlDataId).val("");
+                        if (options.onUnSelected)
+                            options.onUnSelected();
+                    }
+                }
+            }
+        }
+
         $(this).typeahead({
             hint: true,
             highlight: true,
@@ -243,15 +327,10 @@ $.fn.THAutoComplete = function (options) {
                 display: options.displayName,
                 limit: 100,
                 source: dataSource
-            }).change(function () {
-                if (options.controlDataId) {
-                    if (!$(this).val() || $(this).val() != currentText) {
-                        $("#" + options.controlDataId).val("");
-                        if (options.onUnSelected)
-                            options.onUnSelected();
-                    }
-                }
-            }).on('typeahead:select', function (e, datum) {
+            })
+            .focusout(onKillFocus)
+            .change(onKillFocus)
+            .on('typeahead:select', function (e, datum) {
                 currentText = datum[options.displayName];
                 if (options.controlDataId)
                     $("#" + options.controlDataId).val(datum[options.idField]).change();
@@ -307,24 +386,109 @@ function onSelectAlert(id, titulo) {
     return false;
 }
 function resetForm(form) {
+    var lastCheckBox = null;
     $(form).find("input,select").each(function () {
-        $(this).val("");
-        $(this).change();
+        var $this = $(this);
+        var name = $this.attr("name");
+        if (name && name != lastCheckBox) {
+            if ($this.prop("tagName") == "SELECT") {
+                $this.find("option[value='']").prop("selected", true);
+            } else if ($this.prop("type") == "radio") {
+                $this.prop("checked", false);
+            } else if ($this.prop("type") == "checkbox") {
+                $this.prop("checked", false);
+                lastCheckBox = $this.attr("name");
+            } else {
+                $this.val("");
+            }
+            $this.change();
+        }
     });
     $(form).find(".validation-summary-errors").html("");
 }
 
-function getJSONForm(form) {
+function getSafeValue(value) {
 
-    var values = {};
+    if (value == "true")
+        return true;
+    if (value == "false")
+        return false;
+    if (value || value===0)
+        return value;
+    return "";
+}
+
+function setFormValues(form, values) {
+
+    resetForm(form);
+    var lastCheckBox = null;
     $(form).find("input,select").each(function () {
-        var name = $(this).attr("name");
-        if (name) {
+        var $this = $(this);
+        var name = $this.attr("name");
+        
+        if (name && name != lastCheckBox) {
             name = name.split(".").pop(-1);
             name = name.charAt(0).toLowerCase() + name.substr(1);
-            values[name] = $(this).val();
-            if ($(this).prop("tagName") == "SELECT")
-                values[name + "Label"] = $(this).find("option:selected").text();
+            var value = getSafeValue(values[name]);
+            if (typeof (AutoNumeric) != "undefined") {
+                var autonumeric = AutoNumeric.getAutoNumericElement(this);
+                if (autonumeric) {
+                    autonumeric.set(value);
+                    $this.change();
+                    return;
+                }
+            }
+            // getNumber
+            if ($this.prop("tagName") == "SELECT") {
+                $this.find("option[value='" + value + "']").prop("selected", true);
+            } else if ($this.prop("type") == "radio") {
+                if (getSafeValue($this.val()) == value)
+                    $this.prop("checked", true);
+            } else if ($this.prop("type") == "checkbox") {
+                if (value) 
+                    $this.prop("checked", true);
+                lastCheckBox = $this.attr("name");
+            } else {
+                $this.val(value);
+            }
+            $this.change();
+        }
+    });
+}
+
+function getFormValues(form) {
+
+    var values = {};
+    var lastCheckBox = null;
+    $(form).find("input,select").each(function () {
+        var $this = $(this);
+        var name = $this.attr("name");
+        if (name && name != lastCheckBox) {
+            var value = getSafeValue($this.val());
+            if (value || value==0) {
+                name = name.split(".").pop(-1);
+                name = name.charAt(0).toLowerCase() + name.substr(1);
+                if (typeof (AutoNumeric) != "undefined") {
+                    var autonumeric = AutoNumeric.getAutoNumericElement(this);
+                    if (autonumeric) {
+                        values[name] = autonumeric.getNumber();
+                        return;
+                    }
+                }
+                // getNumber
+                if ($this.prop("type") == "radio") {
+                    if ($this.is(":checked"))
+                        values[name] = value;
+                } else if ($this.prop("type") == "checkbox") {
+                    if ($this.is(":checked"))
+                        values[name] = value;
+                    lastCheckBox = $this.attr("name");
+                } else {
+                    values[name] = value;
+                    if ($this.prop("tagName") == "SELECT")
+                        values[name + "Label"] = $this.find("option:selected").text();
+                }
+            }
         }
     });
 
@@ -468,6 +632,28 @@ $(function () {
         return false;
     });
 
+    $("h5>a>i.fa-chevron-down").each(function () {
+        var $a = $(this).closest("a");
+        var save = $a.data("toggle-save");
+        if (save) {
+            save = "toggle-save-" + $a.data("target");
+        }
+        $a.click(function () {
+            var $ibutn = $(this).find("i.fa-chevron-down,i.fa-chevron-up");
+            $ibutn.toggleClass("fa-chevron-down");
+            $ibutn.toggleClass("fa-chevron-up");
+            if ($ibutn.hasClass("fa-chevron-up"))
+                localStorage[save] = 1;
+            else localStorage.removeItem(save);
+        });
+        if (save) {
+            if (localStorage[save]) {
+                $($a.data("target")).collapse("show");
+                $a.click();
+            }
+        }
+    });
+
     $.setStoreProperties = function (url, id) {
         $.setDocumentProperties(url, id, 1);
     };
@@ -498,11 +684,6 @@ $(function () {
             if (url && id) {
                 updateProperties();
             }
-            /*if ($('body').hasClass("aside-menu-hidden")) {
-                
-            }
-            $('body').toggleClass('aside-menu-hidden');*/
-            // resizeBroadcast();
         });
 
         return function setProperties(_url, _id, _post) {
@@ -512,11 +693,15 @@ $(function () {
             if (!!(url && id))
                 $("#lidocprop").closest("ul").removeClass("hidet");
             else $("#lidocprop").closest("ul").addClass("hidet");
-            /*if (!$('body').hasClass("aside-menu-hidden")) {
+            if ($("#lidocprop").find("a").hasClass("show")) {
                 updateProperties();
-            }*/
+            }
         };
     })();
+
+    if (typeof (__id) != "undefined") {
+        $.setDocumentProperties(docPath, __id);
+    }
 });
 
 Number.prototype.formatCurrency = function (c, d, t) {
@@ -528,4 +713,77 @@ Number.prototype.formatCurrency = function (c, d, t) {
         i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))),
         j = (j = i.length) > 3 ? j % 3 : 0;
     return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+};
+
+
+/*
+ * readonly
+ * idMirrorTextArea
+ */
+$.fn._tinyMCE = function (options) {
+
+    options = options || {};
+    var length = tinyMCE.editors.length;
+    for (var i = length; i > 0; i--) {
+        tinyMCE.editors[i - 1].remove();
+    };
+    var ctrlid = "#" + this.attr("id");
+
+    function rel(text) {
+        text = text.replace(/\r/gi, '');
+        text = text.replace(/&nbsp;/gi, '');
+        while (text[0] == '\n') {
+            text = text.substring(1);
+        }
+        text = text.split('\n');
+        var szfinal = "";
+        for (x = 0; x < text.length; x++) {
+            text[x] = text[x].trim();
+            if (text[x].match(/[\S]/g) != null) {
+                if (szfinal.length)
+                    szfinal += "\n";
+                szfinal += text[x];
+            }
+        }
+        // text = text.join('\n').replace(/\n{2,}/g, '\n');
+        return szfinal;
+    }
+
+    function lim() {
+        var limpio = rel(editor.getContent().replace(/<\S[^><]*>/g, ""));
+        $(ctrlid).val(limpio);
+        var completa = "<ol><li>" + limpio.replace(/\n/g, "</li><li>") + "</li></ol>";
+        editor.setContent(completa);
+    }
+
+    tinyMCE.init({
+        mode: "exact"
+        , selector: "#" + options.idMirrorTextArea
+        , readonly: options.readonly
+        , menubar: false
+        , statusbar: false
+        , toolbar: false
+        , valid_elements: "ol,li,p,br"
+        , setup: function (ed) {
+            editor = ed;
+            ed.on('submit', function (e) {
+                lim();
+            });
+            ed.on('init', function (ed) {
+                var completa = $(ctrlid).val();
+                completa = "<ol><li>" + completa.replace(/\n/g, "</li><li>") + "</li></ol>";
+                editor.setContent(completa);
+                $("#" + options.idMirrorTextArea).remove();
+            });
+            ed.on('blur', function (e) {
+                tinyMCE.triggerSave();
+                lim();
+            });
+        }
+        , paste_preprocess: function (pl, o) {
+            o.content = o.content.replace(/<\S[^><]*>/g, "");
+        }
+    });
+
+    return this;
 };

@@ -180,6 +180,7 @@ public partial class administrador_usuario : System.Web.UI.Page
             }
 
             conector.Commit();
+            CUsuario.CleanUser(HId.Value);
             ((MasterPageI)Master).SetResultado(mensaje);
         }
     }

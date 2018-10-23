@@ -12,6 +12,9 @@ namespace OrganizationExample15
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            routes.MapRoute("filesu", "Files/Upload", new { controller = "Files", action = "Upload" });
+            routes.MapRoute("files", "Files/{type}/{*filename}", new { controller = "Files", action = "Index" });
+            routes.MapRoute("publicfiles", "PFiles/{type}/{key}/{*filename}", new { controller = "Files", action = "Public" });
 
             routes.MapRoute(
                 name: "Default",

@@ -18,7 +18,7 @@
     }
     @RenderSection("headers", false)
 </head>
-<body class="bodymvc">
+<body class="bodymvc" ng-app="OrganizationExample15App">
     <div id="loading">Cargando ...</div>
     <table class="w100" border="0" align="center" cellpadding="0" cellspacing="0">
         <tr style="background-color: #184580">
@@ -63,7 +63,15 @@
                                 @RenderSection("navbar", false)
                                 @if (ViewBag.Excel != null)
                                 {
-                                    <a href="#" class="saveExcel" onclick="return @ViewBag.Excel">Excel</a>
+                                    <a href="@HomeCareVersion.URLAppendParam(Request, "se", "1")" class="saveExcel">Excel</a>
+                                }
+                                @if (ViewBag.Print != null)
+                                {
+                                    <a href="@HomeCareVersion.URLAppendParam(Request, "pd", "1")" target="_blank" class="printDocument">Imprimir</a>
+                                }
+                                @if (ViewBag.PDF != null)
+                                {
+                                    <a href="@HomeCareVersion.URLAppendParam(Request, "pdf", "1")" class="pdfDocument">PDF</a>
                                 }
                                 @if (ViewBag._Layout.ListAlertas.Count > 0)
                                 {
@@ -136,13 +144,13 @@
                                             <div id="navegador" class="tab-pane show active fade">
                                                 <div class="card card-body navmenu">
                                                     @{int i = 0; }
-                                                    @foreach (var parent in ((List<SDG.Componentes.CURLs>)ViewBag.User.GetFullMenu()).Where(x => ((CUsuario)ViewBag.User).GetPermisosRaiz(x.FullURL) > 0 && x.Visible && x.Parent != "__no__").GroupBy(x => x.Parent).Select(x => x.Key))
+                                                    @foreach (var parent in ((List<SDG.Componentes.CURLs>)ViewBag.User.GetFullMenu()).Where(x => ((CUsuario)ViewBag.User).GetPermisosRaiz(x.URL) > 0 && x.Visible && x.Parent != "__no__").GroupBy(x => x.Parent).Select(x => x.Key))
                                                     {
                                                         <div class="parent">
                                                             <a href="#" data-toggle="collapse" data-target="@string.Format(".child{0}", ++i)" aria-expanded="false">@parent</a>
-                                                            @foreach (var url in ((List<SDG.Componentes.CURLs>)ViewBag.User.GetFullMenu()).Where(x => x.Parent == parent && ((CUsuario)ViewBag.User).GetPermisosRaiz(x.FullURL) > 0 && x.Visible))
+                                                            @foreach (var url in ((List<SDG.Componentes.CURLs>)ViewBag.User.GetFullMenu()).Where(x => x.Parent == parent && ((CUsuario)ViewBag.User).GetPermisosRaiz(x.URL) > 0 && x.Visible))
                                                             {
-                                                                <div class="child collapse @string.Format("child{0}", i)"><a href="@Url.Content(url.URL)">@url.Titulo</a></div>
+                                                                <div class="child collapse @string.Format("child{0}", i)"><a href="@Url.Content(url.URL + ViewBag._Layout.Params)">@url.Titulo</a></div>
                                                             }
                                                         </div>
                                                     }
@@ -158,7 +166,7 @@
                                 </tr>
                             </table>
                         </td>
-                        <td width="645" valign="top" bgcolor="#FFFFFF">
+                        <td width="645" valign="top" bgcolor="#FFFFFF" class="_container">
                             <table width="100%" border="0" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td class="fondoTituloUsuario" style="padding:18px 50px 20px 5px" align="right">
@@ -183,7 +191,7 @@
             </td>
             <td class="red"></td>
         </tr>
-        <tr style="background-color: #184580">
+        <tr style="background-color: #184580" class="footer">
             <td></td>
             <td>
                 <!-- pie de pagina -->

@@ -57,8 +57,50 @@ table {
 .nw {
     white-space: nowrap;
 }
+.w100 {
+    width: 100%;
+}
+.w50 {
+    width: 50%;
+}
+.w33 {
+    width: 33%;
+}
+.float-right {
+    float: right;
+}
+.r {
+    text-align: right;
+}
+.c {
+    text-align: center;
+}
+.b {
+    font-weight: bold;
+}
+.l {
+    text-align: left;
+}
+.px {
+    width: 1px;
+}
+.tdt {
+    vertical-align: top;
+}
 
-.anulado span{background:#FF0000;color:#fff;text-decoration:none;font-family:arial, sans-serif;text-align:center;font-weight:bold;padding:5px 40px;font-size:20px;line-height:2rem;position:relative;transition:0.5s;}
+.anulado span {
+    background: #FF0000;
+    color: #fff;
+    text-decoration: none;
+    font-family: arial, sans-serif;
+    text-align: center;
+    font-weight: bold;
+    padding: 5px 40px;
+    font-size: 20px;
+    line-height: 2rem;
+    position: relative;
+    transition: 0.5s;
+}
 .anulado span:hover{background:#006600;color:#fff;}
 .anulado span::before,.anulado span::after{content:"";width:100%;display:block;position:absolute;top:1px;left:0;height:1px;background:#fff;}
 .anulado span::after{bottom:1px;top:auto;}

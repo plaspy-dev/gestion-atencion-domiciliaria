@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SDG.Componentes;
@@ -20,12 +21,14 @@ public partial class _Default : System.Web.UI.Page
             {
                 Session.RemoveAll();
                 CConector.SetCookie("contrasena", "");
+                FormsAuthentication.SignOut();
                 Response.Redirect("~/");
             }
 
             CUsuario usuario = (CUsuario)Usuario.Validate();
             if (usuario != null)
             {
+                FormsAuthentication.SetAuthCookie(usuario.Id, true);
                 string url = Request.QueryString["from"];
                 if (url == null || url.Length == 0)
                     usuario.Redirect();
@@ -46,6 +49,7 @@ public partial class _Default : System.Web.UI.Page
         CUsuario usuario = (CUsuario)Usuario.Validate(m_EUsuario.Text, m_EContrasena.Text);
         if (usuario != null)
         {
+            FormsAuthentication.SetAuthCookie(usuario.Id, true);
             string url = Request.QueryString["from"];
             if (url == null || url.Length == 0)
                 usuario.Redirect();

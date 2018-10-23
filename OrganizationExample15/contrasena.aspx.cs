@@ -13,6 +13,8 @@ public partial class contrasena : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         if(!IsPostBack) {
+            CUsuario usuario= (CUsuario)Usuario.GetInstance(false);
+            Logs.Write("access: {0} {1}", CUsuario.GetCurrentURL(), usuario.CanAccess());
             if (!string.IsNullOrEmpty(Usuario.GetInstance().GetForceURL()))
                 Title = "Su contraseña ha caducado";
         }

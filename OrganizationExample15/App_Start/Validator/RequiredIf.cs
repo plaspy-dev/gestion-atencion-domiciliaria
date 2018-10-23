@@ -26,6 +26,9 @@ namespace SDG.Componentes.Validator
                 {
                     required = !string.IsNullOrEmpty((string)fieldvalue);
                 }
+                else if (fieldvalue is bool) {
+                    required = (bool)fieldvalue;
+                }
                 else
                 {
                     required = fieldvalue != null;

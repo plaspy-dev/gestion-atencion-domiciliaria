@@ -277,6 +277,7 @@ public class servicios : System.Web.Services.WebService
         List<CJSon> lista = new List<CJSon>();
         CUsuario usuario = (CUsuario)CUsuario.GetInstance();
 
+        q = HttpUtility.UrlDecode(q);
         string usuarioQuery = "";
         if (usuario.GetPermisosRaiz("~/App_data/Paciente") == 0)
         {
@@ -336,6 +337,7 @@ LIMIT 1)", Query.GetValor(usuario["personal"]));
     // [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     public List<CJSon> GetPaciente(String q, string e)
     {
+        q = HttpUtility.UrlDecode(q);
         List<CJSon> lista = new List<CJSon>();
         CUsuario usuario= (CUsuario)CUsuario.GetInstance();
         string usuarioQuery="";

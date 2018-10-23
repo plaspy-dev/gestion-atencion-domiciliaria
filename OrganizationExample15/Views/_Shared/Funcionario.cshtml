@@ -1,17 +1,23 @@
-﻿@model OrganizationExample15.Models.MFuncionario
-@Html.TextBoxFor(x => x.Nombre, Model?.ReadOnly==true ? (object)new { @class = "_mtercero", placeholder = "Buscar", @readonly = "" } : (object)new { @class = "_mtercero", placeholder = "Buscar" })
-@Html.TextBoxFor(x=>x.Id, new { @class= "hidet _mhtercero" })
-@if (Model?.ReadOnly!=true)
+﻿@model OrganizationExample15.Models.MFuncionarioSimple
+@Html.TextBoxFor(x => x.Nombre, Model?.ReadOnly == true ? (object)new { @class = "_mtercero", placeholder = "Buscar", @readonly = "" } : (object)new { @class = "_mtercero", placeholder = "Buscar" })
+@Html.TextBoxFor(x => x.Id, new { @class = "hidet _mhtercero validate" })
+@if (Model.Required)
 {
-<script>
-    $(function () {
-        var options = $.extend(window._mtercerooptions || {}, {
-            queryURL: rootPath + "webservices/servicios.asmx/GetPersonal",
-            controlDataId: $("._mtercero").next("input").attr("id"),
-            displayName: "item",
-            idField: "value"
+    @Html.HiddenFor(x=>x.Required)
+    @Html.ValidationMessageFor(x => x.Nombre, "*")
+    @Html.ValidationMessageFor(x => x.Id, "*")
+}
+@if (Model?.ReadOnly != true)
+{
+    <script>
+        $(function () {
+            var options = $.extend(window._mtercerooptions || {}, {
+                queryURL: rootPath + "webservices/servicios.asmx/GetPersonal",
+                controlDataId: $("._mtercero").next("input").attr("id"),
+                displayName: "item",
+                idField: "value"
+            });
+            $("._mtercero").THAutoComplete(options);
         });
-        $("._mtercero").THAutoComplete(options);
-    });
-</script>
+    </script>
 }

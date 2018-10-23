@@ -47,7 +47,8 @@ namespace OrganizationExample15.Models.terapeutico
         [Required(ErrorMessage = "Por favor ingrese la fecha de Hasta")]
         [RegularExpression(@"^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$", ErrorMessage = "Por favor ingrese una fecha valida")]
         public string Fin { get; set; }
-        public MFuncionario Funcionario { get; set; }
+        public MFuncionarioSimple Funcionario { get; set; }
+        public Galeria Galeria { get; set; }
         public uint? Estado { get; set; }
 
         public List<Servicio> Servicios = new List<Servicio>();
@@ -68,7 +69,8 @@ namespace OrganizationExample15.Models.terapeutico
         public Servicio _Servicio { get; set; }
 
         public Cuentas() {
-            Funcionario = new MFuncionario();
+            Funcionario = new MFuncionarioSimple();
+            Galeria = new Galeria();
         }
 
         public bool ValidateServiciosCount() {
@@ -123,7 +125,7 @@ namespace OrganizationExample15.Models.terapeutico
                         info.PacienteId = reader["pacId"].ToString();
                         info.ServicioId = reader["actId"].ToString();
                         info.Cantidad = (uint ?)(reader["c"] as long?);
-                        info.Valor = reader["precio"] as decimal?;
+                        info.Valor = reader["p"] as decimal?;
 
                         services[reader["actId"].ToString()] = reader["an"].ToString();
                         pacientes[reader["pacId"].ToString()] = reader["paciente"].ToString();

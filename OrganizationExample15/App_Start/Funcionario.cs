@@ -15,6 +15,8 @@ public class Funcionario
     public string Documento { get; set; }
     public string CarId { get; set; }
     public string Cargo { get { return GetCargo(CarId); } }
+    public string Direccion { get; set; }
+    public string Telefono { get; set; }
 
     public string DocumentoYNombres
     {
@@ -61,6 +63,8 @@ public class Funcionario
             query += "perNombre";
             query += "perDocumento";
             query += "carId";
+            query += "perDireccion";
+            query += "perTelefono";
 
             using (CConector conector = new CConector())
             {
@@ -71,6 +75,8 @@ public class Funcionario
                     funcionario.Documento = reader["perDocumento"].ToString();
                     funcionario.Nombres = reader["perNombre"].ToString();
                     funcionario.CarId = reader["carId"].ToString();
+                    funcionario.Telefono = reader["perTelefono"].ToString();
+                    funcionario.Direccion = reader["perDireccion"].ToString();
                 }
             }
 
@@ -117,6 +123,7 @@ public class Funcionario
         CConector conector = (CConector)pConector;
         try
         {
+            OrganizationExample15.FileStorage.CleanTempFiles(conector);
             RebuildDirectorio(conector, null);
             conector.Commit();   
         } finally {

@@ -1,14 +1,24 @@
-﻿@model OrganizationExample15.Models.MPaciente
-@Html.TextBoxFor(x=>x.Nombre, new { @class="_mpaciente", placeholder="Buscar" })@Html.TextBoxFor(x=>x.Id, new { @class="hidet" })
+﻿@model OrganizationExample15.Models.MPacienteSimple
+@Html.TextBoxFor(x => x.Nombre, new { @class = "_mpaciente", placeholder = "Buscar" })
+@Html.TextBoxFor(x => x.Id, new { @class = "_mhpaciente hidet validate" })
+@if (Model.ShowLabel) {
+    <span class="_mspaciente">@Model.Nombre</span>
+}
+@if (Model.Required)
+{
+    @Html.HiddenFor(x => x.Required)
+    @Html.ValidationMessageFor(x => x.Nombre, "*")
+    @Html.ValidationMessageFor(x => x.Id, "*")
+}
 <script>
     $(function () {
-        var options = $.extend(window._mpacienteoptions || {}, {
+        var options = $.extend({
             queryURL: rootPath + "webservices/servicios.asmx/GetPacienteI",
             controlDataId: $("._mpaciente").next("input").attr("id"),
             displayName: "item",
-            data: { e: '@ViewBag.User["entidades"]' },
+            data: { e: '@Model.Entidades' },
             idField: "value"
-        });
+        }, window._mpacienteoptions || {});
         $("._mpaciente").THAutoComplete(options);
     });
 </script>

@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Listado Cuentas";
     Layout = "~/Views/_Shared/_LayoutPage.cshtml";
-    CUsuario user = (CUsuario)CUsuario.GetInstance();
+    CUsuario user = ViewBag.User;
 }
 
 <div class="animated fadeIn">
@@ -75,10 +75,6 @@
         }
     </style>
     <script>
-        function onSaveExcel() {
-            $('#fquery').find("form").submit();
-            return false;
-        }
         function onUpdate() {
             $(".saveExcel").hide();
             $("#gpe").bootgrid("reload");
@@ -159,6 +155,11 @@
                 }
             }, cb).data('daterangepicker').calculateChosenLabel();
             cb(start, end);
+
+            $(".saveExcel").click(function () {
+                $('#fquery').find("form").submit();
+                return false;
+            });
         });
     </script>
 }

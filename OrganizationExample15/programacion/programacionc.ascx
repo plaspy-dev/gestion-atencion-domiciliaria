@@ -179,7 +179,7 @@
     </tr>
     <tr id="repeticion">
         <td>Cada</td>
-        <td align="left"><asp:TextBox runat="server" ID="TDias" MaxLength="2" CssClass="entero" Width="24px"></asp:TextBox>&nbsp;Días</td>
+        <td align="left"><asp:TextBox runat="server" ID="TDias" Text="1" MaxLength="2" CssClass="entero" Width="24px"></asp:TextBox>&nbsp;Días</td>
     </tr>
     <tr id="semana">
         <td colspan="2" align="left">

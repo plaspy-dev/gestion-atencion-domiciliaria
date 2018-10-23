@@ -11,6 +11,7 @@ using MySql.Data.MySqlClient;
 using System.Configuration;
 using System.IO;
 using System.Drawing;
+using OrganizationExample15;
 
 public partial class rh_funcionario : System.Web.UI.Page
 {
@@ -325,94 +326,6 @@ public partial class rh_funcionario : System.Web.UI.Page
         }
     }*/
 
-    public Bitmap CheckImage(Bitmap firma) {
-
-        int whites = 0;
-        int blacks = 0;
-        int initialline = 0;
-        int finalline = 0;
-        int initialrow = 0;
-        int finalrow = 0;
-        int lastwhite = 0;
-
-        for (int x = 0; x < firma.Width; x++)
-        {
-            bool hasblacks = false;
-            for (int y = 0; y < firma.Height; y++)
-            {
-                Color color = firma.GetPixel(x, y);
-                if (color.R > 150 && color.B > 150 && color.G > 150) {
-                    whites++;
-                } else {
-                    hasblacks = true;
-                    blacks++;
-                }
-            }
-            if (hasblacks) {
-                if (initialrow == 0) { 
-                    initialrow = x - 1;
-                } else {
-                    if (x-finalrow > 5)
-                        lastwhite = finalrow;
-                    finalrow = x + 1;
-                }
-            } else if (x-initialrow<10) {
-                initialrow = 0;
-                lastwhite = 0;
-                finalrow = 0;
-            } else if(lastwhite > 0 && x - finalrow<10) {
-                finalrow = lastwhite;
-            }
-        }
-
-        double percentage = (double)blacks / whites;
-        if (percentage > 0.005 && percentage < 0.10) { // si la cantidad de negros en la imagen es menor al 1% la rechazamos o mayor al 10%
-
-            for (int y = 0; y < firma.Height; y++)
-            {
-                bool hasblacks = false;
-                for (int x = 0; x < firma.Width; x++)
-                {
-                    Color color = firma.GetPixel(x, y);
-                    if (color.R > 150 && color.B > 150 && color.G > 150) {
-                        /*if (color.R > 240 && color.B > 240 && color.G > 240)
-                            firma.SetPixel(x, y, Color.White);*/
-                    } else {
-                        hasblacks = true;
-                    }
-                }
-                if (hasblacks)
-                {
-                    if (initialline == 0) { 
-                        initialline = y - 1;
-                    } else {
-                        if(y - finalline>5)
-                            lastwhite = finalline;
-                        finalline = y + 1;
-                    }
-                } else if (y-initialline<10) {
-                    initialline = 0;
-                    lastwhite = 0;
-                    finalline = 0;
-                } else if(lastwhite>0 && y - finalline < 10) {
-                    finalline = lastwhite;
-                }
-            }
-
-            if (finalline == 0 || finalline > firma.Height)
-                finalline = firma.Height;
-            if (finalrow == 0 || finalrow > firma.Width)
-                finalrow = firma.Width;
-            if (initialline < 0)
-                initialline = 0;
-            if (initialrow < 0)
-                initialrow = 0;
-
-            return firma.Clone(new Rectangle(initialrow, initialline, finalrow - initialrow, finalline - initialline), firma.PixelFormat);
-        }
-        return null; 
-    }
-
     public bool CheckFirmas(Bitmap firmaysello, bool rotate=true) {
 
         int ystart = 420;
@@ -425,7 +338,7 @@ public partial class rh_funcionario : System.Web.UI.Page
 
         using (Bitmap firma2 = firmaysello.Clone(new Rectangle(xstart, ystart, width, height), firmaysello.PixelFormat))
         {
-            using (Bitmap firma = CheckImage(firma2)) 
+            using (Bitmap firma = FileStorage.CropSign(firma2)) 
             {
                 if (firma == null)
                 {
@@ -445,7 +358,7 @@ public partial class rh_funcionario : System.Web.UI.Page
         xstart = 900;
         using (Bitmap sello2 = firmaysello.Clone(new Rectangle(xstart, ystart, width, height), firmaysello.PixelFormat))
         {
-            using (Bitmap sello = CheckImage(sello2))
+            using (Bitmap sello = FileStorage.CropSign(sello2))
             {
                 if (sello == null)
                     return false;

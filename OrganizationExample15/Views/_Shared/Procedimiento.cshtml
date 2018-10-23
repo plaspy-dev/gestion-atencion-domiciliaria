@@ -1,0 +1,17 @@
+﻿@model OrganizationExample15.Models.MProcedimiento
+@Html.TextBoxFor(x => x.Nombre, Model?.ReadOnly==true ? (object)new { @class = "_mprocedimiento", placeholder = "Buscar", @readonly = "" } : (object)new { @class = "_mprocedimiento", placeholder = "Buscar" })
+@Html.TextBoxFor(x=>x.Id, new { @class= "hidet _mhprocedimiento" })
+@if (Model?.ReadOnly!=true)
+{
+<script>
+    $(function () {
+        var options = $.extend(window._mprocedimientooptions || {}, {
+            queryURL: rootPath + "webservices/servicios.asmx/GetMedicamentos",
+            controlDataId: $("._mprocedimiento").next("input").attr("id"),
+            displayName: "item",
+            idField: "value"
+        });
+        $("._mprocedimiento").THAutoComplete(options);
+    });
+</script>
+}

@@ -1,0 +1,45 @@
+﻿@model OrganizationExample15.Models.terapeutico.Documentos
+@{
+    ViewBag.Title = "Documentos";
+    Layout = "~/Views/_Shared/_LayoutPage.cshtml";
+}
+<form action="@Url.Content(Request.Url.AbsolutePath +  Request.Url.Query)" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <table class="table table-striped table-sm">
+        <tr>
+            <td class="px">Funcionario</td>
+            <td>@Html.Partial("~/Views/_Shared/Funcionario.cshtml", Model?.Funcionario, HomeCareVersion.GetPrefixPartial("Funcionario"))</td>
+        </tr>
+        @if (!string.IsNullOrEmpty(Model.ProtectedFields["fid"]))
+        {
+            <tr>
+                <td><a href="@Url.Content(FileStorage.GetPublicURLPath(FileStorage.Types.firmas, Model.Funcionario.Id + ".jpg"))">Firma</a> @Html.ValidationMessageFor(x => x.Firma, "*")</td>
+                <td>@Html.TextBoxFor(x => x.Firma, new { type = "file", accept = "image/jpeg;capture=camera" })</td>
+            </tr>
+            <tr>
+                <td><a href="@Url.Content(FileStorage.GetPublicURLPath(FileStorage.Types.firmas, Model.Funcionario.Id + ".jpg"))">Sello</a> @Html.ValidationMessageFor(x => x.Sello, "*")</td>
+                <td>@Html.TextBoxFor(x => x.Sello, new { type = "file", accept = "image/jpeg;capture=camera" })</td>
+            </tr>
+            <tr>
+                <td><a href="@Url.Content(FileStorage.GetPublicURLPath(FileStorage.Types.RUT, FileStorage.GetFileName(FileStorage.Types.RUT, Model.Funcionario.Id)))">RUT</a> @Html.ValidationMessageFor(x => x.RUT, "*")</td>
+                <td>@Html.TextBoxFor(x => x.RUT, new { type = "file", accept = "image/jpeg;capture=camera" })</td>
+            </tr>
+        }
+    </table>
+    @if (!string.IsNullOrEmpty(Model.ProtectedFields["fid"]))
+    {
+        @Html.ValidationSummary()
+    <div class="r">
+        @Html.HiddenFor(x => x._gk)
+        <button class="btn btn-submit">Aceptar</button>
+        <a href="@Request.Url.AbsolutePath" class="btn btn-default">Cancelar</a>
+    </div>
+        }
+ </form>
+@section scripts {
+    <script>
+        $(function () {
+            $("._mtercero").focus();
+        });
+    </script>
+}

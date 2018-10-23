@@ -122,16 +122,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="administrador\aseguradores.aspx" />
-    <Content Include="administrador\barthel.aspx" />
-    <Content Include="administrador\categoria_censo.aspx" />
-    <Content Include="administrador\copagos.aspx" />
-    <Content Include="administrador\Default.aspx" />
-    <Content Include="administrador\grupos.aspx" />
-    <Content Include="administrador\medicamentos.aspx" />
-    <Content Include="administrador\parametros2.aspx" />
-    <Content Include="administrador\preguntas.aspx" />
-    <Content Include="administrador\terceros.aspx" />
     <Content Include="administrador\usuario.aspx" />
     <Content Include="admisiones\amasivas.aspx" />
     <Content Include="admisiones\autorizaciones.aspx" />
@@ -245,7 +235,9 @@
     <Content Include="ctrl\history.ascx" />
     <Content Include="ctrl\sharehistory.ascx" />
     <Content Include="Default.aspx" />
-    <Content Include="directorio.xml" />
+    <Content Include="directorio.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="directorio\Default.aspx" />
     <Content Include="entrega_turno\bitacora.aspx" />
     <Content Include="equipo\devolucion.ascx" />
@@ -359,6 +351,8 @@
     <Content Include="imgs\search.png" />
     <Content Include="imgs\ui-anim_basic_16x16.gif" />
     <Content Include="inicio.aspx" />
+    <Content Include="js\angulargaleria.js" />
+    <Content Include="js\angulargridctrl.js" />
     <Content Include="js\avance.png" />
     <Content Include="js\bootstrap.js" />
     <Content Include="js\bootstrap.min.js" />
@@ -366,6 +360,7 @@
     <Content Include="js\en.js" />
     <Content Include="js\FixFocus.js" />
     <Content Include="js\flecha.jpg" />
+    <Content Include="js\gridedit.js" />
     <Content Include="js\gridlistadd.js" />
     <Content Include="js\jquery-1.7.2.min.js" />
     <Content Include="js\jquery-linedtextarea.js" />
@@ -461,6 +456,7 @@
     <Content Include="js\validators.js" />
     <Content Include="lib\angular-1.7.2\angular.js" />
     <Content Include="lib\angular-1.7.2\angular.min.js" />
+    <Content Include="lib\autonumeric-4.1.0\autonumeric.min.js" />
     <Content Include="lib\bloodhound\bloodhound.js" />
     <Content Include="lib\bloodhound\bloodhound.min.js" />
     <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.css" />
@@ -484,7 +480,49 @@
     <Content Include="lib\daterangepicker\daterangepicker.css" />
     <Content Include="lib\daterangepicker\daterangepicker.js" />
     <Content Include="lib\daterangepicker\daterangepicker.original.js" />
+    <Content Include="lib\dropzone\dropzone.css" />
+    <Content Include="lib\dropzone\dropzone.js" />
     <Content Include="lib\jquery-3.3.1\jquery-3.3.1.min.js" />
+    <Content Include="lib\jquery-inputmask\bindings\inputmask.binding.js" />
+    <Content Include="lib\jquery-inputmask\bindings\inputmask.binding.min.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.min.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jquery.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jquery.min.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.min.js" />
+    <Content Include="lib\jquery-inputmask\global\document.js" />
+    <Content Include="lib\jquery-inputmask\global\document.min.js" />
+    <Content Include="lib\jquery-inputmask\global\window.js" />
+    <Content Include="lib\jquery-inputmask\global\window.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.date.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.date.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.numeric.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.numeric.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.phone.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.phone.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\jquery.inputmask.js" />
+    <Content Include="lib\jquery-inputmask\jquery.inputmask.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-be.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-be.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ca.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ca.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-hu.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-hu.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-it.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-it.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-mx.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-mx.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-nl.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-nl.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ru.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ru.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone.min.js" />
     <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
     <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
     <Content Include="lib\jquery-validation\dist\additional-methods.js" />
@@ -599,76 +637,6 @@
     <Content Include="xlsx\[Content_Types].xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="administrador\aseguradores.aspx.cs">
-      <DependentUpon>aseguradores.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="administrador\aseguradores.aspx.designer.cs">
-      <DependentUpon>aseguradores.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="administrador\barthel.aspx.cs">
-      <DependentUpon>barthel.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="administrador\barthel.aspx.designer.cs">
-      <DependentUpon>barthel.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="administrador\categoria_censo.aspx.cs">
-      <DependentUpon>categoria_censo.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="administrador\categoria_censo.aspx.designer.cs">
-      <DependentUpon>categoria_censo.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="administrador\copagos.aspx.cs">
-      <DependentUpon>copagos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="administrador\copagos.aspx.designer.cs">
-      <DependentUpon>copagos.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="administrador\Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="administrador\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="administrador\grupos.aspx.cs">
-      <DependentUpon>grupos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="administrador\grupos.aspx.designer.cs">
-      <DependentUpon>grupos.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="administrador\medicamentos.aspx.cs">
-      <DependentUpon>medicamentos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="administrador\medicamentos.aspx.designer.cs">
-      <DependentUpon>medicamentos.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="administrador\parametros2.aspx.cs">
-      <DependentUpon>parametros2.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="administrador\parametros2.aspx.designer.cs">
-      <DependentUpon>parametros2.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="administrador\preguntas.aspx.cs">
-      <DependentUpon>preguntas.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="administrador\preguntas.aspx.designer.cs">
-      <DependentUpon>preguntas.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="administrador\terceros.aspx.cs">
-      <DependentUpon>terceros.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="administrador\terceros.aspx.designer.cs">
-      <DependentUpon>terceros.aspx</DependentUpon>
-    </Compile>
     <Compile Include="administrador\usuario.aspx.cs">
       <DependentUpon>usuario.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -732,6 +700,7 @@
     <Compile Include="App_Start\BaseController.cs" />
     <Compile Include="App_Start\BootgridResponseData.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\Cache.cs" />
     <Compile Include="App_Start\Calificacion.cs" />
     <Compile Include="App_Start\CConector.cs" />
     <Compile Include="App_Start\CConectorMS.cs" />
@@ -741,9 +710,11 @@
     <Compile Include="App_Start\Entidad.cs" />
     <Compile Include="App_Start\Excel.cs" />
     <Compile Include="App_Start\Files.cs" />
+    <Compile Include="App_Start\FileStorage.cs" />
     <Compile Include="App_Start\Funcionario.cs" />
     <Compile Include="App_Start\GridUtil.cs" />
     <Compile Include="App_Start\Heridas.cs" />
+    <Compile Include="App_Start\HomeCarePolicyAttribute.cs" />
     <Compile Include="App_Start\HomeCareVersion.cs" />
     <Compile Include="App_Start\Paciente.cs" />
     <Compile Include="App_Start\PDFConverter.cs" />
@@ -763,7 +734,10 @@
     <Compile Include="App_Start\Tercero.cs" />
     <Compile Include="App_Start\Validator\DateGreaterThan.cs" />
     <Compile Include="App_Start\Validator\DateLessThan.cs" />
+    <Compile Include="App_Start\Validator\MaxFileSize.cs" />
+    <Compile Include="App_Start\Validator\MultipleFileExtensions.cs" />
     <Compile Include="App_Start\Validator\MethodValidator.cs" />
+    <Compile Include="App_Start\Validator\RequiredIfNot.cs" />
     <Compile Include="App_Start\Validator\RequiredIf.cs" />
     <Compile Include="App_Start\Varios.cs" />
     <Compile Include="archivo\archivo.aspx.cs">
@@ -948,9 +922,24 @@
     <Compile Include="contrasena.aspx.designer.cs">
       <DependentUpon>contrasena.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\Administrador\UsuariosController.cs" />
+    <Compile Include="Controllers\Administrador\TercerosController.cs" />
+    <Compile Include="Controllers\Administrador\FormulacionController.cs" />
+    <Compile Include="Controllers\Administrador\GruposController.cs" />
+    <Compile Include="Controllers\Administrador\AseguradoresController.cs" />
+    <Compile Include="Controllers\Administrador\CategoriaCensoController.cs" />
+    <Compile Include="Controllers\Administrador\CopagosController.cs" />
+    <Compile Include="Controllers\Administrador\IndicesController.cs" />
+    <Compile Include="Controllers\Administrador\EncuestaUsuarioController.cs" />
+    <Compile Include="Controllers\Administrador\Parametros2Controller.cs" />
+    <Compile Include="Controllers\Administrador\ParametrosController.cs" />
+    <Compile Include="Controllers\ClinicaHeridas\ValoracionController.cs" />
+    <Compile Include="Controllers\ClinicaHeridas\InformeEPSController.cs" />
+    <Compile Include="Controllers\Files\FilesController.cs" />
     <Compile Include="Controllers\IndexController.cs" />
-    <Compile Include="Controllers\Terapeutico\TerapeuticoController.Listado.cs" />
-    <Compile Include="Controllers\Terapeutico\TerapeuticoController.cs" />
+    <Compile Include="Controllers\Terapeutico\DocumentosController.cs" />
+    <Compile Include="Controllers\Terapeutico\ListadoCuentasController.cs" />
+    <Compile Include="Controllers\Terapeutico\CuentasController.cs" />
     <Compile Include="Controllers\_LayoutController.cs" />
     <Compile Include="control\actividad.ascx.cs">
       <DependentUpon>actividad.ascx</DependentUpon>
@@ -1256,10 +1245,28 @@
     <Compile Include="materna\seguimiento.aspx.designer.cs">
       <DependentUpon>seguimiento.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Models\Administrador\MUsuario.cs" />
+    <Compile Include="Models\Administrador\Tercero.cs" />
+    <Compile Include="Models\Administrador\Asegurador.cs" />
+    <Compile Include="Models\Administrador\CategoriaCenso.cs" />
+    <Compile Include="Models\Administrador\Copago.cs" />
+    <Compile Include="Models\Administrador\Grupo.cs" />
+    <Compile Include="Models\Administrador\MProcedimiento.cs" />
+    <Compile Include="Models\Administrador\Privilege.cs" />
+    <Compile Include="Models\Administrador\Parametros2.cs" />
+    <Compile Include="Models\Administrador\Varios.cs" />
+    <Compile Include="Models\CheckTextParam.cs" />
+    <Compile Include="Models\ClinicaHeridas\InfomeEPS.cs" />
+    <Compile Include="Models\ClinicaHeridas\Valoracion.cs" />
+    <Compile Include="Models\FileParam.cs" />
+    <Compile Include="Models\Galeria.cs" />
     <Compile Include="Models\MPaciente.cs" />
+    <Compile Include="Models\MProcedimiento.cs" />
+    <Compile Include="Models\Shared\Historial.cs" />
     <Compile Include="Models\Shared\Property.cs" />
     <Compile Include="Models\terapeutico\Cuentas.cs" />
-    <Compile Include="Models\MTercero.cs" />
+    <Compile Include="Models\MFuncionario.cs" />
+    <Compile Include="Models\terapeutico\Documentos.cs" />
     <Compile Include="Models\terapeutico\ListadoCuentas.cs" />
     <Compile Include="modificaciones.ascx.cs">
       <DependentUpon>modificaciones.ascx</DependentUpon>
@@ -1635,8 +1642,6 @@
     <Content Include="archivo\importarCSV.ashx" />
     <Content Include="archivo\importarExcel.ashx" />
     <Content Include="archivo\UploadFile.ashx" />
-    <Content Include="clinicaheridas\informeeps.aspx.cs.old" />
-    <Content Include="clinicaheridas\informeeps.aspx.old" />
     <Content Include="file\file.ashx" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
@@ -1686,6 +1691,8 @@
     <Content Include="fonts\md-fonts\package.json" />
     <Content Include="fonts\md-fonts\README.md" />
     <Content Include="dbupgrade.json" />
+    <Content Include="lib\dropzone\basic.scss" />
+    <Content Include="lib\dropzone\dropzone.scss" />
     <None Include="packages.config" />
     <Content Include="Views\_Shared\_LayoutPage.cshtml" />
     <Content Include="Views\Terapeutico\Cuentas.cshtml" />
@@ -1695,6 +1702,39 @@
     <Content Include="Views\_Layout\Properties.cshtml" />
     <Content Include="Views\Terapeutico\ListadoCuentas.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\_Shared\Galeria.cshtml" />
+    <Content Include="Views\Terapeutico\Documentos.cshtml" />
+    <Content Include="Views\Terapeutico\Cuentas_Print.cshtml" />
+    <Content Include="Views\_Shared\_LayoutPagePrint.cshtml" />
+    <Content Include="Views\Administrador\Aseguradores.cshtml" />
+    <Content Include="Views\Administrador\_Aseguradores.cshtml" />
+    <Content Include="Views\Administrador\CategoriaCenso.cshtml" />
+    <Content Include="Views\Administrador\_CategoriaCenso.cshtml" />
+    <Content Include="Views\_Shared\Procedimiento.cshtml" />
+    <Content Include="Views\Administrador\Copagos.cshtml" />
+    <Content Include="Views\Administrador\Parametros.cshtml" />
+    <Content Include="Views\Administrador\_Parametros.cshtml" />
+    <Content Include="Views\Administrador\EncuestaUsuario.cshtml" />
+    <Content Include="Views\Administrador\_EncuestaUsuario.cshtml" />
+    <Content Include="Views\Administrador\Indices.cshtml" />
+    <Content Include="Views\Administrador\_Indices.cshtml" />
+    <Content Include="Views\Administrador\_Grupos.cshtml" />
+    <Content Include="Views\Administrador\Grupos.cshtml" />
+    <Content Include="Views\Administrador\Formulacion.cshtml" />
+    <Content Include="Views\Administrador\_Formulacion.cshtml" />
+    <Content Include="Views\Administrador\Parametros2.cshtml" />
+    <Content Include="Views\Administrador\_Parametros2.cshtml" />
+    <Content Include="Views\Administrador\_Terceros.cshtml" />
+    <Content Include="Views\Administrador\Terceros.cshtml" />
+    <Content Include="Views\Administrador\_Usuarios.cshtml" />
+    <Content Include="Views\Administrador\Usuarios.cshtml" />
+    <Content Include="Views\ClinicaHeridas\InformeEPS.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Valoracion.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Herida.cshtml" />
+    <Content Include="Views\_Shared\PacienteInfo.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Valoracion_Print.cshtml" />
+    <Content Include="Views\_Shared\GaleriaAngular.cshtml" />
+    <Content Include="Views\_Shared\Historial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

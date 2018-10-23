@@ -17,18 +17,26 @@
         return this;
     };
 
-    var $contentholder = $(".container");
+    var $contentholder = $("._container");
     var $footer = $(".footer");
+    var $buttondcpluss = $(".dcplusbtn");
 
     function ordlg() {
         var height = $contentholder.offset().top + $contentholder.height();
         if (height > $(window).height())
             height = $(window).height();
-        height -= 220;
         height = height + $(window).scrollTop();
+        if (height > $footer.offset().top)
+            height = $footer.offset().top;
+        height -= 220;
+
         if (height < 50)
             height = 50;
-        $(".dcplusbtn").css("top", height);
+
+        var maxwidth = $(window).width() + $(window).scrollLeft();
+        $buttondcpluss.css("right", 30 + $(document).width() - maxwidth);
+        
+        $buttondcpluss.css("top", height);
         $(".dcplusbtnm").btnBottomRight();
     }
 

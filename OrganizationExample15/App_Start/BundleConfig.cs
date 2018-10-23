@@ -31,7 +31,7 @@ public class BundleConfig
                       , "~/lib/bloodhound/bloodhound.js"
                       , "~/lib/typeahead.jquery/typeahead.jquery.mod.js"
                     , "~/js/jquery.cookie.js"
-                    , "~/js/jquery.autonumeric.js"
+                    , "~/lib/autonumeric-4.1.0/autonumeric.min.js"
                     , "~/lib/jquery-validation/dist/jquery.validate.js"
                     , "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"
                     , "~/lib/toastr/toastr.min.js"
