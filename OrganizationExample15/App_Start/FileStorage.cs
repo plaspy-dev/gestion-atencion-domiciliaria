@@ -30,7 +30,8 @@ namespace OrganizationExample15
             firmas,
             sellos,
             RUT,
-            valoracion // valoracion clinica de heridas
+            valoracion, // valoracion clinica de heridas
+            evolucion // evolucion clinica de heridas
         }
 
         private static IDictionary<string, string> _mappings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {

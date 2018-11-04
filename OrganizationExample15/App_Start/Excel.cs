@@ -56,7 +56,8 @@ namespace OrganizationExample15
                                 {
                                     if (reader[i] is DateTime)
                                     {
-                                        RenderXLSXPage.WriteString(zipStream, string.Format(CultureInfo.InvariantCulture, "<c s=\"6\"><v>{0}</v></c>", ((DateTime)reader[i]).ToOADate()));
+                                        DateTime date= (DateTime)reader[i];
+                                        RenderXLSXPage.WriteString(zipStream, string.Format(CultureInfo.InvariantCulture, "<c s=\"{1}\"><v>{0}</v></c>", date.ToOADate(), date.Hour==0 && date.Minute==0 && date.Second==0 ? 7 : 6));
                                     }
                                     else RenderXLSXPage.WriteString(zipStream, string.Format("<c{0}</c>", RenderXLSXPage.GetTypeValueXLSX(reader[i].ToString())));
                                 }

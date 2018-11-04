@@ -158,7 +158,6 @@
     <Content Include="cliente\quejas.html" />
     <Content Include="cliente\quejasa.html" />
     <Content Include="clinicaheridas\casa.jpg" />
-    <Content Include="clinicaheridas\egresos.aspx" />
     <Content Include="clinicaheridas\escaladolor.jpg" />
     <Content Include="clinicaheridas\escalas\e0.jpg" />
     <Content Include="clinicaheridas\escalas\e1.jpg" />
@@ -172,12 +171,6 @@
     <Content Include="clinicaheridas\escalas\e8.jpg" />
     <Content Include="clinicaheridas\escalas\e9.jpg" />
     <Content Include="clinicaheridas\escalas\escaladolor.jpg" />
-    <Content Include="clinicaheridas\evolucion.aspx" />
-    <Content Include="clinicaheridas\evolucion.html" />
-    <Content Include="clinicaheridas\informeeps.aspx" />
-    <Content Include="clinicaheridas\informeEPS.html" />
-    <Content Include="clinicaheridas\valoracion.aspx" />
-    <Content Include="clinicaheridas\valoracion.html" />
     <Content Include="contrasena.aspx" />
     <Content Include="control\actividad.ascx" />
     <Content Include="control\actividad.ascx.js" />
@@ -887,34 +880,6 @@
     <Compile Include="cliente\quejas.aspx.designer.cs">
       <DependentUpon>quejas.aspx</DependentUpon>
     </Compile>
-    <Compile Include="clinicaheridas\egresos.aspx.cs">
-      <DependentUpon>egresos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="clinicaheridas\egresos.aspx.designer.cs">
-      <DependentUpon>egresos.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="clinicaheridas\evolucion.aspx.cs">
-      <DependentUpon>evolucion.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="clinicaheridas\evolucion.aspx.designer.cs">
-      <DependentUpon>evolucion.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="clinicaheridas\informeeps.aspx.cs">
-      <DependentUpon>informeeps.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="clinicaheridas\informeeps.aspx.designer.cs">
-      <DependentUpon>informeeps.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="clinicaheridas\valoracion.aspx.cs">
-      <DependentUpon>valoracion.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="clinicaheridas\valoracion.aspx.designer.cs">
-      <DependentUpon>valoracion.aspx</DependentUpon>
-    </Compile>
     <Compile Include="contrasena.aspx.cs">
       <DependentUpon>contrasena.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -933,6 +898,8 @@
     <Compile Include="Controllers\Administrador\EncuestaUsuarioController.cs" />
     <Compile Include="Controllers\Administrador\Parametros2Controller.cs" />
     <Compile Include="Controllers\Administrador\ParametrosController.cs" />
+    <Compile Include="Controllers\ClinicaHeridas\EvolucionController.cs" />
+    <Compile Include="Controllers\ClinicaHeridas\EgresosController.cs" />
     <Compile Include="Controllers\ClinicaHeridas\ValoracionController.cs" />
     <Compile Include="Controllers\ClinicaHeridas\InformeEPSController.cs" />
     <Compile Include="Controllers\Files\FilesController.cs" />
@@ -1256,7 +1223,9 @@
     <Compile Include="Models\Administrador\Parametros2.cs" />
     <Compile Include="Models\Administrador\Varios.cs" />
     <Compile Include="Models\CheckTextParam.cs" />
+    <Compile Include="Models\ClinicaHeridas\Egresos.cs" />
     <Compile Include="Models\ClinicaHeridas\InfomeEPS.cs" />
+    <Compile Include="Models\ClinicaHeridas\Evolucion.cs" />
     <Compile Include="Models\ClinicaHeridas\Valoracion.cs" />
     <Compile Include="Models\FileParam.cs" />
     <Compile Include="Models\Galeria.cs" />
@@ -1735,6 +1704,9 @@
     <Content Include="Views\ClinicaHeridas\Valoracion_Print.cshtml" />
     <Content Include="Views\_Shared\GaleriaAngular.cshtml" />
     <Content Include="Views\_Shared\Historial.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Evolucion.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Evolucion_Print.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Egresos.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

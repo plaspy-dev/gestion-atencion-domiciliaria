@@ -113,7 +113,7 @@
                 formatters: {
                     "link": function (column, row) {
                         if (row["t"] == 1)
-                            return '<a href="' + rootPath + 'ClinicaHeridas/evolucion.aspx?pid=' + row["p"] + '&ehid=' + row["id"] + '" target="_blank">' + row[column.id] + '</a>';
+                            return '<a href="' + rootPath + 'ClinicaHeridas/Evolucion?pid=' + row["p"] + '&ehid=' + row["id"] + '" target="_blank">' + row[column.id] + '</a>';
                         return '<a href="' + rootPath + 'ClinicaHeridas/Valoracion?pid=' + row["p"] + '&hveid=' + row["id"] + '" target="_blank">' + row[column.id] + '</a>';
                     },
                     currency: function (column, row) {

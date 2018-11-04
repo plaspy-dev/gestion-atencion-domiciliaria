@@ -55,14 +55,6 @@ namespace OrganizationExample15.Controllers
             valoracion.Paciente.ShowLabel = true;
             valoracion.Funcionario.Required = true;
 
-            /*if (hveid!=null)
-            {
-                using (CConector conector = new CConector())
-                    Response.Redirect(string.Format("~/clinicaheridas/valoracion.aspx?pid={0}"
-                        , conector.QueryString("SELECT paciente FROM valoracion_herida WHERE id=" + Query.GetValor(hveid))
-                        ));
-            }*/
-
             if (pid!=null)
             {
                 valoracion.Paciente.Id = pid.ToString();
@@ -121,13 +113,13 @@ namespace OrganizationExample15.Controllers
                         query += "funcionario";
 
                         MySqlDataReader reader = conector.Query(query.GetSelect("paciente={0} AND ({1} IS NULL OR id={1}) ORDER BY id DESC LIMIT 1", null, Query.GetValor(pid), Query.GetValor(hveid)));
-                        if (reader != null && reader.Read())
-                        {
-                            valoracion.ProtectedFields["id"]=
-                            valoracion.Id = reader["id"].ToString();
+                    if (reader != null && reader.Read())
+                    {
+                        valoracion.ProtectedFields["id"] =
+                        valoracion.Id = reader["id"].ToString();
 
-                            valoracion.Galeria.CanDelete =
-                                valoracion.Galeria.CanUpload = usuario.CanUpdate();
+                        valoracion.Galeria.CanDelete =
+                            valoracion.Galeria.CanUpload = usuario.CanUpdate();
 
                         if (usuario.CanPrint())
                         {
@@ -135,34 +127,29 @@ namespace OrganizationExample15.Controllers
                             ViewBag.PDF = true;
                         }
 
-                        valoracion.Fecha= Query.GetFromMySQLDate(reader["fecha"]);
-                            valoracion.Funcionario.Id = reader["funcionario"].ToString();
-                            valoracion.TA = reader["ta"].ToString();
-                            valoracion.FC = reader["fc"].ToString();
-                            valoracion.FR = reader["fr"].ToString();
-                            valoracion.T = string.Format(CultureInfo.InvariantCulture, "{0:0.#}", Convert.ToSingle(reader["t"]));
-                        valoracion.PulsosDistales= reader["pulsosdistales"].ToString();
-                        valoracion.TipoOstomia= reader["ostomias"].ToString();
+                        valoracion.Fecha = Query.GetFromMySQLDate(reader["fecha"]);
+                        valoracion.Funcionario.Id = reader["funcionario"].ToString();
+                        valoracion.TA = reader["ta"].ToString();
+                        valoracion.FC = reader["fc"].ToString();
+                        valoracion.FR = reader["fr"].ToString();
+                        valoracion.T = string.Format(CultureInfo.InvariantCulture, "{0:0.#}", Convert.ToSingle(reader["t"]));
+                        valoracion.PulsosDistales = reader["pulsosdistales"].ToString();
+                        valoracion.TipoOstomia = reader["ostomias"].ToString();
                         valoracion.UbicacionEstoma = reader["ubicacion"].ToString();
-                        valoracion.ColorEstoma= reader["color"]==DBNull.Value ? null : (uint ?)Convert.ToUInt32(reader["color"]);
+                        valoracion.ColorEstoma = reader["color"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["color"]);
                         valoracion.EstomaNivelPiel = reader["estoma"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["estoma"]);
-                        valoracion.EstomaComplicaciones= reader["complicaciones"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["complicaciones"]);
-                        valoracion.EstadoPiel= reader["estado_piel"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["estado_piel"]);
-                        valoracion.TipoDispositivo= reader["tipo_dispositivo"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["tipo_dispositivo"]);
-                        valoracion.Funcional= reader["funcional"]==DBNull.Value;
-                        valoracion.FuncionalParametro = reader["funcional"]==DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["funcional"]);
+                        valoracion.EstomaComplicaciones = reader["complicaciones"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["complicaciones"]);
+                        valoracion.EstadoPiel = reader["estado_piel"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["estado_piel"]);
+                        valoracion.TipoDispositivo = reader["tipo_dispositivo"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["tipo_dispositivo"]);
+                        valoracion.Funcional = reader["funcional"] == DBNull.Value;
+                        valoracion.FuncionalParametro = reader["funcional"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["funcional"]);
                         valoracion.EscalaDolor = reader["dolor"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["dolor"]);
                         valoracion.FuncionalDescripcion = reader["funcional_descripcion"].ToString();
 
-                            // TTiempoEvolucion.Text = reader["tiempo_evolucion_ulcera"].ToString();
-                            // Utilidades.SelectInDropDown(DLugarOrigen, reader["lugar_origen_ulcera"]);
-                            // Utilidades.SelectInDropDown(DTejidoSospechoso, reader["tejido_profundo"]);
-
-                        valoracion.Ostomias= reader["costomias"].ToString() == "1";
+                        valoracion.Ostomias = reader["costomias"].ToString() == "1";
                         valoracion.DispositivosMedicosInsertados = reader["cdispositivos_medicos"].ToString() == "1";
-                        
-                            // THogarGeriatrico.Text = reader["hogar_geriatrico"].ToString();
-                            valoracion.ConsentimientoInformado = reader["consentimiento"].ToString() == "1";
+
+                        valoracion.ConsentimientoInformado = reader["consentimiento"].ToString() == "1";
                         valoracion.Periodicidad = reader["periodicidad"].ToString();
                         valoracion.Fistulas = reader["fistula"].ToString() == "1";
                         valoracion.LocalizacionFistula = reader["localizacion_fistula"].ToString();
@@ -171,57 +158,57 @@ namespace OrganizationExample15.Controllers
                         valoracion.ObservacionesPulso = reader["observacion_pulso"].ToString();
                         valoracion.Manejo = reader["manejo"].ToString();
 
-                            query = new Query("valoracion_herida_herida");
+                        query = new Query("valoracion_herida_herida");
 
-                            query += "id";
-                            query += "localizacion";
-                            query += "localizacion2";
-                            query += "localizacion3";
-                            query += "mi";
-                            query += "pies";
-                            query += "ubicacion_especifica";
-                            query += "etiologia";
-                            query += "etiologia_otro";
-                            query += "clasificacion";
-                            query += "factores_riesgo";
-                            query += "longitud";
-                            query += "anchura";
-                            query += "profundidad";
-                            query += "tunelizacion";
-                            query += "cavidad";
-                            query += "bolsillo_tamano";
-                            query += "bolsillo_ubicacion";
-                            query += "tipo_tejido";
-                            query += "compacto";
-                            query += "fibrina";
-                            query += "epitelizacion";
-                            query += "escara";
-                            query += "granulacion";
-                            query += "hipergranulacion";
-                            query += "limpio";
-                            query += "necrosis";
-                            query += "seleccion_tejido";
-                            query += "exudado";
-                            query += "tipo_exudado";
-                            query += "piel_circundante";
-                            query += "bordes_herida";
-                            query += "olor";
-                            query += "olor_descripcion";
-                            query += "signos_sintomas";
-                            query += "exudado_complicacion";
-                            query += "exudado_definicion";
+                        query += "id";
+                        query += "localizacion";
+                        query += "localizacion2";
+                        query += "localizacion3";
+                        query += "mi";
+                        query += "pies";
+                        query += "ubicacion_especifica";
+                        query += "etiologia";
+                        query += "etiologia_otro";
+                        query += "clasificacion";
+                        query += "factores_riesgo";
+                        query += "longitud";
+                        query += "anchura";
+                        query += "profundidad";
+                        query += "tunelizacion";
+                        query += "cavidad";
+                        query += "bolsillo_tamano";
+                        query += "bolsillo_ubicacion";
+                        query += "tipo_tejido";
+                        query += "compacto";
+                        query += "fibrina";
+                        query += "epitelizacion";
+                        query += "escara";
+                        query += "granulacion";
+                        query += "hipergranulacion";
+                        query += "limpio";
+                        query += "necrosis";
+                        query += "seleccion_tejido";
+                        query += "exudado";
+                        query += "tipo_exudado";
+                        query += "piel_circundante";
+                        query += "bordes_herida";
+                        query += "olor";
+                        query += "olor_descripcion";
+                        query += "signos_sintomas";
+                        query += "exudado_complicacion";
+                        query += "exudado_definicion";
 
-                            List<Heridas> heridas = new List<Heridas>();
+                        List<Heridas> heridas = new List<Heridas>();
 
-                            reader = conector.Query(query.GetSelect("valoracion=" + Query.GetValor(valoracion.Id)));
-                            if (reader != null)
+                        reader = conector.Query(query.GetSelect("valoracion=" + Query.GetValor(valoracion.Id)));
+                        if (reader != null)
+                        {
+                            while (reader.Read())
                             {
-                                while (reader.Read())
-                                {
 
                                 Herida herida = new Herida();
 
-                                herida.Id= reader["id"].ToString();
+                                herida.Id = reader["id"].ToString();
                                 herida.Localizacion = reader["localizacion"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["localizacion"]);
                                 herida.Localizacion2 = reader["localizacion2"] == DBNull.Value ? 0 : (uint?)Convert.ToUInt32(reader["localizacion2"]);
                                 herida.Localizacion3 = reader["localizacion3"] == DBNull.Value ? 0 : (uint?)Convert.ToUInt32(reader["localizacion3"]);
@@ -232,10 +219,10 @@ namespace OrganizationExample15.Controllers
                                 herida.OtroEtiologia = reader["etiologia_otro"].ToString();
                                 herida.Clasificacion = reader["clasificacion"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["clasificacion"]);
                                 herida.FactoresRiesgo = reader["factores_riesgo"].ToString();
-                                herida.Longitud = reader["longitud"]==DBNull.Value ? null : string.Format(CultureInfo.InvariantCulture, "{0}", reader["longitud"]);
+                                herida.Longitud = reader["longitud"] == DBNull.Value ? null : string.Format(CultureInfo.InvariantCulture, "{0}", reader["longitud"]);
                                 herida.Anchura = reader["anchura"] == DBNull.Value ? null : string.Format(CultureInfo.InvariantCulture, "{0}", reader["anchura"]);
                                 herida.Profundidad = reader["profundidad"] == DBNull.Value ? null : string.Format(CultureInfo.InvariantCulture, "{0}", reader["profundidad"]);
-                                herida.Tunelizacion = reader["tunelizacion"]!=DBNull.Value;
+                                herida.Tunelizacion = reader["tunelizacion"] != DBNull.Value;
                                 herida.TunelizacionParametro = reader["tunelizacion"] == DBNull.Value ? null : string.Format(CultureInfo.InvariantCulture, "{0}", reader["tunelizacion"]);
                                 herida.Cavidad = reader["cavidad"] == DBNull.Value ? null : string.Format(CultureInfo.InvariantCulture, "{0}", reader["cavidad"]);
                                 herida.Bolsillo = reader["bolsillo_tamano"] != DBNull.Value;
@@ -252,7 +239,7 @@ namespace OrganizationExample15.Controllers
                                 herida.TejidoNecrosis = reader["necrosis"].ToString();
                                 herida.TejidoExposicion = reader["seleccion_tejido"].ToString();
                                 herida.Exudado = reader["exudado"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["exudado"]);
-                                herida.ExudadoTipo= reader["tipo_exudado"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["tipo_exudado"]);
+                                herida.ExudadoTipo = reader["tipo_exudado"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["tipo_exudado"]);
                                 herida.ExudadoPiel = reader["piel_circundante"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["piel_circundante"]);
                                 herida.ExudadoBordes = reader["bordes_herida"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["bordes_herida"]);
                                 herida.ExudadoOlor = reader["olor"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["olor"]);
@@ -260,7 +247,7 @@ namespace OrganizationExample15.Controllers
                                 herida.ExudadoSignos = reader["signos_sintomas"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["signos_sintomas"]);
                                 herida.ExudadoComplicaciones = reader["exudado_complicacion"] != DBNull.Value;
                                 herida.ExudadodComplicacionesParametro = reader["exudado_complicacion"].ToString();
-                                herida.ExudadoClasificacion= reader["exudado_definicion"]==DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["exudado_definicion"]);
+                                herida.ExudadoClasificacion = reader["exudado_definicion"] == DBNull.Value ? null : (uint?)Convert.ToUInt32(reader["exudado_definicion"]);
 
 
                                 herida.Galeria = new Galeria();
@@ -269,7 +256,7 @@ namespace OrganizationExample15.Controllers
                                 string path = string.Join("/", new string[] { valoracion.Id, herida.Id });
                                 foreach (string file in FileStorage.ListFiles(FileStorage.Types.valoracion, path))
                                 {
-                                    herida.Galeria.Files.Add(Url.Content(FileStorage.GetPublicURLPath(FileStorage.Types.valoracion, path  + "/" + file)));
+                                    herida.Galeria.Files.Add(Url.Content(FileStorage.GetPublicURLPath(FileStorage.Types.valoracion, path + "/" + file)));
                                 }
 
                                 valoracion.Heridas.Add(herida);
@@ -282,16 +269,19 @@ namespace OrganizationExample15.Controllers
                         query += "estado";
                         query += "observaciones";
 
-                        reader= conector.Query(query.GetSelect("valoracion={0}", null, Query.GetValor(valoracion.Id)));
-                        if (reader != null) {
-                            while (reader.Read()) {
+                        reader = conector.Query(query.GetSelect("valoracion={0}", null, Query.GetValor(valoracion.Id)));
+                        if (reader != null)
+                        {
+                            while (reader.Read())
+                            {
 
-                                CheckTextParam info= valoracion.Antecendentes.Find(x => x.Id == Convert.ToUInt32(reader["motivo"]));
-                                if (info == null) {
-                                    info = new CheckTextParam() { Id= Convert.ToUInt32(reader["motivo"]) };
+                                CheckTextParam info = valoracion.Antecendentes.Find(x => x.Id == Convert.ToUInt32(reader["motivo"]));
+                                if (info == null)
+                                {
+                                    info = new CheckTextParam() { Id = Convert.ToUInt32(reader["motivo"]) };
                                     valoracion.Antecendentes.Add(info);
                                 }
-                                
+
                                 info.Check = reader["estado"].ToString() == "1";
                                 info.Text = reader["observaciones"].ToString();
                             }
@@ -341,6 +331,7 @@ namespace OrganizationExample15.Controllers
                                 info.Check = reader["valor"].ToString() == "1";
                             }
                         }
+
                     }
                 }
             }
@@ -579,7 +570,7 @@ namespace OrganizationExample15.Controllers
                     }
 
                     if (string.IsNullOrEmpty(valoracion.Id) && usuario.GetPermisosRaiz("~/App_data/Escalas") == 0)
-                        Usuario.GetUsuario().SetForceURL("~/paciente/barthel.aspx?pid=" + pacienteid + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(valoracion.Fecha, true)), conector);
+                        usuario.SetForceURL("~/paciente/barthel.aspx?pid=" + pacienteid + "&f=" + HttpUtility.UrlEncode(Query.GetMySQLDateFormat(valoracion.Fecha, true)), conector);
 
                     foreach (Herida herida in valoracion.Heridas)
                     {

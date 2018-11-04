@@ -109,7 +109,7 @@
     </tr>
     <tr>
         <td><strong>Signos vitales</strong></td>
-        <td colspan="4"><strong>T</strong>: @Model.T °, <strong>FC</strong>: @Model.FC Lat/min, <strong>TA</strong>:@Model.TA, <strong>FR</strong>: @Model.FR Min, <strong>Pulsos: </strong>@Model.PulsosDistales @Model.ObservacionesPulso.</td>
+        <td colspan="4"><strong>T</strong>: @Model.T °, <strong>FC</strong>: @Model.FC Lat/min, <strong>TA</strong>:@Model.TA, <strong>FR</strong>: @Model.FR Min, <strong>Pulsos: </strong>@(Model.PulsosDistales == "1" ? "Presentes" : "Ausentes") @Model.ObservacionesPulso.</td>
     </tr>
     <tr>
         <td><strong>Índice de Barthel</strong></td>
@@ -289,7 +289,13 @@
     </tr>
 </table>
 <p align="justify"><strong>Periodicidad</strong>: @Model.Periodicidad</p>
-<strong>Plan de manejo</strong>:@Model.Manejo
+<strong>Plan de manejo</strong>:
+<ol>
+    @foreach (string text in Model.Manejo.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries))
+    {
+        <li>@text</li>
+    }
+</ol>
 <p align="justify"><strong>Plan educativo</strong>: @string.Join(",", Model.ComponenteEducativo.Where(x=>x.Check).Select(x=>x.Name))</p>
 <p>
     <img src="@Url.Content(FileStorage.GetPublicURLPath(FileStorage.Types.firmas, funcionario.Id + ".jpg"))" class="firma" />

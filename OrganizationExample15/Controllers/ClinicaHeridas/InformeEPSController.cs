@@ -142,7 +142,7 @@ FROM evolucion_herida
                                 string paciente = reader["paciente"].ToString();
                                 string html = null;
                                 if (reader["t"].ToString() == "1") { // evolucion
-                                    html = HomeCareVersion.DownloadURLAuth(this, string.Format("{0}/{1}?pid={2}&ehid={3}&p=1", HomeCareVersion.GetURLLocalhost(), Url.Content("~/ClinicaHeridas/evolucion.aspx"), paciente, id));
+                                    html = HomeCareVersion.DownloadURLAuth(this, string.Format("{0}/{1}?pid={2}&ehid={3}&p=1", HomeCareVersion.GetURLLocalhost(), Url.Content("~/ClinicaHeridas/Evolucion"), paciente, id));
                                 } else { // valoracion
                                     html = HomeCareVersion.DownloadURLAuth(this, string.Format("{0}/{1}?pid={2}&hveid={3}&pd=1", HomeCareVersion.GetURLLocalhost(), Url.Content("~/ClinicaHeridas/Valoracion"), paciente, id));
                                 }

@@ -66,6 +66,10 @@ public class BaseController : Controller
 
                 if (!usuario.CanAccess()) {
                     filterContext.Result = new RedirectResult(FormsAuthentication.DefaultUrl);
+                } else if (!string.IsNullOrEmpty(usuario.ForceURL)) { // Ahora busquemos el force URL
+                    if (Request.Url.ToString().ToLower().IndexOf(HttpUtility.UrlDecode(Url.Content(usuario.GetForceURL()).ToLower()).Replace(" ", "+")) == -1) {// es la misma
+                        filterContext.Result = new RedirectResult(usuario.GetForceURL());
+                    }
                 }
             }
         }

@@ -297,6 +297,20 @@
                                 @Html.DropDownListFor(x => x.ExudadoClasificacion, MVarios.GetList(MVarios.Tipo.ValoracionHeridasClasificacionExudado).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
                             </td>
                         </tr>
+                        @if (Model.Evolucion)
+                        {
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h5>Cambios locales de herida</h5></td>
+                        </tr>
+                        <tr>
+                            <td>@Html.HiddenFor(x=>x.Evolucion)Tipo</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.ExudadoClasificacion, MVarios.GetList(MVarios.Tipo.EvolucionManejoHeridasTipoCambioLocal).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                            <td class="nw">Signos de infección</td>
+                            <td>@Html.TextBoxFor(x=>x.SignoInfeccion)</td>
+                        </tr>
+                        }
                         <tr>
                             <td colspan="4" class="text-section-title" id="registrofotografico"><h5>Registro fotográfico</h5></td>
                         </tr>

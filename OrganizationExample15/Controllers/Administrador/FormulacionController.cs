@@ -110,7 +110,7 @@ namespace OrganizationExample15.Controllers.Administrador
                     {
                         return HttpNotFound();
                     }
-                    string existid = conector.QueryString("SELECT id FROM medicamentos WHERE nombre={0} AND estado IS NULL LIMIT 1", Query.GetValor(item.Nombre));
+                    string existid = conector.QueryString("SELECT id FROM medicamentos WHERE nombre={0} AND IFNULL(principio,'')=IFNULL({1},'') AND tipo={2} estado IS NULL LIMIT 1", Query.GetValor(item.Nombre), Query.GetValor(item.Forma), Query.GetValor(item.ProtectedFields["tid"]));
                     if (!string.IsNullOrEmpty(existid) && existid != id)
                         return Content(string.Format("alert({0});", Query.GetValor("Ya existe un procedimiento llamado " + Query.GetValor(item.Nombre))));
 
@@ -183,14 +183,15 @@ namespace OrganizationExample15.Controllers.Administrador
                             if (dcosto != null && dcosto != 0) {
                                 costos["proveedor"] = costo.Proveedor;
                                 costos["costo"] = dcosto;
+                                if (conector.QueryMod(costos.GetInsert()) == -1)
+                                    return Content(string.Format("alert({0});", Query.GetValor(conector.LastError)));
                             }
-                            if (conector.QueryMod(costos.GetInsert()) == -1)
-                                return Content(string.Format("alert({0});", Query.GetValor(conector.LastError)));
                         }
                     }
 
                     conector.Commit();
                     MProcedimiento.CleanCache(id);
+                    CProductoValor.Delete(id);
 
                     return Content(string.Format("$('#PP').modal('hide'); $('#gpe').bootgrid('reload'); toastr.success({0});", Query.GetValor(string.Format("Procedimiento {0} editado", item.Nombre))));
                 }
