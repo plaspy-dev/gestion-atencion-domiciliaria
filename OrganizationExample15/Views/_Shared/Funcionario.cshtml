@@ -1,9 +1,12 @@
 ﻿@model OrganizationExample15.Models.MFuncionarioSimple
-@Html.TextBoxFor(x => x.Nombre, Model?.ReadOnly == true ? (object)new { @class = "_mtercero", placeholder = "Buscar", @readonly = "" } : (object)new { @class = "_mtercero", placeholder = "Buscar" })
-@Html.TextBoxFor(x => x.Id, new { @class = "hidet _mhtercero validate" })
+@{
+    string id = Guid.NewGuid().ToString();
+}
+@Html.TextBoxFor(x => x.Nombre, Model?.ReadOnly == true ? (object)new { @class = "_mtercero", placeholder = "Buscar", @readonly = "", id = id } : (object)new { @class = "_mtercero", placeholder = "Buscar", id = id })
+@Html.TextBoxFor(x => x.Id, new { @class = "hidet _mhtercero validate", id = "h" + id })
 @if (Model.Required)
 {
-    @Html.HiddenFor(x=>x.Required)
+    @Html.HiddenFor(x => x.Required)
     @Html.ValidationMessageFor(x => x.Nombre, "*")
     @Html.ValidationMessageFor(x => x.Id, "*")
 }
@@ -13,11 +16,11 @@
         $(function () {
             var options = $.extend(window._mtercerooptions || {}, {
                 queryURL: rootPath + "webservices/servicios.asmx/GetPersonal",
-                controlDataId: $("._mtercero").next("input").attr("id"),
+                controlDataId: "@string.Format("h{0}", id)",
                 displayName: "item",
                 idField: "value"
             });
-            $("._mtercero").THAutoComplete(options);
+            $("#@id").THAutoComplete(options);
         });
     </script>
 }

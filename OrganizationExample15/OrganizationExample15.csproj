@@ -171,7 +171,6 @@
     <Content Include="clinicaheridas\escalas\e8.jpg" />
     <Content Include="clinicaheridas\escalas\e9.jpg" />
     <Content Include="clinicaheridas\escalas\escaladolor.jpg" />
-    <Content Include="contrasena.aspx" />
     <Content Include="control\actividad.ascx" />
     <Content Include="control\actividad.ascx.js" />
     <Content Include="css\ajax-loader.gif" />
@@ -227,12 +226,10 @@
     <Content Include="ctrl\historia.html" />
     <Content Include="ctrl\history.ascx" />
     <Content Include="ctrl\sharehistory.ascx" />
-    <Content Include="Default.aspx" />
     <Content Include="directorio.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="directorio\Default.aspx" />
-    <Content Include="entrega_turno\bitacora.aspx" />
     <Content Include="equipo\devolucion.ascx" />
     <Content Include="equipo\equipo.aspx" />
     <Content Include="equipo\informe.aspx" />
@@ -286,6 +283,7 @@
     <Content Include="images\logo.html" />
     <Content Include="images\logo.swf" />
     <Content Include="images\OrganizationExample16.jpg" />
+    <Content Include="images\OrganizationExample16.png" />
     <Content Include="images\tema\favicon.ico" />
     <Content Include="images\tema\fcl.jpg" />
     <Content Include="images\tema\fcr.jpg" />
@@ -343,7 +341,6 @@
     <Content Include="imgs\procesando.gif" />
     <Content Include="imgs\search.png" />
     <Content Include="imgs\ui-anim_basic_16x16.gif" />
-    <Content Include="inicio.aspx" />
     <Content Include="js\angulargaleria.js" />
     <Content Include="js\angulargridctrl.js" />
     <Content Include="js\avance.png" />
@@ -880,13 +877,6 @@
     <Compile Include="cliente\quejas.aspx.designer.cs">
       <DependentUpon>quejas.aspx</DependentUpon>
     </Compile>
-    <Compile Include="contrasena.aspx.cs">
-      <DependentUpon>contrasena.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="contrasena.aspx.designer.cs">
-      <DependentUpon>contrasena.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Controllers\Administrador\UsuariosController.cs" />
     <Compile Include="Controllers\Administrador\TercerosController.cs" />
     <Compile Include="Controllers\Administrador\FormulacionController.cs" />
@@ -902,6 +892,10 @@
     <Compile Include="Controllers\ClinicaHeridas\EgresosController.cs" />
     <Compile Include="Controllers\ClinicaHeridas\ValoracionController.cs" />
     <Compile Include="Controllers\ClinicaHeridas\InformeEPSController.cs" />
+    <Compile Include="Controllers\InicioController.cs" />
+    <Compile Include="Models\Contrasena.cs" />
+    <Compile Include="Controllers\ContrasenaController.cs" />
+    <Compile Include="Controllers\EntregaTurno\BitacoraController.cs" />
     <Compile Include="Controllers\Files\FilesController.cs" />
     <Compile Include="Controllers\IndexController.cs" />
     <Compile Include="Controllers\Terapeutico\DocumentosController.cs" />
@@ -929,26 +923,12 @@
     <Compile Include="ctrl\sharehistory.ascx.designer.cs">
       <DependentUpon>sharehistory.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
     <Compile Include="directorio\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="directorio\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="entrega_turno\bitacora.aspx.cs">
-      <DependentUpon>bitacora.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="entrega_turno\bitacora.aspx.designer.cs">
-      <DependentUpon>bitacora.aspx</DependentUpon>
     </Compile>
     <Compile Include="equipo\devolucion.ascx.cs">
       <DependentUpon>devolucion.ascx</DependentUpon>
@@ -1170,13 +1150,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="inicio.aspx.cs">
-      <DependentUpon>inicio.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="inicio.aspx.designer.cs">
-      <DependentUpon>inicio.aspx</DependentUpon>
-    </Compile>
     <Compile Include="MasterPage.master.cs">
       <DependentUpon>MasterPage.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1227,8 +1200,10 @@
     <Compile Include="Models\ClinicaHeridas\InfomeEPS.cs" />
     <Compile Include="Models\ClinicaHeridas\Evolucion.cs" />
     <Compile Include="Models\ClinicaHeridas\Valoracion.cs" />
+    <Compile Include="Models\EntregaTurno\Bitacora.cs" />
     <Compile Include="Models\FileParam.cs" />
     <Compile Include="Models\Galeria.cs" />
+    <Compile Include="Models\LogIn.cs" />
     <Compile Include="Models\MPaciente.cs" />
     <Compile Include="Models\MProcedimiento.cs" />
     <Compile Include="Models\Shared\Historial.cs" />
@@ -1707,6 +1682,12 @@
     <Content Include="Views\ClinicaHeridas\Evolucion.cshtml" />
     <Content Include="Views\ClinicaHeridas\Evolucion_Print.cshtml" />
     <Content Include="Views\ClinicaHeridas\Egresos.cshtml" />
+    <Content Include="Views\EntregaTurno\Bitacora.cshtml" />
+    <Content Include="Views\EntregaTurno\_Bitacora.cshtml" />
+    <Content Include="Views\Contrasena\Index.cshtml" />
+    <Content Include="Views\Inicio\Index.cshtml" />
+    <Content Include="Views\_Shared\_LayoutPage_Login.cshtml" />
+    <Content Include="Views\Index\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1720,6 +1701,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Bitacora\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

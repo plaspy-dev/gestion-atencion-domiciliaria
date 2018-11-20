@@ -45,7 +45,7 @@ namespace OrganizationExample15.Controllers
                     , sort
                     );
 
-                return Content(JsonConvert.SerializeObject(data), HomeCareVersion.JSONContentType);
+                return Content(JsonConvert.SerializeObject(data, HomeCareVersion.JsonSerializerSettingsCamelCase), HomeCareVersion.JSONContentType);
             }
         }
 
@@ -71,9 +71,10 @@ namespace OrganizationExample15.Controllers
                 string join = @"LEFT JOIN asegurador ON (asegurador.entId=paciente.entId)";
 
                 CUsuario usuario = ViewBag.User;
-                if (!Excel.SaveExcel(this, usuario, "Informe EPS", query.GetSelect(where + " ORDER BY paciente.egresoClinicaHeridas", join)))
+
+                using (CConector conector = new CConector())
                 {
-                    return HttpNotFound();
+                    GridUtils.ExportExcelXLSX(Response, conector, query.GetSelect(where + " ORDER BY paciente.egresoClinicaHeridas", join), Server.MapPath("~/xlsx/"), "Informe EPS", usuario.Nombre);
                 }
                 return new EmptyResult();
             }

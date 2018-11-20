@@ -1,0 +1,71 @@
+﻿@{
+                /**/
+
+                ViewBag.Title = "Inicio";
+                Layout = "~/Views/_Shared/_LayoutPage.cshtml";
+}
+@section headers {
+    @SDG.Componentes.HtmlUtil.RenderStyle("~/css/notas.css")
+    <style type="text/css">
+        .closebutton {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            width: 20px;
+            height: 20px
+        }
+    </style>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            /*$("#accordion").accordion({ autoHeight: false, navigation: true, collapsible: true, active: false, animated: false,
+                change: function(event, ui) {
+                    ui.newContent.children('div:eq(0)').children(':submit').click();
+                }
+            });*/
+            $(".closebutton").button({
+                icons: {
+                    primary: "ui-icon-close"
+                },
+                text: false
+            }).click(function () {
+                $(this).parent().parent().hide();
+                $.cookie("cumple-" + $(this).attr("perid"), "1", { expires: 7 });
+                return false;
+            });
+
+            $("#notas ul li").each(function () {
+                if ($.cookie("cumple-" + $(this).find("span").attr("perid")) == null)
+                    $(this).show();
+            });
+        });
+    </script>
+}
+@if (ViewBag.list != null)
+{
+    <div id="notas">
+        <ul>
+            @foreach (var key in ViewBag.list)
+            {
+                <li class="hidet">
+                    <a href="mailto:@key["perCorreoElectronico"]" onclick="return false;">
+                        <span class="closebutton" perid="@key["id"]">X</span>
+                        <h2>@key["dia"]<br />@key["nombres"]</h2>
+                        <p>
+                            @key["cargo"]<br />
+                            @key["celular"]<br />
+                            @key["perCorreoElectronico"]<br />
+                        </p>
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+}
+<div class="list-group">
+    @foreach (var info in Alertas.GetAlertas())
+    {
+        <a href="#" onclick="return onSelectAlert(@info.Id, '@info.Nombre');" class="list-group-item d-flex justify-content-between align-items-center">@info.Nombre <span class="badge badge-primary badge-pill">@info.Numero</span></a>
+    }
+</div>

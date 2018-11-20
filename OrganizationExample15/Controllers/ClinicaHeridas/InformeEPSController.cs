@@ -88,7 +88,7 @@ FROM evolucion_herida
                     , sort
                     );
 
-                return Content(JsonConvert.SerializeObject(data), HomeCareVersion.JSONContentType);
+                return Content(JsonConvert.SerializeObject(data, HomeCareVersion.JsonSerializerSettingsCamelCase), HomeCareVersion.JSONContentType);
             }
         }
 
@@ -106,7 +106,7 @@ FROM evolucion_herida
                 , cuentas.Entidad ?? 0
                 );
 
-                if (cuentas.PDF == 1)
+                if (cuentas.PDF == 1 || cuentas.Print==1)
                 {
                     // return pdf
                     string query = string.Format(@"(SELECT 
@@ -142,7 +142,7 @@ FROM evolucion_herida
                                 string paciente = reader["paciente"].ToString();
                                 string html = null;
                                 if (reader["t"].ToString() == "1") { // evolucion
-                                    html = HomeCareVersion.DownloadURLAuth(this, string.Format("{0}/{1}?pid={2}&ehid={3}&p=1", HomeCareVersion.GetURLLocalhost(), Url.Content("~/ClinicaHeridas/Evolucion"), paciente, id));
+                                    html = HomeCareVersion.DownloadURLAuth(this, string.Format("{0}/{1}?pid={2}&ehid={3}&pd=1", HomeCareVersion.GetURLLocalhost(), Url.Content("~/ClinicaHeridas/Evolucion"), paciente, id));
                                 } else { // valoracion
                                     html = HomeCareVersion.DownloadURLAuth(this, string.Format("{0}/{1}?pid={2}&hveid={3}&pd=1", HomeCareVersion.GetURLLocalhost(), Url.Content("~/ClinicaHeridas/Valoracion"), paciente, id));
                                 }
@@ -160,13 +160,12 @@ FROM evolucion_herida
                             }
                             htmlcompleto.Append("</body>");
                             htmlcompleto.Append("</html>");
-                            return PDFConverter.RenderPDF(this, "Valoración de heridas", htmlcompleto.ToString());
+                            return cuentas.Print==1 ? Content(htmlcompleto.ToString()) : PDFConverter.RenderPDF(this, "Valoración de heridas", htmlcompleto.ToString());
                         }
                     }
                 }
                 else
                 {
-
                     string query = string.Format(@"(SELECT 
                         valoracion_herida.fecha 'Fecha'                        
                         ,paciente.pacDocumento 'Documento'
@@ -194,9 +193,9 @@ FROM evolucion_herida
                         )", string.Format(where, "evolucion_herida"));
 
                     CUsuario usuario = ViewBag.User;
-                    if (!Excel.SaveExcel(this, usuario, "Informe EPS", query))
+                    using (CConector conector = new CConector())
                     {
-                        return HttpNotFound();
+                        GridUtils.ExportExcelXLSX(Response, conector, query, Server.MapPath("~/xlsx/"), "Informe EPS", usuario.Nombre);
                     }
                 }
                 return new EmptyResult();
@@ -214,6 +213,7 @@ FROM evolucion_herida
 
             ViewBag.Excel = 1;
             ViewBag.PDF = 1;
+            ViewBag.Print = 1;
 
             return View(cuentas);
         }

@@ -44,7 +44,7 @@ namespace OrganizationExample15.Controllers
         [HttpPost]
         public ActionResult __Evolucion(int current, int rowCount, Dictionary<string, string> sort, uint pid) {
 
-            return Content(JsonConvert.SerializeObject(GetBootGridEvolucion(current, rowCount, sort, pid.ToString())), HomeCareVersion.JSONContentType);
+            return Content(JsonConvert.SerializeObject(GetBootGridEvolucion(current, rowCount, sort, pid.ToString()), HomeCareVersion.JsonSerializerSettingsCamelCase), HomeCareVersion.JSONContentType);
         }
 
         [NonAction]

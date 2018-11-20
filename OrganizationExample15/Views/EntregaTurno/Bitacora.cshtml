@@ -1,0 +1,129 @@
+﻿@model OrganizationExample15.Models.EntregaTurno.BitacoraFilter
+@{
+    ViewBag.Title = "Bitacora";
+    Layout = "~/Views/_Shared/_LayoutPage.cshtml";
+    CUsuario user = ViewBag.User;
+}
+
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-accent-theme">
+                <div class="card-body">
+                    <div id="fquery">
+                        @using (Html.BeginForm())
+                        {
+                            <table class="table table-sm">
+                                <tr>
+                                    <td>Fecha</td>
+                                    <td>Tipo</td>
+                                    <td class="nw">Administrativa</td>
+                                    <td class="nw">Servicio</td>
+                                    <td>Estado</td>
+                                    <td>Paciente</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="reportrange" id="reportrange">
+                                            <i class="fa fa-calendar"></i>&nbsp;<span></span> <i class="fa fa-caret-down"></i>
+                                        </div>
+                                        <div class="hide">
+                                            @Html.TextBoxFor(x => x.Desde) @Html.TextBoxFor(x => x.Hasta)
+                                        </div>
+                                    </td>
+                                    <td>@Html.DropDownListFor(x => x.Tipo, OrganizationExample15.Models.Administrador.MVarios.GetList(OrganizationExample15.Models.Administrador.MVarios.Tipo.BitacorasEstado).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Todos)", new { @class = "amc" })</td>
+                                    <td>@Html.DropDownListFor(x => x.NovedadAdministrativa, OrganizationExample15.Models.Administrador.MVarios.GetList(OrganizationExample15.Models.Administrador.MVarios.Tipo.BitacorasNovedadAdministrativa).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Todas)", new { @class = "amc" })</td>
+                                    <td>@Html.DropDownListFor(x => x.NovedadServicio, OrganizationExample15.Models.Administrador.MVarios.GetList(OrganizationExample15.Models.Administrador.MVarios.Tipo.BitacorasNovedadServicio).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Todas)", new { @class = "amc" })</td>
+                                    <td>@Html.DropDownListFor(x => x.Estado, OrganizationExample15.Models.Administrador.MVarios.GetList(OrganizationExample15.Models.Administrador.MVarios.Tipo.BitacorasEstado).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Todos)", new { @class = "amc" })</td>
+                                    <td>@Html.Partial("~/Views/_Shared/Paciente.cshtml", Model.Paciente, HomeCareVersion.GetPrefixPartial("Paciente"))</td>
+                                    <td class="w100"><a href="#" class="btn btn-submit" onclick="return onUpdate()">Actualizar</a></td>
+                                </tr>
+                            </table>
+                        }
+                    </div>
+                    <table id="gpe" class="table table-sm table-bordered table-hover table-striped table-bootgrid">
+                        <thead>
+                            <tr>
+                                <th data-column-id="id" data-formatter="select" data-sortable="false" data-visible-in-selection="false"></th>
+                                @if (user.CanDelete())
+                                {
+                                    <th data-column-id="id" data-formatter="delete" data-sortable="false" data-visible-in-selection="false"></th>
+                                }
+                                <th data-column-id="f" data-align="right" data-css-class="nw" data-order="desc">Fecha</th>
+                                <th data-column-id="t" data-css-class="nw">Tipo</th>
+                                <th data-column-id="na" data-css-class="nw">Novedad Administrativa</th>
+                                <th data-column-id="ns" data-css-class="nw">Novedad de servicio</th>
+                                <th data-column-id="p" data-css-class="nw">Paciente</th>
+                                <th data-column-id="o" data-header-css-class="w100">Observaciones</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div class="dcplusbtn">
+                        <div>
+                            <a href="#" id="addg" onclick="return editRow();" class="btn btn-submit btn-circle btn-xl pull-right" style="padding-top: 18px; padding-left: 18px">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- end card-body -->
+            </div>
+            <!-- end card -->
+        </div>
+        <!-- end col -->
+    </div>
+    <!-- end row -->
+</div>
+@section scripts {
+    <link rel="stylesheet" href="~/lib/jquery.bootgrid/jquery.bootgrid.css">
+    <link rel="stylesheet" href="~/lib/daterangepicker/daterangepicker.css">
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.js"></script>
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.fa.js"></script>
+    <script src="~/lib/daterangepicker/daterangepicker.js"></script>
+    <script src="~/js/gridlistadd.js"></script>
+    <script src="~/js/gridedit.js"></script>
+    <style></style>
+    <script>
+        var url = "@Request.Url.AbsolutePath";
+        function onUpdate() {
+            $(".saveExcel").hide();
+            $("#gpe").bootgrid("reload");
+            return false;
+        }
+        $(function () {
+            var start = moment($("#Desde").val());
+            var end = moment($("#Hasta").val());
+            var $reportrange = $('#reportrange');
+
+            function cb(start, end) {
+                $("#Desde").val(start.format("YYYY-MM-DD"));
+                $("#Hasta").val(end.format("YYYY-MM-DD"));
+                if ($reportrange.data('daterangepicker').chosenLabel != daterangepickerlocale.customRangeLabel)
+                    $reportrange.find("span").html($reportrange.data('daterangepicker').chosenLabel);
+                else $('#reportrange span').html(start.locale("es").format('D [de] MMMM [de] YYYY') + ' - ' + end.locale("es").format('D [de] MMMM [de] YYYY'));
+            }
+
+            $reportrange.daterangepicker({
+                locale: daterangepickerlocale,
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 días': [moment().subtract(30, 'days'), moment()],
+                    'Mes actual': [moment().startOf('month'), moment().endOf('month')],
+                    'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb).data('daterangepicker').calculateChosenLabel();
+            cb(start, end);
+        });
+
+        function initDlg() {
+            $("._date").wrap('<div class="input-group"></div>')
+                .datetimepicker({ locale: 'es', format: 'L', showTodayButton: true, showClear: true, maxDate: moment(new Date()).add(1, 'h') })
+                ;
+        }
+    </script>
+}

@@ -111,6 +111,7 @@ public class CUsuario : Usuario
                                 pUsuario.SetPermiso(reader["url"].ToString(), Convert.ToInt32(reader["permiso"]));
                             }
                         }
+                        pUsuario.AddPermiso("__no__", "Contraseña", "~/Contrasena", 1);
                     }
                 }
                 HttpContext.Current.Cache.Insert("usr_" + userId, pUsuario);
@@ -149,7 +150,7 @@ public class CUsuario : Usuario
                             }
                         }
                     }
-                    pUsuario.AddPermiso("__no__", "Contraseña", "~/contrasena.aspx", 1);
+                    pUsuario.AddPermiso("__no__", "Contraseña", "~/Contrasena", 1);
                     CConector.SetCookie("loginOrganizationExample15", pUsuario.GetLogin());
                     CConector.SetCookie("contrasena", Crypt.EncriptarDES(passwd, System.Environment.GetEnvironmentVariable("DOMICILIO_SESSION_KEY_4")), DateTime.Now.AddHours(10));
                     conector.Query("UPDATE usuario SET ingreso=SYSDATE() WHERE id='" + pUsuario.GetID() + "'");

@@ -34,7 +34,7 @@ namespace OrganizationExample15.Controllers.Administrador
                     , sort
                     );
 
-                return Content(JsonConvert.SerializeObject(data), HomeCareVersion.JSONContentType);
+                return Content(JsonConvert.SerializeObject(data, HomeCareVersion.JsonSerializerSettingsCamelCase), HomeCareVersion.JSONContentType);
             }
         }
 

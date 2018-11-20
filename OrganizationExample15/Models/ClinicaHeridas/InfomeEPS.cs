@@ -15,6 +15,7 @@ namespace OrganizationExample15.Models.ClinicaHeridas
         public string Hasta { get; set; }
         public uint? Entidad { get; set; }
         public uint? PDF { get; set; }
+        public uint? Print { get; set; }
 
         public InformeEPS() {
             Paciente = new MPacienteSimple();

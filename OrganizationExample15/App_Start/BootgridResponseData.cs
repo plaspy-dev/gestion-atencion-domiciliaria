@@ -9,16 +9,18 @@ namespace SDG.Componentes
 {
     public class BootgridResponseData
     {
-        public int current { get; set; } //? current page
-        public int rowCount { get; set; } //? rows per page
-        public List<Dictionary<string, object>> rows { get; set; } //? items
-        public int total { get; set; } //? total rows for whole query
+        public int Current { get; set; } //? current page
+        public int RowCount { get; set; } //? rows per page
+        public List<Dictionary<string, object>> Rows { get; set; } //? items
+        public int Total { get; set; } //? total rows for whole query
 
         public static object BasicFormat(string columnName, object value)
         {
-
             if (value is DateTime)
-                return value.ToString();
+            {
+                DateTime date = (DateTime)value;
+                return date.Hour==0 && date.Minute==0 && date.Second==0 ? date.ToShortDateString() : date.ToString();
+            }
             return HttpUtility.HtmlEncode(value);
         }
 
@@ -28,12 +30,12 @@ namespace SDG.Componentes
 
             int total = 0;
             int.TryParse(conector.QueryString(queryCount), out total);
-            data.total = total;
-            data.rows = new List<Dictionary<string, object>>();
+            data.Total = total;
+            data.Rows = new List<Dictionary<string, object>>();
 
-            if (total > 0)
+            if (total > 0 && rowCount > 0)
             {
-                data.current = current;
+                data.Current = current;
 
                 if (sort != null && sort.Count == 1)
                 {
@@ -61,9 +63,9 @@ namespace SDG.Componentes
                                 row[reader.GetName(i)] = FormatFunc == null ? BasicFormat(null, reader[i]) : FormatFunc(reader.GetName(i), reader[i]);
                             }
                         }
-                        data.rows.Add(row);
+                        data.Rows.Add(row);
                     }
-                    data.rowCount = data.rows.Count;
+                    data.RowCount = data.Rows.Count;
                 }
             }
 

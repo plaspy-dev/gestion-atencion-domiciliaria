@@ -105,7 +105,7 @@ public partial class administrador_usuario : System.Web.UI.Page
             query["personal"] = TIdPersonal.Text;
             query["cumpleanos"] = CCumpleanos.Checked ? "1" : "";
             if (CForceChange.Checked)
-                query["forceurl"] = "~/contrasena.aspx";
+                query["forceurl"] = "~/Contrasena";
             else query["forceurl"] = ""; // reseteamos el usuario para evitar que entre en un bucle.
 
             // agregamos los cargos que puede programar el usuario

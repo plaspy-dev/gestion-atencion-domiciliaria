@@ -13,6 +13,7 @@
                         @using (Html.BeginForm())
                         {
                             @Html.HiddenFor(x => x.PDF)
+                            @Html.HiddenFor(x=>x.Print)
                             <table class="table table-sm">
                                 <tr>
                                     <td>Fechas</td>
@@ -159,12 +160,20 @@
 
             $(".saveExcel").click(function () {
                 $('#fquery').find("#PDF").val("");
-                $('#fquery').find("form").submit();
+                $('#fquery').find("#Print").val("");
+                $('#fquery').find("form").attr("target", "").submit();
                 return false;
             });
             $(".pdfDocument").click(function () {
                 $('#fquery').find("#PDF").val("1");
-                $('#fquery').find("form").submit();
+                $('#fquery').find("#Print").val("");
+                $('#fquery').find("form").attr("target", "").submit();
+                return false;
+            });
+            $(".printDocument").click(function () {
+                $('#fquery').find("#PDF").val("");
+                $('#fquery').find("#Print").val("1");
+                $('#fquery').find("form").attr("target", "_blank").submit();
                 return false;
             });
         });

@@ -198,7 +198,7 @@ public partial class MasterPageI {
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.LinkButton lnkCambioClave;
+    protected global::System.Web.UI.WebControls.HyperLink lnkCambioClave;
     
     /// <summary>
     /// lnkSalir control.
@@ -207,7 +207,7 @@ public partial class MasterPageI {
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.LinkButton lnkSalir;
+    protected global::System.Web.UI.WebControls.HyperLink lnkSalir;
     
     /// <summary>
     /// lblUsuario control.

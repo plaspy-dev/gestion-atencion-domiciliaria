@@ -49,7 +49,7 @@ LEFT JOIN medicamentos ON (medicamentos.id=cuenta_servicio.servicio)
                     , sort
                     );
 
-                return Content(JsonConvert.SerializeObject(data), HomeCareVersion.JSONContentType);
+                return Content(JsonConvert.SerializeObject(data, HomeCareVersion.JsonSerializerSettingsCamelCase), HomeCareVersion.JSONContentType);
             }
         }
 
@@ -75,12 +75,17 @@ LEFT JOIN medicamentos ON (medicamentos.id=cuenta_servicio.servicio)
 
                 string groupby = " GROUP BY Funcionario,Final,Fecha,Estado";
 
-                if (!Excel.SaveExcel(this, usuario, "Cuentas", @"SELECT recurso_humano.perNombre Funcionario,DATE(cuenta.fecha) Fecha,DATE(cuenta.final) Final,estado.nombre Estado,SUM(cuenta_servicio.cantidad*IFNULL(cuenta_servicio.valor, medicamentos.precio)) Total,SUM(cuenta_servicio.cantidad) Servicios 
+                using (CConector conector = new CConector())
+                {
+                    GridUtils.ExportExcelXLSX(Response, conector, @"SELECT recurso_humano.perNombre Funcionario,DATE(cuenta.fecha) Fecha,DATE(cuenta.final) Final,estado.nombre Estado,SUM(cuenta_servicio.cantidad*IFNULL(cuenta_servicio.valor, medicamentos.precio)) Total,SUM(cuenta_servicio.cantidad) Servicios 
 FROM cuenta
 LEFT JOIN recurso_humano ON (recurso_humano.perId=cuenta.personal)
 LEFT JOIN varios estado ON (estado.id=cuenta.estado)
-LEFT JOIN cuenta_servicio ON (cuenta_servicio.cuenta=cuenta.id) " + where + groupby)) {
-                    return HttpNotFound();
+LEFT JOIN cuenta_servicio ON (cuenta_servicio.cuenta=cuenta.id) " + where + groupby
+, Server.MapPath("~/xlsx/")
+, "Cuentas"
+,usuario.Nombre
+);
                 }
                 return new EmptyResult();
             }

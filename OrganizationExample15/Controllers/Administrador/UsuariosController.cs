@@ -43,7 +43,7 @@ namespace OrganizationExample15.Controllers.Administrador
                     , sort
                     );
 
-                return Content(JsonConvert.SerializeObject(data), HomeCareVersion.JSONContentType);
+                return Content(JsonConvert.SerializeObject(data, HomeCareVersion.JsonSerializerSettingsCamelCase), HomeCareVersion.JSONContentType);
             }
         }
 
@@ -112,7 +112,7 @@ namespace OrganizationExample15.Controllers.Administrador
                     query["personal"] = item.Funcionario.Id;
                     query["cumpleanos"] = item.Cumpleanos ? "1": null;
                     if (item.CambioContrasena)
-                        query["forceurl"] = "~/contrasena.aspx";
+                        query["forceurl"] = "~/Contrasena";
                     else query["forceurl"] = ""; // reseteamos el usuario para evitar que entre en un bucle.
                     query["cargos"] = string.Join(",", item.Cargos);
                     query["entidades"] = string.Join(",", item.Entidades);

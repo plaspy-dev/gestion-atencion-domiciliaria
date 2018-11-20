@@ -1,0 +1,65 @@
+﻿@model OrganizationExample15.Models.EntregaTurno.Bitacora
+@{
+    CUsuario user = ViewBag.User;
+}
+@using SDG.Componentes
+<div id="PP" style="display: none;" class="bkdlg modal fade" role="dialog">
+    <form method="post" action="@Request.Url.AbsolutePath">
+        <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">@(Model.Id==null ? "Nueva" : "Editar")</h4>
+                    <a href="#" class="close" onclick="$('#PP').modal('hide'); return false;">&times;</a>
+                </div>
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.Id)
+                    <table class="table table-condensed table-sm table-striped">
+                        <tr>
+                            <td class="px">Fecha @Html.ValidationMessageFor(x => x.Fecha, "*")</td>
+                            <td>@Html.TextBoxFor(x => x.Fecha, new { @class="_date" })</td>
+                            <td class="nw">Tipo @Html.ValidationMessageFor(x => x.Tipo, "*")</td>
+                            <td class="w100">@Html.DropDownListFor(x => x.Tipo, OrganizationExample15.Models.Administrador.Parametro2.GetList(OrganizationExample15.Models.Administrador.Parametro2.Tipo.BitacorasTipo).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Ninguno)", new { @class = "amc" })</td>
+                        </tr>
+                        <tr>
+                            <td class="nw">Novedad administrativa @Html.ValidationMessageFor(x=>x.NovedadAdministrativa, "*")</td>
+                            <td>@Html.DropDownListFor(x => x.NovedadAdministrativa, OrganizationExample15.Models.Administrador.MVarios.GetList(OrganizationExample15.Models.Administrador.MVarios.Tipo.BitacorasNovedadAdministrativa).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Ninguno)", new { @class = "amc" })</td>
+                            <td class="nw">Novedad del servicio prestado @Html.ValidationMessageFor(x => x.NovedadServicio, "*")</td>
+                            <td>@Html.DropDownListFor(x => x.NovedadServicio, OrganizationExample15.Models.Administrador.MVarios.GetList(OrganizationExample15.Models.Administrador.MVarios.Tipo.BitacorasNovedadServicio).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Ninguno)", new { @class = "amc" })</td>
+                        </tr>
+                        <tr>
+                            <td>Paciente</td>
+                            <td>@Html.Partial("~/Views/_Shared/Paciente.cshtml", Model.Paciente, HomeCareVersion.GetPrefixPartial("Paciente"))</td>
+                            <td>Estado</td>
+                            <td>@Html.DropDownListFor(x => x.Estado, OrganizationExample15.Models.Administrador.MVarios.GetList(OrganizationExample15.Models.Administrador.MVarios.Tipo.BitacorasEstado).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Ninguno)", new { @class = "amc" })</td>
+                        </tr>
+                        <tr>
+                            <td>Observaciones @Html.ValidationMessageFor(x=>x.Observaciones, "*")</td>
+                            <td colspan="3">@Html.TextAreaFor(x => x.Observaciones, new { @class = "w100" })</td>
+                        </tr>
+                        @if (!string.IsNullOrEmpty(Model.NombreFuncionario)) {
+                            <tr>
+                                <td>Funcionario</td>
+                                <td colspan="3">@Model.NombreFuncionario</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td colspan="4">
+                                @Html.ValidationSummary()
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    @if ((user.CanInsert() && string.IsNullOrEmpty(Model.Id)) || (user.CanUpdate() && !string.IsNullOrEmpty(Model.Id)))
+                    {
+                        @Html.HiddenFor(x => x._gk)
+                        <input type="submit" value="Aceptar" class="btn btn-submit" />
+                    }
+                    <a href="#" onclick="$('#PP').modal('hide'); return false" class="btn btn-default">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>initDlg()</script>
+</div>

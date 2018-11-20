@@ -9,7 +9,7 @@
 
     var bootgrid = OrganizationExample15.Controllers.ClinicaHeridasController.GetBootGridValoracion(0, 0, null, Model.Paciente.Id);
 
-    Historial historial = new Historial(bootgrid.total, bootgrid.total == 1 ? "Valoración" : "Valoraciones", "~/ClinicaHeridas/__Valoracion", "~/ClinicaHeridas/Valoracion?pid={pid}&hveid={id}");
+    Historial historial = new Historial(bootgrid.Total, bootgrid.Total == 1 ? "Valoración" : "Valoraciones", "~/ClinicaHeridas/__Valoracion", "~/ClinicaHeridas/Valoracion?pid={pid}&hveid={id}");
     historial.QueryParams["pid"] = Model.Paciente.Id;
     historial.Columns.Add(new BootGridColumn("Fecha", "f") { Align = BootGridColumn.Aligns.right, CssClass = "nw", DataOrder=BootGridColumn.Order.desc, Formatter="link" });
     historial.Columns.Add(new BootGridColumn("Funcionario", "p") { HeaderCssClass = "w100" });

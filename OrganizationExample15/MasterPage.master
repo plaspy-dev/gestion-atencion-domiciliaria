@@ -156,7 +156,7 @@
                     </object>
                 </td>
                 <td width="1" style="background-color: #327FCD; vertical-align:bottom;">
-                    <asp:ImageButton runat="server" ID="IP" ImageUrl="~/images/OrganizationExample16.jpg" PostBackUrl="~/eventos/pacientes.aspx" />
+                    <asp:ImageButton runat="server" ID="IP" ImageUrl="~/images/OrganizationExample16.png" PostBackUrl="/OrganizationExample16" />
                 </td>
                 <td valign="middle" align="right" style="text-align:right; min-width: 20px; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;">
                 <asp:UpdatePanel runat="server" ID="UAlertas" UpdateMode="Conditional">
@@ -205,8 +205,8 @@
                             <asp:LinkButton ID="lnkGuardar" runat="server" CssClass="menuArriba" Visible="False" ValidationGroup="Guardar">Guardar</asp:LinkButton>
                             <asp:LinkButton ID="lnkExcel" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" onclick="lnkExcel_Click">Excel</asp:LinkButton>
                             <asp:LinkButton ID="lnkPDF" runat="server" CssClass="menuArriba" Visible="False" CausesValidation="False" onclick="lnkPDF_Click">PDF</asp:LinkButton>
-                            <asp:LinkButton ID="lnkCambioClave" runat="server" CssClass="menuArriba" CausesValidation="False" PostBackUrl="~/contrasena.aspx">Contraseña</asp:LinkButton>
-                            <asp:LinkButton ID="lnkSalir" runat="server" CssClass="menuArriba" CausesValidation="False" PostBackUrl="~/Default.aspx?end=1">Salir</asp:LinkButton>
+                            <asp:HyperLink ID="lnkCambioClave" runat="server" CssClass="menuArriba" NavigateUrl="~/Contrasena">Contraseña</asp:HyperLink>
+                            <asp:HyperLink ID="lnkSalir" runat="server" CssClass="menuArriba" NavigateUrl="~/Index?end=1">Salir</asp:HyperLink>
                         </ContentTemplate>
                         <Triggers>
                             <asp:PostBackTrigger ControlID="lnkGuardar" />

@@ -13,6 +13,7 @@ namespace OrganizationExample15
 {
     public class Excel
     {
+        [Obsolete("Usar clase GridUtils.ExportExcelXLSX", true)]
         public static bool SaveExcel(Controller controller, CUsuario user, string title, string query)
         {
             HttpRequestBase Request = controller.Request;

@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/css/mb")
+    <link rel="stylesheet" href="~/css/glyphicon.css" />
+    <link rel="shortcut icon" href="@Url.Content("~/images/tema/favicon.ico")" />
+    <script>var rootPath = '@Url.Content("~/")'; var docPath = '@Request.Url.AbsolutePath';</script>
+    <script src="~/lib/jquery-3.3.1/jquery-3.3.1.min.js" type="text/javascript"></script>
+    @if (HomeCareVersion.IsDebug)
+    {
+        <style type='text/css'>
+            .red {
+                background-color: Red;
+            }
+        </style>
+    }
+    @RenderSection("headers", false)
+</head>
+<body class="bodymvc" ng-app="OrganizationExample15App">
+    <div id="loading">Cargando ...</div>
+    <table class="w100" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr style="background-color: #184580">
+            <td style="width:1000px;"></td>
+            <td style="min-width: 890px;">
+                <!-- encablezado -->
+                <table class="w100" align="center" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="fhl"></td>
+                        <td width="1">
+                            <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="172" height="55" id="FlashID" title="OrganizationExample15">
+                                <param name="movie" value="@Url.Content("~/images/logo.swf")" />
+                                <param name="quality" value="high" />
+                                <param name="wmode" value="opaque" />
+                                <param name="swfversion" value="6.0.65.0" />
+                                <param name="FlashVars" value="url=" @Url.Content("~/") "  />
+                                <!-- La siguiente etiqueta object es para navegadores distintos de IE. Ocúltela a IE mediante IECC. -->
+                                <!--[if !IE]>-->
+                                <object type="application/x-shockwave-flash" data="@Url.Content("~/images/logo.swf")" width="172" height="55">
+                                    <!--<![endif]-->
+                                    <param name="quality" value="high" />
+                                    <param name="wmode" value="opaque" />
+                                    <param name="swfversion" value="6.0.65.0" />
+                                    <param name="FlashVars" value="url=" @Url.Content("~/") "  />
+                                    <!-- El navegador muestra el siguiente contenido alternativo para usuarios con Flash Player 6.0 o versiones anteriores. -->
+                                    <a href="@Url.Content("~/")">
+                                        <img src="@Url.Content("~/images/tema/logop.jpg")" width="150" height="55" />
+                                    </a>
+                                    <!--[if !IE]>-->
+                                </object>
+                                <!--<![endif]-->
+                            </object>
+                        </td>
+                        <td width="1" style="background-color: #327FCD; vertical-align:bottom;">
+                            <a href="@Url.Content("/OrganizationExample16")">
+                                <img src="@Url.Content("~/images/OrganizationExample16.png")" />
+                            </a>
+                        </td>
+                        <td valign="middle" align="right" style="text-align:right; min-width: 20px; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;"></td>
+                        <td valign="middle" align="right" style="min-width: 630px; text-align:right; white-space: nowrap; border-top: solid #0D6AB8 1px; background-color: #327FCD; vertical-align: middle;position:relative;">
+                            <div id="headerm" class="dropdown show">
+                                @RenderSection("navbar", false)
+                            </div>
+                        </td>
+                        <td style="background-color: #327FCD;width: 100%; min-width: 3px;"></td>
+                        <td class="fhr"></td>
+                    </tr>
+                </table>
+            </td>
+            <td style="width:1000px;"></td>
+        </tr>
+        <tr>
+            <td class="red"></td>
+            <td>
+                <!-- contenido -->
+                <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="fcl"></td>
+                        <td width="645" valign="top" bgcolor="#FFFFFF" class="_container">
+                            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="fondoTituloUsuario" style="padding:18px 50px 20px 5px" align="right">
+                                        <table cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td><b class="TPagina">@ViewBag.Title</b></td>
+                                                <td></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:10px 20px 5px 5px" class="fondoPagina">
+                                        @RenderBody()
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td class="fcr"></td>
+                    </tr>
+                </table>
+            </td>
+            <td class="red"></td>
+        </tr>
+        <tr style="background-color: #184580" class="footer">
+            <td></td>
+            <td>
+                <!-- pie de pagina -->
+                <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#184580">
+                    <tr>
+                        <td class="fhl"></td>
+                        <td align="right" style="background-color: #FFF; padding-right: 30px;">Versión @HomeCareVersion.Number</td>
+                        <td class="fhr"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="padding:5px 0px 20px 25px;font-size: 10px;color: #ffffff;">
+                            <b>OrganizationExample15</b> © Demostración local<br />
+                            Dirección de demostración · Teléfono de prueba 000 000 0000<br />
+                            Desarrollado por <a href="http://www.sdg.com.co">Software Developers Group LTDA</a>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+    @Scripts.Render("~/js/mb")
+    @RenderSection("scripts", false)
+</body>
+</html>

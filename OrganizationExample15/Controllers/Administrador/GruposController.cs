@@ -14,9 +14,9 @@ namespace OrganizationExample15.Controllers.Administrador
         public ActionResult __Grupos(int current, int rowCount, Dictionary<string, string> sort, string searchPhrase = null)
         {
             CUsuario usuario = ViewBag.User;
-            string where = " eliminado IS NULL";
+            string where = " grupo.eliminado IS NULL";
             if (!string.IsNullOrEmpty(searchPhrase))
-                where += string.Format(" AND nombre LIKE CONCAT('%',{0},'%') ", Query.GetValor(searchPhrase));
+                where += string.Format(" AND grupo.nombre LIKE CONCAT('%',{0},'%') ", Query.GetValor(searchPhrase));
 
             Query query = new Query("grupo");
 
@@ -40,7 +40,7 @@ namespace OrganizationExample15.Controllers.Administrador
                     , sort
                     );
 
-                return Content(JsonConvert.SerializeObject(data), HomeCareVersion.JSONContentType);
+                return Content(JsonConvert.SerializeObject(data, HomeCareVersion.JsonSerializerSettingsCamelCase), HomeCareVersion.JSONContentType);
             }
         }
 
