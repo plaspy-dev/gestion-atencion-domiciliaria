@@ -1,0 +1,2 @@
+﻿<%@ Control Language="C#" AutoEventWireup="true" Inherits="rh_funcionarioSimple" Codebehind="funcionarioSimple.ascx.cs" %>
+<asp:TextBox runat="server" ID="TFuncionario" Width="100%"></asp:TextBox><asp:TextBox runat="server" ID="TFuncionarioID" CssClass="hidet"></asp:TextBox>

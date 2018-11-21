@@ -1688,6 +1688,7 @@
     <Content Include="Views\Inicio\Index.cshtml" />
     <Content Include="Views\_Shared\_LayoutPage_Login.cshtml" />
     <Content Include="Views\Index\Index.cshtml" />
+    <Content Include="Views\EntregaTurno\BitacoraPrint.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1701,7 +1702,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Bitacora\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

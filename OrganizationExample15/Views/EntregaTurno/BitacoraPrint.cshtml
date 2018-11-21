@@ -1,0 +1,119 @@
+﻿@model OrganizationExample15.Models.EntregaTurno.Bitacora
+@using OrganizationExample15.Models.Administrador
+@{
+    ViewBag.Title = "Bitácora";
+    Layout = "~/Views/_Shared/_LayoutPagePrint.cshtml";
+    Paciente paciente = Paciente.GetPaciente(Model.Paciente.Id);
+}
+<table class="w100" border="0">
+    @if (Model.OmitirEncabezado)
+    {
+        <tr>
+            <td colspan="5"><hr /></td>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <td colspan="5">
+                <table class="w100" border="0">
+                    <tr>
+                        <td>
+                            <p><strong>BITÁCORA</strong></p>
+                            <p>
+                                <strong>OrganizationExample15 SAS</strong><br />
+                                NIT. 000.000.015-0
+                            </p>
+                        </td>
+                        <td valign="bottom"></td>
+                        <td align="right" valign="middle">
+                            <br />
+                            <img src="~/imgs/Logo.jpg" width="170" height="60" alt="logo" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr><!-- datospaciente -->
+        if (!string.IsNullOrEmpty(paciente.Id))
+        {
+            <tr bgcolor="#FFFFFF">
+                <td colspan="5">
+                    <fieldset>
+                        <table class="w100">
+                            <tr>
+                                <td width="11%">Documento</td>
+                                <td width="19%"><strong>@paciente.documento</strong></td>
+                                <td width="13%">Nombre</td>
+                                <td width="38%" nowrap="nowrap"><strong>@paciente.NombreCompleto</strong></td>
+                                <td width="10%" nowrap="nowrap">Sexo</td>
+                                <td width="9%" nowrap="nowrap">@(paciente.sexoId == "1" ? "F" : "M")</td>
+                            </tr>
+                            <tr>
+                                <td>Nacimiento</td>
+                                <td class="nw">@paciente.FechaNac.Split(' ')[0] <span style="float: right">@paciente.Edad años</span></td>
+                                <td>Asegurador</td>
+                                <td>@paciente.NombreEntidad</td>
+                                <td>Categoría</td>
+                                <td>@paciente.Categoria</td>
+                            </tr>
+                            <tr>
+                                <td>Barrio</td>
+                                <td>@paciente.Barrio</td>
+                                <td>Direcci&oacute;n</td>
+                                <td colspan="3">@paciente.Barrio</td>
+                            </tr>
+                            <tr>
+                                <td>Tel&eacute;fono</td>
+                                <td>@paciente.Telefono</td>
+                                <td>Familiar</td>
+                                <td>@paciente.FamiliarResponsable</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>Parentesco</td>
+                                <td>@paciente.parentesco</td>
+                                <td>Tipo de Afiliaci&oacute;n</td>
+                                <td>@paciente.TipoAfiliacion</td>
+                                <td>Pago directo</td>
+                                <td>@paciente.tipopago</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6"><strong>@Html.Raw(string.Join("<br/>", paciente.cie10.Select(x => Html.Encode(Procedimientos.GetCodigoCIE(x)))))</strong></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                </td>
+            </tr><!-- datospacienteEnd -->
+        }
+        else
+        {
+            <tr>
+                <td colspan="5"><hr /></td>
+            </tr>
+        }
+    }
+    <tr>
+        <td><b>Fecha</b></td>
+        <td>@Model.Fecha</td>
+        <td><b>Tipo</b></td>
+        <td class="nw">@Parametro2.GetItem(Parametro2.Tipo.BitacorasTipo, Model.Tipo?.ToString()).Nombre</td>
+        <td class="w100"></td>
+    </tr>
+    <tr>
+        <td class="nw"><b>Novedad Administrativa</b></td>
+        <td class="nw">@MVarios.GetItem(Model.NovedadAdministrativa?.ToString()).Nombre</td>
+        <td class="nw"><b>Novedad de servicio</b></td>
+        <td class="nw">@MVarios.GetItem(Model.NovedadServicio?.ToString()).Nombre</td>
+    </tr>
+    <tr>
+        <td><b>Funcionario</b></td>
+        <td>@Model.NombreFuncionario</td>
+        <td><b>Estado</b></td>
+        <td>@MVarios.GetItem(Model.Estado?.ToString()).Nombre</td>
+    </tr>
+    <tr>
+        <td class="vat"><b>Observaciones</b></td>
+        <td colspan="4">@Model.Observaciones</td>
+    </tr>
+</table>

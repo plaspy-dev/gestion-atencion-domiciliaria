@@ -1,0 +1,488 @@
+﻿@model OrganizationExample15.Models.ClinicaHeridas.Valoracion
+@using OrganizationExample15.Models.Administrador
+@using OrganizationExample15.Models.Shared
+@{
+    ViewBag.Title = "Valoración de heridas";
+    Layout = "~/Views/_Shared/_LayoutPage.cshtml";
+    CUsuario usuario = ViewBag.User;
+    bool showOK = (usuario.CanInsert() && string.IsNullOrEmpty(Model.ProtectedFields["id"])) || (usuario.CanUpdate() && !string.IsNullOrEmpty(Model.ProtectedFields["id"]));
+
+    var bootgrid = OrganizationExample15.Controllers.ClinicaHeridasController.GetBootGridValoracion(0, 0, null, Model.Paciente.Id);
+
+    Historial historial = new Historial(bootgrid.Total, bootgrid.Total == 1 ? "Valoración" : "Valoraciones", "~/ClinicaHeridas/__Valoracion", "~/ClinicaHeridas/Valoracion?pid={pid}&hveid={id}");
+    historial.QueryParams["pid"] = Model.Paciente.Id;
+    historial.Columns.Add(new BootGridColumn("Fecha", "f") { Align = BootGridColumn.Aligns.right, CssClass = "nw", DataOrder=BootGridColumn.Order.desc, Formatter="link" });
+    historial.Columns.Add(new BootGridColumn("Funcionario", "p") { HeaderCssClass = "w100" });
+}
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-accent-theme">
+                <div class="card-body">
+                    <form autocomplete="off" method="post" action="@(Request.Url.AbsolutePath + Request.Url.Query)">
+                        <div>Paciente @Html.Partial("~/Views/_Shared/Paciente.cshtml", Model.Paciente, HomeCareVersion.GetPrefixPartial("Paciente"))</div>
+                        @if (!string.IsNullOrEmpty(Model.Paciente.Id))
+                        {
+                            <div>@Html.Partial("~/Views/_Shared/PacienteInfo.cshtml", Model.Paciente.Id)</div>
+                            <div>@Html.Partial("~/Views/_Shared/Historial.cshtml", historial)</div>
+                            @Html.AntiForgeryToken()
+                            <table class="tda">
+                                <tr>
+                                    <td style="text-align: justify; font-size: 10px">
+                                        <b>Indicaciones</b><br />
+                                        Tenga en cuenta  que la evaluación detallada de esta valoración depende  el plan de intervención requerido<br />
+                                        En datos subjetivos  para la escala de dolor registre el número según corresponda.<br />
+                                        Marque con una (x) según corresponda en la localización, etiología, <br />
+                                        para la medición de la herida inserte el aplicador de algodón, mantenga los dedos en la superficie de la piel y mida desde los dedos hasta la punta, registre los cms o mms.<br />
+                                        Acerca de la tunelización, cavidad y tracto sinusal tenga en cuenta las manecillas del reloj donde las 12 inicia de forma cefalocaudal, registre 12, 3, 6, 9.
+                                    </td>
+                                    <td><img src="casa.jpg" /></td>
+                                </tr>
+                            </table>
+                            <table class="table table-sm table-striped">
+                                <tr>
+                                    <td>Fecha @Html.ValidationMessageFor(x => x.Fecha, "*")</td>
+                                    <td>@Html.TextBoxFor(x => x.Fecha, new { @class = "_date" })</td>
+                                    <td>Funcionario</td>
+                                    <td>@Html.Partial("~/Views/_Shared/Funcionario.cshtml", Model.Funcionario, HomeCareVersion.GetPrefixPartial("Funcionario"))</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Examén físico</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h6>Datos objetivos - signos vitales</h6></td>
+                                </tr>
+                                <tr>
+                                    <td>TA @Html.ValidationMessageFor(x => x.TA, "*")</td>
+                                    <td>@Html.TextBoxFor(x => x.TA, new { @class = "likenumber" })</td>
+                                    <td>FC @Html.ValidationMessageFor(x => x.FC, "*")</td>
+                                    <td>@Html.TextBoxFor(x => x.FC, new { @class = "likenumber" })</td>
+                                </tr>
+                                <tr>
+                                    <td>FR @Html.ValidationMessageFor(x => x.FR, "*")</td>
+                                    <td>@Html.TextBoxFor(x => x.FR, new { @class = "likenumber" })</td>
+                                    <td>T @Html.ValidationMessageFor(x => x.T, "*")</td>
+                                    <td>@Html.TextBoxFor(x => x.T, new { @class = "likenumber" })</td>
+                                </tr>
+                                <tr>
+                                    <td class="nw">Pulsos distales @Html.ValidationMessageFor(x => x.PulsosDistales, "*")</td>
+                                    <td class="nw">
+                                        <label>
+                                            @Html.RadioButtonFor(x => x.PulsosDistales, "1")
+                                            Presentes
+                                        </label>
+                                        <label>
+                                            @Html.RadioButtonFor(x => x.PulsosDistales, "0")
+                                            Ausentes
+                                        </label>
+                                    </td>
+                                    <td><span class="pulsos">Observaciones</span></td>
+                                    <td>@Html.TextBoxFor(x => x.ObservacionesPulso, new { @class = "pulsos" })</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-section-title" colspan="4"><h6>Antecedentes</h6></td>
+                                </tr>
+                                @for (int i = 0; i < Model.Antecendentes.Count; i++)
+                                {
+                                    <tr class="@(i == Model.Antecendentes.Count - 1 ? "tdb" : null)">
+                                        <td class="nw">
+                                            @Html.CheckBoxFor(x => x.Antecendentes[i].Check)
+                                            @Html.HiddenFor(x => x.Antecendentes[i].Id)
+                                            @Html.LabelFor(x => x.Antecendentes[i].Check, Model.Antecendentes[i].Name)
+                                            @Html.HiddenFor(x => x.Antecendentes[i].Required)
+                                            @Html.ValidationMessageFor(x => x.Antecendentes[i].Text, "*")
+                                        </td>
+                                        <td colspan="3">
+                                            @Html.TextBoxFor(x => x.Antecendentes[i].Text, new { @class = "w100" })
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td class="text-section-title tdt" colspan="4"><h6>Riesgos</h6></td>
+                                </tr>
+                                @for (int i = 0; i < Model.Riesgos.Count; i++)
+                                {
+                                    <tr class="@(i == Model.Riesgos.Count - 1 ? "tdb" : null)">
+                                        <td class="nw">
+                                            @Html.CheckBoxFor(x => x.Riesgos[i].Check)
+                                            @Html.HiddenFor(x => x.Riesgos[i].Id)
+                                            @Html.LabelFor(x => x.Riesgos[i].Check, Model.Riesgos[i].Name)
+                                            @Html.HiddenFor(x => x.Riesgos[i].Required)
+                                            @Html.ValidationMessageFor(x => x.Riesgos[i].Text, "*")
+                                        </td>
+                                        <td colspan="3">
+                                            @Html.TextBoxFor(x => x.Riesgos[i].Text, new { @class = "w100" })
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>@Html.CheckBoxFor(x => x.Fistulas) @Html.LabelFor(x => x.Fistulas, "Fístulas")</h5></td>
+                                </tr>
+                                <tr class="hidet fistula">
+                                    <td>Localización @Html.ValidationMessageFor(x => x.LocalizacionFistula, "*")</td>
+                                    <td>@Html.TextBoxFor(x => x.LocalizacionFistula)</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr class="hidet fistula">
+                                    <td class="nw">Cantidad afluente @Html.ValidationMessageFor(x => x.CantidadAfluente, "*")</td>
+                                    <td>@Html.TextBoxFor(x => x.CantidadAfluente, new { @class = "cms" })</td>
+                                    <td colspan="2">@Html.CheckBoxFor(x => x.SignosDeInfeccion) @Html.LabelFor(x => x.SignosDeInfeccion, "Signos de infección")</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>@Html.CheckBoxFor(x => x.Ostomias) @Html.LabelFor(x => x.Ostomias, "Ostomías")</h5></td>
+                                </tr>
+                                <tr class="hidet ostomia">
+                                    <td>Tipo @Html.ValidationMessageFor(x => x.TipoOstomia, "*")</td>
+                                    <td class="nw">
+                                        <label>
+                                            @Html.RadioButtonFor(x => x.TipoOstomia, "0") Temporal
+                                        </label>
+                                        <label>
+                                            @Html.RadioButtonFor(x => x.TipoOstomia, "1") Definitiva
+                                        </label>
+                                    <td>Ubicación del estoma @Html.ValidationMessageFor(x => x.UbicacionEstoma, "*")</td>
+                                    <td>@Html.TextBoxFor(x => x.UbicacionEstoma)</td>
+                                </tr>
+                                <tr class="hidet ostomia">
+                                    <td class="nw">Color del estoma @Html.ValidationMessageFor(x => x.ColorEstoma, "*")</td>
+                                    <td>
+                                        @Html.DropDownListFor(x => x.ColorEstoma, MVarios.GetList(MVarios.Tipo.ValoracionHeridasColorEstoma).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                                    </td>
+                                    <td class="nw">Estoma a nivel de la piel @Html.ValidationMessageFor(x => x.EstomaNivelPiel, "*")</td>
+                                    <td>
+                                        @Html.DropDownListFor(x => x.EstomaNivelPiel, MVarios.GetList(MVarios.Tipo.ValoracionHeridasEstomaNivelPiel).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                                    </td>
+                                </tr>
+                                <tr class="hidet ostomia">
+                                    <td>
+                                        Complicaciones @Html.ValidationMessageFor(x => x.EstomaComplicaciones, "*")
+                                    </td>
+                                    <td>
+                                        @Html.DropDownListFor(x => x.EstomaComplicaciones, MVarios.GetList(MVarios.Tipo.ValoracionHeridasComplicaciones).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                                    </td>
+                                    <td>
+                                        Estado de la piel @Html.ValidationMessageFor(x => x.EstadoPiel, "*")
+                                    </td>
+                                    <td>
+                                        @Html.DropDownListFor(x => x.EstadoPiel, MVarios.GetList(MVarios.Tipo.ValoracionHeridasEstadoPiel).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5><label>@Html.CheckBoxFor(x => x.DispositivosMedicosInsertados) Dispositivos médicos insertados</label></h5></td>
+                                </tr>
+                                <tr class="hidet dispositivos">
+                                    <td>Tipo @Html.ValidationMessageFor(x => x.TipoDispositivo, "*")</td>
+                                    <td>
+                                        @Html.DropDownListFor(x => x.TipoDispositivo, MVarios.GetList(MVarios.Tipo.ValoracionHeridasTipoDispositivo).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                                    </td>
+                                    <td><label>@Html.CheckBoxFor(x => x.Funcional) Funcional</label>@Html.ValidationMessageFor(x => x.FuncionalParametro, "*")</td>
+                                    <td>
+                                        @Html.DropDownListFor(x => x.FuncionalParametro, MVarios.GetList(MVarios.Tipo.ValoracionHeridasDispositivoFuncional).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), new { @class = "amc funcional" })
+                                    </td>
+                                </tr>
+                                <tr class="hidet obstruido">
+                                    <td></td>
+                                    <td></td>
+                                    <td>Descripción</td>
+                                    <td>@Html.TextBoxFor(x => x.FuncionalDescripcion)</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Datos subjetivos</h5></td>
+                                </tr>
+                                <tr>
+                                    <td>Escala de dolor @Html.ValidationMessageFor(x => x.EscalaDolor, "*")</td>
+                                    <td>
+                                        @Html.DropDownListFor(x => x.EscalaDolor, MVarios.GetList(MVarios.Tipo.ValoracionHeridasEscalaDolor).OrderBy(x => Convert.ToInt32(x.Nombre)).Select(x => new SelectListItem() { Value = x.Id, Text = string.Format("{0} - {1}", x.Nombre, x.Descripcion) }), "(Ninguno)", new { @class = "amc" })
+                                    </td>
+                                    <td colspan="2" class="tdr">
+                                        <img alt="Escala de dolor" id="iEscalaDolor" src="escaladolor.jpg" usemap="#mEscalaDolor" hidefocus="true" tabindex="-1" />
+                                        <map name="escaladolor" id="mEscalaDolor">
+                                            <area alt='1' title='1' href='#' shape='rect' coords='97,0,147,70' />
+                                            <area alt='2' title='2' href='#' shape='rect' coords='147,0,172,70' />
+                                            <area alt='3' title='3' href='#' shape='rect' coords='172,0,197,70' />
+                                            <area alt='4' title='4' href='#' shape='rect' coords='197,0,222,70' />
+                                            <area alt='5' title='5' href='#' shape='rect' coords='222,0,247,70' />
+                                            <area alt='6' title='6' href='#' shape='rect' coords='247,0,272,70' />
+                                            <area alt='7' title='7' href='#' shape='rect' coords='272,0,297,70' />
+                                            <area alt='8' title='8' href='#' shape='rect' coords='297,0,322,70' />
+                                            <area alt='9' title='9' href='#' shape='rect' coords='322,0,347,70' />
+                                            <area alt='10' title='10' href='#' shape='rect' coords='347,0,372,70' />
+                                        </map>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Heridas @Html.ValidationMessageFor(x => x._Heridas, "*")</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" ng-controller="GridList as controller" ng-cloak>
+                                        <table class="table table-sm table-striped table-bordered" ng-show="controller.length">
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="w100">Localización</td>
+                                            </tr>
+                                            <tr ng-repeat="row in controller.list|filter:filterDeleted">
+                                                <td>
+                                                    <a href="#" ng-click="controller.onEdit(row)" onclick="return false;" class="btn btn-xs btn-submit">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="#" ng-click="controller.onPreDelete(row)" onclick="return false;" class="btn btn-xs btn-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                                <td class="w100 nw">{{row.ubicacionEspecifica}}</td>
+                                            </tr>
+                                        </table>
+                                        <div ng-hide="controller.length" class="card">
+                                            <div class="card bg-light p-2">
+                                                <p class="mb-0">Por favor agregue una herida</p>
+                                            </div>
+                                        </div>
+                                        <div class="r p-1">
+                                            <div class="hide">
+                                                @Html.TextBoxFor(x => x._Heridas, new { ng_model = "controller.result", ng_init = "controller.init('zHeridas')", id = "zHeridas", @class = "validate" })
+                                                <input type="text" id="jsonlist" ng-model="controller.json" />
+                                                <a href="#" id="listadd" ng-click="controller.onAdd()" onclick="return false;"></a>
+                                            </div>
+                                            <a href="#" class="btn btn-primary" onclick="return onAdd()"><i class="fa fa-plus"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Plan de intervención</h5></td>
+                                </tr>
+                                <tr>
+                                    <td class="tdl">
+                                        Periodicidad @Html.ValidationMessageFor(x => x.Periodicidad, "*")
+                                    </td>
+                                    <td colspan="3" class="tdr">@Html.TextBoxFor(x => x.Periodicidad, new { @class = "w100" })</td>
+                                </tr>
+                                <tr>
+                                    <td class="tdl" valign="top">
+                                        Manejo @Html.ValidationMessageFor(x => x.Manejo, "*")
+                                    </td>
+                                    <td colspan="3">
+                                        @Html.TextAreaFor(x => x.Manejo, new { @class = "hidet" })
+                                        <textarea id="elm1" name="elm1" style="width: 99%; height: 200px;" rows="2" cols="20"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Componente educativo</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <label>@Html.CheckBoxFor(x => x.ConsentimientoInformado) Consentimiento informado</label>
+                                    </td>
+                                </tr>
+                                @for (int i = 0; i < Model.ComponenteEducativo.Count; i++)
+                                {
+                                    <tr>
+                                        <td colspan="4">
+                                            @Html.HiddenFor(x => x.ComponenteEducativo[i].Id)
+                                            <label>@Html.CheckBoxFor(x => x.ComponenteEducativo[i].Check) @Model.ComponenteEducativo[i].Name</label>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                            <div>@Html.ValidationSummary()</div>
+                            <div class="r">
+                                @if (!string.IsNullOrEmpty(Model.ProtectedFields["id"]) && usuario.CanInsert())
+                                {
+                                    <a href="@string.Format("{0}?pid={1}&hveid=0", Request.Url.AbsolutePath, Model.Paciente.Id)" class="btn btn-default pull-left">Nueva valoración</a>
+                                }
+                                @if (showOK)
+                                {
+                                    @Html.HiddenFor(x => x._gk)
+                                    <button type="submit" class="btn btn-submit">Aceptar</button>
+                                }
+                                <a href="@Request.Url.AbsolutePath" class="btn btn-default">Cancelar</a>
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(Model.Paciente.Id))
+{
+    @Html.Partial("Herida", new OrganizationExample15.Models.ClinicaHeridas.Herida() { ShowOK = showOK, Galeria = Model.Galeria })
+}
+@section scripts {
+    <link rel="stylesheet" href="~/lib/dropzone/dropzone.css" />
+    <link rel="stylesheet" href="~/lib/jquery.bootgrid/jquery.bootgrid.css" />
+    <script src="~/js/tinymce.min.js"></script>
+    <script type="text/javascript" src="~/lib/angular-1.7.2/angular.js"></script>
+    <script src="~/js/angulargridctrl.js"></script>
+    <script src="~/js/angulargaleria.js"></script>
+    <script src="~/lib/jquery-inputmask/inputmask.js"></script>
+    <script src="~/lib/jquery-inputmask/jquery.inputmask.js"></script>
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.js"></script>
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.fa.js"></script>
+    <script src="~/lib/dropzone/dropzone.js"></script>
+    <style>
+        .cms, .porcentaje {
+            text-align: right;
+            width: 100px;
+        }
+
+        .likenumber {
+            width: 120px;
+        }
+    </style>
+    @if (!string.IsNullOrEmpty(Model.ProtectedFields["id"]))
+    {
+        <script>var __id = @Model.ProtectedFields["id"];</script>
+    }
+    <script>
+        var _mpacienteoptions = { selectURL: "@(Request.Url.AbsolutePath+"?pid=")" };
+        Dropzone.autoDiscover = false;
+
+        function validateHeridasCount(value, element, form) {
+
+            try {
+                var list = [];
+                list = JSON.parse(value);
+                for (var i = 0; i < list.length; i++) {
+                    if (!list[i].eliminado)
+                        return true;
+                }
+            } catch (e) {
+            }
+            return false;
+            //return list.length > 0;
+        }
+
+        function onAdd() {
+
+            $("#dZUpload").removeClass("dz-started")[0].dropzone.removeAllFiles();
+            resetForm($(".fakeform"));
+
+            $("#jsongallery").val("").change();
+
+            $("#mherida").modal("show");
+            return false;
+        }
+
+        function onEdit(row) {
+
+            $("#dZUpload").removeClass("dz-started")[0].dropzone.removeAllFiles();
+            setFormValues($(".fakeform"), row);
+            $("#jsongallery").val(JSON.stringify(row.galeria)).change();
+            $("#mherida").modal("show");
+            return false;
+        }
+
+    $(function() {
+        $("._mpaciente").focus();
+        $("#Fistulas").change(function () {
+            $(".fistula").toggle($(this).is(":checked"));
+        }).change();
+        $("#Ostomias").change(function () {
+            $(".ostomia").toggle($(this).is(":checked"));
+        }).change();
+        $("#DispositivosMedicosInsertados").change(function () {
+            $(".dispositivos").toggle($(this).is(":checked"));
+        }).change();
+        $("#FuncionalParametro").change(function () {
+            $(".obstruido").toggle(!$("#Funcional").is(":checked") && $(this).find('option:selected').text().toLowerCase() == "obstruido");
+        }).change();
+        $("#Funcional").change(function () {
+            $(".funcional").toggle(!$(this).is(":checked"));
+            $("#FuncionalParametro").change();
+        }).change();
+        $("#EscalaDolor").change(function () {
+            var text = $("option:selected", this).text().split(" ")[0];
+            $("#iEscalaDolor").attr("src", $(this).val() ? ("escalas/e" + text + ".jpg") : "escaladolor.jpg");
+        }).change();
+        $("#Bolsillo").change(function () {
+            $(".bolsillo").toggle($(this).is(":checked"));
+        });
+        $("#LugarOrigen").change(function () {
+            $(".geriatrico").toggle($(this).find('option:selected').text().toLowerCase().startsWith("hogar ger"));
+        });
+
+        $("#Etiologia").change(function () {
+            $(".etiologia").toggle($(this).val() == "0");
+            $(".etiologiam").toggle($(this).find('option:selected').text().toLowerCase() == "ulcera por presión");
+        }).change();
+
+        $("#Manejo")._tinyMCE({ idMirrorTextArea: "elm1", readonly: @(showOK ? "false" : "true") });
+
+
+        var $form = $(".fakeform");
+        $form.on("submit", function (e) {
+            if (!$(this).valid()) {
+                return false;
+            }
+            var values = getFormValues(this);
+
+            try {
+                values.galeria = JSON.parse($("#jsongallery").val());
+            } catch (ex) { }
+
+            $("#jsonlist").val(JSON.stringify(values)).change();
+            $("#listadd").click();
+            $(this).find(".modal").modal("hide");
+            $(window).resize();
+            resetForm(this);
+            return false;
+        });
+
+
+        var autonumericporcentaje= AutoNumeric.multiple(".porcentaje", {
+            currencySymbol: " %",
+            currencySymbolPlacement: "s",
+            maximumValue: "100",
+            minimumValue: "0",
+            decimalPlaces: 0
+        });
+
+        AutoNumeric.multiple(".cms", {
+            currencySymbol: " cms",
+            currencySymbolPlacement: "s",
+            minimumValue: "0",
+            allowDecimalPadding: false,
+            decimalPlaces: 1
+        });
+
+        AutoNumeric.multiple("#FC", {
+            currencySymbol: " Lat/min",
+            currencySymbolPlacement: "s",
+            minimumValue: "0",
+            decimalPlaces: 0
+        });
+
+        AutoNumeric.multiple("#FR", {
+            currencySymbol: " Res/min",
+            currencySymbolPlacement: "s",
+            minimumValue: "0",
+            decimalPlaces: 0
+        });
+
+        AutoNumeric.multiple("#T", {
+            currencySymbol: " °",
+            currencySymbolPlacement: "s",
+            minimumValue: "0",
+            decimalPlaces: 0
+        });
+
+        $(".porcentaje").change(function () {
+            var total = 0;
+            for (var i = 0; i < autonumericporcentaje.length; i++) {
+                total+=autonumericporcentaje[i].getNumber();
+            }
+            $("#totalporcentaje").text(total ? (total + "%") : "").css("color", total>100 ? "#FF0000" : "#00FF00");
+        }).change();
+
+        $("#TA").inputmask("999/999 mm/Hg");
+
+        if ($.getUrlParameter("ed") == "1") {
+            toastr.success("Valoración editada");
+        }
+    });
+    </script>
+}

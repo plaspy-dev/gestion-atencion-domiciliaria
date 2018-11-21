@@ -24,15 +24,18 @@ namespace OrganizationExample15.Models.EntregaTurno
         public MPacienteSimple Paciente { get; set; } = new MPacienteSimple();
         public ulong? Estado { get; set; }
         public string NombreFuncionario { get; set; }
+        public bool OmitirEncabezado { get; set; }
     }
 
     public class BitacoraFilter {
         public string Desde { get; set; }
         public string Hasta { get; set; }
-        public uint NovedadAdministrativa { get; set; }
-        public uint NovedadServicio { get; set; }
-        public ulong Estado { get; set; }
-        public uint Tipo { get; set; }
+        public uint? NovedadAdministrativa { get; set; } = 0;
+        public uint? NovedadServicio { get; set; } = 0;
+        public ulong? Estado { get; set; } = 0;
+        public uint? Tipo { get; set; } = 0;
+        public uint? PDF { get; set; }
+        public uint? Print { get; set; }
         public MPacienteSimple Paciente { get; set; } = new MPacienteSimple();
     }
 }

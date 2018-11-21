@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="~/css/imprimir.css" type="text/css" rel="stylesheet" />
+<title>Evolución de heridas</title>
+<link type="text/css" href="~/css/imprimir.css" />
+<style type="text/css">
+	body {
+	font-size: 12px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	}
+</style>
+</head>
+<body>
+<table width="100%" border="0">
+  <tr>
+    <td colspan="5"><table width="100%" border="0">
+      <tr>
+        <td><p><strong>EVOLUCIÓN DE HERIDAS</strong></p>
+          <p><strong>OrganizationExample15 SAS</strong><br />
+          NIT. 000.000.015-0</p></td>
+        <td valign="bottom"><img src="casa.jpg" /></td>
+        <td align="right" valign="middle"><br />
+          <img src="../imgs/Logo.jpg" width="170" height="60" alt="logo" /></td>
+      </tr>
+    </table></td>
+  </tr><!-- datospaciente -->
+  <tr bgcolor="#FFFFFF">
+    <td colspan="5"><fieldset>
+    <strong>
+    <legend></legend>
+      </strong>
+    <table width="100%">
+      <tr>
+        <td width="11%">Documento</td>
+        <td width="19%"><strong>$TPaciente$</strong></td>
+        <td width="13%">Nombre</td>
+        <td width="38%" nowrap="nowrap"><strong>$LPaciente$</strong></td>
+        <td width="10%" nowrap="nowrap">Sexo</td>
+        <td width="9%" nowrap="nowrap">$LSexo$ </td>
+      </tr>
+      <tr>
+        <td>Nacimiento</td>
+        <td class="nw">$LFechaNacimiento$ <span style="float: right">$LEdad$</span></td>
+        <td>Asegurador</td>
+        <td>$LAsegurador$</td>
+        <td>Categoría</td>
+        <td>$szCategoria$</td>
+      </tr>
+      <tr>
+        <td>Barrio</td>
+        <td>$LBarrio$</td>
+        <td>Direcci&oacute;n</td>
+        <td colspan="3">$LDireccion$</td>
+      </tr>
+      <tr>
+        <td>Tel&eacute;fono</td>
+        <td>$LTelefono$</td>
+        <td>Familiar</td>
+        <td>$LFamiliar$</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>Parentesco</td>
+        <td>$LParentesco$</td>
+        <td>Tipo de Afiliaci&oacute;n</td>
+        <td>$szTipoAfiliacion$</td>
+        <td>Pago directo</td>
+        <td>$LTipoPago$</td>
+      </tr>
+      <tr>
+        <td colspan="6"><strong>$LCIE10$</strong></td>
+      </tr>
+    </table>
+    </fieldset></td>
+  </tr><!-- datospacienteEnd -->
+  <tr>
+    <td><strong>Fecha</strong></td>
+    <td colspan="2">$TFecha$</td>
+    <td>&nbsp;</td>
+    <td nowrap="nowrap">&nbsp;</td>    
+  </tr>
+  <tr>
+  	<td><strong>Signos vitales</strong></td>
+    <td colspan="4"><strong>T</strong>: $TT$ °, <strong>FC</strong>: $TFC$ Lat/min, <strong>TA</strong>:$TTA$, <strong>FR</strong>: $TFR$ Min, <strong>Pulsos: </strong>$RPDistales$ $TObservacionPulso$.</td>
+  </tr>
+  <tr>
+	  <td><strong>Índice de Barthel</strong></td>
+      <td>$szBarthel$</td>
+      <td><strong>Escala de Braden</strong></td>
+   	  <td>$szBraden$</td>
+      <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td><strong>Escala Norton</strong></td>
+    <td>$szNorton$</td>
+    <td><strong>Escala Cruz Roja</strong></td>
+    <td>$szCruzRoja$</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td><strong>Valoración inicial</strong></td>
+    <td>$LValoracionInicial$</td>
+    <td><strong>Días de evolución</strong></td>
+    <td>$LDiasEvolucion$</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td><strong>Última evolución</strong></td>
+    <td>$LUltimaEvolucion$</td>
+    <td><strong>Días de evolución</strong></td>
+    <td>$LDiasEvolucion2$</td>
+    <td>&nbsp;</td>
+  </tr>
+  <!-- seccionherida -->
+    <tr>
+      <td colspan="4"><hr /></td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Herida $TUbicacionEspecifica$</strong></td>
+    </tr>
+    <tr>
+        <td colspan="4" class="celdaTitulo tdr tdl"><strong>Valoración de heridas - Localización: </strong>$DLocalizacion$, $RLocalizacion2$, $RLocalizacion3$, <strong>MI: </strong>$RMI$, <strong>Pies:</strong> $RPies$</td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Categoría</strong></td>
+    </tr>
+    <tr>
+      <td colspan="4"><strong>Clasificación: </strong>$DClasificacion$, <strong>Factores de riesgo determinante: </strong>$TFactoresRiesgo$</td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Tamaño</strong>: Longitud $TLongitud$ cms., Anchura $TAnchura$ cms., Profundidad $TProfunidad$ cms., $CTunelizacion$ Tunelización $TTunelizacion$ cms., Cavidad $TCavidad$ cms.<strong> $CBolsillo$ Bolsillo: Profunidad:</strong> $TBolsilloProfundidad$ cms., Ubicación: <span class="tdr">$TBolsilloUbicacion$</span></td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Porcentaje de tejido: Compacto</strong> $TCompacto$%, <strong>De fibrina</strong> $TDeFibrina$%, <strong>Epitelización</strong> $TEpitelizacion$%, <strong>Esfacelo</strong> $TEscara$%,<strong>Granulación</strong> $TGranulacion$%, <strong>Hipergranulación</strong> $THiperGranulacion$%, <strong>Limpio pero no granulado</strong> $TLimpio$%, <strong>Necrosis profunda</strong> $TNecrosis$%</td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Exudado: </strong>$DExudado$, <strong>Tipo:</strong> $DTipoExudado$, <strong>Piel circundante:</strong> $DPielCircundante$, <strong>Bordes de la herida:</strong> $DBordesHerida$, <strong>Signos y síntomas:</strong> $DSignosSintomas$.</td>
+    </tr>
+    <tr>
+      <td colspan="4"><strong>Cambios locales de herida: </strong>$DTipoCambios$, <strong>Signos infección: </strong>$TSignosInfeccion$</td>
+    </tr>
+    <tr>
+    	<td colspan="4"><strong>Registro fotográfico</strong></td>
+    </tr>
+    <tr>
+    	<td colspan="4">$szFotos$</td>
+    </tr>
+    <!-- seccionheridaEnd -->
+    <tr>
+      <td colspan="4"><hr /></td>
+    </tr>
+</table>
+<p align="justify"><strong>Manejo:</strong> $szPlanManejo$</p>
+<p align="justify"><strong>Clínica</strong>: $szClinica$, <strong>Otros</strong>: $TOtros$</p>
+<p align="justify"><strong>Plan educativo</strong>: $szPlanEducativo$</p>
+<p>
+  <img src="~/Image/firmas/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><img src="~/Image/sellos/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><br />
+______________________________<br/>
+        <strong>$TFuncionario$</strong><br />
+        Registro médico $szProfesional$ <br />
+        $szCargo$</p>
+</body>
+</html>

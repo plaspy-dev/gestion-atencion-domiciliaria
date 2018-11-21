@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/imprimir.css" type="text/css" rel="stylesheet" />
+    <title>Acta MIPRES $TNumero$</title>
+<style type="text/css">
+	body {
+	font-size: 12px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 10px;
+	}
+</style>
+</head>
+<body>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td colspan="5">
+                <table width="100%" border="0">
+                    <tr>
+                        <td width="31%" height="66">
+                            <p><strong>Acta MIPRES</strong></p>
+                            <p>
+                                <strong>OrganizationExample15 SAS</strong><br />
+                                NIT. 000.000.015-0
+                            </p>
+                        </td>
+                        <td width="54%" valign="bottom"><p align="right">&nbsp;</p></td>
+                        <td width="15%" align="right" valign="middle">
+                            <br />
+                            <img src="../imgs/Logo.jpg" width="143" height="49" alt="logo" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr bgcolor="#FFFFFF">
+            <td colspan="5">
+                <fieldset>
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td width="12%">Documento</td>
+                            <td width="17%"><strong>$TPaciente$</strong></td>
+                            <td width="12%">Nombre</td>
+                            <td width="36%" nowrap="nowrap"><strong>$LPaciente$</strong></td>
+                            <td width="9%" nowrap="nowrap">Sexo</td>
+                            <td width="14%" nowrap="nowrap">$LSexo$ </td>
+                        </tr>
+                        <tr>
+                            <td>Nacimiento</td>
+                            <td class="nw">$LFechaNacimiento$ <span style="float: right">$LEdad$</span></td>
+                            <td>Asegurador</td>
+                            <td>$LAsegurador$</td>
+                            <td>Categoría</td>
+                            <td>$szCategoria$</td>
+                        </tr>
+                        <tr>
+                            <td>Barrio</td>
+                            <td>$LBarrio$</td>
+                            <td>Direcci&oacute;n</td>
+                            <td colspan="3">$LDireccion$</td>
+                        </tr>
+                        <tr>
+                            <td>Tel&eacute;fono</td>
+                            <td>$LTelefono$</td>
+                            <td>Familiar</td>
+                            <td>$LFamiliar$</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>Parentesco</td>
+                            <td>$LParentesco$</td>
+                            <td>Tipo de Afiliaci&oacute;n</td>
+                            <td>$szTipoAfiliacion$</td>
+                            <td>Pago directo</td>
+                            <td>$LTipoPago$</td>
+                        </tr>
+                        <tr>
+                            <td height="15" colspan="6"><strong>$LCIE10$</strong></td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Número acta</strong></td>
+            <td colspan="2">$TId$</td>
+        </tr>
+        <tr>
+            <td><strong>Fecha acta</strong> </td>
+            <td class="nw">$TFecha$</td>
+            <td class="nw"><b>Elaborado por</b></td>
+            <td>$ElaboradoPor$</td>
+        </tr>
+        <tr>
+            <td class="nw"><b>Fecha prescripción</b></td>
+            <td class="nw">$TPrescripcion$</td>
+            <td class="nw"><b>Número MIPRES</b></td>
+            <td>$TNumero$</td>
+        </tr>
+        <tr>
+            <td><b>Tipo</b></td>
+            <td>$RTipo$</td>
+        </tr>
+        <tr>
+            <td><b>CIE10</b></td>
+            <td colspan="4">$ListCIE10$</td>
+        </tr>
+        <tr>
+            <td><strong>Justificación</strong></td>
+            <td colspan="4">$TJustificacion$</td>
+        </tr>
+        <tr>
+            <td><b>Estado</b></td>
+            <td>$RAprobada$</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align: center">
+                <b>
+                    SERVICIO, TECNOLOGIA, NUTRICIÓN O MEDICAMENTO PRESCRITO
+                </b>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">$ListServicios$</td>
+        </tr>
+    </table>
+    <br />
+    <br />
+    <div><b>Profesionales que realizan el acto</b></div>
+    <br />
+    <br />
+    <br />
+    <table class="w100" style="width: 100%">
+        <tr>
+            <td>
+                <img src="~/Image/firmas/$IdAsistente1$.jpg?d=$SYSDATE()$" class="firma" /><img src="~/Image/sellos/$IdAsistente1$.jpg?d=$SYSDATE()$" class="firma" />
+            </td>
+            <td>
+                <img src="~/Image/firmas/$IdAsistente2$.jpg?d=$SYSDATE()$" class="firma" /><img src="~/Image/sellos/$IdAsistente2$.jpg?d=$SYSDATE()$" class="firma" />
+            </td>
+            <td>
+                <img src="~/Image/firmas/$IdAsistente3$.jpg?d=$SYSDATE()$" class="firma" /><img src="~/Image/sellos/$IdAsistente3$.jpg?d=$SYSDATE()$" class="firma" />
+            </td>
+        </tr>
+        <tr>
+            <td>______________________________</td>
+            <td>______________________________</td>
+            <td>______________________________</td>
+        </tr>
+        <tr>
+            <td><strong>$szAsistente1$</strong></td>
+            <td><strong>$szAsistente2$</strong></td>
+            <td><strong>$szAsistente3$</strong></td>
+        </tr>
+        <tr>
+            <td>Registro $szProfesional1$</td>
+            <td>Registro $szProfesional2$</td>
+            <td>Registro $szProfesional3$</td>
+        </tr>
+        <tr>
+            <td>$szCargo1$</td>
+            <td>$szCargo2$</td>
+            <td>$szCargo3$</td>
+        </tr>
+    </table>
+</body>
+</html>

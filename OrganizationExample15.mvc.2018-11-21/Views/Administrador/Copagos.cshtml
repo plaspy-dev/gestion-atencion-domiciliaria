@@ -1,0 +1,79 @@
+﻿@model List<OrganizationExample15.Models.Administrador.Copago>
+@{
+    ViewBag.Title = "Copagos";
+    Layout = "~/Views/_Shared/_LayoutPage.cshtml";
+    CUsuario user = ViewBag.User;
+}
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-accent-theme">
+                <div class="card-body">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                    <table class="table table-sm table-bordered table-hover table-striped">
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                        <tr>
+                            <td colspan="2" class="text-section-title"><h4>Categoría @Model[i].Nombre @Html.HiddenFor(x => x[i].Nombre) @Html.HiddenFor(x=>x[i]._gk)</h4></td>
+                        </tr>
+                        <tr>
+                            <td>Porcentaje del valor del servicio</td>
+                            <td>@Html.TextBoxFor(x => x[i].Valores.Nombre, new { @class= "float" })</td>
+                        </tr>
+                        <tr>
+                            <td>Valor tope máximo a cobrar por servicio año</td>
+                            <td>@Html.TextBoxFor(x => x[i].Valores.Descripcion, new { @class = "dinero" })</td>
+                        </tr>
+                        <tr>
+                            <td>Valor tope máximo a cobrar por año</td>
+                            <td>@Html.TextBoxFor(x => x[i].Valores.szReservado, new { @class = "dinero" })</td>
+                        </tr>
+                        }
+                        <tr>
+                            <td colspan="2">
+                                @Html.ValidationSummary()
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="r">
+                        <button type="submit" class="btn btn-submit">Aceptar</button>
+                        <a href="@Request.Url.AbsolutePath" class="btn btn-default">Cancelar</a>
+                    </div>
+                    }
+                </div>
+                <!-- end card-body -->
+            </div>
+            <!-- end card -->
+        </div>
+        <!-- end col -->
+    </div>
+    <!-- end row -->
+</div>
+@section scripts {
+    <style></style>
+    <script>
+        $(function () {
+            $("form input:visible:first").focus();
+            // todos los reales
+            AutoNumeric.multiple(".float", {
+                currencySymbol: "%",
+                currencySymbolPlacement: "s",
+                maximumValue: "100",
+                minimumValue: "0"
+            });
+            AutoNumeric.multiple(".dinero", {
+                currencySymbol: "$",
+                minimumValue: "0",
+                decimalPlaces: 0
+            });
+            /*$('.float:not(.rfloat)').autoNumeric('init', { vMin: 0, aSep: '', aSign: '%', mDec: 8, aPad: false }).addClass("rfloat");
+            // dinero
+            $('.dinero:not(.rdinero)').autoNumeric('init', { vMin: 0, aSign: '$', aPad: false }).addClass("rdinero");*/
+            if ($.getUrlParameter("ce") == "1") {
+                toastr.info("Copagos editados");
+            }
+        });
+    </script>
+}

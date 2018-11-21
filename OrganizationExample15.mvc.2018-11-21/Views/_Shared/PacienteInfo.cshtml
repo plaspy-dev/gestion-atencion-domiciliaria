@@ -1,0 +1,81 @@
+﻿@model string
+@{
+    Paciente paciente = Paciente.GetPaciente(Model);
+    List<Autorizaciones> autorizaciones= Autorizaciones.GetAutorizaciones(Model);
+}
+@if (!string.IsNullOrEmpty(paciente?.Id))
+{
+    <div class="text-section-title"><h5><a href="#" data-toggle-save="true" data-toggle="collapse" data-target="#informacionpersonal">Información paciente <i class="fa fa-chevron-down pull-right"></i></a></h5></div>
+    <div id="informacionpersonal" class="collapse">
+        <table class="table table-sm table-striped table-hover m-0">
+            <tr>
+                <td class="nw">Fecha Nacimiento</td>
+                <td class="nw b">@paciente.FechaNac.Split(' ')[0] - @paciente.Edad años</td>
+                <td>Sexo</td>
+                <td class="b w100">@(paciente.sexoId == "1" ? "F" : "M")</td>
+            </tr>
+            <tr>
+                <td>Asegurador</td>
+                <td class="nw b">@paciente.NombreEntidad</td>
+                <td>Carné</td>
+                <td class="b">@paciente.Carne</td>
+            </tr>
+            <tr>
+                <td>Dirección</td>
+                <td class="b" style="min-width: 250px">@paciente.Direccion</td>
+                <td>Barrio</td>
+                <td class="b nw">@paciente.Barrio</td>
+            </tr>
+            <tr>
+                <td>Teléfono</td>
+                <td class="b">@paciente.Telefono</td>
+                <td>Celular</td>
+                <td class="nw b">@paciente.Celular</td>
+            </tr>
+            <tr>
+                <td>Pago Dir</td>
+                <td class="nw b">@paciente.tipopago</td>
+                <td>Grupo</td>
+                <td class="b">@paciente.Grupo</td>
+            </tr>
+            <tr>
+                <td>Familiar</td>
+                <td class="b nw">@paciente.FamiliarResponsable</td>
+                <td>Parentesco</td>
+                <td class="b">@paciente.parentesco</td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-section-title"><h6>CIE10</h6></td>
+            </tr>
+            <tr>
+                <td colspan="4" class="b">
+                    @Html.Raw(string.Join("<br/>", paciente.cie10.Select(x => Html.Encode(Procedimientos.GetCodigoCIE(x)))))
+                </td>
+            </tr>
+        </table>
+    </div>
+    if (autorizaciones?.Count > 0)
+    {
+    <div class="text-section-title"><h5><a href="#" data-toggle="collapse" data-toggle-save="true" data-target="#pacienteservicios">Servicios<i class="fa fa-chevron-down pull-right"></i></a></h5></div>
+    <div id="pacienteservicios" class="collapse">
+        <table class="table table-sm table-striped table-hover m-0">
+            @foreach (var autorizacion in autorizaciones)
+            {
+                <tr>
+                    <td></td>
+                    <td class="b w100 nw">Autorizacion: @autorizacion.Autorizacion</td>
+                    <td class="px nw b">@autorizacion.fecha.ToShortDateString()</td>
+                    <td class="px nw b">@autorizacion.vencimiento.ToShortDateString()</td>
+                </tr>
+                foreach (var detalle in autorizacion.detalles)
+                {
+                    <tr>
+                        <td class="px r b">@detalle.Cantidad</td>
+                        <td colspan="3">@detalle.NombreCompleto</td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+        }
+    }

@@ -1,0 +1,181 @@
+﻿@model OrganizationExample15.Models.ClinicaHeridas.InformeEPS
+@{
+    ViewBag.Title = "Informe EPS";
+    Layout = "~/Views/_Shared/_LayoutPage.cshtml";
+    CUsuario user = ViewBag.User;
+}
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-accent-theme">
+                <div class="card-body">
+                    <div id="fquery">
+                        @using (Html.BeginForm())
+                        {
+                            @Html.HiddenFor(x => x.PDF)
+                            @Html.HiddenFor(x=>x.Print)
+                            <table class="table table-sm">
+                                <tr>
+                                    <td>Fechas</td>
+                                    <td>Entidad</td>
+                                    <td>Paciente</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @Html.HiddenFor(x => x._gk)
+                                        <div class="reportrange" id="reportrange">
+                                            <i class="fa fa-calendar"></i>&nbsp;<span></span> <i class="fa fa-caret-down"></i>
+                                        </div>
+                                        <div class="hide">
+                                            @Html.TextBoxFor(x => x.Desde) @Html.TextBoxFor(x => x.Hasta)
+                                        </div>
+                                    </td>
+                                    <td>@Html.DropDownListFor(x => x.Entidad, OrganizationExample15.Models.Administrador.Asegurador.GetList().Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Todos)", new { @class = "amc" })</td>
+                                    <td>@Html.Partial("~/Views/_Shared/Paciente.cshtml", Model.Paciente, HomeCareVersion.GetPrefixPartial("Paciente"))</td>
+                                    <td class="r w100"><a href="#" class="btn btn-submit" onclick="return onUpdate()">Actualizar</a></td>
+                                </tr>
+                            </table>
+                        }
+                    </div>
+                    <table id="gpe" class="table table-sm table-bordered table-hover table-striped table-bootgrid">
+                        <thead>
+                            <tr>
+                                <th data-column-id="f" data-align="right" data-formatter="link" data-css-class="nw" data-order="asc">Fecha</th>
+                                <th data-column-id="d" data-order="asc" data-css-class="nw">Documento</th>
+                                <th data-column-id="n" data-order="asc" data-header-css-class="w100" data-css-class="nw">Paciente</th>
+                                <th data-column-id="a" data-css-class="nw">Asegurador</th>
+                                <th data-column-id="e" data-css-class="nw">Funcionario</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <!-- end card-body -->
+            </div>
+            <!-- end card -->
+        </div>
+        <!-- end col -->
+    </div>
+    <!-- end row -->
+</div>
+@section scripts {
+    <link rel="stylesheet" href="~/lib/jquery.bootgrid/jquery.bootgrid.css">
+    <link rel="stylesheet" href="~/lib/bootstrap-multiselect/css/bootstrap-multiselect.css" />
+    <link rel="stylesheet" href="~/lib/daterangepicker/daterangepicker.css">
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.js"></script>
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.fa.js"></script>
+    <script src="~/lib/daterangepicker/daterangepicker.js"></script>
+    <style>
+        .bootgrid-header .search {
+            display: none;
+        }
+
+        .saveExcel {
+            display: none;
+        }
+    </style>
+    <script>
+        function onUpdate() {
+            $(".saveExcel").hide();
+            $("#gpe").bootgrid("reload");
+            return false;
+        }
+        $(function () {
+            var localstoragename = "gderc";
+            var rowCount = [10, 25, 50, -1];
+            if (localStorage[localstoragename] && localStorage[localstoragename] != rowCount[0])
+                rowCount.splice(0, 0, localStorage[localstoragename]);
+            $("#gpe").bootgrid({
+                ajax: true,
+                rowCount: rowCount,
+                labels: $.gridLabels,
+                url: rootPath + "ClinicaHeridas/__InformeEPS",
+                statusMapping: {
+                    4: "expired"
+                },
+                maxSpan: {
+                    days: 31
+                },
+                post: function () {
+                    return $('#fquery').find("form").serializeArray().reduce(function (obj, item) {
+                        if (obj[item.name]) {
+                            if (Array.isArray(obj[item.name])) {
+                                obj[item.name].push(item.value);
+                            } else {
+                                var tmp = obj[item.name];
+                                obj[item.name] = [];
+                                obj[item.name].push(tmp);
+                                obj[item.name].push(item.value);
+                            }
+                        } else obj[item.name] = item.value;
+                        return obj;
+                    }, {});
+                },
+                formatters: {
+                    "link": function (column, row) {
+                        if (row["t"] == 1)
+                            return '<a href="' + rootPath + 'ClinicaHeridas/Evolucion?pid=' + row["p"] + '&ehid=' + row["id"] + '" target="_blank">' + row[column.id] + '</a>';
+                        return '<a href="' + rootPath + 'ClinicaHeridas/Valoracion?pid=' + row["p"] + '&hveid=' + row["id"] + '" target="_blank">' + row[column.id] + '</a>';
+                    },
+                    currency: function (column, row) {
+                        if (row[column.id])
+                            return (+row[column.id]).formatCurrency();
+                        return row[column.id];
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function () {
+                localStorage[localstoragename] = $(this).bootgrid('getRowCount');
+                $(this).next("#" + $(this).attr("id") + "-footer").toggle($(this).bootgrid("getTotalPageCount") > 1);
+                $(".saveExcel").toggle($(this).bootgrid("getTotalRowCount") > 0);
+                $(window).resize();
+            });
+
+
+            var start = moment($("#Desde").val());
+            var end = moment($("#Hasta").val());
+            var $reportrange = $('#reportrange');
+
+            function cb(start, end) {
+                $("#Desde").val(start.format("YYYY-MM-DD"));
+                $("#Hasta").val(end.format("YYYY-MM-DD"));
+                if ($reportrange.data('daterangepicker').chosenLabel != daterangepickerlocale.customRangeLabel)
+                    $reportrange.find("span").html($reportrange.data('daterangepicker').chosenLabel);
+                else $('#reportrange span').html(start.locale("es").format('D [de] MMMM [de] YYYY') + ' - ' + end.locale("es").format('D [de] MMMM [de] YYYY'));
+            }
+
+            $reportrange.daterangepicker({
+                locale: daterangepickerlocale,
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 días': [moment().subtract(30, 'days'), moment()],
+                    'Mes actual': [moment().startOf('month'), moment().endOf('month')],
+                    'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb).data('daterangepicker').calculateChosenLabel();
+            cb(start, end);
+
+            $(".saveExcel").click(function () {
+                $('#fquery').find("#PDF").val("");
+                $('#fquery').find("#Print").val("");
+                $('#fquery').find("form").attr("target", "").submit();
+                return false;
+            });
+            $(".pdfDocument").click(function () {
+                $('#fquery').find("#PDF").val("1");
+                $('#fquery').find("#Print").val("");
+                $('#fquery').find("form").attr("target", "").submit();
+                return false;
+            });
+            $(".printDocument").click(function () {
+                $('#fquery').find("#PDF").val("");
+                $('#fquery').find("#Print").val("1");
+                $('#fquery').find("form").attr("target", "_blank").submit();
+                return false;
+            });
+        });
+    </script>
+}

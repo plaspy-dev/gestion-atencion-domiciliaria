@@ -1,0 +1,26 @@
+﻿@model OrganizationExample15.Models.MFuncionarioSimple
+@{
+    string id = Guid.NewGuid().ToString();
+}
+@Html.TextBoxFor(x => x.Nombre, Model?.ReadOnly == true ? (object)new { @class = "_mtercero", placeholder = "Buscar", @readonly = "", id = id } : (object)new { @class = "_mtercero", placeholder = "Buscar", id = id })
+@Html.TextBoxFor(x => x.Id, new { @class = "hidet _mhtercero validate", id = "h" + id })
+@if (Model.Required)
+{
+    @Html.HiddenFor(x => x.Required)
+    @Html.ValidationMessageFor(x => x.Nombre, "*")
+    @Html.ValidationMessageFor(x => x.Id, "*")
+}
+@if (Model?.ReadOnly != true)
+{
+    <script>
+        $(function () {
+            var options = $.extend(window._mtercerooptions || {}, {
+                queryURL: rootPath + "webservices/servicios.asmx/GetPersonal",
+                controlDataId: "@string.Format("h{0}", id)",
+                displayName: "item",
+                idField: "value"
+            });
+            $("#@id").THAutoComplete(options);
+        });
+    </script>
+}

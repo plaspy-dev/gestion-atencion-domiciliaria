@@ -16,6 +16,7 @@ using SDG.Componentes;
 public class PDFConverter
 {
     public static Regex RegexTagSrc = new Regex("(href|src)=\\\"\\/(.*?)\\\"", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    public static Regex RegexHtmlBody = new Regex(".*<body.*?>(?<theBody>.*)\n.*</body>", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
 
     // PDF Converter
     private static void ErrorDataHandler(object sendingProcess, DataReceivedEventArgs errLine)
@@ -99,7 +100,7 @@ public class PDFConverter
 
         Response.ContentType = "application/pdf";
         Response.Cache.SetCacheability(HttpCacheability.NoCache);
-        Response.AddHeader("content-disposition", "attachment;filename=" + HttpUtility.UrlPathEncode("Cuenta") + ".pdf");
+        Response.AddHeader("content-disposition", "attachment;filename=" + HttpUtility.UrlPathEncode(title) + ".pdf");
 
         string serverpath = HomeCareVersion.GetURLLocalhost() + "/";
 

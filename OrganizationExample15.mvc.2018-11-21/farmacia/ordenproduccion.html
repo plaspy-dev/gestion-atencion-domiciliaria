@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="Stylesheet" type="text/css" href="~/css/imprimir.css" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Orden de producción $TNumero$</title>
+    <style>
+        #GM {
+            width: 100%;
+        }
+        .c5,.c6,.c7,.c8,.c9 {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td align="center">
+<table><tr><td>
+<div style="border: 1px #AAA solid;border-radius: 5px; text-align: left">
+<table>
+        <tr>
+          <td width="133"><img src="../imgs/logo170x62.jpg" width="170" height="62" alt="logo" /></td>
+          <td colspan="2" align="center" class="titulo" style="text-align: center">Orden de producción</td>
+          <td align="right" nowrap="nowrap" class="numero" style="text-align: right">$TNumero$</td>
+        </tr>
+        <tr>
+          <td colspan="4"><hr /></td>
+        </tr>
+        <tr>
+            <td>Fecha</td>
+            <td><b>$TFecha$</b></td>
+        </tr>
+        <tr>
+          <td>Proveedor</td>
+          <td colspan="3"><b>$TProveedor$</b></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap">Paciente</td>
+          <td colspan="3"><b>$TPaciente$</b></td>
+        </tr>
+        <tr>
+          <td>Dirección</td>
+          <td><b>$szDireccion$</b></td>
+          <td>Barrio</td>
+          <td nowrap="nowrap"><b>$szBarrio$</b></td>
+        </tr>
+        <tr>
+          <td>Asegurador</td>
+          <td><b>$szAsegurador$</b></td>
+          <td>Teléfono</td>
+          <td><b>$szTelefono$</b></td>
+        </tr>
+        <tr>
+          <td colspan="4"><hr /></td>
+        </tr>
+        <tr>
+            <td colspan="4" id="dp">
+            	$GM$
+            </td>
+        </tr>
+        <tr>
+          <td colspan="4"><hr /></td>
+        </tr>
+		<tr>
+            <td>Observaciones</td>
+            <td colspan="3"><b>$TObservaciones$</b></td>
+        </tr>
+        <tr>
+        	<td colspan="4">
+            	<table width="100%">
+                	<tr>
+                    	<td width="50%"><br/><br/><br/><hr/>Firma quien entrega<br />
+Nombres<br />Documento</td>
+                        <td><br/><br/><br/><hr/>Firma quien recibe<br />
+Nombre<br />
+Documento</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+    <ul>
+        <li><b>Dosis(mg/g):</b> Dosis a adecuar(mg/g) Corresponde a la dosis de medicamento por infusor</li>
+        <li><b>Cantidad ampollas:</b> Cantidad de ampollas entregadas</li>
+        <li><b>Volumen total(ml)</b> Volumen total (ml). Volumen final después de reconstituido el medicamento</li>
+    </ul>
+</td></tr></table>
+</td>
+</tr>
+</table>
+</body>
+</html>

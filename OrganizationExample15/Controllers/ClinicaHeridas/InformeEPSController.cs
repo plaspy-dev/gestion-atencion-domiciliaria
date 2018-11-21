@@ -135,7 +135,6 @@ FROM evolucion_herida
                         MySqlDataReader reader= conector.Query(query);
                         if (reader != null) {
                             StringBuilder htmlcompleto = new StringBuilder();
-                            Regex regx = new Regex(".*<body.*?>(?<theBody>.*)\n.*</body>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
                             while (reader.Read()) {
                                 string id = reader["id"].ToString();
@@ -152,7 +151,7 @@ FROM evolucion_herida
                                     htmlcompleto.Replace("</body>", "");
                                     htmlcompleto.Replace("</html>", "");
                                 } else {
-                                    Match match= regx.Match(html);
+                                    Match match= PDFConverter.RegexHtmlBody.Match(html);
                                     if (match.Success) {
                                         htmlcompleto.Append(match.Groups[1].Value);
                                     }

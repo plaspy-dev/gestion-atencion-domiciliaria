@@ -1,0 +1,1744 @@
+﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{94CE243A-1D52-4E38-BEBD-03908B7D6990}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OrganizationExample15</RootNamespace>
+    <AssemblyName>OrganizationExample15</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="FileHelpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\FileHelpers.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SDG.Componentes, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\SDG.Componentes.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.6\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.6\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.6\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\WebGrease.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="administrador\usuario.aspx" />
+    <Content Include="admisiones\amasivas.aspx" />
+    <Content Include="admisiones\autorizaciones.aspx" />
+    <Content Include="admisiones\confirmara.aspx" />
+    <Content Include="admisiones\consulta.aspx" />
+    <Content Include="admisiones\cumplimiento.aspx" />
+    <Content Include="admisiones\programacion.html" />
+    <Content Include="admisiones\recaudos.aspx" />
+    <Content Include="admisiones\recibos.aspx" />
+    <Content Include="archivo\archivo.aspx" />
+    <Content Include="archivo\Browser.aspx" />
+    <Content Include="archivo\consultahistoria.aspx" />
+    <Content Include="archivo\digitalizacion.aspx" />
+    <Content Include="archivo\digitalizacionc.ascx" />
+    <Content Include="archivo\dropzone.css" />
+    <Content Include="archivo\dropzone.js" />
+    <Content Include="archivo\subir.aspx" />
+    <Content Include="auditoria\autorizadovsrealizado.aspx" />
+    <Content Include="auditoria\OrganizationExample51.aspx" />
+    <Content Include="auditoria\consultacomplicaciones.aspx" />
+    <Content Include="auditoria\Costos.aspx" />
+    <Content Include="auditoria\eventoa.aspx" />
+    <Content Include="auditoria\indicadores.aspx" />
+    <Content Include="auditoria\mortalidad.aspx" />
+    <Content Include="auditoria\nuevopaciente.aspx" />
+    <Content Include="censo\censo_programacion.aspx" />
+    <Content Include="censo\Default.aspx" />
+    <Content Include="cliente\escliente.aspx" />
+    <Content Include="cliente\escliente.html" />
+    <Content Include="cliente\estadisticas.aspx" />
+    <Content Include="cliente\estadisticas2.aspx" />
+    <Content Include="cliente\listadoquejas.aspx" />
+    <Content Include="cliente\quejas.aspx" />
+    <Content Include="cliente\quejas.html" />
+    <Content Include="cliente\quejasa.html" />
+    <Content Include="clinicaheridas\casa.jpg" />
+    <Content Include="clinicaheridas\escaladolor.jpg" />
+    <Content Include="clinicaheridas\escalas\e0.jpg" />
+    <Content Include="clinicaheridas\escalas\e1.jpg" />
+    <Content Include="clinicaheridas\escalas\e10.jpg" />
+    <Content Include="clinicaheridas\escalas\e2.jpg" />
+    <Content Include="clinicaheridas\escalas\e3.jpg" />
+    <Content Include="clinicaheridas\escalas\e4.jpg" />
+    <Content Include="clinicaheridas\escalas\e5.jpg" />
+    <Content Include="clinicaheridas\escalas\e6.jpg" />
+    <Content Include="clinicaheridas\escalas\e7.jpg" />
+    <Content Include="clinicaheridas\escalas\e8.jpg" />
+    <Content Include="clinicaheridas\escalas\e9.jpg" />
+    <Content Include="clinicaheridas\escalas\escaladolor.jpg" />
+    <Content Include="control\actividad.ascx" />
+    <Content Include="control\actividad.ascx.js" />
+    <Content Include="css\ajax-loader.gif" />
+    <Content Include="css\bootstrap.css" />
+    <Content Include="css\bootstrap.min.css" />
+    <Content Include="css\estilo.css" />
+    <Content Include="css\font-awesome.css" />
+    <Content Include="css\font-awesome.min.css" />
+    <Content Include="css\fontawesome\css\font-awesome.css" />
+    <Content Include="css\fontawesome\css\font-awesome.min.css" />
+    <Content Include="css\fontawesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="css\glyphicon.css" />
+    <Content Include="css\images\calendar.gif" />
+    <Content Include="css\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="css\images\ui-bg_flat_55_fbec88_40x100.png" />
+    <Content Include="css\images\ui-bg_glass_75_d0e5f5_1x400.png" />
+    <Content Include="css\images\ui-bg_glass_85_dfeffc_1x400.png" />
+    <Content Include="css\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="css\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" />
+    <Content Include="css\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" />
+    <Content Include="css\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" />
+    <Content Include="css\images\ui-icons_217bc0_256x240.png" />
+    <Content Include="css\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="css\images\ui-icons_469bdd_256x240.png" />
+    <Content Include="css\images\ui-icons_6da8d5_256x240.png" />
+    <Content Include="css\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="css\images\ui-icons_d8e7f3_256x240.png" />
+    <Content Include="css\images\ui-icons_f9bd01_256x240.png" />
+    <Content Include="css\imprimir.css" />
+    <Content Include="css\jquery-linedtextarea.css" />
+    <Content Include="css\jquery.multiselect.css" />
+    <Content Include="css\jquery.multiselect.filter.css" />
+    <Content Include="css\notas.css" />
+    <Content Include="css\pdf.css" />
+    <Content Include="css\ui-lightness\images\calendar.gif" />
+    <Content Include="css\ui-lightness\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_flat_55_fbec88_40x100.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_glass_75_d0e5f5_1x400.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_glass_85_dfeffc_1x400.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_217bc0_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_469bdd_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_6da8d5_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_d8e7f3_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_f9bd01_256x240.png" />
+    <Content Include="css\ui-lightness\jquery-ui-1.8.13.custom.css" />
+    <Content Include="css\ui-lightness\jquery-ui-numeric-min.css" />
+    <Content Include="ctrl\historia.html" />
+    <Content Include="ctrl\history.ascx" />
+    <Content Include="ctrl\sharehistory.ascx" />
+    <Content Include="directorio.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="directorio\Default.aspx" />
+    <Content Include="equipo\devolucion.ascx" />
+    <Content Include="equipo\equipo.aspx" />
+    <Content Include="equipo\informe.aspx" />
+    <Content Include="equipo\prestamo.ascx" />
+    <Content Include="eventos\asistencia.aspx" />
+    <Content Include="eventos\Default.aspx" />
+    <Content Include="eventos\diarios.aspx" />
+    <Content Include="eventos\informes.aspx" />
+    <Content Include="eventos\nomina.aspx" />
+    <Content Include="eventos\pacientes.aspx" />
+    <Content Include="eventos\programacion.aspx" />
+    <Content Include="facturacion\cuentasmedicas.aspx" />
+    <Content Include="facturacion\factura.aspx" />
+    <Content Include="facturacion\facturacion.aspx" />
+    <Content Include="facturacion\facturacioninsumos.aspx" />
+    <Content Include="facturacion\facturactrl.ascx" />
+    <Content Include="facturacion\importacion.aspx" />
+    <Content Include="facturacion\porfacturar.aspx" />
+    <Content Include="farmacia\almacen1.sql" />
+    <Content Include="farmacia\devolucion.aspx" />
+    <Content Include="farmacia\devolucion.html" />
+    <Content Include="farmacia\entrada.aspx" />
+    <Content Include="farmacia\entrada.html" />
+    <Content Include="farmacia\estado.aspx" />
+    <Content Include="farmacia\estado.html" />
+    <Content Include="farmacia\gastos.aspx" />
+    <Content Include="farmacia\gastos.html" />
+    <Content Include="farmacia\informes.aspx" />
+    <Content Include="farmacia\kardex.html" />
+    <Content Include="farmacia\ordencompra.html" />
+    <Content Include="farmacia\ordencompracorreo.html" />
+    <Content Include="farmacia\ordendecompra.aspx" />
+    <Content Include="farmacia\ordenproducccion.aspx" />
+    <Content Include="farmacia\ordenproduccion.html" />
+    <Content Include="farmacia\ordenproduccioncorreo.html" />
+    <Content Include="farmacia\planilla.aspx" />
+    <Content Include="farmacia\planilla.html" />
+    <Content Include="farmacia\salida.aspx" />
+    <Content Include="farmacia\salida.html" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\md-fonts\css\materialdesignicons.css" />
+    <Content Include="fonts\md-fonts\css\materialdesignicons.min.css" />
+    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.svg" />
+    <Content Include="fonts\md-fonts\preview.html" />
+    <Content Include="gerencia\costos.aspx" />
+    <Content Include="gerencia\programacion.aspx" />
+    <Content Include="gestionambiental\consulta.aspx" />
+    <Content Include="gestionambiental\gestionambiental.aspx" />
+    <Content Include="Global.asax" />
+    <Content Include="images\logo.html" />
+    <Content Include="images\logo.swf" />
+    <Content Include="images\OrganizationExample16.jpg" />
+    <Content Include="images\OrganizationExample16.png" />
+    <Content Include="images\tema\favicon.ico" />
+    <Content Include="images\tema\fcl.jpg" />
+    <Content Include="images\tema\fcr.jpg" />
+    <Content Include="images\tema\fhl.jpg" />
+    <Content Include="images\tema\fhr.jpg" />
+    <Content Include="images\tema\fondo-contenido.jpg" />
+    <Content Include="images\tema\fondo-cuerpo.jpg" />
+    <Content Include="images\tema\fondo-header.jpg" />
+    <Content Include="images\tema\fondo_titulos.jpg" />
+    <Content Include="images\tema\fondo_titulo_contenido.jpg" />
+    <Content Include="images\tema\fondo_titulo_menu.jpg" />
+    <Content Include="images\tema\fondo_titulo_noticia.jpg" />
+    <Content Include="images\tema\fpl.jpg" />
+    <Content Include="images\tema\logof.jpg" />
+    <Content Include="images\tema\logop.jpg" />
+    <Content Include="images\tema\logo_peq.jpg" />
+    <Content Include="images\tema\menu-top.jpg" />
+    <Content Include="images\tema\menubg.jpg" />
+    <Content Include="images\tema\menuover.jpg" />
+    <Content Include="images\tema\menu_bg.jpg" />
+    <Content Include="images\tema\menu_bgf.jpg" />
+    <Content Include="images\tema\pie-pagf.jpg" />
+    <Content Include="images\tema\separador-contenido.jpg" />
+    <Content Include="images\tema\separador-noticias.jpg" />
+    <Content Include="images\tema\separador-tips.jpg" />
+    <Content Include="images\tema\separador.jpg" />
+    <Content Include="images\tema\tall.jpg" />
+    <Content Include="imgs\advertencia.jpg" />
+    <Content Include="imgs\agenda.gif" />
+    <Content Include="imgs\ajax-loader.gif" />
+    <Content Include="imgs\alerta.gif" />
+    <Content Include="imgs\alerta.png" />
+    <Content Include="imgs\barraSombra.png" />
+    <Content Include="imgs\bkg.jpg" />
+    <Content Include="imgs\bkgor.jpg" />
+    <Content Include="imgs\bkgor1.jpg" />
+    <Content Include="imgs\bkg_.jpg" />
+    <Content Include="imgs\bkg_or.jpg" />
+    <Content Include="imgs\bkg_or1.jpg" />
+    <Content Include="imgs\bkg__.jpg" />
+    <Content Include="imgs\blank.jpg" />
+    <Content Include="imgs\cal.gif" />
+    <Content Include="imgs\calendar.png" />
+    <Content Include="imgs\Calendario.png" />
+    <Content Include="imgs\collapse.jpg" />
+    <Content Include="imgs\edit.gif" />
+    <Content Include="imgs\eliminar.gif" />
+    <Content Include="imgs\expand.jpg" />
+    <Content Include="imgs\help.png" />
+    <Content Include="imgs\Logo.jpg" />
+    <Content Include="imgs\logo170x62.jpg" />
+    <Content Include="imgs\Logo2.jpg" />
+    <Content Include="imgs\lupa - copia.jpg" />
+    <Content Include="imgs\lupa.jpg" />
+    <Content Include="imgs\procesando.gif" />
+    <Content Include="imgs\search.png" />
+    <Content Include="imgs\ui-anim_basic_16x16.gif" />
+    <Content Include="js\angulargaleria.js" />
+    <Content Include="js\angulargridctrl.js" />
+    <Content Include="js\avance.png" />
+    <Content Include="js\bootstrap.js" />
+    <Content Include="js\bootstrap.min.js" />
+    <Content Include="js\combo.js" />
+    <Content Include="js\en.js" />
+    <Content Include="js\FixFocus.js" />
+    <Content Include="js\flecha.jpg" />
+    <Content Include="js\gridedit.js" />
+    <Content Include="js\gridlistadd.js" />
+    <Content Include="js\jquery-1.7.2.min.js" />
+    <Content Include="js\jquery-linedtextarea.js" />
+    <Content Include="js\jquery-ui-1.8.13.custom.min.js" />
+    <Content Include="js\jquery-ui-timepicker-addon.js" />
+    <Content Include="js\jquery.autonumeric.js" />
+    <Content Include="js\jquery.cookie.js" />
+    <Content Include="js\jquery.maskedinput-1.3.min.js" />
+    <Content Include="js\jquery.multiselect.filter.js" />
+    <Content Include="js\jquery.multiselect.filter.min.js" />
+    <Content Include="js\jquery.multiselect.min.js" />
+    <Content Include="js\jquery.ui.autocomplete.selectFirst.js" />
+    <Content Include="js\jquery.ui.datepicker-es.js" />
+    <Content Include="js\jquery.ui.notification.min.js" />
+    <Content Include="js\jquery.updatepanel.js" />
+    <Content Include="js\main.js" />
+    <Content Include="js\mainmvc.js" />
+    <Content Include="js\mono.js" />
+    <Content Include="js\plugins\advlist\plugin.min.js" />
+    <Content Include="js\plugins\anchor\plugin.min.js" />
+    <Content Include="js\plugins\autolink\plugin.min.js" />
+    <Content Include="js\plugins\autoresize\plugin.min.js" />
+    <Content Include="js\plugins\autosave\plugin.min.js" />
+    <Content Include="js\plugins\bbcode\plugin.min.js" />
+    <Content Include="js\plugins\charmap\plugin.min.js" />
+    <Content Include="js\plugins\code\plugin.min.js" />
+    <Content Include="js\plugins\contextmenu\plugin.min.js" />
+    <Content Include="js\plugins\directionality\plugin.min.js" />
+    <Content Include="js\plugins\emoticons\img\smiley-cool.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-cry.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-embarassed.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-foot-in-mouth.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-frown.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-innocent.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-kiss.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-laughing.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-money-mouth.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-sealed.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-smile.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-surprised.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-tongue-out.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-undecided.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-wink.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-yell.gif" />
+    <Content Include="js\plugins\emoticons\plugin.min.js" />
+    <Content Include="js\plugins\example\dialog.html" />
+    <Content Include="js\plugins\example\plugin.min.js" />
+    <Content Include="js\plugins\example_dependency\plugin.min.js" />
+    <Content Include="js\plugins\fullpage\plugin.min.js" />
+    <Content Include="js\plugins\fullscreen\plugin.min.js" />
+    <Content Include="js\plugins\hr\plugin.min.js" />
+    <Content Include="js\plugins\image\plugin.min.js" />
+    <Content Include="js\plugins\importcss\plugin.min.js" />
+    <Content Include="js\plugins\insertdatetime\plugin.min.js" />
+    <Content Include="js\plugins\layer\plugin.min.js" />
+    <Content Include="js\plugins\legacyoutput\plugin.min.js" />
+    <Content Include="js\plugins\link\plugin.min.js" />
+    <Content Include="js\plugins\lists\plugin.min.js" />
+    <Content Include="js\plugins\media\moxieplayer.swf" />
+    <Content Include="js\plugins\media\plugin.min.js" />
+    <Content Include="js\plugins\nonbreaking\plugin.min.js" />
+    <Content Include="js\plugins\noneditable\plugin.min.js" />
+    <Content Include="js\plugins\pagebreak\plugin.min.js" />
+    <Content Include="js\plugins\paste\plugin.min.js" />
+    <Content Include="js\plugins\preview\plugin.min.js" />
+    <Content Include="js\plugins\print\plugin.min.js" />
+    <Content Include="js\plugins\save\plugin.min.js" />
+    <Content Include="js\plugins\searchreplace\plugin.min.js" />
+    <Content Include="js\plugins\spellchecker\plugin.min.js" />
+    <Content Include="js\plugins\tabfocus\plugin.min.js" />
+    <Content Include="js\plugins\table\plugin.min.js" />
+    <Content Include="js\plugins\template\plugin.min.js" />
+    <Content Include="js\plugins\textcolor\plugin.min.js" />
+    <Content Include="js\plugins\visualblocks\css\visualblocks.css" />
+    <Content Include="js\plugins\visualblocks\plugin.min.js" />
+    <Content Include="js\plugins\visualchars\plugin.min.js" />
+    <Content Include="js\plugins\wordcount\plugin.min.js" />
+    <Content Include="js\skins\lightgray\content.inline.min.css" />
+    <Content Include="js\skins\lightgray\content.min.css" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.dev.svg" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.svg" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.dev.svg" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.svg" />
+    <Content Include="js\skins\lightgray\img\anchor.gif" />
+    <Content Include="js\skins\lightgray\img\loader.gif" />
+    <Content Include="js\skins\lightgray\img\object.gif" />
+    <Content Include="js\skins\lightgray\img\trans.gif" />
+    <Content Include="js\skins\lightgray\skin.ie7.min.css" />
+    <Content Include="js\skins\lightgray\skin.min.css" />
+    <Content Include="js\themes\modern\theme.min.js" />
+    <Content Include="js\tinymce.min.js" />
+    <Content Include="js\Util.js" />
+    <Content Include="js\validators.js" />
+    <Content Include="lib\angular-1.7.2\angular.js" />
+    <Content Include="lib\angular-1.7.2\angular.min.js" />
+    <Content Include="lib\autonumeric-4.1.0\autonumeric.min.js" />
+    <Content Include="lib\bloodhound\bloodhound.js" />
+    <Content Include="lib\bloodhound\bloodhound.min.js" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.css" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.min.css" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.css" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.min.css" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.css" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.min.css" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.js" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.min.js" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.js" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.min.js" />
+    <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker-standalone.css" />
+    <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.css" />
+    <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.min.css" />
+    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="lib\bootstrap-datetimepicker\js\bootstrap-datetimepicker.js" />
+    <Content Include="lib\bootstrap-datetimepicker\js\bootstrap-datetimepicker.min.js" />
+    <Content Include="lib\bootstrap-multiselect\css\bootstrap-multiselect.css" />
+    <Content Include="lib\bootstrap-multiselect\js\bootstrap-multiselect.js" />
+    <Content Include="lib\daterangepicker\daterangepicker.css" />
+    <Content Include="lib\daterangepicker\daterangepicker.js" />
+    <Content Include="lib\daterangepicker\daterangepicker.original.js" />
+    <Content Include="lib\dropzone\dropzone.css" />
+    <Content Include="lib\dropzone\dropzone.js" />
+    <Content Include="lib\jquery-3.3.1\jquery-3.3.1.min.js" />
+    <Content Include="lib\jquery-inputmask\bindings\inputmask.binding.js" />
+    <Content Include="lib\jquery-inputmask\bindings\inputmask.binding.min.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.min.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jquery.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jquery.min.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.min.js" />
+    <Content Include="lib\jquery-inputmask\global\document.js" />
+    <Content Include="lib\jquery-inputmask\global\document.min.js" />
+    <Content Include="lib\jquery-inputmask\global\window.js" />
+    <Content Include="lib\jquery-inputmask\global\window.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.date.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.date.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.numeric.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.numeric.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.phone.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.phone.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\jquery.inputmask.js" />
+    <Content Include="lib\jquery-inputmask\jquery.inputmask.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-be.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-be.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ca.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ca.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-hu.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-hu.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-it.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-it.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-mx.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-mx.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-nl.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-nl.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ru.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ru.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone.min.js" />
+    <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
+    <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
+    <Content Include="lib\jquery-validation\dist\additional-methods.js" />
+    <Content Include="lib\jquery-validation\dist\additional-methods.min.js" />
+    <Content Include="lib\jquery-validation\dist\jquery.validate.js" />
+    <Content Include="lib\jquery-validation\dist\jquery.validate.min.js" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.css" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.fa.js" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.fa.min.js" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.js" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.min.css" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.min.js" />
+    <Content Include="lib\momentjs\moment-with-locales.js" />
+    <Content Include="lib\momentjs\moment-with-locales.min.js" />
+    <Content Include="lib\momentjs\moment.js" />
+    <Content Include="lib\momentjs\moment.min.js" />
+    <Content Include="lib\popper.js\popper.js" />
+    <Content Include="lib\popper.js\popper.min.js" />
+    <Content Include="lib\toastr\toastr.css" />
+    <Content Include="lib\toastr\toastr.min.css" />
+    <Content Include="lib\toastr\toastr.min.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.bundle.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.bundle.min.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.jquery.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.jquery.min.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.jquery.mod.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.jquery.original.js" />
+    <Content Include="materna\compensar.jpg" />
+    <Content Include="materna\famisanar.jpg" />
+    <Content Include="materna\informe.aspx" />
+    <Content Include="materna\neonato.aspx" />
+    <Content Include="materna\neonato.html" />
+    <Content Include="materna\postparto.aspx" />
+    <Content Include="materna\postparto.html" />
+    <Content Include="materna\seguimiento.aspx" />
+    <Content Include="materna\seguimiento.html" />
+    <Content Include="modificaciones.ascx" />
+    <Content Include="notificacion\Default.aspx" />
+    <Content Include="paciente\atendidos.aspx" />
+    <Content Include="paciente\autorizaciones.ascx" />
+    <Content Include="paciente\autorizaciones.ascx.js" />
+    <Content Include="paciente\barthel.aspx" />
+    <Content Include="paciente\barthel.html" />
+    <Content Include="paciente\cie10list.ascx" />
+    <Content Include="paciente\detallepaciente.ascx" />
+    <Content Include="paciente\enfermeria.aspx" />
+    <Content Include="paciente\epicrisis.aspx" />
+    <Content Include="paciente\epicrisis.html" />
+    <Content Include="paciente\evolucion.aspx" />
+    <Content Include="paciente\evolucion.html" />
+    <Content Include="paciente\formatoctc.aspx" />
+    <Content Include="paciente\formatoctc.html" />
+    <Content Include="paciente\formulacion.aspx" />
+    <Content Include="paciente\formulacion.html" />
+    <Content Include="paciente\formulacion36.html" />
+    <Content Include="paciente\gastos.aspx" />
+    <Content Include="paciente\historiasclinicas.aspx" />
+    <Content Include="paciente\informemipres.aspx" />
+    <Content Include="paciente\informes.aspx" />
+    <Content Include="paciente\informulacion.aspx" />
+    <Content Include="paciente\ingreso.aspx" />
+    <Content Include="paciente\ingreso.html" />
+    <Content Include="paciente\mipres.aspx" />
+    <Content Include="paciente\mipres.html" />
+    <Content Include="paciente\paciente.aspx" />
+    <Content Include="paciente\pacienteSimple.ascx" />
+    <Content Include="paciente\pacienteSimple.ascx.js" />
+    <Content Include="paciente\paraclinico.html" />
+    <Content Include="paciente\paraclinicos.aspx" />
+    <Content Include="paciente\SeleccionarPaciente.ascx" />
+    <Content Include="paciente\valoracionat.aspx" />
+    <Content Include="paciente\valoracionat.html" />
+    <Content Include="programacion\consulta.aspx" />
+    <Content Include="programacion\novedad.ascx" />
+    <Content Include="programacion\programacion.aspx" />
+    <Content Include="programacion\programacionc.ascx" />
+    <Content Include="programacion\sinprogramar.aspx" />
+    <Content Include="rh\cumple.aspx" />
+    <Content Include="rh\Default.aspx" />
+    <Content Include="rh\documentos.aspx" />
+    <Content Include="rh\funcionario.aspx" />
+    <Content Include="rh\funcionarioc.ascx" />
+    <Content Include="rh\funcionarioSimple.ascx" />
+    <Content Include="rh\funcionarioSimple.ascx.js" />
+    <Content Include="rh\programacion.aspx" />
+    <Content Include="terapeutico\evolucion.aspx" />
+    <Content Include="terapeutico\evolucion.html" />
+    <Content Include="terapeutico\evoluciones.aspx" />
+    <Content Include="terapeutico\programadovsevoluciones.aspx" />
+    <Content Include="valoracion\enfermeria.aspx" />
+    <Content Include="valoracion\enfermeria.html" />
+    <Content Include="valoracion\sicologia.aspx" />
+    <Content Include="valoracion\sicologia.html" />
+    <Content Include="valoracion\trabajosocial.aspx" />
+    <Content Include="valoracion\trabajosocial.html" />
+    <Content Include="vehiculos\recorrido.aspx" />
+    <Content Include="vehiculos\vehiculo.aspx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="webcam\jquery.webcam.js" />
+    <Content Include="webcam\jscam.swf" />
+    <Content Include="webcam\jscam_canvas_only.swf" />
+    <Content Include="webcam\webcam.ascx" />
+    <Content Include="webservices\servicios.asmx" />
+    <Content Include="xlsx\docProps\app.xml" />
+    <Content Include="xlsx\docProps\core.xml" />
+    <Content Include="xlsx\xl\sharedStrings.xml" />
+    <Content Include="xlsx\xl\styles.xml" />
+    <Content Include="xlsx\xl\workbook.xml" />
+    <Content Include="xlsx\xl\worksheets\sheet1.xml" />
+    <Content Include="xlsx\[Content_Types].xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="administrador\usuario.aspx.cs">
+      <DependentUpon>usuario.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="administrador\usuario.aspx.designer.cs">
+      <DependentUpon>usuario.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="admisiones\amasivas.aspx.cs">
+      <DependentUpon>amasivas.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admisiones\amasivas.aspx.designer.cs">
+      <DependentUpon>amasivas.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="admisiones\autorizaciones.aspx.cs">
+      <DependentUpon>autorizaciones.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admisiones\autorizaciones.aspx.designer.cs">
+      <DependentUpon>autorizaciones.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="admisiones\confirmara.aspx.cs">
+      <DependentUpon>confirmara.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admisiones\confirmara.aspx.designer.cs">
+      <DependentUpon>confirmara.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="admisiones\consulta.aspx.cs">
+      <DependentUpon>consulta.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admisiones\consulta.aspx.designer.cs">
+      <DependentUpon>consulta.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="admisiones\cumplimiento.aspx.cs">
+      <DependentUpon>cumplimiento.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admisiones\cumplimiento.aspx.designer.cs">
+      <DependentUpon>cumplimiento.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="admisiones\recaudos.aspx.cs">
+      <DependentUpon>recaudos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admisiones\recaudos.aspx.designer.cs">
+      <DependentUpon>recaudos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="admisiones\recibos.aspx.cs">
+      <DependentUpon>recibos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admisiones\recibos.aspx.designer.cs">
+      <DependentUpon>recibos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App_Start\Alertas.cs" />
+    <Compile Include="App_Start\Almacen.cs" />
+    <Compile Include="App_Start\Archivo.cs" />
+    <Compile Include="App_Start\Autorizaciones.cs" />
+    <Compile Include="App_Start\BaseController.cs" />
+    <Compile Include="App_Start\BootgridResponseData.cs" />
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\Cache.cs" />
+    <Compile Include="App_Start\Calificacion.cs" />
+    <Compile Include="App_Start\CConector.cs" />
+    <Compile Include="App_Start\CConectorMS.cs" />
+    <Compile Include="App_Start\CConfiguracion.cs" />
+    <Compile Include="App_Start\CProductoValor.cs" />
+    <Compile Include="App_Start\CUsuario.cs" />
+    <Compile Include="App_Start\Entidad.cs" />
+    <Compile Include="App_Start\Excel.cs" />
+    <Compile Include="App_Start\Files.cs" />
+    <Compile Include="App_Start\FileStorage.cs" />
+    <Compile Include="App_Start\Funcionario.cs" />
+    <Compile Include="App_Start\GridUtil.cs" />
+    <Compile Include="App_Start\Heridas.cs" />
+    <Compile Include="App_Start\HomeCarePolicyAttribute.cs" />
+    <Compile Include="App_Start\HomeCareVersion.cs" />
+    <Compile Include="App_Start\Paciente.cs" />
+    <Compile Include="App_Start\PDFConverter.cs" />
+    <Compile Include="App_Start\Permisos.cs" />
+    <Compile Include="App_Start\Prestamo.cs" />
+    <Compile Include="App_Start\Procedimientos.cs" />
+    <Compile Include="App_Start\Producto.cs" />
+    <Compile Include="App_Start\ProductoUsado.cs" />
+    <Compile Include="App_Start\ProtectedField.cs" />
+    <Compile Include="App_Start\RenderXLSXPage.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\SerializeJSON.cs" />
+    <Compile Include="App_Start\servicios.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="App_Start\SIIGOFile.cs" />
+    <Compile Include="App_Start\Tercero.cs" />
+    <Compile Include="App_Start\Validator\DateGreaterThan.cs" />
+    <Compile Include="App_Start\Validator\DateLessThan.cs" />
+    <Compile Include="App_Start\Validator\MaxFileSize.cs" />
+    <Compile Include="App_Start\Validator\MultipleFileExtensions.cs" />
+    <Compile Include="App_Start\Validator\MethodValidator.cs" />
+    <Compile Include="App_Start\Validator\RequiredIfNot.cs" />
+    <Compile Include="App_Start\Validator\RequiredIf.cs" />
+    <Compile Include="App_Start\Varios.cs" />
+    <Compile Include="archivo\archivo.aspx.cs">
+      <DependentUpon>archivo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="archivo\archivo.aspx.designer.cs">
+      <DependentUpon>archivo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="archivo\Browser.aspx.cs">
+      <DependentUpon>Browser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="archivo\Browser.aspx.designer.cs">
+      <DependentUpon>Browser.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="archivo\consultahistoria.aspx.cs">
+      <DependentUpon>consultahistoria.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="archivo\consultahistoria.aspx.designer.cs">
+      <DependentUpon>consultahistoria.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="archivo\digitalizacion.aspx.cs">
+      <DependentUpon>digitalizacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="archivo\digitalizacion.aspx.designer.cs">
+      <DependentUpon>digitalizacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="archivo\digitalizacionc.ascx.cs">
+      <DependentUpon>digitalizacionc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="archivo\digitalizacionc.ascx.designer.cs">
+      <DependentUpon>digitalizacionc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="archivo\subir.aspx.cs">
+      <DependentUpon>subir.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="archivo\subir.aspx.designer.cs">
+      <DependentUpon>subir.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="auditoria\autorizadovsrealizado.aspx.cs">
+      <DependentUpon>autorizadovsrealizado.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="auditoria\autorizadovsrealizado.aspx.designer.cs">
+      <DependentUpon>autorizadovsrealizado.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="auditoria\OrganizationExample51.aspx.cs">
+      <DependentUpon>OrganizationExample51.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="auditoria\OrganizationExample51.aspx.designer.cs">
+      <DependentUpon>OrganizationExample51.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="auditoria\consultacomplicaciones.aspx.cs">
+      <DependentUpon>consultacomplicaciones.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="auditoria\consultacomplicaciones.aspx.designer.cs">
+      <DependentUpon>consultacomplicaciones.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="auditoria\Costos.aspx.cs">
+      <DependentUpon>Costos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="auditoria\Costos.aspx.designer.cs">
+      <DependentUpon>Costos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="auditoria\eventoa.aspx.cs">
+      <DependentUpon>eventoa.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="auditoria\eventoa.aspx.designer.cs">
+      <DependentUpon>eventoa.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="auditoria\indicadores.aspx.cs">
+      <DependentUpon>indicadores.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="auditoria\indicadores.aspx.designer.cs">
+      <DependentUpon>indicadores.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="auditoria\mortalidad.aspx.cs">
+      <DependentUpon>mortalidad.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="auditoria\mortalidad.aspx.designer.cs">
+      <DependentUpon>mortalidad.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="auditoria\nuevopaciente.aspx.cs">
+      <DependentUpon>nuevopaciente.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="auditoria\nuevopaciente.aspx.designer.cs">
+      <DependentUpon>nuevopaciente.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="censo\censo_programacion.aspx.cs">
+      <DependentUpon>censo_programacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="censo\censo_programacion.aspx.designer.cs">
+      <DependentUpon>censo_programacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="censo\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="censo\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="cliente\escliente.aspx.cs">
+      <DependentUpon>escliente.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="cliente\escliente.aspx.designer.cs">
+      <DependentUpon>escliente.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="cliente\estadisticas.aspx.cs">
+      <DependentUpon>estadisticas.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="cliente\estadisticas.aspx.designer.cs">
+      <DependentUpon>estadisticas.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="cliente\estadisticas2.aspx.cs">
+      <DependentUpon>estadisticas2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="cliente\estadisticas2.aspx.designer.cs">
+      <DependentUpon>estadisticas2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="cliente\listadoquejas.aspx.cs">
+      <DependentUpon>listadoquejas.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="cliente\listadoquejas.aspx.designer.cs">
+      <DependentUpon>listadoquejas.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="cliente\quejas.aspx.cs">
+      <DependentUpon>quejas.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="cliente\quejas.aspx.designer.cs">
+      <DependentUpon>quejas.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\Administrador\UsuariosController.cs" />
+    <Compile Include="Controllers\Administrador\TercerosController.cs" />
+    <Compile Include="Controllers\Administrador\FormulacionController.cs" />
+    <Compile Include="Controllers\Administrador\GruposController.cs" />
+    <Compile Include="Controllers\Administrador\AseguradoresController.cs" />
+    <Compile Include="Controllers\Administrador\CategoriaCensoController.cs" />
+    <Compile Include="Controllers\Administrador\CopagosController.cs" />
+    <Compile Include="Controllers\Administrador\IndicesController.cs" />
+    <Compile Include="Controllers\Administrador\EncuestaUsuarioController.cs" />
+    <Compile Include="Controllers\Administrador\Parametros2Controller.cs" />
+    <Compile Include="Controllers\Administrador\ParametrosController.cs" />
+    <Compile Include="Controllers\ClinicaHeridas\EvolucionController.cs" />
+    <Compile Include="Controllers\ClinicaHeridas\EgresosController.cs" />
+    <Compile Include="Controllers\ClinicaHeridas\ValoracionController.cs" />
+    <Compile Include="Controllers\ClinicaHeridas\InformeEPSController.cs" />
+    <Compile Include="Controllers\InicioController.cs" />
+    <Compile Include="Models\Contrasena.cs" />
+    <Compile Include="Controllers\ContrasenaController.cs" />
+    <Compile Include="Controllers\EntregaTurno\BitacoraController.cs" />
+    <Compile Include="Controllers\Files\FilesController.cs" />
+    <Compile Include="Controllers\IndexController.cs" />
+    <Compile Include="Controllers\Terapeutico\DocumentosController.cs" />
+    <Compile Include="Controllers\Terapeutico\ListadoCuentasController.cs" />
+    <Compile Include="Controllers\Terapeutico\CuentasController.cs" />
+    <Compile Include="Controllers\_LayoutController.cs" />
+    <Compile Include="control\actividad.ascx.cs">
+      <DependentUpon>actividad.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="control\actividad.ascx.designer.cs">
+      <DependentUpon>actividad.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ctrl\history.ascx.cs">
+      <DependentUpon>history.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ctrl\history.ascx.designer.cs">
+      <DependentUpon>history.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ctrl\sharehistory.ascx.cs">
+      <DependentUpon>sharehistory.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ctrl\sharehistory.ascx.designer.cs">
+      <DependentUpon>sharehistory.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="directorio\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="directorio\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="equipo\devolucion.ascx.cs">
+      <DependentUpon>devolucion.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="equipo\devolucion.ascx.designer.cs">
+      <DependentUpon>devolucion.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="equipo\equipo.aspx.cs">
+      <DependentUpon>equipo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="equipo\equipo.aspx.designer.cs">
+      <DependentUpon>equipo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="equipo\informe.aspx.cs">
+      <DependentUpon>informe.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="equipo\informe.aspx.designer.cs">
+      <DependentUpon>informe.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="equipo\prestamo.ascx.cs">
+      <DependentUpon>prestamo.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="equipo\prestamo.ascx.designer.cs">
+      <DependentUpon>prestamo.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="eventos\asistencia.aspx.cs">
+      <DependentUpon>asistencia.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="eventos\asistencia.aspx.designer.cs">
+      <DependentUpon>asistencia.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="eventos\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="eventos\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="eventos\diarios.aspx.cs">
+      <DependentUpon>diarios.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="eventos\diarios.aspx.designer.cs">
+      <DependentUpon>diarios.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="eventos\informes.aspx.cs">
+      <DependentUpon>informes.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="eventos\informes.aspx.designer.cs">
+      <DependentUpon>informes.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="eventos\nomina.aspx.cs">
+      <DependentUpon>nomina.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="eventos\nomina.aspx.designer.cs">
+      <DependentUpon>nomina.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="eventos\pacientes.aspx.cs">
+      <DependentUpon>pacientes.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="eventos\pacientes.aspx.designer.cs">
+      <DependentUpon>pacientes.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="eventos\programacion.aspx.cs">
+      <DependentUpon>programacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="eventos\programacion.aspx.designer.cs">
+      <DependentUpon>programacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="facturacion\cuentasmedicas.aspx.cs">
+      <DependentUpon>cuentasmedicas.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="facturacion\cuentasmedicas.aspx.designer.cs">
+      <DependentUpon>cuentasmedicas.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="facturacion\factura.aspx.cs">
+      <DependentUpon>factura.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="facturacion\factura.aspx.designer.cs">
+      <DependentUpon>factura.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="facturacion\facturacion.aspx.cs">
+      <DependentUpon>facturacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="facturacion\facturacion.aspx.designer.cs">
+      <DependentUpon>facturacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="facturacion\facturacioninsumos.aspx.cs">
+      <DependentUpon>facturacioninsumos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="facturacion\facturacioninsumos.aspx.designer.cs">
+      <DependentUpon>facturacioninsumos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="facturacion\facturactrl.ascx.cs">
+      <DependentUpon>facturactrl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="facturacion\facturactrl.ascx.designer.cs">
+      <DependentUpon>facturactrl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="facturacion\importacion.aspx.cs">
+      <DependentUpon>importacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="facturacion\importacion.aspx.designer.cs">
+      <DependentUpon>importacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="facturacion\porfacturar.aspx.cs">
+      <DependentUpon>porfacturar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="facturacion\porfacturar.aspx.designer.cs">
+      <DependentUpon>porfacturar.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="farmacia\devolucion.aspx.cs">
+      <DependentUpon>devolucion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="farmacia\devolucion.aspx.designer.cs">
+      <DependentUpon>devolucion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="farmacia\entrada.aspx.cs">
+      <DependentUpon>entrada.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="farmacia\entrada.aspx.designer.cs">
+      <DependentUpon>entrada.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="farmacia\estado.aspx.cs">
+      <DependentUpon>estado.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="farmacia\estado.aspx.designer.cs">
+      <DependentUpon>estado.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="farmacia\gastos.aspx.cs">
+      <DependentUpon>gastos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="farmacia\gastos.aspx.designer.cs">
+      <DependentUpon>gastos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="farmacia\informes.aspx.cs">
+      <DependentUpon>informes.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="farmacia\informes.aspx.designer.cs">
+      <DependentUpon>informes.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="farmacia\ordendecompra.aspx.cs">
+      <DependentUpon>ordendecompra.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="farmacia\ordendecompra.aspx.designer.cs">
+      <DependentUpon>ordendecompra.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="farmacia\ordenproducccion.aspx.cs">
+      <DependentUpon>ordenproducccion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="farmacia\ordenproducccion.aspx.designer.cs">
+      <DependentUpon>ordenproducccion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="farmacia\planilla.aspx.cs">
+      <DependentUpon>planilla.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="farmacia\planilla.aspx.designer.cs">
+      <DependentUpon>planilla.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="farmacia\salida.aspx.cs">
+      <DependentUpon>salida.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="farmacia\salida.aspx.designer.cs">
+      <DependentUpon>salida.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="gerencia\costos.aspx.cs">
+      <DependentUpon>costos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="gerencia\costos.aspx.designer.cs">
+      <DependentUpon>costos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="gerencia\programacion.aspx.cs">
+      <DependentUpon>programacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="gerencia\programacion.aspx.designer.cs">
+      <DependentUpon>programacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="gestionambiental\consulta.aspx.cs">
+      <DependentUpon>consulta.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="gestionambiental\consulta.aspx.designer.cs">
+      <DependentUpon>consulta.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="gestionambiental\gestionambiental.aspx.cs">
+      <DependentUpon>gestionambiental.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="gestionambiental\gestionambiental.aspx.designer.cs">
+      <DependentUpon>gestionambiental.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="MasterPage.master.cs">
+      <DependentUpon>MasterPage.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MasterPage.master.designer.cs">
+      <DependentUpon>MasterPage.master</DependentUpon>
+    </Compile>
+    <Compile Include="materna\informe.aspx.cs">
+      <DependentUpon>informe.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="materna\informe.aspx.designer.cs">
+      <DependentUpon>informe.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="materna\neonato.aspx.cs">
+      <DependentUpon>neonato.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="materna\neonato.aspx.designer.cs">
+      <DependentUpon>neonato.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="materna\postparto.aspx.cs">
+      <DependentUpon>postparto.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="materna\postparto.aspx.designer.cs">
+      <DependentUpon>postparto.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="materna\seguimiento.aspx.cs">
+      <DependentUpon>seguimiento.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="materna\seguimiento.aspx.designer.cs">
+      <DependentUpon>seguimiento.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Administrador\MUsuario.cs" />
+    <Compile Include="Models\Administrador\Tercero.cs" />
+    <Compile Include="Models\Administrador\Asegurador.cs" />
+    <Compile Include="Models\Administrador\CategoriaCenso.cs" />
+    <Compile Include="Models\Administrador\Copago.cs" />
+    <Compile Include="Models\Administrador\Grupo.cs" />
+    <Compile Include="Models\Administrador\MProcedimiento.cs" />
+    <Compile Include="Models\Administrador\Privilege.cs" />
+    <Compile Include="Models\Administrador\Parametros2.cs" />
+    <Compile Include="Models\Administrador\Varios.cs" />
+    <Compile Include="Models\CheckTextParam.cs" />
+    <Compile Include="Models\ClinicaHeridas\Egresos.cs" />
+    <Compile Include="Models\ClinicaHeridas\InfomeEPS.cs" />
+    <Compile Include="Models\ClinicaHeridas\Evolucion.cs" />
+    <Compile Include="Models\ClinicaHeridas\Valoracion.cs" />
+    <Compile Include="Models\EntregaTurno\Bitacora.cs" />
+    <Compile Include="Models\FileParam.cs" />
+    <Compile Include="Models\Galeria.cs" />
+    <Compile Include="Models\LogIn.cs" />
+    <Compile Include="Models\MPaciente.cs" />
+    <Compile Include="Models\MProcedimiento.cs" />
+    <Compile Include="Models\Shared\Historial.cs" />
+    <Compile Include="Models\Shared\Property.cs" />
+    <Compile Include="Models\terapeutico\Cuentas.cs" />
+    <Compile Include="Models\MFuncionario.cs" />
+    <Compile Include="Models\terapeutico\Documentos.cs" />
+    <Compile Include="Models\terapeutico\ListadoCuentas.cs" />
+    <Compile Include="modificaciones.ascx.cs">
+      <DependentUpon>modificaciones.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="modificaciones.ascx.designer.cs">
+      <DependentUpon>modificaciones.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="nologin.master.cs">
+      <DependentUpon>nologin.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="nologin.master.designer.cs">
+      <DependentUpon>nologin.master</DependentUpon>
+    </Compile>
+    <Compile Include="notificacion\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="notificacion\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\atendidos.aspx.cs">
+      <DependentUpon>atendidos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\atendidos.aspx.designer.cs">
+      <DependentUpon>atendidos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\autorizaciones.ascx.cs">
+      <DependentUpon>autorizaciones.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\autorizaciones.ascx.designer.cs">
+      <DependentUpon>autorizaciones.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\barthel.aspx.cs">
+      <DependentUpon>barthel.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\barthel.aspx.designer.cs">
+      <DependentUpon>barthel.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\cie10list.ascx.cs">
+      <DependentUpon>cie10list.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\cie10list.ascx.designer.cs">
+      <DependentUpon>cie10list.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\detallepaciente.ascx.cs">
+      <DependentUpon>detallepaciente.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\detallepaciente.ascx.designer.cs">
+      <DependentUpon>detallepaciente.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\enfermeria.aspx.cs">
+      <DependentUpon>enfermeria.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\enfermeria.aspx.designer.cs">
+      <DependentUpon>enfermeria.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\epicrisis.aspx.cs">
+      <DependentUpon>epicrisis.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\epicrisis.aspx.designer.cs">
+      <DependentUpon>epicrisis.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\evolucion.aspx.cs">
+      <DependentUpon>evolucion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\evolucion.aspx.designer.cs">
+      <DependentUpon>evolucion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\formatoctc.aspx.cs">
+      <DependentUpon>formatoctc.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\formatoctc.aspx.designer.cs">
+      <DependentUpon>formatoctc.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\formulacion.aspx.cs">
+      <DependentUpon>formulacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\formulacion.aspx.designer.cs">
+      <DependentUpon>formulacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\gastos.aspx.cs">
+      <DependentUpon>gastos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\gastos.aspx.designer.cs">
+      <DependentUpon>gastos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\historiasclinicas.aspx.cs">
+      <DependentUpon>historiasclinicas.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\historiasclinicas.aspx.designer.cs">
+      <DependentUpon>historiasclinicas.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\informemipres.aspx.cs">
+      <DependentUpon>informemipres.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\informemipres.aspx.designer.cs">
+      <DependentUpon>informemipres.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\informes.aspx.cs">
+      <DependentUpon>informes.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\informes.aspx.designer.cs">
+      <DependentUpon>informes.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\informulacion.aspx.cs">
+      <DependentUpon>informulacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\informulacion.aspx.designer.cs">
+      <DependentUpon>informulacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\ingreso.aspx.cs">
+      <DependentUpon>ingreso.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\ingreso.aspx.designer.cs">
+      <DependentUpon>ingreso.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\mipres.aspx.cs">
+      <DependentUpon>mipres.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\mipres.aspx.designer.cs">
+      <DependentUpon>mipres.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\paciente.aspx.cs">
+      <DependentUpon>paciente.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\paciente.aspx.designer.cs">
+      <DependentUpon>paciente.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\pacienteSimple.ascx.cs">
+      <DependentUpon>pacienteSimple.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\pacienteSimple.ascx.designer.cs">
+      <DependentUpon>pacienteSimple.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\paraclinicos.aspx.cs">
+      <DependentUpon>paraclinicos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\paraclinicos.aspx.designer.cs">
+      <DependentUpon>paraclinicos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\SeleccionarPaciente.ascx.cs">
+      <DependentUpon>SeleccionarPaciente.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\SeleccionarPaciente.ascx.designer.cs">
+      <DependentUpon>SeleccionarPaciente.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="paciente\valoracionat.aspx.cs">
+      <DependentUpon>valoracionat.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="paciente\valoracionat.aspx.designer.cs">
+      <DependentUpon>valoracionat.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="programacion\consulta.aspx.cs">
+      <DependentUpon>consulta.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="programacion\consulta.aspx.designer.cs">
+      <DependentUpon>consulta.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="programacion\novedad.ascx.cs">
+      <DependentUpon>novedad.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="programacion\novedad.ascx.designer.cs">
+      <DependentUpon>novedad.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="programacion\programacion.aspx.cs">
+      <DependentUpon>programacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="programacion\programacion.aspx.designer.cs">
+      <DependentUpon>programacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="programacion\programacionc.ascx.cs">
+      <DependentUpon>programacionc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="programacion\programacionc.ascx.designer.cs">
+      <DependentUpon>programacionc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="programacion\sinprogramar.aspx.cs">
+      <DependentUpon>sinprogramar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="programacion\sinprogramar.aspx.designer.cs">
+      <DependentUpon>sinprogramar.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="rh\cumple.aspx.cs">
+      <DependentUpon>cumple.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="rh\cumple.aspx.designer.cs">
+      <DependentUpon>cumple.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="rh\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="rh\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="rh\documentos.aspx.cs">
+      <DependentUpon>documentos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="rh\documentos.aspx.designer.cs">
+      <DependentUpon>documentos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="rh\funcionario.aspx.cs">
+      <DependentUpon>funcionario.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="rh\funcionario.aspx.designer.cs">
+      <DependentUpon>funcionario.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="rh\funcionarioc.ascx.cs">
+      <DependentUpon>funcionarioc.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="rh\funcionarioc.ascx.designer.cs">
+      <DependentUpon>funcionarioc.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="rh\funcionarioSimple.ascx.cs">
+      <DependentUpon>funcionarioSimple.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="rh\funcionarioSimple.ascx.designer.cs">
+      <DependentUpon>funcionarioSimple.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="rh\programacion.aspx.cs">
+      <DependentUpon>programacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="rh\programacion.aspx.designer.cs">
+      <DependentUpon>programacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="terapeutico\evolucion.aspx.cs">
+      <DependentUpon>evolucion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="terapeutico\evolucion.aspx.designer.cs">
+      <DependentUpon>evolucion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="terapeutico\evoluciones.aspx.cs">
+      <DependentUpon>evoluciones.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="terapeutico\evoluciones.aspx.designer.cs">
+      <DependentUpon>evoluciones.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="terapeutico\programadovsevoluciones.aspx.cs">
+      <DependentUpon>programadovsevoluciones.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="terapeutico\programadovsevoluciones.aspx.designer.cs">
+      <DependentUpon>programadovsevoluciones.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="valoracion\enfermeria.aspx.cs">
+      <DependentUpon>enfermeria.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="valoracion\enfermeria.aspx.designer.cs">
+      <DependentUpon>enfermeria.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="valoracion\sicologia.aspx.cs">
+      <DependentUpon>sicologia.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="valoracion\sicologia.aspx.designer.cs">
+      <DependentUpon>sicologia.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="valoracion\trabajosocial.aspx.cs">
+      <DependentUpon>trabajosocial.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="valoracion\trabajosocial.aspx.designer.cs">
+      <DependentUpon>trabajosocial.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="vehiculos\recorrido.aspx.cs">
+      <DependentUpon>recorrido.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="vehiculos\recorrido.aspx.designer.cs">
+      <DependentUpon>recorrido.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="vehiculos\vehiculo.aspx.cs">
+      <DependentUpon>vehiculo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="vehiculos\vehiculo.aspx.designer.cs">
+      <DependentUpon>vehiculo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="webcam\webcam.ascx.cs">
+      <DependentUpon>webcam.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="webcam\webcam.ascx.designer.cs">
+      <DependentUpon>webcam.ascx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\web.config" />
+    <Content Include="MasterPage.master" />
+    <Content Include="nologin.master" />
+    <Content Include="css\fontawesome\fonts\fontawesome-webfont.eot" />
+    <Content Include="css\fontawesome\fonts\fontawesome-webfont.ttf" />
+    <Content Include="css\fontawesome\fonts\fontawesome-webfont.woff" />
+    <Content Include="css\fontawesome\fonts\fontawesome-webfont.woff2" />
+    <Content Include="css\fontawesome\fonts\FontAwesome.otf" />
+    <Content Include="css\fontawesome\less\animated.less" />
+    <Content Include="css\fontawesome\less\bordered-pulled.less" />
+    <Content Include="css\fontawesome\less\core.less" />
+    <Content Include="css\fontawesome\less\fixed-width.less" />
+    <Content Include="css\fontawesome\less\font-awesome.less" />
+    <Content Include="css\fontawesome\less\icons.less" />
+    <Content Include="css\fontawesome\less\larger.less" />
+    <Content Include="css\fontawesome\less\list.less" />
+    <Content Include="css\fontawesome\less\mixins.less" />
+    <Content Include="css\fontawesome\less\path.less" />
+    <Content Include="css\fontawesome\less\rotated-flipped.less" />
+    <Content Include="css\fontawesome\less\stacked.less" />
+    <Content Include="css\fontawesome\less\variables.less" />
+    <Content Include="css\fontawesome\scss\font-awesome.scss" />
+    <Content Include="css\fontawesome\scss\_animated.scss" />
+    <Content Include="css\fontawesome\scss\_bordered-pulled.scss" />
+    <Content Include="css\fontawesome\scss\_core.scss" />
+    <Content Include="css\fontawesome\scss\_fixed-width.scss" />
+    <Content Include="css\fontawesome\scss\_icons.scss" />
+    <Content Include="css\fontawesome\scss\_larger.scss" />
+    <Content Include="css\fontawesome\scss\_list.scss" />
+    <Content Include="css\fontawesome\scss\_mixins.scss" />
+    <Content Include="css\fontawesome\scss\_path.scss" />
+    <Content Include="css\fontawesome\scss\_rotated-flipped.scss" />
+    <Content Include="css\fontawesome\scss\_stacked.scss" />
+    <Content Include="css\fontawesome\scss\_variables.scss" />
+    <Content Include="images\logo.fla" />
+    <Content Include="js\langs\readme.md" />
+    <Content Include="js\skins\lightgray\fonts\readme.md" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.eot" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.ttf" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.woff" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.eot" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.ttf" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.woff" />
+    <Content Include="archivo\archivo.ashx" />
+    <Content Include="archivo\firma.ashx" />
+    <Content Include="archivo\imagen.ashx" />
+    <Content Include="archivo\importarCSV.ashx" />
+    <Content Include="archivo\importarExcel.ashx" />
+    <Content Include="archivo\UploadFile.ashx" />
+    <Content Include="file\file.ashx" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.min.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.min.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.min.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.js.map" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.min.js.map" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.js.map" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.min.js.map" />
+    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="lib\bootstrap-multiselect\less\bootstrap-multiselect.less" />
+    <Content Include="lib\jquery-validation-unobtrusive\.bower.json" />
+    <Content Include="lib\jquery-validation\.bower.json" />
+    <Content Include="lib\jquery-validation\LICENSE.md" />
+    <Content Include="lib\toastr\toastr.js.map" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\md-fonts\.github\ISSUE_TEMPLATE.md" />
+    <Content Include="fonts\md-fonts\bower.json" />
+    <Content Include="fonts\md-fonts\css\materialdesignicons.css.map" />
+    <Content Include="fonts\md-fonts\css\materialdesignicons.min.css.map" />
+    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.eot" />
+    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.ttf" />
+    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.woff" />
+    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.woff2" />
+    <Content Include="fonts\md-fonts\license.md" />
+    <Content Include="fonts\md-fonts\md-fonts\materialdesignicons.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_animated.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_core.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_extras.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_functions.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_icons.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_path.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_variables.scss" />
+    <Content Include="fonts\md-fonts\package.json" />
+    <Content Include="fonts\md-fonts\README.md" />
+    <Content Include="dbupgrade.json" />
+    <Content Include="lib\dropzone\basic.scss" />
+    <Content Include="lib\dropzone\dropzone.scss" />
+    <None Include="packages.config" />
+    <Content Include="Views\_Shared\_LayoutPage.cshtml" />
+    <Content Include="Views\Terapeutico\Cuentas.cshtml" />
+    <Content Include="Views\_Shared\Funcionario.cshtml" />
+    <Content Include="Views\_Shared\Paciente.cshtml" />
+    <Content Include="Views\Terapeutico\CuentasServicio.cshtml" />
+    <Content Include="Views\_Layout\Properties.cshtml" />
+    <Content Include="Views\Terapeutico\ListadoCuentas.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\_Shared\Galeria.cshtml" />
+    <Content Include="Views\Terapeutico\Documentos.cshtml" />
+    <Content Include="Views\Terapeutico\Cuentas_Print.cshtml" />
+    <Content Include="Views\_Shared\_LayoutPagePrint.cshtml" />
+    <Content Include="Views\Administrador\Aseguradores.cshtml" />
+    <Content Include="Views\Administrador\_Aseguradores.cshtml" />
+    <Content Include="Views\Administrador\CategoriaCenso.cshtml" />
+    <Content Include="Views\Administrador\_CategoriaCenso.cshtml" />
+    <Content Include="Views\_Shared\Procedimiento.cshtml" />
+    <Content Include="Views\Administrador\Copagos.cshtml" />
+    <Content Include="Views\Administrador\Parametros.cshtml" />
+    <Content Include="Views\Administrador\_Parametros.cshtml" />
+    <Content Include="Views\Administrador\EncuestaUsuario.cshtml" />
+    <Content Include="Views\Administrador\_EncuestaUsuario.cshtml" />
+    <Content Include="Views\Administrador\Indices.cshtml" />
+    <Content Include="Views\Administrador\_Indices.cshtml" />
+    <Content Include="Views\Administrador\_Grupos.cshtml" />
+    <Content Include="Views\Administrador\Grupos.cshtml" />
+    <Content Include="Views\Administrador\Formulacion.cshtml" />
+    <Content Include="Views\Administrador\_Formulacion.cshtml" />
+    <Content Include="Views\Administrador\Parametros2.cshtml" />
+    <Content Include="Views\Administrador\_Parametros2.cshtml" />
+    <Content Include="Views\Administrador\_Terceros.cshtml" />
+    <Content Include="Views\Administrador\Terceros.cshtml" />
+    <Content Include="Views\Administrador\_Usuarios.cshtml" />
+    <Content Include="Views\Administrador\Usuarios.cshtml" />
+    <Content Include="Views\ClinicaHeridas\InformeEPS.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Valoracion.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Herida.cshtml" />
+    <Content Include="Views\_Shared\PacienteInfo.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Valoracion_Print.cshtml" />
+    <Content Include="Views\_Shared\GaleriaAngular.cshtml" />
+    <Content Include="Views\_Shared\Historial.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Evolucion.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Evolucion_Print.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Egresos.cshtml" />
+    <Content Include="Views\EntregaTurno\Bitacora.cshtml" />
+    <Content Include="Views\EntregaTurno\_Bitacora.cshtml" />
+    <Content Include="Views\Contrasena\Index.cshtml" />
+    <Content Include="Views\Inicio\Index.cshtml" />
+    <Content Include="Views\_Shared\_LayoutPage_Login.cshtml" />
+    <Content Include="Views\Index\Index.cshtml" />
+    <Content Include="Views\EntregaTurno\BitacoraPrint.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <Content Include="webcam\up.ashx" />
+    <Content Include="xlsx\xl\worksheets\_rels\sheet1.xml.rels" />
+    <Content Include="xlsx\xl\_rels\workbook.xml.rels" />
+    <Content Include="xlsx\_rels\.rels" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>10992</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:56436/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,74 @@
+﻿@model OrganizationExample15.Models.Administrador.CategoriaCenso
+@{
+    CUsuario user = ViewBag.User;
+}
+@using SDG.Componentes
+<div id="PP" style="display: none;" class="bkdlg modal fade" role="dialog">
+    <form method="post" action="@Request.Url.AbsolutePath">
+        <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">@(Model.Nombre ?? "Nueva")</h4>
+                    <a href="#" class="close" onclick="$('#PP').modal('hide'); return false;">&times;</a>
+                </div>
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.Id)
+                    <table class="table table-condensed table-sm table-striped">
+                        <tr>
+                            <td class="px">Nombre @Html.ValidationMessageFor(x => x.Nombre, "*")</td>
+                            <td>@Html.TextBoxFor(x => x.Nombre)</td>
+                            <td class="nw">Descripción</td>
+                            <td class="w100">@Html.TextBoxFor(x => x.Descripcion)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h4>Procedimientos</h4></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" ng-controller="GridList as controller">
+                                <table class="table table-sm table-striped table-bordered" ng-show="controller.list.length">
+                                    <tr ng-repeat="row in controller.list">
+                                        <td>
+                                            <a href="#" ng-click="controller.onDelete(row)" onclick="return false;" class="btn btn-xs btn-danger">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                        <td class="w100 nw">{{row.nombre}}</td>
+                                    </tr>
+                                </table>
+                                <div ng-hide="controller.list.length" class="card">
+                                    <div class="card bg-light p-2">
+                                        <p class="mb-0">Por favor agregue un procedimiento</p>
+                                    </div>
+                                </div>
+                                <div class="nw float-right">
+                                    <div class="hide">
+                                        @Html.TextBoxFor(x => x._Procedimientos, new { ng_model = "controller.result", ng_init = "controller.init('zProcedimientos')", id = "zProcedimientos", @class = "validate" })
+                                        <input type="text" id="jsonlist" ng-model="controller.json" />
+                                        <a href="#" id="listadd" ng-click="controller.onAdd()" onclick="return false;"></a>
+                                    </div>
+                                    @Html.Partial("~/Views/_Shared/Procedimiento.cshtml", new OrganizationExample15.Models.MProcedimiento(), HomeCareVersion.GetPrefixPartial("t"))
+                                    <a href="#" onclick="return onAdd()" class="btn btn-default"><i class="fa fa-plus"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                @Html.ValidationSummary()
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    @if ((user.CanInsert() && string.IsNullOrEmpty(Model.Id)) || (user.CanUpdate() && !string.IsNullOrEmpty(Model.Id)))
+                    {
+                        @Html.HiddenFor(x => x._gk)
+                        <input type="submit" value="Aceptar" class="btn btn-submit" />
+                    }
+                    <a href="#" onclick="$('#PP').modal('hide'); return false" class="btn btn-default">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>initDlg()</script>
+</div>

@@ -1,0 +1,20 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/css/imprimir.css" />
+    <meta charset="utf-8" />
+    @RenderSection("headers", false)
+</head>
+<body>
+    @RenderBody()
+    <script src="~/lib/jquery-3.3.1/jquery-3.3.1.min.js"></script>
+    <script>
+        $(function () {
+            if (!document.location.hostname || document.location.hostname == "localhost") return; if (window.print && typeof (noprint) == "undefined") { window.print(); setTimeout(function () { window.close(); }, 1); }
+        });
+    </script>
+    @RenderSection("scripts", false)
+</body>
+</html>

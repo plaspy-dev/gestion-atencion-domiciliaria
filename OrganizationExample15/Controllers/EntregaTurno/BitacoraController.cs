@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using OrganizationExample15.Models.EntregaTurno;
@@ -27,11 +29,11 @@ namespace OrganizationExample15.Controllers
 "
 , Query.GetValor(filter.Desde)
 , Query.GetValor(filter.Hasta)
-, filter.Tipo
-, filter.NovedadAdministrativa
-, filter.NovedadServicio
+, filter.Tipo ?? 0
+, filter.NovedadAdministrativa ?? 0
+, filter.NovedadServicio ?? 0
 , filter.Paciente?.Id ?? "0"
-, filter.Estado
+, filter.Estado ?? 0
 );
             if (!string.IsNullOrEmpty(searchPhrase))
             {
@@ -71,47 +73,60 @@ namespace OrganizationExample15.Controllers
             }
         }
 
+        [NonAction]
+        protected static Bitacora GetBitacora(CConector conector, string id)
+        {
+            Bitacora item = new Bitacora();
+            Query query = new Query("bitacora_turno");
+
+            query += "bitacora_turno.bitId";
+            query += "bitacora_turno.bitFecha";
+            query += "bitacora_turno.bitObservaciones";
+            query += "bitacora_turno.tpaId";
+            query += "bitacora_turno.NAdministrativa";
+            query += "bitacora_turno.NServicio";
+            query += "bitacora_turno.pacId";
+            query += "segUsuarioRegistro";
+            query += "estado";
+
+            MySqlDataReader reader = conector.Query(query.GetSelect("bitId=" + Query.GetValor(id)));
+            if (reader != null && reader.Read())
+            {
+                item.Id = reader["bitId"].ToString();
+                item.Fecha = Query.GetFromMySQLDate(reader["bitFecha"]);
+                item.Observaciones = reader["bitObservaciones"].ToString();
+                item.Tipo = reader["tpaId"] as short?;
+                item.Paciente.Id = reader["pacId"].ToString();
+                item.NovedadAdministrativa = reader["NAdministrativa"] as long?;
+                item.NovedadServicio = reader["NServicio"] as long?;
+                item.Estado = reader["estado"] as ulong?;
+                item.NombreFuncionario = reader["segUsuarioRegistro"].ToString();
+            }
+            return item;
+        }
+
         [HttpGet]
-        public ActionResult _Bitacora(string id)
+        [HomeCarePolicy("~/EntregaTurno/Bitacora", Usuario.Permisos.Print | Usuario.Permisos.Read)]
+        public ActionResult _Bitacora(string id, uint? pdf, uint? pd)
         {
             Bitacora item = new Bitacora();
 
             if (!string.IsNullOrEmpty(id))
             {
-                Query query = new Query("bitacora_turno");
                 using (CConector conector = new CConector())
                 {
-                    query += "bitacora_turno.bitId";
-                    query += "bitacora_turno.bitFecha";
-                    query += "bitacora_turno.bitObservaciones";
-                    query += "bitacora_turno.tpaId";
-                    query += "bitacora_turno.NAdministrativa";
-                    query += "bitacora_turno.NServicio";
-                    query += "bitacora_turno.pacId";
-                    query += "segUsuarioRegistro";
-                    query += "estado";
-
-                    MySqlDataReader reader = conector.Query(query.GetSelect("bitId=" + Query.GetValor(id)));
-                    if (reader != null && reader.Read())
+                    item = GetBitacora(conector, id);
+                    if (!string.IsNullOrEmpty(item.Id))
                     {
-                        item.Id = reader["bitId"].ToString();
-                        item.Fecha = Query.GetFromMySQLDate(reader["bitFecha"]);
-                        item.Observaciones = reader["bitObservaciones"].ToString();
-                        item.Tipo = reader["tpaId"] as short?;
-                        item.Paciente.Id = reader["pacId"].ToString();
-                        item.NovedadAdministrativa= reader["NAdministrativa"] as long?;
-                        item.NovedadServicio = reader["NServicio"] as long?;
-                        item.Estado= reader["estado"] as ulong?;
-                        item.NombreFuncionario= reader["segUsuarioRegistro"].ToString();
-
-                        /*CCDetallePaciente.IdPaciente = TPacienteID.Text;
-                        CCDetallePaciente.Visible = TPacienteID.Text.Length > 0;
-
-                        BMas.Visible = true;
-                        BMas.Enabled = usuario.CanInsert();
-                        BAceptar.Enabled = usuario.CanUpdate();
-
-                        ((MasterPageI)Master).SetModificacion(HBitacora.Value);*/
+                        if (pd == 1)
+                        {
+                            return View("BitacoraPrint", item);
+                        }
+                        if (pdf == 1)
+                        {
+                            PDFConverter.RenderPDF(this, "Bitácora", "BitacoraPrint", item);
+                            return new EmptyResult();
+                        }
                     }
                 }
             }
@@ -141,7 +156,6 @@ namespace OrganizationExample15.Controllers
         [HttpPost]
         public ActionResult _Bitacora(Bitacora item)
         {
-
             if (ModelState.IsValid)
             {
                 using (CConector conector = new CConector())
@@ -197,12 +211,112 @@ namespace OrganizationExample15.Controllers
             return PartialView(item);
         }
 
+        [HttpPost]
+        public ActionResult Bitacora(BitacoraFilter filter) {
+            if (ModelState.IsValid) {
+                CUsuario usuario = ViewBag.User;
+
+                string where = string.Format(@"bitacora_turno.bitFecha BETWEEN {0} AND {1}
+                AND ({2}=0 OR bitacora_turno.tpaId={2})
+                AND ({3}=0 OR bitacora_turno.NAdministrativa = {3})
+                AND ({4} = 0 OR bitacora_turno.NServicio = {4})
+                AND ({5} = 0 OR bitacora_turno.pacId = {5})
+                AND ({6}=0 OR bitacora_turno.estado={6})
+ORDER BY bitacora_turno.bitFecha"
+, Query.GetValor(filter.Desde)
+, Query.GetValor(filter.Hasta)
+, filter.Tipo ?? 0
+, filter.NovedadAdministrativa ?? 0
+, filter.NovedadServicio ?? 0
+, filter.Paciente?.Id ?? "0"
+, filter.Estado ?? 0
+);
+                Query query = new Query("bitacora_turno");
+
+                if (filter.PDF == 1 || filter.Print == 1)
+                {
+                    query["id"] = "bitacora_turno.bitId";
+                    query["pacId"] = "bitacora_turno.pacId";
+
+                    string join = @"LEFT JOIN tipo_actividad ON (tipo_actividad.tpaId=bitacora_turno.tpaId)
+                    LEFT JOIN paciente ON (paciente.pacId=bitacora_turno.pacId)
+                    LEFT JOIN varios nservicio ON (nservicio.id=bitacora_turno.NServicio)
+                    LEFT JOIN varios nadministrativa ON (nadministrativa.id=bitacora_turno.NAdministrativa)
+                    ";
+
+                    string oldPaciente = "";
+
+                    using (CConector conectorr= new CConector())
+                    using (CConector conector = new CConector())
+                    {
+                        MySqlDataReader reader = conector.Query(query.GetSelect(where, join));
+                        if (reader != null)
+                        {
+                            StringBuilder htmlcompleto = new StringBuilder();
+
+                            while (reader.Read())
+                            {
+                                string id = reader["id"].ToString();
+                                string paciente = reader["pacId"].ToString();
+                                Bitacora bitacora = GetBitacora(conectorr, id);
+                                bitacora.OmitirEncabezado = oldPaciente == paciente;
+                                oldPaciente = paciente;
+
+                                string html =  PDFConverter.RenderViewToString(ControllerContext, "BitacoraPrint", bitacora);
+                                if (htmlcompleto.Length == 0)
+                                {
+                                    htmlcompleto.Append(html);
+                                    htmlcompleto.Replace("</body>", "");
+                                    htmlcompleto.Replace("</html>", "");
+                                }
+                                else
+                                {
+                                    Match match = PDFConverter.RegexHtmlBody.Match(html);
+                                    if (match.Success)
+                                    {
+                                        htmlcompleto.Append(match.Groups[1].Value);
+                                    }
+                                }
+                            }
+                            htmlcompleto.Append("</body>");
+                            htmlcompleto.Append("</html>");
+                            return filter.Print == 1 ? Content(htmlcompleto.ToString()) : PDFConverter.RenderPDF(this, "Bitacoras", htmlcompleto.ToString());
+                        }
+                    }
+                } else { // save excel
+                    query["Fecha"] = "bitacora_turno.bitFecha";
+                    query["Tipo"] = "tipo_actividad.tpaDescripcion";
+                    query["Novedad administrativa"] = "nservicio.nombre";
+                    query["Novedad de servicio"] = "nadministrativa.nombre";
+                    query["Paciente"] = "paciente.pacNombres";
+                    query["Observaciones"] = "bitacora_turno.bitObservaciones";
+
+                    string join = @"LEFT JOIN tipo_actividad ON (tipo_actividad.tpaId=bitacora_turno.tpaId)
+                    LEFT JOIN paciente ON (paciente.pacId=bitacora_turno.pacId)
+                    LEFT JOIN varios nservicio ON (nservicio.id=bitacora_turno.NServicio)
+                    LEFT JOIN varios nadministrativa ON (nadministrativa.id=bitacora_turno.NAdministrativa)
+                    ";
+
+                    using (CConector conector = new CConector())
+                    {
+                        GridUtils.ExportExcelXLSX(Response, conector, query.GetSelect(where, join), Server.MapPath("~/xlsx/"), "Informe EPS", usuario.Nombre);
+                    }
+                }
+            }
+            return View(filter);
+        }
+
         // GET: Bitacora
         public ActionResult Bitacora()
         {
             BitacoraFilter filter = new BitacoraFilter();
             filter.Desde = Query.GetMySQLDateFormat(DateTime.Now);
             filter.Hasta = Query.GetMySQLDateFormat(DateTime.Now);
+
+            ViewBag.Excel = 1;
+            ViewBag.PDF = 1;
+            ViewBag.Print = 1;
+
             return View(filter);
         }
     }

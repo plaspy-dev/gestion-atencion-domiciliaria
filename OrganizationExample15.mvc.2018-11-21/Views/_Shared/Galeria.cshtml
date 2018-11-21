@@ -1,0 +1,71 @@
+﻿@model OrganizationExample15.Models.Galeria
+<div class="gallery">
+    @foreach (string file in Model.Files)
+    {
+        string filepath = file.StartsWith("/") ? file : Url.Content(FileStorage.GetURLPath(Model.Tipo, Model.Path, file));
+        string filename = Path.GetFileName(file).Split('?')[0];
+        <div class="gallery-item">
+            <a href="@filepath)">
+                @if (FileStorage.IsImage(filename))
+                {
+                    <img src="@FileStorage.AddParams(filepath,"mw=150&mh=150")" class="lazy img-thumbnail" />
+                }
+                else
+                {
+                    <i class="fa img-thumbnail fa-5x @FileStorage.GetIcon(file)"></i>
+                }
+            </a>
+            <div class="gallery-item-name">
+                <a href="@filepath" class="gallery-item-text">@filename</a>
+                @if (Model.CanDelete)
+                {
+                    <a href="#" class="btn btn-danger btn-xs" onclick="return removeFile(this, '@filename')"><i class="fa fa-trash"></i></a>
+                }
+            </div>
+        </div>
+    }
+    @if (Model.CanDelete)
+    {
+        @Html.HiddenFor(x => x.DeletedFiles, new { @class = "deletedfiles" })
+    }
+    @if (Model.CanUpload)
+    {
+        @Html.HiddenFor(x => x.AddedFiles, new { @class = "addedfiles" })
+        <div id="dZUpload" class="dropzone dropzone-sm">
+            <div class="dz-default dz-message">Para agregar archivos por favor seleccionelos haciendo clic sobre este mensaje o arrastrelos sobre el mensaje</div>
+        </div>
+        <script>
+        $(function () {
+            Dropzone.autoDiscover = false;
+            $(".dropzone")._dropZone({
+                url: "@Url.Content("~/Files/Upload")",
+                acceptedFiles: "@Model.FileMimeTypes",
+                params: {
+                    p: "@Model.Params"
+                },
+                addRemoveLinks: true,
+                _removedfile: function (file) {
+                    var $deletedfiles = $(".gallery").find("input.deletedfiles");
+                    var value = $deletedfiles.val() || "";
+                    value += "," + file._fileName.split("?")[0];
+                    $deletedfiles.val(value);
+
+                    var $addedfiles = $(".gallery").find("input.addedfiles");
+                    value = $addedfiles.val() || "";
+                    var files = value.split(",");
+                    var index = files.indexOf(file._fileName);
+                    if (index != -1) {
+                        files.split(index, 1);
+                        $addedfiles.val(files.join(","));
+                    }
+                }, _success: function (file, response) {
+                    var $addedfiles = $(".gallery").find("input.addedfiles");
+                    var value = $addedfiles.val() || "";
+                    value += "," + response.fileName;
+                    $addedfiles.val(value);
+                }
+            });
+        });
+        </script>
+    }
+</div>

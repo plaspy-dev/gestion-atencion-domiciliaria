@@ -1,0 +1,339 @@
+﻿@model OrganizationExample15.Models.ClinicaHeridas.Herida
+@using OrganizationExample15.Models.Administrador
+<form class="fakeform">
+    <div class="modal" tabindex="-1" role="dialog" id="mherida">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Herida</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm table-striped">
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h5>Localización</h5></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Localización @Html.ValidationMessageFor(x => x.Localizacion, "*")
+                                @Html.ValidationMessageFor(x => x.Localizacion2, "*")
+                                @Html.ValidationMessageFor(x => x.Localizacion3, "*")
+                            </td>
+                            <td colspan="3" class="nw">
+                                <table cellpadding=0 cellspacing=0 class="w100">
+                                    <tr>
+                                        <td>
+                                            @Html.DropDownListFor(x => x.Localizacion, MVarios.GetList(MVarios.Tipo.ValoracionHeridasLocalizacion).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                                        </td>
+                                        <td>
+                                            <label>
+                                                @Html.RadioButtonFor(x=>x.Localizacion2, "0") No aplica
+                                            </label>
+                                            @foreach (var info in MVarios.GetList(MVarios.Tipo.ValoracionHeridasLocalizacion2))
+                                            {
+                                            <label>
+                                                @Html.RadioButtonFor(x => x.Localizacion2, info.Id) @info.Nombre
+                                            </label>
+                                            }
+                                        </td>
+                                        <td>
+                                            <label>
+                                                @Html.RadioButtonFor(x => x.Localizacion3, "0") No aplica
+                                            </label>
+                                            @foreach (var info in MVarios.GetList(MVarios.Tipo.ValoracionHeridasLocalizacion3))
+                                            {
+                                                <label>
+                                                    @Html.RadioButtonFor(x => x.Localizacion3, info.Id) @info.Nombre
+                                                </label>
+                                            }
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ubicación especifica @Html.ValidationMessageFor(x => x.UbicacionEspecifica, "*")</td>
+                            <td>@Html.TextBoxFor(x => x.UbicacionEspecifica)</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                MI @Html.ValidationMessageFor(x => x.MiembrosInferiores, "*")
+                            </td>
+                            <td>
+                                <label>
+                                    @Html.RadioButtonFor(x => x.MiembrosInferiores, "") No aplica
+                                </label>
+                                @foreach (var info in MVarios.GetList(MVarios.Tipo.ValoracionHeridasMI))
+                                {
+                                    <label>
+                                        @Html.RadioButtonFor(x => x.MiembrosInferiores, info.Id) @info.Nombre
+                                    </label>
+                                }
+                            </td>
+                            <td>
+                                Pies @Html.ValidationMessageFor(x => x.Pies, "*")
+                            </td>
+                            <td class="nw">
+                                <label>
+                                    @Html.RadioButtonFor(x => x.Pies, "") No aplica
+                                </label>
+                                @foreach (var info in MVarios.GetList(MVarios.Tipo.ValoracionHeridasPies))
+                                {
+                                    <label>
+                                        @Html.RadioButtonFor(x => x.Pies, info.Id) @info.Nombre
+                                    </label>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h5>Etiología</h5></td>
+                        </tr>
+                        <tr>
+                            <td>Etiología @Html.ValidationMessageFor(x => x.Etiologia, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.Etiologia, new List<SelectListItem>{ new SelectListItem() { Value="0", Text="Otro" } }.Union(MVarios.GetList(MVarios.Tipo.ValoracionHeridasEtiologia).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre })), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                            <td><span class="etiologia hidet">Otro</span></td>
+                            <td>@Html.TextBoxFor(x => x.OtroEtiologia, new { @class = "etiologia hidet" })</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h5>Categoría</h5></td>
+                        </tr>
+                        <tr class="etiologiam hidet">
+                            <td colspan="4" class="text-section-title"><h6>Evolución</h6></td>
+                        </tr>
+                        <tr class="etiologiam hidet">
+                            <td>Tiempo de evolución de la úlcera</td>
+                            <td>@Html.TextBoxFor(x => x.TiempoEvolucionUlcera)</td>
+                            <td>Tejido profundo sospechoso @Html.ValidationMessageFor(x => x.TejidoProfundoSospechoso, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.TejidoProfundoSospechoso, MVarios.GetList(MVarios.Tipo.ValoracionHeridasTejidoProfundoSospechoso).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                        </tr>
+                        <tr class="etiologiam hidet">
+                            <td colspan="2"></td>
+                            <td colspan="2" id="descripciontejido"></td>
+                        </tr>
+                        <tr class="etiologiam hidet">
+                            <td>Lugar donde se originó la úlcera @Html.ValidationMessageFor(x => x.LugarOrigen, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.LugarOrigen, MVarios.GetList(MVarios.Tipo.ValoracionHeridasLugarOrigen).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                            <td><span class="hidet geriatrico">Especifique</span></td>
+                            <td>@Html.TextBoxFor(x => x.HogarGeriatrico, new { @class = "hidet geriatrico" })</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h6>Categoría</h6></td>
+                        </tr>
+                        <tr>
+                            <td>Clasificación @Html.ValidationMessageFor(x => x.Clasificacion, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.Clasificacion, MVarios.GetList(MVarios.Tipo.ValoracionHeridasClasificacion).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                            <td>
+                                Factores de riesgo determinante @Html.ValidationMessageFor(x => x.FactoresRiesgo, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.FactoresRiesgo)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h5>Medición</h5></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h6>Tamaño</h6></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Longitud @Html.ValidationMessageFor(x => x.Longitud, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x=>x.Longitud, new { @class="cms" })</td>
+                            <td>
+                                Anchura @Html.ValidationMessageFor(x => x.Anchura, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.Anchura, new { @class = "cms" })</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Profundidad @Html.ValidationMessageFor(x => x.Profundidad, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.Profundidad, new { @class = "cms" })</td>
+                            <td><label>@Html.CheckBoxFor(x => x.Tunelizacion) Tunelización</label> @Html.ValidationMessageFor(x=>x.TunelizacionParametro, "*")</td>
+                            <td>@Html.TextBoxFor(x => x.TunelizacionParametro, new { @class = "cms" })</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Cavidad @Html.ValidationMessageFor(x => x.Cavidad, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.Cavidad, new { @class = "cms" })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h6><label>@Html.CheckBoxFor(x => x.Bolsillo) Bolsillo</label></h6></td>
+                        </tr>
+                        <tr class="bolsillo hidet">
+                            <td>
+                                Profunidad @Html.ValidationMessageFor(x => x.BolsilloProfundidad, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.BolsilloProfundidad, new { @class = "cms" })</td>
+                            <td>
+                                Ubicación @Html.ValidationMessageFor(x => x.BolsilloUbicacion, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.BolsilloUbicacion, new { @class = "entero", @type = "number" })</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h5>Evaluación</h5></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h6>Lecho de la herida</h6></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Tejido necrótico @Html.ValidationMessageFor(x => x.TejidoNecrotico, "*")
+                            </td>
+                            <td colspan="3">
+                                <label>@Html.RadioButtonFor(x => x.TejidoNecrotico, "0") menor al 25%</label>
+                                <label>@Html.RadioButtonFor(x => x.TejidoNecrotico, "1") mayor al 25%</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h6>Porcentaje de tejido</h6></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Compacto @Html.ValidationMessageFor(x => x.TejidoCompacto, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.TejidoCompacto, new { @class = "porcentaje" })</td>
+                            <td>
+                                De fibrina @Html.ValidationMessageFor(x => x.TejidoFibrina, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.TejidoFibrina, new { @class = "porcentaje" })</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Epitelización @Html.ValidationMessageFor(x => x.TejidoEpitelizacion, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.TejidoEpitelizacion, new { @class = "porcentaje" })</td>
+                            <td>
+                                Esfacelo @Html.ValidationMessageFor(x => x.TejidoEsfacelo, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.TejidoEsfacelo, new { @class = "porcentaje" })</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Granulación @Html.ValidationMessageFor(x => x.TejidoGranulacion, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.TejidoGranulacion, new { @class = "porcentaje" })</td>
+                            <td>
+                                Hipergranulación @Html.ValidationMessageFor(x => x.TejidoHiperGranulacion, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.TejidoHiperGranulacion, new { @class = "porcentaje" })</td>
+                        </tr>
+                        <tr>
+                            <td class="nw">
+                                Limpio pero no granulado @Html.ValidationMessageFor(x => x.TejidoLimpioNoGranulado, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.TejidoLimpioNoGranulado, new { @class = "porcentaje" })</td>
+                            <td>
+                                Necrosis profunda @Html.ValidationMessageFor(x => x.TejidoNecrosis, "*")
+                            </td>
+                            <td>@Html.TextBoxFor(x => x.TejidoNecrosis, new { @class = "porcentaje" })</td>
+                        </tr>
+                        <tr>
+                            <td>Exposición @Html.ValidationMessageFor(x => x.TejidoExposicion, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.TejidoExposicion, MVarios.GetList(MVarios.Tipo.ValoracionHeridasTejidoExposicion).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                            <td>Total</td>
+                            <td><span id="totalporcentaje"></span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h6>Exudado</h6></td>
+                        </tr>
+                        <tr>
+                            <td>Exudado @Html.ValidationMessageFor(x => x.Exudado, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.Exudado, MVarios.GetList(MVarios.Tipo.ValoracionHeridasExudado).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                            <td>Tipo @Html.ValidationMessageFor(x => x.ExudadoTipo, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.ExudadoTipo, MVarios.GetList(MVarios.Tipo.ValoracionHeridasTipoExudado).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Piel circundante @Html.ValidationMessageFor(x => x.ExudadoPiel, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.ExudadoPiel, MVarios.GetList(MVarios.Tipo.ValoracionHeridasPielCircundante).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                            <td>Bordes de la herida @Html.ValidationMessageFor(x => x.ExudadoBordes, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.ExudadoBordes, MVarios.GetList(MVarios.Tipo.ValoracionHeridasBordesHerida).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Olor @Html.ValidationMessageFor(x => x.ExudadoOlor, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.ExudadoOlor, MVarios.GetList(MVarios.Tipo.ValoracionHeridasOlor).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                            <td>Descripción</td>
+                            <td>@Html.TextBoxFor(x => x.ExudadoDescripcion)</td>
+                        </tr>
+                        <tr>
+                            <td>Signos y síntomas @Html.ValidationMessageFor(x => x.ExudadoSignos, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.ExudadoSignos, MVarios.GetList(MVarios.Tipo.ValoracionHeridasSignosSintomas).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="nw"><label>@Html.CheckBoxFor(x => x.ExudadoComplicaciones) Complicaciones</label> @Html.ValidationMessageFor(x=>x.ExudadodComplicacionesParametro, "*")</td>
+                            <td>@Html.TextBoxFor(x => x.ExudadodComplicacionesParametro)</td>
+                            <td>Clasificación @Html.ValidationMessageFor(x => x.ExudadoClasificacion, "*")</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.ExudadoClasificacion, MVarios.GetList(MVarios.Tipo.ValoracionHeridasClasificacionExudado).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                        </tr>
+                        @if (Model.Evolucion)
+                        {
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h5>Cambios locales de herida</h5></td>
+                        </tr>
+                        <tr>
+                            <td>@Html.HiddenFor(x=>x.Evolucion)Tipo</td>
+                            <td>
+                                @Html.DropDownListFor(x => x.ExudadoClasificacion, MVarios.GetList(MVarios.Tipo.EvolucionManejoHeridasTipoCambioLocal).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguno)", new { @class = "amc" })
+                            </td>
+                            <td class="nw">Signos de infección</td>
+                            <td>@Html.TextBoxFor(x=>x.SignoInfeccion)</td>
+                        </tr>
+                        }
+                        <tr>
+                            <td colspan="4" class="text-section-title" id="registrofotografico"><h5>Registro fotográfico</h5></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                @Html.Partial("~/Views/_Shared/GaleriaAngular.cshtml", Model?.Galeria, HomeCareVersion.GetPrefixPartial("Galeria"))
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">@Html.ValidationSummary()</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    @if (Model.ShowOK)
+                    {
+                        @Html.HiddenFor(x => x.Id)
+                        <input type="hidden" name="_aid" />
+                        <button type="submit" class="btn btn-submit">Aceptar</button>
+                    }
+                    <a href="#" class="btn btn-default" data-dismiss="modal">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,27 @@
+﻿@model OrganizationExample15.Models.MPacienteSimple
+@{
+    string id = Guid.NewGuid().ToString();
+}
+@Html.TextBoxFor(x => x.Nombre, new { @class = "_mpaciente", placeholder = "Buscar", id= id })
+@Html.TextBoxFor(x => x.Id, new { @class = "_mhpaciente hidet validate", id= "h" + id })
+@if (Model.ShowLabel) {
+    <span class="_mspaciente">@Model.Nombre</span>
+}
+@if (Model.Required)
+{
+    @Html.HiddenFor(x => x.Required)
+    @Html.ValidationMessageFor(x => x.Nombre, "*")
+    @Html.ValidationMessageFor(x => x.Id, "*")
+}
+<script>
+    $(function () {
+        var options = $.extend({
+            queryURL: rootPath + "webservices/servicios.asmx/GetPacienteI",
+            controlDataId: "@string.Format("h{0}", id)",
+            displayName: "item",
+            data: { e: '@Model.Entidades' },
+            idField: "value"
+        }, window._mpacienteoptions || {});
+        $("#@id").THAutoComplete(options);
+    });
+</script>

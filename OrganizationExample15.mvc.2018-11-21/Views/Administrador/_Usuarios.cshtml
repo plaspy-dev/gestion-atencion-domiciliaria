@@ -1,0 +1,87 @@
+﻿@model OrganizationExample15.Models.Administrador.HSUsuario
+@{
+    CUsuario user = ViewBag.User;
+}
+@using SDG.Componentes
+@using OrganizationExample15.Models.Administrador
+<div id="PP" style="display: none;" class="bkdlg modal fade" role="dialog">
+    <form method="post" action="@Request.Url.AbsolutePath">
+        <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">@(Model.Usuario ?? "Nuevo")</h4>
+                    <a href="#" class="close" onclick="$('#PP').modal('hide'); return false;">&times;</a>
+                </div>
+                <div class="modal-body">
+                    @Html.HiddenFor(x=>x.Id)
+                    <table class="table table-condensed table-sm table-striped">
+                        <tr>
+                            <td>Usuario @Html.ValidationMessageFor(x => x.Usuario, "*")</td>
+                            <td>@Html.TextBoxFor(x => x.Usuario)</td>
+                            <td class="px">Nombre @Html.ValidationMessage("nombre", "*")</td>
+                            <td class="w100">@Html.Partial("~/Views/_Shared/Funcionario.cshtml", Model?.Funcionario, HomeCareVersion.GetPrefixPartial("Funcionario"))</td>
+                        </tr>
+                        <tr>
+                            <td>Grupo @Html.ValidationMessageFor(x => x.Grupo, "*")</td>
+                            <td>@Html.DropDownListFor(x => x.Grupo, OrganizationExample15.Models.Administrador.Grupo.GetList().Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), "(Ninguno)", new { @class = "amc" })</td>
+                            <td class="nw">Cargos a programar</td>
+                            <td>@Html.ListBoxFor(x => x.Cargos, Parametro2.GetList(Parametro2.Tipo.PersonalCargos).Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), new { @class = "msl" })</td>
+                        </tr>
+                        <tr>
+                            <td class="nw">Contraseña @Html.ValidationMessageFor(x => x.Contrasena, "*")</td>
+                            <td>@Html.PasswordFor(x => x.Contrasena)</td>
+                            <td class="nw">Confirmar @Html.ValidationMessageFor(x => x.Confirmar, "*")</td>
+                            <td>@Html.PasswordFor(x => x.Confirmar)</td>
+                        </tr>
+                        <tr>
+                            <td>Entidades</td>
+                            <td>@Html.ListBoxFor(x => x.Entidades, Asegurador.GetList().Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), new { @class = "msl" })</td>
+                            <td>Alertas</td>
+                            <td>@Html.ListBoxFor(x => x.Alertas, Alertas.GetAlertas().Select(x => new SelectListItem() { Text = x.Nombre, Value = x.Id }), new { @class = "msl" })</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="3">
+                                <div>@Html.CheckBoxFor(x => x.CambioContrasena) @Html.LabelFor(x => x.CambioContrasena, "El usuario debe cambiar la contraseña en el proximo inicio de sesión")</div>
+                                <div>@Html.CheckBoxFor(x => x.Cumpleanos) @Html.LabelFor(x => x.Cumpleanos, "Informar cumpleaños")</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                @Html.ValidationSummary()
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    @if ((user.CanInsert() && string.IsNullOrEmpty(Model.Id)) || (user.CanUpdate() && !string.IsNullOrEmpty(Model.Id)))
+                    {
+                        @Html.HiddenFor(x=>x._gk)
+                        <input type="submit" value="Aceptar" class="btn btn-submit" />
+                    }
+                    <a href="#" onclick="$('#PP').modal('hide'); return false" class="btn btn-default">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>
+        $(function () {
+            $(".msl").multiselect({
+                enableClickableOptGroups: true,
+                enableCollapsibleOptGroups: true,
+                enableFiltering: true,
+                includeSelectAllOption: true,
+                nonSelectedText: "(Ninguno)",
+                nSelectedText: " seleccionados",
+                allSelectedText: "(Todos)",
+                resetText: "Borrar",
+                filterPlaceholder: "Filtrar",
+                selectAllText: "Seleccionar todo",
+                enableCaseInsensitiveFiltering: true,
+                numberDisplayed: 1,
+                maxHeight: 450
+            });
+        });
+    </script>
+</div>

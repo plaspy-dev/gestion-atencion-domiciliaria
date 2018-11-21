@@ -1,0 +1,142 @@
+﻿@model OrganizationExample15.Models.Contrasena
+@{
+    ViewBag.Title = "Contraeña";
+    Layout = "~/Views/_Shared/_LayoutPage.cshtml";
+    CUsuario user = ViewBag.User;
+}
+@section headers {
+    <style type="text/css">
+        #pswd_info {
+            padding: 5px;
+            background: #fefefe;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px #ccc;
+            border: 1px solid #ddd;
+        }
+
+            #pswd_info h4 {
+                margin: 0 0 10px 0;
+                padding: 0;
+                font-weight: normal;
+                font-family: Verdana, Arial, Helvetica, sans-serif;
+                font-size: 12px;
+            }
+
+        .invalid {
+            color: #ec3f41;
+        }
+
+        .valid {
+            color: #3a7d34;
+        }
+    </style>
+}
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("form").catchEnter();
+            $("#CurrentPassword").focus();
+        $("#Password").keyup(function() {
+            var pswd = $(this).val();
+            //validate the length
+            if (pswd.length < 8) {
+                $('#length').removeClass('valid').addClass('invalid');
+            } else {
+                $('#length').removeClass('invalid').addClass('valid');
+            }
+            //validate letter
+            if (pswd.match(/[a-z]/)) {
+                $('#letter').removeClass('invalid').addClass('valid');
+            } else {
+                $('#letter').removeClass('valid').addClass('invalid');
+            }
+
+            //validate capital letter
+            if (pswd.match(/[A-Z]/)) {
+                $('#capital').removeClass('invalid').addClass('valid');
+            } else {
+                $('#capital').removeClass('valid').addClass('invalid');
+            }
+            //validate number
+            if (pswd.match(/[0-9]/)) {
+                $('#number').removeClass('invalid').addClass('valid');
+            } else {
+                $('#number').removeClass('valid').addClass('invalid');
+            }
+            });
+        @if (Request.QueryString["sp"] == "1") {
+            @Html.Raw(string.Format("toastr.success({0})", SDG.Componentes.Query.GetValor("Contraseña cambiada exitosamente")));
+        }
+    });
+    </script>
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    if (!string.IsNullOrEmpty(user.ForceURL))
+    {
+        <div class="card card-body bg-light">
+            <div class="card-block">
+                Su contraseña ha expirado
+            </div>
+        </div>
+    }
+    if (Request.QueryString["sp"] == "1")
+    {
+        <div class="card card-body bg-light">
+            <div class="card-block">
+                Contraseña cambiada exitosamente
+            </div>
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-condensed table-sm table-striped">
+                <tr>
+                    <td>
+                        Actual @Html.ValidationMessageFor(x => x.CurrentPassword, "*")
+                    </td>
+                    <td>
+                        @Html.PasswordFor(x => x.CurrentPassword)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Nueva @Html.ValidationMessageFor(x => x.Password, "*")
+                    </td>
+                    <td>
+                        @Html.PasswordFor(x => x.Password)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Confirmar @Html.ValidationMessageFor(x => x.ConfirmPassword, "*")
+                    </td>
+                    <td>
+                        @Html.PasswordFor(x => x.ConfirmPassword)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">@Html.ValidationSummary()</td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="right">
+                        <button class="btn btn-submit">Cambiar</button>
+                        <a class="btn btn-default" href="~/Contrasena">Cancelar</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <div id="pswd_info">
+                <h4 style="white-space:nowrap;">La contraseña debe cumplir los siguientes requerimientos:</h4>
+                <ul>
+                    <li id="letter" class="invalid">Al menos <strong>1 letra minúscula</strong></li>
+                    <li id="capital" class="invalid">Al menos <strong>1 letra mayúscula</strong></li>
+                    <li id="number" class="invalid">Al menos <strong>1 número</strong></li>
+                    <li id="length" class="invalid">Al menos <strong>8 carácteres</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+}

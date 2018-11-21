@@ -1,0 +1,177 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<link href="~/css/imprimir.css" type="text/css" rel="stylesheet" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Seguimiento domiciliario postparto</title>
+<style type="text/css">
+	body {
+	font-size: 12px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	}
+	.fr {
+		float:right;
+	}
+	.insp {
+		white-space: nowrap;
+		display: inline-block;
+		padding-right: 20px;
+	}
+	.pl50 {
+		padding-left: 50px;
+	}
+	.pr50 {
+		padding-right: 50px;
+	}
+	#GAObstetrica,	#GRLaboratorio, #GREcografias, #GCDiagnostico { margin: 0 auto;}
+</style>
+</head>
+<body>
+<img src="~/materna/famisanar.jpg" alt="logo" style="margin-left: 30px; position: absolute; width: 150px" />
+<div class="tc">
+  <h3>SEGUIMIENTO DOMICILIARIO POSTPARTO</h3></div>
+<div class="tda">
+<div class="tc"><h4>1. DATOS PERSONALES</h4></div>
+<div class="tr">1.11 FECHA: $TFecha$</div>
+</div>
+<div class="tda">
+<table style="width: 100%">
+	<tr>
+    	<td>1.1 NOMBRES</td>
+        <td colspan="2">$LNombres$</td>
+        <td>1.2 APELLIDOS</td>
+        <td colspan="2">$LApellidos$</td>
+    </tr>
+    <tr>
+    	<td>1.3 TIPO DE DOCUMENTO</td>
+        <td>$TipoDoc$</td>
+        <td>1.4 N°:</td>
+        <td>$LDocumento$</td>
+        <td>1.5 IPS PRIMARIA:</td>
+        <td>$TIPS$</td>
+    </tr>
+    <tr>
+      <td>1.6 TIPO DE AFILIACION</td>
+      <td>$LTipoPago$</td>
+      <td>1.7 EDAD</td>
+      <td>$LEdad$</td>
+      <td>1.8 TELEFONOS</td>
+      <td>$LTelefono$ LMovil</td>
+    </tr>
+    <tr>
+      <td>1.9 DIRECCION DE RESIDENCIA</td>
+      <td colspan="3">$LDireccion$</td>
+      <td>1.10 NIVEL DE ESCOLARIDAD</td>
+      <td>$TEscolaridad$</td>
+    </tr>
+</table>
+</div>
+<br/>
+<table width="100%">
+<tr>
+	<td class="tda" style="width:50%; vertical-align: top">
+    	<div class="tc"><h4>2. MOTIVO DE CONSULTA Y ENFERMEDAD ACTUAL</h4></div>
+        $grid2$
+    </td>
+    <td class="tda" style="vertical-align: top">
+	    <div class="tc"><h4>3.FACTORES DE RIESGO PSICOSOCIAL</h4></div>
+        $grid3$
+    </td>
+</tr>
+</table>
+<br/>
+<div class="tda">
+	<div class="tc"><h4>4. ANTECEDENTES PARA EL EMBARAZO</h4></div>
+    $gantecedentes$
+</div>
+<br/>
+<div class="tda">
+	<div class="tc"><h4>5. FORMULA OBSTETRICA</h4></div>
+    $GAObstetrica$
+</div>
+<br/>
+<div class="tda">
+	<div class="tc"><h4>6. REVISION POR SISTEMAS</h4></div>
+    $grevision$<br/>
+</div>
+<br/>
+<div class="tda">
+	<div class="tc"><h4>7. RESULTADOS DE LABORATORIOS</h4></div>
+    $TLaboratorio$
+</div>
+<br/>
+<div class="tda">
+	<div class="tc"><h4>8. EXAMEN FISICO</h4></div>
+    $gexamenfisico$
+    <br/>8.12 CARDIOPULMONAR: $TCardioPulmonar$
+   	<br>
+	<b>SENOS</b> $gsenos$
+   	<br/><b>ABDOMEN</b> $gabdomen$
+    <br/>8.17 OBSERVACIONES: $TAbdomen$
+    <br/><b>MIEMBROS INFERIORES</b>$gmiembrosinferiores$
+</div>
+<br/>
+<div class="tda">
+	<div class="tc"><h4>9. DIAGNOSTICO</h4></div>
+    $GCDiagnostico$
+	<br/>9.3 RESULTADO PERINATAL $TRPerinatal$
+    <br/>9.3.1 VIVO <b>$RVivo$</b> 9.3.2 MUERTO <b>$RMuerto$</b> 9.3.3 EN CASA <b>$RCasa$</b> 9.3.4 HOSPITALIZADO <b>$RHospitalizado$</b> 9.3.5 PESO AL NACER <b>$TPeso$</b>
+    <br/>9.3 PATOLOGIA(S) ASOCIADAS (Al egreso): $TPatologiasEgreso$
+    <br/>9.4 PATOLOGIAS IDENTIFICADAS (En la visita): $TPatologiaVisita$
+</div>
+<br/>
+<div class="tda">
+	<div class="tc"><h4>10. PLAN DE MANEJO</h4></div>
+    $gplandemanejo$
+</div>
+<br/>
+<div class="tda">
+	<div class="tc"><h4>11. OBSERVACIONES GENERALES DE LA VISITA</h4></div>
+    $TObservacionesGenerales$
+</div>
+<br/>
+<div class="tda">
+	<div class="tc"><h4>12 . VALORACION DEL RIESGO</h4></div>
+    12.1 VALORACION DEL RIESGO: $RRiesgo$
+</div>
+<br/>
+<div class="tda">
+	<div class="tc"><h4>13. INTERCONSULTAS</h4></div>
+    $ginterconsultas$
+    <br/>
+    <p class="tc">
+    "Estoy de acuerdo y he sido informada acerca de esta visita domiciliaria que recibí, no reemplaza ninguna de mis obligaciones que tengo de asistir a las citas medicas programadas o examenes complementarios"</p>
+    <table style="width: 100%">
+    	<tr>
+        	<td style="width: 50%;" class="tc pl50 pr50">
+            </td>
+            <td class="tc pl50 pr50">
+            <br/>
+            <img src="~/Image/firmas/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><img src="~/Image/sellos/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" />
+            <hr/>
+            FIRMA MEDICO
+            </td>
+        </tr>
+        <tr>
+        	<td class="pl50 pr50">
+            </td>
+            <td class="pl50 pr50">
+            	<table style="width: 100%">
+                	<tr>
+                    	<td style="width: 1px">Nombre:</td>
+			            <td class="tdb">$FuncionarioNombre$</td>
+                    </tr>
+                    <tr>
+                    	<td>RM</td>
+                        <td>$FuncionarioDocumento$</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

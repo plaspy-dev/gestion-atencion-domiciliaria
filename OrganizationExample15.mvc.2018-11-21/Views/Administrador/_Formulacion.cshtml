@@ -1,0 +1,139 @@
+﻿@model OrganizationExample15.Models.Administrador.MProcedimiento
+@{
+    CUsuario user = ViewBag.User;
+}
+@using SDG.Componentes
+@using OrganizationExample15.Models.Administrador
+<div id="PP" style="display: none;" class="bkdlg modal fade" role="dialog">
+    <form method="post" action="@Request.Url.AbsolutePath">
+        <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">@(Model.Nombre ?? "Nuevo")</h4>
+                    <a href="#" class="close" onclick="$('#PP').modal('hide'); return false;">&times;</a>
+                </div>
+                <div class="modal-body">
+                    @Html.HiddenFor(x => x.Id)
+                    <table class="table table-condensed table-sm table-striped">
+                        <tr>
+                            <td class="px">Código @Html.ValidationMessageFor(x => x.Codigo, "*")</td>
+                            <td>@Html.TextBoxFor(x => x.Codigo)</td>
+                            <td>Nombre @Html.ValidationMessageFor(x => x.Nombre, "*")</td>
+                            <td class="w100">@Html.TextBoxFor(x => x.Nombre)</td>
+                        </tr>
+                        <tr>
+                            <td class="nw">Principio activo</td>
+                            <td>@Html.TextBoxFor(x => x.PrincipioActivo)</td>
+                            <td>Forma</td>
+                            <td>@Html.TextBoxFor(x => x.Forma)</td>
+                        </tr>
+                        <tr>
+                            <td>Concentración</td>
+                            <td>@Html.TextBoxFor(x => x.Concentracion)</td>
+                            <td>Aclaración</td>
+                            <td>@Html.TextBoxFor(x => x.Aclaracion)</td>
+                        </tr>
+                        <tr>
+                            <td>Área</td>
+                            <td>@Html.DropDownListFor(x => x.Area, MVarios.GetList(MVarios.Tipo.FormulacionArea).Select(x => new SelectListItem() { Value = x.Id, Text = x.Nombre }), "(Ninguna)", new { @class = "amc" })</td>
+                            <td>Tipo servicio</td>
+                            <td>@Html.DropDownListFor(x => x.TipoServicio, ((Procedimientos.TipoServicio[])Enum.GetValues(typeof(Procedimientos.TipoServicio))).Select(x => new SelectListItem() { Value = ((int)x).ToString(), Text = OrganizationExample15.Cache.GetEnumDescription<Procedimientos.TipoServicio>(x) }), new { @class = "amc" })</td>
+                        </tr>
+                        <tr>
+                            <td>Cargos</td>
+                            <td colspan="3">@Html.ListBoxFor(x => x.Areas, ViewBag._Cargos as List<SelectListItem>, new { @class = "msl" })</td>
+                        </tr>
+                        <tr>
+                            <td>Precio</td>
+                            <td>@Html.TextBoxFor(x => x.Precio, new { @class="dinero" })</td>
+                            <td class="nw">Precio regulado</td>
+                            <td>@Html.TextBoxFor(x => x.PrecioRegulado, new { @class = "dinero" })</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h5>SIIGO</h5></td>
+                        </tr>
+                        <tr>
+                            <td>Código</td>
+                            <td>@Html.TextBoxFor(x => x.CodigoSIIGO)</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="nw">Cuenta inventario</td>
+                            <td>@Html.TextBoxFor(x => x.CuentaInventario)</td>
+                            <td>Cuenta costo</td>
+                            <td>@Html.TextBoxFor(x => x.CuentaCosto)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-section-title"><h5><a href="#" data-toggle="collapse" data-target="#tcostos" aria-expanded="false">Costos por proveedor</a></h5></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <div id="tcostos" class="collapse">
+                                    <table class="table table-sm table-bordered table-hover table-striped table-bootgrid">
+                                        <thead>
+                                            <tr>
+                                                <th>Identificación</th>
+                                                <th>Nombre</th>
+                                                <th>Costo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.Costos.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>@Html.HiddenFor(x => x.Costos[i].Proveedor) @Model.Costos[i].Identificacion</td>
+                                                    <td class="w100">@Model.Costos[i].Nombre</td>
+                                                    <td class="r">@Html.TextBoxFor(x => x.Costos[i].Costo, new { @class = "dinero" })</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                @Html.ValidationSummary()
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    @if ((user.CanInsert() && string.IsNullOrEmpty(Model.Id)) || (user.CanUpdate() && !string.IsNullOrEmpty(Model.Id)))
+                    {
+                        @Html.HiddenFor(x => x._gk)
+                        <input type="submit" value="Aceptar" class="btn btn-submit" />
+                    }
+                    <a href="#" onclick="$('#PP').modal('hide'); return false" class="btn btn-default">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>
+        $(function () {
+            $(".msl").multiselect({
+                enableClickableOptGroups: true,
+                enableCollapsibleOptGroups: true,
+                enableFiltering: true,
+                includeSelectAllOption: true,
+                nonSelectedText: "(Ninguno)",
+                nSelectedText: " seleccionados",
+                allSelectedText: "(Todos)",
+                resetText: "Borrar",
+                filterPlaceholder: "Filtrar",
+                selectAllText: "Seleccionar todo",
+                enableCaseInsensitiveFiltering: true,
+                numberDisplayed: 1,
+                maxHeight: 450
+            });
+            AutoNumeric.multiple(".dinero", {
+                currencySymbol: "$",
+                minimumValue: "0",
+                decimalPlaces: 0
+            });
+        });
+    </script>
+</div>
+

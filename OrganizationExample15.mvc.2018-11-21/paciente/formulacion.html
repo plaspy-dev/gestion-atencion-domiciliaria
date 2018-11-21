@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/imprimir.css" type="text/css" rel="stylesheet" />
+<title>Orden médica</title>
+<style type="text/css">
+	body {
+		font-size: 10px;
+		margin-left: 0px;
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+	}
+	.contenedor {
+    	width: 100%; 
+	}
+	.contenedor .alto {
+		height: 14cm;
+	}
+</style>
+</head>
+<body>
+<div style="page-break-after: always" class="contenedor">
+<table class="contenedor">
+	<tr class="alto">
+    	<td valign="top">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td colspan="5"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td><img src="../imgs/Logo.jpg" width="170" height="60" alt="logo" /></td>
+        <td valign="bottom"><strong>ORDEN M&Eacute;DICA</strong></td>
+        <td align="right" valign="middle"><strong>OrganizationExample15 SAS</strong><br />
+          NIT. 000.000.015-0<br />
+          Dirección de demostración<br />
+000 000 0101</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td colspan="5">
+    <fieldset>
+    	<strong>
+    	<legend>Información paciente</legend>
+    	</strong>
+        <table width="100%" cellpadding="0" cellspacing="0">
+        	<tr>
+    <td>Documento</td>
+    <td><strong>$TPaciente$</strong></td>
+    <td>Nombre</td>
+    <td nowrap="nowrap"><strong>$LPaciente$</strong></td>
+  </tr>
+  <tr>
+    <td>Nacimiento</td>
+    <td class="nw">$LFechaNacimiento$ <span style="float: right">$LEdad$</span></td>
+    <td>Sexo</td>
+    <td>$LSexo$ </td>
+  </tr>
+  <tr>
+    <td>Asegurador</td>
+    <td>$LAsegurador$</td>
+    <td>Tipo de Afiliaci&oacute;n</td>
+    <td>$szTipoAfiliacion$</td>
+  </tr>
+  <tr>
+    <td>Fecha </td>
+    <td>$TFecha$</td>
+    <td>Categoria</td>
+    <td>$szCategoria$</td>
+  </tr>
+    <tr>
+    <td colspan="4">$LCIE10$</td>
+  </tr>
+        </table>
+    </fieldset>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="5">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="5"><table width="100%" border="1" cellspacing="0">
+      <tr>
+        <td align="center"><strong>Medicamento</strong></td>
+        <td align="center"><strong>Cantidad</strong></td>
+        <td align="center"><strong>$szPosologia$</strong></td>
+        $GFormulacionHeader$      </tr>
+      $szFormulacion$
+    </table></td>
+  </tr>
+  <tr>
+    <td colspan="5" align="right">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="5">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="4" align="right" valign="bottom" nowrap="nowrap">Vigencia de 72 horas a partir de la fecha de expedici&oacute;n. </td>
+    <td align="right"><img src="~/Image/firmas/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><img src="~/Image/sellos/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><br />______________________________<br/>
+      $szMedico$<br />
+Registro médico $szProfesional$ <br />
+Medico General<br /></td>
+  </tr>
+</table>
+</td>
+</tr>
+<tr>
+    	<td valign="top">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td colspan="5"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td><img src="../imgs/Logo.jpg" width="170" height="60" alt="logo" /></td>
+        <td valign="bottom"><strong>ORDEN M&Eacute;DICA</strong></td>
+        <td align="right" valign="middle"><strong>OrganizationExample15 SAS</strong><br />
+          NIT. 000.000.015-0<br />
+          Dirección de demostración<br />
+000 000 0101</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td colspan="5">
+    <fieldset>
+    	<strong>
+    	<legend>Información paciente</legend>
+    	</strong>
+        <table width="100%" cellpadding="0" cellspacing="0">
+        	<tr>
+    <td>Documento</td>
+    <td><strong>$TPaciente$</strong></td>
+    <td>Nombre</td>
+    <td nowrap="nowrap"><strong>$LPaciente$</strong></td>
+  </tr>
+  <tr>
+    <td>Nacimiento</td>
+    <td class="nw">$LFechaNacimiento$ <span style="float: right">$LEdad$</span></td>
+    <td>Sexo</td>
+    <td>$LSexo$ </td>
+  </tr>
+  <tr>
+    <td>Asegurador</td>
+    <td>$LAsegurador$</td>
+    <td>Tipo de Afiliaci&oacute;n</td>
+    <td>$szTipoAfiliacion$</td>
+  </tr>
+  <tr>
+    <td>Fecha </td>
+    <td>$TFecha$</td>
+    <td>Categoria</td>
+    <td>$szCategoria$</td>
+  </tr>
+    <tr>
+    <td colspan="4">$LCIE10$</td>
+  </tr>
+        </table>
+    </fieldset>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="5">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="5"><table width="100%" border="1" cellspacing="0">
+      <tr>
+        <td align="center"><strong>Medicamento</strong></td>
+        <td align="center"><strong>Cantidad</strong></td>
+        <td align="center"><strong>$szPosologia$</strong></td>
+        $GFormulacionHeader$      </tr>
+      $szFormulacion$
+    </table></td>
+  </tr>
+  <tr>
+    <td colspan="5" align="right">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="5">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="4" align="right" valign="bottom" nowrap="nowrap">Vigencia de 72 horas a partir de la fecha de expedici&oacute;n. </td>
+    <td align="right"><img src="~/Image/firmas/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><img src="~/Image/sellos/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><br />______________________________<br/>
+      $szMedico$<br />
+Registro médico $szProfesional$ <br />
+Medico General<br /></td>
+  </tr>
+</table>
+</td>
+</tr>
+</table>
+</div>
+</body>
+</html>
