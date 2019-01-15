@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Informe EPS" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="informeeps.aspx.cs" Inherits="clinicaheridas_informeeps" %>
+﻿<%@ Page Title="Informe EPS" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="clinicaheridas_informeeps" Codebehind="informeeps.aspx.cs" %>
 <%@ Register src="~/paciente/detallepaciente.ascx" tagname="detallepaciente" tagprefix="uc4" %>
 <%@ Register src="~/paciente/pacienteSimple.ascx" tagname="PacienteSimple" tagprefix="uc5" %>
 

@@ -33,7 +33,7 @@
                         <param name="wmode" value="opaque" />
                         <param name="swfversion" value="6.0.65.0" />
                         <!-- El navegador muestra el siguiente contenido alternativo para usuarios con Flash Player 6.0 o versiones anteriores. -->
-                        <asp:ImageButton ID="ILogo" runat="server" ImageUrl="~/images/tema/logop.jpg" Width="150" Height="55" CausesValidation="False" PostBackUrl="~/inicio.aspx"/>
+                        <asp:ImageButton ID="ILogo" runat="server" ImageUrl="~/images/tema/logop.jpg" Width="150" Height="55" CausesValidation="False" PostBackUrl="~/Inicio"/>
                         <!--[if !IE]>-->
                       </object>
                       <!--<![endif]-->

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Informe de egresos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="egresos.aspx.cs" Inherits="clinicaheridas_egresos" %>
+﻿<%@ Page Title="Informe de egresos" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" Inherits="clinicaheridas_egresos" Codebehind="egresos.aspx.cs" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>

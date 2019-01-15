@@ -28,7 +28,7 @@ namespace OrganizationExample15.Controllers.Administrador
 
             query["c"] = "COUNT(*)";
 
-            string join = "LEFT JOIN usuario ON (usuario.grupo=grupo.id)";
+            string join = "LEFT JOIN usuario ON (usuario.grupo=grupo.id AND (usuario.estado IS NULL OR usuario.estado NOT IN (1,-1)))";
 
             using (CConector conector = new CConector())
             {

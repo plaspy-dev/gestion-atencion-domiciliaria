@@ -158,6 +158,7 @@
     <Content Include="cliente\quejas.html" />
     <Content Include="cliente\quejasa.html" />
     <Content Include="clinicaheridas\casa.jpg" />
+    <Content Include="clinicaheridas\egresos.aspx" />
     <Content Include="clinicaheridas\escaladolor.jpg" />
     <Content Include="clinicaheridas\escalas\e0.jpg" />
     <Content Include="clinicaheridas\escalas\e1.jpg" />
@@ -171,6 +172,12 @@
     <Content Include="clinicaheridas\escalas\e8.jpg" />
     <Content Include="clinicaheridas\escalas\e9.jpg" />
     <Content Include="clinicaheridas\escalas\escaladolor.jpg" />
+    <Content Include="clinicaheridas\evolucion.aspx" />
+    <Content Include="clinicaheridas\evolucion.html" />
+    <Content Include="clinicaheridas\informeeps.aspx" />
+    <Content Include="clinicaheridas\informeEPS.html" />
+    <Content Include="clinicaheridas\valoracion.aspx" />
+    <Content Include="clinicaheridas\valoracion.html" />
     <Content Include="control\actividad.ascx" />
     <Content Include="control\actividad.ascx.js" />
     <Content Include="css\ajax-loader.gif" />
@@ -230,6 +237,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="directorio\Default.aspx" />
+    <Content Include="entrega_turno\bitacora.aspx" />
     <Content Include="equipo\devolucion.ascx" />
     <Content Include="equipo\equipo.aspx" />
     <Content Include="equipo\informe.aspx" />
@@ -602,6 +610,7 @@
     <Content Include="terapeutico\evolucion.html" />
     <Content Include="terapeutico\evoluciones.aspx" />
     <Content Include="terapeutico\programadovsevoluciones.aspx" />
+    <Content Include="test\test.html" />
     <Content Include="valoracion\enfermeria.aspx" />
     <Content Include="valoracion\enfermeria.html" />
     <Content Include="valoracion\sicologia.aspx" />
@@ -877,6 +886,34 @@
     <Compile Include="cliente\quejas.aspx.designer.cs">
       <DependentUpon>quejas.aspx</DependentUpon>
     </Compile>
+    <Compile Include="clinicaheridas\egresos.aspx.cs">
+      <DependentUpon>egresos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="clinicaheridas\egresos.aspx.designer.cs">
+      <DependentUpon>egresos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="clinicaheridas\evolucion.aspx.cs">
+      <DependentUpon>evolucion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="clinicaheridas\evolucion.aspx.designer.cs">
+      <DependentUpon>evolucion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="clinicaheridas\informeeps.aspx.cs">
+      <DependentUpon>informeeps.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="clinicaheridas\informeeps.aspx.designer.cs">
+      <DependentUpon>informeeps.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="clinicaheridas\valoracion.aspx.cs">
+      <DependentUpon>valoracion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="clinicaheridas\valoracion.aspx.designer.cs">
+      <DependentUpon>valoracion.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\Administrador\UsuariosController.cs" />
     <Compile Include="Controllers\Administrador\TercerosController.cs" />
     <Compile Include="Controllers\Administrador\FormulacionController.cs" />
@@ -893,6 +930,13 @@
     <Compile Include="Controllers\ClinicaHeridas\ValoracionController.cs" />
     <Compile Include="Controllers\ClinicaHeridas\InformeEPSController.cs" />
     <Compile Include="Controllers\InicioController.cs" />
+    <Compile Include="entrega_turno\bitacora.aspx.cs">
+      <DependentUpon>bitacora.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="entrega_turno\bitacora.aspx.designer.cs">
+      <DependentUpon>bitacora.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Models\Contrasena.cs" />
     <Compile Include="Controllers\ContrasenaController.cs" />
     <Compile Include="Controllers\EntregaTurno\BitacoraController.cs" />
@@ -1637,6 +1681,8 @@
     <Content Include="dbupgrade.json" />
     <Content Include="lib\dropzone\basic.scss" />
     <Content Include="lib\dropzone\dropzone.scss" />
+    <Content Include="clinicaheridas\informeeps.aspx.cs.old" />
+    <Content Include="clinicaheridas\informeeps.aspx.old" />
     <None Include="packages.config" />
     <Content Include="Views\_Shared\_LayoutPage.cshtml" />
     <Content Include="Views\Terapeutico\Cuentas.cshtml" />

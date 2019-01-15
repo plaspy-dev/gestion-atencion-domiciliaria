@@ -137,6 +137,8 @@ public partial class clinicaheridas_evolucion : System.Web.UI.Page
                                 TFecha.Text = Query.GetFromMySQLDate(reader["fecha"], true);
                                 UCFuncionario.IdFuncionario = reader["funcionario"].ToString();
                                 TTA.Text = reader["ta"].ToString();
+                                if (!TTA.Text.Contains(" mm/Hg"))
+                                    TTA.Text += " mm/Hg";
                                 TFC.Text = reader["fc"].ToString();
                                 TFR.Text = reader["fr"].ToString();
                                 TT.Text = Utilidades.TryConverToDoubleInvariantCulture(reader["t"]);

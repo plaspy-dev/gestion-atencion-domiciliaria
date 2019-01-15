@@ -18,6 +18,7 @@ namespace OrganizationExample15
             // Code that runs on application startup
             CConector.UpgradeDBFromFile(Server.MapPath("~/dbupgrade.json"));
             CUsuario.StartPage = "~/Inicio";
+            CUsuario.LoginPage = "~/Index";
            AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
