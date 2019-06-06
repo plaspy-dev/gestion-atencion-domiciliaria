@@ -166,6 +166,16 @@
                     <asp:CheckBox runat="server" ID="C" Enabled="false" Checked='<%# Eval("digitalizacion")!=DBNull.Value %>' />
                 </ItemTemplate>
             </asp:TemplateField>
+            <asp:BoundField HeaderText="Paciente actual" DataField="nombrehoy" SortExpression="nombrehoy">
+                    <ItemStyle Wrap="False" />
+                </asp:BoundField>
+                <asp:BoundField HeaderText="Próximo paciente" DataField="nombre" SortExpression="nombre">
+                    <ItemStyle Wrap="False" />
+                </asp:BoundField>
+                <asp:BoundField HeaderText="Próxima programación" DataField="fecha" SortExpression="fecha" DataFormatString="{0:d}" ItemStyle-HorizontalAlign="Right">
+                    <ItemStyle Wrap="False" />
+                </asp:BoundField>
+            <asp:BoundField HeaderText="Alerta de servicios" DataField="alerta" SortExpression="alerta" ItemStyle-Wrap="false" />
         </Columns>
     </asp:GridView>
     <div style="text-align: right;">
@@ -179,7 +189,11 @@
                 per.perFechaTermContrato,cargo.carDescripcion AS cargo,motivo_retiro.mteDescripcion AS retiro,funcionario_estados.eEstDesc AS estado,
                 per.perCelular AS celular, per.digitalizacion
                 ,dispDescripcion
+                ,directorio.fechaf AS fecha
+				,CONCAT(IFNULL(pacientef.pacNombres,''),CASE WHEN directorio.actm IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END) AS nombre
+				,CONCAT(IFNULL(paciente.pacNombres,''), CASE WHEN directorio.acta IN (10001,10009,10012,10013,10015) THEN ' (Descansando)' ELSE '' END) AS nombrehoy
                 ,per.perDireccion
+                ,per.alerta
         ,localidadt.locDescripcion localidadt
 ,localidadv.locDescripcion localidadv
                 FROM recurso_humano per  
@@ -189,6 +203,9 @@
                 LEFT JOIN funcionario_estados ON (funcionario_estados.eEstId=per.eEstId) 
         LEFT JOIN localidad localidadt ON (localidadt.locId=per.locId)
 LEFT JOIN localidad localidadv ON (localidadv.locId=per.residencialocId)
+        LEFT JOIN directorio ON (directorio.perId=per.perId)
+                LEFT JOIN paciente ON (directorio.pacienteh=paciente.pacId)    
+                LEFT JOIN paciente AS pacientef ON (directorio.pacientef=pacientef.pacId)
                 WHERE (@estado=0 OR per.eEstId=@estado)  AND (@cargo=0 or per.carId=@cargo OR FIND_IN_SET(@cargo, per.cargos)!=0)   
                 AND (@digitalizacion=0 OR (@digitalizacion=1 AND per.digitalizacion IS NOT NULL) OR (@digitalizacion=2 AND per.digitalizacion IS NULL))
                 AND (@disponibilidad=0 OR @disponibilidad=per.dispId)

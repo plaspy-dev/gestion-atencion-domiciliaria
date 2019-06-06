@@ -1,6 +1,7 @@
 ﻿@model OrganizationExample15.Models.MPacienteSimple
 @{
-    string id = Guid.NewGuid().ToString();
+    // string id = Guid.NewGuid().ToString();
+    string id = ViewData.TemplateInfo.HtmlFieldPrefix;
 }
 @Html.TextBoxFor(x => x.Nombre, new { @class = "_mpaciente", placeholder = "Buscar", id= id })
 @Html.TextBoxFor(x => x.Id, new { @class = "_mhpaciente hidet validate", id= "h" + id })

@@ -1,0 +1,59 @@
+﻿@model OrganizationExample15.Models.MDiagnostico
+@{
+    // string id = Guid.NewGuid().ToString();
+    string id = ViewData.TemplateInfo.HtmlFieldPrefix;
+}
+@if (!Model.ReadOnly)
+{
+    <script type="text/javascript">
+    $(function () {
+        $("#@id .cie10input").THAutoComplete({
+            queryURL: rootPath + "webservices/servicios.asmx/GetCodigoDiagnosticos",
+            controlDataId: "@id input.cie10id",
+            displayName: "Name",
+            idField: "Value"
+        });
+        $("#@id .btn-addcie10").click(function () {
+            var $parent = $(this).closest("div");
+            var item = {};
+            $parent.find("input").each(function () {
+                var name = $(this).attr("name");
+                if (name) {
+                    name= name.split(".");
+                    name = name[name.length - 1];
+                    name = name.charAt(0).toLowerCase() + name.slice(1);
+                    item[name] = $(this).val();
+                    $(this).val("");
+                }
+            });
+            // $parent.find(".cie10input.tt-input").typeahead("setQuery", "");
+            $parent.find(".cie10input.tt-input").typeahead("val", "");
+            $("#@id").find("input.angularjson").val(JSON.stringify(item)).change();
+        });
+    });
+    function onDeleteCIE10@(id)(row, options) {
+        $("#@id").find(".cie10id").val(row.code);
+        $("#@id").find(".cie10input").typeahead("val", row.description).focus();
+    }
+    </script>
+}
+<div ng-controller="GridList as controller" id="@id" ng-cloak>
+    <input type="text" class="angularjson hide" ng-model="controller.json" ng_change="controller.onAdd()" />
+    @Html.TextBoxFor(x => x._CIE10, new { @class = "angularresult hide", ng_model = "controller.result", ng_init = "controller.init({ id: '" + id + "', selector: '#" + id + " input.angularresult', onDelete: 'onDeleteCIE10" + id + "' })" })
+    <table ng-show="controller.list.length" class="table table-condensed table-hover table-striped table-bordered">
+        <tr ng-repeat="row in controller.list">
+            <td><a href="#" ng-click="controller.onDelete(row)" onclick="return false;" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a></td>
+            <td class="w100">{{row.description}}</td>
+        </tr>
+    </table>
+    @if (!Model.ReadOnly)
+    {
+        <div class="tda" ng-hide="controller.list.length">Por favor agrege un código CIE10</div>
+        <div class="pull-right">
+            CIE10
+            @Html.TextBoxFor(x => x.Edit.Code, new { @class = "hide cie10id" })
+            @Html.TextBoxFor(x => x.Edit.Description, new { @class = "cie10input" })
+            <a href="#" class="btn btn-submit btn-addcie10" onclick="return false;"><i class="fa fa-plus"></i></a>
+        </div>
+    }
+</div>

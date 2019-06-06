@@ -76,9 +76,14 @@ public partial class materna_postparto : System.Web.UI.Page
                                 if (reader["paciente"].ToString() != Request.QueryString["pid"])
                                     Response.Redirect(Request.Url.AbsolutePath + "?pid=" + reader["paciente"].ToString() + "&emid=" + Request.QueryString["emid"]);
 
-                                if (reader["tipo"].ToString() == "1") {
-                                    Response.Redirect(string.Format("~/materna/seguimiento.aspx?pid={0}&emid={1}", reader["paciente"].ToString(), Request.QueryString["emid"]));
-                                    return;
+                                switch (reader["tipo"].ToString())
+                                {
+                                    case "1":
+                                        Response.Redirect(string.Format("~/materna/seguimiento.aspx?pid={0}&emid={1}", reader["paciente"].ToString(), Request.QueryString["emid"]));
+                                        return;
+                                    case "3":
+                                        Response.Redirect(string.Format("~/Materna/Evolucion?pid={0}&ehid={1}", reader["paciente"].ToString(), Request.QueryString["emid"]));
+                                        return;
                                 }
 
                                 string id = reader["id"].ToString();

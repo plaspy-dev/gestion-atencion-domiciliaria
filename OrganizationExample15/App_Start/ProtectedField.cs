@@ -12,15 +12,19 @@ namespace OrganizationExample15
 {
     public class ProtectedField
     {
+        [JsonIgnore]
         public bool SkipGK { get; set; }
+        [JsonIgnore]
         public NameValueCollection ProtectedFields { get; set; }
 #if DEBUG
+        [JsonIgnore]
         public string DebugValue {
             get {
                 return JsonConvert.SerializeObject(_ProtectedFields);
             }
         }
 #endif
+        [JsonIgnore]
         private Dictionary<string, string> _ProtectedFields
         {
             get
@@ -126,6 +130,7 @@ namespace OrganizationExample15
                 }
             }
         }
+        [JsonIgnore]
         public string _gk
         {
             get

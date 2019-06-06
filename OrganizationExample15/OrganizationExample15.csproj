@@ -340,6 +340,7 @@
     <Content Include="imgs\edit.gif" />
     <Content Include="imgs\eliminar.gif" />
     <Content Include="imgs\expand.jpg" />
+    <Content Include="imgs\famisanar.jpg" />
     <Content Include="imgs\help.png" />
     <Content Include="imgs\Logo.jpg" />
     <Content Include="imgs\logo170x62.jpg" />
@@ -929,7 +930,9 @@
     <Compile Include="Controllers\ClinicaHeridas\EgresosController.cs" />
     <Compile Include="Controllers\ClinicaHeridas\ValoracionController.cs" />
     <Compile Include="Controllers\ClinicaHeridas\InformeEPSController.cs" />
+    <Compile Include="Controllers\DebugController.cs" />
     <Compile Include="Controllers\InicioController.cs" />
+    <Compile Include="Controllers\Materna\EvolucionController.cs" />
     <Compile Include="entrega_turno\bitacora.aspx.cs">
       <DependentUpon>bitacora.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1239,7 +1242,6 @@
     <Compile Include="Models\Administrador\Privilege.cs" />
     <Compile Include="Models\Administrador\Parametros2.cs" />
     <Compile Include="Models\Administrador\Varios.cs" />
-    <Compile Include="Models\CheckTextParam.cs" />
     <Compile Include="Models\ClinicaHeridas\Egresos.cs" />
     <Compile Include="Models\ClinicaHeridas\InfomeEPS.cs" />
     <Compile Include="Models\ClinicaHeridas\Evolucion.cs" />
@@ -1248,8 +1250,11 @@
     <Compile Include="Models\FileParam.cs" />
     <Compile Include="Models\Galeria.cs" />
     <Compile Include="Models\LogIn.cs" />
+    <Compile Include="Models\Materna\Evolucion.cs" />
+    <Compile Include="Models\MDiagnostico.cs" />
     <Compile Include="Models\MPaciente.cs" />
     <Compile Include="Models\MProcedimiento.cs" />
+    <Compile Include="Models\ParameterBase.cs" />
     <Compile Include="Models\Shared\Historial.cs" />
     <Compile Include="Models\Shared\Property.cs" />
     <Compile Include="Models\terapeutico\Cuentas.cs" />
@@ -1735,6 +1740,9 @@
     <Content Include="Views\_Shared\_LayoutPage_Login.cshtml" />
     <Content Include="Views\Index\Index.cshtml" />
     <Content Include="Views\EntregaTurno\BitacoraPrint.cshtml" />
+    <Content Include="Views\Materna\Evolucion.cshtml" />
+    <Content Include="Views\_Shared\Diagnostico.cshtml" />
+    <Content Include="Views\Materna\Evolucion_Print.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1748,6 +1756,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Debug\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

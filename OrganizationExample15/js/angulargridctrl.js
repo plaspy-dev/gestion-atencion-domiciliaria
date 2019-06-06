@@ -3,6 +3,7 @@
         var controller = this;
         controller.list = [];
         controller.length = 0;
+        var options = {};
 
         function update() {
             controller.length = 0;
@@ -19,8 +20,15 @@
         };
 
         controller.init = function (ctrlid) {
+            var selector = "";
+            if (typeof (ctrlid) == "string") {
+                selector = "#" + ctrlid;
+            } else {
+                options = ctrlid;
+                selector = options.selector;
+            }
             try {
-                controller.list = JSON.parse($("#" + ctrlid).val());
+                controller.list = JSON.parse($(selector).val());
                 for (var i = 0; i < controller.list.length; i++) {
                     controller.list[i]["$$hashKey"] = null;
                 }
@@ -29,6 +37,8 @@
         };
         controller.onAdd = function () {
 
+            if (!controller.json)
+                return;
             var info = JSON.parse(controller.json);
             if (info._aid) {
                 var currentIndex = controller.list.findIndex(function (x) { return x._aid == info._aid; });
@@ -42,11 +52,15 @@
             }
             controller.json = "";
             update();
+            if (options.onAdd && window[options.onAdd])
+                window[options.onAdd](row, options);
         };
 
         controller.onEdit = function (row) {
             if (window.onEdit)
                 onEdit(row);
+            if (options.onEdit && window[options.onEdit])
+                window[options.onEdit](row, options);
         };
         controller.onPreDelete = function (row) {
             if (!confirm("¿Está seguro de eliminar esta línea?"))
@@ -55,7 +69,9 @@
             if (index > -1)
                 controller.list[index].eliminado = true;
             update();
-        }
+            if (options.onDelete && window[options.onDelete])
+                window[options.onDelete](row, options);
+        };
 
         controller.onDelete = function (row) {
             if (!confirm("¿Está seguro de eliminar esta línea?"))
@@ -64,5 +80,7 @@
             if (index > -1)
                 controller.list.splice(index, 1);
             update();
+            if (options.onDelete && window[options.onDelete])
+                window[options.onDelete](row, options);
         };
     });

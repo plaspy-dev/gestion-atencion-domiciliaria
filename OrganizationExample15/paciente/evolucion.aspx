@@ -241,8 +241,7 @@
                                 ,IFNULL(antecedentes_evolucion.observaciones,antecedentes_paciente.observaciones) AS observaciones
                                 FROM varios 
                                 LEFT JOIN antecedentes_evolucion ON (antecedentes_evolucion.evolucion_paciente=@idingreso AND antecedentes_evolucion.motivo=varios.id) 
-                                -- LEFT JOIN antecedentes_paciente ON (antecedentes_paciente.paciente=@paciente AND antecedentes_paciente.motivo=varios.id)
-                                LEFT JOIN antecedentes_paciente ON (antecedentes_paciente.paciente=0 AND antecedentes_paciente.motivo=varios.id)
+                                LEFT JOIN antecedentes_paciente ON (antecedentes_paciente.paciente=@paciente AND antecedentes_paciente.motivo=varios.id)
                                 WHERE varios.tipo=2 AND varios.szReservado IS NULL
                                 ;" >
                 <SelectParameters>

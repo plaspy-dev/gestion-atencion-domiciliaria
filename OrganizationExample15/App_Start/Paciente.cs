@@ -32,9 +32,12 @@ public class Paciente
     public string tipopago { get; set; }
     public string Grado { get; set; }
     public string Grupo { get; set; }
+    public string EstadoCivil { get; set; }
     public string Categoria { get; set; }
     public DateTime FechaDefuncion { get; set; }
+    public string IPS { get; set; }
     public string TipoAfiliacion { get; set; }
+    public string Ocupacion { get; set; }
     public List<string> cie10 { get; set; }
     public bool Activo { get { return estado == "1"; } }
     public string NombreCompleto { get {
@@ -139,6 +142,9 @@ public class Paciente
             query["pacGrado"] = "paciente.pacGrado";
             query["categoria"] = "paciente.categoria";
             query["szTipoAfiliacion"] = "CASE pacTipoAfiliado WHEN 1 THEN 'Cotizante' WHEN 2 THEN 'Beneficiario' ELSE '' END";
+            query["acompanante_estadocivil"] = "paciente.acompanante_estadocivil";
+            query["acompanante_ocupacion"] = "paciente.acompanante_ocupacion";
+            query["ips_remitente"] = "paciente.ips_remitente";
 
             using (CConector conector = new CConector())
             {
@@ -169,6 +175,9 @@ public class Paciente
                     paciente.TipoAfiliacion = reader["szTipoAfiliacion"].ToString();
                     paciente.Categoria = reader["categoria"].ToString();
                     paciente.Grado = reader["pacGrado"].ToString();
+                    paciente.EstadoCivil = reader["acompanante_estadocivil"].ToString();
+                    paciente.Ocupacion = reader["acompanante_ocupacion"].ToString();
+                    paciente.IPS = reader["ips_remitente"].ToString();
 
                     paciente.cie10 = Procedimientos.GetCodigosCIE10(id);
 

@@ -292,7 +292,7 @@ $.fn.THAutoComplete = function (options) {
                             }));
                         },
                         error: onError
-                    })
+                    });
                 }
             }
         });

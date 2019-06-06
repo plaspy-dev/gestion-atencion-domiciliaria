@@ -1,0 +1,401 @@
+﻿@model OrganizationExample15.Models.Materna.Evolucion
+@using OrganizationExample15.Models.Administrador
+@using OrganizationExample15.Models.Shared
+@using OrganizationExample15.Models
+@{
+    ViewBag.Title = "Seguimiento domiciliario";
+    Layout = "~/Views/_Shared/_LayoutPage.cshtml";
+
+    CUsuario usuario = ViewBag.User;
+    bool showOK = (usuario.CanInsert() && string.IsNullOrEmpty(Model.ProtectedFields["id"])) || (usuario.CanUpdate() && !string.IsNullOrEmpty(Model.ProtectedFields["id"]));
+
+    var bootgrid = OrganizationExample15.Controllers.Materna.MaternaController.GetBootGridEvolucion(0, 0, null, Model.Paciente.Id);
+
+    Historial historial = new Historial(bootgrid.Total, bootgrid.Total == 1 ? "Evolución" : "Evoluciones", "~/Materna/__Evolucion", "~/Materna/Evolucion?pid={pid}&ehid={id}");
+    historial.QueryParams["pid"] = Model.Paciente.Id;
+    historial.Columns.Add(new BootGridColumn("Fecha", "f") { Align = BootGridColumn.Aligns.right, CssClass = "nw", DataOrder = BootGridColumn.Order.desc, Formatter = "link" });
+    historial.Columns.Add(new BootGridColumn("Funcionario", "p") { HeaderCssClass = "w100" });
+    var momentoOcurrenciaEvento = MVarios.GetList(MVarios.Tipo.MaternoEvolucionMomentoOcurrenciaEvento).Select(x => new ParameterValueRequired() { Id = x.Id }).ToList();
+}
+<div class="animated fadeIn">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-accent-theme">
+                <div class="card-body">
+                    <form autocomplete="off" method="post" action="@(Request.Url.AbsolutePath + Request.Url.Query)">
+                        <div>Paciente @Html.Partial("~/Views/_Shared/Paciente.cshtml", Model.Paciente, HomeCareVersion.GetPrefixPartial("Paciente"))</div>
+                        @if (!string.IsNullOrEmpty(Model.Paciente.Id))
+                        {
+                            <div>@Html.Partial("~/Views/_Shared/PacienteInfo.cshtml", Model.Paciente.Id)</div>
+                            <div>@Html.Partial("~/Views/_Shared/Historial.cshtml", historial)</div>
+                            @Html.AntiForgeryToken()
+                            <table class="table table-sm table-striped">
+                                <tr>
+                                    <td>Fecha @Html.ValidationMessageFor(x => x.Fecha, "*")</td>
+                                    <td>@Html.TextBoxFor(x => x.Fecha, new { @class = "datetime" })</td>
+                                    <td>Funcionario</td>
+                                    <td>@Html.Partial("~/Views/_Shared/Funcionario.cshtml", Model.Funcionario, HomeCareVersion.GetPrefixPartial("Funcionario"))</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-section-title"><h5>Criterio de priorización</h5></td>
+                                    <td colspan="2" class="text-section-title"><h5>Factores de riesgo psicosocial</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <table class="w100">
+                                            @for (int i = 0; i < Model.CriterioPriorizacion.Count(); i++)
+                                            {
+                                                <tr>
+                                                    <td class="w100">@Model.CriterioPriorizacion[i].Name @Html.ValidationMessageFor(x => x.CriterioPriorizacion[i].Value, "*") @Html.HiddenFor(x => x.CriterioPriorizacion[i].Id)</td>
+                                                    <td class="nw"><label>@Html.RadioButtonFor(x => x.CriterioPriorizacion[i].Value, "1") SI</label></td>
+                                                    <td class="nw"><label>@Html.RadioButtonFor(x => x.CriterioPriorizacion[i].Value, "0") NO</label></td>
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td>Otro</td>
+                                                <td colspan="2">@Html.TextBoxFor(x => x.CriterioPriorizacionOtro)</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">Observaciones</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">@Html.TextAreaFor(x => x.CriterioPriorizacionObservaciones, new { @class = "w100" })</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td colspan="2">
+                                        <table class="w100">
+                                            @for (int i = 0; i < Model.FactoresRiesgoPsicoSocial.Count(); i++)
+                                            {
+                                                <tr>
+                                                    <td>@Model.FactoresRiesgoPsicoSocial[i].Name  @Html.ValidationMessageFor(x => x.FactoresRiesgoPsicoSocial[i].Value, "*") @Html.HiddenFor(x => x.FactoresRiesgoPsicoSocial[i].Id)</td>
+                                                    <td class="w100">@Model.FactoresRiesgoPsicoSocial[i].Description</td>
+                                                    <td></td>
+                                                    <td class="nw"><label>@Html.RadioButtonFor(x => x.FactoresRiesgoPsicoSocial[i].Value, "0") AUSENTE</label></td>
+                                                    <td class="nw"><label>@Html.RadioButtonFor(x => x.FactoresRiesgoPsicoSocial[i].Value, "1") INTENSO</label></td>
+                                                </tr>
+                                            }
+                                            @for (int i = 0; i < Model.FactoresRiesgoPsicoSocial2.Count(); i++)
+                                            {
+                                                <tr>
+                                                    <td>@Model.FactoresRiesgoPsicoSocial2[i].Name  @Html.ValidationMessageFor(x => x.FactoresRiesgoPsicoSocial2[i].Value, "*") @Html.HiddenFor(x => x.FactoresRiesgoPsicoSocial2[i].Id)</td>
+                                                    <td class="w100">@Model.FactoresRiesgoPsicoSocial2[i].Description</td>
+                                                    <td class="nw"><label>@Html.RadioButtonFor(x => x.FactoresRiesgoPsicoSocial2[i].Value, "2") Casi siempre</label></td>
+                                                    <td class="nw"><label>@Html.RadioButtonFor(x => x.FactoresRiesgoPsicoSocial2[i].Value, "1") A veces</label></td>
+                                                    <td class="nw"><label>@Html.RadioButtonFor(x => x.FactoresRiesgoPsicoSocial2[i].Value, "0") Nunca</label></td>
+                                                </tr>
+                                            }
+                                            @for (int i = 0; i < Model.FactoresRiesgoPsicoSocial3.Count(); i++)
+                                            {
+                                                <tr>
+                                                    <td colspan="2">@Model.FactoresRiesgoPsicoSocial3[i].Name  @Html.ValidationMessageFor(x => x.FactoresRiesgoPsicoSocial3[i].Value, "*") @Html.HiddenFor(x => x.FactoresRiesgoPsicoSocial3[i].Id)</td>
+                                                    <td></td>
+                                                    <td class="nw"><label>@Html.RadioButtonFor(x => x.FactoresRiesgoPsicoSocial3[i].Value, "0") Bajo &lt;3</label></td>
+                                                    <td class="nw"><label>@Html.RadioButtonFor(x => x.FactoresRiesgoPsicoSocial3[i].Value, "1") Alto &ge;3</label></td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Información de la gestación actual</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        El embarazo actual es:
+                                        @for (int i = 0; i < Model.PreguntasEmbarazoActual.Count; i++)
+                                        {
+                                            <span class="nw">
+                                                @Html.HiddenFor(x => x.PreguntasEmbarazoActual[i].Id)
+                                                <b>@Model.PreguntasEmbarazoActual[i].Name</b> @Html.ValidationMessageFor(x => x.PreguntasEmbarazoActual[i].Value, "*") <label>@Html.RadioButtonFor(x => x.PreguntasEmbarazoActual[i].Value, "1") SI</label><label>@Html.RadioButtonFor(x => x.PreguntasEmbarazoActual[i].Value, "0") NO</label>
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Fecha última mestruación</td>
+                                    <td>@Html.TextBoxFor(x => x.FechaUltimaMestruacion, new { @class = "_date" })</td>
+                                    <td>Edad gestacional en semanas al momento de ocurrencia del evento </td>
+                                    <td>@Html.TextBoxFor(x => x.EdadGestacional, new { @class = "w50", @type = "number" })</td>
+                                </tr>
+                                <tr>
+                                    <td>Fecha probable de parto</td>
+                                    <td>@Html.TextBoxFor(x => x.FechaProbableParto, new { @class = "_date" })</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <span>
+                                            Momento de ocurrencia del evento @Html.ValidationMessageFor(x => x.MomentoOcurrenciaEvento, "*")
+                                            @for (int i = 0; i < momentoOcurrenciaEvento.Count; i++)
+                                            {
+                                                <label>
+                                                    @Html.RadioButtonFor(x => x.MomentoOcurrenciaEvento, momentoOcurrenciaEvento[i].Id)
+                                                    @momentoOcurrenciaEvento[i].Name
+                                                </label>
+                                            }
+                                        </span>
+                                        <br />Fórmula obstétrica:
+                                        @for (int i = 0; i < Model.FormulaObstetrica.Count; i++)
+                                        {
+                                            <span class="fo">
+                                                @Model.FormulaObstetrica[i].Name @Html.TextBoxFor(x => x.FormulaObstetrica[i].Value, new { @type = "number" }) @Html.HiddenFor(x => x.FormulaObstetrica[i].Id)
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <span>
+                                            Asistencia a control prenatal
+                                            <label>@Html.RadioButtonFor(x => x.AsistenciaControlPrenatal, "1") SI</label>
+                                            <label>@Html.RadioButtonFor(x => x.AsistenciaControlPrenatal, "0") NO</label>
+                                        </span>
+                                        <span>
+                                            Número de Controles Prenatales
+                                            @Html.TextBoxFor(x => x.NumeroControlesPrenatales, new { @class = "w50" })
+                                        </span>
+                                        <span>
+                                            Clasificación riesgo obstétrico
+                                            <label>@Html.RadioButtonFor(x => x.ClasificacionRiesgo, "1") Alto</label>
+                                            <label>@Html.RadioButtonFor(x => x.ClasificacionRiesgo, "0") Bajo</label>
+                                        </span>
+                                    </td>
+                                </tr>
+                                @for (int i = 0; i < Model.Antecedentes.Count; i++)
+                                {
+                                    <tr>
+                                        <td>@Model.Antecedentes[i].Name @Html.HiddenFor(x => x.Antecedentes[i].Id) @Html.ValidationMessageFor(x => x.Antecedentes[i].Value, "*")</td>
+                                        <td colspan="3">@Html.TextAreaFor(x => x.Antecedentes[i].Value, new { @class = "w100" })</td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Resultado de laboratios e imágenes diagnósticas</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Control de laboratorios</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <table>
+                                            <tr>
+                                                <th rowspan="2">Exámen</th>
+                                                <th colspan="2">PRIMER TRIMESTRE</th>
+                                                <th colspan="2">SEGUNDO TRIMESTRE</th>
+                                                <th colspan="2">TERCER TRIMESTRE</th>
+                                            </tr>
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>Resultado</th>
+                                                <th>Fecha</th>
+                                                <th>Resultado</th>
+                                                <th>Fecha</th>
+                                                <th>Resultado</th>
+                                            </tr>
+                                            @for (int i = 0; i < Model.ControlLaboratorio.Count(); i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Model.ControlLaboratorio[i].Name @Html.HiddenFor(x => x.ControlLaboratorio[i].Id)
+                                                        @Html.ValidationMessageFor(x => x.ControlLaboratorio[i].PTFecha, "*")
+                                                        @Html.ValidationMessageFor(x => x.ControlLaboratorio[i].STFecha, "*")
+                                                        @Html.ValidationMessageFor(x => x.ControlLaboratorio[i].TTFecha, "*")
+                                                    </td>
+                                                    <td>@Html.TextBoxFor(x => x.ControlLaboratorio[i].PTFecha, new { @class = "_date" })</td>
+                                                    <td>@Html.TextBoxFor(x => x.ControlLaboratorio[i].PTResultado)</td>
+                                                    <td>@Html.TextBoxFor(x => x.ControlLaboratorio[i].STFecha, new { @class = "_date" })</td>
+                                                    <td>@Html.TextBoxFor(x => x.ControlLaboratorio[i].STResultado)</td>
+                                                    <td>@Html.TextBoxFor(x => x.ControlLaboratorio[i].TTFecha, new { @class = "_date" })</td>
+                                                    <td>@Html.TextBoxFor(x => x.ControlLaboratorio[i].TTResultado)</td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Controles ecográficos</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <table class="w-100">
+                                            <tr>
+                                                <th>Resultado</th>
+                                                <th>PRIMER TRIMESTRE</th>
+                                                <th>SEGUNDO TRIMESTRE</th>
+                                                <th>TERCER TRIMESTRE</th>
+                                            </tr>
+                                            @for (int i = 0; i < Model.ControlesEcograficos.Count(); i++)
+                                            {
+                                                <tr>
+                                                    <td class="w100">@Model.ControlesEcograficos[i].Name @Html.HiddenFor(x => x.ControlesEcograficos[i].Id)</td>
+                                                    <td>@Html.TextBoxFor(x => x.ControlesEcograficos[i].Trimestre1)</td>
+                                                    <td>@Html.TextBoxFor(x => x.ControlesEcograficos[i].Trimestre2)</td>
+                                                    <td>@Html.TextBoxFor(x => x.ControlesEcograficos[i].Trimestre3)</td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Valoración física y seguimiento</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Signos vitales</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <table class="w100">
+                                            @for (int i = 0; i < Model.SignosVitales.Count(); )
+                                            {
+                                                <tr>
+                                                    @for (int j = 0; j < 2; j++, i++)
+                                                    {
+                                                        if (i < Model.SignosVitales.Count())
+                                                        {
+                                                            <td class="w100 nw">@Model.SignosVitales[i].Name @Html.HiddenFor(x => x.SignosVitales[i].Id) @Html.ValidationMessageFor(x => x.SignosVitales[i].Value, "*")</td>
+                                                            <td>@Html.TextBoxFor(x => x.SignosVitales[i].Value)</td>
+                                                            <td class="nw">@Model.SignosVitales[i].Description</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td></td>
+                                                            <td></td>
+                                                            <td></td>
+                                                        }
+                                                    }
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td>Hallazgos</td>
+                                                <td colspan="5">
+                                                    @Html.TextAreaFor(x => x.Hallazgos, new { @class = "w100" })
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4"><h5>Alteraciones al exámen físico</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <table class="w100">
+                                            @for (int i = 0; i < Model.AlteracionesExamenFisico.Count(); i++)
+                                            {
+                                                <tr>
+                                                    <td class="w100">@Model.AlteracionesExamenFisico[i].Name @Html.HiddenFor(x => x.AlteracionesExamenFisico[i].Id) @Html.ValidationMessageFor(x => x.AlteracionesExamenFisico[i].Value, "*")</td>
+                                                    <td class="nw"><label>@Html.RadioButtonFor(x => x.AlteracionesExamenFisico[i].Value, "1") SI</label></td>
+                                                    <td class="nw"><label>@Html.RadioButtonFor(x => x.AlteracionesExamenFisico[i].Value, "0") NO</label></td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <span>
+                                            Asesoria para acceso a método anticonceptivo post evento obstétrico: @Html.ValidationMessageFor(x => x.AsesoriaMetodoAnticonceptivo, "*")
+                                            <label>@Html.RadioButtonFor(x => x.AsesoriaMetodoAnticonceptivo, "1") SI</label>
+                                            <label>@Html.RadioButtonFor(x => x.AsesoriaMetodoAnticonceptivo, "0") NO</label>
+                                        </span><br />
+                                        <span>
+                                            Accedio a método anticonceptivo post evento obstétrico: @Html.ValidationMessageFor(x => x.AccedioMetodoAnticonceptivo, "*")
+                                            <label>@Html.RadioButtonFor(x => x.AccedioMetodoAnticonceptivo, "1") SI</label>
+                                            <label>@Html.RadioButtonFor(x => x.AccedioMetodoAnticonceptivo, "0") NO</label>
+                                            <b>Cuál</b> @Html.TextBoxFor(x => x.CualMetodoAnticonceptivo)
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Diagnóstico</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h6>Diagnóstico previo (MME)</h6></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        @Html.Partial("~/Views/_Shared/Diagnostico.cshtml", Model.DiagnosticoPrevio, HomeCareVersion.GetPrefixPartial("DiagnosticoPrevio"))
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h6>Diagnóstico actual</h6></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        @Html.Partial("~/Views/_Shared/Diagnostico.cshtml", Model.DiagnosticoActual, HomeCareVersion.GetPrefixPartial("DiagnosticoActual"))
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Plan de manejo</h5></td>
+                                </tr>
+                                @for (int i = 0; i < Model.PlanManejo.Count(); i++)
+                                {
+                                    <tr>
+                                        <td>@Model.PlanManejo[i].Name @Html.HiddenFor(x => x.PlanManejo[i].Id) @Html.ValidationMessageFor(x => x.PlanManejo[i].Value, "*")</td>
+                                        <td colspan="3">@Html.TextAreaFor(x => x.PlanManejo[i].Value, new { @class = "w100" })</td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td colspan="4" class="text-section-title"><h5>Observaciones Generales de la visita</h5></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">@Html.TextAreaFor(x => x.Observaciones, new { @class = "w100" })</td>
+                                </tr>
+                            </table>
+                            <div>@Html.ValidationSummary()</div>
+                            <div class="r">
+                                @if (showOK)
+                                {
+                                    @Html.HiddenFor(x => x._gk)
+                                    <button type="submit" class="btn btn-submit">Aceptar</button>
+                                }
+                                <a href="@Request.Url.AbsolutePath" class="btn btn-default">Cancelar</a>
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <link rel="stylesheet" href="~/lib/jquery.bootgrid/jquery.bootgrid.css" />
+    <script type="text/javascript" src="~/lib/angular-1.7.2/angular.js"></script>
+    <script src="~/js/angulargridctrl.js"></script>
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.js"></script>
+    <script src="~/lib/jquery.bootgrid/jquery.bootgrid.fa.js"></script>
+    <style>
+        .fo > input {
+            width: 40px;
+            text-align: right;
+        }
+
+        .w50 {
+            width: 50px;
+        }
+
+        .likenumber {
+            width: 120px;
+        }
+
+        label > input[type=radio] {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+    </style>
+    @if (!string.IsNullOrEmpty(Model.ProtectedFields["id"]))
+    {
+        <script>var __id = @Model.ProtectedFields["id"];</script>
+    }
+    <script>
+        var _mpacienteoptions = { selectURL: "@(Request.Url.AbsolutePath+"?pid=")" };
+        $(function () {
+            $("._mpaciente").focus();
+
+            if ($.getUrlParameter("ed") == "1") {
+                toastr.success("Valoración editada");
+            }
+        });
+    </script>
+}

@@ -96,18 +96,20 @@
                             <asp:HyperLink Enabled='<%# CUsuario.GetInstance().CanInsert() %>' runat="server" ID="D" Text='<%# Eval("pacNombres") %>' NavigateUrl='<%# string.Format("~/programacion/programacion.aspx?pid={0}", Eval("pacId")) %>'></asp:HyperLink>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre" ItemStyle-Wrap="false"/>
-                    <asp:BoundField HeaderText="Actividad" DataField="actividad" SortExpression="actividad" ItemStyle-Wrap="false"/>
-                    <asp:BoundField HeaderText="Sesiones" DataField="prgNumSesion" SortExpression="prgNumSesion" ItemStyle-HorizontalAlign="Right"/>
-                    <asp:BoundField HeaderText="Profesional" DataField="perNombre" SortExpression="perNombre" ItemStyle-Wrap="false"/>
                     <asp:BoundField HeaderText="Barrio" DataField="pacBarrio" SortExpression="pacBarrio"/>
                     <asp:BoundField HeaderText="Direccion" DataField="pacDireccion" SortExpression="pacDireccion"/>
                     <asp:BoundField HeaderText="Teléfono" DataField="pacTelefono" SortExpression="pacTelefono"/>
+                    <asp:BoundField HeaderText="Asegurador" DataField="entNombre" SortExpression="entNombre" ItemStyle-Wrap="false"/>
                     <asp:TemplateField HeaderText="Autorización" SortExpression="autNumero" ItemStyle-Wrap="false">
                         <ItemTemplate>
                             <asp:HyperLink Enabled='<%# CUsuario.GetInstance().CanInsert() %>' runat="server" ID="A" Text='<%# Eval("autNumero") %>' NavigateUrl='<%# string.Format("~/admisiones/autorizaciones.aspx?aut={0}", Eval("autNumero")) %>'></asp:HyperLink>
                         </ItemTemplate>
                     </asp:TemplateField>
+                    <asp:BoundField HeaderText="Actividad" DataField="actividad" SortExpression="actividad" ItemStyle-Wrap="false"/>
+                    <asp:BoundField HeaderText="Sesiones" DataField="prgNumSesion" SortExpression="prgNumSesion" ItemStyle-HorizontalAlign="Right"/>
+                    <asp:BoundField HeaderText="Profesional" DataField="perNombre" SortExpression="perNombre" ItemStyle-Wrap="false"/>
+                    <asp:BoundField HeaderText="Teléfono" DataField="perTelefono" SortExpression="perTelefono" ItemStyle-Wrap="false"/>
+                    <asp:BoundField HeaderText="Celular" DataField="perCelular" SortExpression="perCelular" ItemStyle-Wrap="false"/>
                     <asp:BoundField HeaderText="Observaciones" DataField="prgObservaciones" SortExpression="prgObservaciones"/>
                     <asp:TemplateField HeaderText="Novedades" SortExpression="novedad" ItemStyle-Wrap="false">
                         <ItemTemplate>
@@ -131,6 +133,8 @@
                                 ,paciente.pacTelefono
                                 ,asegurador.entNombre
                                 ,recurso_humano.perNombre
+                                ,recurso_humano.perTelefono
+                                ,recurso_humano.perCelular
                                 ,medicamentos.nombre AS actividad
                                 ,programacion.prgId
                                 ,programacion.prgNumSesion

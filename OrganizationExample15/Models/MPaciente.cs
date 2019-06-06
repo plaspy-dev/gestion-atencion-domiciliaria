@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
 using SDG.Componentes.Validator;
 
 namespace OrganizationExample15.Models
@@ -18,6 +19,7 @@ namespace OrganizationExample15.Models
                 return Paciente.GetPaciente(Id).DocumentoYNombres;
             }
         }
+        [JsonIgnore]
         public string Entidades
         {
             get
@@ -30,6 +32,7 @@ namespace OrganizationExample15.Models
             }
         }
 
+        [JsonIgnore]
         public bool Required
         {
             get
@@ -41,7 +44,7 @@ namespace OrganizationExample15.Models
                 ProtectedFields["r"] = value ? "1" : null;
             }
         }
-
+        [JsonIgnore]
         public bool ShowLabel {
             get
             {

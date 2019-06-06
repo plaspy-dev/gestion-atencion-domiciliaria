@@ -1,6 +1,7 @@
 ﻿@model OrganizationExample15.Models.MFuncionarioSimple
 @{
-    string id = Guid.NewGuid().ToString();
+    // string id = Guid.NewGuid().ToString();
+    string id = ViewData.TemplateInfo.HtmlFieldPrefix;
 }
 @Html.TextBoxFor(x => x.Nombre, Model?.ReadOnly == true ? (object)new { @class = "_mtercero", placeholder = "Buscar", @readonly = "", id = id } : (object)new { @class = "_mtercero", placeholder = "Buscar", id = id })
 @Html.TextBoxFor(x => x.Id, new { @class = "hidet _mhtercero validate", id = "h" + id })

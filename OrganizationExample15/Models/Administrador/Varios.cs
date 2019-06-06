@@ -349,6 +349,34 @@ namespace OrganizationExample15.Models.Administrador
             NeonatosAntecedentesTransfuncionales = 177,
             [Description("Apoyo Terapeutico/Estado cuenta")]
             ApoyoTerapeuticoEstadoCuenta = 178,
+            [Description("Seguimiento Materno (Nuevo)/Criterio de priorización")]
+            MaternoEvolucionCriterioPriorizacion=179,
+            [Description("Seguimiento Materno (Nuevo)/Factores de riesgo PsicoSocial")]
+            MaternoEvolucionFactoresRiesgoPsicoSocial =180,
+            [Description("Seguimiento Materno (Nuevo)/Factores de riesgo PsicoSocial 2")]
+            MaternoEvolucionFactoresRiesgoPsicoSocial2 = 181,
+            [Description("Seguimiento Materno (Nuevo)/Factores de riesgo PsicoSocial 3")]
+            MaternoEvolucionFactoresRiesgoPsicoSocial3 = 182,
+            [Description("Seguimiento Materno (Nuevo)/Preguntas embarazo actual")]
+            MaternoEvolucionPreguntasEmbarazoActual = 183,
+            [Description("Seguimiento Materno (Nuevo)/Momento de la ocurrencia del evento")]
+            MaternoEvolucionMomentoOcurrenciaEvento = 184,
+            [Description("Seguimiento Materno (Nuevo)/Formula Obstétrica")]
+            MaternoEvolucionFormulaObstetrica = 185,
+            [Description("Seguimiento Materno (Nuevo)/Antecedentes")]
+            MaternoEvolucionAntecendentes = 186,
+            [Description("Seguimiento Materno (Nuevo)/Control de laboratorios")]
+            MaternoEvolucionControlLaboratorios = 187,
+            [Description("Seguimiento Materno (Nuevo)/Controles ecográficos")]
+            MaternoEvolucionControlesEcograficos = 188,
+            [Description("Seguimiento Materno (Nuevo)/Signos vitales")]
+            MaternoEvolucionSignosVitales = 189,
+            [Description("Seguimiento Materno (Nuevo)/Alteraciones al examen físico")]
+            MaternoEvolucionAlteracionesExamenFisico = 190,
+            [Description("Seguimiento Materno (Nuevo)/Plan de manejo")]
+            MaternoEvolucionPlanManejo = 191,
+
+
             [Description("OrganizationExample16 - Programación/Programa")]
             OrganizationExample16ProgramacionPrograma = 10017,
             [Description("OrganizationExample16 - Programación/Actividad")]

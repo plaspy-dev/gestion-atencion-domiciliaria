@@ -86,7 +86,7 @@ namespace OrganizationExample15.Controllers.Administrador
                     {
                         return HttpNotFound();
                     }
-                    string existid = conector.QueryString("SELECT id FROM varios WHERE nombre={0} AND eliminado IS NULL LIMIT 1", Query.GetValor(item.Nombre));
+                    string existid = conector.QueryString("SELECT id FROM varios WHERE nombre={0} AND tipo={1} AND eliminado IS NULL LIMIT 1", Query.GetValor(item.Nombre), Query.GetValor((int)item._Tipo));
                     if (!string.IsNullOrEmpty(existid) && existid != id)
                         return Content(string.Format("alert({0});", Query.GetValor("Ya existe un parámetro llamado " + Query.GetValor(item.Nombre))));
 

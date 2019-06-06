@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
 using SDG.Componentes.Validator;
 
 namespace OrganizationExample15.Models
@@ -9,6 +10,7 @@ namespace OrganizationExample15.Models
     public class MFuncionarioSimple : ProtectedField
     {
         protected string _Nombre { get; set; }
+        [JsonIgnore]
         public bool ReadOnly { get; set; }
         [RequiredIf("Required", ErrorMessage ="Por favor seleccione un funcionario")]
         public string Id { get; set; }
@@ -25,7 +27,7 @@ namespace OrganizationExample15.Models
                 _Nombre = value;
             }
         }
-
+        [JsonIgnore]
         public bool Required
         {
             get

@@ -19,7 +19,7 @@ namespace OrganizationExample15.Controllers
                 Session.RemoveAll();
                 CConector.SetCookie("contrasena", "");
                 FormsAuthentication.SignOut();
-                Response.Redirect("~/");
+                return Redirect("~/");
             }
 
             CUsuario usuario = (CUsuario)CUsuario.Validate();

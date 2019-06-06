@@ -22,7 +22,11 @@ namespace OrganizationExample15.Models.Administrador
             [Description("Recursos humanos/Documentos entregados a Atención Domiciliaria")]
             RecursosHumanosDocumentosEntregadosaHS =4,
             [Description("Recursos humanos/Documentos entregados al contratista")]
-            RecursosHumanosDocumentosEntregadosContratista = 5
+            RecursosHumanosDocumentosEntregadosContratista = 5,
+            [Description("Paciente/Tipo documento")]
+            PacienteTipoDocumento=6,
+            [Description("Paciente/Estado civil")]
+            PacienteEstadoCivil=7
         }
 
         public string Id { get; set; }
@@ -36,6 +40,8 @@ namespace OrganizationExample15.Models.Administrador
                 case Tipo.PersonalCargos:
                 case Tipo.ReportePQRTipos:
                 case Tipo.BitacorasTipo:
+                case Tipo.PacienteTipoDocumento:
+                case Tipo.PacienteEstadoCivil:
                     return "eliminado IS NULL";
                 case Tipo.RecursosHumanosDocumentosEntregadosaHS:
                     return "docTipoEntrega=1 AND eliminado IS NULL";
@@ -59,6 +65,10 @@ namespace OrganizationExample15.Models.Administrador
                     return string.Format("docId={0}", Query.GetValor(id));
                 case Tipo.RecursosHumanosDocumentosEntregadosContratista:
                     return string.Format("docId={0}", Query.GetValor(id));
+                case Tipo.PacienteTipoDocumento:
+                    return string.Format("tdocId={0}", Query.GetValor(id));
+                case Tipo.PacienteEstadoCivil:
+                    return string.Format("estCivilId={0}", Query.GetValor(id));
                 default:
                     return null;
             }
@@ -93,6 +103,17 @@ namespace OrganizationExample15.Models.Administrador
                     query += "docId";
                     query += "docDesc";
                     query["docTipoEntrega"] = 2;
+                    break;
+                case Tipo.PacienteTipoDocumento:
+                    query.TableName = "tipo_documento";
+                    query += "tdocId";
+                    query += "tdocDescripcion";
+                    break;
+                case Tipo.PacienteEstadoCivil:
+                    query.TableName= "estado_civil";
+                    query += "estCivilId";
+                    query += "estCivDescripcion";
+                    query += "estCivCompanero";
                     break;
                 default:
                     return null;

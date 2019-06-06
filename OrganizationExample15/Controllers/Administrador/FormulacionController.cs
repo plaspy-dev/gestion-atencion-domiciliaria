@@ -190,6 +190,7 @@ namespace OrganizationExample15.Controllers.Administrador
                     }
 
                     conector.Commit();
+                    Producto.RemoveProducto(id);
                     MProcedimiento.CleanCache(id);
                     CProductoValor.Delete(id);
 

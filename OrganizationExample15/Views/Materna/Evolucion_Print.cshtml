@@ -1,0 +1,471 @@
+﻿@using OrganizationExample15.Models
+@using OrganizationExample15.Models.Administrador
+@using SDG.Componentes
+@using OrganizationExample15.Models.Administrador
+@model OrganizationExample15.Models.Materna.Evolucion
+@{
+    ViewBag.Title = "Seguimiento domiciliario";
+    Layout = "~/Views/_Shared/_LayoutPagePrint.cshtml";
+    CUsuario usuario = ViewBag.User;
+    Paciente paciente = Paciente.GetPaciente(Model.Paciente.Id);
+    Funcionario funcionario = Funcionario.GetFuncionario(Model.Funcionario.Id);
+}
+<style>
+    .tabledate {
+        width: 100%;
+    }
+
+    .tabledate td {
+        padding: 1px 50px;
+    }
+
+    .tdad {
+        border: 3px double #808080;
+    }
+    table.tdad td, table.tdad th {
+        border: 3px double #808080;
+    }
+    h3,h4 {
+        margin: 1px;
+    }
+    table.tinterconsultas {
+        width: 90%;
+    }
+    table.tinterconsultas td {
+        height: 50px;
+    }
+    table.tfirma {
+        width: 80%;
+        margin-left: 10%;
+    }
+    table.tfirma .firma {
+        height: 80px;
+    }
+</style>
+<div class="tdad">
+    <img src="~/imgs/famisanar.jpg" style="float: right;" alt="logo" />
+    <h3 class="c">
+        SEGUIMIENTO DOMICILIARIO<br />
+        MUJERES CON NOTIFICACIÓN 549-MORBILIDAD MATERNA EXTREMA
+    </h3>
+    <table class="tabledate">
+        <tr>
+            <td><b>FECHA VISITA:</b>  @Query.GetMySQLDateFormat(Model.Fecha)</td>
+            <td class="r"><b>HORA:</b> @Convert.ToDateTime(Model.Fecha).ToShortTimeString()</td>
+        </tr>
+    </table>
+</div>
+<div class="tda">
+    <div class="tdad">
+        <h3 class="c">DATOS PERSONALES</h3>
+    </div>
+    <table class="w100">
+        <tr>
+            <td class="b nw">Primer Nombre</td>
+            <td class="nw">@paciente.pNombre</td>
+            <td class="b nw">Segundo Nombre</td>
+            <td class="nw">@paciente.sNombre</td>
+            <td class="b nw">Primer Apellido</td>
+            <td class="nw">@paciente.pApellido</td>
+            <td class="b nw">Segundo Apellido</td>
+            <td class="nw">@paciente.sApellido</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="nw"><b>Tipo de Documento</b></td>
+            <td>@Parametro2.GetItem(Parametro2.Tipo.PacienteTipoDocumento, paciente.tipodoc).Nombre</td>
+            <td class="nw"><b>No. de Documento</b></td>
+            <td>@paciente.documento</td>
+            <td class="b">Edad</td>
+            <td>@paciente.Edad</td>
+            <td class="b">Estado civil</td>
+            <td>@Parametro2.GetItem(Parametro2.Tipo.PacienteEstadoCivil, paciente.EstadoCivil).Nombre</td>
+            <td class="nw b">Nivel de escolaridad</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="nw b">Teléfono fijo</td>
+            <td>@paciente.Telefono</td>
+            <td class="nw b">Teléfono celular</td>
+            <td>@paciente.Celular</td>
+            <td class="nw b">Dirección residencia</td>
+            <td colspan="5" class="nw">@paciente.Direccion</td>
+        </tr>
+        <tr>
+            <td class="b">Ocupación</td>
+            <td class="nw">@paciente.Ocupacion</td>
+            <td class="b nw">Regimen de afiliación</td>
+            <td class="nw">@paciente.tipopago</td>
+            <td class="b nw">IPS de primer nivel asignada</td>
+            <td colspan="5" class="nw">@Varios.Get(paciente.IPS).Nombre</td>
+        </tr>
+    </table>
+</div>
+<div class="tda">
+    <div class="tdad">
+        <h3 class="c">
+            MOTIVO DE CONSULTA Y ENFERMEDAD ACTUAL
+        </h3>
+    </div>
+    <table class="w100">
+        <tr>
+            <td class="vat">
+                <table class="tdad w100">
+                    <tr>
+                        <th colspan="2">Criterio de priorización</th>
+                    </tr>
+                    @for (int i = 0; i < Model.CriterioPriorizacion.Count(); i++)
+                    {
+                        <tr>
+                            <td class="w100">@Model.CriterioPriorizacion[i].Name</td>
+                            <td>@(Model.CriterioPriorizacion[i].Value == "1" ? "SI" : "NO")</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td>Otro</td>
+                        <td class="nw">@Model.CriterioPriorizacionOtro</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="b">Observaciones</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">@Model.CriterioPriorizacionObservaciones</td>
+                    </tr>
+                </table>
+            </td>
+            <td style="width: 50%" class=" vat">
+                <table class="tdad w100">
+                    <tr>
+                        <th colspan="5">Factores de riesgo psicosocial</th>
+                    </tr>
+                    @for (int i = 0; i < Model.FactoresRiesgoPsicoSocial.Count(); i++)
+                    {
+                        <tr>
+                            <td>@Model.FactoresRiesgoPsicoSocial[i].Name</td>
+                            <td class="w100">@Model.FactoresRiesgoPsicoSocial[i].Description</td>
+                            <td>@(Model.FactoresRiesgoPsicoSocial[i].Value == "1" ? "INTENSO" : "AUSENTE")</td>
+                        </tr>
+                    }
+                    @for (int i = 0; i < Model.FactoresRiesgoPsicoSocial2.Count(); i++)
+                    {
+                        <tr>
+                            <td>@Model.FactoresRiesgoPsicoSocial2[i].Name</td>
+                            <td class="w100">@Model.FactoresRiesgoPsicoSocial2[i].Description</td>
+                            <td class="nw">
+                                 @(Model.FactoresRiesgoPsicoSocial2[i].Value == "2" ? "Casi Siempre" : (Model.FactoresRiesgoPsicoSocial2[i].Value == "1" ? "A veces" : "Nunca"))
+                            </td>
+                        </tr>
+                    }
+                    @for (int i = 0; i < Model.FactoresRiesgoPsicoSocial3.Count(); i++)
+                    {
+                        <tr>
+                            <td colspan="2">@Model.FactoresRiesgoPsicoSocial3[i].Name</td>
+                            <td class="nw">@Html.Raw(Model.FactoresRiesgoPsicoSocial3[i].Value=="1" ? "Alto &ge;3" : "Bajo &lt;3")</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="tda">
+    <div class="tdad"><h3>
+    INFORMACIÓN DE LA GESTACIÓN ACTUAL
+</h3></div>
+    <div>
+        <b>El embarazo actual es: </b>
+        @Html.Raw(string.Join(" ", Model.PreguntasEmbarazoActual.Select(x => string.Format("<span class='nw'>{0}: <b>{1}</b></span>", HttpUtility.HtmlEncode(x.Name), x.Value == "1" ? "SI" : "NO"))))
+        <span class="nw"> Fecha última mestruación: <b>@Model.FechaUltimaMestruacion</b></span>
+        <span class="nw"> Edad gestacional en semanas al momento de ocurrencia del evento: <b>@Model.EdadGestacional</b></span>
+        <span class="nw"> Fecha probable de parto: <b>@Model.FechaProbableParto</b></span>
+        <span class="nw"> Momento de ocurrencia del evento: <b>@MVarios.GetItem(Model.MomentoOcurrenciaEvento).Nombre</b></span>
+        <span class="nw">
+            <b>Fórmula obstétrica: </b>
+            @Html.Raw(string.Join(", ", Model.FormulaObstetrica.Select(x => string.Format("<span>{0}: <b>{1}</b></span>", HttpUtility.HtmlEncode(x.Name), x.Value))))
+        </span>
+        <span> Asistencia a control prenatal: <b>@(Model.AsistenciaControlPrenatal == "1" ? "SI" : "NO")</b></span>
+        <span> Número de Controles Prenatales: <b>@Model.NumeroControlesPrenatales</b></span>
+        <span> Clasificación riesgo obstétrico: <b>@(Model.ClasificacionRiesgo == "1" ? "Alto" : "Bajo")</b></span>
+        @foreach (var info in Model.Antecedentes)
+        {
+        <br /><b>@info.Name: </b>@info.Value
+        }
+    </div>
+</div>
+<div class="tda">
+    <div class="tdad">
+        <h3 class="c">
+            RESULTADO DE LABORATORIOS E IMÁGENES DIAGNÓSTICAS
+        </h3>
+    </div>
+    <table class="w100">
+        <tr>
+            <td class="w50 vat">
+                <table class="tdad w100">
+                    <tr>
+                        <th colspan="7">
+                            CONTROL DE LABORATORIOS
+                        </th>
+                    </tr>
+                    <tr>
+                        <th rowspan="2">EXAMEN</th>
+                        <th colspan="2" class="nw">PRIMER TRIMESTRE</th>
+                        <th colspan="2" class="nw">SEGUNDO TRIMESTRE</th>
+                        <th colspan="2" class="nw">TERCER TRIMESTRE</th>
+                    </tr>
+                    <tr>
+                        <td>Fecha</td>
+                        <td>Resultado</td>
+                        <td>Fecha</td>
+                        <td>Resultado</td>
+                        <td>Fecha</td>
+                        <td>Resultado</td>
+                    </tr>
+                    @for (int i = 0; i < Model.ControlLaboratorio.Count(); i++)
+                    {
+                        <tr>
+                            <td class="w100">@Model.ControlLaboratorio[i].Name</td>
+                            <td>@Model.ControlLaboratorio[i].PTFecha</td>
+                            <td>@Model.ControlLaboratorio[i].PTResultado</td>
+                            <td>@Model.ControlLaboratorio[i].STFecha</td>
+                            <td>@Model.ControlLaboratorio[i].STResultado</td>
+                            <td>@Model.ControlLaboratorio[i].TTFecha</td>
+                            <td>@Model.ControlLaboratorio[i].TTResultado</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+            <td class=" vat">
+                <table class="w100 tdad">
+                    <tr>
+                        <th colspan="4">
+                            CONTROLES ECOGRAFICOS
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            RESULTADO
+                        </th>
+                        <th class="nw">
+                            PRIMER TIMESTRE
+                        </th>
+                        <th class="nw">
+                            SEGUNDO TRIMESTRE
+                        </th>
+                        <th class="nw">
+                            TERCER TRMESTRE
+                        </th>
+                    </tr>
+                    @for (int i = 0; i < Model.ControlesEcograficos.Count(); i++)
+                    {
+                        <tr>
+                            <td class="nw w100">@Model.ControlesEcograficos[i].Name</td>
+                            <td>@Model.ControlesEcograficos[i].Trimestre1</td>
+                            <td>@Model.ControlesEcograficos[i].Trimestre2</td>
+                            <td>@Model.ControlesEcograficos[i].Trimestre3</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="tda">
+    <div class="tdad">
+        <h3 class="c">VALORACIÓN FISICA Y SEGUIMIENTO</h3>
+    </div>
+    <table class="w100">
+        <tr>
+            <td class="vat">
+                <div class="c">
+                    <h4>Signos Vitales</h4>
+                </div>
+                <table class="w100">
+                    <tr>
+                        <td></td>
+                    </tr>
+                    @for (int i = 0; i < Model.SignosVitales.Count; i++)
+                    {
+                        <tr>
+                            <td class="nw">@Model.SignosVitales[i].Name</td>
+                            <td>@Model.SignosVitales[i].Value</td>
+                            <td class="nw">@Model.SignosVitales[i].Description</td>
+                            @{i++;}
+                            @if (i < Model.SignosVitales.Count)
+                            {
+                                <td class="nw">@Model.SignosVitales[i].Name</td>
+                                <td>@Model.SignosVitales[i].Value</td>
+                                <td class="nw">@Model.SignosVitales[i].Description</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            }
+                        </tr>
+                    }
+                    <tr>
+                        <td class="b">Hallazgos</td>
+                        <td colspan="5">
+                            @Model.Hallazgos
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td class="w33 vat">
+                <div class="c">
+                    <h4>Alteraciones al examen físico</h4>
+                </div>
+                <table class="w100">
+                    @for (int i = 0; i < Model.AlteracionesExamenFisico.Count; i++)
+                    {
+                        <tr>
+                            <td class="nw">@Model.AlteracionesExamenFisico[i].Name</td>
+                            <td>@(Model.AlteracionesExamenFisico[i].Value == "1" ? "SI" : "NO")</td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    </table>
+    <span class="nw"> Asesoria para acceso a método anticonceptivo post evento obstétrico: <b>@(Model.AsesoriaMetodoAnticonceptivo == "1" ? "SI" : "NO")</b></span>
+    <span class="nw"> Accedio a método anticonceptivo post evento obstétrico: <b>@(Model.AccedioMetodoAnticonceptivo == "1" ? "SI" : "NO")</b></span>
+    <span class="nw"> Cuál: <b>@Model.CualMetodoAnticonceptivo</b></span>
+</div>
+<table class="w100 tdad">
+    <tr>
+        <th colspan="3">DIAGNÓSTICO</th>
+    </tr>
+    <tr>
+        <th rowspan="@(Model.DiagnosticoPrevio.CIE10s.Count+1)" class="nw">DIAGNÓSTICO PREVIO (MME)</th>
+        <th class="nw">CÓDIGO CIE 10</th>
+        <th class="w100">DESCRIPCIÓN</th>
+    </tr>
+    @for (int i = 0; i < Model.DiagnosticoPrevio.CIE10s.Count; i++)
+    {
+        <tr>
+            <td>@Model.DiagnosticoPrevio.CIE10s[i].Code</td>
+            <td>@Model.DiagnosticoPrevio.CIE10s[i].Description</td>
+        </tr>
+    }
+    <tr>
+        <th rowspan="@(Model.DiagnosticoActual.CIE10s.Count+1)" class="nw">DIAGNÓSTICO ACTUAL</th>
+        <th class="nw">CÓDIGO CIE 10</th>
+        <th class="w100">DESCRIPCIÓN</th>
+    </tr>
+    @for (int i = 0; i < Model.DiagnosticoActual.CIE10s.Count; i++)
+    {
+        <tr>
+            <td>@Model.DiagnosticoActual.CIE10s[i].Code</td>
+            <td>@Model.DiagnosticoActual.CIE10s[i].Description</td>
+        </tr>
+    }
+</table>
+<div class="tda">
+    <div class="tdad">
+        <h3 class="c">
+            PLAN DE MANEJO
+        </h3>
+    </div>
+    @foreach (var info in Model.PlanManejo) {
+        <div>
+            <b>@info.Name: </b> @info.Value
+        </div>
+    }
+</div>
+<div class="tda">
+    <div class="tdad">
+        <h3 class="c">
+            OBSERVACIONES GENERALES DE LA VISITA
+        </h3>
+    </div>
+    <div>@Model.Observaciones</div>
+</div>
+
+<table class="w100">
+    <tr>
+        <td class="w50">
+            <table class="tdad tinterconsultas">
+                <tr>
+                    <th>SOLICITUD DE INTERCONSULTAS</th>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <table class="tdad tinterconsultas" style="float: right">
+                <tr>
+                    <th>PRESCRIPCIÓN DE MEDICAMENTOS</th>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<div>
+    "Estoy de acuerdo y he sido informada sobre la importancia y objetivos de la presente visita domiciliaria, ademas, comprendo que la visita medica que recibí no remplaza ninguna de mis obligaciones de asistir a los servicios de salud para las citas programadas o examenes complementarios"
+</div>
+<table class="w100">
+    <tr>
+        <td class="vat">
+            <table class="tfirma">
+                <tr>
+                    <td colspan="2" class="firma">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><hr /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="c">Firma usuaria</td>
+                </tr>
+                <tr>
+                    <td>Nombre</td>
+                    <td class="tdb w100"></td>
+                </tr>
+                <tr>
+                    <td class="nw">Tipo y No. Doc</td>
+                    <td class="tdb"></td>
+                </tr>
+                <tr>
+                    <td>Teléfono</td>
+                    <td class="tdb"></td>
+                </tr>
+            </table>
+        </td>
+        <td class="w50 vat">
+            <table class="tfirma">
+                <tr>
+                    <td colspan="2" class="firma">
+                        <img src="@Url.Content(FileStorage.GetPublicURLPath(FileStorage.Types.firmas, funcionario.Id + ".jpg"))" class="firma" />
+                        <img src="@Url.Content(FileStorage.GetPublicURLPath(FileStorage.Types.sellos, funcionario.Id + ".jpg"))" class="firma" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><hr /></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="c">Firma profesional de Medicina que realiza la Visita</td>
+                </tr>
+                <tr>
+                    <td>Nombre:</td>
+                    <td class="tdb w100">@funcionario.Nombres</td>
+                </tr>
+                <tr>
+                    <td class="nw">
+                        Registro Medico:
+                    </td>
+                    <td class="tdb">@funcionario.Documento</td>
+                </tr>
+                <tr>
+                    <td>Teléfono:</td>
+                    <td class="tdb">@funcionario.Telefono</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
