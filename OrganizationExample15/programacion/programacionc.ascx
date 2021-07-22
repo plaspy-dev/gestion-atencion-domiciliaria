@@ -107,7 +107,7 @@
                                 autorizacion.autActivo=1
                                 AND autorizacion.pacId=@paciente
                                 {0}
-                                AND autorizacion_detalle.autNumSesiones>(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId)
+                                AND IFNULL(autorizacion_detalle.autSesionesDia, 1)*autorizacion_detalle.autNumSesiones>(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId)
                                 GROUP BY autorizacion.autNumero">
 			                <SelectParameters>
 			                    <asp:ControlParameter ControlID="HIdPaciente" PropertyName="Value" Name="paciente" DefaultValue="0" />
@@ -135,7 +135,7 @@
                     ProviderName="<%$ ConnectionStrings:MySQLConnectionString.ProviderName %>" 
                     SelectCommand="SELECT autorizacion_detalle.actId AS id
                         ,medicamentos.nombre AS nombre
-                        ,autorizacion_detalle.autNumSesiones
+                        ,IFNULL(autorizacion_detalle.autSesionesDia, 1)*autorizacion_detalle.autNumSesiones autNumSesiones
                         ,(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId) AS realizadas
                         FROM autorizacion
                         LEFT JOIN autorizacion_detalle ON (autorizacion_detalle.autNumero=autorizacion.autNumero)
@@ -144,7 +144,7 @@
                         autorizacion.pacId=@paciente
                         AND autorizacion.autNumero=@autorizacion 
                         {0}
-                        AND autorizacion_detalle.autNumSesiones>(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId)
+                        AND IFNULL(autorizacion_detalle.autSesionesDia, 1)*autorizacion_detalle.autNumSesiones>(SELECT IFNULL(SUM(programacion.prgNumSesion),0) FROM programacion WHERE programacion.autNumero=autorizacion.autNumero AND programacion.actId=autorizacion_detalle.actId)
                         ORDER BY medicamentos.nombre">
                         <SelectParameters>
                             <asp:ControlParameter ControlID="HIdPaciente" PropertyName="Value" Name="paciente" DefaultValue="0" />

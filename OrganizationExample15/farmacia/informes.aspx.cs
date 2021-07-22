@@ -272,7 +272,7 @@ public partial class farmacia_informes : System.Web.UI.Page
     {
         int col = GResultados.GetGridColumnIndex(columna);
         if(GResultados.FooterRow!=null) 
-            GResultados.FooterRow.Cells[col].Text = rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : Convert.ToInt32(x.Cells[col].Text)).ToString();
+            GResultados.FooterRow.Cells[col].Text = rows.Sum(x => HttpUtility.HtmlDecode(x.Cells[col].Text).Trim().Length == 0 ? 0 : Convert.ToDecimal(x.Cells[col].Text)).ToString();
     }
     protected void TotalizarDinero(List<GridViewRow> rows, string columna)
     {
