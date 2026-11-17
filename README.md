@@ -11,7 +11,7 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as archived on 2021-07-22.
+This cut records the home-care application as documented on 2026-11-17.
 
 The application keeps the records used to arrange visits and coordinate the people providing care.
 
@@ -40,24 +40,6 @@ The retained site entry is `OrganizationExample15.mvc.2018-11-21/censo/Default.a
 
 The archive inventory counted 10 additions, 2 edits and 0 removals.
 
-### Framework versions
-
-The archived descriptors declare these .NET Framework versions.
-
-- .NET Framework 4.5 in `OrganizationExample15.webforms.sln`, `OrganizationExample16.sln`
-- .NET Framework 4.5.2 in `movil.sln`
-- .NET Framework 4.6 in `OrganizationExample15.mvc.2018-11-21/OrganizationExample15.csproj`, `OrganizationExample15/OrganizationExample15.csproj`
-
-### Usage
-
-Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/materna/postparto.aspx` and the other routes above.
-
-The retained entry page is `OrganizationExample15.mvc.2018-11-21/censo/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
-
-### License
-
-The application’s own code uses the [MIT license](LICENSE).
-
 ### Contributing
 
 For documentation or build changes, describe the archived edition and include the steps to reproduce your result.
@@ -66,9 +48,19 @@ For documentation or build changes, describe the archived edition and include th
 
 For build or demo questions, open an issue with the commit, tool version and command. Remove private data from attached logs.
 
+### Usage
+
+Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/materna/postparto.aspx` and the other routes above.
+
+The retained entry page is `OrganizationExample15.mvc.2018-11-21/censo/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
+
 ### History
 
 Use the commit history to compare this snapshot and the recovery notes with later editions.
+
+### License
+
+[MIT License](LICENSE).
 
 ---
 
@@ -81,7 +73,7 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria archivada el 2021-07-22.
+Este corte conserva la versión de atención domiciliaria documentado el 2026-11-17.
 
 La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
 
@@ -110,24 +102,6 @@ La entrada conservada del sitio es `OrganizationExample15.mvc.2018-11-21/censo/D
 
 El inventario del respaldo registró 10 adiciones, 2 cambios y 0 retiros.
 
-### Versiones de .NET Framework
-
-Los descriptores archivados declaran estas versiones de .NET Framework.
-
-- .NET Framework 4.5 en `OrganizationExample15.webforms.sln`, `OrganizationExample16.sln`
-- .NET Framework 4.5.2 en `movil.sln`
-- .NET Framework 4.6 en `OrganizationExample15.mvc.2018-11-21/OrganizationExample15.csproj`, `OrganizationExample15/OrganizationExample15.csproj`
-
-### Uso
-
-Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/materna/postparto.aspx` y las demás rutas de arriba.
-
-La portada conservada es `OrganizationExample15.mvc.2018-11-21/censo/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
-
-### Licencia
-
-El código propio usa la [licencia MIT](LICENSE).
-
 ### Contribuir
 
 Si propones cambios de documentación o compilación, identifica la edición archivada e incluye los pasos para repetir el resultado.
@@ -136,9 +110,19 @@ Si propones cambios de documentación o compilación, identifica la edición arc
 
 Si tienes dudas sobre la compilación o la demostración, abre una incidencia con el commit, la versión de la herramienta y el comando. Retira los datos privados de los registros adjuntos.
 
+### Uso
+
+Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/materna/postparto.aspx` y las demás rutas de arriba.
+
+La portada conservada es `OrganizationExample15.mvc.2018-11-21/censo/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
+
 ### Historia
 
 Consulta el historial de commits para comparar esta copia y sus notas de reconstrucción con las ediciones posteriores.
+
+### Licencia
+
+[Licencia MIT](LICENSE).
 
 ## Recovered local build / Compilación local recuperada
 
