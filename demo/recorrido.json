@@ -1,0 +1,14 @@
+{
+  "solicitud": "DEMO-V01",
+  "persona": "Persona de demostración",
+  "agenda": {
+    "dia": "2030-01-15",
+    "franja": "10:00–11:00",
+    "lugar": "Zona de prueba"
+  },
+  "recorrido": [
+    "Solicitud recibida",
+    "Visita asignada",
+    "Visita registrada"
+  ]
+}
