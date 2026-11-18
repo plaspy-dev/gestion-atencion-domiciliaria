@@ -1,4 +1,4 @@
-# Home-care management / Gestión de atención domiciliaria
+# Gestión de atención domiciliaria / Home care management
 
 [English](#english) · [Español](#español)
 
@@ -7,16 +7,13 @@
 Archived ASP.NET application for coordinating home visits, care teams and service records
 
 > [!WARNING]
-> **Status: Archived.** This snapshot preserves an earlier edition. Its build instructions identify the requirements and checks for this cut.
+> **Status: Archived.** This snapshot preserves an earlier edition. Use the requirements and checks in its guide.
 
 ### Overview
 
-This cut records the home-care application as documented on 2026-11-17.
+This cut records the home-care application as documented on 2026-11-18.
 
-The application keeps the records used to arrange visits and coordinate the people providing care.
-
-
-### Features in the retained source
+### Features
 
 - Record postpartum care and follow-up in the maternal care module. `OrganizationExample15/materna/postparto.aspx`.
 - Consult the maternal care report. `OrganizationExample15/materna/informe.aspx`.
@@ -29,16 +26,23 @@ The application keeps the records used to arrange visits and coordinate the peop
 - Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
 - Open the staff record for the care team. `OrganizationExample15/rh/funcionario.aspx`.
 
-### Build and local use
+### What you can do
 
-The local build precompiles the remaining Web Forms pages. The build recipe excludes pages that depend on archived controls that have not survived. The runtime test only checks local sign-in with a fictional account. It does not exercise the excluded pages, clinical forms, or external integrations. The 10 file exclusions in `demo/missing-controls.json` include `paciente/ingreso.aspx`, `paciente/ingreso.aspx.cs`, `paciente/evolucion.aspx`, `paciente/evolucion.aspx.cs`.
-On Windows, build the recovered Web Forms copy with `pwsh -NoProfile -File demo/Build.ps1 -Output <new-temp-folder>`. Use IIS Express and a separate MySQL instance for fictional data.
+- Review intake, progress, and nursing records.
+- Keep patient, staff, and service information in working forms.
+- Includes web screens and separate branches for mobile and historical versions.
 
-The retained site entry is `OrganizationExample15.mvc.2018-11-21/censo/Default.aspx`. Use fictional accounts and a disposable database on loopback.
+### Example
 
-### Archive notes
+Use a fictional person and practice visit to walk through intake and locate the follow-up record. See the synthetic example in `demo/`.
 
-The archive inventory counted 10 additions, 2 edits and 0 removals.
+### Getting started
+
+The site uses historical ASP.NET. Review its pages and code in a Windows environment compatible with .NET Framework. To run locally, identify the connections the application uses and prepare an empty database with test data. Original connections, resources, and services are managed separately.
+
+Entry points in the source. [`movil.sln`](movil.sln), [`OrganizationExample16.sln`](OrganizationExample16.sln).
+
+History dates come from Git or available backup evidence. Reconstructed dates from files with no time zone use 12:00 UTC as a reference.
 
 ### Contributing
 
@@ -64,21 +68,20 @@ Use the commit history to compare this snapshot and the recovery notes with late
 
 ---
 
+The local build precompiles the remaining Web Forms pages. The build recipe excludes pages that depend on archived controls that have not survived. The runtime test only checks local sign-in with a fictional account. It does not exercise the excluded pages, clinical forms, or external integrations. The 10 file exclusions in `demo/missing-controls.json` include `paciente/ingreso.aspx`, `paciente/ingreso.aspx.cs`, `paciente/evolucion.aspx`, `paciente/evolucion.aspx.cs`.
+
 ## Español
 
 Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de atención y registros del servicio
 
 > [!WARNING]
-> **Estado: archivado.** Esta copia conserva una edición anterior. Sus instrucciones de compilación indican los requisitos y las pruebas de este corte.
+> **Estado: archivado.** Este corte conserva una edición anterior. Consulta los requisitos y las pruebas de su guía.
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria documentado el 2026-11-17.
+Este corte conserva la versión de atención domiciliaria documentado el 2026-11-18.
 
-La aplicación reúne los registros para organizar las visitas y coordinar al personal que presta la atención.
-
-
-### Funciones en el código conservado
+### Funciones
 
 - Registra la atención posparto y su seguimiento en el módulo materno. `OrganizationExample15/materna/postparto.aspx`.
 - Consulta el informe de atención materna. `OrganizationExample15/materna/informe.aspx`.
@@ -91,16 +94,23 @@ La aplicación reúne los registros para organizar las visitas y coordinar al pe
 - Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
 - Abre la ficha del personal del equipo de atención. `OrganizationExample15/rh/funcionario.aspx`.
 
-### Compilación y uso local
+### Qué puedes hacer
 
-La compilación local precompila las páginas Web Forms disponibles. La receta excluye las páginas que dependen de controles históricos que no se conservaron. La prueba de ejecución cubre solo el ingreso local con una cuenta ficticia. Quedan sin probar las páginas excluidas, los formularios clínicos y las integraciones externas. Las 10 exclusiones de archivos de `demo/missing-controls.json` incluyen `paciente/ingreso.aspx`, `paciente/ingreso.aspx.cs`, `paciente/evolucion.aspx`, `paciente/evolucion.aspx.cs`.
-Los insumos conservados incluyen `OrganizationExample15.sln`, `OrganizationExample15.webforms.sln`, `OrganizationExample16.sln`, `movil.sln`, `OrganizationExample15.mvc.2018-11-21/OrganizationExample15.csproj`, `OrganizationExample15/OrganizationExample15.csproj`. Abre la solución o el proyecto en un entorno de desarrollo de Visual Studio y .NET Framework compatible con el corte. Recupera las referencias compartidas, los paquetes y la configuración de ASP.NET de esta edición antes de usar MSBuild.
+- Consulta fichas de ingreso, evolución y registros de enfermería.
+- Centraliza información de pacientes, personal y servicios en formularios de trabajo.
+- Incluye vistas web y variantes móviles e históricas en ramas separadas.
 
-La entrada conservada del sitio es `OrganizationExample15.mvc.2018-11-21/censo/Default.aspx`. Usa cuentas ficticias y una base desechable en la interfaz local.
+### Ejemplo
 
-### Notas del respaldo
+Usa una persona ficticia y una visita de prueba para recorrer el ingreso y consultar dónde se registra el seguimiento. Usa el ejemplo sintético de `demo/`.
 
-El inventario del respaldo registró 10 adiciones, 2 cambios y 0 retiros.
+### Cómo empezar
+
+El sitio usa ASP.NET de su época. Revisa las páginas y su código en un entorno Windows compatible con .NET Framework. Para una ejecución local, identifica las conexiones que usa la aplicación y prepara una base vacía con datos de prueba. Las conexiones, recursos y servicios originales se gestionan por separado.
+
+Puntos de entrada en el código. [`movil.sln`](movil.sln), [`OrganizationExample16.sln`](OrganizationExample16.sln).
+
+Las fechas del historial se apoyan en Git o en la evidencia disponible de los respaldos. Las fechas reconstruidas a partir de archivos sin zona horaria usan las 12:00 UTC como referencia.
 
 ### Contribuir
 
@@ -124,6 +134,12 @@ Consulta el historial de commits para comparar esta copia y sus notas de reconst
 
 [Licencia MIT](LICENSE).
 
+## Session setup / Configuración de sesión
+
+Set `DOMICILIO_SESSION_KEY`, `DOMICILIO_SESSION_KEY_2`, `DOMICILIO_SESSION_KEY_4` in the ASP.NET process environment before signing in. Generate independent values for your deployment. Use synthetic values in local tests.
+
+Define `DOMICILIO_SESSION_KEY`, `DOMICILIO_SESSION_KEY_2`, `DOMICILIO_SESSION_KEY_4` en el entorno del proceso ASP.NET antes de iniciar sesión. Genera valores propios para tu instalación. Usa valores ficticios en las pruebas locales.
+
 ## Recovered local build / Compilación local recuperada
 
 The recovered Web Forms site is in `OrganizationExample15.webforms`. Run `pwsh -NoProfile -File demo/Build.ps1 -Output <new-directory>` on Windows with .NET Framework 4.8 and the .NET SDK. The build compiles the compatible shared library from the recovered sources and uses the sample Web.config in the copy.
@@ -137,3 +153,6 @@ La compilación restaura iTextSharp 5.4.4 desde el paquete oficial de NuGet y co
 The 2026 reconstruction restores archived Web Forms inputs and builds the compatible February 2016 copy of the owned shared library. The recipe excludes tracked views with missing patient controls from its disposable build. The fictional MySQL test verified sign-in and the protected home page with the historical grouping mode.
 
 La reconstrucción de 2026 recupera insumos archivados de Web Forms y compila la copia compatible de febrero de 2016 de la biblioteca propia. La receta aparta de la copia desechable las vistas que requieren controles de paciente ausentes. La prueba con MySQL ficticio verificó el ingreso y la portada protegida con el modo histórico de agrupación.
+
+La compilación local precompila las páginas Web Forms disponibles. La receta excluye las páginas que dependen de controles históricos que no se conservaron. La prueba de ejecución cubre solo el ingreso local con una cuenta ficticia. Quedan sin probar las páginas excluidas, los formularios clínicos y las integraciones externas. Las 10 exclusiones de archivos de `demo/missing-controls.json` incluyen `paciente/ingreso.aspx`, `paciente/ingreso.aspx.cs`, `paciente/evolucion.aspx`, `paciente/evolucion.aspx.cs`.
+
