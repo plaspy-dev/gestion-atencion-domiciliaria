@@ -11,7 +11,7 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 
 ### Overview
 
-This cut records the home-care application as documented on 2026-11-18.
+This cut records the home-care application as documented on 2026-11-20.
 
 ### Features
 
@@ -79,7 +79,7 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria documentado el 2026-11-18.
+Este corte conserva la versión de atención domiciliaria documentado el 2026-11-20.
 
 ### Funciones
 
