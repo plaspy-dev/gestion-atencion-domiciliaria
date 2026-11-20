@@ -32,25 +32,36 @@ Use Windows with .NET Framework 4.8, IIS Express and PowerShell 7 to build the a
 
 ### Getting started
 
-The latest MVC projects target .NET Framework 4.6. Their missing historical shared helpers still prevent a complete build. The verified Web Forms editions build with the instructions below.
+The archived MVC projects target .NET Framework 4.6. The complete web build of those projects remains under verification.
 
-The test used the archived edition dated 2012-03-14. Export that commit into a separate local checkout and use a new output folder.
+The example uses the archived [10 November 2011 Web Forms edition](../../commit/0133c745fde25672d3e35392d44642c069800548). Install Python 3 and Docker in addition to the Windows tools above. Run the commands below from this checkout. The script exports the edition to a disposable folder and compiles it with its own build script.
 
 ```powershell
-git switch --detach 1c845eecac08
-$output = Join-Path $env:TEMP ('webforms-demo-' + [guid]::NewGuid().ToString('N'))
-pwsh -NoProfile -File demo/Build.ps1 -Output $output
+docker pull mysql@sha256:4bc6bc963e6d8443453676cae56536f4b8156d78bae03c0145cbe47c2aad73bb
+docker pull mcr.microsoft.com/mssql/server@sha256:4525e3efac9f3e241cb003bb2ff2a82818b502f37e12049d788b1a9fa7e13b7f
+python demo/run-webforms.py
 ```
 
 ### Usage
 
 Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/materna/postparto.aspx` and the other routes above.
 
-Sign in as a fictional care-team operator and open the local site. The verified trial issued a session cookie and logged the operator’s sign-in in disposable MySQL. The trial also provided a local SQL Server with a fictional navigation entry.
+The check signs in as `alicia_demo`, opens the protected home page and verifies the timestamp written to MySQL for the fictional operator. MySQL and SQL Server use isolated loopback ports and fictional tables. To open the demo in a browser after this check, set a fresh fictional password and keep the server running.
+
+```powershell
+$env:DOMICILIO_DEMO_PASSWORD = ([guid]::NewGuid().ToString('N')).Substring(0,16)
+python demo/run-webforms.py --serve
+```
+
+Open the address printed by the script. Sign in with `alicia_demo` and the password you provided. Press Ctrl+C to stop and remove the test services.
 
 ### Verification
 
-The archived example was compiled from its own source and used only local services. The coverage is the sign-in and its database activity. Other screens and external service integrations require separate tests.
+The trial on 20 November 2026 used Windows 11 build 26300, PowerShell 7.6.9, .NET SDK 11.0.100, IIS Express 10.0.26013.1000 and ASP.NET Compilation Tool 4.8.10001.0. The images show the original Web Forms sign-in and the protected home page for Alicia Ejemplo. Some historical artwork is absent in that edition. The test covers the sign-in and home page. Visit scheduling and external integrations require separate tests.
+
+![Archived home page greeting the fictional operator Alicia Ejemplo](docs/media/portada-webforms.png)
+
+![Sign-in form followed by the protected home page for the fictional operator](docs/media/ingreso-webforms.gif)
 
 ### Project structure
 
@@ -109,25 +120,36 @@ Usa Windows con .NET Framework 4.8, IIS Express y PowerShell 7 para compilar la 
 
 ### Cómo empezar
 
-Los proyectos MVC más recientes apuntan a .NET Framework 4.6. La ausencia de algunos auxiliares compartidos de la época impide su compilación completa. Las ediciones Web Forms verificadas compilan con las instrucciones de abajo.
+Los proyectos MVC archivados apuntan a .NET Framework 4.6. La compilación web completa de esos proyectos sigue en verificación.
 
-La prueba usó la edición archivada del 2012-03-14. Abre ese commit en una copia local aparte y usa una carpeta nueva para la compilación.
+El ejemplo usa la [edición Web Forms del 10 de noviembre de 2011](../../commit/0133c745fde25672d3e35392d44642c069800548). Instala Python 3 y Docker además de las herramientas de Windows indicadas arriba. Ejecuta estos comandos desde esta copia. El script exporta la edición a una carpeta desechable y la compila con su propio script.
 
 ```powershell
-git switch --detach 1c845eecac08
-$output = Join-Path $env:TEMP ('webforms-demo-' + [guid]::NewGuid().ToString('N'))
-pwsh -NoProfile -File demo/Build.ps1 -Output $output
+docker pull mysql@sha256:4bc6bc963e6d8443453676cae56536f4b8156d78bae03c0145cbe47c2aad73bb
+docker pull mcr.microsoft.com/mssql/server@sha256:4525e3efac9f3e241cb003bb2ff2a82818b502f37e12049d788b1a9fa7e13b7f
+python demo/run-webforms.py
 ```
 
 ### Uso
 
 Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/materna/postparto.aspx` y las demás rutas de arriba.
 
-Ingresa como un operador ficticio del equipo de atención y abre el sitio local. La prueba verificada emitió una cookie de sesión y registró el ingreso en MySQL desechable. También proporcionó un SQL Server local con una entrada ficticia de navegación.
+La comprobación entra con `alicia_demo`, abre la portada protegida y verifica la fecha de ingreso que MySQL registró para la operadora ficticia. MySQL y SQL Server usan puertos locales separados y tablas ficticias. Para abrir la demo en el navegador después de esta comprobación, genera una contraseña ficticia y deja el servidor en marcha.
+
+```powershell
+$env:DOMICILIO_DEMO_PASSWORD = ([guid]::NewGuid().ToString('N')).Substring(0,16)
+python demo/run-webforms.py --serve
+```
+
+Abre la dirección que muestra el script. Ingresa con `alicia_demo` y la contraseña que elegiste. Pulsa Ctrl+C para retirar los servicios de prueba.
 
 ### Verificación
 
-El ejemplo archivado compiló a partir de su propio código y usó solo servicios locales. La prueba cubre el ingreso y su actividad en la base de datos. Las demás pantallas e integraciones requieren pruebas aparte.
+La prueba del 20 de noviembre de 2026 usó Windows 11, compilación 26300, PowerShell 7.6.9, SDK de .NET 11.0.100, IIS Express 10.0.26013.1000 y ASP.NET Compilation Tool 4.8.10001.0. Las imágenes muestran el formulario original de ingreso y la portada protegida para Alicia Ejemplo. Faltan algunas imágenes de esa edición. La prueba cubre el ingreso y la portada. La agenda de visitas y las integraciones externas requieren pruebas aparte.
+
+![Portada archivada que saluda a la operadora ficticia Alicia Ejemplo](docs/media/portada-webforms.png)
+
+![Formulario de ingreso seguido de la portada protegida para la operadora ficticia](docs/media/ingreso-webforms.gif)
 
 ### Estructura del proyecto
 
