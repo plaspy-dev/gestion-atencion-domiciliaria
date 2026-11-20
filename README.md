@@ -1,4 +1,4 @@
-# Gestión de atención domiciliaria / Home care management
+# Gestión de atención domiciliaria
 
 [English](#english) · [Español](#español)
 
@@ -7,11 +7,11 @@
 Archived ASP.NET application for coordinating home visits, care teams and service records
 
 > [!WARNING]
-> **Status: Archived.** This snapshot preserves an earlier edition. Use the requirements and checks in its guide.
+> **Status: Archived.** This snapshot preserves an earlier edition. Its build instructions identify the requirements and checks for this cut.
 
 ### Overview
 
-This cut records the home-care application as documented on 2026-11-20.
+Home-care teams can use the application to organise visits, refer to contact and service records, and coordinate the people who provide care.
 
 ### Features
 
@@ -26,45 +26,51 @@ This cut records the home-care application as documented on 2026-11-20.
 - Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
 - Open the staff record for the care team. `OrganizationExample15/rh/funcionario.aspx`.
 
-### What you can do
+### Requirements
 
-- Review intake, progress, and nursing records.
-- Keep patient, staff, and service information in working forms.
-- Includes web screens and separate branches for mobile and historical versions.
-
-### Example
-
-Use a fictional person and practice visit to walk through intake and locate the follow-up record. See the synthetic example in `demo/`.
+Use Windows with .NET Framework 4.8, IIS Express and PowerShell 7 to build the archived Web Forms edition in the example. Its build script rebuilds the shared library and invokes the ASP.NET compiler. Use a disposable test database and fictional records.
 
 ### Getting started
 
-The site uses historical ASP.NET. Review its pages and code in a Windows environment compatible with .NET Framework. To run locally, identify the connections the application uses and prepare an empty database with test data. Original connections, resources, and services are managed separately.
+The latest MVC projects target .NET Framework 4.6. Their missing historical shared helpers still prevent a complete build. The verified Web Forms editions build with the instructions below.
 
-Entry points in the source. [`movil.sln`](movil.sln), [`OrganizationExample16.sln`](OrganizationExample16.sln).
+The test used the archived edition dated 2012-03-14. Export that commit into a separate local checkout and use a new output folder.
 
-History dates come from Git or available backup evidence. Reconstructed dates from files with no time zone use 12:00 UTC as a reference.
-
-### Contributing
-
-For documentation or build changes, describe the archived edition and include the steps to reproduce your result.
-
-### Support
-
-For build or demo questions, open an issue with the commit, tool version and command. Remove private data from attached logs.
+```powershell
+git switch --detach 1c845eecac08
+$output = Join-Path $env:TEMP ('webforms-demo-' + [guid]::NewGuid().ToString('N'))
+pwsh -NoProfile -File demo/Build.ps1 -Output $output
+```
 
 ### Usage
 
 Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/materna/postparto.aspx` and the other routes above.
 
-The retained entry page is `OrganizationExample15.mvc.2018-11-21/censo/Default.aspx`. Connect the matching local edition to an isolated database with a fictional operator before attempting a protected view.
+Sign in as a fictional care-team operator and open the local site. The verified trial issued a session cookie and logged the operator’s sign-in in disposable MySQL. The trial also provided a local SQL Server with a fictional navigation entry.
+
+### Verification
+
+The archived example was compiled from its own source and used only local services. The coverage is the sign-in and its database activity. Other screens and external service integrations require separate tests.
+
+### Project structure
+
+`OrganizationExample15/` and `OrganizationExample15.mvc.2018-11-21/` contain the MVC editions. `OrganizationExample15.webforms/` contains the Web Forms site. `OrganizationExample16/` contains another archived edition. `movil/` and `movil.no/` contain the mobile pages and an earlier variant. `demo/` holds the fictional example.
 
 ### History
 
-Use the commit history to compare this snapshot and the recovery notes with later editions.
+This repository combines the archived web editions and keeps their recorded Git dates.The 2026 reconstruction brings the recovered archive snapshots into one timeline. The May and August 2011 cuts remain as source archives with incomplete build inputs.
+
+### Contributing
+
+Keep local settings and fictional test data in a disposable copy. Report the exact edition and steps that reproduce the change.
+
+### Support
+
+Use the repository’s issues to report a reproducible build problem or a missing resource.
 
 ### License
 
-[MIT License](LICENSE).
+The application’s own code is available under the [MIT license](LICENSE). Included third-party files retain their original notices.
 
 ---
 
@@ -75,11 +81,14 @@ The local build precompiles the remaining Web Forms pages. The build recipe excl
 Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de atención y registros del servicio
 
 > [!WARNING]
-> **Estado: archivado.** Este corte conserva una edición anterior. Consulta los requisitos y las pruebas de su guía.
+> **Estado: archivado.** Esta copia conserva una edición anterior. Sus instrucciones de compilación indican los requisitos y las pruebas de este corte.
+
+Aplicación ASP.NET para coordinar visitas domiciliarias, equipos de atención y registros del servicio
+
 
 ### Descripción general
 
-Este corte conserva la versión de atención domiciliaria documentado el 2026-11-20.
+Los equipos de atención domiciliaria pueden organizar visitas, consultar fichas de contacto y de servicio y coordinar al personal que presta la atención.
 
 ### Funciones
 
@@ -94,51 +103,51 @@ Este corte conserva la versión de atención domiciliaria documentado el 2026-11
 - Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
 - Abre la ficha del personal del equipo de atención. `OrganizationExample15/rh/funcionario.aspx`.
 
-### Qué puedes hacer
+### Requisitos
 
-- Consulta fichas de ingreso, evolución y registros de enfermería.
-- Centraliza información de pacientes, personal y servicios en formularios de trabajo.
-- Incluye vistas web y variantes móviles e históricas en ramas separadas.
-
-### Ejemplo
-
-Usa una persona ficticia y una visita de prueba para recorrer el ingreso y consultar dónde se registra el seguimiento. Usa el ejemplo sintético de `demo/`.
+Usa Windows con .NET Framework 4.8, IIS Express y PowerShell 7 para compilar la edición Web Forms del ejemplo. El script recompila la biblioteca compartida y ejecuta el compilador de ASP.NET. Usa una base desechable y registros ficticios.
 
 ### Cómo empezar
 
-El sitio usa ASP.NET de su época. Revisa las páginas y su código en un entorno Windows compatible con .NET Framework. Para una ejecución local, identifica las conexiones que usa la aplicación y prepara una base vacía con datos de prueba. Las conexiones, recursos y servicios originales se gestionan por separado.
+Los proyectos MVC más recientes apuntan a .NET Framework 4.6. La ausencia de algunos auxiliares compartidos de la época impide su compilación completa. Las ediciones Web Forms verificadas compilan con las instrucciones de abajo.
 
-Puntos de entrada en el código. [`movil.sln`](movil.sln), [`OrganizationExample16.sln`](OrganizationExample16.sln).
+La prueba usó la edición archivada del 2012-03-14. Abre ese commit en una copia local aparte y usa una carpeta nueva para la compilación.
 
-Las fechas del historial se apoyan en Git o en la evidencia disponible de los respaldos. Las fechas reconstruidas a partir de archivos sin zona horaria usan las 12:00 UTC como referencia.
-
-### Contribuir
-
-Si propones cambios de documentación o compilación, identifica la edición archivada e incluye los pasos para repetir el resultado.
-
-### Soporte
-
-Si tienes dudas sobre la compilación o la demostración, abre una incidencia con el commit, la versión de la herramienta y el comando. Retira los datos privados de los registros adjuntos.
+```powershell
+git switch --detach 1c845eecac08
+$output = Join-Path $env:TEMP ('webforms-demo-' + [guid]::NewGuid().ToString('N'))
+pwsh -NoProfile -File demo/Build.ps1 -Output $output
+```
 
 ### Uso
 
 Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/materna/postparto.aspx` y las demás rutas de arriba.
 
-La portada conservada es `OrganizationExample15.mvc.2018-11-21/censo/Default.aspx`. Conecta la edición local a una base aislada con un operador ficticio antes de abrir una vista protegida.
+Ingresa como un operador ficticio del equipo de atención y abre el sitio local. La prueba verificada emitió una cookie de sesión y registró el ingreso en MySQL desechable. También proporcionó un SQL Server local con una entrada ficticia de navegación.
+
+### Verificación
+
+El ejemplo archivado compiló a partir de su propio código y usó solo servicios locales. La prueba cubre el ingreso y su actividad en la base de datos. Las demás pantallas e integraciones requieren pruebas aparte.
+
+### Estructura del proyecto
+
+`OrganizationExample15/` y `OrganizationExample15.mvc.2018-11-21/` contienen las ediciones MVC. `OrganizationExample15.webforms/` contiene el sitio Web Forms. `OrganizationExample16/` contiene otra edición archivada. `movil/` y `movil.no/` contienen las páginas móviles y una variante anterior. `demo/` guarda el ejemplo ficticio.
 
 ### Historia
 
-Consulta el historial de commits para comparar esta copia y sus notas de reconstrucción con las ediciones posteriores.
+Este repositorio reúne las ediciones web archivadas y conserva las fechas registradas en Git. El historial principal conserva las demás ediciones archivadas.
+
+### Contribuir
+
+Mantén la configuración local y los datos ficticios en una copia desechable. Indica la edición exacta y los pasos para reproducir el cambio.
+
+### Soporte
+
+Usa los issues del repositorio para reportar un problema de compilación reproducible o un recurso que falte.
 
 ### Licencia
 
-[Licencia MIT](LICENSE).
-
-## Session setup / Configuración de sesión
-
-Set `DOMICILIO_SESSION_KEY`, `DOMICILIO_SESSION_KEY_2`, `DOMICILIO_SESSION_KEY_4` in the ASP.NET process environment before signing in. Generate independent values for your deployment. Use synthetic values in local tests.
-
-Define `DOMICILIO_SESSION_KEY`, `DOMICILIO_SESSION_KEY_2`, `DOMICILIO_SESSION_KEY_4` en el entorno del proceso ASP.NET antes de iniciar sesión. Genera valores propios para tu instalación. Usa valores ficticios en las pruebas locales.
+El código propio de la aplicación usa la [licencia MIT](LICENSE). Los archivos de terceros conservan sus avisos originales.
 
 ## Recovered local build / Compilación local recuperada
 
