@@ -305,3 +305,10 @@ OrganizationExample15.mvc.2018-11-21/Global.asax -text
 "/OrganizationExample15/lib/dropzone/dropzone.scss" -text
 "/OrganizationExample15/lib/jquery-validation/LICENSE.md" -text
 "/OrganizationExample15/lib/toastr/toastr.js.map" -text
+
+# Retain browser sources and notices verified against upstream releases.
+"/OrganizationExample15.mvc.2018-11-21/lib/momentjs/moment-with-locales.js" -text
+"/OrganizationExample15.mvc.2018-11-21/lib/momentjs/moment.js" -text
+"/OrganizationExample15/lib/momentjs/moment-with-locales.js" -text
+"/OrganizationExample15/lib/momentjs/moment.js" -text
+"/vendor/third-party/moment-2.22.0-LICENSE.txt" -text

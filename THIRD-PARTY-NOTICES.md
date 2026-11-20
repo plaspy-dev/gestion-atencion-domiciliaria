@@ -195,6 +195,15 @@
 | `OrganizationExample15/lib/jquery-validation/LICENSE.md` | Jörn Zaefferer and contributors | jQuery Validation, archived copy | Original license text | `81e1c4930fd618f75a1d0311ab91ee358f6c9e588dcd4ff2d8e5bcc9c9e1197c` |
 | `OrganizationExample15/lib/toastr/toastr.js.map` | John Papa, Hans Fjällemark and contributors | Toastr, archived copy | Original source map notice | `9d16f16d3d8e311fa9558d05d584d338dead7bef3f6c344b34d1055ed9166db3` |
 
+## Browser package releases / Versiones de paquetes del navegador
+
+| Path / Ruta | Author / Autor | Source / Origen | Notice / Aviso | SHA-256 |
+| --- | --- | --- | --- | --- |
+| `OrganizationExample15/lib/momentjs/moment.js` | Moment.js contributors | [Official package](https://registry.npmjs.org/moment/-/moment-2.22.0.tgz) and archived copy | [MIT](vendor/third-party/moment-2.22.0-LICENSE.txt) | `12a31b1da9bfc75275cba085ff794853dcedbfe3a8842ef58dbe83370ebfab42` |
+| `OrganizationExample15.mvc.2018-11-21/lib/momentjs/moment.js` | Moment.js contributors | [Official package](https://registry.npmjs.org/moment/-/moment-2.22.0.tgz) and archived copy | [MIT](vendor/third-party/moment-2.22.0-LICENSE.txt) | `12a31b1da9bfc75275cba085ff794853dcedbfe3a8842ef58dbe83370ebfab42` |
+| `OrganizationExample15/lib/momentjs/moment-with-locales.js` | Moment.js contributors | [Official package](https://registry.npmjs.org/moment/-/moment-2.22.0.tgz) and archived copy | [MIT](vendor/third-party/moment-2.22.0-LICENSE.txt) | `fba5b17e2ed18d1b7a8ac71bd6959c42108969bcc75f0412f455b2237c68b17d` |
+| `OrganizationExample15.mvc.2018-11-21/lib/momentjs/moment-with-locales.js` | Moment.js contributors | [Official package](https://registry.npmjs.org/moment/-/moment-2.22.0.tgz) and archived copy | [MIT](vendor/third-party/moment-2.22.0-LICENSE.txt) | `fba5b17e2ed18d1b7a8ac71bd6959c42108969bcc75f0412f455b2237c68b17d` |
+
 ## Material Design Icons preview / Vista previa de Material Design Icons
 
 | Path / Ruta | Author / Autor | Origin / Origen | Notice / Aviso | SHA-256 |
