@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -157,21 +157,21 @@
     <Content Include="cliente\quejas.aspx" />
     <Content Include="cliente\quejas.html" />
     <Content Include="cliente\quejasa.html" />
-    <Content Include="clinicaheridas\casa.jpg" />
+    <Content Include="clinicaheridas\casa.jpg" Condition="Exists('clinicaheridas\casa.jpg')" />
     <Content Include="clinicaheridas\egresos.aspx" />
-    <Content Include="clinicaheridas\escaladolor.jpg" />
-    <Content Include="clinicaheridas\escalas\e0.jpg" />
-    <Content Include="clinicaheridas\escalas\e1.jpg" />
-    <Content Include="clinicaheridas\escalas\e10.jpg" />
-    <Content Include="clinicaheridas\escalas\e2.jpg" />
-    <Content Include="clinicaheridas\escalas\e3.jpg" />
-    <Content Include="clinicaheridas\escalas\e4.jpg" />
-    <Content Include="clinicaheridas\escalas\e5.jpg" />
-    <Content Include="clinicaheridas\escalas\e6.jpg" />
-    <Content Include="clinicaheridas\escalas\e7.jpg" />
-    <Content Include="clinicaheridas\escalas\e8.jpg" />
-    <Content Include="clinicaheridas\escalas\e9.jpg" />
-    <Content Include="clinicaheridas\escalas\escaladolor.jpg" />
+    <Content Include="clinicaheridas\escaladolor.jpg" Condition="Exists('clinicaheridas\escaladolor.jpg')" />
+    <Content Include="clinicaheridas\escalas\e0.jpg" Condition="Exists('clinicaheridas\escalas\e0.jpg')" />
+    <Content Include="clinicaheridas\escalas\e1.jpg" Condition="Exists('clinicaheridas\escalas\e1.jpg')" />
+    <Content Include="clinicaheridas\escalas\e10.jpg" Condition="Exists('clinicaheridas\escalas\e10.jpg')" />
+    <Content Include="clinicaheridas\escalas\e2.jpg" Condition="Exists('clinicaheridas\escalas\e2.jpg')" />
+    <Content Include="clinicaheridas\escalas\e3.jpg" Condition="Exists('clinicaheridas\escalas\e3.jpg')" />
+    <Content Include="clinicaheridas\escalas\e4.jpg" Condition="Exists('clinicaheridas\escalas\e4.jpg')" />
+    <Content Include="clinicaheridas\escalas\e5.jpg" Condition="Exists('clinicaheridas\escalas\e5.jpg')" />
+    <Content Include="clinicaheridas\escalas\e6.jpg" Condition="Exists('clinicaheridas\escalas\e6.jpg')" />
+    <Content Include="clinicaheridas\escalas\e7.jpg" Condition="Exists('clinicaheridas\escalas\e7.jpg')" />
+    <Content Include="clinicaheridas\escalas\e8.jpg" Condition="Exists('clinicaheridas\escalas\e8.jpg')" />
+    <Content Include="clinicaheridas\escalas\e9.jpg" Condition="Exists('clinicaheridas\escalas\e9.jpg')" />
+    <Content Include="clinicaheridas\escalas\escaladolor.jpg" Condition="Exists('clinicaheridas\escalas\escaladolor.jpg')" />
     <Content Include="clinicaheridas\evolucion.aspx" />
     <Content Include="clinicaheridas\evolucion.html" />
     <Content Include="clinicaheridas\informeeps.aspx" />
@@ -180,7 +180,7 @@
     <Content Include="clinicaheridas\valoracion.html" />
     <Content Include="control\actividad.ascx" />
     <Content Include="control\actividad.ascx.js" />
-    <Content Include="css\ajax-loader.gif" />
+    <Content Include="css\ajax-loader.gif" Condition="Exists('css\ajax-loader.gif')" />
     <Content Include="css\bootstrap.css" />
     <Content Include="css\bootstrap.min.css" />
     <Content Include="css\estilo.css" />
@@ -188,52 +188,52 @@
     <Content Include="css\font-awesome.min.css" />
     <Content Include="css\fontawesome\css\font-awesome.css" />
     <Content Include="css\fontawesome\css\font-awesome.min.css" />
-    <Content Include="css\fontawesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="css\fontawesome\fonts\fontawesome-webfont.svg" Condition="Exists('css\fontawesome\fonts\fontawesome-webfont.svg')" />
     <Content Include="css\glyphicon.css" />
-    <Content Include="css\images\calendar.gif" />
-    <Content Include="css\images\ui-bg_flat_0_aaaaaa_40x100.png" />
-    <Content Include="css\images\ui-bg_flat_55_fbec88_40x100.png" />
-    <Content Include="css\images\ui-bg_glass_75_d0e5f5_1x400.png" />
-    <Content Include="css\images\ui-bg_glass_85_dfeffc_1x400.png" />
-    <Content Include="css\images\ui-bg_glass_95_fef1ec_1x400.png" />
-    <Content Include="css\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" />
-    <Content Include="css\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" />
-    <Content Include="css\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" />
-    <Content Include="css\images\ui-icons_217bc0_256x240.png" />
-    <Content Include="css\images\ui-icons_2e83ff_256x240.png" />
-    <Content Include="css\images\ui-icons_469bdd_256x240.png" />
-    <Content Include="css\images\ui-icons_6da8d5_256x240.png" />
-    <Content Include="css\images\ui-icons_cd0a0a_256x240.png" />
-    <Content Include="css\images\ui-icons_d8e7f3_256x240.png" />
-    <Content Include="css\images\ui-icons_f9bd01_256x240.png" />
+    <Content Include="css\images\calendar.gif" Condition="Exists('css\images\calendar.gif')" />
+    <Content Include="css\images\ui-bg_flat_0_aaaaaa_40x100.png" Condition="Exists('css\images\ui-bg_flat_0_aaaaaa_40x100.png')" />
+    <Content Include="css\images\ui-bg_flat_55_fbec88_40x100.png" Condition="Exists('css\images\ui-bg_flat_55_fbec88_40x100.png')" />
+    <Content Include="css\images\ui-bg_glass_75_d0e5f5_1x400.png" Condition="Exists('css\images\ui-bg_glass_75_d0e5f5_1x400.png')" />
+    <Content Include="css\images\ui-bg_glass_85_dfeffc_1x400.png" Condition="Exists('css\images\ui-bg_glass_85_dfeffc_1x400.png')" />
+    <Content Include="css\images\ui-bg_glass_95_fef1ec_1x400.png" Condition="Exists('css\images\ui-bg_glass_95_fef1ec_1x400.png')" />
+    <Content Include="css\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" Condition="Exists('css\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png')" />
+    <Content Include="css\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" Condition="Exists('css\images\ui-bg_inset-hard_100_f5f8f9_1x100.png')" />
+    <Content Include="css\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" Condition="Exists('css\images\ui-bg_inset-hard_100_fcfdfd_1x100.png')" />
+    <Content Include="css\images\ui-icons_217bc0_256x240.png" Condition="Exists('css\images\ui-icons_217bc0_256x240.png')" />
+    <Content Include="css\images\ui-icons_2e83ff_256x240.png" Condition="Exists('css\images\ui-icons_2e83ff_256x240.png')" />
+    <Content Include="css\images\ui-icons_469bdd_256x240.png" Condition="Exists('css\images\ui-icons_469bdd_256x240.png')" />
+    <Content Include="css\images\ui-icons_6da8d5_256x240.png" Condition="Exists('css\images\ui-icons_6da8d5_256x240.png')" />
+    <Content Include="css\images\ui-icons_cd0a0a_256x240.png" Condition="Exists('css\images\ui-icons_cd0a0a_256x240.png')" />
+    <Content Include="css\images\ui-icons_d8e7f3_256x240.png" Condition="Exists('css\images\ui-icons_d8e7f3_256x240.png')" />
+    <Content Include="css\images\ui-icons_f9bd01_256x240.png" Condition="Exists('css\images\ui-icons_f9bd01_256x240.png')" />
     <Content Include="css\imprimir.css" />
     <Content Include="css\jquery-linedtextarea.css" />
     <Content Include="css\jquery.multiselect.css" />
     <Content Include="css\jquery.multiselect.filter.css" />
     <Content Include="css\notas.css" />
     <Content Include="css\pdf.css" />
-    <Content Include="css\ui-lightness\images\calendar.gif" />
-    <Content Include="css\ui-lightness\images\ui-bg_flat_0_aaaaaa_40x100.png" />
-    <Content Include="css\ui-lightness\images\ui-bg_flat_55_fbec88_40x100.png" />
-    <Content Include="css\ui-lightness\images\ui-bg_glass_75_d0e5f5_1x400.png" />
-    <Content Include="css\ui-lightness\images\ui-bg_glass_85_dfeffc_1x400.png" />
-    <Content Include="css\ui-lightness\images\ui-bg_glass_95_fef1ec_1x400.png" />
-    <Content Include="css\ui-lightness\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" />
-    <Content Include="css\ui-lightness\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" />
-    <Content Include="css\ui-lightness\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" />
-    <Content Include="css\ui-lightness\images\ui-icons_217bc0_256x240.png" />
-    <Content Include="css\ui-lightness\images\ui-icons_2e83ff_256x240.png" />
-    <Content Include="css\ui-lightness\images\ui-icons_469bdd_256x240.png" />
-    <Content Include="css\ui-lightness\images\ui-icons_6da8d5_256x240.png" />
-    <Content Include="css\ui-lightness\images\ui-icons_cd0a0a_256x240.png" />
-    <Content Include="css\ui-lightness\images\ui-icons_d8e7f3_256x240.png" />
-    <Content Include="css\ui-lightness\images\ui-icons_f9bd01_256x240.png" />
+    <Content Include="css\ui-lightness\images\calendar.gif" Condition="Exists('css\ui-lightness\images\calendar.gif')" />
+    <Content Include="css\ui-lightness\images\ui-bg_flat_0_aaaaaa_40x100.png" Condition="Exists('css\ui-lightness\images\ui-bg_flat_0_aaaaaa_40x100.png')" />
+    <Content Include="css\ui-lightness\images\ui-bg_flat_55_fbec88_40x100.png" Condition="Exists('css\ui-lightness\images\ui-bg_flat_55_fbec88_40x100.png')" />
+    <Content Include="css\ui-lightness\images\ui-bg_glass_75_d0e5f5_1x400.png" Condition="Exists('css\ui-lightness\images\ui-bg_glass_75_d0e5f5_1x400.png')" />
+    <Content Include="css\ui-lightness\images\ui-bg_glass_85_dfeffc_1x400.png" Condition="Exists('css\ui-lightness\images\ui-bg_glass_85_dfeffc_1x400.png')" />
+    <Content Include="css\ui-lightness\images\ui-bg_glass_95_fef1ec_1x400.png" Condition="Exists('css\ui-lightness\images\ui-bg_glass_95_fef1ec_1x400.png')" />
+    <Content Include="css\ui-lightness\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" Condition="Exists('css\ui-lightness\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png')" />
+    <Content Include="css\ui-lightness\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" Condition="Exists('css\ui-lightness\images\ui-bg_inset-hard_100_f5f8f9_1x100.png')" />
+    <Content Include="css\ui-lightness\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" Condition="Exists('css\ui-lightness\images\ui-bg_inset-hard_100_fcfdfd_1x100.png')" />
+    <Content Include="css\ui-lightness\images\ui-icons_217bc0_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_217bc0_256x240.png')" />
+    <Content Include="css\ui-lightness\images\ui-icons_2e83ff_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_2e83ff_256x240.png')" />
+    <Content Include="css\ui-lightness\images\ui-icons_469bdd_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_469bdd_256x240.png')" />
+    <Content Include="css\ui-lightness\images\ui-icons_6da8d5_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_6da8d5_256x240.png')" />
+    <Content Include="css\ui-lightness\images\ui-icons_cd0a0a_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_cd0a0a_256x240.png')" />
+    <Content Include="css\ui-lightness\images\ui-icons_d8e7f3_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_d8e7f3_256x240.png')" />
+    <Content Include="css\ui-lightness\images\ui-icons_f9bd01_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_f9bd01_256x240.png')" />
     <Content Include="css\ui-lightness\jquery-ui-1.8.13.custom.css" />
     <Content Include="css\ui-lightness\jquery-ui-numeric-min.css" />
     <Content Include="ctrl\historia.html" />
     <Content Include="ctrl\history.ascx" />
     <Content Include="ctrl\sharehistory.ascx" />
-    <Content Include="directorio.xml">
+    <Content Include="directorio.xml" Condition="Exists('directorio.xml')">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="directorio\Default.aspx" />
@@ -256,7 +256,7 @@
     <Content Include="facturacion\facturactrl.ascx" />
     <Content Include="facturacion\importacion.aspx" />
     <Content Include="facturacion\porfacturar.aspx" />
-    <Content Include="farmacia\almacen1.sql" />
+    <Content Include="farmacia\almacen1.sql" Condition="Exists('farmacia\almacen1.sql')" />
     <Content Include="farmacia\devolucion.aspx" />
     <Content Include="farmacia\devolucion.html" />
     <Content Include="farmacia\entrada.aspx" />
@@ -277,11 +277,11 @@
     <Content Include="farmacia\planilla.html" />
     <Content Include="farmacia\salida.aspx" />
     <Content Include="farmacia\salida.html" />
-    <Content Include="fonts\fontawesome-webfont.svg" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\fontawesome-webfont.svg" Condition="Exists('fonts\fontawesome-webfont.svg')" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" Condition="Exists('fonts\glyphicons-halflings-regular.svg')" />
     <Content Include="fonts\md-fonts\css\materialdesignicons.css" />
     <Content Include="fonts\md-fonts\css\materialdesignicons.min.css" />
-    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.svg" />
+    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.svg" Condition="Exists('fonts\md-fonts\fonts\materialdesignicons-webfont.svg')" />
     <Content Include="fonts\md-fonts\preview.html" />
     <Content Include="gerencia\costos.aspx" />
     <Content Include="gerencia\programacion.aspx" />
@@ -289,76 +289,76 @@
     <Content Include="gestionambiental\gestionambiental.aspx" />
     <Content Include="Global.asax" />
     <Content Include="images\logo.html" />
-    <Content Include="images\logo.swf" />
-    <Content Include="images\OrganizationExample16.jpg" />
-    <Content Include="images\OrganizationExample16.png" />
-    <Content Include="images\tema\favicon.ico" />
-    <Content Include="images\tema\fcl.jpg" />
-    <Content Include="images\tema\fcr.jpg" />
-    <Content Include="images\tema\fhl.jpg" />
-    <Content Include="images\tema\fhr.jpg" />
-    <Content Include="images\tema\fondo-contenido.jpg" />
-    <Content Include="images\tema\fondo-cuerpo.jpg" />
-    <Content Include="images\tema\fondo-header.jpg" />
-    <Content Include="images\tema\fondo_titulos.jpg" />
-    <Content Include="images\tema\fondo_titulo_contenido.jpg" />
-    <Content Include="images\tema\fondo_titulo_menu.jpg" />
-    <Content Include="images\tema\fondo_titulo_noticia.jpg" />
-    <Content Include="images\tema\fpl.jpg" />
-    <Content Include="images\tema\logof.jpg" />
-    <Content Include="images\tema\logop.jpg" />
-    <Content Include="images\tema\logo_peq.jpg" />
-    <Content Include="images\tema\menu-top.jpg" />
-    <Content Include="images\tema\menubg.jpg" />
-    <Content Include="images\tema\menuover.jpg" />
-    <Content Include="images\tema\menu_bg.jpg" />
-    <Content Include="images\tema\menu_bgf.jpg" />
-    <Content Include="images\tema\pie-pagf.jpg" />
-    <Content Include="images\tema\separador-contenido.jpg" />
-    <Content Include="images\tema\separador-noticias.jpg" />
-    <Content Include="images\tema\separador-tips.jpg" />
-    <Content Include="images\tema\separador.jpg" />
-    <Content Include="images\tema\tall.jpg" />
-    <Content Include="imgs\advertencia.jpg" />
-    <Content Include="imgs\agenda.gif" />
-    <Content Include="imgs\ajax-loader.gif" />
-    <Content Include="imgs\alerta.gif" />
-    <Content Include="imgs\alerta.png" />
-    <Content Include="imgs\barraSombra.png" />
-    <Content Include="imgs\bkg.jpg" />
-    <Content Include="imgs\bkgor.jpg" />
-    <Content Include="imgs\bkgor1.jpg" />
-    <Content Include="imgs\bkg_.jpg" />
-    <Content Include="imgs\bkg_or.jpg" />
-    <Content Include="imgs\bkg_or1.jpg" />
-    <Content Include="imgs\bkg__.jpg" />
-    <Content Include="imgs\blank.jpg" />
-    <Content Include="imgs\cal.gif" />
-    <Content Include="imgs\calendar.png" />
-    <Content Include="imgs\Calendario.png" />
-    <Content Include="imgs\collapse.jpg" />
-    <Content Include="imgs\edit.gif" />
-    <Content Include="imgs\eliminar.gif" />
-    <Content Include="imgs\expand.jpg" />
-    <Content Include="imgs\famisanar.jpg" />
-    <Content Include="imgs\help.png" />
-    <Content Include="imgs\Logo.jpg" />
-    <Content Include="imgs\logo170x62.jpg" />
-    <Content Include="imgs\Logo2.jpg" />
-    <Content Include="imgs\lupa - copia.jpg" />
-    <Content Include="imgs\lupa.jpg" />
-    <Content Include="imgs\procesando.gif" />
-    <Content Include="imgs\search.png" />
-    <Content Include="imgs\ui-anim_basic_16x16.gif" />
+    <Content Include="images\logo.swf" Condition="Exists('images\logo.swf')" />
+    <Content Include="images\OrganizationExample16.jpg" Condition="Exists('images\OrganizationExample16.jpg')" />
+    <Content Include="images\OrganizationExample16.png" Condition="Exists('images\OrganizationExample16.png')" />
+    <Content Include="images\tema\favicon.ico" Condition="Exists('images\tema\favicon.ico')" />
+    <Content Include="images\tema\fcl.jpg" Condition="Exists('images\tema\fcl.jpg')" />
+    <Content Include="images\tema\fcr.jpg" Condition="Exists('images\tema\fcr.jpg')" />
+    <Content Include="images\tema\fhl.jpg" Condition="Exists('images\tema\fhl.jpg')" />
+    <Content Include="images\tema\fhr.jpg" Condition="Exists('images\tema\fhr.jpg')" />
+    <Content Include="images\tema\fondo-contenido.jpg" Condition="Exists('images\tema\fondo-contenido.jpg')" />
+    <Content Include="images\tema\fondo-cuerpo.jpg" Condition="Exists('images\tema\fondo-cuerpo.jpg')" />
+    <Content Include="images\tema\fondo-header.jpg" Condition="Exists('images\tema\fondo-header.jpg')" />
+    <Content Include="images\tema\fondo_titulos.jpg" Condition="Exists('images\tema\fondo_titulos.jpg')" />
+    <Content Include="images\tema\fondo_titulo_contenido.jpg" Condition="Exists('images\tema\fondo_titulo_contenido.jpg')" />
+    <Content Include="images\tema\fondo_titulo_menu.jpg" Condition="Exists('images\tema\fondo_titulo_menu.jpg')" />
+    <Content Include="images\tema\fondo_titulo_noticia.jpg" Condition="Exists('images\tema\fondo_titulo_noticia.jpg')" />
+    <Content Include="images\tema\fpl.jpg" Condition="Exists('images\tema\fpl.jpg')" />
+    <Content Include="images\tema\logof.jpg" Condition="Exists('images\tema\logof.jpg')" />
+    <Content Include="images\tema\logop.jpg" Condition="Exists('images\tema\logop.jpg')" />
+    <Content Include="images\tema\logo_peq.jpg" Condition="Exists('images\tema\logo_peq.jpg')" />
+    <Content Include="images\tema\menu-top.jpg" Condition="Exists('images\tema\menu-top.jpg')" />
+    <Content Include="images\tema\menubg.jpg" Condition="Exists('images\tema\menubg.jpg')" />
+    <Content Include="images\tema\menuover.jpg" Condition="Exists('images\tema\menuover.jpg')" />
+    <Content Include="images\tema\menu_bg.jpg" Condition="Exists('images\tema\menu_bg.jpg')" />
+    <Content Include="images\tema\menu_bgf.jpg" Condition="Exists('images\tema\menu_bgf.jpg')" />
+    <Content Include="images\tema\pie-pagf.jpg" Condition="Exists('images\tema\pie-pagf.jpg')" />
+    <Content Include="images\tema\separador-contenido.jpg" Condition="Exists('images\tema\separador-contenido.jpg')" />
+    <Content Include="images\tema\separador-noticias.jpg" Condition="Exists('images\tema\separador-noticias.jpg')" />
+    <Content Include="images\tema\separador-tips.jpg" Condition="Exists('images\tema\separador-tips.jpg')" />
+    <Content Include="images\tema\separador.jpg" Condition="Exists('images\tema\separador.jpg')" />
+    <Content Include="images\tema\tall.jpg" Condition="Exists('images\tema\tall.jpg')" />
+    <Content Include="imgs\advertencia.jpg" Condition="Exists('imgs\advertencia.jpg')" />
+    <Content Include="imgs\agenda.gif" Condition="Exists('imgs\agenda.gif')" />
+    <Content Include="imgs\ajax-loader.gif" Condition="Exists('imgs\ajax-loader.gif')" />
+    <Content Include="imgs\alerta.gif" Condition="Exists('imgs\alerta.gif')" />
+    <Content Include="imgs\alerta.png" Condition="Exists('imgs\alerta.png')" />
+    <Content Include="imgs\barraSombra.png" Condition="Exists('imgs\barraSombra.png')" />
+    <Content Include="imgs\bkg.jpg" Condition="Exists('imgs\bkg.jpg')" />
+    <Content Include="imgs\bkgor.jpg" Condition="Exists('imgs\bkgor.jpg')" />
+    <Content Include="imgs\bkgor1.jpg" Condition="Exists('imgs\bkgor1.jpg')" />
+    <Content Include="imgs\bkg_.jpg" Condition="Exists('imgs\bkg_.jpg')" />
+    <Content Include="imgs\bkg_or.jpg" Condition="Exists('imgs\bkg_or.jpg')" />
+    <Content Include="imgs\bkg_or1.jpg" Condition="Exists('imgs\bkg_or1.jpg')" />
+    <Content Include="imgs\bkg__.jpg" Condition="Exists('imgs\bkg__.jpg')" />
+    <Content Include="imgs\blank.jpg" Condition="Exists('imgs\blank.jpg')" />
+    <Content Include="imgs\cal.gif" Condition="Exists('imgs\cal.gif')" />
+    <Content Include="imgs\calendar.png" Condition="Exists('imgs\calendar.png')" />
+    <Content Include="imgs\Calendario.png" Condition="Exists('imgs\Calendario.png')" />
+    <Content Include="imgs\collapse.jpg" Condition="Exists('imgs\collapse.jpg')" />
+    <Content Include="imgs\edit.gif" Condition="Exists('imgs\edit.gif')" />
+    <Content Include="imgs\eliminar.gif" Condition="Exists('imgs\eliminar.gif')" />
+    <Content Include="imgs\expand.jpg" Condition="Exists('imgs\expand.jpg')" />
+    <Content Include="imgs\famisanar.jpg" Condition="Exists('imgs\famisanar.jpg')" />
+    <Content Include="imgs\help.png" Condition="Exists('imgs\help.png')" />
+    <Content Include="imgs\Logo.jpg" Condition="Exists('imgs\Logo.jpg')" />
+    <Content Include="imgs\logo170x62.jpg" Condition="Exists('imgs\logo170x62.jpg')" />
+    <Content Include="imgs\Logo2.jpg" Condition="Exists('imgs\Logo2.jpg')" />
+    <Content Include="imgs\lupa - copia.jpg" Condition="Exists('imgs\lupa - copia.jpg')" />
+    <Content Include="imgs\lupa.jpg" Condition="Exists('imgs\lupa.jpg')" />
+    <Content Include="imgs\procesando.gif" Condition="Exists('imgs\procesando.gif')" />
+    <Content Include="imgs\search.png" Condition="Exists('imgs\search.png')" />
+    <Content Include="imgs\ui-anim_basic_16x16.gif" Condition="Exists('imgs\ui-anim_basic_16x16.gif')" />
     <Content Include="js\angulargaleria.js" />
     <Content Include="js\angulargridctrl.js" />
-    <Content Include="js\avance.png" />
+    <Content Include="js\avance.png" Condition="Exists('js\avance.png')" />
     <Content Include="js\bootstrap.js" />
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\combo.js" />
     <Content Include="js\en.js" />
     <Content Include="js\FixFocus.js" />
-    <Content Include="js\flecha.jpg" />
+    <Content Include="js\flecha.jpg" Condition="Exists('js\flecha.jpg')" />
     <Content Include="js\gridedit.js" />
     <Content Include="js\gridlistadd.js" />
     <Content Include="js\jquery-1.7.2.min.js" />
@@ -388,22 +388,22 @@
     <Content Include="js\plugins\code\plugin.min.js" />
     <Content Include="js\plugins\contextmenu\plugin.min.js" />
     <Content Include="js\plugins\directionality\plugin.min.js" />
-    <Content Include="js\plugins\emoticons\img\smiley-cool.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-cry.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-embarassed.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-foot-in-mouth.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-frown.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-innocent.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-kiss.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-laughing.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-money-mouth.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-sealed.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-smile.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-surprised.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-tongue-out.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-undecided.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-wink.gif" />
-    <Content Include="js\plugins\emoticons\img\smiley-yell.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-cool.gif" Condition="Exists('js\plugins\emoticons\img\smiley-cool.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-cry.gif" Condition="Exists('js\plugins\emoticons\img\smiley-cry.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-embarassed.gif" Condition="Exists('js\plugins\emoticons\img\smiley-embarassed.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-foot-in-mouth.gif" Condition="Exists('js\plugins\emoticons\img\smiley-foot-in-mouth.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-frown.gif" Condition="Exists('js\plugins\emoticons\img\smiley-frown.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-innocent.gif" Condition="Exists('js\plugins\emoticons\img\smiley-innocent.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-kiss.gif" Condition="Exists('js\plugins\emoticons\img\smiley-kiss.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-laughing.gif" Condition="Exists('js\plugins\emoticons\img\smiley-laughing.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-money-mouth.gif" Condition="Exists('js\plugins\emoticons\img\smiley-money-mouth.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-sealed.gif" Condition="Exists('js\plugins\emoticons\img\smiley-sealed.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-smile.gif" Condition="Exists('js\plugins\emoticons\img\smiley-smile.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-surprised.gif" Condition="Exists('js\plugins\emoticons\img\smiley-surprised.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-tongue-out.gif" Condition="Exists('js\plugins\emoticons\img\smiley-tongue-out.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-undecided.gif" Condition="Exists('js\plugins\emoticons\img\smiley-undecided.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-wink.gif" Condition="Exists('js\plugins\emoticons\img\smiley-wink.gif')" />
+    <Content Include="js\plugins\emoticons\img\smiley-yell.gif" Condition="Exists('js\plugins\emoticons\img\smiley-yell.gif')" />
     <Content Include="js\plugins\emoticons\plugin.min.js" />
     <Content Include="js\plugins\example\dialog.html" />
     <Content Include="js\plugins\example\plugin.min.js" />
@@ -418,7 +418,7 @@
     <Content Include="js\plugins\legacyoutput\plugin.min.js" />
     <Content Include="js\plugins\link\plugin.min.js" />
     <Content Include="js\plugins\lists\plugin.min.js" />
-    <Content Include="js\plugins\media\moxieplayer.swf" />
+    <Content Include="js\plugins\media\moxieplayer.swf" Condition="Exists('js\plugins\media\moxieplayer.swf')" />
     <Content Include="js\plugins\media\plugin.min.js" />
     <Content Include="js\plugins\nonbreaking\plugin.min.js" />
     <Content Include="js\plugins\noneditable\plugin.min.js" />
@@ -439,14 +439,14 @@
     <Content Include="js\plugins\wordcount\plugin.min.js" />
     <Content Include="js\skins\lightgray\content.inline.min.css" />
     <Content Include="js\skins\lightgray\content.min.css" />
-    <Content Include="js\skins\lightgray\fonts\tinymce-small.dev.svg" />
-    <Content Include="js\skins\lightgray\fonts\tinymce-small.svg" />
-    <Content Include="js\skins\lightgray\fonts\tinymce.dev.svg" />
-    <Content Include="js\skins\lightgray\fonts\tinymce.svg" />
-    <Content Include="js\skins\lightgray\img\anchor.gif" />
-    <Content Include="js\skins\lightgray\img\loader.gif" />
-    <Content Include="js\skins\lightgray\img\object.gif" />
-    <Content Include="js\skins\lightgray\img\trans.gif" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.dev.svg" Condition="Exists('js\skins\lightgray\fonts\tinymce-small.dev.svg')" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.svg" Condition="Exists('js\skins\lightgray\fonts\tinymce-small.svg')" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.dev.svg" Condition="Exists('js\skins\lightgray\fonts\tinymce.dev.svg')" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.svg" Condition="Exists('js\skins\lightgray\fonts\tinymce.svg')" />
+    <Content Include="js\skins\lightgray\img\anchor.gif" Condition="Exists('js\skins\lightgray\img\anchor.gif')" />
+    <Content Include="js\skins\lightgray\img\loader.gif" Condition="Exists('js\skins\lightgray\img\loader.gif')" />
+    <Content Include="js\skins\lightgray\img\object.gif" Condition="Exists('js\skins\lightgray\img\object.gif')" />
+    <Content Include="js\skins\lightgray\img\trans.gif" Condition="Exists('js\skins\lightgray\img\trans.gif')" />
     <Content Include="js\skins\lightgray\skin.ie7.min.css" />
     <Content Include="js\skins\lightgray\skin.min.css" />
     <Content Include="js\themes\modern\theme.min.js" />
@@ -471,7 +471,7 @@
     <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker-standalone.css" />
     <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.css" />
     <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.min.css" />
-    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.svg" Condition="Exists('lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.svg')" />
     <Content Include="lib\bootstrap-datetimepicker\js\bootstrap-datetimepicker.js" />
     <Content Include="lib\bootstrap-datetimepicker\js\bootstrap-datetimepicker.min.js" />
     <Content Include="lib\bootstrap-multiselect\css\bootstrap-multiselect.css" />
@@ -481,7 +481,7 @@
     <Content Include="lib\daterangepicker\daterangepicker.original.js" />
     <Content Include="lib\dropzone\dropzone.css" />
     <Content Include="lib\dropzone\dropzone.js" />
-    <Content Include="lib\jquery-3.3.1\jquery-3.3.1.min.js" />
+    <Content Include="lib\jquery-3.3.1\jquery-3.3.1.min.js" Condition="Exists('lib\jquery-3.3.1\jquery-3.3.1.min.js')" />
     <Content Include="lib\jquery-inputmask\bindings\inputmask.binding.js" />
     <Content Include="lib\jquery-inputmask\bindings\inputmask.binding.min.js" />
     <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.js" />
@@ -534,9 +534,9 @@
     <Content Include="lib\jquery.bootgrid\jquery.bootgrid.js" />
     <Content Include="lib\jquery.bootgrid\jquery.bootgrid.min.css" />
     <Content Include="lib\jquery.bootgrid\jquery.bootgrid.min.js" />
-    <Content Include="lib\momentjs\moment-with-locales.js" />
+    <Content Include="lib\momentjs\moment-with-locales.js" Condition="Exists('lib\momentjs\moment-with-locales.js')" />
     <Content Include="lib\momentjs\moment-with-locales.min.js" />
-    <Content Include="lib\momentjs\moment.js" />
+    <Content Include="lib\momentjs\moment.js" Condition="Exists('lib\momentjs\moment.js')" />
     <Content Include="lib\momentjs\moment.min.js" />
     <Content Include="lib\popper.js\popper.js" />
     <Content Include="lib\popper.js\popper.min.js" />
@@ -549,8 +549,8 @@
     <Content Include="lib\typeahead.jquery\typeahead.jquery.min.js" />
     <Content Include="lib\typeahead.jquery\typeahead.jquery.mod.js" />
     <Content Include="lib\typeahead.jquery\typeahead.jquery.original.js" />
-    <Content Include="materna\compensar.jpg" />
-    <Content Include="materna\famisanar.jpg" />
+    <Content Include="materna\compensar.jpg" Condition="Exists('materna\compensar.jpg')" />
+    <Content Include="materna\famisanar.jpg" Condition="Exists('materna\famisanar.jpg')" />
     <Content Include="materna\informe.aspx" />
     <Content Include="materna\neonato.aspx" />
     <Content Include="materna\neonato.html" />
@@ -620,21 +620,21 @@
     <Content Include="valoracion\trabajosocial.html" />
     <Content Include="vehiculos\recorrido.aspx" />
     <Content Include="vehiculos\vehiculo.aspx" />
-    <Content Include="Web.config">
+    <Content Include="Web.config" Condition="Exists('Web.config')">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="webcam\jquery.webcam.js" />
-    <Content Include="webcam\jscam.swf" />
-    <Content Include="webcam\jscam_canvas_only.swf" />
+    <Content Include="webcam\jscam.swf" Condition="Exists('webcam\jscam.swf')" />
+    <Content Include="webcam\jscam_canvas_only.swf" Condition="Exists('webcam\jscam_canvas_only.swf')" />
     <Content Include="webcam\webcam.ascx" />
     <Content Include="webservices\servicios.asmx" />
-    <Content Include="xlsx\docProps\app.xml" />
-    <Content Include="xlsx\docProps\core.xml" />
-    <Content Include="xlsx\xl\sharedStrings.xml" />
-    <Content Include="xlsx\xl\styles.xml" />
-    <Content Include="xlsx\xl\workbook.xml" />
-    <Content Include="xlsx\xl\worksheets\sheet1.xml" />
-    <Content Include="xlsx\[Content_Types].xml" />
+    <Content Include="xlsx\docProps\app.xml" Condition="Exists('xlsx\docProps\app.xml')" />
+    <Content Include="xlsx\docProps\core.xml" Condition="Exists('xlsx\docProps\core.xml')" />
+    <Content Include="xlsx\xl\sharedStrings.xml" Condition="Exists('xlsx\xl\sharedStrings.xml')" />
+    <Content Include="xlsx\xl\styles.xml" Condition="Exists('xlsx\xl\styles.xml')" />
+    <Content Include="xlsx\xl\workbook.xml" Condition="Exists('xlsx\xl\workbook.xml')" />
+    <Content Include="xlsx\xl\worksheets\sheet1.xml" Condition="Exists('xlsx\xl\worksheets\sheet1.xml')" />
+    <Content Include="xlsx\[Content_Types].xml" Condition="Exists('xlsx\[Content_Types].xml')" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="administrador\usuario.aspx.cs">
@@ -1620,7 +1620,7 @@
     <Content Include="css\fontawesome\scss\_rotated-flipped.scss" />
     <Content Include="css\fontawesome\scss\_stacked.scss" />
     <Content Include="css\fontawesome\scss\_variables.scss" />
-    <Content Include="images\logo.fla" />
+    <Content Include="images\logo.fla" Condition="Exists('images\logo.fla')" />
     <Content Include="js\langs\readme.md" />
     <Content Include="js\skins\lightgray\fonts\readme.md" />
     <Content Include="js\skins\lightgray\fonts\tinymce-small.eot" />
@@ -1656,8 +1656,8 @@
     <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="lib\bootstrap-multiselect\less\bootstrap-multiselect.less" />
-    <Content Include="lib\jquery-validation-unobtrusive\.bower.json" />
-    <Content Include="lib\jquery-validation\.bower.json" />
+    <Content Include="lib\jquery-validation-unobtrusive\.bower.json" Condition="Exists('lib\jquery-validation-unobtrusive\.bower.json')" />
+    <Content Include="lib\jquery-validation\.bower.json" Condition="Exists('lib\jquery-validation\.bower.json')" />
     <Content Include="lib\jquery-validation\LICENSE.md" />
     <Content Include="lib\toastr\toastr.js.map" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
@@ -1665,7 +1665,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\md-fonts\.github\ISSUE_TEMPLATE.md" />
-    <Content Include="fonts\md-fonts\bower.json" />
+    <Content Include="fonts\md-fonts\bower.json" Condition="Exists('fonts\md-fonts\bower.json')" />
     <Content Include="fonts\md-fonts\css\materialdesignicons.css.map" />
     <Content Include="fonts\md-fonts\css\materialdesignicons.min.css.map" />
     <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.eot" />
@@ -1681,13 +1681,13 @@
     <Content Include="fonts\md-fonts\md-fonts\_icons.scss" />
     <Content Include="fonts\md-fonts\md-fonts\_path.scss" />
     <Content Include="fonts\md-fonts\md-fonts\_variables.scss" />
-    <Content Include="fonts\md-fonts\package.json" />
+    <Content Include="fonts\md-fonts\package.json" Condition="Exists('fonts\md-fonts\package.json')" />
     <Content Include="fonts\md-fonts\README.md" />
-    <Content Include="dbupgrade.json" />
+    <Content Include="dbupgrade.json" Condition="Exists('dbupgrade.json')" />
     <Content Include="lib\dropzone\basic.scss" />
     <Content Include="lib\dropzone\dropzone.scss" />
-    <Content Include="clinicaheridas\informeeps.aspx.cs.old" />
-    <Content Include="clinicaheridas\informeeps.aspx.old" />
+    <Content Include="clinicaheridas\informeeps.aspx.cs.old" Condition="Exists('clinicaheridas\informeeps.aspx.cs.old')" />
+    <Content Include="clinicaheridas\informeeps.aspx.old" Condition="Exists('clinicaheridas\informeeps.aspx.old')" />
     <None Include="packages.config" />
     <Content Include="Views\_Shared\_LayoutPage.cshtml" />
     <Content Include="Views\Terapeutico\Cuentas.cshtml" />
@@ -1750,9 +1750,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <Content Include="webcam\up.ashx" />
-    <Content Include="xlsx\xl\worksheets\_rels\sheet1.xml.rels" />
-    <Content Include="xlsx\xl\_rels\workbook.xml.rels" />
-    <Content Include="xlsx\_rels\.rels" />
+    <Content Include="xlsx\xl\worksheets\_rels\sheet1.xml.rels" Condition="Exists('xlsx\xl\worksheets\_rels\sheet1.xml.rels')" />
+    <Content Include="xlsx\xl\_rels\workbook.xml.rels" Condition="Exists('xlsx\xl\_rels\workbook.xml.rels')" />
+    <Content Include="xlsx\_rels\.rels" Condition="Exists('xlsx\_rels\.rels')" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
