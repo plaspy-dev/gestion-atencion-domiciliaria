@@ -63,6 +63,8 @@ Open the address printed by the script. Sign in with `alicia_demo` and the passw
 
 ### Verification
 
+Each MVC demo also opens the group administration page, filters its group list and confirms that the group for the fictional visit team comes from MySQL.
+
 The distributable project keeps the archived list of content. MSBuild includes those historical files when they are present. The checkout omits archived records, unreleased visual assets, live configuration and files that could not be paired with this edition. The demo supplies a loopback configuration, a fictional directory and a clean migration list. Other modules may require their own safe fixtures or replacement artwork.
 
 The two MVC source compilations passed on 20 November 2026 with Python 3.12.4 and MSBuild 18.11.1.51303. The Web Forms demo used Docker 29.9.2.
@@ -95,7 +97,7 @@ The application’s own code is available under the [MIT license](LICENSE). Incl
 
 ---
 
-Both MVC editions compiled their main project. Runtime verification used fictional local data and confirmed sign-in and the protected start page. The pages inherited from Web Forms, the full content package and external integrations remain outside this check.
+Both MVC editions compiled their main project. Runtime verification used fictional local data and confirmed sign-in and the protected start page. The pages inherited from Web Forms, the full content package and external integrations remain outside this check. The check also used the group filter and found the fictional group.
 
 ## Español
 
@@ -161,6 +163,8 @@ Abre la dirección que muestra el script. Ingresa con `alicia_demo` y la contras
 
 ### Verificación
 
+La demo de cada edición MVC también abre la administración de grupos, filtra la lista y comprueba que MySQL devuelve el grupo del equipo ficticio de visitas.
+
 El proyecto distribuible conserva la lista de contenido del respaldo. MSBuild incorpora esos archivos cuando están presentes. La copia omite registros archivados, recursos visuales sin revisión, configuración real y archivos que no se pudieron emparejar con la edición. La demo aporta la configuración local, un directorio ficticio y una lista de migraciones vacía. Otros módulos pueden requerir sus propios datos de prueba o imágenes de reemplazo.
 
 Las dos compilaciones de fuentes MVC pasaron el 20 de noviembre de 2026 con Python 3.12.4 y MSBuild 18.11.1.51303. La demo Web Forms usó Docker 29.9.2.
@@ -191,5 +195,5 @@ Usa los issues del repositorio para reportar un problema de compilación reprodu
 
 El código propio de la aplicación usa la [licencia MIT](LICENSE). Los archivos de terceros conservan sus avisos originales.
 
-Se compiló el proyecto principal de las dos ediciones MVC. La prueba de ejecución usó datos ficticios locales y confirmó el ingreso y la portada protegida. Las páginas heredadas de Web Forms, el paquete completo de contenidos y las integraciones externas quedan fuera de esta comprobación.
+Se compiló el proyecto principal de las dos ediciones MVC. La prueba de ejecución usó datos ficticios locales y confirmó el ingreso y la portada protegida. Las páginas heredadas de Web Forms, el paquete completo de contenidos y las integraciones externas quedan fuera de esta comprobación. La prueba también usó el filtro de grupos y encontró el grupo ficticio.
 
