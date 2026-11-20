@@ -133,3 +133,5 @@
 "/vendor/componentes-web/Web/UI/WebControls/GridView.cs" -text
 "/vendor/componentes-web/app.config" -text
 "/vendor/componentes-web/componentes.csproj" -text
+OrganizationExample15/Global.asax -text
+OrganizationExample15.mvc.2018-11-21/Global.asax -text

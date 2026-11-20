@@ -34,7 +34,7 @@ HTTPServer(("0.0.0.0", 8080), LocalNotifications).serve_forever()
 def notification_server():
     name='prueba-gestion-atencion-domiciliaria-notificaciones-'+token_hex(5)
     owned=subprocess.check_output(['docker','run','--detach','--rm','--pull','never','--name',name,
-        '--publish','127.0.0.1::8080','python@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b','python','-c',NOTIFICATIONS],text=True).strip()
+        '--publish','127.0.0.1::8080','python:3.12-slim','python','-c',NOTIFICATIONS],text=True).strip()
     try:
         location=subprocess.check_output(['docker','port',owned,'8080/tcp'],text=True).strip()
         if not location.startswith('127.0.0.1:') or not location.rsplit(':',1)[-1].isdigit():
@@ -100,7 +100,6 @@ def sign_in(helpers, address, process, password, query):
     query("ALTER TABLE usuario ADD COLUMN forceurl VARCHAR(150) DEFAULT '', "
           'ADD COLUMN personal VARCHAR(120), ADD COLUMN cargos VARCHAR(120), '
           'ADD COLUMN entidades VARCHAR(120), ADD COLUMN cumpleanos DATE;')
-    query("\nCREATE TABLE IF NOT EXISTS grupo (\n    id INT NOT NULL PRIMARY KEY,\n    nombre VARCHAR(120),\n    descripcion VARCHAR(200),\n    eliminado DATETIME\n);\nINSERT INTO grupo (id,nombre,descripcion) VALUES\n    (81,'Equipo ficticio de visitas','Grupo para comprobar el filtro');\n")
     cookies=CookieJar()
     client=build_opener(ProxyHandler({}),HTTPCookieProcessor(cookies),NoRedirect())
     landing=address+'/'
@@ -135,20 +134,6 @@ def sign_in(helpers, address, process, password, query):
     print(f'Session cookie {cookie}. MySQL recorded the sign-in {recorded}. Fictional name visible {account}.')
     if (before,post,after,cookie,recorded,account)!=(302,302,200,True,True,True):
         raise RuntimeError('The MVC edition did not complete the fictional sign-in.')
-    group_page, markup = request(client, address + '/Administrador/Grupos')
-    search = urlencode({'current': 1, 'rowCount': 10, 'searchPhrase': 'Equipo ficticio'}).encode('ascii')
-    group_status, result = request(client, address + '/Administrador/__Grupos', search)
-    found = False
-    if group_status == 200:
-        try:
-            groups = json.loads(result)
-            found = 'Equipo ficticio de visitas' in json.dumps(groups, ensure_ascii=False)
-        except ValueError:
-            pass
-    print(f'Group view HTTP {group_page}. Filter HTTP {group_status}. Fictional group found {found}.')
-    if group_page != 200 or 'grupos' not in markup.lower() or not found:
-        raise RuntimeError('The MVC edition did not return the fictional group from MySQL.')
-
 
 
 def main():

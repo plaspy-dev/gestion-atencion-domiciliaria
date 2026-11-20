@@ -1,4 +1,4 @@
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -122,509 +122,509 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="administrador\usuario.aspx" Condition="Exists('administrador\usuario.aspx')" />
-    <Content Include="admisiones\amasivas.aspx" Condition="Exists('admisiones\amasivas.aspx')" />
-    <Content Include="admisiones\autorizaciones.aspx" Condition="Exists('admisiones\autorizaciones.aspx')" />
-    <Content Include="admisiones\confirmara.aspx" Condition="Exists('admisiones\confirmara.aspx')" />
-    <Content Include="admisiones\consulta.aspx" Condition="Exists('admisiones\consulta.aspx')" />
-    <Content Include="admisiones\cumplimiento.aspx" Condition="Exists('admisiones\cumplimiento.aspx')" />
-    <Content Include="admisiones\programacion.html" Condition="Exists('admisiones\programacion.html')" />
-    <Content Include="admisiones\recaudos.aspx" Condition="Exists('admisiones\recaudos.aspx')" />
-    <Content Include="admisiones\recibos.aspx" Condition="Exists('admisiones\recibos.aspx')" />
-    <Content Include="archivo\archivo.aspx" Condition="Exists('archivo\archivo.aspx')" />
-    <Content Include="archivo\Browser.aspx" Condition="Exists('archivo\Browser.aspx')" />
-    <Content Include="archivo\consultahistoria.aspx" Condition="Exists('archivo\consultahistoria.aspx')" />
-    <Content Include="archivo\digitalizacion.aspx" Condition="Exists('archivo\digitalizacion.aspx')" />
-    <Content Include="archivo\digitalizacionc.ascx" Condition="Exists('archivo\digitalizacionc.ascx')" />
-    <Content Include="archivo\dropzone.css" Condition="Exists('archivo\dropzone.css')" />
-    <Content Include="archivo\dropzone.js" Condition="Exists('archivo\dropzone.js')" />
-    <Content Include="archivo\subir.aspx" Condition="Exists('archivo\subir.aspx')" />
-    <Content Include="auditoria\autorizadovsrealizado.aspx" Condition="Exists('auditoria\autorizadovsrealizado.aspx')" />
-    <Content Include="auditoria\OrganizationExample51.aspx" Condition="Exists('auditoria\OrganizationExample51.aspx')" />
-    <Content Include="auditoria\consultacomplicaciones.aspx" Condition="Exists('auditoria\consultacomplicaciones.aspx')" />
-    <Content Include="auditoria\Costos.aspx" Condition="Exists('auditoria\Costos.aspx')" />
-    <Content Include="auditoria\eventoa.aspx" Condition="Exists('auditoria\eventoa.aspx')" />
-    <Content Include="auditoria\indicadores.aspx" Condition="Exists('auditoria\indicadores.aspx')" />
-    <Content Include="auditoria\mortalidad.aspx" Condition="Exists('auditoria\mortalidad.aspx')" />
-    <Content Include="auditoria\nuevopaciente.aspx" Condition="Exists('auditoria\nuevopaciente.aspx')" />
-    <Content Include="censo\censo_programacion.aspx" Condition="Exists('censo\censo_programacion.aspx')" />
-    <Content Include="censo\Default.aspx" Condition="Exists('censo\Default.aspx')" />
-    <Content Include="cliente\escliente.aspx" Condition="Exists('cliente\escliente.aspx')" />
-    <Content Include="cliente\escliente.html" Condition="Exists('cliente\escliente.html')" />
-    <Content Include="cliente\estadisticas.aspx" Condition="Exists('cliente\estadisticas.aspx')" />
-    <Content Include="cliente\estadisticas2.aspx" Condition="Exists('cliente\estadisticas2.aspx')" />
-    <Content Include="cliente\listadoquejas.aspx" Condition="Exists('cliente\listadoquejas.aspx')" />
-    <Content Include="cliente\quejas.aspx" Condition="Exists('cliente\quejas.aspx')" />
-    <Content Include="cliente\quejas.html" Condition="Exists('cliente\quejas.html')" />
-    <Content Include="cliente\quejasa.html" Condition="Exists('cliente\quejasa.html')" />
-    <Content Include="clinicaheridas\casa.jpg" Condition="Exists('clinicaheridas\casa.jpg')" />
-    <Content Include="clinicaheridas\escaladolor.jpg" Condition="Exists('clinicaheridas\escaladolor.jpg')" />
-    <Content Include="clinicaheridas\escalas\e0.jpg" Condition="Exists('clinicaheridas\escalas\e0.jpg')" />
-    <Content Include="clinicaheridas\escalas\e1.jpg" Condition="Exists('clinicaheridas\escalas\e1.jpg')" />
-    <Content Include="clinicaheridas\escalas\e10.jpg" Condition="Exists('clinicaheridas\escalas\e10.jpg')" />
-    <Content Include="clinicaheridas\escalas\e2.jpg" Condition="Exists('clinicaheridas\escalas\e2.jpg')" />
-    <Content Include="clinicaheridas\escalas\e3.jpg" Condition="Exists('clinicaheridas\escalas\e3.jpg')" />
-    <Content Include="clinicaheridas\escalas\e4.jpg" Condition="Exists('clinicaheridas\escalas\e4.jpg')" />
-    <Content Include="clinicaheridas\escalas\e5.jpg" Condition="Exists('clinicaheridas\escalas\e5.jpg')" />
-    <Content Include="clinicaheridas\escalas\e6.jpg" Condition="Exists('clinicaheridas\escalas\e6.jpg')" />
-    <Content Include="clinicaheridas\escalas\e7.jpg" Condition="Exists('clinicaheridas\escalas\e7.jpg')" />
-    <Content Include="clinicaheridas\escalas\e8.jpg" Condition="Exists('clinicaheridas\escalas\e8.jpg')" />
-    <Content Include="clinicaheridas\escalas\e9.jpg" Condition="Exists('clinicaheridas\escalas\e9.jpg')" />
-    <Content Include="clinicaheridas\escalas\escaladolor.jpg" Condition="Exists('clinicaheridas\escalas\escaladolor.jpg')" />
-    <Content Include="control\actividad.ascx" Condition="Exists('control\actividad.ascx')" />
-    <Content Include="control\actividad.ascx.js" Condition="Exists('control\actividad.ascx.js')" />
-    <Content Include="css\ajax-loader.gif" Condition="Exists('css\ajax-loader.gif')" />
-    <Content Include="css\bootstrap.css" Condition="Exists('css\bootstrap.css')" />
-    <Content Include="css\bootstrap.min.css" Condition="Exists('css\bootstrap.min.css')" />
-    <Content Include="css\estilo.css" Condition="Exists('css\estilo.css')" />
-    <Content Include="css\font-awesome.css" Condition="Exists('css\font-awesome.css')" />
-    <Content Include="css\font-awesome.min.css" Condition="Exists('css\font-awesome.min.css')" />
-    <Content Include="css\fontawesome\css\font-awesome.css" Condition="Exists('css\fontawesome\css\font-awesome.css')" />
-    <Content Include="css\fontawesome\css\font-awesome.min.css" Condition="Exists('css\fontawesome\css\font-awesome.min.css')" />
-    <Content Include="css\fontawesome\fonts\fontawesome-webfont.svg" Condition="Exists('css\fontawesome\fonts\fontawesome-webfont.svg')" />
-    <Content Include="css\glyphicon.css" Condition="Exists('css\glyphicon.css')" />
-    <Content Include="css\images\calendar.gif" Condition="Exists('css\images\calendar.gif')" />
-    <Content Include="css\images\ui-bg_flat_0_aaaaaa_40x100.png" Condition="Exists('css\images\ui-bg_flat_0_aaaaaa_40x100.png')" />
-    <Content Include="css\images\ui-bg_flat_55_fbec88_40x100.png" Condition="Exists('css\images\ui-bg_flat_55_fbec88_40x100.png')" />
-    <Content Include="css\images\ui-bg_glass_75_d0e5f5_1x400.png" Condition="Exists('css\images\ui-bg_glass_75_d0e5f5_1x400.png')" />
-    <Content Include="css\images\ui-bg_glass_85_dfeffc_1x400.png" Condition="Exists('css\images\ui-bg_glass_85_dfeffc_1x400.png')" />
-    <Content Include="css\images\ui-bg_glass_95_fef1ec_1x400.png" Condition="Exists('css\images\ui-bg_glass_95_fef1ec_1x400.png')" />
-    <Content Include="css\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" Condition="Exists('css\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png')" />
-    <Content Include="css\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" Condition="Exists('css\images\ui-bg_inset-hard_100_f5f8f9_1x100.png')" />
-    <Content Include="css\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" Condition="Exists('css\images\ui-bg_inset-hard_100_fcfdfd_1x100.png')" />
-    <Content Include="css\images\ui-icons_217bc0_256x240.png" Condition="Exists('css\images\ui-icons_217bc0_256x240.png')" />
-    <Content Include="css\images\ui-icons_2e83ff_256x240.png" Condition="Exists('css\images\ui-icons_2e83ff_256x240.png')" />
-    <Content Include="css\images\ui-icons_469bdd_256x240.png" Condition="Exists('css\images\ui-icons_469bdd_256x240.png')" />
-    <Content Include="css\images\ui-icons_6da8d5_256x240.png" Condition="Exists('css\images\ui-icons_6da8d5_256x240.png')" />
-    <Content Include="css\images\ui-icons_cd0a0a_256x240.png" Condition="Exists('css\images\ui-icons_cd0a0a_256x240.png')" />
-    <Content Include="css\images\ui-icons_d8e7f3_256x240.png" Condition="Exists('css\images\ui-icons_d8e7f3_256x240.png')" />
-    <Content Include="css\images\ui-icons_f9bd01_256x240.png" Condition="Exists('css\images\ui-icons_f9bd01_256x240.png')" />
-    <Content Include="css\imprimir.css" Condition="Exists('css\imprimir.css')" />
-    <Content Include="css\jquery-linedtextarea.css" Condition="Exists('css\jquery-linedtextarea.css')" />
-    <Content Include="css\jquery.multiselect.css" Condition="Exists('css\jquery.multiselect.css')" />
-    <Content Include="css\jquery.multiselect.filter.css" Condition="Exists('css\jquery.multiselect.filter.css')" />
-    <Content Include="css\notas.css" Condition="Exists('css\notas.css')" />
-    <Content Include="css\pdf.css" Condition="Exists('css\pdf.css')" />
-    <Content Include="css\ui-lightness\images\calendar.gif" Condition="Exists('css\ui-lightness\images\calendar.gif')" />
-    <Content Include="css\ui-lightness\images\ui-bg_flat_0_aaaaaa_40x100.png" Condition="Exists('css\ui-lightness\images\ui-bg_flat_0_aaaaaa_40x100.png')" />
-    <Content Include="css\ui-lightness\images\ui-bg_flat_55_fbec88_40x100.png" Condition="Exists('css\ui-lightness\images\ui-bg_flat_55_fbec88_40x100.png')" />
-    <Content Include="css\ui-lightness\images\ui-bg_glass_75_d0e5f5_1x400.png" Condition="Exists('css\ui-lightness\images\ui-bg_glass_75_d0e5f5_1x400.png')" />
-    <Content Include="css\ui-lightness\images\ui-bg_glass_85_dfeffc_1x400.png" Condition="Exists('css\ui-lightness\images\ui-bg_glass_85_dfeffc_1x400.png')" />
-    <Content Include="css\ui-lightness\images\ui-bg_glass_95_fef1ec_1x400.png" Condition="Exists('css\ui-lightness\images\ui-bg_glass_95_fef1ec_1x400.png')" />
-    <Content Include="css\ui-lightness\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" Condition="Exists('css\ui-lightness\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png')" />
-    <Content Include="css\ui-lightness\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" Condition="Exists('css\ui-lightness\images\ui-bg_inset-hard_100_f5f8f9_1x100.png')" />
-    <Content Include="css\ui-lightness\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" Condition="Exists('css\ui-lightness\images\ui-bg_inset-hard_100_fcfdfd_1x100.png')" />
-    <Content Include="css\ui-lightness\images\ui-icons_217bc0_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_217bc0_256x240.png')" />
-    <Content Include="css\ui-lightness\images\ui-icons_2e83ff_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_2e83ff_256x240.png')" />
-    <Content Include="css\ui-lightness\images\ui-icons_469bdd_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_469bdd_256x240.png')" />
-    <Content Include="css\ui-lightness\images\ui-icons_6da8d5_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_6da8d5_256x240.png')" />
-    <Content Include="css\ui-lightness\images\ui-icons_cd0a0a_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_cd0a0a_256x240.png')" />
-    <Content Include="css\ui-lightness\images\ui-icons_d8e7f3_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_d8e7f3_256x240.png')" />
-    <Content Include="css\ui-lightness\images\ui-icons_f9bd01_256x240.png" Condition="Exists('css\ui-lightness\images\ui-icons_f9bd01_256x240.png')" />
-    <Content Include="css\ui-lightness\jquery-ui-1.8.13.custom.css" Condition="Exists('css\ui-lightness\jquery-ui-1.8.13.custom.css')" />
-    <Content Include="css\ui-lightness\jquery-ui-numeric-min.css" Condition="Exists('css\ui-lightness\jquery-ui-numeric-min.css')" />
-    <Content Include="ctrl\historia.html" Condition="Exists('ctrl\historia.html')" />
-    <Content Include="ctrl\history.ascx" Condition="Exists('ctrl\history.ascx')" />
-    <Content Include="ctrl\sharehistory.ascx" Condition="Exists('ctrl\sharehistory.ascx')" />
-    <Content Include="directorio.xml" Condition="Exists('directorio.xml')">
+    <Content Include="administrador\usuario.aspx" />
+    <Content Include="admisiones\amasivas.aspx" />
+    <Content Include="admisiones\autorizaciones.aspx" />
+    <Content Include="admisiones\confirmara.aspx" />
+    <Content Include="admisiones\consulta.aspx" />
+    <Content Include="admisiones\cumplimiento.aspx" />
+    <Content Include="admisiones\programacion.html" />
+    <Content Include="admisiones\recaudos.aspx" />
+    <Content Include="admisiones\recibos.aspx" />
+    <Content Include="archivo\archivo.aspx" />
+    <Content Include="archivo\Browser.aspx" />
+    <Content Include="archivo\consultahistoria.aspx" />
+    <Content Include="archivo\digitalizacion.aspx" />
+    <Content Include="archivo\digitalizacionc.ascx" />
+    <Content Include="archivo\dropzone.css" />
+    <Content Include="archivo\dropzone.js" />
+    <Content Include="archivo\subir.aspx" />
+    <Content Include="auditoria\autorizadovsrealizado.aspx" />
+    <Content Include="auditoria\OrganizationExample51.aspx" />
+    <Content Include="auditoria\consultacomplicaciones.aspx" />
+    <Content Include="auditoria\Costos.aspx" />
+    <Content Include="auditoria\eventoa.aspx" />
+    <Content Include="auditoria\indicadores.aspx" />
+    <Content Include="auditoria\mortalidad.aspx" />
+    <Content Include="auditoria\nuevopaciente.aspx" />
+    <Content Include="censo\censo_programacion.aspx" />
+    <Content Include="censo\Default.aspx" />
+    <Content Include="cliente\escliente.aspx" />
+    <Content Include="cliente\escliente.html" />
+    <Content Include="cliente\estadisticas.aspx" />
+    <Content Include="cliente\estadisticas2.aspx" />
+    <Content Include="cliente\listadoquejas.aspx" />
+    <Content Include="cliente\quejas.aspx" />
+    <Content Include="cliente\quejas.html" />
+    <Content Include="cliente\quejasa.html" />
+    <Content Include="clinicaheridas\casa.jpg" />
+    <Content Include="clinicaheridas\escaladolor.jpg" />
+    <Content Include="clinicaheridas\escalas\e0.jpg" />
+    <Content Include="clinicaheridas\escalas\e1.jpg" />
+    <Content Include="clinicaheridas\escalas\e10.jpg" />
+    <Content Include="clinicaheridas\escalas\e2.jpg" />
+    <Content Include="clinicaheridas\escalas\e3.jpg" />
+    <Content Include="clinicaheridas\escalas\e4.jpg" />
+    <Content Include="clinicaheridas\escalas\e5.jpg" />
+    <Content Include="clinicaheridas\escalas\e6.jpg" />
+    <Content Include="clinicaheridas\escalas\e7.jpg" />
+    <Content Include="clinicaheridas\escalas\e8.jpg" />
+    <Content Include="clinicaheridas\escalas\e9.jpg" />
+    <Content Include="clinicaheridas\escalas\escaladolor.jpg" />
+    <Content Include="control\actividad.ascx" />
+    <Content Include="control\actividad.ascx.js" />
+    <Content Include="css\ajax-loader.gif" />
+    <Content Include="css\bootstrap.css" />
+    <Content Include="css\bootstrap.min.css" />
+    <Content Include="css\estilo.css" />
+    <Content Include="css\font-awesome.css" />
+    <Content Include="css\font-awesome.min.css" />
+    <Content Include="css\fontawesome\css\font-awesome.css" />
+    <Content Include="css\fontawesome\css\font-awesome.min.css" />
+    <Content Include="css\fontawesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="css\glyphicon.css" />
+    <Content Include="css\images\calendar.gif" />
+    <Content Include="css\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="css\images\ui-bg_flat_55_fbec88_40x100.png" />
+    <Content Include="css\images\ui-bg_glass_75_d0e5f5_1x400.png" />
+    <Content Include="css\images\ui-bg_glass_85_dfeffc_1x400.png" />
+    <Content Include="css\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="css\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" />
+    <Content Include="css\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" />
+    <Content Include="css\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" />
+    <Content Include="css\images\ui-icons_217bc0_256x240.png" />
+    <Content Include="css\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="css\images\ui-icons_469bdd_256x240.png" />
+    <Content Include="css\images\ui-icons_6da8d5_256x240.png" />
+    <Content Include="css\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="css\images\ui-icons_d8e7f3_256x240.png" />
+    <Content Include="css\images\ui-icons_f9bd01_256x240.png" />
+    <Content Include="css\imprimir.css" />
+    <Content Include="css\jquery-linedtextarea.css" />
+    <Content Include="css\jquery.multiselect.css" />
+    <Content Include="css\jquery.multiselect.filter.css" />
+    <Content Include="css\notas.css" />
+    <Content Include="css\pdf.css" />
+    <Content Include="css\ui-lightness\images\calendar.gif" />
+    <Content Include="css\ui-lightness\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_flat_55_fbec88_40x100.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_glass_75_d0e5f5_1x400.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_glass_85_dfeffc_1x400.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_gloss-wave_55_5c9ccc_500x100.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_inset-hard_100_f5f8f9_1x100.png" />
+    <Content Include="css\ui-lightness\images\ui-bg_inset-hard_100_fcfdfd_1x100.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_217bc0_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_469bdd_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_6da8d5_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_d8e7f3_256x240.png" />
+    <Content Include="css\ui-lightness\images\ui-icons_f9bd01_256x240.png" />
+    <Content Include="css\ui-lightness\jquery-ui-1.8.13.custom.css" />
+    <Content Include="css\ui-lightness\jquery-ui-numeric-min.css" />
+    <Content Include="ctrl\historia.html" />
+    <Content Include="ctrl\history.ascx" />
+    <Content Include="ctrl\sharehistory.ascx" />
+    <Content Include="directorio.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="directorio\Default.aspx" Condition="Exists('directorio\Default.aspx')" />
-    <Content Include="equipo\devolucion.ascx" Condition="Exists('equipo\devolucion.ascx')" />
-    <Content Include="equipo\equipo.aspx" Condition="Exists('equipo\equipo.aspx')" />
-    <Content Include="equipo\informe.aspx" Condition="Exists('equipo\informe.aspx')" />
-    <Content Include="equipo\prestamo.ascx" Condition="Exists('equipo\prestamo.ascx')" />
-    <Content Include="eventos\asistencia.aspx" Condition="Exists('eventos\asistencia.aspx')" />
-    <Content Include="eventos\Default.aspx" Condition="Exists('eventos\Default.aspx')" />
-    <Content Include="eventos\diarios.aspx" Condition="Exists('eventos\diarios.aspx')" />
-    <Content Include="eventos\informes.aspx" Condition="Exists('eventos\informes.aspx')" />
-    <Content Include="eventos\nomina.aspx" Condition="Exists('eventos\nomina.aspx')" />
-    <Content Include="eventos\pacientes.aspx" Condition="Exists('eventos\pacientes.aspx')" />
-    <Content Include="eventos\programacion.aspx" Condition="Exists('eventos\programacion.aspx')" />
-    <Content Include="facturacion\cuentasmedicas.aspx" Condition="Exists('facturacion\cuentasmedicas.aspx')" />
-    <Content Include="facturacion\factura.aspx" Condition="Exists('facturacion\factura.aspx')" />
-    <Content Include="facturacion\facturacion.aspx" Condition="Exists('facturacion\facturacion.aspx')" />
-    <Content Include="facturacion\facturacioninsumos.aspx" Condition="Exists('facturacion\facturacioninsumos.aspx')" />
-    <Content Include="facturacion\facturactrl.ascx" Condition="Exists('facturacion\facturactrl.ascx')" />
-    <Content Include="facturacion\importacion.aspx" Condition="Exists('facturacion\importacion.aspx')" />
-    <Content Include="facturacion\porfacturar.aspx" Condition="Exists('facturacion\porfacturar.aspx')" />
-    <Content Include="farmacia\almacen1.sql" Condition="Exists('farmacia\almacen1.sql')" />
-    <Content Include="farmacia\devolucion.aspx" Condition="Exists('farmacia\devolucion.aspx')" />
-    <Content Include="farmacia\devolucion.html" Condition="Exists('farmacia\devolucion.html')" />
-    <Content Include="farmacia\entrada.aspx" Condition="Exists('farmacia\entrada.aspx')" />
-    <Content Include="farmacia\entrada.html" Condition="Exists('farmacia\entrada.html')" />
-    <Content Include="farmacia\estado.aspx" Condition="Exists('farmacia\estado.aspx')" />
-    <Content Include="farmacia\estado.html" Condition="Exists('farmacia\estado.html')" />
-    <Content Include="farmacia\gastos.aspx" Condition="Exists('farmacia\gastos.aspx')" />
-    <Content Include="farmacia\gastos.html" Condition="Exists('farmacia\gastos.html')" />
-    <Content Include="farmacia\informes.aspx" Condition="Exists('farmacia\informes.aspx')" />
-    <Content Include="farmacia\kardex.html" Condition="Exists('farmacia\kardex.html')" />
-    <Content Include="farmacia\ordencompra.html" Condition="Exists('farmacia\ordencompra.html')" />
-    <Content Include="farmacia\ordencompracorreo.html" Condition="Exists('farmacia\ordencompracorreo.html')" />
-    <Content Include="farmacia\ordendecompra.aspx" Condition="Exists('farmacia\ordendecompra.aspx')" />
-    <Content Include="farmacia\ordenproducccion.aspx" Condition="Exists('farmacia\ordenproducccion.aspx')" />
-    <Content Include="farmacia\ordenproduccion.html" Condition="Exists('farmacia\ordenproduccion.html')" />
-    <Content Include="farmacia\ordenproduccioncorreo.html" Condition="Exists('farmacia\ordenproduccioncorreo.html')" />
-    <Content Include="farmacia\planilla.aspx" Condition="Exists('farmacia\planilla.aspx')" />
-    <Content Include="farmacia\planilla.html" Condition="Exists('farmacia\planilla.html')" />
-    <Content Include="farmacia\salida.aspx" Condition="Exists('farmacia\salida.aspx')" />
-    <Content Include="farmacia\salida.html" Condition="Exists('farmacia\salida.html')" />
-    <Content Include="fonts\fontawesome-webfont.svg" Condition="Exists('fonts\fontawesome-webfont.svg')" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" Condition="Exists('fonts\glyphicons-halflings-regular.svg')" />
-    <Content Include="fonts\md-fonts\css\materialdesignicons.css" Condition="Exists('fonts\md-fonts\css\materialdesignicons.css')" />
-    <Content Include="fonts\md-fonts\css\materialdesignicons.min.css" Condition="Exists('fonts\md-fonts\css\materialdesignicons.min.css')" />
-    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.svg" Condition="Exists('fonts\md-fonts\fonts\materialdesignicons-webfont.svg')" />
-    <Content Include="fonts\md-fonts\preview.html" Condition="Exists('fonts\md-fonts\preview.html')" />
-    <Content Include="gerencia\costos.aspx" Condition="Exists('gerencia\costos.aspx')" />
-    <Content Include="gerencia\programacion.aspx" Condition="Exists('gerencia\programacion.aspx')" />
-    <Content Include="gestionambiental\consulta.aspx" Condition="Exists('gestionambiental\consulta.aspx')" />
-    <Content Include="gestionambiental\gestionambiental.aspx" Condition="Exists('gestionambiental\gestionambiental.aspx')" />
-    <Content Include="Global.asax" Condition="Exists('Global.asax')" />
-    <Content Include="images\logo.html" Condition="Exists('images\logo.html')" />
-    <Content Include="images\logo.swf" Condition="Exists('images\logo.swf')" />
-    <Content Include="images\OrganizationExample16.jpg" Condition="Exists('images\OrganizationExample16.jpg')" />
-    <Content Include="images\OrganizationExample16.png" Condition="Exists('images\OrganizationExample16.png')" />
-    <Content Include="images\tema\favicon.ico" Condition="Exists('images\tema\favicon.ico')" />
-    <Content Include="images\tema\fcl.jpg" Condition="Exists('images\tema\fcl.jpg')" />
-    <Content Include="images\tema\fcr.jpg" Condition="Exists('images\tema\fcr.jpg')" />
-    <Content Include="images\tema\fhl.jpg" Condition="Exists('images\tema\fhl.jpg')" />
-    <Content Include="images\tema\fhr.jpg" Condition="Exists('images\tema\fhr.jpg')" />
-    <Content Include="images\tema\fondo-contenido.jpg" Condition="Exists('images\tema\fondo-contenido.jpg')" />
-    <Content Include="images\tema\fondo-cuerpo.jpg" Condition="Exists('images\tema\fondo-cuerpo.jpg')" />
-    <Content Include="images\tema\fondo-header.jpg" Condition="Exists('images\tema\fondo-header.jpg')" />
-    <Content Include="images\tema\fondo_titulos.jpg" Condition="Exists('images\tema\fondo_titulos.jpg')" />
-    <Content Include="images\tema\fondo_titulo_contenido.jpg" Condition="Exists('images\tema\fondo_titulo_contenido.jpg')" />
-    <Content Include="images\tema\fondo_titulo_menu.jpg" Condition="Exists('images\tema\fondo_titulo_menu.jpg')" />
-    <Content Include="images\tema\fondo_titulo_noticia.jpg" Condition="Exists('images\tema\fondo_titulo_noticia.jpg')" />
-    <Content Include="images\tema\fpl.jpg" Condition="Exists('images\tema\fpl.jpg')" />
-    <Content Include="images\tema\logof.jpg" Condition="Exists('images\tema\logof.jpg')" />
-    <Content Include="images\tema\logop.jpg" Condition="Exists('images\tema\logop.jpg')" />
-    <Content Include="images\tema\logo_peq.jpg" Condition="Exists('images\tema\logo_peq.jpg')" />
-    <Content Include="images\tema\menu-top.jpg" Condition="Exists('images\tema\menu-top.jpg')" />
-    <Content Include="images\tema\menubg.jpg" Condition="Exists('images\tema\menubg.jpg')" />
-    <Content Include="images\tema\menuover.jpg" Condition="Exists('images\tema\menuover.jpg')" />
-    <Content Include="images\tema\menu_bg.jpg" Condition="Exists('images\tema\menu_bg.jpg')" />
-    <Content Include="images\tema\menu_bgf.jpg" Condition="Exists('images\tema\menu_bgf.jpg')" />
-    <Content Include="images\tema\pie-pagf.jpg" Condition="Exists('images\tema\pie-pagf.jpg')" />
-    <Content Include="images\tema\separador-contenido.jpg" Condition="Exists('images\tema\separador-contenido.jpg')" />
-    <Content Include="images\tema\separador-noticias.jpg" Condition="Exists('images\tema\separador-noticias.jpg')" />
-    <Content Include="images\tema\separador-tips.jpg" Condition="Exists('images\tema\separador-tips.jpg')" />
-    <Content Include="images\tema\separador.jpg" Condition="Exists('images\tema\separador.jpg')" />
-    <Content Include="images\tema\tall.jpg" Condition="Exists('images\tema\tall.jpg')" />
-    <Content Include="imgs\advertencia.jpg" Condition="Exists('imgs\advertencia.jpg')" />
-    <Content Include="imgs\agenda.gif" Condition="Exists('imgs\agenda.gif')" />
-    <Content Include="imgs\ajax-loader.gif" Condition="Exists('imgs\ajax-loader.gif')" />
-    <Content Include="imgs\alerta.gif" Condition="Exists('imgs\alerta.gif')" />
-    <Content Include="imgs\alerta.png" Condition="Exists('imgs\alerta.png')" />
-    <Content Include="imgs\barraSombra.png" Condition="Exists('imgs\barraSombra.png')" />
-    <Content Include="imgs\bkg.jpg" Condition="Exists('imgs\bkg.jpg')" />
-    <Content Include="imgs\bkgor.jpg" Condition="Exists('imgs\bkgor.jpg')" />
-    <Content Include="imgs\bkgor1.jpg" Condition="Exists('imgs\bkgor1.jpg')" />
-    <Content Include="imgs\bkg_.jpg" Condition="Exists('imgs\bkg_.jpg')" />
-    <Content Include="imgs\bkg_or.jpg" Condition="Exists('imgs\bkg_or.jpg')" />
-    <Content Include="imgs\bkg_or1.jpg" Condition="Exists('imgs\bkg_or1.jpg')" />
-    <Content Include="imgs\bkg__.jpg" Condition="Exists('imgs\bkg__.jpg')" />
-    <Content Include="imgs\blank.jpg" Condition="Exists('imgs\blank.jpg')" />
-    <Content Include="imgs\cal.gif" Condition="Exists('imgs\cal.gif')" />
-    <Content Include="imgs\calendar.png" Condition="Exists('imgs\calendar.png')" />
-    <Content Include="imgs\Calendario.png" Condition="Exists('imgs\Calendario.png')" />
-    <Content Include="imgs\collapse.jpg" Condition="Exists('imgs\collapse.jpg')" />
-    <Content Include="imgs\edit.gif" Condition="Exists('imgs\edit.gif')" />
-    <Content Include="imgs\eliminar.gif" Condition="Exists('imgs\eliminar.gif')" />
-    <Content Include="imgs\expand.jpg" Condition="Exists('imgs\expand.jpg')" />
-    <Content Include="imgs\help.png" Condition="Exists('imgs\help.png')" />
-    <Content Include="imgs\Logo.jpg" Condition="Exists('imgs\Logo.jpg')" />
-    <Content Include="imgs\logo170x62.jpg" Condition="Exists('imgs\logo170x62.jpg')" />
-    <Content Include="imgs\Logo2.jpg" Condition="Exists('imgs\Logo2.jpg')" />
-    <Content Include="imgs\lupa - copia.jpg" Condition="Exists('imgs\lupa - copia.jpg')" />
-    <Content Include="imgs\lupa.jpg" Condition="Exists('imgs\lupa.jpg')" />
-    <Content Include="imgs\procesando.gif" Condition="Exists('imgs\procesando.gif')" />
-    <Content Include="imgs\search.png" Condition="Exists('imgs\search.png')" />
-    <Content Include="imgs\ui-anim_basic_16x16.gif" Condition="Exists('imgs\ui-anim_basic_16x16.gif')" />
-    <Content Include="js\angulargaleria.js" Condition="Exists('js\angulargaleria.js')" />
-    <Content Include="js\angulargridctrl.js" Condition="Exists('js\angulargridctrl.js')" />
-    <Content Include="js\avance.png" Condition="Exists('js\avance.png')" />
-    <Content Include="js\bootstrap.js" Condition="Exists('js\bootstrap.js')" />
-    <Content Include="js\bootstrap.min.js" Condition="Exists('js\bootstrap.min.js')" />
-    <Content Include="js\combo.js" Condition="Exists('js\combo.js')" />
-    <Content Include="js\en.js" Condition="Exists('js\en.js')" />
-    <Content Include="js\FixFocus.js" Condition="Exists('js\FixFocus.js')" />
-    <Content Include="js\flecha.jpg" Condition="Exists('js\flecha.jpg')" />
-    <Content Include="js\gridedit.js" Condition="Exists('js\gridedit.js')" />
-    <Content Include="js\gridlistadd.js" Condition="Exists('js\gridlistadd.js')" />
-    <Content Include="js\jquery-1.7.2.min.js" Condition="Exists('js\jquery-1.7.2.min.js')" />
-    <Content Include="js\jquery-linedtextarea.js" Condition="Exists('js\jquery-linedtextarea.js')" />
-    <Content Include="js\jquery-ui-1.8.13.custom.min.js" Condition="Exists('js\jquery-ui-1.8.13.custom.min.js')" />
-    <Content Include="js\jquery-ui-timepicker-addon.js" Condition="Exists('js\jquery-ui-timepicker-addon.js')" />
-    <Content Include="js\jquery.autonumeric.js" Condition="Exists('js\jquery.autonumeric.js')" />
-    <Content Include="js\jquery.cookie.js" Condition="Exists('js\jquery.cookie.js')" />
-    <Content Include="js\jquery.maskedinput-1.3.min.js" Condition="Exists('js\jquery.maskedinput-1.3.min.js')" />
-    <Content Include="js\jquery.multiselect.filter.js" Condition="Exists('js\jquery.multiselect.filter.js')" />
-    <Content Include="js\jquery.multiselect.filter.min.js" Condition="Exists('js\jquery.multiselect.filter.min.js')" />
-    <Content Include="js\jquery.multiselect.min.js" Condition="Exists('js\jquery.multiselect.min.js')" />
-    <Content Include="js\jquery.ui.autocomplete.selectFirst.js" Condition="Exists('js\jquery.ui.autocomplete.selectFirst.js')" />
-    <Content Include="js\jquery.ui.datepicker-es.js" Condition="Exists('js\jquery.ui.datepicker-es.js')" />
-    <Content Include="js\jquery.ui.notification.min.js" Condition="Exists('js\jquery.ui.notification.min.js')" />
-    <Content Include="js\jquery.updatepanel.js" Condition="Exists('js\jquery.updatepanel.js')" />
-    <Content Include="js\main.js" Condition="Exists('js\main.js')" />
-    <Content Include="js\mainmvc.js" Condition="Exists('js\mainmvc.js')" />
-    <Content Include="js\mono.js" Condition="Exists('js\mono.js')" />
-    <Content Include="js\plugins\advlist\plugin.min.js" Condition="Exists('js\plugins\advlist\plugin.min.js')" />
-    <Content Include="js\plugins\anchor\plugin.min.js" Condition="Exists('js\plugins\anchor\plugin.min.js')" />
-    <Content Include="js\plugins\autolink\plugin.min.js" Condition="Exists('js\plugins\autolink\plugin.min.js')" />
-    <Content Include="js\plugins\autoresize\plugin.min.js" Condition="Exists('js\plugins\autoresize\plugin.min.js')" />
-    <Content Include="js\plugins\autosave\plugin.min.js" Condition="Exists('js\plugins\autosave\plugin.min.js')" />
-    <Content Include="js\plugins\bbcode\plugin.min.js" Condition="Exists('js\plugins\bbcode\plugin.min.js')" />
-    <Content Include="js\plugins\charmap\plugin.min.js" Condition="Exists('js\plugins\charmap\plugin.min.js')" />
-    <Content Include="js\plugins\code\plugin.min.js" Condition="Exists('js\plugins\code\plugin.min.js')" />
-    <Content Include="js\plugins\contextmenu\plugin.min.js" Condition="Exists('js\plugins\contextmenu\plugin.min.js')" />
-    <Content Include="js\plugins\directionality\plugin.min.js" Condition="Exists('js\plugins\directionality\plugin.min.js')" />
-    <Content Include="js\plugins\emoticons\img\smiley-cool.gif" Condition="Exists('js\plugins\emoticons\img\smiley-cool.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-cry.gif" Condition="Exists('js\plugins\emoticons\img\smiley-cry.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-embarassed.gif" Condition="Exists('js\plugins\emoticons\img\smiley-embarassed.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-foot-in-mouth.gif" Condition="Exists('js\plugins\emoticons\img\smiley-foot-in-mouth.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-frown.gif" Condition="Exists('js\plugins\emoticons\img\smiley-frown.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-innocent.gif" Condition="Exists('js\plugins\emoticons\img\smiley-innocent.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-kiss.gif" Condition="Exists('js\plugins\emoticons\img\smiley-kiss.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-laughing.gif" Condition="Exists('js\plugins\emoticons\img\smiley-laughing.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-money-mouth.gif" Condition="Exists('js\plugins\emoticons\img\smiley-money-mouth.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-sealed.gif" Condition="Exists('js\plugins\emoticons\img\smiley-sealed.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-smile.gif" Condition="Exists('js\plugins\emoticons\img\smiley-smile.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-surprised.gif" Condition="Exists('js\plugins\emoticons\img\smiley-surprised.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-tongue-out.gif" Condition="Exists('js\plugins\emoticons\img\smiley-tongue-out.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-undecided.gif" Condition="Exists('js\plugins\emoticons\img\smiley-undecided.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-wink.gif" Condition="Exists('js\plugins\emoticons\img\smiley-wink.gif')" />
-    <Content Include="js\plugins\emoticons\img\smiley-yell.gif" Condition="Exists('js\plugins\emoticons\img\smiley-yell.gif')" />
-    <Content Include="js\plugins\emoticons\plugin.min.js" Condition="Exists('js\plugins\emoticons\plugin.min.js')" />
-    <Content Include="js\plugins\example\dialog.html" Condition="Exists('js\plugins\example\dialog.html')" />
-    <Content Include="js\plugins\example\plugin.min.js" Condition="Exists('js\plugins\example\plugin.min.js')" />
-    <Content Include="js\plugins\example_dependency\plugin.min.js" Condition="Exists('js\plugins\example_dependency\plugin.min.js')" />
-    <Content Include="js\plugins\fullpage\plugin.min.js" Condition="Exists('js\plugins\fullpage\plugin.min.js')" />
-    <Content Include="js\plugins\fullscreen\plugin.min.js" Condition="Exists('js\plugins\fullscreen\plugin.min.js')" />
-    <Content Include="js\plugins\hr\plugin.min.js" Condition="Exists('js\plugins\hr\plugin.min.js')" />
-    <Content Include="js\plugins\image\plugin.min.js" Condition="Exists('js\plugins\image\plugin.min.js')" />
-    <Content Include="js\plugins\importcss\plugin.min.js" Condition="Exists('js\plugins\importcss\plugin.min.js')" />
-    <Content Include="js\plugins\insertdatetime\plugin.min.js" Condition="Exists('js\plugins\insertdatetime\plugin.min.js')" />
-    <Content Include="js\plugins\layer\plugin.min.js" Condition="Exists('js\plugins\layer\plugin.min.js')" />
-    <Content Include="js\plugins\legacyoutput\plugin.min.js" Condition="Exists('js\plugins\legacyoutput\plugin.min.js')" />
-    <Content Include="js\plugins\link\plugin.min.js" Condition="Exists('js\plugins\link\plugin.min.js')" />
-    <Content Include="js\plugins\lists\plugin.min.js" Condition="Exists('js\plugins\lists\plugin.min.js')" />
-    <Content Include="js\plugins\media\moxieplayer.swf" Condition="Exists('js\plugins\media\moxieplayer.swf')" />
-    <Content Include="js\plugins\media\plugin.min.js" Condition="Exists('js\plugins\media\plugin.min.js')" />
-    <Content Include="js\plugins\nonbreaking\plugin.min.js" Condition="Exists('js\plugins\nonbreaking\plugin.min.js')" />
-    <Content Include="js\plugins\noneditable\plugin.min.js" Condition="Exists('js\plugins\noneditable\plugin.min.js')" />
-    <Content Include="js\plugins\pagebreak\plugin.min.js" Condition="Exists('js\plugins\pagebreak\plugin.min.js')" />
-    <Content Include="js\plugins\paste\plugin.min.js" Condition="Exists('js\plugins\paste\plugin.min.js')" />
-    <Content Include="js\plugins\preview\plugin.min.js" Condition="Exists('js\plugins\preview\plugin.min.js')" />
-    <Content Include="js\plugins\print\plugin.min.js" Condition="Exists('js\plugins\print\plugin.min.js')" />
-    <Content Include="js\plugins\save\plugin.min.js" Condition="Exists('js\plugins\save\plugin.min.js')" />
-    <Content Include="js\plugins\searchreplace\plugin.min.js" Condition="Exists('js\plugins\searchreplace\plugin.min.js')" />
-    <Content Include="js\plugins\spellchecker\plugin.min.js" Condition="Exists('js\plugins\spellchecker\plugin.min.js')" />
-    <Content Include="js\plugins\tabfocus\plugin.min.js" Condition="Exists('js\plugins\tabfocus\plugin.min.js')" />
-    <Content Include="js\plugins\table\plugin.min.js" Condition="Exists('js\plugins\table\plugin.min.js')" />
-    <Content Include="js\plugins\template\plugin.min.js" Condition="Exists('js\plugins\template\plugin.min.js')" />
-    <Content Include="js\plugins\textcolor\plugin.min.js" Condition="Exists('js\plugins\textcolor\plugin.min.js')" />
-    <Content Include="js\plugins\visualblocks\css\visualblocks.css" Condition="Exists('js\plugins\visualblocks\css\visualblocks.css')" />
-    <Content Include="js\plugins\visualblocks\plugin.min.js" Condition="Exists('js\plugins\visualblocks\plugin.min.js')" />
-    <Content Include="js\plugins\visualchars\plugin.min.js" Condition="Exists('js\plugins\visualchars\plugin.min.js')" />
-    <Content Include="js\plugins\wordcount\plugin.min.js" Condition="Exists('js\plugins\wordcount\plugin.min.js')" />
-    <Content Include="js\skins\lightgray\content.inline.min.css" Condition="Exists('js\skins\lightgray\content.inline.min.css')" />
-    <Content Include="js\skins\lightgray\content.min.css" Condition="Exists('js\skins\lightgray\content.min.css')" />
-    <Content Include="js\skins\lightgray\fonts\tinymce-small.dev.svg" Condition="Exists('js\skins\lightgray\fonts\tinymce-small.dev.svg')" />
-    <Content Include="js\skins\lightgray\fonts\tinymce-small.svg" Condition="Exists('js\skins\lightgray\fonts\tinymce-small.svg')" />
-    <Content Include="js\skins\lightgray\fonts\tinymce.dev.svg" Condition="Exists('js\skins\lightgray\fonts\tinymce.dev.svg')" />
-    <Content Include="js\skins\lightgray\fonts\tinymce.svg" Condition="Exists('js\skins\lightgray\fonts\tinymce.svg')" />
-    <Content Include="js\skins\lightgray\img\anchor.gif" Condition="Exists('js\skins\lightgray\img\anchor.gif')" />
-    <Content Include="js\skins\lightgray\img\loader.gif" Condition="Exists('js\skins\lightgray\img\loader.gif')" />
-    <Content Include="js\skins\lightgray\img\object.gif" Condition="Exists('js\skins\lightgray\img\object.gif')" />
-    <Content Include="js\skins\lightgray\img\trans.gif" Condition="Exists('js\skins\lightgray\img\trans.gif')" />
-    <Content Include="js\skins\lightgray\skin.ie7.min.css" Condition="Exists('js\skins\lightgray\skin.ie7.min.css')" />
-    <Content Include="js\skins\lightgray\skin.min.css" Condition="Exists('js\skins\lightgray\skin.min.css')" />
-    <Content Include="js\themes\modern\theme.min.js" Condition="Exists('js\themes\modern\theme.min.js')" />
-    <Content Include="js\tinymce.min.js" Condition="Exists('js\tinymce.min.js')" />
-    <Content Include="js\Util.js" Condition="Exists('js\Util.js')" />
-    <Content Include="js\validators.js" Condition="Exists('js\validators.js')" />
-    <Content Include="lib\angular-1.7.2\angular.js" Condition="Exists('lib\angular-1.7.2\angular.js')" />
-    <Content Include="lib\angular-1.7.2\angular.min.js" Condition="Exists('lib\angular-1.7.2\angular.min.js')" />
-    <Content Include="lib\autonumeric-4.1.0\autonumeric.min.js" Condition="Exists('lib\autonumeric-4.1.0\autonumeric.min.js')" />
-    <Content Include="lib\bloodhound\bloodhound.js" Condition="Exists('lib\bloodhound\bloodhound.js')" />
-    <Content Include="lib\bloodhound\bloodhound.min.js" Condition="Exists('lib\bloodhound\bloodhound.min.js')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.css" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap-grid.css')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.min.css" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap-grid.min.css')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.css" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap-reboot.css')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.min.css" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap-reboot.min.css')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.css" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap.css')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.min.css" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap.min.css')" />
-    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.js" Condition="Exists('lib\bootstrap-4.1.2\js\bootstrap.bundle.js')" />
-    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.min.js" Condition="Exists('lib\bootstrap-4.1.2\js\bootstrap.bundle.min.js')" />
-    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.js" Condition="Exists('lib\bootstrap-4.1.2\js\bootstrap.js')" />
-    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.min.js" Condition="Exists('lib\bootstrap-4.1.2\js\bootstrap.min.js')" />
-    <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker-standalone.css" Condition="Exists('lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker-standalone.css')" />
-    <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.css" Condition="Exists('lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.css')" />
-    <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.min.css" Condition="Exists('lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.min.css')" />
-    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.svg" Condition="Exists('lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.svg')" />
-    <Content Include="lib\bootstrap-datetimepicker\js\bootstrap-datetimepicker.js" Condition="Exists('lib\bootstrap-datetimepicker\js\bootstrap-datetimepicker.js')" />
-    <Content Include="lib\bootstrap-datetimepicker\js\bootstrap-datetimepicker.min.js" Condition="Exists('lib\bootstrap-datetimepicker\js\bootstrap-datetimepicker.min.js')" />
-    <Content Include="lib\bootstrap-multiselect\css\bootstrap-multiselect.css" Condition="Exists('lib\bootstrap-multiselect\css\bootstrap-multiselect.css')" />
-    <Content Include="lib\bootstrap-multiselect\js\bootstrap-multiselect.js" Condition="Exists('lib\bootstrap-multiselect\js\bootstrap-multiselect.js')" />
-    <Content Include="lib\daterangepicker\daterangepicker.css" Condition="Exists('lib\daterangepicker\daterangepicker.css')" />
-    <Content Include="lib\daterangepicker\daterangepicker.js" Condition="Exists('lib\daterangepicker\daterangepicker.js')" />
-    <Content Include="lib\daterangepicker\daterangepicker.original.js" Condition="Exists('lib\daterangepicker\daterangepicker.original.js')" />
-    <Content Include="lib\dropzone\dropzone.css" Condition="Exists('lib\dropzone\dropzone.css')" />
-    <Content Include="lib\dropzone\dropzone.js" Condition="Exists('lib\dropzone\dropzone.js')" />
-    <Content Include="lib\jquery-3.3.1\jquery-3.3.1.min.js" Condition="Exists('lib\jquery-3.3.1\jquery-3.3.1.min.js')" />
-    <Content Include="lib\jquery-inputmask\bindings\inputmask.binding.js" Condition="Exists('lib\jquery-inputmask\bindings\inputmask.binding.js')" />
-    <Content Include="lib\jquery-inputmask\bindings\inputmask.binding.min.js" Condition="Exists('lib\jquery-inputmask\bindings\inputmask.binding.min.js')" />
-    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.js" Condition="Exists('lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.js')" />
-    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.min.js" Condition="Exists('lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.min.js')" />
-    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jquery.js" Condition="Exists('lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jquery.js')" />
-    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jquery.min.js" Condition="Exists('lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jquery.min.js')" />
-    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.js" Condition="Exists('lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.js')" />
-    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.min.js" Condition="Exists('lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.min.js')" />
-    <Content Include="lib\jquery-inputmask\global\document.js" Condition="Exists('lib\jquery-inputmask\global\document.js')" />
-    <Content Include="lib\jquery-inputmask\global\document.min.js" Condition="Exists('lib\jquery-inputmask\global\document.min.js')" />
-    <Content Include="lib\jquery-inputmask\global\window.js" Condition="Exists('lib\jquery-inputmask\global\window.js')" />
-    <Content Include="lib\jquery-inputmask\global\window.min.js" Condition="Exists('lib\jquery-inputmask\global\window.min.js')" />
-    <Content Include="lib\jquery-inputmask\inputmask.date.extensions.js" Condition="Exists('lib\jquery-inputmask\inputmask.date.extensions.js')" />
-    <Content Include="lib\jquery-inputmask\inputmask.date.extensions.min.js" Condition="Exists('lib\jquery-inputmask\inputmask.date.extensions.min.js')" />
-    <Content Include="lib\jquery-inputmask\inputmask.extensions.js" Condition="Exists('lib\jquery-inputmask\inputmask.extensions.js')" />
-    <Content Include="lib\jquery-inputmask\inputmask.extensions.min.js" Condition="Exists('lib\jquery-inputmask\inputmask.extensions.min.js')" />
-    <Content Include="lib\jquery-inputmask\inputmask.js" Condition="Exists('lib\jquery-inputmask\inputmask.js')" />
-    <Content Include="lib\jquery-inputmask\inputmask.min.js" Condition="Exists('lib\jquery-inputmask\inputmask.min.js')" />
-    <Content Include="lib\jquery-inputmask\inputmask.numeric.extensions.js" Condition="Exists('lib\jquery-inputmask\inputmask.numeric.extensions.js')" />
-    <Content Include="lib\jquery-inputmask\inputmask.numeric.extensions.min.js" Condition="Exists('lib\jquery-inputmask\inputmask.numeric.extensions.min.js')" />
-    <Content Include="lib\jquery-inputmask\inputmask.phone.extensions.js" Condition="Exists('lib\jquery-inputmask\inputmask.phone.extensions.js')" />
-    <Content Include="lib\jquery-inputmask\inputmask.phone.extensions.min.js" Condition="Exists('lib\jquery-inputmask\inputmask.phone.extensions.min.js')" />
-    <Content Include="lib\jquery-inputmask\jquery.inputmask.js" Condition="Exists('lib\jquery-inputmask\jquery.inputmask.js')" />
-    <Content Include="lib\jquery-inputmask\jquery.inputmask.min.js" Condition="Exists('lib\jquery-inputmask\jquery.inputmask.min.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-be.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-be.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-be.min.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-be.min.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-ca.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-ca.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-ca.min.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-ca.min.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-hu.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-hu.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-hu.min.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-hu.min.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-it.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-it.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-it.min.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-it.min.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-mx.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-mx.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-mx.min.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-mx.min.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-nl.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-nl.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-nl.min.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-nl.min.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-ru.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-ru.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone-ru.min.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone-ru.min.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone.js')" />
-    <Content Include="lib\jquery-inputmask\phone-codes\phone.min.js" Condition="Exists('lib\jquery-inputmask\phone-codes\phone.min.js')" />
-    <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" Condition="Exists('lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js')" />
-    <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" Condition="Exists('lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js')" />
-    <Content Include="lib\jquery-validation\dist\additional-methods.js" Condition="Exists('lib\jquery-validation\dist\additional-methods.js')" />
-    <Content Include="lib\jquery-validation\dist\additional-methods.min.js" Condition="Exists('lib\jquery-validation\dist\additional-methods.min.js')" />
-    <Content Include="lib\jquery-validation\dist\jquery.validate.js" Condition="Exists('lib\jquery-validation\dist\jquery.validate.js')" />
-    <Content Include="lib\jquery-validation\dist\jquery.validate.min.js" Condition="Exists('lib\jquery-validation\dist\jquery.validate.min.js')" />
-    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.css" Condition="Exists('lib\jquery.bootgrid\jquery.bootgrid.css')" />
-    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.fa.js" Condition="Exists('lib\jquery.bootgrid\jquery.bootgrid.fa.js')" />
-    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.fa.min.js" Condition="Exists('lib\jquery.bootgrid\jquery.bootgrid.fa.min.js')" />
-    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.js" Condition="Exists('lib\jquery.bootgrid\jquery.bootgrid.js')" />
-    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.min.css" Condition="Exists('lib\jquery.bootgrid\jquery.bootgrid.min.css')" />
-    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.min.js" Condition="Exists('lib\jquery.bootgrid\jquery.bootgrid.min.js')" />
-    <Content Include="lib\momentjs\moment-with-locales.js" Condition="Exists('lib\momentjs\moment-with-locales.js')" />
-    <Content Include="lib\momentjs\moment-with-locales.min.js" Condition="Exists('lib\momentjs\moment-with-locales.min.js')" />
-    <Content Include="lib\momentjs\moment.js" Condition="Exists('lib\momentjs\moment.js')" />
-    <Content Include="lib\momentjs\moment.min.js" Condition="Exists('lib\momentjs\moment.min.js')" />
-    <Content Include="lib\popper.js\popper.js" Condition="Exists('lib\popper.js\popper.js')" />
-    <Content Include="lib\popper.js\popper.min.js" Condition="Exists('lib\popper.js\popper.min.js')" />
-    <Content Include="lib\toastr\toastr.css" Condition="Exists('lib\toastr\toastr.css')" />
-    <Content Include="lib\toastr\toastr.min.css" Condition="Exists('lib\toastr\toastr.min.css')" />
-    <Content Include="lib\toastr\toastr.min.js" Condition="Exists('lib\toastr\toastr.min.js')" />
-    <Content Include="lib\typeahead.jquery\typeahead.bundle.js" Condition="Exists('lib\typeahead.jquery\typeahead.bundle.js')" />
-    <Content Include="lib\typeahead.jquery\typeahead.bundle.min.js" Condition="Exists('lib\typeahead.jquery\typeahead.bundle.min.js')" />
-    <Content Include="lib\typeahead.jquery\typeahead.jquery.js" Condition="Exists('lib\typeahead.jquery\typeahead.jquery.js')" />
-    <Content Include="lib\typeahead.jquery\typeahead.jquery.min.js" Condition="Exists('lib\typeahead.jquery\typeahead.jquery.min.js')" />
-    <Content Include="lib\typeahead.jquery\typeahead.jquery.mod.js" Condition="Exists('lib\typeahead.jquery\typeahead.jquery.mod.js')" />
-    <Content Include="lib\typeahead.jquery\typeahead.jquery.original.js" Condition="Exists('lib\typeahead.jquery\typeahead.jquery.original.js')" />
-    <Content Include="materna\compensar.jpg" Condition="Exists('materna\compensar.jpg')" />
-    <Content Include="materna\famisanar.jpg" Condition="Exists('materna\famisanar.jpg')" />
-    <Content Include="materna\informe.aspx" Condition="Exists('materna\informe.aspx')" />
-    <Content Include="materna\neonato.aspx" Condition="Exists('materna\neonato.aspx')" />
-    <Content Include="materna\neonato.html" Condition="Exists('materna\neonato.html')" />
-    <Content Include="materna\postparto.aspx" Condition="Exists('materna\postparto.aspx')" />
-    <Content Include="materna\postparto.html" Condition="Exists('materna\postparto.html')" />
-    <Content Include="materna\seguimiento.aspx" Condition="Exists('materna\seguimiento.aspx')" />
-    <Content Include="materna\seguimiento.html" Condition="Exists('materna\seguimiento.html')" />
-    <Content Include="modificaciones.ascx" Condition="Exists('modificaciones.ascx')" />
-    <Content Include="notificacion\Default.aspx" Condition="Exists('notificacion\Default.aspx')" />
-    <Content Include="paciente\atendidos.aspx" Condition="Exists('paciente\atendidos.aspx')" />
-    <Content Include="paciente\autorizaciones.ascx" Condition="Exists('paciente\autorizaciones.ascx')" />
-    <Content Include="paciente\autorizaciones.ascx.js" Condition="Exists('paciente\autorizaciones.ascx.js')" />
-    <Content Include="paciente\barthel.aspx" Condition="Exists('paciente\barthel.aspx')" />
-    <Content Include="paciente\barthel.html" Condition="Exists('paciente\barthel.html')" />
-    <Content Include="paciente\cie10list.ascx" Condition="Exists('paciente\cie10list.ascx')" />
-    <Content Include="paciente\detallepaciente.ascx" Condition="Exists('paciente\detallepaciente.ascx')" />
-    <Content Include="paciente\enfermeria.aspx" Condition="Exists('paciente\enfermeria.aspx')" />
-    <Content Include="paciente\epicrisis.aspx" Condition="Exists('paciente\epicrisis.aspx')" />
-    <Content Include="paciente\epicrisis.html" Condition="Exists('paciente\epicrisis.html')" />
-    <Content Include="paciente\evolucion.aspx" Condition="Exists('paciente\evolucion.aspx')" />
-    <Content Include="paciente\evolucion.html" Condition="Exists('paciente\evolucion.html')" />
-    <Content Include="paciente\formatoctc.aspx" Condition="Exists('paciente\formatoctc.aspx')" />
-    <Content Include="paciente\formatoctc.html" Condition="Exists('paciente\formatoctc.html')" />
-    <Content Include="paciente\formulacion.aspx" Condition="Exists('paciente\formulacion.aspx')" />
-    <Content Include="paciente\formulacion.html" Condition="Exists('paciente\formulacion.html')" />
-    <Content Include="paciente\formulacion36.html" Condition="Exists('paciente\formulacion36.html')" />
-    <Content Include="paciente\gastos.aspx" Condition="Exists('paciente\gastos.aspx')" />
-    <Content Include="paciente\historiasclinicas.aspx" Condition="Exists('paciente\historiasclinicas.aspx')" />
-    <Content Include="paciente\informemipres.aspx" Condition="Exists('paciente\informemipres.aspx')" />
-    <Content Include="paciente\informes.aspx" Condition="Exists('paciente\informes.aspx')" />
-    <Content Include="paciente\informulacion.aspx" Condition="Exists('paciente\informulacion.aspx')" />
-    <Content Include="paciente\ingreso.aspx" Condition="Exists('paciente\ingreso.aspx')" />
-    <Content Include="paciente\ingreso.html" Condition="Exists('paciente\ingreso.html')" />
-    <Content Include="paciente\mipres.aspx" Condition="Exists('paciente\mipres.aspx')" />
-    <Content Include="paciente\mipres.html" Condition="Exists('paciente\mipres.html')" />
-    <Content Include="paciente\paciente.aspx" Condition="Exists('paciente\paciente.aspx')" />
-    <Content Include="paciente\pacienteSimple.ascx" Condition="Exists('paciente\pacienteSimple.ascx')" />
-    <Content Include="paciente\pacienteSimple.ascx.js" Condition="Exists('paciente\pacienteSimple.ascx.js')" />
-    <Content Include="paciente\paraclinico.html" Condition="Exists('paciente\paraclinico.html')" />
-    <Content Include="paciente\paraclinicos.aspx" Condition="Exists('paciente\paraclinicos.aspx')" />
-    <Content Include="paciente\SeleccionarPaciente.ascx" Condition="Exists('paciente\SeleccionarPaciente.ascx')" />
-    <Content Include="paciente\valoracionat.aspx" Condition="Exists('paciente\valoracionat.aspx')" />
-    <Content Include="paciente\valoracionat.html" Condition="Exists('paciente\valoracionat.html')" />
-    <Content Include="programacion\consulta.aspx" Condition="Exists('programacion\consulta.aspx')" />
-    <Content Include="programacion\novedad.ascx" Condition="Exists('programacion\novedad.ascx')" />
-    <Content Include="programacion\programacion.aspx" Condition="Exists('programacion\programacion.aspx')" />
-    <Content Include="programacion\programacionc.ascx" Condition="Exists('programacion\programacionc.ascx')" />
-    <Content Include="programacion\sinprogramar.aspx" Condition="Exists('programacion\sinprogramar.aspx')" />
-    <Content Include="rh\cumple.aspx" Condition="Exists('rh\cumple.aspx')" />
-    <Content Include="rh\Default.aspx" Condition="Exists('rh\Default.aspx')" />
-    <Content Include="rh\documentos.aspx" Condition="Exists('rh\documentos.aspx')" />
-    <Content Include="rh\funcionario.aspx" Condition="Exists('rh\funcionario.aspx')" />
-    <Content Include="rh\funcionarioc.ascx" Condition="Exists('rh\funcionarioc.ascx')" />
-    <Content Include="rh\funcionarioSimple.ascx" Condition="Exists('rh\funcionarioSimple.ascx')" />
-    <Content Include="rh\funcionarioSimple.ascx.js" Condition="Exists('rh\funcionarioSimple.ascx.js')" />
-    <Content Include="rh\programacion.aspx" Condition="Exists('rh\programacion.aspx')" />
-    <Content Include="terapeutico\evolucion.aspx" Condition="Exists('terapeutico\evolucion.aspx')" />
-    <Content Include="terapeutico\evolucion.html" Condition="Exists('terapeutico\evolucion.html')" />
-    <Content Include="terapeutico\evoluciones.aspx" Condition="Exists('terapeutico\evoluciones.aspx')" />
-    <Content Include="terapeutico\programadovsevoluciones.aspx" Condition="Exists('terapeutico\programadovsevoluciones.aspx')" />
-    <Content Include="valoracion\enfermeria.aspx" Condition="Exists('valoracion\enfermeria.aspx')" />
-    <Content Include="valoracion\enfermeria.html" Condition="Exists('valoracion\enfermeria.html')" />
-    <Content Include="valoracion\sicologia.aspx" Condition="Exists('valoracion\sicologia.aspx')" />
-    <Content Include="valoracion\sicologia.html" Condition="Exists('valoracion\sicologia.html')" />
-    <Content Include="valoracion\trabajosocial.aspx" Condition="Exists('valoracion\trabajosocial.aspx')" />
-    <Content Include="valoracion\trabajosocial.html" Condition="Exists('valoracion\trabajosocial.html')" />
-    <Content Include="vehiculos\recorrido.aspx" Condition="Exists('vehiculos\recorrido.aspx')" />
-    <Content Include="vehiculos\vehiculo.aspx" Condition="Exists('vehiculos\vehiculo.aspx')" />
-    <Content Include="Web.config" Condition="Exists('Web.config')">
+    <Content Include="directorio\Default.aspx" />
+    <Content Include="equipo\devolucion.ascx" />
+    <Content Include="equipo\equipo.aspx" />
+    <Content Include="equipo\informe.aspx" />
+    <Content Include="equipo\prestamo.ascx" />
+    <Content Include="eventos\asistencia.aspx" />
+    <Content Include="eventos\Default.aspx" />
+    <Content Include="eventos\diarios.aspx" />
+    <Content Include="eventos\informes.aspx" />
+    <Content Include="eventos\nomina.aspx" />
+    <Content Include="eventos\pacientes.aspx" />
+    <Content Include="eventos\programacion.aspx" />
+    <Content Include="facturacion\cuentasmedicas.aspx" />
+    <Content Include="facturacion\factura.aspx" />
+    <Content Include="facturacion\facturacion.aspx" />
+    <Content Include="facturacion\facturacioninsumos.aspx" />
+    <Content Include="facturacion\facturactrl.ascx" />
+    <Content Include="facturacion\importacion.aspx" />
+    <Content Include="facturacion\porfacturar.aspx" />
+    <Content Include="farmacia\almacen1.sql" />
+    <Content Include="farmacia\devolucion.aspx" />
+    <Content Include="farmacia\devolucion.html" />
+    <Content Include="farmacia\entrada.aspx" />
+    <Content Include="farmacia\entrada.html" />
+    <Content Include="farmacia\estado.aspx" />
+    <Content Include="farmacia\estado.html" />
+    <Content Include="farmacia\gastos.aspx" />
+    <Content Include="farmacia\gastos.html" />
+    <Content Include="farmacia\informes.aspx" />
+    <Content Include="farmacia\kardex.html" />
+    <Content Include="farmacia\ordencompra.html" />
+    <Content Include="farmacia\ordencompracorreo.html" />
+    <Content Include="farmacia\ordendecompra.aspx" />
+    <Content Include="farmacia\ordenproducccion.aspx" />
+    <Content Include="farmacia\ordenproduccion.html" />
+    <Content Include="farmacia\ordenproduccioncorreo.html" />
+    <Content Include="farmacia\planilla.aspx" />
+    <Content Include="farmacia\planilla.html" />
+    <Content Include="farmacia\salida.aspx" />
+    <Content Include="farmacia\salida.html" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\md-fonts\css\materialdesignicons.css" />
+    <Content Include="fonts\md-fonts\css\materialdesignicons.min.css" />
+    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.svg" />
+    <Content Include="fonts\md-fonts\preview.html" />
+    <Content Include="gerencia\costos.aspx" />
+    <Content Include="gerencia\programacion.aspx" />
+    <Content Include="gestionambiental\consulta.aspx" />
+    <Content Include="gestionambiental\gestionambiental.aspx" />
+    <Content Include="Global.asax" />
+    <Content Include="images\logo.html" />
+    <Content Include="images\logo.swf" />
+    <Content Include="images\OrganizationExample16.jpg" />
+    <Content Include="images\OrganizationExample16.png" />
+    <Content Include="images\tema\favicon.ico" />
+    <Content Include="images\tema\fcl.jpg" />
+    <Content Include="images\tema\fcr.jpg" />
+    <Content Include="images\tema\fhl.jpg" />
+    <Content Include="images\tema\fhr.jpg" />
+    <Content Include="images\tema\fondo-contenido.jpg" />
+    <Content Include="images\tema\fondo-cuerpo.jpg" />
+    <Content Include="images\tema\fondo-header.jpg" />
+    <Content Include="images\tema\fondo_titulos.jpg" />
+    <Content Include="images\tema\fondo_titulo_contenido.jpg" />
+    <Content Include="images\tema\fondo_titulo_menu.jpg" />
+    <Content Include="images\tema\fondo_titulo_noticia.jpg" />
+    <Content Include="images\tema\fpl.jpg" />
+    <Content Include="images\tema\logof.jpg" />
+    <Content Include="images\tema\logop.jpg" />
+    <Content Include="images\tema\logo_peq.jpg" />
+    <Content Include="images\tema\menu-top.jpg" />
+    <Content Include="images\tema\menubg.jpg" />
+    <Content Include="images\tema\menuover.jpg" />
+    <Content Include="images\tema\menu_bg.jpg" />
+    <Content Include="images\tema\menu_bgf.jpg" />
+    <Content Include="images\tema\pie-pagf.jpg" />
+    <Content Include="images\tema\separador-contenido.jpg" />
+    <Content Include="images\tema\separador-noticias.jpg" />
+    <Content Include="images\tema\separador-tips.jpg" />
+    <Content Include="images\tema\separador.jpg" />
+    <Content Include="images\tema\tall.jpg" />
+    <Content Include="imgs\advertencia.jpg" />
+    <Content Include="imgs\agenda.gif" />
+    <Content Include="imgs\ajax-loader.gif" />
+    <Content Include="imgs\alerta.gif" />
+    <Content Include="imgs\alerta.png" />
+    <Content Include="imgs\barraSombra.png" />
+    <Content Include="imgs\bkg.jpg" />
+    <Content Include="imgs\bkgor.jpg" />
+    <Content Include="imgs\bkgor1.jpg" />
+    <Content Include="imgs\bkg_.jpg" />
+    <Content Include="imgs\bkg_or.jpg" />
+    <Content Include="imgs\bkg_or1.jpg" />
+    <Content Include="imgs\bkg__.jpg" />
+    <Content Include="imgs\blank.jpg" />
+    <Content Include="imgs\cal.gif" />
+    <Content Include="imgs\calendar.png" />
+    <Content Include="imgs\Calendario.png" />
+    <Content Include="imgs\collapse.jpg" />
+    <Content Include="imgs\edit.gif" />
+    <Content Include="imgs\eliminar.gif" />
+    <Content Include="imgs\expand.jpg" />
+    <Content Include="imgs\help.png" />
+    <Content Include="imgs\Logo.jpg" />
+    <Content Include="imgs\logo170x62.jpg" />
+    <Content Include="imgs\Logo2.jpg" />
+    <Content Include="imgs\lupa - copia.jpg" />
+    <Content Include="imgs\lupa.jpg" />
+    <Content Include="imgs\procesando.gif" />
+    <Content Include="imgs\search.png" />
+    <Content Include="imgs\ui-anim_basic_16x16.gif" />
+    <Content Include="js\angulargaleria.js" />
+    <Content Include="js\angulargridctrl.js" />
+    <Content Include="js\avance.png" />
+    <Content Include="js\bootstrap.js" />
+    <Content Include="js\bootstrap.min.js" />
+    <Content Include="js\combo.js" />
+    <Content Include="js\en.js" />
+    <Content Include="js\FixFocus.js" />
+    <Content Include="js\flecha.jpg" />
+    <Content Include="js\gridedit.js" />
+    <Content Include="js\gridlistadd.js" />
+    <Content Include="js\jquery-1.7.2.min.js" />
+    <Content Include="js\jquery-linedtextarea.js" />
+    <Content Include="js\jquery-ui-1.8.13.custom.min.js" />
+    <Content Include="js\jquery-ui-timepicker-addon.js" />
+    <Content Include="js\jquery.autonumeric.js" />
+    <Content Include="js\jquery.cookie.js" />
+    <Content Include="js\jquery.maskedinput-1.3.min.js" />
+    <Content Include="js\jquery.multiselect.filter.js" />
+    <Content Include="js\jquery.multiselect.filter.min.js" />
+    <Content Include="js\jquery.multiselect.min.js" />
+    <Content Include="js\jquery.ui.autocomplete.selectFirst.js" />
+    <Content Include="js\jquery.ui.datepicker-es.js" />
+    <Content Include="js\jquery.ui.notification.min.js" />
+    <Content Include="js\jquery.updatepanel.js" />
+    <Content Include="js\main.js" />
+    <Content Include="js\mainmvc.js" />
+    <Content Include="js\mono.js" />
+    <Content Include="js\plugins\advlist\plugin.min.js" />
+    <Content Include="js\plugins\anchor\plugin.min.js" />
+    <Content Include="js\plugins\autolink\plugin.min.js" />
+    <Content Include="js\plugins\autoresize\plugin.min.js" />
+    <Content Include="js\plugins\autosave\plugin.min.js" />
+    <Content Include="js\plugins\bbcode\plugin.min.js" />
+    <Content Include="js\plugins\charmap\plugin.min.js" />
+    <Content Include="js\plugins\code\plugin.min.js" />
+    <Content Include="js\plugins\contextmenu\plugin.min.js" />
+    <Content Include="js\plugins\directionality\plugin.min.js" />
+    <Content Include="js\plugins\emoticons\img\smiley-cool.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-cry.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-embarassed.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-foot-in-mouth.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-frown.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-innocent.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-kiss.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-laughing.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-money-mouth.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-sealed.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-smile.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-surprised.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-tongue-out.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-undecided.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-wink.gif" />
+    <Content Include="js\plugins\emoticons\img\smiley-yell.gif" />
+    <Content Include="js\plugins\emoticons\plugin.min.js" />
+    <Content Include="js\plugins\example\dialog.html" />
+    <Content Include="js\plugins\example\plugin.min.js" />
+    <Content Include="js\plugins\example_dependency\plugin.min.js" />
+    <Content Include="js\plugins\fullpage\plugin.min.js" />
+    <Content Include="js\plugins\fullscreen\plugin.min.js" />
+    <Content Include="js\plugins\hr\plugin.min.js" />
+    <Content Include="js\plugins\image\plugin.min.js" />
+    <Content Include="js\plugins\importcss\plugin.min.js" />
+    <Content Include="js\plugins\insertdatetime\plugin.min.js" />
+    <Content Include="js\plugins\layer\plugin.min.js" />
+    <Content Include="js\plugins\legacyoutput\plugin.min.js" />
+    <Content Include="js\plugins\link\plugin.min.js" />
+    <Content Include="js\plugins\lists\plugin.min.js" />
+    <Content Include="js\plugins\media\moxieplayer.swf" />
+    <Content Include="js\plugins\media\plugin.min.js" />
+    <Content Include="js\plugins\nonbreaking\plugin.min.js" />
+    <Content Include="js\plugins\noneditable\plugin.min.js" />
+    <Content Include="js\plugins\pagebreak\plugin.min.js" />
+    <Content Include="js\plugins\paste\plugin.min.js" />
+    <Content Include="js\plugins\preview\plugin.min.js" />
+    <Content Include="js\plugins\print\plugin.min.js" />
+    <Content Include="js\plugins\save\plugin.min.js" />
+    <Content Include="js\plugins\searchreplace\plugin.min.js" />
+    <Content Include="js\plugins\spellchecker\plugin.min.js" />
+    <Content Include="js\plugins\tabfocus\plugin.min.js" />
+    <Content Include="js\plugins\table\plugin.min.js" />
+    <Content Include="js\plugins\template\plugin.min.js" />
+    <Content Include="js\plugins\textcolor\plugin.min.js" />
+    <Content Include="js\plugins\visualblocks\css\visualblocks.css" />
+    <Content Include="js\plugins\visualblocks\plugin.min.js" />
+    <Content Include="js\plugins\visualchars\plugin.min.js" />
+    <Content Include="js\plugins\wordcount\plugin.min.js" />
+    <Content Include="js\skins\lightgray\content.inline.min.css" />
+    <Content Include="js\skins\lightgray\content.min.css" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.dev.svg" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.svg" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.dev.svg" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.svg" />
+    <Content Include="js\skins\lightgray\img\anchor.gif" />
+    <Content Include="js\skins\lightgray\img\loader.gif" />
+    <Content Include="js\skins\lightgray\img\object.gif" />
+    <Content Include="js\skins\lightgray\img\trans.gif" />
+    <Content Include="js\skins\lightgray\skin.ie7.min.css" />
+    <Content Include="js\skins\lightgray\skin.min.css" />
+    <Content Include="js\themes\modern\theme.min.js" />
+    <Content Include="js\tinymce.min.js" />
+    <Content Include="js\Util.js" />
+    <Content Include="js\validators.js" />
+    <Content Include="lib\angular-1.7.2\angular.js" />
+    <Content Include="lib\angular-1.7.2\angular.min.js" />
+    <Content Include="lib\autonumeric-4.1.0\autonumeric.min.js" />
+    <Content Include="lib\bloodhound\bloodhound.js" />
+    <Content Include="lib\bloodhound\bloodhound.min.js" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.css" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.min.css" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.css" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.min.css" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.css" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.min.css" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.js" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.min.js" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.js" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.min.js" />
+    <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker-standalone.css" />
+    <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.css" />
+    <Content Include="lib\bootstrap-datetimepicker\css\bootstrap-datetimepicker.min.css" />
+    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="lib\bootstrap-datetimepicker\js\bootstrap-datetimepicker.js" />
+    <Content Include="lib\bootstrap-datetimepicker\js\bootstrap-datetimepicker.min.js" />
+    <Content Include="lib\bootstrap-multiselect\css\bootstrap-multiselect.css" />
+    <Content Include="lib\bootstrap-multiselect\js\bootstrap-multiselect.js" />
+    <Content Include="lib\daterangepicker\daterangepicker.css" />
+    <Content Include="lib\daterangepicker\daterangepicker.js" />
+    <Content Include="lib\daterangepicker\daterangepicker.original.js" />
+    <Content Include="lib\dropzone\dropzone.css" />
+    <Content Include="lib\dropzone\dropzone.js" />
+    <Content Include="lib\jquery-3.3.1\jquery-3.3.1.min.js" />
+    <Content Include="lib\jquery-inputmask\bindings\inputmask.binding.js" />
+    <Content Include="lib\jquery-inputmask\bindings\inputmask.binding.min.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jqlite.min.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jquery.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.jquery.min.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.js" />
+    <Content Include="lib\jquery-inputmask\dependencyLibs\inputmask.dependencyLib.min.js" />
+    <Content Include="lib\jquery-inputmask\global\document.js" />
+    <Content Include="lib\jquery-inputmask\global\document.min.js" />
+    <Content Include="lib\jquery-inputmask\global\window.js" />
+    <Content Include="lib\jquery-inputmask\global\window.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.date.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.date.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.numeric.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.numeric.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.phone.extensions.js" />
+    <Content Include="lib\jquery-inputmask\inputmask.phone.extensions.min.js" />
+    <Content Include="lib\jquery-inputmask\jquery.inputmask.js" />
+    <Content Include="lib\jquery-inputmask\jquery.inputmask.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-be.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-be.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ca.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ca.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-hu.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-hu.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-it.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-it.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-mx.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-mx.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-nl.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-nl.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ru.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone-ru.min.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone.js" />
+    <Content Include="lib\jquery-inputmask\phone-codes\phone.min.js" />
+    <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
+    <Content Include="lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
+    <Content Include="lib\jquery-validation\dist\additional-methods.js" />
+    <Content Include="lib\jquery-validation\dist\additional-methods.min.js" />
+    <Content Include="lib\jquery-validation\dist\jquery.validate.js" />
+    <Content Include="lib\jquery-validation\dist\jquery.validate.min.js" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.css" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.fa.js" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.fa.min.js" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.js" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.min.css" />
+    <Content Include="lib\jquery.bootgrid\jquery.bootgrid.min.js" />
+    <Content Include="lib\momentjs\moment-with-locales.js" />
+    <Content Include="lib\momentjs\moment-with-locales.min.js" />
+    <Content Include="lib\momentjs\moment.js" />
+    <Content Include="lib\momentjs\moment.min.js" />
+    <Content Include="lib\popper.js\popper.js" />
+    <Content Include="lib\popper.js\popper.min.js" />
+    <Content Include="lib\toastr\toastr.css" />
+    <Content Include="lib\toastr\toastr.min.css" />
+    <Content Include="lib\toastr\toastr.min.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.bundle.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.bundle.min.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.jquery.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.jquery.min.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.jquery.mod.js" />
+    <Content Include="lib\typeahead.jquery\typeahead.jquery.original.js" />
+    <Content Include="materna\compensar.jpg" />
+    <Content Include="materna\famisanar.jpg" />
+    <Content Include="materna\informe.aspx" />
+    <Content Include="materna\neonato.aspx" />
+    <Content Include="materna\neonato.html" />
+    <Content Include="materna\postparto.aspx" />
+    <Content Include="materna\postparto.html" />
+    <Content Include="materna\seguimiento.aspx" />
+    <Content Include="materna\seguimiento.html" />
+    <Content Include="modificaciones.ascx" />
+    <Content Include="notificacion\Default.aspx" />
+    <Content Include="paciente\atendidos.aspx" />
+    <Content Include="paciente\autorizaciones.ascx" />
+    <Content Include="paciente\autorizaciones.ascx.js" />
+    <Content Include="paciente\barthel.aspx" />
+    <Content Include="paciente\barthel.html" />
+    <Content Include="paciente\cie10list.ascx" />
+    <Content Include="paciente\detallepaciente.ascx" />
+    <Content Include="paciente\enfermeria.aspx" />
+    <Content Include="paciente\epicrisis.aspx" />
+    <Content Include="paciente\epicrisis.html" />
+    <Content Include="paciente\evolucion.aspx" />
+    <Content Include="paciente\evolucion.html" />
+    <Content Include="paciente\formatoctc.aspx" />
+    <Content Include="paciente\formatoctc.html" />
+    <Content Include="paciente\formulacion.aspx" />
+    <Content Include="paciente\formulacion.html" />
+    <Content Include="paciente\formulacion36.html" />
+    <Content Include="paciente\gastos.aspx" />
+    <Content Include="paciente\historiasclinicas.aspx" />
+    <Content Include="paciente\informemipres.aspx" />
+    <Content Include="paciente\informes.aspx" />
+    <Content Include="paciente\informulacion.aspx" />
+    <Content Include="paciente\ingreso.aspx" />
+    <Content Include="paciente\ingreso.html" />
+    <Content Include="paciente\mipres.aspx" />
+    <Content Include="paciente\mipres.html" />
+    <Content Include="paciente\paciente.aspx" />
+    <Content Include="paciente\pacienteSimple.ascx" />
+    <Content Include="paciente\pacienteSimple.ascx.js" />
+    <Content Include="paciente\paraclinico.html" />
+    <Content Include="paciente\paraclinicos.aspx" />
+    <Content Include="paciente\SeleccionarPaciente.ascx" />
+    <Content Include="paciente\valoracionat.aspx" />
+    <Content Include="paciente\valoracionat.html" />
+    <Content Include="programacion\consulta.aspx" />
+    <Content Include="programacion\novedad.ascx" />
+    <Content Include="programacion\programacion.aspx" />
+    <Content Include="programacion\programacionc.ascx" />
+    <Content Include="programacion\sinprogramar.aspx" />
+    <Content Include="rh\cumple.aspx" />
+    <Content Include="rh\Default.aspx" />
+    <Content Include="rh\documentos.aspx" />
+    <Content Include="rh\funcionario.aspx" />
+    <Content Include="rh\funcionarioc.ascx" />
+    <Content Include="rh\funcionarioSimple.ascx" />
+    <Content Include="rh\funcionarioSimple.ascx.js" />
+    <Content Include="rh\programacion.aspx" />
+    <Content Include="terapeutico\evolucion.aspx" />
+    <Content Include="terapeutico\evolucion.html" />
+    <Content Include="terapeutico\evoluciones.aspx" />
+    <Content Include="terapeutico\programadovsevoluciones.aspx" />
+    <Content Include="valoracion\enfermeria.aspx" />
+    <Content Include="valoracion\enfermeria.html" />
+    <Content Include="valoracion\sicologia.aspx" />
+    <Content Include="valoracion\sicologia.html" />
+    <Content Include="valoracion\trabajosocial.aspx" />
+    <Content Include="valoracion\trabajosocial.html" />
+    <Content Include="vehiculos\recorrido.aspx" />
+    <Content Include="vehiculos\vehiculo.aspx" />
+    <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="webcam\jquery.webcam.js" Condition="Exists('webcam\jquery.webcam.js')" />
-    <Content Include="webcam\jscam.swf" Condition="Exists('webcam\jscam.swf')" />
-    <Content Include="webcam\jscam_canvas_only.swf" Condition="Exists('webcam\jscam_canvas_only.swf')" />
-    <Content Include="webcam\webcam.ascx" Condition="Exists('webcam\webcam.ascx')" />
-    <Content Include="webservices\servicios.asmx" Condition="Exists('webservices\servicios.asmx')" />
-    <Content Include="xlsx\docProps\app.xml" Condition="Exists('xlsx\docProps\app.xml')" />
-    <Content Include="xlsx\docProps\core.xml" Condition="Exists('xlsx\docProps\core.xml')" />
-    <Content Include="xlsx\xl\sharedStrings.xml" Condition="Exists('xlsx\xl\sharedStrings.xml')" />
-    <Content Include="xlsx\xl\styles.xml" Condition="Exists('xlsx\xl\styles.xml')" />
-    <Content Include="xlsx\xl\workbook.xml" Condition="Exists('xlsx\xl\workbook.xml')" />
-    <Content Include="xlsx\xl\worksheets\sheet1.xml" Condition="Exists('xlsx\xl\worksheets\sheet1.xml')" />
-    <Content Include="xlsx\[Content_Types].xml" Condition="Exists('xlsx\[Content_Types].xml')" />
+    <Content Include="webcam\jquery.webcam.js" />
+    <Content Include="webcam\jscam.swf" />
+    <Content Include="webcam\jscam_canvas_only.swf" />
+    <Content Include="webcam\webcam.ascx" />
+    <Content Include="webservices\servicios.asmx" />
+    <Content Include="xlsx\docProps\app.xml" />
+    <Content Include="xlsx\docProps\core.xml" />
+    <Content Include="xlsx\xl\sharedStrings.xml" />
+    <Content Include="xlsx\xl\styles.xml" />
+    <Content Include="xlsx\xl\workbook.xml" />
+    <Content Include="xlsx\xl\worksheets\sheet1.xml" />
+    <Content Include="xlsx\[Content_Types].xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="administrador\usuario.aspx.cs">
@@ -1537,168 +1537,168 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\web.config" Condition="Exists('Views\web.config')" />
-    <Content Include="MasterPage.master" Condition="Exists('MasterPage.master')" />
-    <Content Include="nologin.master" Condition="Exists('nologin.master')" />
-    <Content Include="css\fontawesome\fonts\fontawesome-webfont.eot" Condition="Exists('css\fontawesome\fonts\fontawesome-webfont.eot')" />
-    <Content Include="css\fontawesome\fonts\fontawesome-webfont.ttf" Condition="Exists('css\fontawesome\fonts\fontawesome-webfont.ttf')" />
-    <Content Include="css\fontawesome\fonts\fontawesome-webfont.woff" Condition="Exists('css\fontawesome\fonts\fontawesome-webfont.woff')" />
-    <Content Include="css\fontawesome\fonts\fontawesome-webfont.woff2" Condition="Exists('css\fontawesome\fonts\fontawesome-webfont.woff2')" />
-    <Content Include="css\fontawesome\fonts\FontAwesome.otf" Condition="Exists('css\fontawesome\fonts\FontAwesome.otf')" />
-    <Content Include="css\fontawesome\less\animated.less" Condition="Exists('css\fontawesome\less\animated.less')" />
-    <Content Include="css\fontawesome\less\bordered-pulled.less" Condition="Exists('css\fontawesome\less\bordered-pulled.less')" />
-    <Content Include="css\fontawesome\less\core.less" Condition="Exists('css\fontawesome\less\core.less')" />
-    <Content Include="css\fontawesome\less\fixed-width.less" Condition="Exists('css\fontawesome\less\fixed-width.less')" />
-    <Content Include="css\fontawesome\less\font-awesome.less" Condition="Exists('css\fontawesome\less\font-awesome.less')" />
-    <Content Include="css\fontawesome\less\icons.less" Condition="Exists('css\fontawesome\less\icons.less')" />
-    <Content Include="css\fontawesome\less\larger.less" Condition="Exists('css\fontawesome\less\larger.less')" />
-    <Content Include="css\fontawesome\less\list.less" Condition="Exists('css\fontawesome\less\list.less')" />
-    <Content Include="css\fontawesome\less\mixins.less" Condition="Exists('css\fontawesome\less\mixins.less')" />
-    <Content Include="css\fontawesome\less\path.less" Condition="Exists('css\fontawesome\less\path.less')" />
-    <Content Include="css\fontawesome\less\rotated-flipped.less" Condition="Exists('css\fontawesome\less\rotated-flipped.less')" />
-    <Content Include="css\fontawesome\less\stacked.less" Condition="Exists('css\fontawesome\less\stacked.less')" />
-    <Content Include="css\fontawesome\less\variables.less" Condition="Exists('css\fontawesome\less\variables.less')" />
-    <Content Include="css\fontawesome\scss\font-awesome.scss" Condition="Exists('css\fontawesome\scss\font-awesome.scss')" />
-    <Content Include="css\fontawesome\scss\_animated.scss" Condition="Exists('css\fontawesome\scss\_animated.scss')" />
-    <Content Include="css\fontawesome\scss\_bordered-pulled.scss" Condition="Exists('css\fontawesome\scss\_bordered-pulled.scss')" />
-    <Content Include="css\fontawesome\scss\_core.scss" Condition="Exists('css\fontawesome\scss\_core.scss')" />
-    <Content Include="css\fontawesome\scss\_fixed-width.scss" Condition="Exists('css\fontawesome\scss\_fixed-width.scss')" />
-    <Content Include="css\fontawesome\scss\_icons.scss" Condition="Exists('css\fontawesome\scss\_icons.scss')" />
-    <Content Include="css\fontawesome\scss\_larger.scss" Condition="Exists('css\fontawesome\scss\_larger.scss')" />
-    <Content Include="css\fontawesome\scss\_list.scss" Condition="Exists('css\fontawesome\scss\_list.scss')" />
-    <Content Include="css\fontawesome\scss\_mixins.scss" Condition="Exists('css\fontawesome\scss\_mixins.scss')" />
-    <Content Include="css\fontawesome\scss\_path.scss" Condition="Exists('css\fontawesome\scss\_path.scss')" />
-    <Content Include="css\fontawesome\scss\_rotated-flipped.scss" Condition="Exists('css\fontawesome\scss\_rotated-flipped.scss')" />
-    <Content Include="css\fontawesome\scss\_stacked.scss" Condition="Exists('css\fontawesome\scss\_stacked.scss')" />
-    <Content Include="css\fontawesome\scss\_variables.scss" Condition="Exists('css\fontawesome\scss\_variables.scss')" />
-    <Content Include="images\logo.fla" Condition="Exists('images\logo.fla')" />
-    <Content Include="js\langs\readme.md" Condition="Exists('js\langs\readme.md')" />
-    <Content Include="js\skins\lightgray\fonts\readme.md" Condition="Exists('js\skins\lightgray\fonts\readme.md')" />
-    <Content Include="js\skins\lightgray\fonts\tinymce-small.eot" Condition="Exists('js\skins\lightgray\fonts\tinymce-small.eot')" />
-    <Content Include="js\skins\lightgray\fonts\tinymce-small.ttf" Condition="Exists('js\skins\lightgray\fonts\tinymce-small.ttf')" />
-    <Content Include="js\skins\lightgray\fonts\tinymce-small.woff" Condition="Exists('js\skins\lightgray\fonts\tinymce-small.woff')" />
-    <Content Include="js\skins\lightgray\fonts\tinymce.eot" Condition="Exists('js\skins\lightgray\fonts\tinymce.eot')" />
-    <Content Include="js\skins\lightgray\fonts\tinymce.ttf" Condition="Exists('js\skins\lightgray\fonts\tinymce.ttf')" />
-    <Content Include="js\skins\lightgray\fonts\tinymce.woff" Condition="Exists('js\skins\lightgray\fonts\tinymce.woff')" />
-    <Content Include="archivo\archivo.ashx" Condition="Exists('archivo\archivo.ashx')" />
-    <Content Include="archivo\firma.ashx" Condition="Exists('archivo\firma.ashx')" />
-    <Content Include="archivo\imagen.ashx" Condition="Exists('archivo\imagen.ashx')" />
-    <Content Include="archivo\importarCSV.ashx" Condition="Exists('archivo\importarCSV.ashx')" />
-    <Content Include="archivo\importarExcel.ashx" Condition="Exists('archivo\importarExcel.ashx')" />
-    <Content Include="archivo\UploadFile.ashx" Condition="Exists('archivo\UploadFile.ashx')" />
-    <Content Include="file\file.ashx" Condition="Exists('file\file.ashx')" />
-    <Content Include="fonts\fontawesome-webfont.eot" Condition="Exists('fonts\fontawesome-webfont.eot')" />
-    <Content Include="fonts\fontawesome-webfont.ttf" Condition="Exists('fonts\fontawesome-webfont.ttf')" />
-    <Content Include="fonts\fontawesome-webfont.woff" Condition="Exists('fonts\fontawesome-webfont.woff')" />
-    <Content Include="fonts\fontawesome-webfont.woff2" Condition="Exists('fonts\fontawesome-webfont.woff2')" />
-    <Content Include="fonts\FontAwesome.otf" Condition="Exists('fonts\FontAwesome.otf')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.css.map" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap-grid.css.map')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.min.css.map" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap-grid.min.css.map')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.css.map" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap-reboot.css.map')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.min.css.map" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap-reboot.min.css.map')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.css.map" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap.css.map')" />
-    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.min.css.map" Condition="Exists('lib\bootstrap-4.1.2\css\bootstrap.min.css.map')" />
-    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.js.map" Condition="Exists('lib\bootstrap-4.1.2\js\bootstrap.bundle.js.map')" />
-    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.min.js.map" Condition="Exists('lib\bootstrap-4.1.2\js\bootstrap.bundle.min.js.map')" />
-    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.js.map" Condition="Exists('lib\bootstrap-4.1.2\js\bootstrap.js.map')" />
-    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.min.js.map" Condition="Exists('lib\bootstrap-4.1.2\js\bootstrap.min.js.map')" />
-    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.eot" Condition="Exists('lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.eot')" />
-    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.ttf" Condition="Exists('lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.ttf')" />
-    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.woff" Condition="Exists('lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.woff')" />
-    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.woff2" Condition="Exists('lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.woff2')" />
-    <Content Include="lib\bootstrap-multiselect\less\bootstrap-multiselect.less" Condition="Exists('lib\bootstrap-multiselect\less\bootstrap-multiselect.less')" />
-    <Content Include="lib\jquery-validation-unobtrusive\.bower.json" Condition="Exists('lib\jquery-validation-unobtrusive\.bower.json')" />
-    <Content Include="lib\jquery-validation\.bower.json" Condition="Exists('lib\jquery-validation\.bower.json')" />
-    <Content Include="lib\jquery-validation\LICENSE.md" Condition="Exists('lib\jquery-validation\LICENSE.md')" />
-    <Content Include="lib\toastr\toastr.js.map" Condition="Exists('lib\toastr\toastr.js.map')" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" Condition="Exists('fonts\glyphicons-halflings-regular.eot')" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" Condition="Exists('fonts\glyphicons-halflings-regular.ttf')" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" Condition="Exists('fonts\glyphicons-halflings-regular.woff')" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" Condition="Exists('fonts\glyphicons-halflings-regular.woff2')" />
-    <Content Include="fonts\md-fonts\.github\ISSUE_TEMPLATE.md" Condition="Exists('fonts\md-fonts\.github\ISSUE_TEMPLATE.md')" />
-    <Content Include="fonts\md-fonts\bower.json" Condition="Exists('fonts\md-fonts\bower.json')" />
-    <Content Include="fonts\md-fonts\css\materialdesignicons.css.map" Condition="Exists('fonts\md-fonts\css\materialdesignicons.css.map')" />
-    <Content Include="fonts\md-fonts\css\materialdesignicons.min.css.map" Condition="Exists('fonts\md-fonts\css\materialdesignicons.min.css.map')" />
-    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.eot" Condition="Exists('fonts\md-fonts\fonts\materialdesignicons-webfont.eot')" />
-    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.ttf" Condition="Exists('fonts\md-fonts\fonts\materialdesignicons-webfont.ttf')" />
-    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.woff" Condition="Exists('fonts\md-fonts\fonts\materialdesignicons-webfont.woff')" />
-    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.woff2" Condition="Exists('fonts\md-fonts\fonts\materialdesignicons-webfont.woff2')" />
-    <Content Include="fonts\md-fonts\license.md" Condition="Exists('fonts\md-fonts\license.md')" />
-    <Content Include="fonts\md-fonts\md-fonts\materialdesignicons.scss" Condition="Exists('fonts\md-fonts\md-fonts\materialdesignicons.scss')" />
-    <Content Include="fonts\md-fonts\md-fonts\_animated.scss" Condition="Exists('fonts\md-fonts\md-fonts\_animated.scss')" />
-    <Content Include="fonts\md-fonts\md-fonts\_core.scss" Condition="Exists('fonts\md-fonts\md-fonts\_core.scss')" />
-    <Content Include="fonts\md-fonts\md-fonts\_extras.scss" Condition="Exists('fonts\md-fonts\md-fonts\_extras.scss')" />
-    <Content Include="fonts\md-fonts\md-fonts\_functions.scss" Condition="Exists('fonts\md-fonts\md-fonts\_functions.scss')" />
-    <Content Include="fonts\md-fonts\md-fonts\_icons.scss" Condition="Exists('fonts\md-fonts\md-fonts\_icons.scss')" />
-    <Content Include="fonts\md-fonts\md-fonts\_path.scss" Condition="Exists('fonts\md-fonts\md-fonts\_path.scss')" />
-    <Content Include="fonts\md-fonts\md-fonts\_variables.scss" Condition="Exists('fonts\md-fonts\md-fonts\_variables.scss')" />
-    <Content Include="fonts\md-fonts\package.json" Condition="Exists('fonts\md-fonts\package.json')" />
-    <Content Include="fonts\md-fonts\README.md" Condition="Exists('fonts\md-fonts\README.md')" />
-    <Content Include="dbupgrade.json" Condition="Exists('dbupgrade.json')" />
-    <Content Include="lib\dropzone\basic.scss" Condition="Exists('lib\dropzone\basic.scss')" />
-    <Content Include="lib\dropzone\dropzone.scss" Condition="Exists('lib\dropzone\dropzone.scss')" />
+    <Content Include="Views\web.config" />
+    <Content Include="MasterPage.master" />
+    <Content Include="nologin.master" />
+    <Content Include="css\fontawesome\fonts\fontawesome-webfont.eot" />
+    <Content Include="css\fontawesome\fonts\fontawesome-webfont.ttf" />
+    <Content Include="css\fontawesome\fonts\fontawesome-webfont.woff" />
+    <Content Include="css\fontawesome\fonts\fontawesome-webfont.woff2" />
+    <Content Include="css\fontawesome\fonts\FontAwesome.otf" />
+    <Content Include="css\fontawesome\less\animated.less" />
+    <Content Include="css\fontawesome\less\bordered-pulled.less" />
+    <Content Include="css\fontawesome\less\core.less" />
+    <Content Include="css\fontawesome\less\fixed-width.less" />
+    <Content Include="css\fontawesome\less\font-awesome.less" />
+    <Content Include="css\fontawesome\less\icons.less" />
+    <Content Include="css\fontawesome\less\larger.less" />
+    <Content Include="css\fontawesome\less\list.less" />
+    <Content Include="css\fontawesome\less\mixins.less" />
+    <Content Include="css\fontawesome\less\path.less" />
+    <Content Include="css\fontawesome\less\rotated-flipped.less" />
+    <Content Include="css\fontawesome\less\stacked.less" />
+    <Content Include="css\fontawesome\less\variables.less" />
+    <Content Include="css\fontawesome\scss\font-awesome.scss" />
+    <Content Include="css\fontawesome\scss\_animated.scss" />
+    <Content Include="css\fontawesome\scss\_bordered-pulled.scss" />
+    <Content Include="css\fontawesome\scss\_core.scss" />
+    <Content Include="css\fontawesome\scss\_fixed-width.scss" />
+    <Content Include="css\fontawesome\scss\_icons.scss" />
+    <Content Include="css\fontawesome\scss\_larger.scss" />
+    <Content Include="css\fontawesome\scss\_list.scss" />
+    <Content Include="css\fontawesome\scss\_mixins.scss" />
+    <Content Include="css\fontawesome\scss\_path.scss" />
+    <Content Include="css\fontawesome\scss\_rotated-flipped.scss" />
+    <Content Include="css\fontawesome\scss\_stacked.scss" />
+    <Content Include="css\fontawesome\scss\_variables.scss" />
+    <Content Include="images\logo.fla" />
+    <Content Include="js\langs\readme.md" />
+    <Content Include="js\skins\lightgray\fonts\readme.md" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.eot" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.ttf" />
+    <Content Include="js\skins\lightgray\fonts\tinymce-small.woff" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.eot" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.ttf" />
+    <Content Include="js\skins\lightgray\fonts\tinymce.woff" />
+    <Content Include="archivo\archivo.ashx" />
+    <Content Include="archivo\firma.ashx" />
+    <Content Include="archivo\imagen.ashx" />
+    <Content Include="archivo\importarCSV.ashx" />
+    <Content Include="archivo\importarExcel.ashx" />
+    <Content Include="archivo\UploadFile.ashx" />
+    <Content Include="file\file.ashx" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-grid.min.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap-reboot.min.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\css\bootstrap.min.css.map" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.js.map" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.bundle.min.js.map" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.js.map" />
+    <Content Include="lib\bootstrap-4.1.2\js\bootstrap.min.js.map" />
+    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="lib\bootstrap-datetimepicker\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="lib\bootstrap-multiselect\less\bootstrap-multiselect.less" />
+    <Content Include="lib\jquery-validation-unobtrusive\.bower.json" />
+    <Content Include="lib\jquery-validation\.bower.json" />
+    <Content Include="lib\jquery-validation\LICENSE.md" />
+    <Content Include="lib\toastr\toastr.js.map" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\md-fonts\.github\ISSUE_TEMPLATE.md" />
+    <Content Include="fonts\md-fonts\bower.json" />
+    <Content Include="fonts\md-fonts\css\materialdesignicons.css.map" />
+    <Content Include="fonts\md-fonts\css\materialdesignicons.min.css.map" />
+    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.eot" />
+    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.ttf" />
+    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.woff" />
+    <Content Include="fonts\md-fonts\fonts\materialdesignicons-webfont.woff2" />
+    <Content Include="fonts\md-fonts\license.md" />
+    <Content Include="fonts\md-fonts\md-fonts\materialdesignicons.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_animated.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_core.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_extras.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_functions.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_icons.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_path.scss" />
+    <Content Include="fonts\md-fonts\md-fonts\_variables.scss" />
+    <Content Include="fonts\md-fonts\package.json" />
+    <Content Include="fonts\md-fonts\README.md" />
+    <Content Include="dbupgrade.json" />
+    <Content Include="lib\dropzone\basic.scss" />
+    <Content Include="lib\dropzone\dropzone.scss" />
     <None Include="packages.config" />
-    <Content Include="Views\_Shared\_LayoutPage.cshtml" Condition="Exists('Views\_Shared\_LayoutPage.cshtml')" />
-    <Content Include="Views\Terapeutico\Cuentas.cshtml" Condition="Exists('Views\Terapeutico\Cuentas.cshtml')" />
-    <Content Include="Views\_Shared\Funcionario.cshtml" Condition="Exists('Views\_Shared\Funcionario.cshtml')" />
-    <Content Include="Views\_Shared\Paciente.cshtml" Condition="Exists('Views\_Shared\Paciente.cshtml')" />
-    <Content Include="Views\Terapeutico\CuentasServicio.cshtml" Condition="Exists('Views\Terapeutico\CuentasServicio.cshtml')" />
-    <Content Include="Views\_Layout\Properties.cshtml" Condition="Exists('Views\_Layout\Properties.cshtml')" />
-    <Content Include="Views\Terapeutico\ListadoCuentas.cshtml" Condition="Exists('Views\Terapeutico\ListadoCuentas.cshtml')" />
+    <Content Include="Views\_Shared\_LayoutPage.cshtml" />
+    <Content Include="Views\Terapeutico\Cuentas.cshtml" />
+    <Content Include="Views\_Shared\Funcionario.cshtml" />
+    <Content Include="Views\_Shared\Paciente.cshtml" />
+    <Content Include="Views\Terapeutico\CuentasServicio.cshtml" />
+    <Content Include="Views\_Layout\Properties.cshtml" />
+    <Content Include="Views\Terapeutico\ListadoCuentas.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <Content Include="Views\_Shared\Galeria.cshtml" Condition="Exists('Views\_Shared\Galeria.cshtml')" />
-    <Content Include="Views\Terapeutico\Documentos.cshtml" Condition="Exists('Views\Terapeutico\Documentos.cshtml')" />
-    <Content Include="Views\Terapeutico\Cuentas_Print.cshtml" Condition="Exists('Views\Terapeutico\Cuentas_Print.cshtml')" />
-    <Content Include="Views\_Shared\_LayoutPagePrint.cshtml" Condition="Exists('Views\_Shared\_LayoutPagePrint.cshtml')" />
-    <Content Include="Views\Administrador\Aseguradores.cshtml" Condition="Exists('Views\Administrador\Aseguradores.cshtml')" />
-    <Content Include="Views\Administrador\_Aseguradores.cshtml" Condition="Exists('Views\Administrador\_Aseguradores.cshtml')" />
-    <Content Include="Views\Administrador\CategoriaCenso.cshtml" Condition="Exists('Views\Administrador\CategoriaCenso.cshtml')" />
-    <Content Include="Views\Administrador\_CategoriaCenso.cshtml" Condition="Exists('Views\Administrador\_CategoriaCenso.cshtml')" />
-    <Content Include="Views\_Shared\Procedimiento.cshtml" Condition="Exists('Views\_Shared\Procedimiento.cshtml')" />
-    <Content Include="Views\Administrador\Copagos.cshtml" Condition="Exists('Views\Administrador\Copagos.cshtml')" />
-    <Content Include="Views\Administrador\Parametros.cshtml" Condition="Exists('Views\Administrador\Parametros.cshtml')" />
-    <Content Include="Views\Administrador\_Parametros.cshtml" Condition="Exists('Views\Administrador\_Parametros.cshtml')" />
-    <Content Include="Views\Administrador\EncuestaUsuario.cshtml" Condition="Exists('Views\Administrador\EncuestaUsuario.cshtml')" />
-    <Content Include="Views\Administrador\_EncuestaUsuario.cshtml" Condition="Exists('Views\Administrador\_EncuestaUsuario.cshtml')" />
-    <Content Include="Views\Administrador\Indices.cshtml" Condition="Exists('Views\Administrador\Indices.cshtml')" />
-    <Content Include="Views\Administrador\_Indices.cshtml" Condition="Exists('Views\Administrador\_Indices.cshtml')" />
-    <Content Include="Views\Administrador\_Grupos.cshtml" Condition="Exists('Views\Administrador\_Grupos.cshtml')" />
-    <Content Include="Views\Administrador\Grupos.cshtml" Condition="Exists('Views\Administrador\Grupos.cshtml')" />
-    <Content Include="Views\Administrador\Formulacion.cshtml" Condition="Exists('Views\Administrador\Formulacion.cshtml')" />
-    <Content Include="Views\Administrador\_Formulacion.cshtml" Condition="Exists('Views\Administrador\_Formulacion.cshtml')" />
-    <Content Include="Views\Administrador\Parametros2.cshtml" Condition="Exists('Views\Administrador\Parametros2.cshtml')" />
-    <Content Include="Views\Administrador\_Parametros2.cshtml" Condition="Exists('Views\Administrador\_Parametros2.cshtml')" />
-    <Content Include="Views\Administrador\_Terceros.cshtml" Condition="Exists('Views\Administrador\_Terceros.cshtml')" />
-    <Content Include="Views\Administrador\Terceros.cshtml" Condition="Exists('Views\Administrador\Terceros.cshtml')" />
-    <Content Include="Views\Administrador\_Usuarios.cshtml" Condition="Exists('Views\Administrador\_Usuarios.cshtml')" />
-    <Content Include="Views\Administrador\Usuarios.cshtml" Condition="Exists('Views\Administrador\Usuarios.cshtml')" />
-    <Content Include="Views\ClinicaHeridas\InformeEPS.cshtml" Condition="Exists('Views\ClinicaHeridas\InformeEPS.cshtml')" />
-    <Content Include="Views\ClinicaHeridas\Valoracion.cshtml" Condition="Exists('Views\ClinicaHeridas\Valoracion.cshtml')" />
-    <Content Include="Views\ClinicaHeridas\Herida.cshtml" Condition="Exists('Views\ClinicaHeridas\Herida.cshtml')" />
-    <Content Include="Views\_Shared\PacienteInfo.cshtml" Condition="Exists('Views\_Shared\PacienteInfo.cshtml')" />
-    <Content Include="Views\ClinicaHeridas\Valoracion_Print.cshtml" Condition="Exists('Views\ClinicaHeridas\Valoracion_Print.cshtml')" />
-    <Content Include="Views\_Shared\GaleriaAngular.cshtml" Condition="Exists('Views\_Shared\GaleriaAngular.cshtml')" />
-    <Content Include="Views\_Shared\Historial.cshtml" Condition="Exists('Views\_Shared\Historial.cshtml')" />
-    <Content Include="Views\ClinicaHeridas\Evolucion.cshtml" Condition="Exists('Views\ClinicaHeridas\Evolucion.cshtml')" />
-    <Content Include="Views\ClinicaHeridas\Evolucion_Print.cshtml" Condition="Exists('Views\ClinicaHeridas\Evolucion_Print.cshtml')" />
-    <Content Include="Views\ClinicaHeridas\Egresos.cshtml" Condition="Exists('Views\ClinicaHeridas\Egresos.cshtml')" />
-    <Content Include="Views\EntregaTurno\Bitacora.cshtml" Condition="Exists('Views\EntregaTurno\Bitacora.cshtml')" />
-    <Content Include="Views\EntregaTurno\_Bitacora.cshtml" Condition="Exists('Views\EntregaTurno\_Bitacora.cshtml')" />
-    <Content Include="Views\Contrasena\Index.cshtml" Condition="Exists('Views\Contrasena\Index.cshtml')" />
-    <Content Include="Views\Inicio\Index.cshtml" Condition="Exists('Views\Inicio\Index.cshtml')" />
-    <Content Include="Views\_Shared\_LayoutPage_Login.cshtml" Condition="Exists('Views\_Shared\_LayoutPage_Login.cshtml')" />
-    <Content Include="Views\Index\Index.cshtml" Condition="Exists('Views\Index\Index.cshtml')" />
-    <Content Include="Views\EntregaTurno\BitacoraPrint.cshtml" Condition="Exists('Views\EntregaTurno\BitacoraPrint.cshtml')" />
+    <Content Include="Views\_Shared\Galeria.cshtml" />
+    <Content Include="Views\Terapeutico\Documentos.cshtml" />
+    <Content Include="Views\Terapeutico\Cuentas_Print.cshtml" />
+    <Content Include="Views\_Shared\_LayoutPagePrint.cshtml" />
+    <Content Include="Views\Administrador\Aseguradores.cshtml" />
+    <Content Include="Views\Administrador\_Aseguradores.cshtml" />
+    <Content Include="Views\Administrador\CategoriaCenso.cshtml" />
+    <Content Include="Views\Administrador\_CategoriaCenso.cshtml" />
+    <Content Include="Views\_Shared\Procedimiento.cshtml" />
+    <Content Include="Views\Administrador\Copagos.cshtml" />
+    <Content Include="Views\Administrador\Parametros.cshtml" />
+    <Content Include="Views\Administrador\_Parametros.cshtml" />
+    <Content Include="Views\Administrador\EncuestaUsuario.cshtml" />
+    <Content Include="Views\Administrador\_EncuestaUsuario.cshtml" />
+    <Content Include="Views\Administrador\Indices.cshtml" />
+    <Content Include="Views\Administrador\_Indices.cshtml" />
+    <Content Include="Views\Administrador\_Grupos.cshtml" />
+    <Content Include="Views\Administrador\Grupos.cshtml" />
+    <Content Include="Views\Administrador\Formulacion.cshtml" />
+    <Content Include="Views\Administrador\_Formulacion.cshtml" />
+    <Content Include="Views\Administrador\Parametros2.cshtml" />
+    <Content Include="Views\Administrador\_Parametros2.cshtml" />
+    <Content Include="Views\Administrador\_Terceros.cshtml" />
+    <Content Include="Views\Administrador\Terceros.cshtml" />
+    <Content Include="Views\Administrador\_Usuarios.cshtml" />
+    <Content Include="Views\Administrador\Usuarios.cshtml" />
+    <Content Include="Views\ClinicaHeridas\InformeEPS.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Valoracion.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Herida.cshtml" />
+    <Content Include="Views\_Shared\PacienteInfo.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Valoracion_Print.cshtml" />
+    <Content Include="Views\_Shared\GaleriaAngular.cshtml" />
+    <Content Include="Views\_Shared\Historial.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Evolucion.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Evolucion_Print.cshtml" />
+    <Content Include="Views\ClinicaHeridas\Egresos.cshtml" />
+    <Content Include="Views\EntregaTurno\Bitacora.cshtml" />
+    <Content Include="Views\EntregaTurno\_Bitacora.cshtml" />
+    <Content Include="Views\Contrasena\Index.cshtml" />
+    <Content Include="Views\Inicio\Index.cshtml" />
+    <Content Include="Views\_Shared\_LayoutPage_Login.cshtml" />
+    <Content Include="Views\Index\Index.cshtml" />
+    <Content Include="Views\EntregaTurno\BitacoraPrint.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <Content Include="webcam\up.ashx" Condition="Exists('webcam\up.ashx')" />
-    <Content Include="xlsx\xl\worksheets\_rels\sheet1.xml.rels" Condition="Exists('xlsx\xl\worksheets\_rels\sheet1.xml.rels')" />
-    <Content Include="xlsx\xl\_rels\workbook.xml.rels" Condition="Exists('xlsx\xl\_rels\workbook.xml.rels')" />
-    <Content Include="xlsx\_rels\.rels" Condition="Exists('xlsx\_rels\.rels')" />
+    <Content Include="webcam\up.ashx" />
+    <Content Include="xlsx\xl\worksheets\_rels\sheet1.xml.rels" />
+    <Content Include="xlsx\xl\_rels\workbook.xml.rels" />
+    <Content Include="xlsx\_rels\.rels" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -32,7 +32,7 @@ Use Windows with .NET Framework 4.8, IIS Express and PowerShell 7 to build the a
 
 ### Getting started
 
-The archived MVC projects target .NET Framework 4.6. From Developer PowerShell for Visual Studio, run `python demo/build-mvc.py` to compile their recovered C# source. The script restores pinned packages from NuGet and rebuilds the included shared library before compiling both projects. It uses separate Git exports. Run `python demo/build-mvc.py --package-output <new-folder>` to build both web projects. The packaged output covers the content available in this tree. Run `python demo/run-mvc.py --edition <folder>` to verify sign-in against fictional MySQL. Both editions used the matching startup files and isolated configuration in the 23 November 2026 check.
+The archived MVC projects target .NET Framework 4.6. From Developer PowerShell for Visual Studio, run `python demo/build-mvc.py` to compile their recovered C# source. The script restores pinned packages from NuGet and rebuilds the included shared library before compiling both projects. It uses separate Git exports. Run `python demo/run-mvc.py` with IIS Express and Docker to check sign-in in the default MVC edition. The demo creates its own local databases and a fictional notification server. It verifies that the fictional account can open `/Inicio` and that MySQL records the sign-in. The source build covers both MVC editions. Full packaging and the embedded legacy ASPX pages still require archived resources and separate verification.
 
 The example uses the archived [10 November 2011 Web Forms edition](../../commit/0133c745fde25672d3e35392d44642c069800548). Install Python 3 and Docker in addition to the Windows tools above. Run the commands below from this checkout. The script exports the edition to a disposable folder and compiles it with its own build script.
 
@@ -87,6 +87,8 @@ The application’s own code is available under the [MIT license](LICENSE). Incl
 
 ---
 
+Both MVC editions compiled their main project. Runtime verification used fictional local data and confirmed sign-in and the protected start page. The pages inherited from Web Forms, the full content package and external integrations remain outside this check.
+
 ## Español
 
 Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de atención y registros del servicio
@@ -120,7 +122,7 @@ Usa Windows con .NET Framework 4.8, IIS Express y PowerShell 7 para compilar la 
 
 ### Cómo empezar
 
-Los proyectos MVC archivados apuntan a .NET Framework 4.6. Desde Developer PowerShell para Visual Studio, ejecuta `python demo/build-mvc.py` para compilar las fuentes C# recuperadas. El programa restaura los paquetes fijados en NuGet y recompila la biblioteca compartida antes de compilar ambos proyectos. Usa exportaciones Git separadas. Ejecuta `python demo/build-mvc.py --package-output <carpeta-nueva>` para compilar ambos proyectos web con el contenido disponible en este árbol. Usa `python demo/run-mvc.py --edition <carpeta>` para comprobar el ingreso con MySQL ficticio. En la prueba del 23 de noviembre de 2026, las dos ediciones usaron los archivos de inicio correspondientes y la configuración aislada.
+Los proyectos MVC archivados apuntan a .NET Framework 4.6. Desde Developer PowerShell para Visual Studio, ejecuta `python demo/build-mvc.py` para compilar las fuentes C# recuperadas. El programa restaura los paquetes fijados en NuGet y recompila la biblioteca compartida antes de compilar ambos proyectos. Usa exportaciones Git separadas. Ejecuta `python demo/run-mvc.py` con IIS Express y Docker para comprobar el ingreso de la edición MVC predeterminada. La demo crea sus propias bases locales y un servidor de notificaciones ficticio. Comprueba que la cuenta ficticia abre `/Inicio` y que MySQL registra el ingreso. La compilación de fuentes abarca las dos ediciones MVC. El empaquetado completo y las páginas ASPX heredadas requieren recursos del respaldo y pruebas aparte.
 
 El ejemplo usa la [edición Web Forms del 10 de noviembre de 2011](../../commit/0133c745fde25672d3e35392d44642c069800548). Instala Python 3 y Docker además de las herramientas de Windows indicadas arriba. Ejecuta estos comandos desde esta copia. El script exporta la edición a una carpeta desechable y la compila con su propio script.
 
@@ -172,3 +174,6 @@ Usa los issues del repositorio para reportar un problema de compilación reprodu
 ### Licencia
 
 El código propio de la aplicación usa la [licencia MIT](LICENSE). Los archivos de terceros conservan sus avisos originales.
+
+Se compiló el proyecto principal de las dos ediciones MVC. La prueba de ejecución usó datos ficticios locales y confirmó el ingreso y la portada protegida. Las páginas heredadas de Web Forms, el paquete completo de contenidos y las integraciones externas quedan fuera de esta comprobación.
+
