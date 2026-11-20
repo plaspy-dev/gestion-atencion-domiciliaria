@@ -34,7 +34,7 @@ HTTPServer(("0.0.0.0", 8080), LocalNotifications).serve_forever()
 def notification_server():
     name='prueba-gestion-atencion-domiciliaria-notificaciones-'+token_hex(5)
     owned=subprocess.check_output(['docker','run','--detach','--rm','--pull','never','--name',name,
-        '--publish','127.0.0.1::8080','python:3.12-slim','python','-c',NOTIFICATIONS],text=True).strip()
+        '--publish','127.0.0.1::8080','python@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b','python','-c',NOTIFICATIONS],text=True).strip()
     try:
         location=subprocess.check_output(['docker','port',owned,'8080/tcp'],text=True).strip()
         if not location.startswith('127.0.0.1:') or not location.rsplit(':',1)[-1].isdigit():

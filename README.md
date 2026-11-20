@@ -32,7 +32,13 @@ Use Windows with .NET Framework 4.8, IIS Express and PowerShell 7 to build the a
 
 ### Getting started
 
-The archived MVC projects target .NET Framework 4.6. From Developer PowerShell for Visual Studio, run `python demo/build-mvc.py` to compile their recovered C# source. The script restores pinned packages from NuGet and rebuilds the included shared library before compiling both projects. It uses separate Git exports. Run `python demo/run-mvc.py` with IIS Express and Docker to check sign-in in the default MVC edition. The demo creates its own local databases and a fictional notification server. It verifies that the fictional account can open `/Inicio` and that MySQL records the sign-in. The source build covers both MVC editions. Full packaging and the embedded legacy ASPX pages still require archived resources and separate verification.
+The archived MVC projects target .NET Framework 4.6. From Developer PowerShell for Visual Studio, run `python demo/build-mvc.py` to compile their recovered C# source. The script restores pinned packages from NuGet and rebuilds the included shared library before compiling both projects. It uses separate Git exports. Run `python demo/run-mvc.py` with IIS Express and Docker to check sign-in in the default MVC edition. The demo creates its own local databases and a fictional notification server. It verifies that the fictional account can open `/Inicio` and that MySQL records the sign-in. The source build covers both MVC editions. Full packaging and the embedded legacy ASPX pages still require archived resources and separate verification. Prepare the pinned notification image and select the edition with these commands.
+
+```powershell
+docker pull python@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+python demo/run-mvc.py --edition OrganizationExample15
+python demo/run-mvc.py --edition OrganizationExample15.mvc.2018-11-21
+```
 
 The example uses the archived [10 November 2011 Web Forms edition](../../commit/0133c745fde25672d3e35392d44642c069800548). Install Python 3 and Docker in addition to the Windows tools above. Run the commands below from this checkout. The script exports the edition to a disposable folder and compiles it with its own build script.
 
@@ -67,7 +73,7 @@ The trial on 20 November 2026 used Windows 11 build 26300, PowerShell 7.6.9, .NE
 
 ### Project structure
 
-`OrganizationExample15/` and `OrganizationExample15.mvc.2018-11-21/` contain the MVC editions. `OrganizationExample15.webforms/` contains the Web Forms site. `OrganizationExample16/` contains another archived edition. `movil/` and `movil.no/` contain the mobile pages and an earlier variant. `demo/` holds the fictional example.
+`OrganizationExample15/` and `OrganizationExample15.mvc.2018-11-21/` contain the MVC editions. `OrganizationExample15.webforms/` contains the Web Forms site. `OrganizationExample16/` contains another archived edition. `movil/` and `movil.no/` contain the mobile pages and an earlier variant. `vendor/` contains the recovered shared library and package project files. `demo/` holds the fictional example.
 
 ### History
 
@@ -122,7 +128,13 @@ Usa Windows con .NET Framework 4.8, IIS Express y PowerShell 7 para compilar la 
 
 ### Cómo empezar
 
-Los proyectos MVC archivados apuntan a .NET Framework 4.6. Desde Developer PowerShell para Visual Studio, ejecuta `python demo/build-mvc.py` para compilar las fuentes C# recuperadas. El programa restaura los paquetes fijados en NuGet y recompila la biblioteca compartida antes de compilar ambos proyectos. Usa exportaciones Git separadas. Ejecuta `python demo/run-mvc.py` con IIS Express y Docker para comprobar el ingreso de la edición MVC predeterminada. La demo crea sus propias bases locales y un servidor de notificaciones ficticio. Comprueba que la cuenta ficticia abre `/Inicio` y que MySQL registra el ingreso. La compilación de fuentes abarca las dos ediciones MVC. El empaquetado completo y las páginas ASPX heredadas requieren recursos del respaldo y pruebas aparte.
+Los proyectos MVC archivados apuntan a .NET Framework 4.6. Desde Developer PowerShell para Visual Studio, ejecuta `python demo/build-mvc.py` para compilar las fuentes C# recuperadas. El programa restaura los paquetes fijados en NuGet y recompila la biblioteca compartida antes de compilar ambos proyectos. Usa exportaciones Git separadas. Ejecuta `python demo/run-mvc.py` con IIS Express y Docker para comprobar el ingreso de la edición MVC predeterminada. La demo crea sus propias bases locales y un servidor de notificaciones ficticio. Comprueba que la cuenta ficticia abre `/Inicio` y que MySQL registra el ingreso. La compilación de fuentes abarca las dos ediciones MVC. El empaquetado completo y las páginas ASPX heredadas requieren recursos del respaldo y pruebas aparte. Prepara la imagen de notificaciones fijada y selecciona la edición con estos comandos.
+
+```powershell
+docker pull python@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+python demo/run-mvc.py --edition OrganizationExample15
+python demo/run-mvc.py --edition OrganizationExample15.mvc.2018-11-21
+```
 
 El ejemplo usa la [edición Web Forms del 10 de noviembre de 2011](../../commit/0133c745fde25672d3e35392d44642c069800548). Instala Python 3 y Docker además de las herramientas de Windows indicadas arriba. Ejecuta estos comandos desde esta copia. El script exporta la edición a una carpeta desechable y la compila con su propio script.
 
@@ -157,7 +169,7 @@ La prueba del 20 de noviembre de 2026 usó Windows 11, compilación 26300, Power
 
 ### Estructura del proyecto
 
-`OrganizationExample15/` y `OrganizationExample15.mvc.2018-11-21/` contienen las ediciones MVC. `OrganizationExample15.webforms/` contiene el sitio Web Forms. `OrganizationExample16/` contiene otra edición archivada. `movil/` y `movil.no/` contienen las páginas móviles y una variante anterior. `demo/` guarda el ejemplo ficticio.
+`OrganizationExample15/` y `OrganizationExample15.mvc.2018-11-21/` contienen las ediciones MVC. `OrganizationExample15.webforms/` contiene el sitio Web Forms. `OrganizationExample16/` contiene otra edición archivada. `movil/` y `movil.no/` contienen las páginas móviles y una variante anterior. `vendor/` contiene la biblioteca compartida recuperada y los archivos de proyecto de sus paquetes. `demo/` guarda el ejemplo ficticio.
 
 ### Historia
 
