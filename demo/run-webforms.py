@@ -138,6 +138,21 @@ GO
         docker('rm', '-f', identity)
 
 
+def write_web_config(config, path):
+    # System.Configuration expects the assembly namespace on assemblyBinding.
+    raw = ET.tostring(config.getroot(), encoding='utf-8', xml_declaration=True)
+    namespace = b'urn:schemas-microsoft-com:asm.v1'
+    match = re.search(rb'\sxmlns:(ns\d+)="' + re.escape(namespace) + rb'"', raw)
+    if match:
+        prefix = match[1] + b':'
+        raw = raw[:match.start()] + raw[match.end():]
+        raw = raw.replace(b'<' + prefix + b'assemblyBinding',
+                          b'<assemblyBinding xmlns="' + namespace + b'"')
+        raw = raw.replace(b'<' + prefix, b'<').replace(b'</' + prefix, b'</')
+    ET.fromstring(raw)
+    path.write_bytes(raw)
+
+
 @contextmanager
 def web(site, root, db_port, password, sql_config):
     config = ET.parse(site / 'Web.config')
@@ -164,7 +179,7 @@ def web(site, root, db_port, password, sql_config):
     if errors is None:
         errors = ET.SubElement(application, 'customErrors')
     errors.set('mode', 'Off')
-    config.write(site / 'Web.config', encoding='utf-8', xml_declaration=True)
+    write_web_config(config, site / 'Web.config')
     port = local_port()
     host = ET.parse(IIS / 'config/templates/PersonalWebServer/applicationhost.config')
     sites = host.find('./system.applicationHost/sites')
@@ -180,7 +195,7 @@ def web(site, root, db_port, password, sql_config):
     host_config = root / 'applicationhost.config'
     host.write(host_config, encoding='utf-8', xml_declaration=True)
     env = {**os.environ, 'IIS_USER_HOME': str(root / 'IISExpress')}
-    for suffix in ('', '_2', '_3', '_4'):
+    for suffix in ('', '_2', '_3', '_4', '_5'):
         env['DOMICILIO_SESSION_KEY' + suffix] = token_hex(4)
     address = f'http://127.0.0.1:{port}{alias}'
     with (root / 'iis.log').open('wb') as report, subprocess.Popen(

@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/css/imprimir.css" type="text/css" rel="stylesheet" />
+<title>Formato CTC</title>
+<style type="text/css">
+	body {
+	font-size: 12px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	}
+	.pagina {
+		page-break-after: always;
+	}
+	.pagina:last-child {
+		page-break-after: auto;
+	}
+</style>
+</head>
+<body>
+<div>
+<page class="pagina">
+<p><strong>F53-A SOLICITUD  Y JUSTIFICACION DE L MEDICO TRATANTE  PARA EL USO DE SERVICIOS Y/O MEDICAMENTOS NO POS </strong>
+</p>
+<p>FECHA: DIA<strong> $dia$ </strong>MES <strong>$mes$</strong> AÑO<strong> $ano$</strong></p>
+<p>I. DATOS DEL  USUARIO</p>
+<p>NOMBRE DEL  PACIENTE: <strong>$Nombres$</strong></p>
+<p>APELLIDOS: <strong>$Apellidos$</strong></p>
+<p>DOCUMENTO DE IDENTIDAD: <strong>$szTipoDocumento$</strong><br />
+Numero:<strong> $TPaciente$</strong></p>
+<p>FECHA DE  NACIMIENTO:<strong>$LFechaNacimiento$</strong></p>
+<p>PLAN:  CONTRIBUTIVO <strong>$contributivo$</strong> SUBSIDIADO: <strong>$subsidiado$</strong></p>
+<p>II. CASO  CLINICO<br />
+  HISTORIA  CLINICA Nº <strong>$hclinica$</strong><br />
+DIAGNOSTICO:<br />
+<strong>$LCIE10$</strong></p>
+<p>DESCRIPCION  DEL CASO: <br />
+  <strong>$enfermedad_actual$</strong><br />
+  <br />
+  III.  ALTERNATIVAS POS UTILIZADAS (MEDICAMENTOS POS UTILIZADOS)<br />
+  $szPOS$</p>
+<p>PROCEDIMIENTOS  Y/O INSUMOS POS UTILIZADOS<br />
+  <strong>$TRespuestaClinica$</strong><br />
+  RESPUESTA CLINICA Y PARACLINICA ALCANZADA CON MEDICAMENTOS, PROCEDIMIENTOS Y/O  INÑSUMOS POS UTILIZADOS </p>
+<p>Si  no se utilizaron alternativas POS, indique si HAY INDICACION EXPRESA O  CONTRAINDICACION EXPRESA PARA LA UTILIZACION DE   OPCIONES POS :<br />
+  <strong>$TContraindicacion$ </strong></p>
+<p>IV. MEDICAMENTO, SERVICIO O INSUMO POS  SOLICITADO.<br />
+  MEDICAMENTO NO POS <br />
+  $szNoPOS$</p>
+<p>SERVICIO O INSUMO NO POS <br />
+  Nombre:<strong> $Nombre$</strong><br />
+  Cantidad: <strong>$Cantidad$</strong><br />
+  Tiempo  de Utilización: <strong>$Tiempo$</strong></p>
+<p>JUSTIFICACION  PARA EL USO DEL MEDICAMENTO, SERVICIO O INSUMO NO POS<br />
+  Efecto deseado: <strong>$Efecto$</strong><br />
+  Tiempo  de respuesta esperado: <strong>$Respuesta$</strong><br />
+  Efectos  secundarios y posibles riesgos:<strong> $EfectosSecundarios$.</strong></p>
+<p>V. DATOS DEL MEDICO TRATANTE<br />
+  ADSCRITO  A RED: SI <strong>X</strong> NO___<br />
+  NOMBRE:<strong>$szMedico$</strong><br />
+  DCUMENTO  DE IDENTIFICACION:<strong>$szProfesional$</strong><br />
+  DIRECCION  EN DONDE SE PUEDA UBICAR: <strong>Dirección de demostración</strong><br />
+  E-MAIL: <strong>auditoria@example.invalid</strong><br />
+  TELEFONO: <strong>000 000 0101</strong>  MOVIL: <br />
+  ESPECIALIDAD:<strong>$szCargo$</strong></p>
+<p>FIRMA <img src="~/Image/firmas/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><img src="~/Image/sellos/$szIdUsuario$.jpg?d=$SYSDATE()$" class="firma" /><br /> R.M.____________<br />
+  Nota:  esta solicitud debe ser diligenciada con   letra clara </p>
+</page>
+</div>
+</body>
+</html>

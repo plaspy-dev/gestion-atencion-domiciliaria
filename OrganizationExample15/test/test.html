@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    Hola mundo
+</body>
+<script type="text/javascript">
+    var json = {
+        usuario: "operador@example.invalid",
+        contrasena: "DEMO_SIN_ACCESO",
+        factura: 800042,
+        fecha: "2018-11-21",
+        observaciones: "Registro ficticio de facturación",
+        metodopago: "002",
+        cliente: {
+            documento: "1000000212",
+            nombres: "Paciente",
+            apellidos: "Ejemplo",
+            direccion: "Calle Ejemplo 100",
+            telefono: "3000000212",
+            email: "paciente@example.invalid",
+            dv: null,
+            esnit: false
+        },
+        productos: [{
+            codigo: "SERVICIO-DEMO-01",
+            nombre: "Servicio de demostración",
+            cantidad: 1,
+            preciot: 109900,
+            descuento: 0
+        }]
+    };
+    window.addEventListener("com.sdg.inventario.success", function (event) {
+        console.log("Event com.sdg.inventario.success");
+        alert(event);
+    });
+    setTimeout(function () {
+        alert(window.SDGSIIGO.extensionId);
+        try { chrome.runtime.sendMessage(window.SDGSIIGO.extensionId, { text: "com.sdg.inventario.invoice", param: json }); } catch (e) { }
+    }, 200);
+</script>
+</html>
