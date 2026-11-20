@@ -195,7 +195,7 @@ def web(site, root, db_port, password, sql_config):
     host_config = root / 'applicationhost.config'
     host.write(host_config, encoding='utf-8', xml_declaration=True)
     env = {**os.environ, 'IIS_USER_HOME': str(root / 'IISExpress')}
-    for suffix in ('', '_2', '_3', '_4'):
+    for suffix in ('', '_2', '_3', '_4', '_5'):
         env['DOMICILIO_SESSION_KEY' + suffix] = token_hex(4)
     address = f'http://127.0.0.1:{port}{alias}'
     with (root / 'iis.log').open('wb') as report, subprocess.Popen(
