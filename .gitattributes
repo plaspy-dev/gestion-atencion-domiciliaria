@@ -464,3 +464,12 @@ OrganizationExample15.mvc.2018-11-21/Global.asax -text
 
 "/OrganizationExample15/lib/jquery-3.3.1/jquery-3.3.1.min.js" -text
 "/OrganizationExample15.mvc.2018-11-21/lib/jquery-3.3.1/jquery-3.3.1.min.js" -text
+
+"/OrganizationExample15.mvc.2018-11-21/images/tema/fondo-contenido.jpg" -text
+"/OrganizationExample15.mvc.2018-11-21/images/tema/menu_bgf.jpg" -text
+"/OrganizationExample15.mvc.2018-11-21/images/tema/separador-tips.jpg" -text
+"/OrganizationExample15.mvc.2018-11-21/images/tema/tall.jpg" -text
+"/OrganizationExample15/images/tema/fondo-contenido.jpg" -text
+"/OrganizationExample15/images/tema/menu_bgf.jpg" -text
+"/OrganizationExample15/images/tema/separador-tips.jpg" -text
+"/OrganizationExample15/images/tema/tall.jpg" -text
