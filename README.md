@@ -70,6 +70,8 @@ Open the address printed by the script. Sign in with `alicia_demo` and the passw
 
 ### Verification
 
+The MVC package includes the recovered browser-library graphics. The local walkthrough uses fictional records and excludes patient material, retired Flash assets and application graphics whose origin is undetermined.
+
 Each MVC demo also opens the group administration page, filters its group list and confirms that the group for the fictional visit team comes from MySQL.
 
 The distributable project keeps the archived list of content. MSBuild includes those historical files when they are present. The checkout omits archived records, unreleased visual assets, live configuration and files that could not be paired with this edition. The demo supplies a loopback configuration, a fictional directory and a clean migration list. Other modules may require their own safe fixtures or replacement artwork.
@@ -174,6 +176,8 @@ python demo/run-webforms.py --serve
 Abre la dirección que muestra el script. Ingresa con `alicia_demo` y la contraseña que elegiste. Pulsa Ctrl+C para retirar los servicios de prueba.
 
 ### Verificación
+
+El paquete MVC incluye los gráficos recuperados de las bibliotecas web. El recorrido local usa datos ficticios y excluye material de pacientes, componentes Flash retirados y gráficos de la aplicación cuyo origen queda por determinar.
 
 La demo de cada edición MVC también abre la administración de grupos, filtra la lista y comprueba que MySQL devuelve el grupo del equipo ficticio de visitas.
 
