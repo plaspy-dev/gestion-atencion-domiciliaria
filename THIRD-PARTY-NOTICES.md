@@ -340,6 +340,17 @@
 | `OrganizationExample15.mvc.2018-11-21/fonts/md-fonts/bower.json` | Material Design Icons contributors | mdi 2.0.46 | Package metadata and its preserved declarations | `ebc4bb710686e7b8b17684069a5733c57dcd7556dff6374cc99e9ac2745f7aa7` |
 | `OrganizationExample15.mvc.2018-11-21/fonts/md-fonts/package.json` | Material Design Icons contributors | mdi 2.0.46 | Package metadata and its preserved declarations | `9c3aefbaacbc198c57a474e1d39b6c8bfbe6a27369e07341fbc3013c1648fa9b` |
 
+## jQuery 3.3.1
+
+Both layouts load jQuery 3.3.1 from their archived edition. The script retains its original bytes and MIT notice.
+
+Los dos diseños cargan jQuery 3.3.1 de su edición archivada. El archivo conserva sus bytes originales y su aviso MIT.
+
+| Path / Ruta | Author / Autor | Source / Origen | Notice / Aviso | SHA-256 |
+| --- | --- | --- | --- | --- |
+| `OrganizationExample15/lib/jquery-3.3.1/jquery-3.3.1.min.js` | JS Foundation and jQuery contributors | Matched MVC archive / Respaldo MVC cotejado | MIT notice in the file / Aviso MIT en el archivo | `dba93475c5abfb227b11e504efac683cd9eadc1107e99a1722b0fde4241a586b` |
+| `OrganizationExample15.mvc.2018-11-21/lib/jquery-3.3.1/jquery-3.3.1.min.js` | JS Foundation and jQuery contributors | Matched MVC archive / Respaldo MVC cotejado | MIT notice in the file / Aviso MIT en el archivo | `dba93475c5abfb227b11e504efac683cd9eadc1107e99a1722b0fde4241a586b` |
+
 ## Material Design Icons preview / Vista previa de Material Design Icons
 
 | Path / Ruta | Author / Autor | Origin / Origen | Notice / Aviso | SHA-256 |

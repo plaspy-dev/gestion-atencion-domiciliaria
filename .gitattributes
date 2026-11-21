@@ -461,3 +461,6 @@ OrganizationExample15.mvc.2018-11-21/Global.asax -text
 "/OrganizationExample15/xlsx/xl/workbook.xml" -text
 "/OrganizationExample15/xlsx/xl/worksheets/_rels/sheet1.xml.rels" -text
 "/OrganizationExample15/xlsx/xl/worksheets/sheet1.xml" -text
+
+"/OrganizationExample15/lib/jquery-3.3.1/jquery-3.3.1.min.js" -text
+"/OrganizationExample15.mvc.2018-11-21/lib/jquery-3.3.1/jquery-3.3.1.min.js" -text
