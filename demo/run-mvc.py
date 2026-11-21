@@ -13,7 +13,7 @@ from tempfile import TemporaryDirectory
 import time
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urljoin, urlsplit
-from urllib.request import HTTPCookieProcessor, HTTPRedirectHandler, ProxyHandler, build_opener
+from urllib.request import HTTPCookieProcessor, HTTPRedirectHandler, ProxyHandler, Request, build_opener
 from xml.etree import ElementTree as ET
 from zipfile import ZipFile
 
@@ -44,7 +44,7 @@ def notification_server():
         subprocess.run(['docker','stop','--time','3',owned],check=False,stdout=subprocess.DEVNULL)
 
 
-def prepare(source, site, scratch, endpoint, edition):
+def prepare(source, site, scratch, endpoint, edition, edit=False):
     assemblies=sorted((scratch/'edition/obj').glob('*.dll'))
     if not assemblies:
         raise RuntimeError('Build the MVC assemblies before starting the demo.')
@@ -77,7 +77,10 @@ def prepare(source, site, scratch, endpoint, edition):
     config.write(site/'Web.config',encoding='utf-8',xml_declaration=True)
     (site/'dbupgrade.json').write_text('[]\n',encoding='utf-8')
     (site/'directorio.xml').write_text('<paginas><seccion><titulo>Demostración</titulo><pagina>'
-        '<titulo>Portada</titulo><url>~/Inicio</url></pagina></seccion></paginas>\n',encoding='utf-8')
+        '<titulo>Portada</titulo><url>~/Inicio</url></pagina></seccion>'
+        + ('<seccion><titulo>Permisos_Especiales</titulo><pagina><titulo>Consulta ficticia</titulo>'
+           '<url>~/Demostracion/Permiso</url></pagina></seccion>' if edit else '')
+        + '</paginas>\n',encoding='utf-8')
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -85,18 +88,19 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
-def request(client, url, data=None):
+def request(client, url, data=None, ajax=False):
     if urlsplit(url).hostname!='127.0.0.1':
         raise RuntimeError('The demo uses only loopback HTTP requests.')
     try:
-        reply=client.open(url,data=data,timeout=120)
+        headers={'X-Requested-With':'XMLHttpRequest'} if ajax else {}
+        reply=client.open(Request(url,data=data,headers=headers),timeout=120)
     except HTTPError as error:
         reply=error
     with reply:
         return reply.code,reply.read(200000).decode('utf-8',errors='replace')
 
 
-def sign_in(helpers, address, process, password, query):
+def sign_in(helpers, address, process, password, query, edit=False):
     query("ALTER TABLE usuario ADD COLUMN forceurl VARCHAR(150) DEFAULT '', "
           'ADD COLUMN personal VARCHAR(120), ADD COLUMN cargos VARCHAR(120), '
           'ADD COLUMN entidades VARCHAR(120), ADD COLUMN cumpleanos DATE;')
@@ -150,6 +154,33 @@ def sign_in(helpers, address, process, password, query):
         raise RuntimeError('The MVC edition did not return the fictional group from MySQL.')
 
 
+    if edit:
+        change_group(helpers,client,address,query)
+
+
+def change_group(helpers, client, address, query):
+    query("GRANT INSERT ON domicilio_demo.modificaciones TO 'domicilio_demo'@'%'; "
+          "GRANT INSERT, DELETE ON domicilio_demo.permisos TO 'domicilio_demo'@'%';")
+    endpoint=address+'/Administrador/_Grupos'
+    opened,markup=request(client,endpoint+'?id=81',ajax=True)
+    form=helpers['LoginForm']()
+    form.feed(markup)
+    candidates=[(action,fields) for action,fields in form.forms if fields.get('Id')=='81' and 'Nombre' in fields]
+    if opened!=200 or len(candidates)!=1:
+        raise RuntimeError('Could not open the fictional group edit form.')
+    (action,fields),=candidates
+    url=urljoin(address+'/',action or endpoint)
+    if urlsplit(url).netloc!=urlsplit(address).netloc:
+        raise RuntimeError('The edit form points outside its test server.')
+    fields.update(Nombre='Equipo ficticio de visitas actualizado',
+                  Descripcion='Cambio comprobado en el entorno local')
+    saved,response=request(client,url,urlencode(fields).encode('ascii'),ajax=True)
+    persisted=query("SELECT COUNT(*) FROM grupo WHERE id=81 AND nombre='Equipo ficticio de visitas actualizado' "
+                    "AND descripcion='Cambio comprobado en el entorno local';").strip()==b'1'
+    print(f'Group edit GET {opened}. Save HTTP {saved}. Confirmation {"toastr.success" in response}. MySQL stored the fictional change {persisted}.')
+    if saved!=200 or 'toastr.success' not in response or not persisted:
+        raise RuntimeError('MySQL did not retain the fictional group change.')
+
 
 def main():
     builder=runpy.run_path(str(DEMO/'build-mvc.py'))
@@ -159,6 +190,7 @@ def main():
     parser=ArgumentParser(description=__doc__)
     parser.add_argument('--edition',choices=editions,default=editions[0])
     parser.add_argument('--msbuild',default='MSBuild.exe')
+    parser.add_argument('--edit-group',action='store_true',help='verify a fictional group edit')
     args=parser.parse_args()
     repo=DEMO.parent
     version=subprocess.check_output(['git','-C',repo,'rev-parse','HEAD'],text=True).strip()
@@ -173,11 +205,14 @@ def main():
         site=source/args.edition
         builder['build'](args.msbuild,source,scratch,args.edition,manifest)
         with notification_server() as address:
-            prepare(source,site,scratch,address,args.edition)
+            prepare(source,site,scratch,address,args.edition,edit=args.edit_group)
             password=token_hex(16)
             with (helpers['mysql'](password) as (port,query),helpers['sqlserver']() as database,
                   helpers['web'](site,scratch,port,password,database) as (endpoint,process)):
-                sign_in(helpers,endpoint,process,password,query)
+                if args.edit_group:
+                    sign_in(helpers,endpoint,process,password,query,edit=True)
+                else:
+                    sign_in(helpers,endpoint,process,password,query)
 
 
 if __name__=='__main__':

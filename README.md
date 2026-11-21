@@ -9,6 +9,9 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 > [!WARNING]
 > **Status: Archived.** This snapshot preserves an earlier edition. Its build instructions identify the requirements and checks for this cut.
 
+ASP.NET application for coordinating home visits, care teams and service records
+
+
 ### Overview
 
 Home-care teams can use the application to organise visits, refer to contact and service records, and coordinate the people who provide care.
@@ -39,7 +42,7 @@ $mvcOutput = Join-Path $env:TEMP ('domicilio-mvc-' + [guid]::NewGuid().ToString(
 python demo/build-mvc.py --package-output $mvcOutput
 ```
 
-The archived MVC projects target .NET Framework 4.6. From Developer PowerShell for Visual Studio, run `python demo/build-mvc.py` to compile their recovered C# source. The script restores pinned packages from NuGet and rebuilds the included shared library before compiling both projects. It uses separate Git exports. Run `python demo/run-mvc.py` with IIS Express and Docker to check sign-in in the default MVC edition. The demo creates its own local databases and a fictional notification server. It verifies that the fictional account can open `/Inicio` and that MySQL records the sign-in. The source build covers both MVC editions. Full packaging and the embedded legacy ASPX pages still require archived resources and separate verification. Prepare the pinned notification image and select the edition with these commands.
+The archived MVC projects target .NET Framework 4.6. From Developer PowerShell for Visual Studio, run `python demo/build-mvc.py` to compile their recovered C# source. The script restores pinned packages from NuGet and rebuilds the included shared library before compiling both projects. It uses separate Git exports. Run `python demo/run-mvc.py` with IIS Express and Docker to check sign-in in the default MVC edition. The demo creates its own local databases and a fictional notification server. It verifies that the fictional account can open `/Inicio` and that MySQL records the sign-in. This recipe verifies MVC sign-in and the `/Inicio` page. The embedded legacy ASPX pages need a separate verification. Prepare the pinned notification image and select the edition with these commands.
 
 ```powershell
 docker pull python@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
@@ -58,6 +61,8 @@ python demo/run-webforms.py
 ### Usage
 
 Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/materna/postparto.aspx` and the other routes above.
+
+Add `--edit-group` to either `python demo/run-mvc.py --edition ...` command. The demo opens the fictional group, saves its new name and description, and checks the stored row in MySQL.
 
 The check signs in as `alicia_demo`, opens the protected home page and verifies the timestamp written to MySQL for the fictional operator. MySQL and SQL Server use isolated loopback ports and fictional tables. To open the demo in a browser after this check, set a fresh fictional password and keep the server running.
 
@@ -100,7 +105,9 @@ The trial on 20 November 2026 used Windows 11 build 26300, PowerShell 7.6.9, .NE
 
 ### Project structure
 
-`OrganizationExample15/` and `OrganizationExample15.mvc.2018-11-21/` contain the MVC editions. `OrganizationExample15.webforms/` contains the Web Forms site. `OrganizationExample16/` contains another archived edition. `movil/` and `movil.no/` contain the mobile pages and an earlier variant. `vendor/` contains the recovered shared library and package project files. `demo/` holds the fictional example.
+- `OrganizationExample15/OrganizationExample15.csproj` and `OrganizationExample15.mvc.2018-11-21/OrganizationExample15.csproj` are the two MVC projects. Run either with `demo/run-mvc.py --edition <folder>`.
+- `OrganizationExample15.webforms/` and `OrganizationExample16/` preserve separate Web Forms editions. `demo/run-webforms.py` builds and runs the linked historical edition.
+- `demo/build-mvc.py` builds and packages the distributable MVC projects. `vendor/` holds the recovered shared libraries and `docs/media/` contains the application captures.
 
 ### History
 
@@ -160,7 +167,7 @@ $mvcOutput = Join-Path $env:TEMP ('domicilio-mvc-' + [guid]::NewGuid().ToString(
 python demo/build-mvc.py --package-output $mvcOutput
 ```
 
-Los proyectos MVC archivados apuntan a .NET Framework 4.6. Desde Developer PowerShell para Visual Studio, ejecuta `python demo/build-mvc.py` para compilar las fuentes C# recuperadas. El programa restaura los paquetes fijados en NuGet y recompila la biblioteca compartida antes de compilar ambos proyectos. Usa exportaciones Git separadas. Ejecuta `python demo/run-mvc.py` con IIS Express y Docker para comprobar el ingreso de la edición MVC predeterminada. La demo crea sus propias bases locales y un servidor de notificaciones ficticio. Comprueba que la cuenta ficticia abre `/Inicio` y que MySQL registra el ingreso. La compilación de fuentes abarca las dos ediciones MVC. El empaquetado completo y las páginas ASPX heredadas requieren recursos del respaldo y pruebas aparte. Prepara la imagen de notificaciones fijada y selecciona la edición con estos comandos.
+Los proyectos MVC archivados apuntan a .NET Framework 4.6. Desde Developer PowerShell para Visual Studio, ejecuta `python demo/build-mvc.py` para compilar las fuentes C# recuperadas. El programa restaura los paquetes fijados en NuGet y recompila la biblioteca compartida antes de compilar ambos proyectos. Usa exportaciones Git separadas. Ejecuta `python demo/run-mvc.py` con IIS Express y Docker para comprobar el ingreso de la edición MVC predeterminada. La demo crea sus propias bases locales y un servidor de notificaciones ficticio. Comprueba que la cuenta ficticia abre `/Inicio` y que MySQL registra el ingreso. La receta comprueba el ingreso en MVC y la página `/Inicio`. Las páginas ASPX integradas requieren una prueba aparte. Prepara la imagen de notificaciones fijada y selecciona la edición con estos comandos.
 
 ```powershell
 docker pull python@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
@@ -179,6 +186,8 @@ python demo/run-webforms.py
 ### Uso
 
 Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/materna/postparto.aspx` y las demás rutas de arriba.
+
+Agrega `--edit-group` a cualquiera de los comandos `python demo/run-mvc.py --edition ...`. La demo abre el grupo ficticio, guarda el nombre y la descripción nuevos y coteja la fila en MySQL.
 
 La comprobación entra con `alicia_demo`, abre la portada protegida y verifica la fecha de ingreso que MySQL registró para la operadora ficticia. MySQL y SQL Server usan puertos locales separados y tablas ficticias. Para abrir la demo en el navegador después de esta comprobación, genera una contraseña ficticia y deja el servidor en marcha.
 
@@ -221,7 +230,9 @@ La prueba del 20 de noviembre de 2026 usó Windows 11, compilación 26300, Power
 
 ### Estructura del proyecto
 
-`OrganizationExample15/` y `OrganizationExample15.mvc.2018-11-21/` contienen las ediciones MVC. `OrganizationExample15.webforms/` contiene el sitio Web Forms. `OrganizationExample16/` contiene otra edición archivada. `movil/` y `movil.no/` contienen las páginas móviles y una variante anterior. `vendor/` contiene la biblioteca compartida recuperada y los archivos de proyecto de sus paquetes. `demo/` guarda el ejemplo ficticio.
+- `OrganizationExample15/OrganizationExample15.csproj` y `OrganizationExample15.mvc.2018-11-21/OrganizationExample15.csproj` son los dos proyectos MVC. Ejecuta cualquiera con `demo/run-mvc.py --edition <carpeta>`.
+- `OrganizationExample15.webforms/` y `OrganizationExample16/` conservan ediciones distintas de Web Forms. `demo/run-webforms.py` compila y ejecuta la edición histórica enlazada.
+- `demo/build-mvc.py` compila y empaqueta los proyectos MVC distribuibles. `vendor/` reúne las bibliotecas recuperadas y `docs/media/` contiene las capturas de la aplicación.
 
 ### Historia
 
