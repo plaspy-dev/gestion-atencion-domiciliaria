@@ -76,6 +76,10 @@ The MVC package includes the recovered browser-library graphics. The local walkt
 
 Each MVC demo also opens the group administration page, filters its group list and confirms that the group for the fictional visit team comes from MySQL.
 
+On 21 November 2026, MSBuild packaged both MVC editions. The export test called the packaged Excel exporter with a fictional MySQL row in each edition, then read the resulting workbook and verified that row. The test covers the exporter and template. The full browser workflow for every export remains unverified.
+
+The original MVC content lists have 93 and 90 omitted entries. Wound care, maternal care, pharmacy and webcam demonstrations require separate fictional material. The original Flash widgets remain outside the current browser test. Some archived images need independently identified artwork or a copy matched to this edition. Local configuration, menus and table definitions for the tested routes come from the disposable recipe.
+
 The distributable project keeps the archived list of content. MSBuild includes those historical files when they are present. The checkout omits archived records, unreleased visual assets, live configuration and files that could not be paired with this edition. The demo supplies a loopback configuration, a fictional directory and a clean migration list. Other modules may require their own safe fixtures or replacement artwork.
 
 The two MVC source compilations passed on 20 November 2026 with Python 3.12.4 and MSBuild 18.11.1.51303. The Web Forms demo used Docker 29.9.2.
@@ -184,6 +188,10 @@ Ambos paquetes MVC incluyen la plantilla de libro en blanco que usa la aplicaci�
 El paquete MVC incluye los gráficos recuperados de las bibliotecas web. El recorrido local usa datos ficticios y excluye material de pacientes, componentes Flash retirados y gráficos de la aplicación cuyo origen queda por determinar.
 
 La demo de cada edición MVC también abre la administración de grupos, filtra la lista y comprueba que MySQL devuelve el grupo del equipo ficticio de visitas.
+
+El 21 de noviembre de 2026, MSBuild empaquetó las dos ediciones MVC. La prueba llamó al exportador de Excel del paquete con una fila de MySQL ficticio por edición, volvió a abrir el libro y comprobó esa fila. El ensayo cubrió el exportador y su plantilla. Queda por verificar el recorrido completo de cada exportación desde el navegador.
+
+Las listas originales de contenido MVC tienen 93 y 90 entradas omitidas. Las demos de heridas, atención materna, farmacia y cámara requieren material ficticio propio. Los componentes Flash históricos quedan fuera de la prueba en el navegador actual. Algunos gráficos necesitan una procedencia identificada o una copia cotejada con esta edición. La receta desechable aporta la configuración local, los menús y las tablas para las rutas probadas.
 
 El proyecto distribuible conserva la lista de contenido del respaldo. MSBuild incorpora esos archivos cuando están presentes. La copia omite registros archivados, recursos visuales sin revisión, configuración real y archivos que no se pudieron emparejar con la edición. La demo aporta la configuración local, un directorio ficticio y una lista de migraciones vacía. Otros módulos pueden requerir sus propios datos de prueba o imágenes de reemplazo.
 
