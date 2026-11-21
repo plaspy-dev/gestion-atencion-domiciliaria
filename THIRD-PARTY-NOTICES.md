@@ -327,6 +327,19 @@
 | `OrganizationExample15/js/skins/lightgray/img/trans.gif` | TinyMCE contributors | TinyMCE browser assets, archived copy | Original distribution attribution | `9cf020d7c3bba7f5ab10cda54aabef934f906d4f9a3acf99e9e7dc6c98579635` |
 | `OrganizationExample15/lib/bootstrap-datetimepicker/fonts/glyphicons-halflings-regular.svg` | Glyphicons | Glyphicons Halflings as distributed with Bootstrap, archived copy | Original distribution attribution | `d985cda034eab4c9f2403976f8d171fbf6efc4b593107d8b1401e5b6daa46295` |
 
+## Browser package metadata / Metadatos de paquetes web
+
+| Path / Ruta | Author / Autor | Archived package / Paquete archivado | Notice / Aviso | SHA-256 |
+| --- | --- | --- | --- | --- |
+| `OrganizationExample15/lib/jquery-validation-unobtrusive/.bower.json` | Microsoft | jquery-validation-unobtrusive 3.2.6 | Original Microsoft software license link in the metadata | `b61134baffdf22422ce7cef791b6e74096519f75ea788c2498cbd1387b5b0653` |
+| `OrganizationExample15/lib/jquery-validation/.bower.json` | jQuery Validation contributors | jquery-validation 1.14.0 | MIT, as declared in the original metadata | `378de37b85545d7afed4197a1d6fe5e2f21879335051898114d6a4f333033d5a` |
+| `OrganizationExample15/fonts/md-fonts/bower.json` | Material Design Icons contributors | mdi 2.0.46 | Package metadata and its preserved declarations | `ebc4bb710686e7b8b17684069a5733c57dcd7556dff6374cc99e9ac2745f7aa7` |
+| `OrganizationExample15/fonts/md-fonts/package.json` | Material Design Icons contributors | mdi 2.0.46 | Package metadata and its preserved declarations | `9c3aefbaacbc198c57a474e1d39b6c8bfbe6a27369e07341fbc3013c1648fa9b` |
+| `OrganizationExample15.mvc.2018-11-21/lib/jquery-validation-unobtrusive/.bower.json` | Microsoft | jquery-validation-unobtrusive 3.2.6 | Original Microsoft software license link in the metadata | `b61134baffdf22422ce7cef791b6e74096519f75ea788c2498cbd1387b5b0653` |
+| `OrganizationExample15.mvc.2018-11-21/lib/jquery-validation/.bower.json` | jQuery Validation contributors | jquery-validation 1.14.0 | MIT, as declared in the original metadata | `378de37b85545d7afed4197a1d6fe5e2f21879335051898114d6a4f333033d5a` |
+| `OrganizationExample15.mvc.2018-11-21/fonts/md-fonts/bower.json` | Material Design Icons contributors | mdi 2.0.46 | Package metadata and its preserved declarations | `ebc4bb710686e7b8b17684069a5733c57dcd7556dff6374cc99e9ac2745f7aa7` |
+| `OrganizationExample15.mvc.2018-11-21/fonts/md-fonts/package.json` | Material Design Icons contributors | mdi 2.0.46 | Package metadata and its preserved declarations | `9c3aefbaacbc198c57a474e1d39b6c8bfbe6a27369e07341fbc3013c1648fa9b` |
+
 ## Material Design Icons preview / Vista previa de Material Design Icons
 
 | Path / Ruta | Author / Autor | Origin / Origen | Notice / Aviso | SHA-256 |

@@ -70,6 +70,8 @@ Open the address printed by the script. Sign in with `alicia_demo` and the passw
 
 ### Verification
 
+Both MVC packages include the recovered blank workbook template used to export pages to Excel. The template contains formatting and workbook structure. The demonstration data comes from the disposable test database.
+
 The MVC package includes the recovered browser-library graphics. The local walkthrough uses fictional records and excludes patient material, retired Flash assets and application graphics whose origin is undetermined.
 
 Each MVC demo also opens the group administration page, filters its group list and confirms that the group for the fictional visit team comes from MySQL.
@@ -176,6 +178,8 @@ python demo/run-webforms.py --serve
 Abre la dirección que muestra el script. Ingresa con `alicia_demo` y la contraseña que elegiste. Pulsa Ctrl+C para retirar los servicios de prueba.
 
 ### Verificación
+
+Ambos paquetes MVC incluyen la plantilla de libro en blanco que usa la aplicación para exportar páginas a Excel. La plantilla contiene el formato y la estructura del libro. Los datos de demostración provienen de la base desechable de prueba.
 
 El paquete MVC incluye los gráficos recuperados de las bibliotecas web. El recorrido local usa datos ficticios y excluye material de pacientes, componentes Flash retirados y gráficos de la aplicación cuyo origen queda por determinar.
 
