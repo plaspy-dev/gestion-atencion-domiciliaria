@@ -351,6 +351,12 @@ Los dos diseños cargan jQuery 3.3.1 de su edición archivada. El archivo conser
 | `OrganizationExample15/lib/jquery-3.3.1/jquery-3.3.1.min.js` | JS Foundation and jQuery contributors | Matched MVC archive / Respaldo MVC cotejado | MIT notice in the file / Aviso MIT en el archivo | `dba93475c5abfb227b11e504efac683cd9eadc1107e99a1722b0fde4241a586b` |
 | `OrganizationExample15.mvc.2018-11-21/lib/jquery-3.3.1/jquery-3.3.1.min.js` | JS Foundation and jQuery contributors | Matched MVC archive / Respaldo MVC cotejado | MIT notice in the file / Aviso MIT en el archivo | `dba93475c5abfb227b11e504efac683cd9eadc1107e99a1722b0fde4241a586b` |
 
+## Mobile edition / Edición móvil
+
+| Component / Componente | Author / Autor | Source / Origen | Notice / Aviso | Path / Ruta | SHA-256 |
+| --- | --- | --- | --- | --- | --- |
+| MySQL Connector/NET 6.3.5 | Oracle | December 2015 mobile release / Edición móvil de diciembre de 2015 | Original assembly and embedded notices / Ensamblado y avisos incorporados originales | `vendor/movil/MySql.Data.dll` | `86525a33e425f2afbd00cbaedaa0135bb69145db51a042b65b0c46b1b5dbeb81` |
+
 ## Material Design Icons preview / Vista previa de Material Design Icons
 
 | Path / Ruta | Author / Autor | Origin / Origen | Notice / Aviso | SHA-256 |

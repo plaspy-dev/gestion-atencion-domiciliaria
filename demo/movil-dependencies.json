@@ -1,0 +1,23 @@
+{
+  "framework": "4.5.2",
+  "mysql": "86525a33e425f2afbd00cbaedaa0135bb69145db51a042b65b0c46b1b5dbeb81",
+  "original": "c22fa6f0902546f14720917e53f459ee21f6d5d7f9eef40248fe9dac8f370dff",
+  "mysql_path": "vendor/movil/MySql.Data.dll",
+  "packages": [
+    [
+      "microsoft.aspnet.razor",
+      "3.2.3",
+      "6cc108770bd5f84c019bebe3df9003f2228abeea1cb03d2b97de1fe5eab0a418"
+    ],
+    [
+      "microsoft.aspnet.webpages",
+      "3.2.3",
+      "d28f91adbe2e3d2ac7d16a60c20b9f81b59816805fd999ae774b7d9146780809"
+    ],
+    [
+      "microsoft.web.infrastructure",
+      "1.0.0",
+      "94d5011a05bd4c22cf4bdbbd871650de632c1adf0ccd210e9d7b3bd67f1c98b0"
+    ]
+  ]
+}

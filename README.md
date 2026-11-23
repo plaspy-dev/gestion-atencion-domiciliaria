@@ -75,6 +75,10 @@ Open the address printed by the script. Sign in with `alicia_demo` and the passw
 
 ### Verification
 
+On 23 November 2026 the local checks used Windows 11 Pro build 26300, Python 3.12.4, IIS Express 10.0.26013.1000, Docker 29.9.2 and MySQL 5.7.44. The two MVC checks used MSBuild 18.11.1.51303. The mobile check used .NET SDK 11.0.100 for the shared library and the ASP.NET compiler 4.8.10001.0 for the archived site.
+
+The December 2015 mobile edition targets .NET Framework 4.5.2. Run `python demo/run-movil.py` from the checkout on Windows with Python, .NET Framework 4.8, the .NET SDK, IIS Express and Docker. The script restores the archived versions of Razor and Web Pages, rebuilds the recovered shared library, and confirms the protected page and fictional MySQL sign-in. Use `--compile-only` to run the compiler without starting Docker. The separate `movil.no/` prototype depends on ASP.NET Identity, OWIN and Web Optimization. Its exact package manifest has not been recovered.
+
 Run `python demo/run-mvc.py --edition <folder> --catalogs` to retrieve the fictional insurer, user and parameter records from their signed-in catalog routes. Both editions returned one expected record per catalog using local MySQL.
 
 Four neutral theme textures are included byte for byte in both MVC editions. The two archived header images are withheld while their graphic provenance is unresolved.
@@ -108,6 +112,8 @@ The trial on 20 November 2026 used Windows 11 build 26300, PowerShell 7.6.9, .NE
 ### Project structure
 
 - `OrganizationExample15/OrganizationExample15.csproj` and `OrganizationExample15.mvc.2018-11-21/OrganizationExample15.csproj` are the two MVC projects. Run either with `demo/run-mvc.py --edition <folder>`.
+- `movil/Default.aspx` is the recovered mobile sign-in page. `movil.sln` preserves the original website solution. `demo/run-movil.py` builds it and runs the local test.
+- `movil.no/Default.aspx` opens the separate prototype. Its ASP.NET Identity sign-in starts at `movil.no/Account/Login.aspx`.
 - `OrganizationExample15.webforms/` and `OrganizationExample16/` preserve separate Web Forms editions. `demo/run-webforms.py` builds and runs the linked historical edition.
 - `demo/build-mvc.py` builds and packages the distributable MVC projects. `vendor/` holds the recovered shared libraries and `docs/media/` contains the application captures.
 
@@ -202,6 +208,10 @@ Abre la dirección que muestra el script. Ingresa con `alicia_demo` y la contras
 
 ### Verificación
 
+El 23 de noviembre de 2026, las pruebas locales usaron Windows 11 Pro compilación 26300, Python 3.12.4, IIS Express 10.0.26013.1000, Docker 29.9.2 y MySQL 5.7.44. Las dos pruebas de MVC usaron MSBuild 18.11.1.51303. La prueba móvil usó el SDK de .NET 11.0.100 para la biblioteca compartida y el compilador ASP.NET 4.8.10001.0 para el sitio archivado.
+
+La edición móvil de diciembre de 2015 tiene como destino .NET Framework 4.5.2. Ejecuta `python demo/run-movil.py` desde la copia en Windows con Python, .NET Framework 4.8, el SDK de .NET, IIS Express y Docker. El script restaura las versiones archivadas de Razor y Web Pages, recompila la biblioteca propia recuperada y confirma la portada protegida y el ingreso en MySQL ficticio. Usa `--compile-only` para compilar sin levantar Docker. El prototipo separado `movil.no/` necesita ASP.NET Identity, OWIN y Web Optimization. Su manifiesto exacto sigue sin aparecer.
+
 Ejecuta `python demo/run-mvc.py --edition <carpeta> --catalogs` para consultar los registros ficticios de aseguradores, usuarios y parámetros desde sus catálogos con sesión activa. Ambas ediciones devolvieron un registro esperado por catálogo con MySQL local.
 
 Ambas ediciones MVC incluyen cuatro texturas neutras del respaldo, byte a byte. Las dos imágenes históricas de cabecera quedan en reserva hasta confirmar su procedencia gráfica.
@@ -235,6 +245,8 @@ La prueba del 20 de noviembre de 2026 usó Windows 11, compilación 26300, Power
 ### Estructura del proyecto
 
 - `OrganizationExample15/OrganizationExample15.csproj` y `OrganizationExample15.mvc.2018-11-21/OrganizationExample15.csproj` son los dos proyectos MVC. Ejecuta cualquiera con `demo/run-mvc.py --edition <carpeta>`.
+- `movil/Default.aspx` es el ingreso de la edición móvil recuperada. `movil.sln` conserva la solución original. `demo/run-movil.py` compila el sitio y repite la prueba local.
+- `movil.no/Default.aspx` abre el prototipo separado. Su ingreso con ASP.NET Identity empieza en `movil.no/Account/Login.aspx`.
 - `OrganizationExample15.webforms/` y `OrganizationExample16/` conservan ediciones distintas de Web Forms. `demo/run-webforms.py` compila y ejecuta la edición histórica enlazada.
 - `demo/build-mvc.py` compila y empaqueta los proyectos MVC distribuibles. `vendor/` reúne las bibliotecas recuperadas y `docs/media/` contiene las capturas de la aplicación.
 
