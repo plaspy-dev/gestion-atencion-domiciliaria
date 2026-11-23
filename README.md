@@ -75,6 +75,8 @@ Open the address printed by the script. Sign in with `alicia_demo` and the passw
 
 ### Verification
 
+Run `python demo/run-mvc.py --edition <folder> --catalogs` to retrieve the fictional insurer, user and parameter records from their signed-in catalog routes. Both editions returned one expected record per catalog using local MySQL.
+
 Four neutral theme textures are included byte for byte in both MVC editions. The two archived header images are withheld while their graphic provenance is unresolved.
 
 Both MVC packages include the recovered blank workbook template used to export pages to Excel. The template contains formatting and workbook structure. The demonstration data comes from the disposable test database.
@@ -199,6 +201,8 @@ python demo/run-webforms.py --serve
 Abre la dirección que muestra el script. Ingresa con `alicia_demo` y la contraseña que elegiste. Pulsa Ctrl+C para retirar los servicios de prueba.
 
 ### Verificación
+
+Ejecuta `python demo/run-mvc.py --edition <carpeta> --catalogs` para consultar los registros ficticios de aseguradores, usuarios y parámetros desde sus catálogos con sesión activa. Ambas ediciones devolvieron un registro esperado por catálogo con MySQL local.
 
 Ambas ediciones MVC incluyen cuatro texturas neutras del respaldo, byte a byte. Las dos imágenes históricas de cabecera quedan en reserva hasta confirmar su procedencia gráfica.
 

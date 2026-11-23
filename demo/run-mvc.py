@@ -100,7 +100,7 @@ def request(client, url, data=None, ajax=False):
         return reply.code,reply.read(200000).decode('utf-8',errors='replace')
 
 
-def sign_in(helpers, address, process, password, query, edit=False):
+def sign_in(helpers, address, process, password, query, edit=False, catalogs=False):
     query("ALTER TABLE usuario ADD COLUMN forceurl VARCHAR(150) DEFAULT '', "
           'ADD COLUMN personal VARCHAR(120), ADD COLUMN cargos VARCHAR(120), '
           'ADD COLUMN entidades VARCHAR(120), ADD COLUMN cumpleanos DATE;')
@@ -156,6 +156,8 @@ def sign_in(helpers, address, process, password, query, edit=False):
 
     if edit:
         change_group(helpers,client,address,query)
+    if catalogs:
+        check_catalogs(client,address,query)
 
 
 def change_group(helpers, client, address, query):
@@ -182,6 +184,36 @@ def change_group(helpers, client, address, query):
         raise RuntimeError('MySQL did not retain the fictional group change.')
 
 
+def check_catalogs(client, address, query):
+    query("""
+CREATE TABLE IF NOT EXISTS asegurador (entid INT PRIMARY KEY, entnombre VARCHAR(80), eliminado DATETIME,
+ enteps INT, entafp INT, entarp INT, entprgnoaut INT, maximo_mensual INT, maximo_paciente INT);
+INSERT INTO asegurador (entid,entnombre) VALUES (71,'Aseguradora Ficticia de Visitas');
+CREATE TABLE IF NOT EXISTS varios (id INT PRIMARY KEY, nombre VARCHAR(100), descripcion VARCHAR(100),
+ tipo INT, eliminado DATETIME);
+INSERT INTO varios (id,nombre,descripcion,tipo) VALUES (84,'Valor Ficticio de Catalogo','Dato de demostracion',7);
+GRANT SELECT ON domicilio_demo.asegurador TO 'domicilio_demo'@'%';
+GRANT SELECT ON domicilio_demo.varios TO 'domicilio_demo'@'%';
+""")
+    verified = []
+    for name, search, expected, parameters in (
+        ('Aseguradores', 'Aseguradora Ficticia', 'Aseguradora Ficticia de Visitas', {}),
+        ('Usuarios', 'alicia_demo', 'alicia_demo', {}),
+        ('Parametros', 'Valor Ficticio', 'Valor Ficticio de Catalogo', {'t': 7}),
+    ):
+        filters = urlencode({'current': 1, 'rowCount': 10, 'searchPhrase': search, **parameters})
+        status, body = request(client, address + '/Administrador/__' + name + '?' + filters, ajax=True)
+        try:
+            record = json.loads(body) if status == 200 else None
+        except ValueError:
+            record = None
+        found = isinstance(record, dict) and len(record.get('rows') or []) == 1 and expected in json.dumps(record)
+        print(f'{name}: HTTP {status}. Fictional catalog row {found}.')
+        verified.append(found)
+    if not all(verified):
+        raise RuntimeError('One or more catalog queries did not return the expected fictional row.')
+
+
 def main():
     builder=runpy.run_path(str(DEMO/'build-mvc.py'))
     helpers=runpy.run_path(str(DEMO/'run-webforms.py'))
@@ -191,6 +223,7 @@ def main():
     parser.add_argument('--edition',choices=editions,default=editions[0])
     parser.add_argument('--msbuild',default='MSBuild.exe')
     parser.add_argument('--edit-group',action='store_true',help='verify a fictional group edit')
+    parser.add_argument('--catalogs', action='store_true', help='verify three fictional catalog queries')
     args=parser.parse_args()
     repo=DEMO.parent
     version=subprocess.check_output(['git','-C',repo,'rev-parse','HEAD'],text=True).strip()
@@ -209,10 +242,7 @@ def main():
             password=token_hex(16)
             with (helpers['mysql'](password) as (port,query),helpers['sqlserver']() as database,
                   helpers['web'](site,scratch,port,password,database) as (endpoint,process)):
-                if args.edit_group:
-                    sign_in(helpers,endpoint,process,password,query,edit=True)
-                else:
-                    sign_in(helpers,endpoint,process,password,query)
+                sign_in(helpers,endpoint,process,password,query,edit=args.edit_group,catalogs=args.catalogs)
 
 
 if __name__=='__main__':
