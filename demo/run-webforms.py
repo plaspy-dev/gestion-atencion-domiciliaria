@@ -83,7 +83,7 @@ GRANT SELECT, UPDATE ON {DATABASE}.* TO 'domicilio_demo'@'%';
 
 
 @contextmanager
-def sqlserver():
+def sqlserver(identity_demo=False):
     env = {**os.environ, 'MSSQL_SA_PASSWORD': 'Demo1!' + token_hex(18)}
     identity = docker('run', '--rm', '-d', '--pull', 'never',
                       '--name', 'prueba-gestion-atencion-domiciliaria-' + token_hex(4) + '-sqlserver',
@@ -108,6 +108,7 @@ def sqlserver():
         else:
             raise RuntimeError('The disposable SQL Server did not start.')
         account_password = 'Demo1!' + token_hex(18)
+        demo_role = "db_owner" if identity_demo else "db_datareader"
         query(f"""
 CREATE DATABASE domicilio_demo_sql;
 GO
@@ -116,7 +117,7 @@ GO
 USE domicilio_demo_sql;
 GO
 CREATE USER domicilio_demo FOR LOGIN domicilio_demo;
-ALTER ROLE db_datareader ADD MEMBER domicilio_demo;
+ALTER ROLE {demo_role} ADD MEMBER domicilio_demo;
 CREATE TABLE dbo.seg_menu (
     meidmenu INT PRIMARY KEY, meidmenupadre INT NULL, medescmenu NVARCHAR(100), meruta VARCHAR(150)
 );
@@ -154,7 +155,7 @@ def write_web_config(config, path):
 
 
 @contextmanager
-def web(site, root, db_port, password, sql_config):
+def web(site, root, db_port, password, sql_config, sql_key="ConnBD"):
     config = ET.parse(site / 'Web.config')
     settings = config.find('appSettings')
     if settings is None:
@@ -169,10 +170,11 @@ def web(site, root, db_port, password, sql_config):
         connections = ET.SubElement(config.getroot(), 'connectionStrings')
     for entry in list(connections):
         connections.remove(entry)
-    ET.SubElement(connections, 'add', name='MySQLConnectionString',
-                  providerName='MySql.Data.MySqlClient',
-                  connectionString=f'Server=127.0.0.1;Port={db_port};Database={DATABASE};Uid=domicilio_demo;Pwd={password};')
-    ET.SubElement(connections, 'add', name='ConnBD', providerName='System.Data.SqlClient',
+    if db_port is not None:
+        ET.SubElement(connections, 'add', name='MySQLConnectionString',
+                      providerName='MySql.Data.MySqlClient',
+                      connectionString=f'Server=127.0.0.1;Port={db_port};Database={DATABASE};Uid=domicilio_demo;Pwd={password};')
+    ET.SubElement(connections, 'add', name=sql_key, providerName='System.Data.SqlClient',
                   connectionString=sql_config)
     application = config.find('system.web')
     errors = application.find('customErrors')
