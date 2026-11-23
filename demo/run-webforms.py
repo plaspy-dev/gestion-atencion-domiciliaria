@@ -39,7 +39,7 @@ def docker(*args, data=None, env=None):
 
 
 @contextmanager
-def mysql(password):
+def mysql(password, webforms_pages=False):
     env = {**os.environ, 'MYSQL_ROOT_PASSWORD': token_hex(18)}
     identity = docker('run', '--rm', '-d', '--pull', 'never',
                       '--name', 'prueba-gestion-atencion-domiciliaria-' + token_hex(4) + '-mysql',
@@ -73,6 +73,9 @@ CREATE USER 'domicilio_demo'@'%' IDENTIFIED BY '{password}';
 GRANT SELECT, UPDATE ON {DATABASE}.* TO 'domicilio_demo'@'%';
 '''
         query(table)
+        if webforms_pages:
+            query(Path(__file__).with_name('webforms-pages.sql').read_text(encoding='utf-8'))
+            query(f"GRANT INSERT, DELETE ON {DATABASE}.directorio TO 'domicilio_demo'@'%';")
         binding = docker('port', identity, '3306/tcp').decode().strip()
         assigned = re.fullmatch(r'127\.0\.0\.1:(\d+)', binding)
         if assigned is None or assigned[1] == '3306':
@@ -155,7 +158,7 @@ def write_web_config(config, path):
 
 
 @contextmanager
-def web(site, root, db_port, password, sql_config, sql_key="ConnBD"):
+def web(site, root, db_port, password, sql_config, sql_key="ConnBD", webforms_pages=False):
     config = ET.parse(site / 'Web.config')
     settings = config.find('appSettings')
     if settings is None:
@@ -165,6 +168,25 @@ def web(site, root, db_port, password, sql_config, sql_key="ConnBD"):
             if old.get('key') == key:
                 settings.remove(old)
         ET.SubElement(settings, 'add', key=key, value=value)
+    if webforms_pages:
+        key = 'ValidationSettings:UnobtrusiveValidationMode'
+        for entry in settings.findall('add'):
+            if entry.get('key') == key:
+                settings.remove(entry)
+        ET.SubElement(settings, 'add', key=key, value='None')
+        data = config.find('system.data')
+        if data is None:
+            data = ET.SubElement(config.getroot(), 'system.data')
+        factories = data.find('DbProviderFactories')
+        if factories is None:
+            factories = ET.SubElement(data, 'DbProviderFactories')
+        provider = 'MySql.Data.MySqlClient'
+        for entry in list(factories):
+            if entry.get('invariant') == provider:
+                factories.remove(entry)
+        ET.SubElement(factories, 'remove', invariant=provider)
+        ET.SubElement(factories, 'add', name='MySQL Data Provider', invariant=provider,
+                      description='Connector/NET', type='MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data')
     connections = config.find('connectionStrings')
     if connections is None:
         connections = ET.SubElement(config.getroot(), 'connectionStrings')

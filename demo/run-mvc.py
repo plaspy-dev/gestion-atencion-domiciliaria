@@ -100,7 +100,7 @@ def request(client, url, data=None, ajax=False):
         return reply.code,reply.read(200000).decode('utf-8',errors='replace')
 
 
-def sign_in(helpers, address, process, password, query, edit=False, catalogs=False):
+def sign_in(helpers, address, process, password, query, edit=False, catalogs=False, webforms_pages=False):
     query("ALTER TABLE usuario ADD COLUMN forceurl VARCHAR(150) DEFAULT '', "
           'ADD COLUMN personal VARCHAR(120), ADD COLUMN cargos VARCHAR(120), '
           'ADD COLUMN entidades VARCHAR(120), ADD COLUMN cumpleanos DATE;')
@@ -156,8 +156,12 @@ def sign_in(helpers, address, process, password, query, edit=False, catalogs=Fal
 
     if edit:
         change_group(helpers,client,address,query)
-    if catalogs:
+    if catalogs or webforms_pages:
         check_catalogs(client,address,query)
+    if webforms_pages:
+        pages = runpy.run_path(str(DEMO/'webforms-pages.py'))
+        pages['verify_pages'](request,client,address)
+        pages['verify_discharge_workbook'](request, client, address, query, helpers['LoginForm'])
 
 
 def change_group(helpers, client, address, query):
@@ -224,6 +228,7 @@ def main():
     parser.add_argument('--msbuild',default='MSBuild.exe')
     parser.add_argument('--edit-group',action='store_true',help='verify a fictional group edit')
     parser.add_argument('--catalogs', action='store_true', help='verify three fictional catalog queries')
+    parser.add_argument('--webforms-pages', action='store_true', help='open four protected Web Forms pages')
     args=parser.parse_args()
     repo=DEMO.parent
     version=subprocess.check_output(['git','-C',repo,'rev-parse','HEAD'],text=True).strip()
@@ -240,9 +245,9 @@ def main():
         with notification_server() as address:
             prepare(source,site,scratch,address,args.edition,edit=args.edit_group)
             password=token_hex(16)
-            with (helpers['mysql'](password) as (port,query),helpers['sqlserver']() as database,
-                  helpers['web'](site,scratch,port,password,database) as (endpoint,process)):
-                sign_in(helpers,endpoint,process,password,query,edit=args.edit_group,catalogs=args.catalogs)
+            with (helpers['mysql'](password,args.webforms_pages) as (port,query),helpers['sqlserver']() as database,
+                  helpers['web'](site,scratch,port,password,database,webforms_pages=args.webforms_pages) as (endpoint,process)):
+                sign_in(helpers,endpoint,process,password,query,edit=args.edit_group,catalogs=args.catalogs,webforms_pages=args.webforms_pages)
 
 
 if __name__=='__main__':

@@ -9,25 +9,22 @@ Archived ASP.NET application for coordinating home visits, care teams and servic
 > [!WARNING]
 > **Status: Archived.** This snapshot preserves an earlier edition. Its build instructions identify the requirements and checks for this cut.
 
-ASP.NET application for coordinating home visits, care teams and service records
-
-
 ### Overview
 
 Home-care teams can use the application to organise visits, refer to contact and service records, and coordinate the people who provide care.
 
 ### Features
 
-- Record postpartum care and follow-up in the maternal care module. `OrganizationExample15/materna/postparto.aspx`.
-- Consult the maternal care report. `OrganizationExample15/materna/informe.aspx`.
-- Open the batch admission screen to process patient admissions. `OrganizationExample15/admisiones/amasivas.aspx`.
-- Review visit scheduling from the census. `OrganizationExample15/censo/censo_programacion.aspx`.
-- Review the list of therapeutic progress notes. `OrganizationExample15/terapeutico/evoluciones.aspx`.
-- List discharges from the wound-care clinic. `OrganizationExample15/clinicaheridas/egresos.aspx`.
-- Record the wound assessment in the clinical record. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
-- Consult and maintain wound progression notes. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
-- Open the patient record and its care information. `OrganizationExample15/paciente/paciente.aspx`.
-- Open the staff record for the care team. `OrganizationExample15/rh/funcionario.aspx`.
+- Open the patient record and its care information. `OrganizationExample15.webforms/paciente/paciente.aspx`.
+- Open the staff record for the care team. `OrganizationExample15.webforms/rh/funcionario.aspx`.
+- Manage the operator accounts used to sign in. `OrganizationExample15.webforms/administrador/usuario.aspx`.
+- View and maintain access groups. `OrganizationExample15.webforms/administrador/grupos.aspx`.
+- List discharges from the wound-care clinic. Export the results to Excel. `OrganizationExample15.webforms/clinicaheridas/egresos.aspx`.
+- Record postpartum care and follow-up in the maternal care module. `OrganizationExample15.webforms/materna/postparto.aspx`.
+- Consult the maternal care report. `OrganizationExample15.webforms/materna/informe.aspx`.
+- Open the batch admission screen to process patient admissions. `OrganizationExample15.webforms/admisiones/amasivas.aspx`.
+- Review visit scheduling from the census. `OrganizationExample15.webforms/censo/censo_programacion.aspx`.
+- Review the list of therapeutic progress notes. `OrganizationExample15.webforms/terapeutico/evoluciones.aspx`.
 
 ### Requirements
 
@@ -60,8 +57,6 @@ python demo/run-webforms.py
 
 ### Usage
 
-Use the documented local build with a fictional operator. The available screens include `OrganizationExample15/materna/postparto.aspx` and the other routes above.
-
 Add `--edit-group` to either `python demo/run-mvc.py --edition ...` command. The demo opens the fictional group, saves its new name and description, and checks the stored row in MySQL.
 
 The check signs in as `alicia_demo`, opens the protected home page and verifies the timestamp written to MySQL for the fictional operator. MySQL and SQL Server use isolated loopback ports and fictional tables. To open the demo in a browser after this check, set a fresh fictional password and keep the server running.
@@ -75,7 +70,11 @@ Open the address printed by the script. Sign in with `alicia_demo` and the passw
 
 ### Verification
 
+Run `python demo/run-mvc.py --webforms-pages` to open the scheduling, patient, staff and user administration screens in the archived Web Forms layer. The demo starts local MySQL and SQL Server containers, uses the included fictional schema and fetches the discharge report as an XLSX file. The check opens the worksheet and matches the fictional discharge. Use `--edition` to repeat the walkthrough for the other MVC package. The screen check covers opening each form. Individual edit operations require separate scenarios.
+
 On 23 November 2026 the local checks used Windows 11 Pro build 26300, Python 3.12.4, IIS Express 10.0.26013.1000, Docker 29.9.2 and MySQL 5.7.44. The two MVC checks used MSBuild 18.11.1.51303. The mobile check used .NET SDK 11.0.100 for the shared library and the ASP.NET compiler 4.8.10001.0 for the archived site.
+
+The local Web Forms recipe builds the 2011 edition and checks that a fictional user can open its protected home page. Use the separate MVC and mobile recipes to repeat those demonstrations with fictional data.
 
 The December 2015 mobile edition targets .NET Framework 4.5.2. Run `python demo/run-movil.py` from the checkout on Windows with Python, .NET Framework 4.8, the .NET SDK, IIS Express and Docker. The script restores the archived versions of Razor and Web Pages, rebuilds the recovered shared library, and confirms the protected page and fictional MySQL sign-in. Use `--compile-only` to run the compiler without starting Docker. The separate `movil.no/` prototype uses ASP.NET Identity, OWIN and Web Optimization. Its archived package manifest remains missing. Run `python demo/run-movil-prototype.py` with the same Windows tools and PowerShell 7.6.9 to restore the pinned compatible packages, precompile, and register a fictional account in disposable SQL Server. The script verifies the local session cookie and the saved account. The original prototype sources remain in place.
 
@@ -119,7 +118,7 @@ The trial on 20 November 2026 used Windows 11 build 26300, PowerShell 7.6.9, .NE
 
 ### History
 
-This repository combines the archived web editions and keeps their recorded Git dates.The 2026 reconstruction brings the recovered archive snapshots into one timeline. The May and August 2011 cuts remain as source archives with incomplete build inputs.
+This repository combines the archived web editions and keeps their recorded Git dates. The 2026 reconstruction brings the recovered archive snapshots into one timeline. The May and August 2011 cuts remain as source archives with incomplete build inputs.
 
 ### Contributing
 
@@ -142,25 +141,22 @@ Aplicación ASP.NET archivada para coordinar visitas domiciliarias, equipos de a
 > [!WARNING]
 > **Estado: archivado.** Esta copia conserva una edición anterior. Sus instrucciones de compilación indican los requisitos y las pruebas de este corte.
 
-Aplicación ASP.NET para coordinar visitas domiciliarias, equipos de atención y registros del servicio
-
-
 ### Descripción general
 
 Los equipos de atención domiciliaria pueden organizar visitas, consultar fichas de contacto y de servicio y coordinar al personal que presta la atención.
 
 ### Funciones
 
-- Registra la atención posparto y su seguimiento en el módulo materno. `OrganizationExample15/materna/postparto.aspx`.
-- Consulta el informe de atención materna. `OrganizationExample15/materna/informe.aspx`.
-- Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `OrganizationExample15/admisiones/amasivas.aspx`.
-- Consulta la programación de visitas desde el censo. `OrganizationExample15/censo/censo_programacion.aspx`.
-- Consulta el listado de notas de evolución terapéutica. `OrganizationExample15/terapeutico/evoluciones.aspx`.
-- Consulta los egresos de la clínica de heridas. `OrganizationExample15/clinicaheridas/egresos.aspx`.
-- Registra la valoración de heridas en la ficha clínica. `OrganizationExample15/clinicaheridas/valoracion.aspx`.
-- Consulta y actualiza las notas de evolución de heridas. `OrganizationExample15/clinicaheridas/evolucion.aspx`.
-- Abre la ficha del paciente y su información de atención. `OrganizationExample15/paciente/paciente.aspx`.
-- Abre la ficha del personal del equipo de atención. `OrganizationExample15/rh/funcionario.aspx`.
+- Abre la ficha del paciente y su información de atención. `OrganizationExample15.webforms/paciente/paciente.aspx`.
+- Abre la ficha del personal del equipo de atención. `OrganizationExample15.webforms/rh/funcionario.aspx`.
+- Administra las cuentas de operador para ingresar. `OrganizationExample15.webforms/administrador/usuario.aspx`.
+- Consulta y administra los grupos de acceso. `OrganizationExample15.webforms/administrador/grupos.aspx`.
+- Consulta los egresos de la clínica de heridas. Exporta los resultados a Excel. `OrganizationExample15.webforms/clinicaheridas/egresos.aspx`.
+- Registra la atención posparto y su seguimiento en el módulo materno. `OrganizationExample15.webforms/materna/postparto.aspx`.
+- Consulta el informe de atención materna. `OrganizationExample15.webforms/materna/informe.aspx`.
+- Abre la pantalla de admisiones masivas para procesar ingresos de pacientes. `OrganizationExample15.webforms/admisiones/amasivas.aspx`.
+- Consulta la programación de visitas desde el censo. `OrganizationExample15.webforms/censo/censo_programacion.aspx`.
+- Consulta el listado de notas de evolución terapéutica. `OrganizationExample15.webforms/terapeutico/evoluciones.aspx`.
 
 ### Requisitos
 
@@ -193,8 +189,6 @@ python demo/run-webforms.py
 
 ### Uso
 
-Usa la compilación local documentada con un operador ficticio. Las pantallas disponibles incluyen `OrganizationExample15/materna/postparto.aspx` y las demás rutas de arriba.
-
 Agrega `--edit-group` a cualquiera de los comandos `python demo/run-mvc.py --edition ...`. La demo abre el grupo ficticio, guarda el nombre y la descripción nuevos y coteja la fila en MySQL.
 
 La comprobación entra con `alicia_demo`, abre la portada protegida y verifica la fecha de ingreso que MySQL registró para la operadora ficticia. MySQL y SQL Server usan puertos locales separados y tablas ficticias. Para abrir la demo en el navegador después de esta comprobación, genera una contraseña ficticia y deja el servidor en marcha.
@@ -208,7 +202,11 @@ Abre la dirección que muestra el script. Ingresa con `alicia_demo` y la contras
 
 ### Verificación
 
+Ejecuta `python demo/run-mvc.py --webforms-pages` para abrir las pantallas Web Forms de programación, pacientes, personal y administración de usuarios. La demostración inicia contenedores locales de MySQL y SQL Server, usa el esquema ficticio incluido y descarga el informe de egresos en XLSX. La prueba abre la hoja de cálculo y comprueba que contiene el egreso ficticio. Usa `--edition` para repetir el recorrido en la otra edición MVC. La prueba comprueba la apertura de cada formulario. Las operaciones de edición requieren recorridos propios.
+
 El 23 de noviembre de 2026, las pruebas locales usaron Windows 11 Pro compilación 26300, Python 3.12.4, IIS Express 10.0.26013.1000, Docker 29.9.2 y MySQL 5.7.44. Las dos pruebas de MVC usaron MSBuild 18.11.1.51303. La prueba móvil usó el SDK de .NET 11.0.100 para la biblioteca compartida y el compilador ASP.NET 4.8.10001.0 para el sitio archivado.
+
+La receta local de Web Forms compila la edición de 2011 y comprueba que un usuario ficticio pueda abrir la portada protegida. Usa las recetas independientes de MVC y móvil para repetir esas demostraciones con datos ficticios.
 
 La edición móvil de diciembre de 2015 tiene como destino .NET Framework 4.5.2. Ejecuta `python demo/run-movil.py` desde la copia en Windows con Python, .NET Framework 4.8, el SDK de .NET, IIS Express y Docker. El script restaura las versiones archivadas de Razor y Web Pages, recompila la biblioteca propia recuperada y confirma la portada protegida y el ingreso en MySQL ficticio. Usa `--compile-only` para compilar sin levantar Docker. El prototipo separado `movil.no/` usa ASP.NET Identity, OWIN y Web Optimization. El manifiesto de época sigue sin aparecer. Ejecuta `python demo/run-movil-prototype.py` con las mismas herramientas de Windows y PowerShell 7.6.9 para recuperar los paquetes compatibles fijados, precompilar y registrar una cuenta ficticia en SQL Server desechable. El script comprueba la cookie local y la cuenta guardada. El código original del prototipo se conserva.
 
@@ -252,7 +250,7 @@ La prueba del 20 de noviembre de 2026 usó Windows 11, compilación 26300, Power
 
 ### Historia
 
-Este repositorio reúne las ediciones web archivadas y conserva las fechas registradas en Git. El historial principal conserva las demás ediciones archivadas.
+Este repositorio reúne las ediciones web archivadas y conserva las fechas registradas en Git. La reconstrucción de 2026 reúne en un solo historial las ediciones recuperadas de los respaldos. Los cortes de mayo y agosto de 2011 se conservan como archivos de código con insumos de compilación incompletos.
 
 ### Contribuir
 
