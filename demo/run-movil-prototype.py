@@ -1,6 +1,7 @@
 """Build the archived mobile prototype and register a fictional account."""
 
 from argparse import ArgumentParser
+from functools import partial
 from http.cookiejar import CookieJar
 import json
 import os
@@ -140,7 +141,8 @@ def main():
         if not args.compile_only:
             with (common['sqlserver'](identity_demo=True) as connection,
                   common['web'](site, scratch, None, None, connection, sql_key='DefaultConnection') as (address, process)):
-                register(address, process, common['LoginForm'], mobile['request'], connection)
+                request = partial(mobile['request'], timeout=120)
+                register(address, process, common['LoginForm'], request, connection)
 
 
 if __name__ == '__main__':

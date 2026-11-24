@@ -28,7 +28,7 @@ Home-care teams can use the application to organise visits, refer to contact and
 
 ### Requirements
 
-Use Windows with .NET Framework 4.8, IIS Express and PowerShell 7 to build the archived Web Forms edition in the example. Its build script rebuilds the shared library and invokes the ASP.NET compiler. Use a disposable test database and fictional records.
+Use Windows with .NET Framework 4.8, IIS Express and PowerShell 7.6.9 to build the archived Web Forms edition in the example. Its build script rebuilds the shared library and invokes the ASP.NET compiler. Use a disposable test database and fictional records.
 
 ### Getting started
 
@@ -74,9 +74,7 @@ Run `python demo/run-mvc.py --webforms-pages` to open the scheduling, patient, s
 
 On 23 November 2026 the local checks used Windows 11 Pro build 26300, Python 3.12.4, IIS Express 10.0.26013.1000, Docker 29.9.2 and MySQL 5.7.44. The two MVC checks used MSBuild 18.11.1.51303. The mobile check used .NET SDK 11.0.100 for the shared library and the ASP.NET compiler 4.8.10001.0 for the archived site.
 
-The local Web Forms recipe builds the 2011 edition and checks that a fictional user can open its protected home page. Use the separate MVC and mobile recipes to repeat those demonstrations with fictional data.
-
-The December 2015 mobile edition targets .NET Framework 4.5.2. Run `python demo/run-movil.py` from the checkout on Windows with Python, .NET Framework 4.8, the .NET SDK, IIS Express and Docker. The script restores the archived versions of Razor and Web Pages, rebuilds the recovered shared library, and confirms the protected page and fictional MySQL sign-in. Use `--compile-only` to run the compiler without starting Docker. The separate `movil.no/` prototype uses ASP.NET Identity, OWIN and Web Optimization. Its archived package manifest remains missing. Run `python demo/run-movil-prototype.py` with the same Windows tools and PowerShell 7.6.9 to restore the pinned compatible packages, precompile, and register a fictional account in disposable SQL Server. The script verifies the local session cookie and the saved account. The original prototype sources remain in place.
+The December 2015 mobile edition targets .NET Framework 4.5.2. Run `python demo/run-movil.py` from the checkout on Windows with Python, .NET Framework 4.8, the .NET SDK, IIS Express and Docker. The script restores the archived versions of Razor and Web Pages, rebuilds the recovered shared library, and confirms the protected page and fictional MySQL sign-in. Use `--compile-only` to run the compiler without starting Docker. The separate `movil.no/` prototype uses ASP.NET Identity, OWIN and Web Optimization. Its archived package manifest remains missing. Run `python demo/run-movil-prototype.py` with the same Windows tools and PowerShell 7.6.9 to restore the pinned compatible packages, precompile, and register a fictional account in disposable SQL Server. The script verifies the local session cookie and the saved account. The original prototype sources remain in place. The local HTTP request can wait up to 120 seconds for ASP.NET to start. Pass `--compile-only` to precompile the prototype.
 
 Run `python demo/run-mvc.py --edition <folder> --catalogs` to retrieve the fictional insurer, user and parameter records from their signed-in catalog routes. Both editions returned one expected record per catalog using local MySQL.
 
@@ -160,7 +158,7 @@ Los equipos de atención domiciliaria pueden organizar visitas, consultar fichas
 
 ### Requisitos
 
-Usa Windows con .NET Framework 4.8, IIS Express y PowerShell 7 para compilar la edición Web Forms del ejemplo. El script recompila la biblioteca compartida y ejecuta el compilador de ASP.NET. Usa una base desechable y registros ficticios.
+Usa Windows con .NET Framework 4.8, IIS Express y PowerShell 7.6.9 para compilar la edición Web Forms del ejemplo. El script recompila la biblioteca compartida y ejecuta el compilador de ASP.NET. Usa una base desechable y registros ficticios.
 
 ### Cómo empezar
 
@@ -206,9 +204,7 @@ Ejecuta `python demo/run-mvc.py --webforms-pages` para abrir las pantallas Web F
 
 El 23 de noviembre de 2026, las pruebas locales usaron Windows 11 Pro compilación 26300, Python 3.12.4, IIS Express 10.0.26013.1000, Docker 29.9.2 y MySQL 5.7.44. Las dos pruebas de MVC usaron MSBuild 18.11.1.51303. La prueba móvil usó el SDK de .NET 11.0.100 para la biblioteca compartida y el compilador ASP.NET 4.8.10001.0 para el sitio archivado.
 
-La receta local de Web Forms compila la edición de 2011 y comprueba que un usuario ficticio pueda abrir la portada protegida. Usa las recetas independientes de MVC y móvil para repetir esas demostraciones con datos ficticios.
-
-La edición móvil de diciembre de 2015 tiene como destino .NET Framework 4.5.2. Ejecuta `python demo/run-movil.py` desde la copia en Windows con Python, .NET Framework 4.8, el SDK de .NET, IIS Express y Docker. El script restaura las versiones archivadas de Razor y Web Pages, recompila la biblioteca propia recuperada y confirma la portada protegida y el ingreso en MySQL ficticio. Usa `--compile-only` para compilar sin levantar Docker. El prototipo separado `movil.no/` usa ASP.NET Identity, OWIN y Web Optimization. El manifiesto de época sigue sin aparecer. Ejecuta `python demo/run-movil-prototype.py` con las mismas herramientas de Windows y PowerShell 7.6.9 para recuperar los paquetes compatibles fijados, precompilar y registrar una cuenta ficticia en SQL Server desechable. El script comprueba la cookie local y la cuenta guardada. El código original del prototipo se conserva.
+La edición móvil de diciembre de 2015 tiene como destino .NET Framework 4.5.2. Ejecuta `python demo/run-movil.py` desde la copia en Windows con Python, .NET Framework 4.8, el SDK de .NET, IIS Express y Docker. El script restaura las versiones archivadas de Razor y Web Pages, recompila la biblioteca propia recuperada y confirma la portada protegida y el ingreso en MySQL ficticio. Usa `--compile-only` para compilar sin levantar Docker. El prototipo separado `movil.no/` usa ASP.NET Identity, OWIN y Web Optimization. El manifiesto de época sigue sin aparecer. Ejecuta `python demo/run-movil-prototype.py` con las mismas herramientas de Windows y PowerShell 7.6.9 para recuperar los paquetes compatibles fijados, precompilar y registrar una cuenta ficticia en SQL Server desechable. El script comprueba la cookie local y la cuenta guardada. El código original del prototipo se conserva. La petición HTTP local puede esperar hasta 120 segundos a que arranque ASP.NET. Usa `--compile-only` para precompilar el prototipo.
 
 Ejecuta `python demo/run-mvc.py --edition <carpeta> --catalogs` para consultar los registros ficticios de aseguradores, usuarios y parámetros desde sus catálogos con sesión activa. Ambas ediciones devolvieron un registro esperado por catálogo con MySQL local.
 

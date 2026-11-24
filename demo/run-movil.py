@@ -29,9 +29,9 @@ class LocalRedirect(HTTPRedirectHandler):
         return None
 
 
-def request(client, target, fields=None):
+def request(client, target, fields=None, timeout=25):
     try:
-        response = client.open(Request(target, data=urlencode(fields).encode() if fields else None), timeout=25)
+        response = client.open(Request(target, data=urlencode(fields).encode() if fields else None), timeout=timeout)
     except HTTPError as error:
         response = error
     with response:
