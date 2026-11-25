@@ -70,6 +70,8 @@ Open the address printed by the script. Sign in with `alicia_demo` and the passw
 
 ### Verification
 
+On 25 November 2026, a clean local clone built the archived Web Forms edition and opened its protected home page. The two MVC editions returned HTTP 200 for both parameter administration views after sign-in. Separate local checks signed in to the mobile edition and saved a fictional registration in the prototype.
+
 Run `python demo/run-mvc.py --webforms-pages` to open the scheduling, patient, staff and user administration screens in the archived Web Forms layer. The demo starts local MySQL and SQL Server containers, uses the included fictional schema and fetches the discharge report as an XLSX file. The check opens the worksheet and matches the fictional discharge. Use `--edition` to repeat the walkthrough for the other MVC package. The screen check covers opening each form. Individual edit operations require separate scenarios.
 
 On 23 November 2026 the local checks used Windows 11 Pro build 26300, Python 3.12.4, IIS Express 10.0.26013.1000, Docker 29.9.2 and MySQL 5.7.44. The two MVC checks used MSBuild 18.11.1.51303. The mobile check used .NET SDK 11.0.100 for the shared library and the ASP.NET compiler 4.8.10001.0 for the archived site.
@@ -199,6 +201,8 @@ python demo/run-webforms.py --serve
 Abre la dirección que muestra el script. Ingresa con `alicia_demo` y la contraseña que elegiste. Pulsa Ctrl+C para retirar los servicios de prueba.
 
 ### Verificación
+
+El 25 de noviembre de 2026, un clon local limpio compiló la edición archivada Web Forms y abrió su portada protegida. Las dos ediciones MVC devolvieron HTTP 200 para ambas vistas de parámetros después de iniciar sesión. Otras pruebas locales iniciaron sesión en la edición móvil y guardaron un registro ficticio en el prototipo.
 
 Ejecuta `python demo/run-mvc.py --webforms-pages` para abrir las pantallas Web Forms de programación, pacientes, personal y administración de usuarios. La demostración inicia contenedores locales de MySQL y SQL Server, usa el esquema ficticio incluido y descarga el informe de egresos en XLSX. La prueba abre la hoja de cálculo y comprueba que contiene el egreso ficticio. Usa `--edition` para repetir el recorrido en la otra edición MVC. La prueba comprueba la apertura de cada formulario. Las operaciones de edición requieren recorridos propios.
 
